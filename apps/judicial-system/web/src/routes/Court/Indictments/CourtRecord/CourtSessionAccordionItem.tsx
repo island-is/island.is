@@ -24,6 +24,10 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   BlueBox,
   DateTime,
   Modal,
@@ -118,10 +122,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
 
   const {
+    judges,
     districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
+
+  const defaultJudge = judges?.find(
+    (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
+  )
 
   const patchSession = (
     courtSessionId: string,
@@ -393,6 +402,29 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       (acc, session) => (acc += session.filedDocuments?.length || 0),
       0,
     )
+  }
+
+  const getInitialAttendees = () => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
+    }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        attendees.push(`\n${defendant.name} ákærði`)
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
   }
 
   useEffect(() => {

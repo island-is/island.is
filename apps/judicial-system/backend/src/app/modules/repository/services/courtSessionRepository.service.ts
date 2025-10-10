@@ -28,6 +28,7 @@ interface DeleteCourtSessionOptions {
 
 interface UpdateCourtSession {
   location?: string
+  judgeId?: string
   startDate?: Date
   endDate?: Date
   isClosed?: boolean
@@ -149,6 +150,7 @@ export class CourtSessionRepositoryService {
 
       const transaction = options?.transaction
 
+<<<<<<< HEAD
       // Only allow users to delete the latest court session
       const courtSessionsInCase = await this.courtSessionModel.findAll({
         where: { caseId },
@@ -161,6 +163,8 @@ export class CourtSessionRepositoryService {
         )
       }
 
+=======
+>>>>>>> c07ae5724d05f9931bdf8c3ad6881cadf4543f9b
       // First delete all documents in the session
       await this.courtDocumentRepositoryService.deleteDocumentsInSession(
         caseId,
@@ -191,7 +195,11 @@ export class CourtSessionRepositoryService {
   ) {
     const numberOfDeletedRows = await this.courtSessionModel.destroy({
       where: { id: courtSessionId, caseId },
+<<<<<<< HEAD
       transaction: transaction,
+=======
+      transaction,
+>>>>>>> c07ae5724d05f9931bdf8c3ad6881cadf4543f9b
     })
 
     if (numberOfDeletedRows < 1) {

@@ -110,6 +110,8 @@ namespace: 'services-payments'
 podDisruptionBudget:
   maxUnavailable: 1
   unhealthyPodEvictionPolicy: 'AlwaysAllow'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 3
@@ -143,3 +145,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments'
+  create: true
+  name: 'services-payments'

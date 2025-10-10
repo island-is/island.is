@@ -71,9 +71,8 @@ const OJOITemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Hugsmidjan,
   institution: general.ministryOfJustice,
   featureFlag: Features.officialJournalOfIceland,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
-  ],
   dataSchema: partialSchema,
   allowedDelegations: [
     {
