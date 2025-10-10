@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m as coreMessage,
@@ -27,6 +27,10 @@ import copyToClipboard from 'copy-to-clipboard'
 import UsageTable from '../../components/UsageTable/UsageTable'
 import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -74,6 +78,23 @@ type CopiedCode = {
 export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
+  const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const isPageDisabled = await featureFlagClient.getValue(
+        'isPortalAirDiscountPageDisabled',
+        false,
+      )
+      if (isPageDisabled) {
+        setIsDisabled(isPageDisabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const {
     data: flightLegData,
@@ -106,6 +127,28 @@ export const AirDiscountOverview = () => {
         setCopiedCodes(copiedCodes)
       }, 5000)
     }
+  }
+
+  if (isDisabled) {
+    return (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(m.noFundingTitle)}
+        message={formatMessage(m.noFunding, {
+          link: (str: any) => (
+            <a
+              href={formatMessage(m.noFundingMoreInfoLink)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button variant="text">{str}</Button>
+            </a>
+          ),
+        })}
+        imgSrc="./assets/images/coffee.svg"
+      />
+    )
   }
 
   return (
