@@ -6,6 +6,11 @@ import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
+import {
+  buildServiceCatalog,
+  collectEnvVarNames,
+  listServiceNames,
+} from './service-inspector'
 
 const cli = yargs(process.argv.slice(2))
   .scriptName('yarn infra')
@@ -51,6 +56,60 @@ const cli = yargs(process.argv.slice(2))
     },
     async (argv) => {
       await renderServiceEnvVars(argv.service as string)
+    },
+  )
+  .command(
+    'services',
+    'List services defined in the DSL',
+    (yargs) =>
+      yargs.option('json', {
+        type: 'boolean',
+        default: false,
+        describe: 'Output list as JSON array',
+      }),
+    async (argv) => {
+      const catalog = buildServiceCatalog()
+      const names = listServiceNames(catalog)
+      if (argv.json) {
+        process.stdout.write(JSON.stringify(names, null, 2) + '\n')
+      } else {
+        names.forEach((name) => console.log(name))
+      }
+    },
+  )
+  .command(
+    'getenv <service>',
+    'List environment variable names configured for a service',
+    (yargs) =>
+      yargs
+        .positional('service', { type: 'string', demandOption: true })
+        .option('env', {
+          choices: OpsEnvNames,
+          describe:
+            'Resolve service within a specific environment (defaults to dev if available).',
+        })
+        .option('json', {
+          type: 'boolean',
+          default: true,
+          describe: 'Output variables as a JSON array (use --no-json for plain)',
+        }),
+    async (argv) => {
+      const catalog = buildServiceCatalog()
+      try {
+        const { variables } = await collectEnvVarNames(
+          argv.service as string,
+          { env: argv.env as OpsEnv | undefined },
+          catalog,
+        )
+        if (argv.json) {
+          process.stdout.write(JSON.stringify(variables, null, 2) + '\n')
+        } else {
+          variables.forEach((name) => console.log(name))
+        }
+      } catch (error) {
+        console.error((error as Error).message)
+        process.exitCode = 1
+      }
     },
   )
   .command(

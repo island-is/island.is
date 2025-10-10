@@ -1,0 +1,14 @@
+{
+  "name": "workspace-tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "env-vars": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env TS_NODE_PROJECT=tools/tsconfig.tools.json node -r ts-node/register -r tsconfig-paths/register tools/scripts/find-env-vars.ts",
+        "forwardAllArgs": true,
+        "cwd": "."
+      }
+    }
+  }
+}
