@@ -55,7 +55,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.prerequisites,

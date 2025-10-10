@@ -30,9 +30,8 @@ const template: ApplicationTemplate<
   name: application.name,
   codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
-  ],
   dataSchema: AnonymityInVehicleRegistrySchema,
   stateMachineConfig: {
     initial: States.DRAFT,

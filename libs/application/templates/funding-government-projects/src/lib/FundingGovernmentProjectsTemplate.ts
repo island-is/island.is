@@ -45,9 +45,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   name: application.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.FundingGovernmentProjects.translation,
-  ],
   dataSchema: FundingGovernmentProjectsSchema,
   stateMachineConfig: {
     initial: States.draft,

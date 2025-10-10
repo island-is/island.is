@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -40,6 +41,8 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
   name: m.formName.defaultMessage,
   codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportAnnulmentApplication,
+  translationNamespaces:
+    ApplicationConfigurations.PassportAnnulment.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
