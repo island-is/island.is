@@ -1,0 +1,73 @@
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
+    questionnaires {
+      id
+      title
+      sentDate
+      status
+      description
+      organization
+    }
+  }
+}
+
+query GetQuestionnaire($id: String!, $locale: String!) {
+  questionnairesDetail(id: $id, locale: $locale) {
+    id
+    title
+    sentDate
+    status
+    description
+    organization
+    sections {
+      __typename
+      sectionTitle
+      questions {
+        __typename
+        id
+        label
+        sublabel
+        display
+        dependsOn
+        answerOptions {
+          type
+          id
+          label
+          sublabel
+          display
+          # Text input fields
+          placeholder
+          maxLength
+          # Number input fields
+          min
+          max
+          # Thermometer/Scale fields
+          maxLabel
+          minLabel
+          # Radio/Checkbox fields
+          options {
+            label
+            value
+          }
+          value {
+            extraQuestions
+          }
+        }
+        visibilityConditions {
+          questionId
+          operator
+          expectedValues
+          showWhenMatched
+        }
+      }
+    }
+  }
+}
+
+mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
+  submitQuestionnaire(input: $input) {
+    id
+    title
+    status
+  }
+}

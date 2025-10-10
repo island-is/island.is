@@ -152,7 +152,6 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
-
     {
       name: m.vaccinations,
       description: m.vaccinationsIntro,
@@ -178,6 +177,18 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.singleWaitlist,
           path: HealthPaths.HealthWaitlistsDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      searchTags: [],
+      children: [
+        {
+          name: messages.questionnaire,
+          path: HealthPaths.HealthQuestionnairesDetail,
           navHide: true,
         },
       ],
