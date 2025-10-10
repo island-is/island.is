@@ -93,7 +93,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   institution: m.applicantInstitution,
   name: m.applicationTitle,
   stateMachineConfig: {

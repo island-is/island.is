@@ -50,9 +50,8 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
-  ],
   dataSchema: PublicDebtPaymentPlanSchema,
   stateMachineConfig: {
     initial: States.prerequisites,

@@ -31,9 +31,8 @@ const template: ApplicationTemplate<
   name: 'Bílaleigu gjaldflokkar',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Skatturinn',
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.CarRentalFeeCategory.translation,
-  ],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

@@ -85,7 +85,7 @@ const IdCardTemplate: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   dataSchema: IdCardSchema,
-  translationNamespaces: [ApplicationConfigurations.IdCard.translation],
+  translationNamespaces: ApplicationConfigurations.IdCard.translation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
