@@ -11,6 +11,7 @@ import {
   InfoCardGrid,
   isDateAfterToday,
 } from '@island.is/portals/my-pages/core'
+import { isDefined } from '@island.is/shared/utils'
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
@@ -33,6 +34,13 @@ const PaymentsAndRights: React.FC<Props> = ({
   const hasInsuranceCardDate = Boolean(insurance.data?.from)
   const isInsured = insurance.data?.isInsured
   const ehicDate = insurance.data?.ehicCardExpiryDate
+  const paymentsDefined = isDefined(payments.data)
+  const medicineDefined = isDefined(medicine.data)
+  const insuranceDefined = isDefined(insurance.data)
+
+  const allEmpty = !paymentsDefined && !medicineDefined && !insuranceDefined
+  const allError = payments.error && medicine.error && insurance.error
+  const anyLoading = payments.loading || medicine.loading || insurance.loading
 
   const currentPath = HealthPaths.HealthOverview
 
@@ -42,6 +50,16 @@ const PaymentsAndRights: React.FC<Props> = ({
         {formatMessage(messages.statusOfRightsAndPayments)}
       </Text>
       <InfoCardGrid
+        empty={
+          anyLoading
+            ? undefined
+            : allEmpty && !allError
+            ? {
+                title: formatMessage(messages.noData),
+                description: formatMessage(messages.noPaymentsAndRightsData),
+              }
+            : undefined
+        }
         cards={[
           {
             title: formatMessage(messages.paymentsAndRights),
@@ -91,11 +109,11 @@ const PaymentsAndRights: React.FC<Props> = ({
           },
           {
             title: formatMessage(messages.hasHealthInsurance),
-            description: `${formatMessage(messages.from).toLocaleLowerCase()} ${
-              insurance.data?.from
-                ? formatDate(insurance.data?.from)
-                : formatMessage(messages.unknown)
-            }`,
+            description: isInsured
+              ? `${formatMessage(
+                  messages.from,
+                ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`
+              : formatMessage(messages.noHealthInsurance),
             to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             loading: insurance.loading,

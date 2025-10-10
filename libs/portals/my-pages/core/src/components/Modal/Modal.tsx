@@ -112,8 +112,8 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 }}
                 size="large"
               />
-            </Box>{' '}
-            <Box>
+            </Box>
+            <Box width="full">
               <Box marginBottom={6}>
                 {title && (
                   <Text variant="h3" marginBottom={'auto'}>
