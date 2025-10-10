@@ -512,9 +512,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolApplyForOtherSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.sub.label',
       defaultMessage:
-        'Þú getur sótt um fyrir barnið þitt í skóla utan þíns skólahverfis, en ekki er víst að skólinn geti tekið við barninu.',
+        'Ef forsjáraðili velur að hafna innritun í hverfisskóla þá býðst honum sjálfkrafa sá möguleiki að sækja um annan skóla fyrir barnið sitt.',
       description:
-        'You can apply for your child to attend a school outside your school district, but it is not certain that the school will be able to accept your child.',
+        'If the guardian chooses to decline enrollment in the neighbourhood school, they are automatically offered the option to apply for another school for their child.',
     },
 
     // Apply to a new school
