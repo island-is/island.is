@@ -1,7 +1,11 @@
 export { StudentTranscriptApi as UnakApi } from './gen/fetch'
 export { StudentTrackInstitution as UnakStudentTrackInstitution } from './gen/fetch'
 export { StudentTrack as UnakStudentTrack } from './gen/fetch'
+export { StudentFile as UnakStudentFile } from './gen/fetch'
 export { NemandiGetLocaleEnum as UnakLocale } from './gen/fetch'
-export { NemandiFerillFerillFileTranscriptGetLocaleEnum as UnakTranscriptLocale } from './gen/fetch'
 export { NemandiFerillFerillGetLocaleEnum as UnakFerillLocale } from './gen/fetch'
+export { NemandiFerillFerillFileTypeGetLocaleEnum as UnakTranscriptLocale } from './gen/fetch'
+export { FileType as UnakFileType } from './gen/fetch'
+export { StudentTrackOverview as UnakStudentTrackOverview } from './gen/fetch'
+
 export * from './universityOfAkureyriCareerClient.config'
