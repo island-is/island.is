@@ -141,8 +141,8 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ foreignCitizenship, nationalId }) => {
-          return !foreignCitizenship?.length
+        ({ foreignCitizenship, nationalId, enabled }) => {
+          return enabled && !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
             : true
         },
