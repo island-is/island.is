@@ -1,11 +1,11 @@
-import { CreateOptions, Sequelize, Transaction, UpdateOptions } from 'sequelize'
+import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -46,7 +46,6 @@ interface UpdateCourtSession {
 @Injectable()
 export class CourtSessionRepositoryService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
