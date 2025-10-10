@@ -150,21 +150,6 @@ export class CourtSessionRepositoryService {
 
       const transaction = options?.transaction
 
-<<<<<<< HEAD
-      // Only allow users to delete the latest court session
-      const courtSessionsInCase = await this.courtSessionModel.findAll({
-        where: { caseId },
-        order: [['created', 'DESC']],
-      })
-
-      if (courtSessionsInCase[0].id !== courtSessionId) {
-        throw new InternalServerErrorException(
-          `Could not delete court session ${courtSessionId} of case ${caseId}. Court session to delete is not the latest court session in the case.`,
-        )
-      }
-
-=======
->>>>>>> c07ae5724d05f9931bdf8c3ad6881cadf4543f9b
       // First delete all documents in the session
       await this.courtDocumentRepositoryService.deleteDocumentsInSession(
         caseId,
@@ -195,11 +180,7 @@ export class CourtSessionRepositoryService {
   ) {
     const numberOfDeletedRows = await this.courtSessionModel.destroy({
       where: { id: courtSessionId, caseId },
-<<<<<<< HEAD
-      transaction: transaction,
-=======
       transaction,
->>>>>>> c07ae5724d05f9931bdf8c3ad6881cadf4543f9b
     })
 
     if (numberOfDeletedRows < 1) {
