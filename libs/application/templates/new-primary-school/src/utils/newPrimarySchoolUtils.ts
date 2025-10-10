@@ -166,6 +166,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   )
 
+  const hasBeenTreatedBySpecialist = getValueViaPath<YesOrNo>(
+    answers,
+    'support.hasBeenTreatedBySpecialist',
+  )
+
+  const specialist = getValueViaPath<string>(answers, 'support.specialist')
+
   const requestingMeeting = getValueViaPath<YesOrNo>(
     answers,
     'support.requestingMeeting[0]',
@@ -277,6 +284,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForNeighbourhoodSchool,
     currentSchoolId,
+    isSerdeild: false,
+    hasBeenTreatedBySpecialist,
+    specialist,
   }
 }
 

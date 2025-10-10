@@ -69,6 +69,10 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
+          condition: (answers) => {
+            const { isSerdeild } = getApplicationAnswers(answers)
+            return !isSerdeild
+          },
           defaultValue: (application: Application) => {
             const { socialProfile } = getApplicationExternalData(
               application.externalData,
@@ -104,6 +108,10 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
+          condition: (answers) => {
+            const { isSerdeild } = getApplicationAnswers(answers)
+            return !isSerdeild
+          },
           defaultValue: (application: Application) => {
             const { socialProfile } = getApplicationExternalData(
               application.externalData,
@@ -143,10 +151,10 @@ export const supportSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            const { hasDiagnoses, hasHadSupport } =
+            const { hasDiagnoses, hasHadSupport, isSerdeild } =
               getApplicationAnswers(answers)
 
-            return hasDiagnoses === YES || hasHadSupport === YES
+            return isSerdeild || hasDiagnoses === YES || hasHadSupport === YES
           },
           defaultValue: (application: Application) =>
             hasDefaultSupportCaseworker(
