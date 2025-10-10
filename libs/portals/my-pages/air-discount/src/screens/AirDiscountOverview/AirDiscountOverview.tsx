@@ -130,13 +130,22 @@ export const AirDiscountOverview = () => {
   }
 
   if (isDisabled) {
-    const nextYear = new Date().getFullYear() + 1
     return (
       <Problem
         type="no_data"
         noBorder={false}
         title={formatMessage(m.noFundingTitle)}
-        message={`${formatMessage(m.noFunding)} 1. janúar ${nextYear}`}
+        message={formatMessage(m.noFunding, {
+          link: (str: any) => (
+            <a
+              href={formatMessage(m.noFundingMoreInfoLink)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button variant="text">{str}</Button>
+            </a>
+          ),
+        })}
         imgSrc="./assets/images/coffee.svg"
       />
     )
