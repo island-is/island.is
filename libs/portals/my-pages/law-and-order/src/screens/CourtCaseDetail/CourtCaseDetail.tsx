@@ -34,9 +34,12 @@ const CourtCaseDetail = () => {
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
+  const hasVerdict = courtCase?.data?.hasVerdict
+  const hasVerdictBeenServed = courtCase?.data?.hasVerdictBeenServed
 
   useEffect(() => {
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
 
   return (
@@ -51,10 +54,12 @@ const CourtCaseDetail = () => {
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
+
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        {data?.lawAndOrderCourtCaseDetail && !loading && (
-          <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.data?.hasBeenServed && (
+        {data?.lawAndOrderCourtCaseDetail &&
+          !loading &&
+          courtCase?.data?.hasSubpoenaBeenServed && (
+            <Box paddingRight={2} marginBottom={[1]}>
               <LinkButton
                 to={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -65,7 +70,28 @@ const CourtCaseDetail = () => {
                 variant="utility"
                 size="default"
               />
-            )}
+            </Box>
+          )}
+        {hasVerdict && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            <LinkButton
+              to={
+                hasVerdictBeenServed
+                  ? LawAndOrderPaths.VerdictDetail.replace(
+                      ':id',
+                      courtCase?.data?.id?.toString() || '',
+                    )
+                  : formatMessage(messages.mailboxLink)
+              }
+              text={
+                hasVerdictBeenServed
+                  ? formatMessage(messages.verdict)
+                  : formatMessage(messages.openVerdictInMailbox)
+              }
+              icon="receipt"
+              variant="utility"
+              size="default"
+            />
           </Box>
         )}
       </Box>

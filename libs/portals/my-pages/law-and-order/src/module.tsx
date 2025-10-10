@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
+import Verdict from './screens/Verdict/Verdict'
 
 const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
@@ -44,6 +45,12 @@ export const lawAndOrderModule: PortalModule = {
       path: LawAndOrderPaths.SubpoenaDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <Subpoena />,
+    },
+    {
+      name: m.case,
+      path: LawAndOrderPaths.VerdictDetail,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <Verdict />,
     },
   ],
 }
