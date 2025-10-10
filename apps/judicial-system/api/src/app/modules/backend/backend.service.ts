@@ -29,7 +29,6 @@ import {
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
-import { DeleteCourtSessionResponse } from '../court-session/dto/deleteCourtSession.response'
 import {
   CivilClaimant,
   Defendant,
