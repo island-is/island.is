@@ -124,8 +124,7 @@ export const Problem = ({
 
     case ProblemTypes.noData:
       return (
-        <>
-          <ProblemTemplate
+        <ProblemTemplate
             {...defaultProps}
             {...noDataProps}
             variant="info"
@@ -134,7 +133,6 @@ export const Problem = ({
             size={size}
             detailLink={detailLink}
           />
-        </>
       )
 
     default:
