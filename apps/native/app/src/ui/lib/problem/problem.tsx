@@ -125,14 +125,14 @@ export const Problem = ({
     case ProblemTypes.noData:
       return (
         <ProblemTemplate
-            {...defaultProps}
-            {...noDataProps}
-            variant="info"
-            title={title ?? t('problem.noData.title')}
-            message={message ?? t('problem.noData.message')}
-            size={size}
-            detailLink={detailLink}
-          />
+          {...defaultProps}
+          {...noDataProps}
+          variant="info"
+          title={title ?? t('problem.noData.title')}
+          message={message ?? t('problem.noData.message')}
+          size={size}
+          detailLink={detailLink}
+        />
       )
 
     default:
