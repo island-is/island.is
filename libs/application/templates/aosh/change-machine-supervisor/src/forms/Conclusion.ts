@@ -1,12 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, conclusion } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
