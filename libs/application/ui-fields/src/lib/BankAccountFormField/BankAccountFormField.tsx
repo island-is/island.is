@@ -47,8 +47,7 @@ export const BankAccountFormField = ({
     application,
     formatMessage,
   )
-
-  const bankInfo = getDefaultValue(field, application)
+  const bankInfo = getDefaultValue(field, application, locale)
 
   // Extract errors for each bank account field part (individual field errors)
   const bankNumberError = getErrorViaPath(errors || {}, `${id}.bankNumber`)

@@ -24,6 +24,7 @@ interface NationalIdWithNameProps {
   application: Application
   disabled?: boolean
   required?: boolean
+  readOnly?: boolean
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
@@ -57,6 +58,7 @@ export const NationalIdWithName: FC<
   application,
   disabled,
   required,
+  readOnly,
   customId = '',
   customNationalIdLabel = '',
   phoneLabel = undefined,
@@ -256,6 +258,7 @@ export const NationalIdWithName: FC<
             defaultValue={defaultNationalId}
             format="######-####"
             required={required}
+            readOnly={readOnly}
             backgroundColor="blue"
             onChange={debounce(async (v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
@@ -313,7 +316,7 @@ export const NationalIdWithName: FC<
                 : undefined
             }
             disabled={disabled}
-            readOnly={!disabled}
+            readOnly={!disabled || readOnly}
           />
         </GridColumn>
       </GridRow>
@@ -333,6 +336,7 @@ export const NationalIdWithName: FC<
                 backgroundColor="blue"
                 error={getFieldErrorString(error, 'phone')}
                 disabled={disabled}
+                readOnly={readOnly}
               />
             </GridColumn>
           )}
@@ -351,6 +355,7 @@ export const NationalIdWithName: FC<
                 backgroundColor="blue"
                 error={getFieldErrorString(error, 'email')}
                 disabled={disabled}
+                readOnly={readOnly}
               />
             </GridColumn>
           )}
