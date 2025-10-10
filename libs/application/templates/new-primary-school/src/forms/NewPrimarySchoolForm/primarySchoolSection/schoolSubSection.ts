@@ -9,7 +9,7 @@ import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getPrefferedSchoolName,
+  getPreferredSchoolName,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
@@ -28,19 +28,19 @@ export const schoolSubSection = buildSubSection({
         newPrimarySchoolMessages.primarySchool.schoolSubSectionDescription,
       children: [
         buildRadioField({
-          id: 'school.applyForPrefferedSchool',
+          id: 'school.applyForPreferredSchool',
           required: true,
           options: (application) => {
             return [
               {
                 label:
                   newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForPrefferedSchoolLabel,
+                    .schoolApplyForPreferredSchoolLabel,
                 subLabel: {
                   ...newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForPrefferedSchoolSubLabel,
+                    .schoolApplyForPreferredSchoolSubLabel,
                   values: {
-                    prefferedSchoolName: getPrefferedSchoolName(
+                    preferredSchoolName: getPreferredSchoolName(
                       application.externalData,
                     ),
                   },

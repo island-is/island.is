@@ -49,7 +49,7 @@ export class FriggClientService {
     }
   }
 
-  async getPrefferedSchool(
+  async getPreferredSchool(
     user: User,
     childNationalId: string,
   ): Promise<OrganizationModel> {

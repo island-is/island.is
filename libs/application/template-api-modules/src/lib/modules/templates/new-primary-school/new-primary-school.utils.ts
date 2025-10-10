@@ -94,10 +94,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchool,
     selectedSchoolType,
     currentSchoolId,
-    applyForPrefferedSchool,
+    applyForPreferredSchool,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId, prefferedSchool } = getApplicationExternalData(
+  const { primaryOrgId, preferredSchool } = getApplicationExternalData(
     application.externalData,
   )
 
@@ -131,8 +131,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       defaultOrganizationId: primaryOrgId || currentSchoolId,
     }),
     selectedOrganizationId:
-      (applyForPrefferedSchool === YES
-        ? prefferedSchool?.id
+      (applyForPreferredSchool === YES
+        ? preferredSchool?.id
         : selectedSchool) || '',
     requestingMeeting: requestingMeeting === YES,
     ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL

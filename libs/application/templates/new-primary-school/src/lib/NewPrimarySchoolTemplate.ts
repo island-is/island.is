@@ -79,8 +79,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               throwOnError: true,
             }),
             defineTemplateApi({
-              action: ApiModuleActions.getPrefferedSchool,
-              externalDataId: 'prefferedSchool',
+              action: ApiModuleActions.getPreferredSchool,
+              externalDataId: 'preferredSchool',
               throwOnError: true,
             }),
           ],

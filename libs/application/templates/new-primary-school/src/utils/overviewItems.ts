@@ -36,7 +36,7 @@ import {
   getApplicationExternalData,
   getCurrentSchoolName,
   getGenderMessage,
-  getPrefferedSchoolName,
+  getPreferredSchoolName,
   getSelectedOptionLabel,
 } from './newPrimarySchoolUtils'
 
@@ -341,7 +341,7 @@ export const schoolItems = async (
     applicationType,
     expectedStartDate,
     selectedSchool,
-    applyForPrefferedSchool,
+    applyForPreferredSchool,
     selectedSchoolType,
     temporaryStay,
     expectedEndDate,
@@ -358,12 +358,12 @@ export const schoolItems = async (
     {
       width: 'half',
       keyText:
-        applyForPrefferedSchool === YES
+        applyForPreferredSchool === YES
           ? newPrimarySchoolMessages.overview.neighbourhoodSchool
           : newPrimarySchoolMessages.overview.selectedSchool,
       valueText:
-        applyForPrefferedSchool === YES
-          ? getPrefferedSchoolName(externalData)
+        applyForPreferredSchool === YES
+          ? getPreferredSchoolName(externalData)
           : selectedSchoolName,
     },
   ]

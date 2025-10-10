@@ -89,7 +89,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
-  async getPrefferedSchool({
+  async getPreferredSchool({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
@@ -97,7 +97,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
     if (!childNationalId) return undefined
 
-    return await this.friggClientService.getPrefferedSchool(
+    return await this.friggClientService.getPreferredSchool(
       auth,
       childNationalId,
     )

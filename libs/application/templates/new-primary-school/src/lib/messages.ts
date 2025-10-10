@@ -494,15 +494,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Children have the right to attend school in the municipality where they are registered as legal residents. Most municipalities assign children to their district school or the one closest to their home. However, it is the right of the guardian to apply for another school for their child, whether within the municipality, outside it, or in an independent school. However, it is not certain that the school will be able to accept the child, and this depends on the rules set by the municipality and the circumstances in the new school each time.',
     },
-    schoolApplyForPrefferedSchoolLabel: {
-      id: 'nps.application:primary.school.school.apply.for.preffered.school.label',
+    schoolApplyForPreferredSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.label',
       defaultMessage: 'Staðfesta innritun í hverfisskóla',
       description: 'Confirm enrollment in the neighbourhood school',
     },
-    schoolApplyForPrefferedSchoolSubLabel: {
-      id: 'nps.application:primary.school.school.apply.for.preffered.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {prefferedSchoolName}',
-      description: 'Your neighbourhood school is: {prefferedSchoolName}',
+    schoolApplyForPreferredSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.sub.label',
+      defaultMessage: 'Hverfisskólinn ykkar er: {preferredSchoolName}',
+      description: 'Your neighbourhood school is: {preferredSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',

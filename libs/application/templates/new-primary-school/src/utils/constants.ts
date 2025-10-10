@@ -21,7 +21,7 @@ export type Events =
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
-  getPrefferedSchool = 'getPrefferedSchool',
+  getPreferredSchool = 'getPreferredSchool',
   sendApplication = 'sendApplication',
 }
 

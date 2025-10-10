@@ -13,7 +13,7 @@ export const primarySchoolSection = buildSection({
   title: newPrimarySchoolMessages.primarySchool.sectionTitle,
   children: [
     currentSchoolSubSection,
-    currentNurserySubSection,
+    // currentNurserySubSection,
     schoolSubSection,
     newSchoolSubSection,
     reasonForApplicationSubSection,

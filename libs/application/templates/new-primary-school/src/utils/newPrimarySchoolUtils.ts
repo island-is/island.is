@@ -224,9 +224,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentNursery.nursery',
   )
 
-  const applyForPrefferedSchool = getValueViaPath<YesOrNo>(
+  const applyForPreferredSchool = getValueViaPath<YesOrNo>(
     answers,
-    'school.applyForPrefferedSchool',
+    'school.applyForPreferredSchool',
   )
 
   const currentSchoolId = getValueViaPath<string>(
@@ -276,7 +276,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
-    applyForPrefferedSchool,
+    applyForPreferredSchool,
     currentSchoolId,
   }
 }
@@ -360,9 +360,9 @@ export const getApplicationExternalData = (
     'childInformation.data.socialProfile',
   )
 
-  const prefferedSchool = getValueViaPath<Organization | null>(
+  const preferredSchool = getValueViaPath<Organization | null>(
     externalData,
-    'prefferedSchool.data',
+    'preferredSchool.data',
   )
 
   return {
@@ -382,7 +382,7 @@ export const getApplicationExternalData = (
     childAffiliations,
     healthProfile,
     socialProfile,
-    prefferedSchool,
+    preferredSchool,
   }
 }
 
@@ -454,10 +454,10 @@ export const getCurrentSchoolName = (externalData: ExternalData) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getPrefferedSchoolName = (externalData: ExternalData) => {
-  const { prefferedSchool } = getApplicationExternalData(externalData)
+export const getPreferredSchoolName = (externalData: ExternalData) => {
+  const { preferredSchool } = getApplicationExternalData(externalData)
 
-  return prefferedSchool?.name
+  return preferredSchool?.name
 }
 
 export const determineNameFromApplicationAnswers = (

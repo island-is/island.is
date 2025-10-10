@@ -89,10 +89,10 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.school',
       title: newPrimarySchoolMessages.overview.schoolTitle,
       backId: (answers) => {
-        const { applyForPrefferedSchool } = getApplicationAnswers(answers)
+        const { applyForPreferredSchool } = getApplicationAnswers(answers)
 
         return editable
-          ? applyForPrefferedSchool === YES
+          ? applyForPreferredSchool === YES
             ? 'school'
             : 'newSchool'
           : undefined
@@ -104,13 +104,13 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers) => {
-        const { applicationType, applyForPrefferedSchool } =
+        const { applicationType, applyForPreferredSchool } =
           getApplicationAnswers(answers)
 
         return (
           applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
           (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-            applyForPrefferedSchool === NO)
+            applyForPreferredSchool === NO)
         )
       },
     }),
