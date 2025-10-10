@@ -72,7 +72,7 @@ const useCourtSessions = () => {
 
         return Boolean(data?.deleteCourtSession?.deleted)
       } catch (error) {
-        toast.error('Upp kom villa við að eyða þinghald')
+        toast.error('Upp kom villa við að eyða þinghaldi')
 
         return false
       }
