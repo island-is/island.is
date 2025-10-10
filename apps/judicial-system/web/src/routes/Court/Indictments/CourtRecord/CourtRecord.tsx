@@ -90,7 +90,6 @@ const CourtRecord: FC = () => {
 
     const rulingId = rulings[0].id
     const url = await getFileUrl(rulingId)
-    console.log(rulings)
 
     if (url) {
       setRulingUrl(url)
