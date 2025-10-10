@@ -338,7 +338,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase((prev) => ({
       ...prev,
       courtSessions: prev.courtSessions?.filter(
-        (session) => session.id === courtSessionId,
+        (session) => session.id !== courtSessionId,
       ),
     }))
 
