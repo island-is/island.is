@@ -49,6 +49,15 @@ export class FriggClientService {
     }
   }
 
+  async getPrefferedSchool(
+    user: User,
+    childNationalId: string,
+  ): Promise<OrganizationModel> {
+    return await this.friggApiWithAuth(user).getPreferredSchools({
+      nationalId: childNationalId,
+    })
+  }
+
   sendApplication(
     user: User,
     form: RegistrationInput,

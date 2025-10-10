@@ -490,19 +490,19 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolSubSectionDescription: {
       id: 'nps.application:primary.school.school.sub.section.description',
       defaultMessage:
-        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Einstaka sveitarfélög úthluta barni námsvist í hverfisskóla eða sem næst þeirra lögheimili. Í báðun tilfellum geta foreldrar sótt um annan skóla hvort sem er innan sveitarfélags eða utan. Ekki er þó víst að nýr skóli sjái sér fært að taka á móti barni. Er það ávalt háð aðstæðum hverju sinni.',
+        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Langflest sveitarfélög úthluta barni skólavist í hverfisskóla eða sem næst þeirra heimili. Eftir sem áður er það réttur forsjáraðila að sækja um annan skóla fyrir barnið sitt, hvort sem er innan sveitarfélagsins, utan þess eða í sjálfstætt starfandi skóla. Ekki er þó víst að sá skóli geti tekið á móti barninu og fer það eftir þeim reglum sem sveitarfélagið setur og aðstæðum í nýjum skóla hverju sinni.',
       description:
-        'Children have the right to attend school in the municipality where they have their registered domicile. Some municipalities assign a child to a neighbourhood school or the school closest to their domicile. In both cases, parents can apply for another school, whether within the municipality or outside it. However, it is not certain that the new school will be able to accept the child. This is always subject to the circumstances at the time.',
+        'Children have the right to attend school in the municipality where they are registered as legal residents. Most municipalities assign children to their district school or the one closest to their home. However, it is the right of the guardian to apply for another school for their child, whether within the municipality, outside it, or in an independent school. However, it is not certain that the school will be able to accept the child, and this depends on the rules set by the municipality and the circumstances in the new school each time.',
     },
-    schoolApplyForNeighbourhoodSchoolLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.label',
+    schoolApplyForPrefferedSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preffered.school.label',
       defaultMessage: 'Staðfesta innritun í hverfisskóla',
       description: 'Confirm enrollment in the neighbourhood school',
     },
-    schoolApplyForNeighbourhoodSchoolSubLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {neighbourhoodSchoolName}',
-      description: 'Your neighbourhood school is: {neighbourhoodSchoolName}',
+    schoolApplyForPrefferedSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preffered.school.sub.label',
+      defaultMessage: 'Hverfisskólinn ykkar er: {prefferedSchoolName}',
+      description: 'Your neighbourhood school is: {prefferedSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',

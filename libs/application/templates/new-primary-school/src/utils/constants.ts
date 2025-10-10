@@ -21,6 +21,7 @@ export type Events =
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
+  getPrefferedSchool = 'getPrefferedSchool',
   sendApplication = 'sendApplication',
 }
 
@@ -56,7 +57,7 @@ export enum AffiliationRole {
   Teacher = 'teacher',
 }
 
-export enum AffiliationOrganizationType {
+export enum OrganizationType {
   ChildCare = 'childCare',
   Municipality = 'municipality',
   National = 'national',
