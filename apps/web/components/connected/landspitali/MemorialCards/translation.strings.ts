@@ -147,6 +147,11 @@ export const m = {
     },
   }),
   overview: defineMessages({
+    recipientEmail: {
+      id: 'web.landspitali.memorialCard:overview.recipientEmail',
+      defaultMessage: 'Netfang:',
+      description: 'Netfang',
+    },
     errorTitle: {
       id: 'web.landspitali.memorialCard:overview.errorTitle',
       defaultMessage: 'Villa',
