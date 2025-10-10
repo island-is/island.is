@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   DefenderChoice,
+  EventType,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 
@@ -209,7 +210,13 @@ export class CaseService {
   ): Promise<VerdictResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    if (!isCompletedCase(caseData.state)) {
+    const isCaseSentToPublicProsecutor = caseData.eventLogs?.some(
+      (eventLog) =>
+        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    )
+    // we also have to ensure that the verdict is completed, confirmed and sent to public prosecutor.
+    // sent to public prosecutor indicates that the verdict has been delivered to police if that was requested
+    if (!isCompletedCase(caseData.state) || !isCaseSentToPublicProsecutor) {
       throw new BadRequestException(
         `Verdict is not available for case ${caseId}. Case must be completed before verdict can be accessed.`,
       )
