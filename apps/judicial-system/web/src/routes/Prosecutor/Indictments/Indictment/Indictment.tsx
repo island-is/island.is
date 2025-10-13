@@ -581,7 +581,7 @@ const Indictment = () => {
             </BlueBox>
           </Box>
           {workingCase.hasCivilClaims && (
-            <>
+            <Box component="section">
               <SectionHeading
                 title={formatMessage(strings.civilDemandsTitle)}
               />
@@ -620,7 +620,7 @@ const Indictment = () => {
                   autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
-            </>
+            </Box>
           )}
           <Box component="section">
             <SectionHeading
@@ -628,7 +628,7 @@ const Indictment = () => {
               tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
             />
             <Input
-              name="pentalites"
+              name="penalties"
               label="Athugasemdir"
               placeholder="Hver er hæfileg refsing að mati ákæruvalds?"
               value={workingCase.penalties ?? ''}
