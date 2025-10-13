@@ -513,6 +513,9 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: organizationPageSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [
+            locale === 'is' ? 'utgefid-efni' : 'published-material',
+          ],
         },
       },
     }),

@@ -987,10 +987,10 @@ export const OrganizationWrapper: React.FC<
   pageDescription,
   pageFeaturedImage,
   organizationPage,
-  breadcrumbItems,
+  breadcrumbItems: breadcrumbItemsProp,
   mainContent,
   sidebarContent,
-  navigationData,
+  navigationData: navigationDataProp,
   fullWidthContent = false,
   stickySidebar = true,
   children,
@@ -1004,7 +1004,6 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {
@@ -1017,11 +1016,6 @@ export const OrganizationWrapper: React.FC<
       href: url,
       active: router.asPath === url,
     })) ?? []
-
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
-  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -1046,6 +1040,71 @@ export const OrganizationWrapper: React.FC<
     organizationPage.organization?.canPagesBeFoundInSearchResults ??
     organizationPage.canBeFoundInSearchResults ??
     true
+
+  const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
+    'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
+    false,
+  )
+
+  const { breadcrumbItems, navigationData } = useMemo(() => {
+    if (!sitemapContentTypeDeterminesNavigationAndBreadcrumbs) {
+      return {
+        breadcrumbItems: breadcrumbItemsProp ?? [],
+        navigationData: navigationDataProp,
+      }
+    }
+
+    const breadcrumbItems: BreadCrumbItem[] = (
+      organizationPage.navigationLinks?.breadcrumbs ?? []
+    ).map((breadcrumb) => ({
+      title: breadcrumb.label,
+      href: breadcrumb.href,
+    }))
+
+    const pathname = new URL(router.asPath, 'https://island.is').pathname
+
+    const navigationData: NavigationData = {
+      title: navigationDataProp.title,
+      items: (organizationPage.navigationLinks?.topLinks ?? []).map(
+        (topLink) => {
+          let isAnyChildActive = false
+          const midLinks = (topLink.midLinks ?? []).map((midLink) => {
+            const isActive = midLink.isActive || pathname === midLink.href
+            if (isActive) isAnyChildActive = true
+            return {
+              title: midLink.label,
+              href: midLink.href,
+              active: isActive,
+            }
+          })
+          return {
+            title: topLink.label,
+            href: topLink.href,
+            active:
+              topLink.isActive || pathname === topLink.href || isAnyChildActive,
+            items: midLinks,
+          }
+        },
+      ),
+    }
+
+    return {
+      breadcrumbItems,
+      navigationData,
+    }
+  }, [
+    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
+    organizationPage.navigationLinks?.breadcrumbs,
+    organizationPage.navigationLinks?.topLinks,
+    router.asPath,
+    navigationDataProp,
+    breadcrumbItemsProp,
+  ])
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [navigationData.items, router.asPath],
+  )
 
   return (
     <>

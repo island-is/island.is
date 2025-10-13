@@ -109,6 +109,10 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   customAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
@@ -155,6 +159,7 @@ const Layout: Screen<LayoutProps> = ({
   children,
   megaMenuData,
   customTopLoginButtonItem,
+  languageToggleHrefOverride,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -410,6 +415,7 @@ const Layout: Screen<LayoutProps> = ({
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
                 loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
+                languageToggleHrefOverride={languageToggleHrefOverride}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -705,6 +711,10 @@ interface LayoutComponentProps {
     buttonType: string
     blacklistedPathnames?: string[]
   }
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -753,6 +763,9 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const customTopLoginButtonItem =
       layoutComponentProps?.customTopLoginButtonItem
 
+    const languageToggleHrefOverride =
+      layoutComponentProps?.languageToggleHrefOverride
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -763,6 +776,7 @@ export const withMainLayout = <T, C extends ScreenContext>(
         customAlertBannerContent,
         languageToggleQueryParams,
         customTopLoginButtonItem,
+        languageToggleHrefOverride,
       },
       componentProps,
     }

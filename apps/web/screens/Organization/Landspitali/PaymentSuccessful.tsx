@@ -130,6 +130,9 @@ PaymentSuccessful.getProps = async ({ apolloClient, locale }) => {
         input: {
           slug: 'landspitali',
           lang: locale,
+          subpageSlugs: [
+            locale === 'is' ? 'greidsla-tokst' : 'payment-successful',
+          ],
         },
       },
     }),
