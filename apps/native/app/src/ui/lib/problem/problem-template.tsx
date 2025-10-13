@@ -5,6 +5,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { Colors } from '../../utils'
 import { Typography } from '../typography/typography'
 import { useBrowser } from '../../../lib/use-browser'
+import externalLinkIcon from '../../../assets/icons/external-link.png'
 
 type Variant = 'info' | 'error' | 'warning'
 export type DetailLink = {
@@ -158,20 +159,27 @@ export const ProblemTemplate = ({
         </Typography>
         {detailLink && (
           <Pressable
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: theme.spacing[1],
+              borderBottomWidth: 1,
+              marginTop: theme.spacing[1],
+              borderBottomColor: theme.color.blue400,
+            }}
             onPress={() => {
               openBrowser(detailLink.url)
             }}
           >
-            <Typography
-              variant="body"
-              color="blue400"
-              style={{
-                textDecorationLine: 'underline',
-                textDecorationColor: theme.color.blue400,
-              }}
-            >
+            <Typography variant="body" color={theme.color.blue400} weight="600">
               {detailLink.text}
             </Typography>
+            <Icon
+              style={{ width: theme.spacing[2], height: theme.spacing[2] }}
+              source={externalLinkIcon}
+            />
           </Pressable>
         )}
       </Content>
