@@ -12,6 +12,7 @@ export const serviceSetup = (services: {
   service(serviceName)
     .image(image)
     .namespace(namespace)
+    .serviceAccount('payments')
     .env({
       BASEPATH: basepath,
       API_INTERNAL_BASEPATH: ref((h) => `http://${h.svc(services.api)}`),

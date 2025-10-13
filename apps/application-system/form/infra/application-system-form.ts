@@ -3,6 +3,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
   service('application-system-form')
     .namespace('application-system')
+    .serviceAccount('application-system-form')
     .liveness('/liveness')
     .readiness('/readiness')
     .env({
