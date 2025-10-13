@@ -81,7 +81,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
     chartData = breakdown.items.map(
       (item: ProviderStatisticsBreakdownWithCategories) => {
         const monthLabel =
-          item.year && item.month
+          item.year != null && item.month != null
             ? new Date(item.year, item.month - 1).toLocaleString('is', {
                 month: 'short',
               })

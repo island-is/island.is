@@ -158,7 +158,7 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsBreakdownByProviderId',
-          resources: user.nationalId,
+          resources: input.providerId,
           meta: {
             nationalId: user.nationalId,
             providerId: input.providerId,

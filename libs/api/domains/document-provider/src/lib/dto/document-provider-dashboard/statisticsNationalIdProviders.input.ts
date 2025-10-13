@@ -5,7 +5,7 @@ import {
   registerEnumType,
   GraphQLISODateTime,
 } from '@nestjs/graphql'
-import { Min } from 'class-validator'
+import { IsOptional, IsBoolean, Min, Max } from 'class-validator'
 
 export enum DocumentProviderDashboardStatisticsSortBy {
   Name = 'Name',
@@ -28,13 +28,18 @@ export class DocumentProviderDashboardGetStatisticsProvidersNationalId {
   sortBy?: DocumentProviderDashboardStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
   desc?: boolean
 
   @Field(() => Int, { nullable: true })
+  @IsOptional()
   @Min(1)
   page?: number
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, defaultValue: 1 })
+  @IsOptional()
   @Min(1)
+  @Max(100)
   pageSize?: number
 }
