@@ -3531,7 +3531,7 @@
         "properties": {
           "timeRegistrations": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/TimeRegistrationDto" }
+            "items": { "$ref": "#/components/schemas/TimeRegistrationImportDto" }
           }
         },
         "additionalProperties": false,

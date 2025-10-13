@@ -18,3 +18,22 @@ query UserInfoOverview($useFakeData: Boolean) {
     }
   }
 }
+
+query testQuery {
+  icelandicGovernmentEmployees(input: { organizationId: "09901" }) {
+    totalCount
+    data {
+      name
+      job
+      email
+      phoneNumber
+      department
+      currentlyActive
+      location {
+        address
+        description
+        postalCode
+      }
+    }
+  }
+}

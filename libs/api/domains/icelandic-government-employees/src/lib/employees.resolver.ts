@@ -12,7 +12,7 @@ import { EmployeesInput } from "./dtos/getEmployeeList.input"
 export class IcelandicGovernmentEmployeesResolver {
   constructor(
     private readonly employeeService: IcelandicGovernmentEmployeesService,
-  ) {}
+  ) { }
 
   @Query(() => EmployeeList, {
     name: 'icelandicGovernmentEmployees',
@@ -26,3 +26,4 @@ export class IcelandicGovernmentEmployeesResolver {
   ): Promise<EmployeeList | null> {
     return this.employeeService.getEmployees(user, input.organizationId)
   }
+}

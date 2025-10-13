@@ -21,10 +21,10 @@ export const OrganizationEmployeeApiProvider = {
           organizationSlug: 'fjarsysla-rikisins',
           autoAuth: idsClientConfig.isConfigured
             ? {
-                mode: 'tokenExchange',
+                mode: 'token',
                 issuer: idsClientConfig.issuer,
-                clientId: idsClientConfig.clientId,
-                clientSecret: idsClientConfig.clientSecret,
+                clientId: config.clientId,
+                clientSecret: config.clientSecret,
                 scope: config.scope,
               }
             : undefined,

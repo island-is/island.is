@@ -12,7 +12,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
 import { maskString } from '@island.is/shared/utils'
-import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
+import { useTestQueryQuery, useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 
@@ -24,6 +24,11 @@ const UserInfoOverview = () => {
   const [bioChildrenCards, setBioChildrenCards] = useState<JSX.Element[]>([])
 
   const { data, error, loading } = useUserInfoOverviewQuery()
+
+  const { data: testData, error: testError} = useTestQueryQuery()
+
+  console.log('data', testData)
+  console.log('error', testError)
 
   const { spouse, childCustody, biologicalChildren } =
     data?.nationalRegistryPerson || {}
