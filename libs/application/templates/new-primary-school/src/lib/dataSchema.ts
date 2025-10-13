@@ -151,7 +151,7 @@ export const dataSchema = z.object({
     school: z.string(),
   }),
   school: z.object({
-    applyForNeighbourhoodSchool: z.enum([YES, NO]),
+    applyForPreferredSchool: z.enum([YES, NO]),
   }),
   siblings: z
     .array(
