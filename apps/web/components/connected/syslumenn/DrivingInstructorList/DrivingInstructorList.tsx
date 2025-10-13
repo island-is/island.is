@@ -37,7 +37,7 @@ const getSortedAndFilteredDrivingInstructors = (
 
   const fullSearchString: string = searchTerms.join(' ')
   const instructorsStartingWithFullSearchString: DrivingInstructor[] = []
-  const instructorsContainingAllTerm: DrivingInstructor[] = []
+  const instructorsContainingAllTerms: DrivingInstructor[] = []
 
   const startsWithFullSearchString = (
     instructor: DrivingInstructor,
@@ -64,13 +64,13 @@ const getSortedAndFilteredDrivingInstructors = (
     if (startsWithFullSearchString(instructor)) {
       instructorsStartingWithFullSearchString.push(instructor)
     } else if (containsAllTerms(instructor)) {
-      instructorsContainingAllTerm.push(instructor)
+      instructorsContainingAllTerms.push(instructor)
     }
   }
 
   // Concatenate the arrays with, starting with the instructors that start with the full search string.
   return instructorsStartingWithFullSearchString.concat(
-    instructorsContainingAllTerm,
+    instructorsContainingAllTerms,
   )
 }
 
