@@ -256,10 +256,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/OrganizationModel" }
-                }
+                "schema": { "$ref": "#/components/schemas/OrganizationModel" }
               }
             }
           }
@@ -444,10 +441,6 @@
           "health": { "$ref": "#/components/schemas/HealthInput" },
           "social": { "$ref": "#/components/schemas/SocialInput" },
           "language": { "$ref": "#/components/schemas/LanguageInput" },
-          "preRegisteredId": {
-            "type": "string",
-            "description": "If a user has an open ongoing registration, for example first year students submit the id here"
-          },
           "defaultOrganizationId": {
             "type": "string",
             "description": "The school a student should or does belong to, pre registered school or current school"
