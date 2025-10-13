@@ -623,6 +623,37 @@ const Indictment = () => {
             </BlueBox>
           </Box>
         )}
+        <SectionHeading
+          title="Viðurlög - athugasemdir sækjanda"
+          tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
+        />
+        <Input
+          name="pentalites"
+          label="Athugasemdir"
+          placeholder="Hver er hæfileg refsing að mati ákæruvalds?"
+          value={workingCase.penalties ?? ''}
+          onChange={(event) =>
+            removeTabsValidateAndSet(
+              'penalties',
+              event.target.value,
+              [],
+              setWorkingCase,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSendToServer(
+              'penalties',
+              event.target.value,
+              [],
+              workingCase,
+              updateCase,
+            )
+          }
+          textarea
+          autoComplete="off"
+          rows={10}
+          autoExpand={{ on: true, maxHeight: 300 }}
+        />
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}

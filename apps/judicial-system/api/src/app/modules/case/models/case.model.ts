@@ -512,4 +512,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
 }
