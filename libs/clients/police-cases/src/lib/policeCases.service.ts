@@ -12,11 +12,11 @@ export class PoliceCasesClientService {
     this.casesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   public getCases = async (user: User): Promise<PoliceCaseDto[]> => {
-    const response = await this.casesApiWithAuth(
-      user,
-    ).apiGetcasesSocialsecuritynumberGet({
-      socialsecuritynumber: user.nationalId,
-    }).catch(handle404)
+    const response = await this.casesApiWithAuth(user)
+      .apiGetcasesSocialsecuritynumberGet({
+        socialsecuritynumber: user.nationalId,
+      })
+      .catch(handle404)
 
     if (!response || !response.cases) {
       return []

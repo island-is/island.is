@@ -57,6 +57,8 @@ export class PoliceCasesService {
     }
 
     const policeCase = cases.find((c) => c.caseNumber === caseNumber)
-    return policeCase ? mapPoliceCase(policeCase, locale, formatMessage) : undefined
+    return policeCase
+      ? mapPoliceCase(policeCase, locale, formatMessage)
+      : undefined
   }
 }
