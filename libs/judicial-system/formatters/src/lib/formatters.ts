@@ -246,6 +246,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY: 'líkamsmeiðingar',
 }
 
 export const districtCourtAbbreviation = (courtName?: string | null) => {

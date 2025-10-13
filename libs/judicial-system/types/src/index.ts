@@ -101,6 +101,7 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
   CaseAppealState,

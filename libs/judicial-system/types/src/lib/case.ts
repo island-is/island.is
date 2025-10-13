@@ -71,7 +71,13 @@ export enum IndictmentSubtype {
   TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY = 'BODILY_INJURY',
 }
+
+export const deprecatedIndictmentSubtypes: IndictmentSubtype[] = [
+  IndictmentSubtype.BODILY_INJURY,
+]
 
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
