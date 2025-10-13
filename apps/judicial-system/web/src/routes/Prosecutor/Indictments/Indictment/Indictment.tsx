@@ -53,6 +53,7 @@ import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseIn
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 
 export const getIndictmentIntroductionAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -627,32 +628,9 @@ const Indictment = () => {
               title="Viðurlög - athugasemdir sækjanda"
               tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
             />
-            <Input
-              name="penalties"
-              label="Athugasemdir"
-              placeholder="Hver er hæfileg refsing að mati ákæruvalds?"
-              value={workingCase.penalties ?? ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'penalties',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'penalties',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              autoComplete="off"
-              rows={10}
-              autoExpand={{ on: true, maxHeight: 300 }}
+            <InputPenalties
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
             />
           </Box>
           <Box marginBottom={10}>
