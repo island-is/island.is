@@ -309,7 +309,7 @@ export const getAdminDataForAdminPortal = async (
     const valueFromMap = nationalIdMap.get(nationalId)
     if (valueFromMap) return valueFromMap
     const valueFromApi =
-      (await tryToGetNameFromNationalId(nationalId, identityService, true)) ??
+      (await identityService.tryToGetNameFromNationalId(nationalId, true)) ??
       nationalId
     nationalIdMap.set(nationalId, valueFromApi)
     return valueFromApi
@@ -353,22 +353,4 @@ export const getAdminDataForAdminPortal = async (
         }
       }),
   )
-}
-
-export const tryToGetNameFromNationalId = async (
-  nationalId: string,
-  identityService: IdentityClientService,
-  returnWithNationalId: boolean,
-): Promise<string | undefined> => {
-  const identity = await identityService.getIdentity(nationalId)
-
-  try {
-    return identity?.name
-      ? returnWithNationalId
-        ? `${identity?.name} (${nationalId})`
-        : identity?.name
-      : undefined
-  } catch (e) {
-    return undefined
-  }
 }
