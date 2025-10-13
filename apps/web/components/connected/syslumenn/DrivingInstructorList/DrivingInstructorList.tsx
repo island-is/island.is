@@ -54,7 +54,7 @@ const getSortedAndFilteredDrivingInstructors = (
       return (
         instructor.name?.trim().toLowerCase().includes(searchTerm) ||
         instructor.postalCode?.trim().includes(searchTerm) ||
-        instructor.municipality?.trim().includes(searchTerm)
+        instructor.municipality?.trim().toLowerCase().includes(searchTerm)
       )
     })
   }
@@ -117,6 +117,7 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
             setSelectedPage(1)
             setSearchValue(event.target.value)
           }}
+          loading={loading}
         />
       </Box>
 
