@@ -201,9 +201,9 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     title: {
       id: 'marp.application:not.eligible.title',
       defaultMessage:
-        'Því miður átt þú ekki rétt á sjúkra- og endurhæfingargreiðslum',
+        'Því miður getur þú ekki sótt um sjúkra- og endurhæfingargreiðslur',
       description:
-        'Unfortunately, you are not eligible for medical and rehabilitation payments.',
+        'Unfortunately, you are not able to proceed with a medical and rehabilitation payments application',
     },
     applicantAlreadyHasPendingApplicationDescription: {
       id: 'marp.application:not.eligible.already.has.pending.applcation.description#markdown',
@@ -254,6 +254,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    baseCertDisabilityDateEmptyDescription: {
+      id: 'marp.application:not.eligible.base.cert.disability.date.empty.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert með grunnvottorð sem staðfestingu á óvinnufærni. Í grunnvottorðinu er ekki skilgreind dagsetning hvenær óvinnufærni átti sér stað. Þessi dagsetning verður að vera skilgreind.\n\nÞú þarft að hafa samband við þann aðila sem gefur út grunnvottorðið og láta tilgreina dagsetningu hvenær óvinnufærni átti sér stað, og láta uppfæra vottorðið eða senda inn nýtt.\n\nÞá getur þú reynt aftur að sækja um.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You have a certificate that confirms reduced capacity. The certificate does not include a date when disability occurred. This date must be defined.\n\nYou must contact the entity that issued the certificate and request that they include a date when incapacity occurred, have the certificated update or have a new one created.\n\nWhen this is done, you can apply again.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     latestMedicalDocumentNotFoundDescription: {
       id: 'marp.application:not.eligible.latest.medical.doc.not.found.description#markdown',
       defaultMessage:
@@ -267,6 +274,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         '* Ekki tókst að stofna viðskiptamann. Vinsamlegast reynið aftur síðar.\n\nEf vandamálið heldur áfram, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
         '* Unable to create user. Please try again later.\n\nIf the issue persists, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    unexpectedErrorDescription: {
+      id: 'marp.application:not.eligible.unexpected.error.description#markdown',
+      defaultMessage:
+        '* Óskilgreind villa kom upp við að sækja gögn eða staðfesta að þú uppfyllir skilyrði til þess að fá að sækja um sjúkra- og endurhæfingargreiðslur.\n\nVinsamlegast reyndu aftur síðar þar sem tenging við ytri aðila gæti legið niðri.\n\nEf þessi villa kemur aftur, vinsamlegast afritaðu textann, skráðu þig inn á minarsidur.tr.is og smelltu á "Hafa samband", smelltu svo á "Sjúkra- og endurhæfingargreiðslur" kassann og límdu svo textann af villunni inn í erindið og sendu það.',
+      description:
+        '* An unexpected error occurred while fetching data or confirming that you fulfil all conditions to be eligible for medical and rehabilitation payments.\n\nPlease try again later as an external connection could be temporarily unavailable.\n\nIf this error occurs again, please copy this text, sign into minarsidur.tr.is and navigate to “Hafa samband”, press the "Sjúkra- og endurhæfingargreiðslur" box and paste the error text into your message and send it.',
     },
   }),
 
