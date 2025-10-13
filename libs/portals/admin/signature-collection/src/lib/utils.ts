@@ -22,6 +22,10 @@ export const allowedScopesAdmin: string[] = [
   AdminPortalScope.signatureCollectionProcess,
 ]
 
+export const allowedScopesMunicipality: string[] = [
+  AdminPortalScope.signatureCollectionMunicipality,
+]
+
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },
   { value: 'Vestfirðingafjórðungur', label: 'Vestfirðingafjórðungur' },

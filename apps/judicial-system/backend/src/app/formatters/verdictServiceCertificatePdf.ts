@@ -45,12 +45,19 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
-export const createVerdictServiceCertificate = (
-  theCase: Case,
-  defendant: Defendant,
-  verdict: Verdict,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+export const createVerdictServiceCertificate = ({
+  theCase,
+  defendant,
+  verdict,
+  deliveredToDefenderName,
+  formatMessage,
+}: {
+  theCase: Case
+  defendant: Defendant
+  verdict: Verdict
+  deliveredToDefenderName?: string
+  formatMessage: FormatMessage
+}): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -106,7 +113,7 @@ export const createVerdictServiceCertificate = (
       doc,
       verdict.serviceStatus === VerdictServiceStatus.DEFENDER
         ? `Birt fyrir verjanda ${
-            defendant.defenderName ? `- ${defendant.defenderName}` : '' // TODO: is it guaranteed that this is the correct defender
+            deliveredToDefenderName ? `- ${deliveredToDefenderName}` : ''
           }`
         : verdict.comment || 'Ekki skráð',
       'Times-Roman',

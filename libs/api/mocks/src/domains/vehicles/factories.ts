@@ -49,6 +49,7 @@ export const vehicleDetail = factory<VehiclesDetail>({
   lastMileage: {
     mileage: faker.datatype.number().toString(),
   },
+  latestMileageRegistration: faker.datatype.number(),
 })
 
 export const vehicleMileageDetail = factory<VehicleMileageOverview>({

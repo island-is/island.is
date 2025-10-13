@@ -15,6 +15,13 @@ export const caseFileWrapper = style({
   transition: 'background-color 0.2s ease-in-out',
 })
 
+export const caseFileWrapperBackground = styleVariants({
+  white: {
+    background: theme.color.white,
+    borderColor: theme.color.blue200,
+  },
+})
+
 export const error = style({
   background: theme.color.red100,
   borderColor: 'transparent',

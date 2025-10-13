@@ -22,12 +22,13 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { isDefined, sortAlpha } from '@island.is/shared/utils'
-import type {
-  ConnectedComponent,
-  WebLandspitaliCatalogQuery,
-  WebLandspitaliCatalogQueryVariables,
-  WebLandspitaliCreateMemorialCardPaymentUrlMutation,
-  WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables,
+import {
+  type ConnectedComponent,
+  type WebLandspitaliCatalogQuery,
+  type WebLandspitaliCatalogQueryVariables,
+  WebLandspitaliCreateMemorialCardPaymentUrlInputSendType,
+  type WebLandspitaliCreateMemorialCardPaymentUrlMutation,
+  type WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -47,6 +48,7 @@ interface MemorialCard {
   amountISK: string
   senderSignature: string
   recipientName: string
+  recipientEmail: string
   recipientAddress: string
   recipientPostalCode: string
   recipientPlace: string
@@ -57,6 +59,7 @@ interface MemorialCard {
   senderPostalCode: string
   senderPlace: string
   amountISKCustom: string
+  sendType: WebLandspitaliCreateMemorialCardPaymentUrlInputSendType
 }
 
 const DEFAULT_FUND_OPTIONS: Option<string>[] = [
@@ -145,6 +148,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       amountISK: '',
       senderSignature: '',
       recipientName: '',
+      recipientEmail: '',
       recipientAddress: '',
       recipientPostalCode: '',
       recipientPlace: '',
@@ -155,6 +159,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       senderPostalCode: '',
       senderPlace: '',
       amountISKCustom: '',
+      sendType:
+        WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail,
     },
   })
 
@@ -212,6 +218,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const { activeLocale } = useI18n()
 
+  const sendType = watch('sendType')
+
   if (submitted) {
     const data = methods.getValues()
     const amountISK =
@@ -233,7 +241,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.senderAddress)} {data.senderAddress}
           </Text>
           <Text>
-            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}
+            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}{' '}
+            {data.senderPlace}
           </Text>
         </Stack>
         <Stack space={2}>
@@ -241,13 +250,28 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
           <Text>
             {formatMessage(m.overview.recipientName)} {data.recipientName}
           </Text>
-          <Text>
-            {formatMessage(m.overview.recipientAddress)} {data.recipientAddress}
-          </Text>
-          <Text>
-            {formatMessage(m.overview.recipientPostalCode)}{' '}
-            {data.recipientPostalCode}
-          </Text>
+
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientAddress)}{' '}
+              {data.recipientAddress}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientPostalCode)}{' '}
+              {data.recipientPostalCode} {data.recipientPlace}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email && (
+            <Text>
+              {formatMessage(m.overview.recipientEmail)} {data.recipientEmail}
+            </Text>
+          )}
+
           <Text>
             {formatMessage(m.overview.inMemoryOf)} {data.inMemoryOf}
           </Text>
@@ -310,6 +334,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       senderSignature: data.senderSignature,
                       locale: activeLocale,
                       inMemoryOf: data.inMemoryOf,
+                      recipientEmail: data.recipientEmail,
+                      sendType: data.sendType,
+                      cancelUrl: window.location.href,
                     },
                   },
                 })
@@ -455,33 +482,94 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               control={control}
               required
             />
-            <InputController
-              id="recipientAddress"
-              label={formatMessage(m.info.recipientAddressLabel)}
-              size="xs"
-              error={errors.recipientAddress?.message}
-              rules={requiredRule}
-              control={control}
-              required
-            />
-            <InputController
-              id="recipientPostalCode"
-              label={formatMessage(m.info.recipientPostalCodeLabel)}
-              size="xs"
-              error={errors.recipientPostalCode?.message}
-              rules={requiredRule}
-              control={control}
-              required
-            />
-            <InputController
-              id="recipientPlace"
-              label={formatMessage(m.info.recipientPlaceLabel)}
-              size="xs"
-              error={errors.recipientPlace?.message}
-              rules={requiredRule}
-              control={control}
-              required
-            />
+
+            <Box paddingY={2}>
+              <Stack space={1}>
+                <RadioButton
+                  id="sendTypePostalMail"
+                  name="sendTypePostalMail"
+                  value={
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail
+                  }
+                  label={formatMessage(m.info.sendTypePostalMailLabel)}
+                  onChange={() =>
+                    setValue(
+                      'sendType',
+                      WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail,
+                    )
+                  }
+                  checked={
+                    sendType ===
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail
+                  }
+                />
+                <RadioButton
+                  id="sendTypeEmail"
+                  name="sendTypeEmail"
+                  value={
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email
+                  }
+                  label={formatMessage(m.info.sendTypeEmailLabel)}
+                  onChange={() =>
+                    setValue(
+                      'sendType',
+                      WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email,
+                    )
+                  }
+                  checked={
+                    sendType ===
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email
+                  }
+                />
+              </Stack>
+            </Box>
+
+            {sendType ===
+              WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email && (
+              <InputController
+                id="recipientEmail"
+                type="email"
+                label={formatMessage(m.info.recipientEmailLabel)}
+                size="xs"
+                error={errors.recipientEmail?.message}
+                rules={requiredRule}
+                control={control}
+                required
+              />
+            )}
+
+            {sendType ===
+              WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+              <>
+                <InputController
+                  id="recipientAddress"
+                  label={formatMessage(m.info.recipientAddressLabel)}
+                  size="xs"
+                  error={errors.recipientAddress?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+                <InputController
+                  id="recipientPostalCode"
+                  label={formatMessage(m.info.recipientPostalCodeLabel)}
+                  size="xs"
+                  error={errors.recipientPostalCode?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+                <InputController
+                  id="recipientPlace"
+                  label={formatMessage(m.info.recipientPlaceLabel)}
+                  size="xs"
+                  error={errors.recipientPlace?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+              </>
+            )}
           </Stack>
 
           <Stack space={2}>

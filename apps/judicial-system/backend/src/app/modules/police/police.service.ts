@@ -160,7 +160,6 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
   })
 
-  // TODO: Template - confirm with RLS
   private documentStructure = z.object({
     comment: z.string().nullish(),
     servedBy: z.string().nullish(),
@@ -168,8 +167,10 @@ export class PoliceService {
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
-    deliveredOnIslandis: z.boolean().nullish(),
     defenderNationalId: z.string().nullish(),
+    deliveredOnIslandis: z.boolean().nullish(),
+    // TODO: this is not supported atm
+    legalPaperRequestDate: z.string().nullish(),
   })
 
   constructor(
@@ -678,6 +679,9 @@ export class PoliceService {
 
       if (res.ok) {
         const policeResponse = await res.json()
+        this.logger.debug(
+          `Verdict for defendant ${defendantId} with police document id ${policeResponse.id} and file type code ${fileTypeCode} delivered to national commissioners office `,
+        )
         return { externalPoliceDocumentId: policeResponse.id }
       }
     } catch (error) {
@@ -707,14 +711,13 @@ export class PoliceService {
     user?: User,
   ): Promise<VerdictPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
+      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
           const response: z.infer<typeof this.documentStructure> =
             await res.json()
           this.documentStructure.parse(response)
-
           const servedAt =
             response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
               ? new Date(response.servedAt)
@@ -726,11 +729,14 @@ export class PoliceService {
               deliveredOnPaper: response.deliveredOnPaper ?? false,
               deliveredOnIslandis: response.deliveredOnIslandis ?? false,
               deliveredToLawyer: response.deliveredToLawyer ?? false,
+              legalPaperRequestDate:
+                response.legalPaperRequestDate ?? undefined,
             }),
+            deliveredToDefenderNationalId:
+              response.defenderNationalId ?? undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: servedAt,
-            defenderNationalId: response.defenderNationalId ?? undefined,
           }
         }
         const reason = await res.text()

@@ -133,6 +133,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
+  [ApplicationTypes.DISABILITY_PENSION]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/disability-pension'
+    ),
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/household-supplement'
@@ -222,7 +226,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PRACTICAL_EXAM]: () =>
     import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
-    import('@island.is/application/templates/rental-agreement'),
+    import('@island.is/application/templates/hms/rental-agreement'),
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/terminate-rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>

@@ -11,6 +11,7 @@ import {
   DirectGrantPaymentFlowMetadata,
   MemorialCardPaymentFlowMetadata,
 } from './types'
+import { WebLandspitaliCreateMemorialCardPaymentUrlInputSendType } from '@island.is/shared/types'
 
 @Injectable()
 export class LandspitaliService {
@@ -72,12 +73,24 @@ export class LandspitaliService {
   ) {
     const lines: string[] = []
 
+    let sendType = ''
+    switch (input.sendType) {
+      case WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail:
+        sendType = 'bréfpósti'
+        break
+      case WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email:
+        sendType = 'tölvupósti'
+        break
+    }
+
     lines.push(`Minningarsjóður: ${input.fundChargeItemCode ?? ''}`)
     lines.push(`Til minningar um: ${input.inMemoryOf ?? ''}`)
     lines.push(`Fjárhæð: ${input.amountISK ?? ''} krónur`)
     lines.push(`Undirskrift sendanda: ${input.senderSignature ?? ''}`)
 
     lines.push(`Nafn viðtakanda korts: ${input.recipientName ?? ''}`)
+    lines.push(`Netfang viðtakanda korts: ${input.recipientEmail ?? ''}`)
+    lines.push(`Senda kort með: ${sendType}`)
     lines.push(`Heimilisfang viðtakanda korts: ${input.recipientAddress ?? ''}`)
     lines.push(`Póstnúmer viðtakanda korts: ${input.recipientPostalCode ?? ''}`)
     lines.push(`Staður viðtakanda korts: ${input.recipientPlace ?? ''}`)

@@ -194,6 +194,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
         })}
         onAddValue={onAdd}
         buttonText={formatMessage(m.buttonText)}
+        // this disabled the button
         isDisabled={(value) => {
           if (!value) return true
           return !validatePoliceCaseNumber(value, clientPoliceNumbers ?? [])

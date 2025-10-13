@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -26,7 +27,6 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   title: freight.create.pageTitle,
   description: freight.create.descriptionShortTerm,
   children: [
-    ...FreightCommonHiddenInputs('freight'),
     ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
     // Note: We are reusing convoyId as freightId here.
     // This is safe because freight and convoy are separate arrays,
@@ -176,6 +176,11 @@ export const FreightShortTermCreateMultiField = buildMultiField({
           freightIndex,
           convoyIndex,
         ),
+    }),
+    buildCustomField({
+      component: 'HandleBeforeSubmitFreight',
+      id: 'handleBeforeSubmitFreight',
+      description: '',
     }),
   ],
 })

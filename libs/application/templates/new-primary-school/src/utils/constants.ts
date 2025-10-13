@@ -1,6 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export const FIRST_GRADE_AGE = 6
+export const TENTH_GRADE_AGE = 16
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
@@ -9,23 +10,23 @@ export const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
+  REJECTED = 'rejected',
+  APPROVED = 'approved',
 }
 
 export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
   sendApplication = 'sendApplication',
-  getCitizenship = 'getCitizenship',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ORGANIZATION_REVIEWER = 'organizationReviewer',
 }
 
 export enum ReasonForApplicationOptions {

@@ -238,6 +238,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             payerPlace: data.senderPlace,
             amountISK: parseInt(amountISK.replace(/\./g, '')),
             locale: activeLocale,
+            cancelUrl: window.location.href,
           },
         },
       })

@@ -25,6 +25,11 @@ export class UpdateCourtSessionDto {
   readonly location?: string
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly judgeId?: string
+
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
@@ -81,4 +86,9 @@ export class UpdateCourtSessionDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly closingEntries?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isConfirmed?: boolean
 }

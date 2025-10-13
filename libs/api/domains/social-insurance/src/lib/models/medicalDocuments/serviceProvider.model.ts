@@ -6,9 +6,6 @@ export class ServiceProvider {
   serviceProviderName?: string
 
   @Field({ nullable: true })
-  coordinatorName?: string
-
-  @Field({ nullable: true })
   coordinatorTitle?: string
 
   @Field({ nullable: true })

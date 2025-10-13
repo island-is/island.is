@@ -29,6 +29,7 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicationType = getValueViaPath<ApplicationType>(
@@ -93,7 +94,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(
       answers,
       'healthProtection.hasFoodAllergiesOrIntolerances',
-    ) ?? [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    ) ?? []
 
   const foodAllergiesOrIntolerances =
     getValueViaPath<string[]>(
@@ -103,7 +104,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hasOtherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.hasOtherAllergies') ??
-    [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    []
 
   const otherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.otherAllergies') ?? []
@@ -165,11 +166,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   )
 
-  // TODO: Skoða betur defaultValue??
   const requestingMeeting = getValueViaPath<YesOrNo>(
     answers,
     'support.requestingMeeting[0]',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedStartDate = getValueViaPath<string>(
@@ -182,11 +182,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'startingSchool.expectedStartDateHiddenInput',
   )
 
-  // TODO: Skoða betur defaultValue??
   const temporaryStay = getValueViaPath<YesOrNo>(
     answers,
     'startingSchool.temporaryStay',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedEndDate = getValueViaPath<string>(
@@ -360,16 +359,6 @@ export const getApplicationExternalData = (
     'childInformation.data.socialProfile',
   )
 
-  const childCitizenshipCode = getValueViaPath<string>(
-    externalData,
-    'citizenship.data.childCitizenshipCode',
-  )
-
-  const otherGuardianCitizenshipCode = getValueViaPath<string>(
-    externalData,
-    'citizenship.data.otherGuardianCitizenshipCode',
-  )
-
   return {
     children,
     applicantName,
@@ -387,8 +376,6 @@ export const getApplicationExternalData = (
     childAffiliations,
     healthProfile,
     socialProfile,
-    childCitizenshipCode,
-    otherGuardianCitizenshipCode,
   }
 }
 
@@ -601,10 +588,13 @@ export const getApplicationType = (
   }
 
   // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  if (!childInformation?.primaryOrgId) {
-    return yearOfBirth === firstGradeYear
-      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      : ApplicationType.NEW_PRIMARY_SCHOOL
+  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
+  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    if (!childInformation?.primaryOrgId) {
+      return yearOfBirth === firstGradeYear
+        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        : ApplicationType.NEW_PRIMARY_SCHOOL
+    }
   }
 
   return ApplicationType.NEW_PRIMARY_SCHOOL

@@ -24,6 +24,7 @@ interface MultipleValueListProps {
   buttonText: string
   name: string
   isDisabled: (value?: string) => boolean
+  isLoading?: boolean
   hasError?: boolean
   errorMessage?: string
   onBlur?: (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
@@ -38,6 +39,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   name,
   buttonText,
   isDisabled,
+  isLoading,
   hasError,
   errorMessage,
   onBlur,
@@ -71,7 +73,10 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   }
 
   return (
-    <BlueBox dataTestId="multipleValueListContainer">
+    <BlueBox
+      dataTestId="multipleValueListContainer"
+      className={styles.container}
+    >
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
@@ -109,7 +114,8 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
         <Button
           icon="add"
           size="small"
-          disabled={isDisabled(value)}
+          disabled={isDisabled(value) || value === ''}
+          loading={isLoading}
           onClick={() => {
             onAddValue(value)
             clearInput()

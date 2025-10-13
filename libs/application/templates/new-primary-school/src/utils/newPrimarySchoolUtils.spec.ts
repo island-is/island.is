@@ -178,23 +178,24 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+  // ADD BACK WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
+  // it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+  //   const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
-    const answers = {
-      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
-    }
+  //   const answers = {
+  //     childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+  //   }
 
-    const externalData = {
-      childInformation: {
-        data: {},
-      },
-    } as unknown as ExternalData
+  //   const externalData = {
+  //     childInformation: {
+  //       data: {},
+  //     },
+  //   } as unknown as ExternalData
 
-    expect(getApplicationType(answers, externalData)).toBe(
-      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-    )
-  })
+  //   expect(getApplicationType(answers, externalData)).toBe(
+  //     ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  //   )
+  // })
 
   it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE

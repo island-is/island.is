@@ -28,69 +28,74 @@ const OwnerView = ({
 
   return (
     <Stack space={8}>
-      {signedLists && (
+      {signedLists?.length > 0 && (
         <SignedLists
           collectionType={collectionType}
           signedLists={signedLists}
         />
       )}
-      <Box>
-        <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.myListsDescription)}
-        </Text>
-        {listsForOwner.map((list: SignatureCollectionList) => (
-          <Box key={list.id} marginTop={3}>
-            <ActionCard
-              backgroundColor="white"
-              heading={list.candidate.name ?? ''}
-              progressMeter={{
-                currentProgress: list.numberOfSignatures || 0,
-                maxProgress: list.area?.min,
-                withLabel: true,
-              }}
-              eyebrow={`${formatMessage(m.endTime)} ${format(
-                new Date(list.endTime),
-                'dd.MM.yyyy',
-              )}`}
-              cta={
-                list.active
-                  ? {
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ViewMunicipalList.replace(
-                            ':id',
-                            list.id,
-                          ),
-                          {
-                            state: {
-                              collectionId: collectionId || '',
+
+      {/* Candidate created lists */}
+      {listsForOwner?.length > 0 && (
+        <Box>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.myListsDescription)}
+          </Text>
+          <Stack space={[3, 5]}>
+            {listsForOwner.map((list) => (
+              <ActionCard
+                key={list.id}
+                backgroundColor="white"
+                heading={list.candidate.name ?? ''}
+                progressMeter={{
+                  currentProgress: list.numberOfSignatures || 0,
+                  maxProgress: list.area?.min,
+                  withLabel: true,
+                }}
+                eyebrow={`${formatMessage(m.endTime)} ${format(
+                  new Date(list.endTime),
+                  'dd.MM.yyyy',
+                )}`}
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ViewMunicipalList.replace(
+                              ':id',
+                              list.id,
+                            ),
+                            {
+                              state: {
+                                collectionId: collectionId || '',
+                              },
                             },
-                          },
-                        )
-                      },
-                    }
-                  : undefined
-              }
-              tag={
-                list.active
-                  ? {
-                      label: formatMessage(m.collectionIsActive),
-                      variant: 'blue',
-                      outlined: false,
-                    }
-                  : {
-                      label: formatMessage(m.collectionClosed),
-                      variant: 'red',
-                      outlined: true,
-                    }
-              }
-            />
-          </Box>
-        ))}
-      </Box>
+                          )
+                        },
+                      }
+                    : undefined
+                }
+                tag={
+                  list.active
+                    ? {
+                        label: formatMessage(m.collectionIsActive),
+                        variant: 'blue',
+                        outlined: false,
+                      }
+                    : {
+                        label: formatMessage(m.collectionClosed),
+                        variant: 'red',
+                        outlined: true,
+                      }
+                }
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
       <Managers collectionType={collectionType} />
     </Stack>
   )
