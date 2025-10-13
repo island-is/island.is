@@ -28,7 +28,6 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../utils/enums'
 
 const template: ApplicationTemplate<
@@ -43,7 +42,6 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.ActivationAllowance.translation,
   dataSchema: ActivationAllowanceAnswersSchema,
-  featureFlag: Features.ActivationAllowanceApplicationEnabled,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
