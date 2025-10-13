@@ -153,6 +153,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
     .image(imageName)
+    .serviceAccount('services-auth-ids-api-cleanup')
     .command('node')
     .args('main.cjs', '--job=cleanup')
     .resources({

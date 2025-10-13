@@ -61,8 +61,8 @@ export class CourtDocumentService {
   ): Promise<CourtDocument> {
     return this.courtDocumentRepositoryService.fileInCourtSession(
       caseId,
-      courtDocumentId,
       fileDto.courtSessionId,
+      courtDocumentId,
       { transaction },
     )
   }

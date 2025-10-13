@@ -282,12 +282,13 @@ export class AppService {
   ) {
     const getPoliceDocumentDeliveryStatus = ({
       delivered,
+      deliveredToDefendant,
       deliveredOnPaper,
       deliveredOnIslandis,
       deliveredToLawyer,
     }: UpdatePoliceDocumentDeliveryDto) => {
       if (delivered) {
-        if (deliveredOnPaper) {
+        if (deliveredOnPaper || deliveredToDefendant) {
           return ServiceStatus.IN_PERSON
         }
         if (deliveredOnIslandis) {
