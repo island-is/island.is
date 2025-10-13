@@ -37,9 +37,11 @@ export class RentalAgreementService extends BaseTemplateApiService {
       return
     }
 
-    return await this.homeApiWithAuth(auth).contractSendDraftPost({
-      contractId: application.id,
-    })
+    // return await this.homeApiWithAuth(auth).contractSendDraftPost({
+    //   contractId: application.id,
+    // }) // The draft endpoint is not ready as is, uncomment when fixed
+
+    return
   }
 
   async submitApplicationToHmsRentalService({
