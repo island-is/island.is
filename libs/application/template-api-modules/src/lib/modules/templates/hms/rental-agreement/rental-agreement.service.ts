@@ -30,16 +30,18 @@ export class RentalAgreementService extends BaseTemplateApiService {
     return await fetchFinancialIndexationForMonths(months)
   }
 
-  async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+  async sendDraft(/*{ application, auth }: TemplateApiModuleActionProps*/) {
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       // Don't send draft when running locally or on dev because
       // the application will not exist on the system HMS is calling which is prod or staging
       return
     }
 
-    return await this.homeApiWithAuth(auth).contractSendDraftPost({
-      contractId: application.id,
-    })
+    // return await this.homeApiWithAuth(auth).contractSendDraftPost({
+    //   contractId: application.id,
+    // }) // The draft endpoint is not ready as is, uncomment when fixed
+
+    return
   }
 
   async submitApplicationToHmsRentalService({
