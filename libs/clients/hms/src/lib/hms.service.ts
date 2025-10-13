@@ -10,6 +10,7 @@ import {
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
+import { Fasteign as FasteignAsset, FasteignirApi } from '@island.is/clients/assets'
 
 @Injectable()
 export class HmsService {
@@ -17,6 +18,7 @@ export class HmsService {
     private readonly stadfangApi: StadfangApi,
     private readonly fasteignApi: FasteignApi,
     private readonly adalmatseiningApi: AdalmatseiningApi,
+    private propertiesApi: FasteignirApi,
   ) {}
 
   private apiWithAuth = <T extends BaseAPI>(api: T, user: User): T =>
@@ -186,5 +188,36 @@ export class HmsService {
         `Failed to retrieve property information: ${errorMessage}`,
       )
     }
+  }
+
+  // This is using the relatively new FasteignirApi
+  async hmsPropertyByPropertyCode(
+    auth: User,
+    input: { fasteignNrs?: string[] } = { fasteignNrs: [] },
+  ) {
+    console.log('user', auth)
+    console.log('input', input)
+    let properties: Array<FasteignAsset> = []
+
+    try {
+    const api = this.propertiesApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
+
+    properties = await Promise.all(
+      input.fasteignNrs?.map((nr) => {
+        return api.fasteignirGetFasteign({
+          fasteignanumer:
+            // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
+            // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+            nr?.replace(/\D/g, '') ?? '',
+        })
+      }) ?? [],
+    )
+  } catch (e) {
+    throw new Error(`Failed to fetch properties: ${e.message}`)
+  }
+
+    return properties
   }
 }

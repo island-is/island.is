@@ -36,7 +36,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
   const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
   const storedValue: AddressProps = getValues(id)
-
+  const onlyAddressSearch: boolean =
+    field?.props && typeof field.props['onlyAddressSearch'] === 'boolean'
+      ? (field.props['onlyAddressSearch'] as boolean)
+      : false
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
     null,
   )
@@ -349,7 +352,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
         )}
       </Box>
 
-      {selectedAddress && (
+      {selectedAddress && !onlyAddressSearch && (
         <Box marginTop={propertySectionHasContent ? 6 : 0}>
           {propertySearchLoading ? (
             <div style={{ textAlign: 'center' }}>

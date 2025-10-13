@@ -2,6 +2,7 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildSection,
+  buildTitleField,
   YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
@@ -29,6 +30,18 @@ export const confirmReadSection = buildSection({
           options: [
             {
               label: m.confirmReadMessages.confirmReadFireCompensationInfo,
+              value: YES,
+            },
+          ],
+        }),
+        buildTitleField({
+          title: 'Aðrar eignir.',
+        }),
+        buildCheckboxField({
+          id: 'otherPropertiesThanIOwnCheckbox',
+          options: [
+            { 
+              label: 'Ég er að sækja um eign sem ég á ekki.',
               value: YES,
             },
           ],
