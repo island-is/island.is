@@ -2,9 +2,9 @@ import { ReactNode } from 'react'
 import { Image, Pressable, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { navigateTo } from '../../../lib/deep-linking'
 import { Colors } from '../../utils'
 import { Typography } from '../typography/typography'
+import { useBrowser } from '../../../lib/use-browser'
 
 type Variant = 'info' | 'error' | 'warning'
 export type DetailLink = {
@@ -129,10 +129,9 @@ export const ProblemTemplate = ({
   size = 'large',
 }: ProblemTemplateProps) => {
   const theme = useTheme()
+  const { openBrowser } = useBrowser()
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
-
-  console.log('detailLink', detailLink)
 
   return (
     <Host borderColor={borderColor} noContainer={withContainer} size={size}>
@@ -160,7 +159,7 @@ export const ProblemTemplate = ({
         {detailLink && (
           <Pressable
             onPress={() => {
-              navigateTo('/webview', { source: { uri: detailLink.url } })
+              openBrowser(detailLink.url)
             }}
           >
             <Typography
