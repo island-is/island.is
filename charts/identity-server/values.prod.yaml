@@ -55,6 +55,8 @@ auth-admin-web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -74,6 +76,11 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-admin-web'
+    create: true
+    name: 'auth-admin-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -545,6 +552,8 @@ services-auth-ids-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 6
@@ -573,6 +582,11 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
     - 'main.cjs'
@@ -618,6 +632,8 @@ services-auth-ids-api-cleanup:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -637,6 +653,11 @@ services-auth-ids-api-cleanup:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api-cleanup'
+    create: true
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
@@ -703,6 +724,8 @@ services-auth-personal-representative:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -728,6 +751,11 @@ services-auth-personal-representative:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative'
+    create: true
+    name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
   enabled: true
   env:
@@ -773,6 +801,8 @@ services-auth-personal-representative-public:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -791,6 +821,11 @@ services-auth-personal-representative-public:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative-public'
+    create: true
+    name: 'services-auth-personal-representative-public'
 services-auth-public-api:
   enabled: true
   env:
