@@ -1,28 +1,29 @@
 import React from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { FormattedMessage, useIntl } from 'react-intl'
 import styled, { useTheme } from 'styled-components/native'
 
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import externalLinkIcon from '../../assets/icons/external-link.png'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   useGetAirDiscountFlightLegsQuery,
   useGetAirDiscountQuery,
 } from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import {
+  AirDiscountCard,
   Alert,
+  Bullet,
   Heading,
   Link,
   LinkText,
   Problem,
   Skeleton,
   Typography,
-  Bullet,
-  AirDiscountCard,
 } from '../../ui'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { AirfaresUsageTable } from './airfares-usage-table'
-import externalLinkIcon from '../../assets/icons/external-link.png'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -83,6 +84,29 @@ const Empty = () => {
   )
 }
 
+const Disabled = () => {
+  const intl = useIntl()
+  const theme = useTheme()
+
+  return (
+    <View
+      style={{
+        margin: theme.spacing[2],
+      }}
+    >
+      <Problem
+        type="no_data"
+        title={intl.formatMessage({ id: 'airDiscount.disabledTitle' })}
+        message={intl.formatMessage({ id: 'airDiscount.disabledDescription' })}
+        detailLink={{
+          text: intl.formatMessage({ id: 'button.moreInfoHere' }),
+          url: 'https://island.is/minarsidur/loftbru',
+        }}
+      />
+    </View>
+  )
+}
+
 export const AirDiscountScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
@@ -90,6 +114,11 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
 
   const intl = useIntl()
   const theme = useTheme()
+
+  const ffIsAppAirDiscountPageDisabled = useFeatureFlag(
+    'isAppAirDiscountPageDisabled',
+    false,
+  )
 
   const { data, loading, error } = useGetAirDiscountQuery({
     fetchPolicy: 'network-only',
@@ -113,6 +142,10 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
     data?.airDiscountSchemeDiscounts?.filter(
       (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
     ).length === data?.airDiscountSchemeDiscounts?.length
+
+  if (ffIsAppAirDiscountPageDisabled) {
+    return <Disabled />
+  }
 
   return (
     <ScrollView style={{ flex: 1 }}>
