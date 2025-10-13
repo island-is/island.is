@@ -232,6 +232,28 @@ const CourtRecord: FC = () => {
     [workingCase.id],
   )
 
+  const handleEndOfSessionBookingsUpdate = () => {
+    const endOfSessionBookings: string[] = []
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
+
+    // override existing end of session booking if there
+    // is a update for a given working case (e.g. appeal decision)
+    // that should trigger an end of session bookings default text update
+    setAndSendCaseToServer(
+      [
+        {
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -420,6 +442,7 @@ const CourtRecord: FC = () => {
           <AppealSections
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            onChange={handleEndOfSessionBookingsUpdate}
           />
         </Box>
         <Box component="section" marginBottom={5}>

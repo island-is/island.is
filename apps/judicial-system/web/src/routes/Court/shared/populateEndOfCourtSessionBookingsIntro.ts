@@ -5,7 +5,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-// this is based on investigation
 export const populateEndOfCourtSessionBookingsIntro = (
   workingCase: Case,
   endOfSessionBookings: string[],
