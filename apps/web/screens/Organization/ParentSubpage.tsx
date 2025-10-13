@@ -53,11 +53,18 @@ const OrganizationParentSubpage: Screen<
   useLocalLinkTypeResolver()
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
+  let pageTitle = subpage?.title ?? ''
+  if (parentSubpage.childLinks?.length > 1) {
+    pageTitle = `${parentSubpage?.title ?? ''}${
+      Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
+    }${subpage?.title ?? ''}`
+  }
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage?.title ?? ''}
+      pageTitle={pageTitle}
       organizationPage={organizationPage}
       fullWidthContent={true}
       pageFeaturedImage={
