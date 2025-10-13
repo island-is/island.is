@@ -139,10 +139,22 @@ export class FormsService {
 
     const formResponseDto: FormResponseDto = {
       forms: forms.map((form) => {
-        return defaults(
+        const dto = defaults(
           pick(form, keys),
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
+
+        if (dto.completedSectionInfo) {
+          const cs = dto.completedSectionInfo
+
+          cs.title ??= { is: '', en: '' }
+          cs.confirmationHeader ??= { is: '', en: '' }
+          cs.confirmationText ??= { is: '', en: '' }
+
+          cs.additionalInfo ??= []
+        }
+
+        return dto
       }),
       organizationNationalIds: await this.organizationModel
         .findAll({
@@ -208,7 +220,7 @@ export class FormsService {
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
-      completedSectionInfo: completedSectionInfo,
+      completedSectionInfo,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)) as Form
 
@@ -440,6 +452,14 @@ export class FormsService {
         form.organizationId,
         UrlTypes.VALIDATION,
       ),
+    }
+
+    if (form.completedSectionInfo) {
+      const cs = form.completedSectionInfo
+      cs.title ??= { is: '', en: '' }
+      cs.confirmationHeader ??= { is: '', en: '' }
+      cs.confirmationText ??= { is: '', en: '' }
+      cs.additionalInfo ??= []
     }
 
     return response

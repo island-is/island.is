@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/ui'
 import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ export const Screen = () => {
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
     (currentSection?.data?.sectionType === SectionTypes.COMPLETED
-      ? formatMessage(m.completedHeader)
+      ? null
       : state.sections?.[currentSection?.index]?.name?.[lang] ?? '')
 
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType

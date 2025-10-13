@@ -12,6 +12,6 @@ export class CompletedSectionInfo {
   @Field(() => LanguageType)
   confirmationText!: LanguageType
 
-  @Field(() => [LanguageType], { nullable: 'itemsAndList' })
-  additionalInfo?: LanguageType[]
+  @Field(() => [LanguageType])
+  additionalInfo: LanguageType[] = []
 }

@@ -57,13 +57,7 @@ export const AdditionalInfo = ({
           backgroundColor="blue"
           textarea
           value={info.is || ''}
-          onFocus={async (e) => {
-            setFocus(e.target.value)
-            if (info.en === '' && info.is !== '' && info.is) {
-              const translation = await getTranslation(info.is)
-              changeAdditionalInfo(index, 'en', translation.translation)
-            }
-          }}
+          onFocus={(e) => setFocus(e.target.value)}
           onChange={(e) => changeAdditionalInfo(index, 'is', e.target.value)}
           onBlur={(e) => e.target.value !== focus && saveAdditionalInfo()}
         />
@@ -73,6 +67,13 @@ export const AdditionalInfo = ({
           backgroundColor="blue"
           textarea
           value={info.en || ''}
+          onFocus={async (e) => {
+            setFocus(e.target.value)
+            if (info.en === '' && info.is !== '' && info.is) {
+              const translation = await getTranslation(info.is)
+              changeAdditionalInfo(index, 'en', translation.translation)
+            }
+          }}
           onChange={(e) => changeAdditionalInfo(index, 'en', e.target.value)}
           onBlur={(e) => e.target.value !== focus && saveAdditionalInfo()}
         />

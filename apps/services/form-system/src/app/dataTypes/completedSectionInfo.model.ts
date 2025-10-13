@@ -23,5 +23,5 @@ export class CompletedSectionInfo {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => LanguageType)
-  additionalInfo!: LanguageType[]
+  additionalInfo: LanguageType[] = []
 }
