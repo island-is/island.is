@@ -142,9 +142,8 @@ export class InternalVerdictController {
         verdictId: verdict.id,
         verdictCreated: verdict.created,
         externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
-        subpoenaHash: currentVerdict.hash,
+        verdictHash: currentVerdict.hash,
         verdictDeliveredToPolice: new Date(),
-        indictmentHash: theCase.indictmentHash,
       }
     }
     return this.auditTrailService.audit(
