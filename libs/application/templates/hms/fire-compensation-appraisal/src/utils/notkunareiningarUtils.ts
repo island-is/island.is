@@ -11,26 +11,17 @@ export const notkunareiningarOptions = (
     'otherPropertiesThanIOwnCheckbox',
   )?.includes(YES)
 
-  const selectedRealEstateId = 
-  otherPropertiesThanIOwn 
-  ? 'F' + getValueViaPath<string>(
-      application.answers,
-      'selectedPropertyByCode',
-    )
-  : getValueViaPath<string>(
-    application.answers,
-    'realEstate',
-    )
+  const selectedRealEstateId = otherPropertiesThanIOwn
+    ? 'F' +
+      getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(application.answers, 'realEstate')
 
-  const fasteignir = otherPropertiesThanIOwn 
-  ? getValueViaPath<Array<Fasteign>>(
-      application.answers,
-      'anyProperties',
-    )
-  : getValueViaPath<Array<Fasteign>>(
-      application.externalData,
-      'getProperties.data',
-    )
+  const fasteignir = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(
+        application.externalData,
+        'getProperties.data',
+      )
 
   const fasteign = fasteignir?.find(
     (fasteign) => fasteign.fasteignanumer === selectedRealEstateId,

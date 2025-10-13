@@ -10,7 +10,10 @@ import {
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
-import { Fasteign as FasteignAsset, FasteignirApi } from '@island.is/clients/assets'
+import {
+  Fasteign as FasteignAsset,
+  FasteignirApi,
+} from '@island.is/clients/assets'
 
 @Injectable()
 export class HmsService {
@@ -198,23 +201,23 @@ export class HmsService {
     let properties: Array<FasteignAsset> = []
 
     try {
-    const api = this.propertiesApi.withMiddleware(
-      new AuthMiddleware(auth, { forwardUserInfo: true }),
-    )
+      const api = this.propertiesApi.withMiddleware(
+        new AuthMiddleware(auth, { forwardUserInfo: true }),
+      )
 
-    properties = await Promise.all(
-      input.fasteignNrs?.map((nr) => {
-        return api.fasteignirGetFasteign({
-          fasteignanumer:
-            // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
-            // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
-            nr?.replace(/\D/g, '') ?? '',
-        })
-      }) ?? [],
-    )
-  } catch (e) {
-    throw new Error(`Failed to fetch properties: ${e.message}`)
-  }
+      properties = await Promise.all(
+        input.fasteignNrs?.map((nr) => {
+          return api.fasteignirGetFasteign({
+            fasteignanumer:
+              // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
+              // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+              nr?.replace(/\D/g, '') ?? '',
+          })
+        }) ?? [],
+      )
+    } catch (e) {
+      throw new Error(`Failed to fetch properties: ${e.message}`)
+    }
 
     return properties
   }

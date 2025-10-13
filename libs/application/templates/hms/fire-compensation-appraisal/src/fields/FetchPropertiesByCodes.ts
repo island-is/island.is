@@ -38,7 +38,7 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
       setValue('anyProperties', [])
     }
     })()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCode, apolloClient, setValue])
 
   return null
