@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -107,28 +108,40 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     )
 
     if (needsPayerApproval(application.answers)) {
-      await this.sharedTemplateAPIService.sendEmail(
-        generatePayerApprovedApplicationEmail,
-        application,
-      )
+      await this.sharedTemplateAPIService
+        .sendEmail(generatePayerApprovedApplicationEmail, application)
+        .catch((e) => {
+          this.logger.error('Failed to send payer approved email', {
+            e,
+            applicationId: application.id,
+          })
+        })
     }
 
     return response
   }
 
   async assignPayer({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.sendEmail(
-      generateAssignPayerEmail,
-      application,
-    )
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignPayerEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send assign payer email', {
+          e,
+          applicationId: application.id,
+        })
+      })
   }
 
   async notifyApplicantOfRejectionFromPayer({
     application,
   }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.sendEmail(
-      generatePayerRejectedApplicationEmail,
-      application,
-    )
+    await this.sharedTemplateAPIService
+      .sendEmail(generatePayerRejectedApplicationEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send payer rejected email', {
+          e,
+          applicationId: application.id,
+        })
+      })
   }
 }

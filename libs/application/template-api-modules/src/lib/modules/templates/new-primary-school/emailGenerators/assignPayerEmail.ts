@@ -4,6 +4,7 @@ import {
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
+import { format as formatKennitala } from 'kennitala'
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../new-primary-school.utils'
 
@@ -54,13 +55,17 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
-            copy: `${applicantName} Kt: ${application.applicant} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfaradi barni og er að óska eftir samþykki frá þér.`,
+            copy: `${applicantName} Kt: ${formatKennitala(
+              application.applicant,
+            )} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfaradi barni og er að óska eftir samþykki frá þér.`,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: `${childInfo?.name} Kt: ${childInfo?.nationalId}`,
+            copy: `${childInfo?.name} Kt: ${formatKennitala(
+              childInfo?.nationalId ?? '',
+            )}`,
           },
         },
         {
