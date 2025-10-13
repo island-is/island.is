@@ -52,6 +52,30 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
+const extractNavigationItems = (
+  organizationPage: Query['getOrganizationPage'],
+  pathWithoutHash: string,
+  isSitemap: boolean,
+): NavigationItem[] => {
+  if (isSitemap) {
+    return (
+      organizationPage?.topLevelNavigation?.links.map((link) => ({
+        title: link.label,
+        href: link.href,
+        active: link.href === pathWithoutHash,
+      })) ?? []
+    )
+  }
+
+  return (
+    organizationPage?.menuLinks.map(({ primaryLink }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url ?? '',
+      active: primaryLink?.url === pathWithoutHash,
+    })) ?? []
+  )
+}
+
 const OrganizationHomePage = ({
   organizationPage,
   organization,
@@ -63,20 +87,6 @@ const OrganizationHomePage = ({
   const router = useRouter()
 
   const pathWithoutHash = router.asPath.split('#')[0]
-
-  const navList: NavigationItem[] =
-    organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text ?? '',
-      href: primaryLink?.url ?? '',
-      active:
-        primaryLink?.url === pathWithoutHash ||
-        childrenLinks.some((link) => link.url === pathWithoutHash),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathWithoutHash,
-      })),
-    })) ?? []
 
   const parsedLinkHref = parseOrganizationLinkHref(organization)
   const linkTitle = parsedLinkHref
@@ -91,6 +101,12 @@ const OrganizationHomePage = ({
   }, [organization?.namespace?.fields])
 
   const o = useNamespace(organizationNamespace)
+
+  const navList = extractNavigationItems(
+    organizationPage,
+    pathWithoutHash,
+    o('sitemapNavigation', false),
+  )
 
   return (
     <OrganizationWrapper
