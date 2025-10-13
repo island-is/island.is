@@ -170,7 +170,9 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
                   (selectedPage - 1) * instructorsPerPage + instructorsPerPage,
                 )
                 .map((instructor) => (
-                  <T.Row key={instructor.name}>
+                  <T.Row
+                    key={`${instructor.name}-${instructor.postalCode}-${instructor.municipality}`}
+                  >
                     <T.Data>{instructor.name}</T.Data>
                     <T.Data>{instructor.postalCode}</T.Data>
                     <T.Data>{instructor.municipality}</T.Data>
