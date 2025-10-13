@@ -103,6 +103,10 @@ const QuestionnairesAnswer = lazy(() =>
   import('./screens/Questionnaires/QuestionnaireAnswer'),
 )
 
+const QuestionnairesAnswered = lazy(() =>
+  import('./screens/Questionnaires/QuestionnaireAnswered'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 export const healthModule: PortalModule = {
@@ -395,6 +399,13 @@ export const healthModule: PortalModule = {
       key: undefined, //TODO
       enabled: true, // TODO
       element: <QuestionnairesAnswer />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesAnswered,
+      key: undefined, //TODO
+      enabled: true, // TODO
+      element: <QuestionnairesAnswered />,
     },
   ],
 }

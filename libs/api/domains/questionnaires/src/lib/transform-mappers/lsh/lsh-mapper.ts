@@ -344,9 +344,7 @@ function mapQuestionnaire(form: Form): Questionnaire {
     form.answerDateTime != null &&
     form.answerDateTime !== '' &&
     form.answerDateTime !== 'null' &&
-    typeof form.answerDateTime === 'string' &&
-    form.answerDateTime.trim() !== '' &&
-    !isNaN(new Date(form.answerDateTime).getTime())
+    typeof form.answerDateTime === 'string'
 
   const status = answered
     ? QuestionnairesStatusEnum.answered

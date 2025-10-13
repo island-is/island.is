@@ -90,9 +90,5 @@ query GetAnsweredQuestionnaire(
 }
 
 mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
-  submitQuestionnaire(input: $input) {
-    id
-    title
-    status
-  }
+  submitQuestionnaire(input: $input)
 }

@@ -29,7 +29,7 @@ export class QuestionnairesService {
   ) {}
 
   async getQuestionnaire(
-    user: User,
+    _user: User,
     id: string,
   ): Promise<Questionnaire | null> {
     const elList = createMockElDistressThermometerQuestionnaire()
@@ -38,21 +38,28 @@ export class QuestionnairesService {
     const elList2 = createMockElPregnancyQuestionnaire()
     const elList2Transformed = mapExternalQuestionnairesToList([elList2])
 
-    const lshDevQuestionnaires: QuestionnairesList[] = []
-
     // Handle error for each client so the other can still succeed
-    const lshDev: Form[] = await this.lshDevApi.getPatientForms(user)
+    const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
     const lshTemp = mapFormsToQuestionnairesList(lshDev)
 
-    const data = [
-      elListTransformed,
-      elList2Transformed,
-      ...lshDevQuestionnaires,
-    ].find((list) =>
+    const lshAnswered: Form[] = await this.lshDevApi.getAnsweredForms(_user)
+    const lshAnsweredTransformed = mapFormsToQuestionnairesList(lshAnswered)
+
+    const data = [elListTransformed, elList2Transformed].find((list) =>
       list.questionnaires?.some((q: Questionnaire) => q.id === id),
     )?.questionnaires?.[0]
 
     const lshFound = lshTemp.questionnaires?.find((q) => q.id === id)
+    const answeredLshFound = lshAnsweredTransformed.questionnaires?.find(
+      (q) => q.id === id,
+    )
+
+    // Prefer answered questionnaire if it exists
+    if (answeredLshFound) {
+      return answeredLshFound
+    }
+
+    // If neither found, return null
 
     if (!data && !lshFound) {
       return null
@@ -82,12 +89,20 @@ export class QuestionnairesService {
 
     return data
   }
+
   async submitQuestionnaire(
     user: User,
     input: QuestionnaireInput,
   ): Promise<boolean> {
     const lshAnswer = mapToLshAnswer(input)
-    return await this.lshDevApi.postPatientForm(user, lshAnswer, lshAnswer.GUID)
+    const response = await this.lshDevApi.postPatientForm(
+      user,
+      lshAnswer,
+      lshAnswer.GUID,
+    )
+    // TODO: Fix based on real response, needs typing in client
+    // \"{\\\"Status\\\":\\\"0\\\",\\\"Message\\\":\\\"Success\\\"}\""
+    return true
   }
 
   async getQuestionnaires(
@@ -95,9 +110,11 @@ export class QuestionnairesService {
     _locale: Locale,
   ): Promise<QuestionnairesList | null> {
     const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
-
     // Transform each LSH Dev questionnaire
-    const lshTemp = mapFormsToQuestionnairesList(lshDev)
+    const lshTransformed = mapFormsToQuestionnairesList(lshDev)
+
+    const lshAnswered: Form[] = await this.lshDevApi.getAnsweredForms(_user)
+    const lshAnsweredTransformed = mapFormsToQuestionnairesList(lshAnswered)
 
     // Transform EL questionnaire using the health directorate mapper
     const elList = createMockElDistressThermometerQuestionnaire()
@@ -110,7 +127,8 @@ export class QuestionnairesService {
     const allQuestionnaires: Questionnaire[] = [
       ...(elListTransformed.questionnaires || []),
       ...(elList2Transformed.questionnaires || []),
-      ...(lshTemp.questionnaires || []),
+      ...(lshTransformed.questionnaires || []),
+      ...(lshAnsweredTransformed.questionnaires || []),
     ]
 
     return { questionnaires: allQuestionnaires }

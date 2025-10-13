@@ -50,11 +50,12 @@ const QuestionnaireInfo: React.FC = () => {
     status === QuestionnaireQuestionnairesStatusEnum.notAnswered
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
 
-  const link = isAnswered
-    ? HealthPaths.HealthQuestionnairesAnswered.replace(':id', id)
-    : notAnswered
-    ? HealthPaths.HealthQuestionnairesAnswer.replace(':id', id)
-    : undefined
+  const link = HealthPaths.HealthQuestionnairesAnswer.replace(':id', id)
+  //  isAnswered
+  //   ? HealthPaths.HealthQuestionnairesAnswered.replace(':id', id)
+  //   : notAnswered
+  //   ? HealthPaths.HealthQuestionnairesAnswer.replace(':id', id)
+  //   : undefined
 
   const statusLabel = isAnswered
     ? formatMessage(messages.answeredQuestionnaire)

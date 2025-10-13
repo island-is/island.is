@@ -17,6 +17,8 @@ export type { ThermometerProps } from './QuestionsTypes/Thermometer'
 export { Stepper } from './Stepper'
 export type { Step } from './Stepper'
 
+export { AnsweredQuestionnaire } from './AnsweredQuestionnaire'
+
 // Export generic questionnaire components
 export { QuestionRenderer } from './QuestionRenderer'
 export { GenericQuestionnaire } from './GenericQuestionnaire'

@@ -65,21 +65,23 @@ const QuestionnaireAnswer: React.FC = () => {
           formId: data?.questionnairesDetail?.formId || '',
         },
       },
-    }).catch((e) => {
-      console.error('Error submitting questionnaire:', e)
-      toast.error(
-        formatMessage(messages.errorSendingAnswers, {
-          title: data?.questionnairesDetail?.title || '',
-        }),
-      )
     })
-
-    toast.success(
-      formatMessage(messages.yourAnswersForHasBeenSent, {
-        title: data?.questionnairesDetail?.title || '',
-      }),
-    )
-    navigate(-1)
+      .catch((e) => {
+        console.error('Error submitting questionnaire:', e)
+        toast.error(
+          formatMessage(messages.errorSendingAnswers, {
+            title: data?.questionnairesDetail?.title || '',
+          }),
+        )
+      })
+      .then(() => {
+        toast.success(
+          formatMessage(messages.yourAnswersForHasBeenSent, {
+            title: data?.questionnairesDetail?.title || '',
+          }),
+        )
+        navigate(-1)
+      })
   }
 
   const handleCancel = () => {
