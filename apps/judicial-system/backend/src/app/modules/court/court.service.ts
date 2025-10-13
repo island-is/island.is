@@ -122,7 +122,7 @@ export const courtSubtypes: CourtSubtypes = {
   // TODO: replace with appropriate type when it has been created in the court system
   VIDEO_RECORDING_EQUIPMENT: 'Annað',
   // The following are no longer used but left here for historical data integrity
-  BODILY_INJURY: 'Annað',
+  BODILY_INJURY: 'Hegningarlagabrot önnur',
 }
 
 enum RobotEmailType {
