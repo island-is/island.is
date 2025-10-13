@@ -22,6 +22,7 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
   const { applicantName } = getApplicationExternalData(application.externalData)
 
   if (!payerEmail) throw new Error('Could not find payer email')
+  if (!childInfo) throw new Error('Could not find child information')
 
   const subject = 'Yfirferð á umsókn í grunnskóla'
 
@@ -63,8 +64,8 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
-            copy: `${childInfo?.name} Kt: ${formatKennitala(
-              childInfo?.nationalId ?? '',
+            copy: `${childInfo.name} Kt: ${formatKennitala(
+              childInfo.nationalId,
             )}`,
           },
         },
