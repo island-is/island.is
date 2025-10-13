@@ -29,6 +29,10 @@ export const mobileNav = style({
   transitionDelay: '200ms',
 })
 
+export const fullWidthInner = style({
+  maxWidth: theme.breakpoints.xl,
+})
+
 globalStyle(`${btn} > span`, {
   boxShadow: 'none',
 })
