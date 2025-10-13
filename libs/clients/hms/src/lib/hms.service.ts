@@ -195,8 +195,6 @@ export class HmsService {
     auth: User,
     input: { fasteignNrs?: string[] } = { fasteignNrs: [] },
   ) {
-    console.log('user', auth)
-    console.log('input', input)
     let properties: Array<FasteignAsset> = []
 
     try {

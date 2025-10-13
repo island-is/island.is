@@ -28,7 +28,6 @@ export const sumUsageUnitsFireCompensation = (
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
   )
-  console.log('property', property)
 
   const usageUnitsFireAppraisal =
     property?.notkunareiningar?.notkunareiningar?.map((unit) => {

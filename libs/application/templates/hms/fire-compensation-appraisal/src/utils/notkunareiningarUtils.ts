@@ -32,19 +32,15 @@ export const notkunareiningarOptions = (
       'getProperties.data',
     )
 
-    console.log('fasteignir', fasteignir)
-    console.log('selectedRealEstateId', selectedRealEstateId)
   const fasteign = fasteignir?.find(
     (fasteign) => fasteign.fasteignanumer === selectedRealEstateId,
   )
-  const x = fasteign?.notkunareiningar?.notkunareiningar?.map((notkunareining) => ({
+  return (
+    fasteign?.notkunareiningar?.notkunareiningar?.map((notkunareining) => ({
       label: `${notkunareining.notkunBirting} - Brunabótamat: ${formatCurrency(
         notkunareining.brunabotamat ?? 0,
       )}`,
       value: notkunareining.notkunareininganumer ?? '',
     })) ?? []
-    console.log('options', x)
-  return (
-x
   )
 }

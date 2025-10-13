@@ -96,6 +96,9 @@ export class HmsResolver {
     return { address: addressInfo }
   }
 
+  /**
+ * Returns Array<FasteignAsset> serialized as JSON.
+ */
   @Query(() => [GraphQLJSONObject], {
     name: 'hmsPropertyByPropertyCode',
     nullable: true,
