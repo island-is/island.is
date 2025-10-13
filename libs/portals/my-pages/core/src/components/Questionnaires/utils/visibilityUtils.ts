@@ -2,7 +2,20 @@ import { QuestionAnswer } from '../../../types/questionnaire'
 import type { QuestionnaireVisibilityCondition } from '@island.is/api/schema'
 import { QuestionnaireVisibilityOperator } from '@island.is/api/schema'
 
-type StructuredVisibilityCondition = QuestionnaireVisibilityCondition
+// Extended type to include mathematical operators
+type ExtendedVisibilityOperator =
+  | QuestionnaireVisibilityOperator
+  | 'greaterThan'
+  | 'greaterThanOrEqual'
+  | 'lessThan'
+  | 'lessThanOrEqual'
+
+interface ExtendedVisibilityCondition
+  extends Omit<QuestionnaireVisibilityCondition, 'operator'> {
+  operator: ExtendedVisibilityOperator
+}
+
+type StructuredVisibilityCondition = ExtendedVisibilityCondition
 
 /* -------------------- Helper Functions -------------------- */
 
@@ -23,6 +36,44 @@ const checkIsSelected = (
   if (typeof value === 'number') return value.toString() === expectedValue
 
   return false
+}
+
+// Check mathematical comparison
+const checkMathematicalComparison = (
+  operator: string,
+  questionId: string,
+  expectedValue: string,
+  answers: { [key: string]: QuestionAnswer },
+): boolean => {
+  const answer = answers[questionId]
+  if (!answer || answer.value === undefined || answer.value === null)
+    return false
+
+  let actualValue: number
+  if (typeof answer.value === 'number') {
+    actualValue = answer.value
+  } else if (typeof answer.value === 'string') {
+    actualValue = parseFloat(answer.value)
+    if (isNaN(actualValue)) return false
+  } else {
+    return false
+  }
+
+  const expected = parseFloat(expectedValue)
+  if (isNaN(expected)) return false
+
+  switch (operator) {
+    case 'greaterThan':
+      return actualValue > expected
+    case 'greaterThanOrEqual':
+      return actualValue >= expected
+    case 'lessThan':
+      return actualValue < expected
+    case 'lessThanOrEqual':
+      return actualValue <= expected
+    default:
+      return false
+  }
 }
 
 // Check if a question has any answer
@@ -55,19 +106,8 @@ const evaluateStructuredCondition = (
     case QuestionnaireVisibilityOperator.contains:
       if (expectedValues && expectedValues.length > 0) {
         conditionMet = expectedValues.some((val) => {
-          if (questionId === 'Checklist21448')
-            console.log(
-              'checkIsSelected debug:',
-              checkIsSelected(val, questionId, answers),
-            )
           return checkIsSelected(val, questionId, answers)
         })
-        if (questionId === 'Checklist21448') {
-          console.log('Expected values:', expectedValues)
-          console.log('Answers:', answers)
-          console.log('Show when matched:', showWhenMatched)
-          console.log('Condition met for equals/contains:', conditionMet)
-        }
       }
       break
     case QuestionnaireVisibilityOperator.exists:
@@ -75,6 +115,20 @@ const evaluateStructuredCondition = (
       break
     case QuestionnaireVisibilityOperator.isEmpty:
       conditionMet = !checkQuestionHasAnswer(questionId, answers)
+      break
+    // Handle mathematical operators
+    case 'greaterThan':
+    case 'greaterThanOrEqual':
+    case 'lessThan':
+    case 'lessThanOrEqual':
+      if (expectedValues && expectedValues.length > 0) {
+        conditionMet = checkMathematicalComparison(
+          operator,
+          questionId,
+          expectedValues[0],
+          answers,
+        )
+      }
       break
     default:
       return true
@@ -90,9 +144,6 @@ export const evaluateStructuredVisibilityConditions = (
 ): boolean => {
   if (!conditions || conditions.length === 0) return true
   return conditions.every((condition) => {
-    if (condition.questionId === 'Checklist21448') {
-      console.log('Evaluating condition for Checklist21448:', condition)
-    }
     return evaluateStructuredCondition(condition, answers)
   })
 }
@@ -111,4 +162,107 @@ export const isQuestionVisibleWithStructuredConditions = (
   answers: { [key: string]: QuestionAnswer },
 ): boolean => {
   return evaluateStructuredVisibilityConditions(visibilityConditions, answers)
+}
+
+// Safe expression evaluator for mathematical formulas
+// Wrap in try-catch when calling this function
+const evaluateExpression = (expression: string): number => {
+  // Clean the expression - only allow numbers, operators, parentheses, and whitespace
+  const cleanExpression = expression.replace(/[^0-9+\-*/().]/g, ' ').trim()
+
+  // Validate the expression contains only allowed characters
+  if (!cleanExpression || !/^[0-9+\-*/().\s]+$/.test(cleanExpression)) {
+    throw new Error('Invalid expression')
+  }
+
+  const parseExpression = (expr: string): number => {
+    // Remove whitespace
+    expr = expr.replace(/\s/g, '')
+
+    // Handle parentheses recursively
+    while (expr.includes('(')) {
+      const lastOpen = expr.lastIndexOf('(')
+      const firstClose = expr.indexOf(')', lastOpen)
+
+      if (firstClose === -1) {
+        throw new Error('Mismatched parentheses')
+      }
+
+      const subExpr = expr.substring(lastOpen + 1, firstClose)
+      const subResult = parseExpression(subExpr)
+      expr =
+        expr.substring(0, lastOpen) + subResult + expr.substring(firstClose + 1)
+    }
+
+    // Parse addition and subtraction (lowest precedence)
+    const addSubMatch = expr.match(/^(.+?)([+-])(.+)$/)
+    if (addSubMatch) {
+      const left = parseExpression(addSubMatch[1])
+      const operator = addSubMatch[2]
+      const right = parseExpression(addSubMatch[3])
+      return operator === '+' ? left + right : left - right
+    }
+
+    // Parse multiplication and division (higher precedence)
+    const mulDivMatch = expr.match(/^(.+?)([*/])(.+)$/)
+    if (mulDivMatch) {
+      const left = parseExpression(mulDivMatch[1])
+      const operator = mulDivMatch[2]
+      const right = parseExpression(mulDivMatch[3])
+      return operator === '*' ? left * right : left / right
+    }
+
+    // Parse number
+    const num = parseFloat(expr)
+    if (isNaN(num)) {
+      throw new Error(`Invalid number: ${expr}`)
+    }
+
+    return num
+  }
+
+  return parseExpression(cleanExpression)
+}
+
+// Calculate LSH based questions formula value based on current answers
+export const calculateFormula = (
+  formula: string,
+  answers: { [key: string]: QuestionAnswer },
+): number | null => {
+  let expression = formula.trim()
+
+  // Replace all @@@QuestionId with actual values
+  const questionRefs = expression.match(/@@@([a-zA-Z0-9_-]+)/g)
+  if (questionRefs) {
+    for (const ref of questionRefs) {
+      const questionId = ref.replace('@@@', '')
+      const answer = answers[questionId]
+      let value = 0
+
+      if (answer && answer.value !== undefined && answer.value !== null) {
+        if (typeof answer.value === 'number') {
+          value = answer.value
+        } else if (typeof answer.value === 'string') {
+          const parsed = parseFloat(answer.value)
+          value = isNaN(parsed) ? 0 : parsed
+        } else if (Array.isArray(answer.value)) {
+          // For arrays, sum all numeric values
+          value = answer.value.reduce((sum, val) => {
+            const num = typeof val === 'number' ? val : parseFloat(String(val))
+            return sum + (isNaN(num) ? 0 : num)
+          }, 0)
+        }
+      }
+
+      expression = expression.replace(ref, value.toString())
+    }
+  }
+
+  try {
+    const result = evaluateExpression(expression)
+    return typeof result === 'number' ? result : 0
+  } catch (error) {
+    console.warn('Error evaluating formula:', formula, error)
+    return 0
+  }
 }

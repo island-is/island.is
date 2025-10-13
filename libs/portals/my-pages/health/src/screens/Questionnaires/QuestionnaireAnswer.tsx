@@ -54,6 +54,7 @@ const QuestionnaireAnswer: React.FC = () => {
       variables: {
         input: {
           id,
+          organization: data?.questionnairesDetail?.organization || '',
           entries: formattedAnswers.map((answer) => ({
             entryID: answer.EntryID,
             type: answer.Type,
@@ -64,10 +65,21 @@ const QuestionnaireAnswer: React.FC = () => {
           formId: data?.questionnairesDetail?.formId || '',
         },
       },
+    }).catch((e) => {
+      console.error('Error submitting questionnaire:', e)
+      toast.error(
+        formatMessage(messages.errorSendingAnswers, {
+          title: data?.questionnairesDetail?.title || '',
+        }),
+      )
     })
-    toast.success('Spurningalisti sendur')
+
+    toast.success(
+      formatMessage(messages.yourAnswersForHasBeenSent, {
+        title: data?.questionnairesDetail?.title || '',
+      }),
+    )
     navigate(-1)
-    console.log('answers:', formattedAnswers)
   }
 
   const handleCancel = () => {

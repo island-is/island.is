@@ -19,8 +19,23 @@ export class QuestionnaireInput {
   id!: string
 
   @Field()
+  organization!: string
+
+  @Field()
   formId!: string
 
   @Field(() => [QuestionnaireEntryInput])
   entries!: QuestionnaireEntryInput[]
+}
+
+@InputType()
+export class QuestionnaireAnsweredInput {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  formId!: string
+
+  @Field()
+  organization!: string
 }

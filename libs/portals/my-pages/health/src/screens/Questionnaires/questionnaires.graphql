@@ -36,29 +36,53 @@ query GetQuestionnaire($id: String!, $locale: String!) {
           label
           sublabel
           display
-          # Text input fields
           placeholder
           maxLength
-          # Number input fields
           min
           max
-          # Thermometer/Scale fields
           maxLabel
           minLabel
-          # Radio/Checkbox fields
           options {
             label
             value
           }
-          value {
-            extraQuestions
-          }
+          formula
         }
         visibilityConditions {
           questionId
           operator
           expectedValues
           showWhenMatched
+        }
+      }
+    }
+  }
+}
+
+query GetAnsweredQuestionnaire(
+  $input: QuestionnaireAnsweredInput!
+  $locale: String!
+) {
+  getAnsweredQuestionnaires(input: $input, locale: $locale) {
+    id
+    formId
+    title
+    sentDate
+    status
+    organization
+    sections {
+      __typename
+      sectionTitle
+      questions {
+        __typename
+        id
+        label
+        answerOptions {
+          type
+          id
+          options {
+            label
+          }
         }
       }
     }

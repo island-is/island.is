@@ -6,10 +6,10 @@ import {
   Section,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import capitalize from 'lodash/capitalize'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { m } from '../../lib/messages'
-import capitalize from 'lodash/capitalize'
 
 export interface Step {
   id: string
@@ -49,14 +49,16 @@ export const Stepper: React.FC<StepperProps> = ({
   const progress = steps?.length
     ? (Math.min(currentStepIndex + 1, steps.length) / steps.length) * 100
     : 0
+
   const handleStepClick = (stepIndex: number) => {
     if (allowClickableSteps && steps && !steps[stepIndex].disabled) {
       onStepChange(stepIndex)
     }
   }
+
   return (
-    <Box>
-      <Box marginBottom={8}>
+    <>
+      <Box marginBottom={[2, 2, 2, 8]}>
         <Button
           variant="ghost"
           onClick={() =>
@@ -89,6 +91,6 @@ export const Stepper: React.FC<StepperProps> = ({
           })}
         />
       )}
-    </Box>
+    </>
   )
 }

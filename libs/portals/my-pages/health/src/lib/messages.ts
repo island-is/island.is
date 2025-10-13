@@ -1736,4 +1736,13 @@ export const messages = defineMessages({
     defaultMessage: 'Sent af',
     id: 'sp.health:sent-from',
   },
+  yourAnswersForHasBeenSent: {
+    defaultMessage: 'Svör þín við {title} hafa verið send',
+    id: 'sp.health:your-answers-for-has-been-sent',
+  },
+  errorSendingAnswers: {
+    defaultMessage:
+      'Ekki tókst að senda svör við {title}. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:error-sending-answers',
+  },
 })

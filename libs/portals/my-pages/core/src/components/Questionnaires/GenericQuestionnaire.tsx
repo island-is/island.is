@@ -10,12 +10,24 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
-import { isQuestionVisibleWithStructuredConditions } from './utils/visibilityUtils'
+import {
+  calculateFormula,
+  isQuestionVisibleWithStructuredConditions,
+} from './utils/visibilityUtils'
 
-import { QuestionnaireQuestion, Questionnaire } from '@island.is/api/schema'
+import {
+  QuestionnaireQuestion,
+  Questionnaire,
+  QuestionnaireAnswerOption,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
+
+// Extended type to include formula field until schema is updated
+interface ExtendedAnswerOption extends QuestionnaireAnswerOption {
+  formula?: string
+}
 
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire
@@ -40,6 +52,49 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>({})
   const [currentStep, setCurrentStep] = useState(0)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+
+  // Helper function to calculate formula
+  const calculateFormulaCallback = useCallback(
+    (
+      formula: string,
+      answers: { [key: string]: QuestionAnswer },
+    ): number | null => {
+      return calculateFormula(formula, answers)
+    },
+    [],
+  )
+
+  // Initialize calculated values when component mounts
+  useEffect(() => {
+    if (!questionnaire.sections?.length) return
+
+    const allQuestions = questionnaire.sections.flatMap(
+      (s) => s.questions || [],
+    )
+    const calculatedAnswers: { [key: string]: QuestionAnswer } = {}
+
+    // Find questions with formulas and calculate their initial values (with empty answers)
+    for (const question of allQuestions) {
+      const extendedAnswerOptions =
+        question.answerOptions as ExtendedAnswerOption
+      if (extendedAnswerOptions?.formula) {
+        const calculatedValue = calculateFormulaCallback(
+          extendedAnswerOptions.formula,
+          {},
+        )
+        calculatedAnswers[question.id] = {
+          questionId: question.id,
+          value: calculatedValue ?? '',
+          type: question.answerOptions.type,
+        }
+      }
+    }
+
+    // Set initial calculated answers
+    if (Object.keys(calculatedAnswers).length > 0) {
+      setAnswers(calculatedAnswers)
+    }
+  }, [questionnaire.sections, calculateFormulaCallback])
 
   // Process sections into visible questions with section-aware filtering
   const processedSections = useMemo(() => {
@@ -106,17 +161,44 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     }
   }, [questionSteps])
 
-  const handleAnswerChange = useCallback((answer: QuestionAnswer) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [answer.questionId]: answer,
-    }))
+  const handleAnswerChange = useCallback(
+    (answer: QuestionAnswer) => {
+      setAnswers((prev) => {
+        const newAnswers = {
+          ...prev,
+          [answer.questionId]: answer,
+        }
 
-    setErrors((prev) => {
-      const { [answer.questionId]: _, ...newErrors } = prev
-      return newErrors
-    })
-  }, [])
+        // Calculate any formulas that depend on changed values
+        const allQuestions =
+          questionnaire.sections?.flatMap((s) => s.questions || []) || []
+
+        for (const question of allQuestions) {
+          const extendedAnswerOptions =
+            question.answerOptions as ExtendedAnswerOption
+          if (extendedAnswerOptions?.formula) {
+            const calculatedValue = calculateFormulaCallback(
+              extendedAnswerOptions.formula,
+              newAnswers,
+            )
+            newAnswers[question.id] = {
+              questionId: question.id,
+              value: calculatedValue ?? '',
+              type: question.answerOptions.type,
+            }
+          }
+        }
+
+        return newAnswers
+      })
+
+      setErrors((prev) => {
+        const { [answer.questionId]: _, ...newErrors } = prev
+        return newErrors
+      })
+    },
+    [questionnaire.sections, calculateFormula],
+  )
 
   const validateCurrentStep = (): boolean => {
     const currentQuestions = questionSteps
@@ -205,13 +287,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         <GridRow>
           {enableStepper && questionSteps && (
             <GridColumn span={['12/12', '12/12', '3/12']}>
-              <Box
-                background={'blue100'}
-                paddingBottom={3}
-                paddingX={3}
-                marginRight={4}
-                overflow="hidden"
-              >
+              <Box background={'blue100'} paddingBottom={3}>
                 <Stepper
                   steps={stepperSteps}
                   currentStepIndex={currentStep}
@@ -270,6 +346,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                       answer={answers[question.id]}
                       onAnswerChange={handleAnswerChange}
                       error={errors[question.id]}
+                      disabled={question.answerOptions.formula ? true : false}
                     />
                   ))}
                 </Stack>

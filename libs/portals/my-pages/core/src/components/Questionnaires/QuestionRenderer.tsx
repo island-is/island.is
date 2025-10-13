@@ -36,7 +36,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       questionId: question.id,
       value,
       type: question.answerOptions.type,
-      extraAnswers,
     })
   }
 

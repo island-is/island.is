@@ -29,8 +29,14 @@ export class LshDevService {
     return data
   }
 
+  async getAnsweredForms(auth: Auth): Promise<Form[]> {
+    const data = await this.patientPropertiesApiWithAuth(
+      auth,
+    ).apiV2PatientPropertiesGetAnsweredFormListGet()
+    return data
+  }
+
   async postPatientForm(auth: Auth, form: any, guid: string): Promise<boolean> {
-    console.log('form to post:', form)
     return await this.patientPropertiesApiWithAuth(
       auth,
     ).apiV2PatientPropertiesSubmitFormAnswersPost({ requestBody: form })

@@ -22,9 +22,9 @@ export interface Form {
   caption?: string | null
   description?: string | null
   gUID?: string | null
-  validToDateTime: Date | string
-  validFromDateTime: Date | string
-  answerDateTime?: Date | string | null
+  validToDateTime: string | null
+  validFromDateTime: string | null
+  answerDateTime?: string | null
   location?: string | null
   answersJSON?: string | null
 }
@@ -95,7 +95,94 @@ function parseVisibility(
       remainingExpr = remainingExpr.replace(match[0], '')
     }
 
-    // Pattern 4: Existence check - only if no specific patterns matched and has unprocessed @@@
+    // Pattern 4: Handle complex logical expressions with && and ||
+    // Example: "@@@Totalscore >=20 && @@@Totalscore <=24"
+    const complexLogicalPattern = /(.+?)\s*(&&|\|\|)\s*(.+)/
+    const complexMatch = complexLogicalPattern.exec(remainingExpr)
+
+    if (complexMatch) {
+      const leftExpr = complexMatch[1].trim()
+      const logicalOp = complexMatch[2]
+      const rightExpr = complexMatch[3].trim()
+
+      // Parse left and right expressions separately
+      const leftConditions = parseVisibility(leftExpr) || []
+      const rightConditions = parseVisibility(rightExpr) || []
+
+      // For && operations, we need ALL conditions to be true (AND logic)
+      // For || operations, we need ANY condition to be true (OR logic)
+      // Since our current system uses AND logic by default, we can combine them
+      if (logicalOp === '&&') {
+        conditions.push(...leftConditions, ...rightConditions)
+      } else if (logicalOp === '||') {
+        // For OR logic, we'd need a different approach
+        // For now, let's treat it as AND since that's what our evaluation supports
+        conditions.push(...leftConditions, ...rightConditions)
+      }
+
+      // Clear the remaining expression since we processed the whole thing
+      remainingExpr = ''
+    } else {
+      // Pattern 5: Single mathematical comparisons '@@@questionId operator value'
+      const mathPatterns = [
+        {
+          regex: /@@@([a-zA-Z0-9_-]+)\s*(>=|<=|>|<|==|!=)\s*(\d+(?:\.\d+)?)/g,
+          op: 'comparison',
+        },
+        {
+          regex:
+            /@@@([a-zA-Z0-9_-]+)\s*(>=|<=|>|<|==|!=)\s*@@@([a-zA-Z0-9_-]+)/g,
+          op: 'variable_comparison',
+        },
+      ]
+
+      for (const pattern of mathPatterns) {
+        let mathMatch
+        while ((mathMatch = pattern.regex.exec(remainingExpr)) !== null) {
+          const operator = mathMatch[2]
+          const value =
+            pattern.op === 'variable_comparison' ? mathMatch[3] : mathMatch[3]
+
+          // Map operators to our visibility operators
+          let visibilityOp = VisibilityOperator.equals
+          const expectedVal = value
+          let showWhen = true
+
+          switch (operator) {
+            case '>':
+              visibilityOp = VisibilityOperator.greaterThan
+              break
+            case '>=':
+              visibilityOp = VisibilityOperator.greaterThanOrEqual
+              break
+            case '<':
+              visibilityOp = VisibilityOperator.lessThan
+              break
+            case '<=':
+              visibilityOp = VisibilityOperator.lessThanOrEqual
+              break
+            case '==':
+              visibilityOp = VisibilityOperator.equals
+              break
+            case '!=':
+              visibilityOp = VisibilityOperator.equals
+              showWhen = false
+              break
+          }
+
+          conditions.push({
+            questionId: mathMatch[1],
+            operator: visibilityOp,
+            expectedValues: [expectedVal],
+            showWhenMatched: showWhen,
+          })
+
+          remainingExpr = remainingExpr.replace(mathMatch[0], '')
+        }
+      }
+    }
+
+    // Pattern 6: Existence check - only if no specific patterns matched and has unprocessed @@@
     if (conditions.length === 0 && remainingExpr.includes('@@@')) {
       const dependencyPattern = /@@@([a-zA-Z0-9_-]+)/g
       let depMatch
@@ -208,12 +295,7 @@ function mapQuestion(q: Record<string, unknown>): Question {
         : undefined,
     minLabel: (q['MinLabel'] as string)?.trim() || undefined,
     maxLabel: (q['MaxLabel'] as string)?.trim() || undefined,
-
-    // Enhanced value structure for dependent questions
-    value:
-      Array.isArray(q['Dependants']) && (q['Dependants'] as string[]).length > 0
-        ? { extraQuestions: q['Dependants'] as string[] }
-        : undefined,
+    formula: (q['Formula'] as string)?.trim() || undefined,
   }
 
   // Extract dependencies from visibility conditions and explicit DependsOn
@@ -254,12 +336,21 @@ function mapQuestionnaire(form: Form): Questionnaire {
   }
 
   const now = new Date()
-  const validTo = new Date(form.validToDateTime)
-  const answered = !!form.answerDateTime
+  const validToDate = toISOStringSafe(form.validToDateTime)
+  const validTo = validToDate && new Date(validToDate)
+
+  // Check if answerDateTime is a valid date/time value
+  const answered =
+    form.answerDateTime != null &&
+    form.answerDateTime !== '' &&
+    form.answerDateTime !== 'null' &&
+    typeof form.answerDateTime === 'string' &&
+    form.answerDateTime.trim() !== '' &&
+    !isNaN(new Date(form.answerDateTime).getTime())
 
   const status = answered
     ? QuestionnairesStatusEnum.answered
-    : validTo < now
+    : validTo && validTo < now
     ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered
 

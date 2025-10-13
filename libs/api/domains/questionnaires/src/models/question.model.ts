@@ -35,6 +35,10 @@ export enum VisibilityOperator {
   contains = 'contains',
   exists = 'exists',
   isEmpty = 'isEmpty',
+  greaterThan = 'greaterThan',
+  greaterThanOrEqual = 'greaterThanOrEqual',
+  lessThan = 'lessThan',
+  lessThanOrEqual = 'lessThanOrEqual',
 }
 
 registerEnumType(VisibilityOperator, {
@@ -68,20 +72,13 @@ export class LabelValue {
   value?: string
 }
 
-@ObjectType('QuestionnaireAnswerOptionValue')
-export class AnswerOptionValue {
-  @Field(() => [String], { nullable: true })
-  extraQuestions?: string[]
-}
-
-// Answer option type - flattened to include answer type properties directly
 @ObjectType('QuestionnaireAnswerOption')
 export class AnswerOption {
   @Field()
   id!: string
 
-  @Field(() => AnswerOptionValue, { nullable: true })
-  value?: AnswerOptionValue
+  @Field({ nullable: true })
+  value?: string
 
   @Field({ nullable: true })
   label?: string
@@ -89,37 +86,35 @@ export class AnswerOption {
   @Field({ nullable: true })
   sublabel?: string
 
-  // Common fields from HealthQuestionnaireAnswerBase
   @Field(() => AnswerOptionType)
   type!: AnswerOptionType
 
   @Field(() => QuestionDisplayType)
   display!: QuestionDisplayType
 
-  // Text input specific fields
   @Field({ nullable: true })
   placeholder?: string
 
   @Field({ nullable: true })
   maxLength?: number
 
-  // Number input specific fields
   @Field({ nullable: true })
   min?: string
 
   @Field({ nullable: true })
   max?: string
 
-  // Thermometer/Scale specific fields
   @Field({ nullable: true })
   maxLabel?: string
 
   @Field({ nullable: true })
   minLabel?: string
 
-  // Radio/Checkbox specific fields
   @Field(() => [LabelValue], { nullable: true })
   options?: LabelValue[]
+
+  @Field({ nullable: true })
+  formula?: string
 }
 
 // Main question type

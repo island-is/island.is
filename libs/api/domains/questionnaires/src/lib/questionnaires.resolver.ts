@@ -14,7 +14,10 @@ import {
   Questionnaire,
   QuestionnairesList,
 } from '../models/questionnaires.model'
-import { QuestionnaireInput } from './dto/questionnaire.input'
+import {
+  QuestionnaireAnsweredInput,
+  QuestionnaireInput,
+} from './dto/questionnaire.input'
 import { QuestionnairesService } from './questionnaires.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -46,6 +49,22 @@ export class QuestionnairesResolver {
     @Args('id') id: string,
   ): Promise<Questionnaire | null> {
     return this.questionnairesService.getQuestionnaire(user, id)
+  }
+
+  @Query(() => [Questionnaire], {
+    name: 'getAnsweredQuestionnaires',
+    nullable: true,
+  })
+  async getAnsweredQuestionnaires(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
+    @Args('input') input: QuestionnaireAnsweredInput,
+  ): Promise<Questionnaire[] | null> {
+    return this.questionnairesService.getAnsweredQuestionnaires(
+      user,
+      locale,
+      input,
+    )
   }
 
   @Mutation(() => Boolean, { name: 'submitQuestionnaire' })

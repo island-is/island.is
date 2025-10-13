@@ -72,6 +72,14 @@ const QuestionnaireInfo: React.FC = () => {
     ? 'red'
     : 'mint'
 
+  if (error && !loading) {
+    return (
+      <Box background="white">
+        <Problem type="internal_service_error" noBorder={false} />
+      </Box>
+    )
+  }
+
   return (
     <IntroWrapper
       title={
@@ -112,7 +120,6 @@ const QuestionnaireInfo: React.FC = () => {
           <LoadingDots />
         </Box>
       )}
-      {error && !loading && <Problem type="internal_service_error" noBorder />}
       {
         <InfoLineStack
           children={[

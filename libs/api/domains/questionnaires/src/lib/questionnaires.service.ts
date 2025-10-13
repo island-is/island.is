@@ -2,7 +2,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import { LshClientService } from '@island.is/clients/lsh'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
-import { QuestionnaireInput } from './dto/questionnaire.input'
+import {
+  QuestionnaireAnsweredInput,
+  QuestionnaireInput,
+} from './dto/questionnaire.input'
 
 import { Form, LshDevService } from '@island.is/clients/health-directorate'
 
@@ -58,6 +61,27 @@ export class QuestionnairesService {
     return (data || lshFound) ?? null
   }
 
+  async getAnsweredQuestionnaires(
+    user: User,
+    _locale: Locale,
+    input: QuestionnaireAnsweredInput,
+  ): Promise<Questionnaire[] | null> {
+    const lshDevQuestionnaires: QuestionnairesList[] = []
+
+    // TODO Handle error for each client so the other can still succeed
+    const lshDev: Form[] = await this.lshDevApi.getAnsweredForms(user)
+    const lshTemp = mapFormsToQuestionnairesList(lshDev)
+
+    const data = lshTemp.questionnaires
+      ?.map((q) => (q.formId === input.formId ? q : null))
+      .filter((q) => q !== null)
+
+    if (!data || data.length === 0) {
+      return null
+    }
+
+    return data
+  }
   async submitQuestionnaire(
     user: User,
     input: QuestionnaireInput,
