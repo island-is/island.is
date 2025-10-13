@@ -407,7 +407,7 @@ const constructInvestigationCourtRecordPdf = (
       theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
       'Times-Bold',
     )
-    addEmptyLines(doc, 2) //?
+    addEmptyLines(doc, 2)
   }
 
   if (theCase.endOfSessionBookings) {

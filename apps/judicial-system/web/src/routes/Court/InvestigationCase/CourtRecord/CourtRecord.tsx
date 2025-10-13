@@ -38,6 +38,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseAppealDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,6 +54,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isCourtRecordStepValidIC,
+  isNullOrUndefined,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -232,9 +234,34 @@ const CourtRecord: FC = () => {
     [workingCase.id],
   )
 
-  const handleEndOfSessionBookingsUpdate = () => {
+  const handleEndOfSessionBookingsUpdate = ({
+    accusedAppealDecision,
+    accusedAppealAnnouncement,
+    prosecutorAppealDecision,
+    prosecutorAppealAnnouncement,
+  }: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => {
     const endOfSessionBookings: string[] = []
-    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
+    const updatedCase = {
+      ...workingCase,
+      ...(!isNullOrUndefined(accusedAppealDecision)
+        ? { accusedAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(accusedAppealAnnouncement)
+        ? { accusedAppealAnnouncement }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealDecision)
+        ? { prosecutorAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+        ? { prosecutorAppealAnnouncement }
+        : {}),
+    }
+    populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
 
     // override existing end of session booking if there
     // is a update for a given working case (e.g. appeal decision)

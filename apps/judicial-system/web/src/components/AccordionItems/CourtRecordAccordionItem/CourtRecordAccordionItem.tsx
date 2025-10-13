@@ -138,7 +138,6 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 SessionArrangements.ALL_PRESENT) && (
               <Box marginBottom={2}>
                 <Text>
-                  {/* TODO: is this still relevant? */}
                   {formatMessage(m.sections.appealDecision.disclaimer)}
                 </Text>
               </Box>

@@ -103,7 +103,6 @@ export const courtRecord = {
     defaultMessage: 'Dómari hefur ekki verið skráður',
     description: 'Notaður sem texti þegar dómari hefur ekki verið skráður.',
   }),
-
   appealDirections: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.appeal_directions',
     defaultMessage:
