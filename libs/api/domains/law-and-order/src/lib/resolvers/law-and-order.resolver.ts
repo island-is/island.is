@@ -123,6 +123,7 @@ export class LawAndOrderResolver {
     resources: string,
     promise: Promise<T>,
     user: User,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     meta?: any,
   ): Promise<T> {
     try {
