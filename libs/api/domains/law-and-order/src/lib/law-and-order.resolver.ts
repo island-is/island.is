@@ -16,6 +16,7 @@ import { GetCourtCaseInput } from '../dto/getCourtCaseInput'
 import { GetSubpoenaInput } from '../dto/getSubpoenaInput'
 import { GetVerdictsInput } from '../dto/getVerdictInput'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
 import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
 import { DefenseChoice } from '../models/defenseChoice.model'
@@ -23,7 +24,6 @@ import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
 import { Verdict } from '../models/verdict.model'
 import { LawAndOrderService } from './law-and-order.service'
-import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
 
 const LOG_CATEGORY = 'law-and-order-resolver'
 
@@ -161,6 +161,7 @@ export class LawAndOrderResolver {
     resources: string,
     promise: Promise<T>,
     user: User,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     meta?: any,
   ): Promise<T> {
     try {

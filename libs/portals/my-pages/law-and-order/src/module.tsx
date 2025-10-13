@@ -1,10 +1,9 @@
-import { PortalModule } from '@island.is/portals/core'
-import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Navigate } from 'react-router-dom'
+import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
-import { Features } from '@island.is/feature-flags'
+import { Navigate } from 'react-router-dom'
+import { LawAndOrderPaths } from './lib/paths'
 import Verdict from './screens/Verdict/Verdict'
 
 const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
