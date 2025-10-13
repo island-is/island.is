@@ -58,7 +58,7 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
           context: {
             copy: `${applicantName} Kt: ${formatKennitala(
               application.applicant,
-            )} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfaradi barni og er að óska eftir samþykki frá þér.`,
+            )} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfarandi barni og er að óska eftir samþykki frá þér.`,
           },
         },
         {
