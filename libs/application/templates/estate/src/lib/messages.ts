@@ -789,6 +789,21 @@ export const m = defineMessages({
     defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
     description: '',
   },
+  attachmentsDescriptionUndividedEstate: {
+    id: 'es.application:attachmentsDescriptionUndividedEstate#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsDescriptionEstateWithoutAssets: {
+    id: 'es.application:attachmentsDescriptionEstateWithoutAssets#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:attachmentsDescriptionDivisionOfEstateByHeirs#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
   attachmentsButton: {
     id: 'es.application:attachmentsButton',
     defaultMessage: 'Velja skjöl',
