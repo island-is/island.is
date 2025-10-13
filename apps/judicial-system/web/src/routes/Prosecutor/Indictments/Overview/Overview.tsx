@@ -190,7 +190,9 @@ const Overview: FC = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
           <Box marginBottom={2}>
             <AlertMessage

@@ -35,7 +35,7 @@ const PoliceCaseNumbersTags: FC<{
 
 const Entry: FC<{ label: string; value: string }> = ({ label, value }) => {
   return (
-    <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
+    <Text color="dark400" fontWeight="semiBold">
       {`${label}: ${value}`}
     </Text>
   )
@@ -103,10 +103,8 @@ export const ProsecutorCaseInfo: FC<
   const { formatMessage } = useIntl()
 
   return (
-    <Box component="section" marginBottom={5}>
-      <Box marginBottom={2}>
-        <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
-      </Box>
+    <Box component="section" display="flex" flexDirection="column" rowGap={1}>
+      <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}
