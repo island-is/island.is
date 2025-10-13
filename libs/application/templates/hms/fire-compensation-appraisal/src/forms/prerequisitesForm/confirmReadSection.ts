@@ -40,7 +40,7 @@ export const confirmReadSection = buildSection({
         buildCheckboxField({
           id: 'otherPropertiesThanIOwnCheckbox',
           options: [
-            { 
+            {
               label: 'Ég er að sækja um eign sem ég á ekki.',
               value: YES,
             },

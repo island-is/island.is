@@ -11,40 +11,30 @@ export const notkunareiningarOptions = (
     'otherPropertiesThanIOwnCheckbox',
   )?.includes(YES)
 
-  const selectedRealEstateId = 
-  otherPropertiesThanIOwn 
-  ? 'F' + getValueViaPath<string>(
-      application.answers,
-      'selectedPropertyByCode',
-    )
-  : getValueViaPath<string>(
-    application.answers,
-    'realEstate',
-    )
+  const selectedRealEstateId = otherPropertiesThanIOwn
+    ? 'F' +
+      getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(application.answers, 'realEstate')
 
-  const fasteignir = otherPropertiesThanIOwn 
-  ? getValueViaPath<Array<Fasteign>>(
-      application.answers,
-      'anyProperties',
-    )
-  : getValueViaPath<Array<Fasteign>>(
-      application.externalData,
-      'getProperties.data',
-    )
+  const fasteignir = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(
+        application.externalData,
+        'getProperties.data',
+      )
 
-    console.log('fasteignir', fasteignir)
-    console.log('selectedRealEstateId', selectedRealEstateId)
+  console.log('fasteignir', fasteignir)
+  console.log('selectedRealEstateId', selectedRealEstateId)
   const fasteign = fasteignir?.find(
     (fasteign) => fasteign.fasteignanumer === selectedRealEstateId,
   )
-  const x = fasteign?.notkunareiningar?.notkunareiningar?.map((notkunareining) => ({
+  const x =
+    fasteign?.notkunareiningar?.notkunareiningar?.map((notkunareining) => ({
       label: `${notkunareining.notkunBirting} - Brunabótamat: ${formatCurrency(
         notkunareining.brunabotamat ?? 0,
       )}`,
       value: notkunareining.notkunareininganumer ?? '',
     })) ?? []
-    console.log('options', x)
-  return (
-x
-  )
+  console.log('options', x)
+  return x
 }

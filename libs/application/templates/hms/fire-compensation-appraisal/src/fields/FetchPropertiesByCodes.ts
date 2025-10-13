@@ -15,7 +15,6 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
 
   useEffect(() => {
     if (!selectedCode) return
-
     ;(async () => {
       if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
         const mockData = getValueViaPath<Array<Fasteign>>(
@@ -33,7 +32,7 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
 
       setValue('anyProperties', data?.hmsPropertyByPropertyCode ?? [])
     })()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCode, apolloClient, setValue])
 
   return null

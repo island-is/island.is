@@ -106,9 +106,12 @@ export class HmsResolver {
     @Args('input') input: HmsPropertyByPropertyCodeInput,
   ): Promise<Array<FasteignAsset>> {
     try {
-      const propertyInfos = await this.hmsService.hmsPropertyByPropertyCode(user, {
-        ...input,
-      })
+      const propertyInfos = await this.hmsService.hmsPropertyByPropertyCode(
+        user,
+        {
+          ...input,
+        },
+      )
       if (!propertyInfos) {
         throw new Error('Property not found')
       }

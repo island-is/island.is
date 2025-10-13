@@ -54,20 +54,22 @@ export const realEstateSection = buildSection({
           clearOnChange: ['usageUnits'],
           marginBottom: 4,
         }),
-        buildCustomField({
-          id: 'anyonesProperty',
-          component: 'PropertySearch',
-          condition: (answers) => {
-            const otherPropertiesThanIOwn = getValueViaPath<string[]>(
-              answers,
-              'otherPropertiesThanIOwnCheckbox',
-            )
-            return !!otherPropertiesThanIOwn?.includes(YES)
+        buildCustomField(
+          {
+            id: 'anyonesProperty',
+            component: 'PropertySearch',
+            condition: (answers) => {
+              const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+                answers,
+                'otherPropertiesThanIOwnCheckbox',
+              )
+              return !!otherPropertiesThanIOwn?.includes(YES)
+            },
           },
-        },
-        {
-          onlyAddressSearch: true,
-        }),
+          {
+            onlyAddressSearch: true,
+          },
+        ),
         buildAsyncSelectField({
           id: 'selectedPropertyByCode',
           title: 'Eignir',
@@ -85,10 +87,12 @@ export const realEstateSection = buildSection({
               'anyonesProperty.propertiesByAddressCode',
             )
 
-            return allProps?.map((prop) => ({
-              label: `(${prop.propertyCode?.toString()}) ${prop.address}`,
-              value: prop.propertyCode?.toString() ?? '',
-            })) ?? []
+            return (
+              allProps?.map((prop) => ({
+                label: `(${prop.propertyCode?.toString()}) ${prop.address}`,
+                value: prop.propertyCode?.toString() ?? '',
+              })) ?? []
+            )
           },
           clearOnChange: ['usageUnits'],
           marginBottom: 4,

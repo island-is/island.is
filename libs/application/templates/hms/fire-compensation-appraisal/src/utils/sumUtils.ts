@@ -10,20 +10,14 @@ export const sumUsageUnitsFireCompensation = (
     answers,
     'otherPropertiesThanIOwnCheckbox',
   )?.includes(YES)
-  const realEstateId = otherPropertiesThanIOwn 
-  ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
-  : getValueViaPath<string>(answers, 'realEstate')
+  const realEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
   const usageUnits = getValueViaPath<Array<string>>(answers, 'usageUnits')
 
-  const properties = otherPropertiesThanIOwn 
-  ? getValueViaPath<Array<Fasteign>>(
-      answers,
-      'anyProperties',
-    )
-  : getValueViaPath<Array<Fasteign>>(
-      externalData,
-      'getProperties.data',
-    )
+  const properties = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
@@ -54,19 +48,13 @@ export const totalFireCompensation = (
     'otherPropertiesThanIOwnCheckbox',
   )?.includes(YES)
 
-  const realEstateId = otherPropertiesThanIOwn 
-  ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
-  : getValueViaPath<string>(answers, 'realEstate')
+  const realEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
 
-  const properties = otherPropertiesThanIOwn 
-  ? getValueViaPath<Array<Fasteign>>(
-      answers,
-      'anyProperties',
-    )
-  : getValueViaPath<Array<Fasteign>>(
-      externalData,
-      'getProperties.data',
-    )
+  const properties = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
