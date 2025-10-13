@@ -17,6 +17,16 @@ import {
   ProvisionsAndConditionSection,
   Files,
   BankAccount,
+  DraftParties,
+  DraftPropertyInfo,
+  DraftRentalAmount,
+  DraftOtherFees,
+  DraftCondition,
+  DraftRegisterProperty,
+  DraftFireProtections,
+  DraftRentalPeriod,
+  DraftSpecialProvisions,
+  DraftAnswersObject,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
@@ -279,5 +289,30 @@ export const applicationAnswers = (
     ...extractSecurityDeposit(answers),
     ...extractOtherFees(answers),
     ...extractReview(answers),
+  }
+}
+
+export const draftAnswers = (
+  answers: Application['answers'],
+): DraftAnswersObject => {
+  return {
+    parties: getValueViaPath<DraftParties>(answers, 'parties'),
+    condition: getValueViaPath<DraftCondition>(answers, 'condition'),
+    otherFees: getValueViaPath<DraftOtherFees>(answers, 'otherFees'),
+    propertyInfo: getValueViaPath<DraftPropertyInfo>(answers, 'propertyInfo'),
+    rentalAmount: getValueViaPath<DraftRentalAmount>(answers, 'rentalAmount'),
+    rentalPeriod: getValueViaPath<DraftRentalPeriod>(answers, 'rentalPeriod'),
+    fireProtections: getValueViaPath<DraftFireProtections>(
+      answers,
+      'fireProtections',
+    ),
+    registerProperty: getValueViaPath<DraftRegisterProperty>(
+      answers,
+      'registerProperty',
+    ),
+    specialProvisions: getValueViaPath<DraftSpecialProvisions>(
+      answers,
+      'specialProvisions',
+    ),
   }
 }

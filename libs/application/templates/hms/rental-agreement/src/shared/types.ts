@@ -222,3 +222,144 @@ export interface RentalAgreementAnswers
     SecurityDepositSection,
     OtherFeesSection,
     ReviewSection {}
+
+export interface DraftPartyContact {
+  email: string
+  phone: string
+  nationalIdWithName: DraftNationalIdWithName
+}
+
+export interface DraftNationalIdWithName {
+  name: string
+  nationalId: string
+}
+export interface DraftTenantInfo {
+  table: DraftPartyContact[]
+}
+
+export interface DraftLandlordInfo {
+  table: DraftPartyContact[]
+  shouldShowRepresentativeTable: string[]
+  representativeTable: DraftPartyContact[]
+}
+export interface DraftParties {
+  tenantInfo: DraftTenantInfo
+  landlordInfo: DraftLandlordInfo
+}
+export interface DraftResultsFile {
+  key: string
+  name: string
+}
+export interface DraftCondition {
+  inspector: string
+  resultsFiles: DraftResultsFile[]
+  resultsDescription: string
+}
+export interface DraftOtherFees {
+  otherCosts: string[]
+  heatingCost: string
+  housingFund: string
+  electricityCost: string
+}
+export interface DraftPropertyInfo {
+  categoryType: string
+  categoryClass: string
+}
+
+export interface DraftBankAccountNumber {
+  ledger: string
+  bankNumber: string
+  accountNumber: string
+}
+
+export interface DraftRentalAmount {
+  amount: string
+  isIndexConnected: string[]
+  paymentDateOptions: string
+  paymentMethodOptions: string
+  rentalPeriodStartDate: string
+  rentalPeriodIsDefinite: string[]
+  paymentMethodNationalId: string
+  securityDepositRequired: string[]
+  paymentMethodBankAccountNumber: DraftBankAccountNumber
+}
+
+export interface DraftRentalPeriod {
+  endDate: string
+  startDate: string
+  isDefinite: string[]
+}
+
+export interface DraftFireProtections {
+  fireBlanket: string
+  propertySize: PropertyUnit[]
+  emergencyExits: string
+  smokeDetectors: string
+  fireExtinguisher: string
+}
+
+export interface DraftRegisterProperty {
+  searchresults: DraftSearchResults
+}
+
+export interface DraftSearchResults {
+  label: string
+  units: PropertyUnit[]
+  value: string
+  address: string
+  landCode: number
+  numOfRooms: object
+  postalCode: number
+  addressCode: number
+  checkedUnits: object
+  municipalityCode: number
+  municipalityName: string
+  changedValueOfUnitSize: object
+  propertiesByAddressCode: DraftPropertyByAddressCode[]
+  numOfConnectedProperties: number
+}
+
+export interface DraftAppraisalUnit {
+  units: PropertyUnit[]
+  address: string
+  unitCode: string
+  addressCode: number
+  propertyCode: number
+  propertyValue: number
+  propertyLandValue: object
+  propertyUsageDescription: string
+}
+
+export interface DraftPropertyByAddressCode {
+  size: number
+  address: string
+  landCode: number
+  sizeUnit: string
+  unitCode: string
+  postalCode: number
+  addressCode: number
+  propertyCode: number
+  propertyValue: number
+  appraisalUnits: DraftAppraisalUnit[]
+  municipalityCode: number
+  municipalityName: string
+  propertyLandValue: number
+  propertyUsageDescription: string
+}
+
+export interface DraftSpecialProvisions {
+  rulesInput: string
+  descriptionInput: string
+  propertySearchUnits: PropertyUnit[]
+}
+export interface DraftAnswersObject {
+  parties?: DraftParties
+  condition?: DraftCondition
+  otherFees?: DraftOtherFees
+  propertyInfo?: DraftPropertyInfo
+  rentalAmount?: DraftRentalAmount
+  rentalPeriod?: DraftRentalPeriod
+  fireProtections?: DraftFireProtections
+  registerProperty?: DraftRegisterProperty
+  specialProvisions?: DraftSpecialProvisions
+}
