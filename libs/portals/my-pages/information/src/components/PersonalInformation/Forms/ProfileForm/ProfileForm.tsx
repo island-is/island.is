@@ -6,11 +6,11 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Link,
   PhoneInput,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Link } from 'react-router-dom'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteEmailOrPhoneValue,
@@ -38,6 +38,7 @@ import { DropModalType } from './types/form'
 import { InputEmail } from './components/Inputs/Email'
 import { AccessDenied } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
+import * as s from './ProfileForm.css'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -203,10 +204,8 @@ export const ProfileForm = ({
                     values={{
                       link: (
                         <Link
-                          color="blue400"
-                          href={InformationPaths.Notifications}
-                          underlineVisibility="always"
-                          underline="small"
+                          to={InformationPaths.SettingsNotifications}
+                          className={s.link}
                         >
                           {formatMessage(emailsMsg.emailListTextLink)}
                         </Link>

@@ -196,12 +196,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
           },
         ],
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
         chargeItems: (application) => {
           const paymentCodes = []
           paymentCodes.push(
@@ -233,6 +227,9 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

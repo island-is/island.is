@@ -1015,5 +1015,9 @@ export const m = defineMessages({
     id: 'form.system:english',
     defaultMessage: 'Enska',
     description: 'English',
+  deleteFormWarning: {
+    id: 'form.system:delete-form-warning',
+    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
+    description: 'Are you sure you want to delete the form: {formName}?',
   },
 })

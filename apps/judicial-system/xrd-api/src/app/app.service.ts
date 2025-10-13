@@ -23,6 +23,7 @@ import {
   LawyerType,
   PoliceFileTypeCode,
   ServiceStatus,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -281,12 +282,13 @@ export class AppService {
   ) {
     const getPoliceDocumentDeliveryStatus = ({
       delivered,
+      deliveredToDefendant,
       deliveredOnPaper,
       deliveredOnIslandis,
       deliveredToLawyer,
     }: UpdatePoliceDocumentDeliveryDto) => {
       if (delivered) {
-        if (deliveredOnPaper) {
+        if (deliveredOnPaper || deliveredToDefendant) {
           return ServiceStatus.IN_PERSON
         }
         if (deliveredOnIslandis) {
@@ -295,8 +297,27 @@ export class AppService {
         if (deliveredToLawyer) {
           return ServiceStatus.DEFENDER
         }
+        return ServiceStatus.FAILED
       }
-      return ServiceStatus.FAILED
+
+      return undefined
+    }
+
+    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
+      const appealDecision =
+        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
+
+      if (
+        !Object.values(VerdictAppealDecision).includes(
+          appealDecision as VerdictAppealDecision,
+        )
+      ) {
+        throw new BadRequestException(
+          `Invalid appeal_decision: ${appealDecision}. Must be one of: ${Object.values(
+            VerdictAppealDecision,
+          ).join(', ')}`,
+        )
+      }
     }
 
     const parsedPoliceUpdate = {
@@ -308,6 +329,9 @@ export class AppService {
       ),
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
+      appealDecision:
+        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
+        undefined,
     }
     try {
       const res = await fetch(

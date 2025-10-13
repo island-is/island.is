@@ -255,6 +255,11 @@ query Case($input: CaseQueryInput!) {
       modified
       caseId
       location
+      judgeId
+      judge {
+        id
+        name
+      }
       startDate
       endDate
       isClosed
@@ -374,6 +379,19 @@ query Case($input: CaseQueryInput!) {
         id
         startDate
         endDate
+        isConfirmed
+        filedDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          name
+          caseFileId
+          generatedPdfUri
+        }
       }
       court {
         id
