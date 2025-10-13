@@ -36,8 +36,5 @@ export const OrganizationEmployeeApiProvider = {
         },
       }),
     ),
-  inject: [
-    ElfurClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
+  inject: [ElfurClientConfig.KEY, IdsClientConfig.KEY],
 }

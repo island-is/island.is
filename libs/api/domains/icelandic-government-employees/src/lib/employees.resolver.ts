@@ -1,10 +1,14 @@
-import { IdsUserGuard, CurrentUser, type User } from "@island.is/auth-nest-tools"
-import { UseGuards, } from "@nestjs/common"
+import {
+  IdsUserGuard,
+  CurrentUser,
+  type User,
+} from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
-import { Args, Query, Resolver } from "@nestjs/graphql"
-import { IcelandicGovernmentEmployeesService } from "./employees.service"
-import { EmployeeList } from "./models/employeeList.model"
-import { EmployeesInput } from "./dtos/getEmployeeList.input"
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { IcelandicGovernmentEmployeesService } from './employees.service'
+import { EmployeeList } from './models/employeeList.model'
+import { EmployeesInput } from './dtos/getEmployeeList.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -12,7 +16,7 @@ import { EmployeesInput } from "./dtos/getEmployeeList.input"
 export class IcelandicGovernmentEmployeesResolver {
   constructor(
     private readonly employeeService: IcelandicGovernmentEmployeesService,
-  ) { }
+  ) {}
 
   @Query(() => EmployeeList, {
     name: 'icelandicGovernmentEmployees',
