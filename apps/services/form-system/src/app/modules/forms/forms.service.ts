@@ -26,6 +26,7 @@ import {
   CertificationType,
   CertificationTypes,
 } from '../../dataTypes/certificationTypes/certificationType.model'
+import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
@@ -214,15 +215,14 @@ export class FormsService {
       confirmationHeader: { is: '', en: '' },
       confirmationText: { is: '', en: '' },
       additionalInfo: [],
-    }
+    } as CompletedSectionInfo
 
-    const newForm = (await this.formModel.create({
+    const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
       completedSectionInfo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any)) as Form
+    } as Form)
 
     await this.createFormTemplate(newForm)
 
