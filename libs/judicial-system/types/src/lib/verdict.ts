@@ -31,15 +31,17 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveredOnIslandis,
   deliveredToLawyer,
   legalPaperRequestDate,
+  deliveredToDefendant,
 }: {
   delivered?: boolean
   deliveredOnPaper?: boolean
   deliveredOnIslandis?: boolean
   deliveredToLawyer?: boolean
   legalPaperRequestDate?: string
+  deliveredToDefendant?: boolean
 }) => {
   if (delivered) {
-    if (deliveredOnPaper) {
+    if (deliveredOnPaper || deliveredToDefendant) {
       return VerdictServiceStatus.IN_PERSON
     }
     if (deliveredOnIslandis) {
@@ -48,6 +50,7 @@ export const mapPoliceVerdictDeliveryStatus = ({
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
     }
+    return VerdictServiceStatus.FAILED
   }
   if (legalPaperRequestDate) {
     return VerdictServiceStatus.LEGAL_PAPER
