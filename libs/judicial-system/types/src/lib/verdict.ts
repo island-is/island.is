@@ -50,7 +50,7 @@ export const mapPoliceVerdictDeliveryStatus = ({
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
     }
-     return VerdictServiceStatus.FAILED
+    return VerdictServiceStatus.FAILED
   }
   if (legalPaperRequestDate) {
     return VerdictServiceStatus.LEGAL_PAPER
