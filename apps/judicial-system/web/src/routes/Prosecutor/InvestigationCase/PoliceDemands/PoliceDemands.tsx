@@ -190,7 +190,9 @@ const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
