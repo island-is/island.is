@@ -234,6 +234,12 @@ export const include: Includeable[] = [
     include: [
       {
         model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],
@@ -346,6 +352,22 @@ export const include: Includeable[] = [
           },
         },
         separate: true,
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+        ],
       },
       { model: Institution, as: 'court' },
       { model: User, as: 'judge' },
