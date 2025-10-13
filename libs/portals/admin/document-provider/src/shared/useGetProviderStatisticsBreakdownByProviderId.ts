@@ -25,16 +25,18 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownReturnType => {
-  const statisticsInput: DocumentProviderDashboardGetStatisticsBreakdownByProviderId = {
-    providerId: providerId ?? '',
-    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-    sortBy:
-      (sortBy as DocumentProviderDashboardCategoryStatisticsSortBy) ?? DocumentProviderDashboardCategoryStatisticsSortBy.Date,
-    desc,
-    page,
-    pageSize,
-  }
+  const statisticsInput: DocumentProviderDashboardGetStatisticsBreakdownByProviderId =
+    {
+      providerId: providerId ?? '',
+      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+      sortBy:
+        (sortBy as DocumentProviderDashboardCategoryStatisticsSortBy) ??
+        DocumentProviderDashboardCategoryStatisticsSortBy.Date,
+      desc,
+      page,
+      pageSize,
+    }
 
   const { data, loading, error } = useQuery(
     GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID,

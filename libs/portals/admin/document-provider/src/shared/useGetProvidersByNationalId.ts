@@ -13,12 +13,13 @@ export const useGetProvidersByNationalId = (
   toDate?: Date,
   skip?: boolean,
 ): GetProvidersByNationalIdReturnType => {
-  const statisticsInput: DocumentProviderDashboardGetStatisticsProvidersNationalId = {
-    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-    page: 1,
-    pageSize: 25,
-  }
+  const statisticsInput: DocumentProviderDashboardGetStatisticsProvidersNationalId =
+    {
+      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+      page: 1,
+      pageSize: 25,
+    }
 
   const { data, loading, error } = useQuery(
     GET_STATISTIC_PROVIDERS_BY_NATIONALID,

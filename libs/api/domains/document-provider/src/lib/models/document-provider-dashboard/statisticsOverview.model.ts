@@ -6,6 +6,8 @@ export class DocumentProviderDashboardStatisticsOverview {
   @Field(() => Int, { nullable: true })
   providerCount?: number
 
-  @Field(() => DocumentProviderDashboardProviderStatisticInfo, { nullable: true })
+  @Field(() => DocumentProviderDashboardProviderStatisticInfo, {
+    nullable: true,
+  })
   statistics?: DocumentProviderDashboardProviderStatisticInfo
 }

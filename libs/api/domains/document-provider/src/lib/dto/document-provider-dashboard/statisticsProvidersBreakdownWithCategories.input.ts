@@ -12,9 +12,13 @@ export enum DocumentProviderDashboardCategoryStatisticsSortBy {
   Published = 'Published',
 }
 
-registerEnumType(DocumentProviderDashboardCategoryStatisticsSortBy, { name: 'DocumentProviderDashboardCategoryStatisticsSortBy' })
+registerEnumType(DocumentProviderDashboardCategoryStatisticsSortBy, {
+  name: 'DocumentProviderDashboardCategoryStatisticsSortBy',
+})
 
-@InputType('DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId')
+@InputType(
+  'DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId',
+)
 export class DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId {
   @Field()
   @IsUUID('4', { message: 'providerId must be a UUID v4' })
@@ -26,7 +30,9 @@ export class DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProv
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, { nullable: true })
+  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, {
+    nullable: true,
+  })
   sortBy?: DocumentProviderDashboardCategoryStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })

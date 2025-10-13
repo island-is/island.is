@@ -15,10 +15,11 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   fromDate?: Date,
   toDate?: Date,
 ): GetProviderStatisticCategoriesReturnType => {
-  const statisticsInput: DocumentProviderDashboardGetStatisticsCategoriesByNationalId = {
-    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-  }
+  const statisticsInput: DocumentProviderDashboardGetStatisticsCategoriesByNationalId =
+    {
+      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+    }
 
   const { data, loading, error } = useQuery(
     GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID,

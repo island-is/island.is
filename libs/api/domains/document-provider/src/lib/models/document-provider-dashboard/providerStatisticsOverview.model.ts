@@ -6,6 +6,8 @@ export class DocumentProviderDashboardProviderStatisticsOverview {
   @Field()
   name!: string
 
-  @Field(() => DocumentProviderDashboardProviderStatisticInfo, { nullable: true })
+  @Field(() => DocumentProviderDashboardProviderStatisticInfo, {
+    nullable: true,
+  })
   statistics?: DocumentProviderDashboardProviderStatisticInfo
 }

@@ -14,7 +14,9 @@ export enum DocumentProviderDashboardStatisticsSortBy {
   Failures = 'Failures',
 }
 
-registerEnumType(DocumentProviderDashboardStatisticsSortBy, { name: 'DocumentProviderDashboardStatisticsSortBy' })
+registerEnumType(DocumentProviderDashboardStatisticsSortBy, {
+  name: 'DocumentProviderDashboardStatisticsSortBy',
+})
 
 @InputType('DocumentProviderDashboardGetStatisticsProvidersNationalId')
 export class DocumentProviderDashboardGetStatisticsProvidersNationalId {

@@ -9,6 +9,8 @@ export class DocumentProviderDashboardProviderStatisticsBreakdown {
   @Field(() => Int, { nullable: true })
   month?: number
 
-  @Field(() => DocumentProviderDashboardProviderStatisticInfo, { nullable: true })
+  @Field(() => DocumentProviderDashboardProviderStatisticInfo, {
+    nullable: true,
+  })
   statistics?: DocumentProviderDashboardProviderStatisticInfo
 }

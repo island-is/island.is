@@ -15,14 +15,15 @@ export const useGetStatisticsOverviewByProviderId = (
 ): GetStatisticsByNationalIdReturnType => {
   const shouldSkip = !providerId
 
-  const statisticsInput: DocumentProviderDashboardGetStatisticsBreakdownByProviderId | undefined =
-    !shouldSkip
-      ? {
-          providerId,
-          from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-          to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-        }
-      : undefined
+  const statisticsInput:
+    | DocumentProviderDashboardGetStatisticsBreakdownByProviderId
+    | undefined = !shouldSkip
+    ? {
+        providerId,
+        from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+        to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+      }
+    : undefined
 
   const { data, loading, error } = useQuery(
     GET_STATISTICS_OVERVIEW_BY_PROVIDERID,
