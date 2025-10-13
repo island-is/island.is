@@ -27,7 +27,7 @@ const CourtCaseDetail = () => {
     useState<LawAndOrderAppealDecision>()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error, refetch } = useGetCourtCaseVerdictQuery({
+  const { data, loading, error } = useGetCourtCaseVerdictQuery({
     variables: {
       input: {
         caseId: id,
