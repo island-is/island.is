@@ -126,6 +126,8 @@ export enum Features {
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
+
+  isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 }
 
 export enum ServerSideFeature {
