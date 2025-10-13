@@ -3,8 +3,7 @@ import { Alert, Linking } from 'react-native'
 import styled from 'styled-components/native'
 import { Typography } from '../typography/typography'
 
-const Host = styled.TouchableOpacity<{ underlined: boolean }>`
-  border-bottom-width: ${({ underlined }) => (underlined ? 1 : 0)}px;
+const Host = styled.TouchableOpacity`
   border-bottom-color: ${(props) => props.theme.color.blue400};
 `
 
@@ -14,7 +13,7 @@ interface LinkProps {
   children: React.ReactNode
 }
 
-export function Link({ url, children, underlined = false }: LinkProps) {
+export function Link({ url, children }: LinkProps) {
   const handlePress = useCallback(async () => {
     const supported = await Linking.canOpenURL(url)
 
@@ -26,7 +25,7 @@ export function Link({ url, children, underlined = false }: LinkProps) {
   }, [url])
 
   return (
-    <Host onPress={handlePress} underlined={underlined}>
+    <Host onPress={handlePress}>
       <Typography>{children}</Typography>
     </Host>
   )

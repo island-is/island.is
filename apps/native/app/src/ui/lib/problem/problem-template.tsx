@@ -1,11 +1,10 @@
 import { ReactNode } from 'react'
-import { Image, View } from 'react-native'
-import styled from 'styled-components/native'
+import { Image, Pressable, View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
-import { Typography } from '../typography/typography'
+import { navigateTo } from '../../../lib/deep-linking'
 import { Colors } from '../../utils'
-import { Link } from '../link/link'
-import { useIntl } from 'react-intl'
+import { Typography } from '../typography/typography'
 
 type Variant = 'info' | 'error' | 'warning'
 export type DetailLink = {
@@ -129,9 +128,11 @@ export const ProblemTemplate = ({
   detailLink,
   size = 'large',
 }: ProblemTemplateProps) => {
-  const intl = useIntl()
+  const theme = useTheme()
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
+
+  console.log('detailLink', detailLink)
 
   return (
     <Host borderColor={borderColor} noContainer={withContainer} size={size}>
@@ -157,17 +158,22 @@ export const ProblemTemplate = ({
           {message}
         </Typography>
         {detailLink && (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              flexWrap: 'wrap',
+          <Pressable
+            onPress={() => {
+              navigateTo('/webview', { source: { uri: detailLink.url } })
             }}
           >
-            <Link underlined={true} url={detailLink.url}>
+            <Typography
+              variant="body"
+              color="blue400"
+              style={{
+                textDecorationLine: 'underline',
+                textDecorationColor: theme.color.blue400,
+              }}
+            >
               {detailLink.text}
-            </Link>
-          </View>
+            </Typography>
+          </Pressable>
         )}
       </Content>
     </Host>
