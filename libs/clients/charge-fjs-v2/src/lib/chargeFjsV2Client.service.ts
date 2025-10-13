@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   ChargeStatusByRequestIDrequestIDGETResponse,
-  DefaultApi,
   ChargeStatusResultStatusEnum,
+  DefaultApi,
 } from '../../gen/fetch'
 import {
   Catalog,
@@ -12,19 +12,33 @@ import {
   PayeeInfo,
 } from './chargeFjsV2Client.types'
 import { isValid } from 'kennitala'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
-  constructor(private api: DefaultApi) {}
+  constructor(
+    private api: DefaultApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
 
   async getChargeStatus(
     chargeId: string,
   ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
-    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-      requestID: chargeId,
-    })
-
-    return response
+    try {
+      return await this.api.chargeStatusByRequestIDrequestIDGET4({
+        requestID: chargeId,
+      })
+    } catch (e) {
+      if (e.status === 404) {
+        this.logger.warn(
+          `Did not find charge ${chargeId} in FJS database. No charge status returned`,
+          e,
+        )
+        return null
+      }
+      throw e
+    }
   }
 
   async deleteCharge(chargeId: string): Promise<string | undefined> {

@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -17,6 +24,10 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   BlueBox,
   DateTime,
   MultipleValueList,
@@ -26,6 +37,7 @@ import EditableCaseFile from '@island.is/judicial-system-web/src/components/Edit
 import {
   Case,
   CourtDocumentResponse,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -109,9 +121,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const {
     judges,
+    districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
+
+  const defaultJudge = judges?.find(
+    (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
+  )
 
   const patchSession = (
     courtSessionId: string,
@@ -154,13 +171,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setWorkingCase((prev) => ({
-      ...prev,
-      unfiledCourtDocuments: [
-        fileInSession,
-        ...(prev.unfiledCourtDocuments || []),
-      ],
-    }))
+    if (fileInSession.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+      setWorkingCase((prev) => ({
+        ...prev,
+        unfiledCourtDocuments: [
+          fileInSession,
+          ...(prev.unfiledCourtDocuments || []),
+        ],
+      }))
+    }
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.filter(
@@ -239,7 +258,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleChangeWitness = (value?: string | null) => {
-    const selectedUser = [...judges, ...registrars].find(
+    const selectedUser = [...districtCourtAssistants, ...registrars].find(
       (u) => u.value === value,
     )
 
@@ -363,6 +382,35 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  const getInitialAttendees = () => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
+    }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        attendees.push(`\n${defendant.name} ákærði`)
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
+  }
+
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
+
   return (
     <AccordionItem
       id={`courtRecordAccordionItem-${courtSession.id}`}
@@ -373,7 +421,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       onToggle={onToggle}
     >
       <LayoutGroup>
-        <Box className={styles.containerGrid}>
+        <Box
+          id={`courtRecordAccordionItemFirstSection-${courtSession.id}`}
+          className={styles.containerGrid}
+        >
           <BlueBox>
             <div className={styles.grid}>
               <DateTime
@@ -381,7 +432,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þingfestingar"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={courtSession.startDate}
+                selectedDate={
+                  courtSession.startDate ??
+                  workingCase.courtDate?.date ??
+                  workingCase.arraignmentDate?.date
+                }
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
                     patchSession(
@@ -395,12 +450,46 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 blueBox={false}
                 required
               />
+              <Select
+                name="judge"
+                label="Veldu dómara/aðstoðarmann"
+                placeholder="Veldu héraðsdómara"
+                value={defaultJudge}
+                options={judges}
+                onChange={(selectedOption) => {
+                  const selectedUser = judges.find(
+                    (u) => u.value === selectedOption?.value,
+                  )
+                  if (!selectedUser) {
+                    return
+                  }
+                  patchSession(courtSession.id, {
+                    judge: {
+                      id: selectedUser.value || '',
+                      name: selectedUser.label,
+                    },
+                  })
+
+                  patchSession(
+                    courtSession.id,
+                    { judgeId: selectedUser.value },
+                    { persist: true },
+                  )
+                }}
+                required
+                isDisabled={usersLoading || courtSession.isConfirmed || false}
+              />
               <Input
                 data-testid="courtLocation"
                 name="courtLocation"
                 tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
                 label="Hvar var dómþing haldið?"
-                value={courtSession.location || ''}
+                value={
+                  courtSession.location ??
+                  (workingCase.court?.name
+                    ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+                    : '')
+                }
                 placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
                 onChange={(event) => {
                   setLocationErrorMessage('')
@@ -514,7 +603,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={courtSession.attendees || ''}
+            value={courtSession.attendees ?? getInitialAttendees()}
             placeholder="Skrifa hér..."
             onChange={(event) => {
               patchSession(courtSession.id, {
@@ -923,8 +1012,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               />
               <Select
                 name="courtUsers"
-                options={[...judges, ...registrars].sort((a, b) =>
-                  a.label.localeCompare(b.label),
+                options={[...districtCourtAssistants, ...registrars].sort(
+                  (a, b) => a.label.localeCompare(b.label),
                 )}
                 value={
                   courtSession.attestingWitness
