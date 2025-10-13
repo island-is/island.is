@@ -24,11 +24,11 @@ import { strings } from './CaseInfo.strings'
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
 }> = ({ policeCaseNumbers }) => (
-  <Box display="flex" flexWrap="wrap">
+  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
     {policeCaseNumbers?.map((policeCaseNumber, index) => (
-      <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
-        <Tag disabled>{policeCaseNumber}</Tag>
-      </Box>
+      <Tag disabled key={`${policeCaseNumber}-${index}`}>
+        {policeCaseNumber}
+      </Tag>
     ))}
   </Box>
 )
@@ -118,10 +118,10 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 }: {
   workingCase: Case
 }) => (
-  <>
+  <Box display="flex" flexDirection="column" rowGap={1}>
     <Prosecutor workingCase={workingCase} />
     <Defendants workingCase={workingCase} />
-  </>
+  </Box>
 )
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
