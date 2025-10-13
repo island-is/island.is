@@ -12,7 +12,9 @@ export class DocumentProviderDashboardGetStatisticsBreakdownByProviderId {
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, { nullable: true })
+  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, {
+    nullable: true,
+  })
   sortBy?: DocumentProviderDashboardCategoryStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true })

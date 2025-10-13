@@ -1,4 +1,9 @@
-import { StatisticsApi, TotalStatisticsSortBy, CategoryStatisticsSortBy, StatisticsSortBy   } from '@island.is/clients/document-provider-dashboard'
+import {
+  StatisticsApi,
+  TotalStatisticsSortBy,
+  CategoryStatisticsSortBy,
+  StatisticsSortBy,
+} from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { DocumentProviderDashboardGetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
@@ -84,7 +89,9 @@ export class DocumentProviderDashboardService {
       return null
     }
 
-    return (statisticCategories as Array<DocumentProviderDashboardCategoryStatistics>)
+    return (
+      statisticCategories as Array<DocumentProviderDashboardCategoryStatistics>
+    )
       .filter((category) => category.name !== null)
       .map((category) => ({
         ...category,

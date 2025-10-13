@@ -15,7 +15,9 @@ export enum DocumentProviderDashboardTotalStatisticsSortBy {
   Date = 'Date',
 }
 
-registerEnumType(DocumentProviderDashboardTotalStatisticsSortBy, { name: 'DocumentProviderDashboardTotalStatisticsSortBy' })
+registerEnumType(DocumentProviderDashboardTotalStatisticsSortBy, {
+  name: 'DocumentProviderDashboardTotalStatisticsSortBy',
+})
 
 @InputType('DocumentProviderDashboardGetStatisticsBreakdownByNationalId')
 export class DocumentProviderDashboardGetStatisticsBreakdownByNationalId {
@@ -25,7 +27,9 @@ export class DocumentProviderDashboardGetStatisticsBreakdownByNationalId {
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, { nullable: true })
+  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, {
+    nullable: true,
+  })
   sortBy?: DocumentProviderDashboardCategoryStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true })

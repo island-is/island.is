@@ -32,7 +32,9 @@ export const GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID = gql`
 `
 
 export const GET_STATISTICS_BY_NATIONALID = gql`
-  query StatisticsByNationalId($input: DocumentProviderDashboardGetStatisticsByNationalId!) {
+  query StatisticsByNationalId(
+    $input: DocumentProviderDashboardGetStatisticsByNationalId!
+  ) {
     statisticsByNationalId(input: $input) {
       providerCount
       statistics {

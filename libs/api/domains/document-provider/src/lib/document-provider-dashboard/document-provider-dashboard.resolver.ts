@@ -45,7 +45,8 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticProvidersByNationalId',
   })
   async statisticProvidersByNationalId(
-    @Args('input') input: DocumentProviderDashboardGetStatisticsProvidersNationalId,
+    @Args('input')
+    input: DocumentProviderDashboardGetStatisticsProvidersNationalId,
     @CurrentUser() user: User,
   ): Promise<DocumentProviderDashboardProviderStatisticsPaginationResponse | null> {
     try {
@@ -75,7 +76,8 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticsCategories',
   })
   async statisticsCategories(
-    @Args('input') input: DocumentProviderDashboardGetStatisticsCategoriesByNationalId,
+    @Args('input')
+    input: DocumentProviderDashboardGetStatisticsCategoriesByNationalId,
     @CurrentUser() user: User,
   ): Promise<Array<DocumentProviderDashboardCategoryStatistics> | null> {
     try {
@@ -143,10 +145,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse, {
-    nullable: true,
-    name: 'statisticsBreakdownByProviderId',
-  })
+  @Query(
+    () =>
+      DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse,
+    {
+      nullable: true,
+      name: 'statisticsBreakdownByProviderId',
+    },
+  )
   async statisticsBreakdownByProviderId(
     @Args('input')
     input: DocumentProviderDashboardGetStatisticsBreakdownByProviderId,
@@ -211,12 +217,17 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse, {
-    nullable: true,
-    name: 'statisticsBreakdownByNationalId',
-  })
+  @Query(
+    () =>
+      DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse,
+    {
+      nullable: true,
+      name: 'statisticsBreakdownByNationalId',
+    },
+  )
   async statisticsBreakdownByNationalId(
-    @Args('input') input: DocumentProviderDashboardGetStatisticsBreakdownByNationalId,
+    @Args('input')
+    input: DocumentProviderDashboardGetStatisticsBreakdownByNationalId,
     @CurrentUser() user: User,
   ): Promise<DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse | null> {
     try {
@@ -242,10 +253,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse, {
-    nullable: true,
-    name: 'statisticsBreakdownWithCategoriesByNationalId',
-  })
+  @Query(
+    () =>
+      DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse,
+    {
+      nullable: true,
+      name: 'statisticsBreakdownWithCategoriesByNationalId',
+    },
+  )
   async statisticsBreakdownWithCategoriesByNationalId(
     @Args('input')
     input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId,
@@ -273,10 +288,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse, {
-    nullable: true,
-    name: 'statisticsBreakdownWithCategoriesByProviderId',
-  })
+  @Query(
+    () =>
+      DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse,
+    {
+      nullable: true,
+      name: 'statisticsBreakdownWithCategoriesByProviderId',
+    },
+  )
   async statisticsBreakdownWithCategoriesByProviderId(
     @Args('input')
     input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId,
