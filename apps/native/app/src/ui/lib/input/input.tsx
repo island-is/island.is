@@ -59,6 +59,9 @@ interface InputProps {
   darkBorder?: boolean
   copy?: boolean
   warningText?: string
+  rightElement?: React.ReactNode
+  allowEmptyValue?: boolean
+  fullWidthWarning?: boolean
 }
 
 export function Input({
@@ -74,6 +77,9 @@ export function Input({
   darkBorder = false,
   copy = false,
   warningText = '',
+  rightElement,
+  allowEmptyValue = false,
+  fullWidthWarning = false,
 }: InputProps) {
   const theme = useTheme()
   const tvalue =
@@ -82,52 +88,60 @@ export function Input({
   return (
     <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
-        {loadLabel && loading ? (
-          <Skeleton
-            active={loading}
-            error={error}
-            style={{ marginBottom: theme.spacing[1], width: '50%' }}
-          />
-        ) : (
-          <LabelText variant="body3">{label}</LabelText>
-        )}
-        {loading || error ? (
-          <Skeleton
-            active={loading}
-            error={error}
-            height={size === 'big' ? 26 : undefined}
-          />
-        ) : (
-          <>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Typography
-                testID={valueTestID}
-                selectable
-                variant={size === 'normal' ? 'heading5' : 'heading3'}
-              >
-                {tvalue === '' || !value ? '-' : value}
-              </Typography>
-              {copy && (
-                <TouchableOpacity
-                  onPress={() => Clipboard.setString(value ?? '')}
-                  style={{ marginLeft: 4 }}
-                >
-                  <Image
-                    source={CopyIcon}
-                    style={{ width: 24, height: 24 }}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-            {warningText && (
-              <WarningMessage>
-                <Label color="warning" icon>
-                  {warningText}
-                </Label>
-              </WarningMessage>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flex: 1, marginRight: theme.spacing[2] }}>
+            {loadLabel && loading ? (
+              <Skeleton
+                active={loading}
+                error={error}
+                style={{ marginBottom: theme.spacing[1], width: '50%' }}
+              />
+            ) : (
+              <LabelText variant="body3">{label}</LabelText>
             )}
-          </>
+            {loading || error ? (
+              <Skeleton
+                active={loading}
+                error={error}
+                height={size === 'big' ? 26 : undefined}
+              />
+            ) : allowEmptyValue && value === '' ? null : (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Typography
+                  testID={valueTestID}
+                  selectable
+                  variant={size === 'normal' ? 'heading5' : 'heading3'}
+                >
+                  {tvalue === '' || !value ? '-' : value}
+                </Typography>
+                {copy && (
+                  <TouchableOpacity
+                    onPress={() => Clipboard.setString(value ?? '')}
+                    style={{ marginLeft: 4 }}
+                  >
+                    <Image
+                      source={CopyIcon}
+                      style={{ width: 24, height: 24 }}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </View>
+          {rightElement}
+        </View>
+        {!loading && !error && warningText && (
+          <WarningMessage>
+            <Label color="warning" icon fullWidth={fullWidthWarning}>
+              {warningText}
+            </Label>
+          </WarningMessage>
         )}
       </Content>
     </Host>
