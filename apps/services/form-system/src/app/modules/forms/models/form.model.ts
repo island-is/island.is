@@ -133,7 +133,12 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.JSONB,
     allowNull: false,
-    defaultValue: () => new CompletedSectionInfo(),
+    defaultValue: () => ({
+      title: new LanguageType(),
+      confirmationHeader: new LanguageType(),
+      confirmationText: new LanguageType(),
+      additionalInfo: [],
+    }),
   })
   completedSectionInfo!: CompletedSectionInfo
 
