@@ -96,11 +96,7 @@ export const AirDiscountOverview = () => {
   }, [])
 
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
-  const {
-    data: flightLegData,
-    loading: flightLegLoading,
-    error: flightLegError,
-  } = useQuery<Query>(AirDiscountFlightLegsQuery)
+  const { data: flightLegData } = useQuery<Query>(AirDiscountFlightLegsQuery)
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
@@ -136,6 +132,7 @@ export const AirDiscountOverview = () => {
         noBorder={false}
         title={formatMessage(m.noFundingTitle)}
         message={formatMessage(m.noFunding, {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           link: (str: any) => (
             <a
               href={formatMessage(m.noFundingMoreInfoLink)}
@@ -165,6 +162,7 @@ export const AirDiscountOverview = () => {
             >
               <Text variant="default" paddingTop={2}>
                 {formatMessage(m.introLink, {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   link: (str: any) => (
                     <a
                       href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
