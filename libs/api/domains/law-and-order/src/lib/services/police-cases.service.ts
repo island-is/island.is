@@ -23,7 +23,7 @@ export class PoliceCasesService {
 
     const cases = await this.policeApi.getCases(user)
 
-    if (!cases || cases.length <= 0) {
+    if (!cases) {
       return {
         data: [],
         totalCount: 0,
@@ -49,7 +49,14 @@ export class PoliceCasesService {
   }
 
   async getCase(user: User, caseNumber: string, locale: Locale) {
-    const cases = await this.getCases(user, locale)
-    return cases.data.find((c) => c.number === caseNumber)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
+    const cases = await this.policeApi.getCases(user)
+
+    if (!cases) {
+      return undefined
+    }
+
+    const policeCase = cases.find((c) => c.caseNumber === caseNumber)
+    return policeCase ? mapPoliceCase(policeCase, locale, formatMessage) : undefined
   }
 }
