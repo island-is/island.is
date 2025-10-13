@@ -1,36 +1,21 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
-import {
-  Accordion,
-  Box,
-  Button,
-  PdfViewer,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
-  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseFileCategory,
-  CourtSessionResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCourtSessions,
-  useFileList,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
@@ -40,12 +25,6 @@ const CourtRecord: FC = () => {
     useContext(FormContext)
   const { createCourtSession, updateCourtSession } = useCourtSessions()
   const [expandedIndex, setExpandedIndex] = useState<number>()
-  const [modalVisible, setModalVisible] = useState<'TODO:REMOVE'>()
-  const [rulingUrl, setRulingUrl] = useState<string>()
-
-  const { getFileUrl } = useFileList({
-    caseId: workingCase.id,
-  })
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -74,29 +53,6 @@ const CourtRecord: FC = () => {
       caseId: workingCase.id,
       isConfirmed: !isConfirmed,
     })
-  }
-
-  const handleRuling = async () => {
-    const showError = () => toast.error('Dómur fannst ekki')
-
-    const rulings = workingCase.caseFiles?.filter(
-      (c) => c.category === CaseFileCategory.COST_BREAKDOWN,
-    )
-
-    if (!rulings || rulings.length === 0) {
-      showError()
-      return
-    }
-
-    const rulingId = rulings[0].id
-    const url = await getFileUrl(rulingId)
-
-    if (url) {
-      setRulingUrl(url)
-      setModalVisible('TODO:REMOVE')
-    } else {
-      showError()
-    }
   }
 
   useEffect(() => {
@@ -188,68 +144,8 @@ const CourtRecord: FC = () => {
         <FormFooter
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() => {
-            handleRuling()
-          }}
         />
       </FormContentContainer>
-      {modalVisible === 'TODO:REMOVE' && (
-        <Modal
-          title="Viltu staðfesta dómsúrlausn og ljúka máli?"
-          text={
-            <Box display="flex" rowGap={2} flexDirection="column">
-              <Box>
-                <Text fontWeight="semiBold" as="span">
-                  Lyktir:
-                </Text>
-                <Text as="span">{` Dómur`}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="semiBold" as="span">
-                  Dagsetning lykta:
-                </Text>
-                <Text as="span">
-                  {` ${formatDate(workingCase.courtEndTime)}`}
-                </Text>
-              </Box>
-              <Box as="ul" marginLeft={2}>
-                <li>
-                  <Text>Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
-                </li>
-                <li>
-                  <Text>
-                    Staðfestur dómur verður aðgengilegur málflytjendum í
-                    Réttarvörslugátt.
-                  </Text>
-                </li>
-                <li>
-                  <Text>
-                    Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
-                    stafrænt pósthólf dómfellda á island.is á næsta skrefi.
-                  </Text>
-                </li>
-              </Box>
-            </Box>
-          }
-          primaryButton={{
-            text: 'Staðfesta',
-            onClick: () => null,
-            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => null,
-          }}
-          footerCheckbox={{
-            label: 'Ég hef rýnt þetta dómskjal',
-            checked: false,
-            onChange: () => null,
-            disabled: false,
-          }}
-        >
-          {rulingUrl && <PdfViewer file={rulingUrl} showAllPages />}
-        </Modal>
-      )}
     </PageLayout>
   )
 }
