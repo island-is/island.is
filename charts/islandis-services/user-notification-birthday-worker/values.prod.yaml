@@ -19,7 +19,7 @@ global:
 name: 'user-notification-birthday-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
   - '--isBirthdayWorker'
 command:
@@ -86,6 +86,7 @@ image:
 namespace: 'user-notification'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

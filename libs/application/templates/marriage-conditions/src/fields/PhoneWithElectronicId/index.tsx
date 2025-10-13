@@ -1,10 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  InputController,
-  PhoneInputController,
-} from '@island.is/shared/form-fields'
+import { PhoneInputController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
@@ -68,7 +65,7 @@ export const PhoneWithElectronicId: FC<
         setLoading(false)
       })
     }
-  }, [phoneNumber, nationalId])
+  }, [phoneNumber, nationalId, answers, getElectronicIdStatus, setValue, topId])
 
   return (
     <Box marginTop={2}>
@@ -81,10 +78,8 @@ export const PhoneWithElectronicId: FC<
         loading={loading}
         error={errors ? getErrorViaPath(errors, id) : undefined}
         onChange={(e) => setPhoneNumber(e.target.value)}
+        defaultValue=""
       />
-      <Box hidden={true}>
-        <InputController id={id} defaultValue={''} />
-      </Box>
     </Box>
   )
 }

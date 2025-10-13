@@ -43,16 +43,20 @@ const CaseResubmitModal: FC<Props> = ({
       title={formatMessage(strings.heading)}
       text={getCaseResubmittedText(formatMessage, workingCase)}
       onClose={onClose}
-      primaryButtonText={formatMessage(strings.primaryButtonText)}
-      secondaryButtonText={formatMessage(strings.secondaryButtonText)}
-      onSecondaryButtonClick={onClose}
-      onPrimaryButtonClick={() => {
-        if (explanation) {
-          onContinue(explanation)
-        }
+      primaryButton={{
+        text: formatMessage(strings.primaryButtonText),
+        onClick: () => {
+          if (explanation) {
+            onContinue(explanation)
+          }
+        },
+        isLoading: isLoading,
+        isDisabled: !explanation,
       }}
-      isPrimaryButtonLoading={isLoading}
-      isPrimaryButtonDisabled={!explanation}
+      secondaryButton={{
+        text: formatMessage(strings.secondaryButtonText),
+        onClick: onClose,
+      }}
     >
       <Box marginBottom={10}>
         <Input

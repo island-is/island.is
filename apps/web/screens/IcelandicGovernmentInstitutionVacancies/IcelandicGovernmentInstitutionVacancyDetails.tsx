@@ -307,11 +307,11 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
             <Stack space={2}>
               {vacancy.contacts.map((contact, index) => (
                 <Box className="rs_read" key={index}>
-                  <Text>
-                    {contact.name && contact.email
-                      ? `${contact.name}, `
-                      : contact.name}
-                    {contact.email && (
+                  <Text>{contact.name ?? ''}</Text>
+                  {contact.jobTitle && <Text>{contact.jobTitle}</Text>}
+                  {contact.email && (
+                    <Text>
+                      {n('email', 'Tölvupóstur:')}{' '}
                       <LinkV2
                         underlineVisibility="always"
                         underline="normal"
@@ -320,8 +320,9 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
                       >
                         {contact.email}
                       </LinkV2>
-                    )}
-                  </Text>
+                    </Text>
+                  )}
+
                   {contact.phone && (
                     <Text>
                       {n('telephone', 'Sími:')} {contact.phone}

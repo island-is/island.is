@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-university-gateway'
 args:
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
@@ -118,6 +118,7 @@ initContainer:
 namespace: 'services-university-gateway'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

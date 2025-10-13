@@ -75,6 +75,7 @@ query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
         author
         body
         createdDate
+        isZendeskAgent
       }
     }
   }
@@ -97,6 +98,7 @@ query GetDocumentTicket($input: DocumentInput!, $locale: String) {
         author
         body
         createdDate
+        isZendeskAgent
       }
     }
   }

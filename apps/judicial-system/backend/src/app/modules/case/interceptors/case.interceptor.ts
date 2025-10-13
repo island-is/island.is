@@ -14,25 +14,43 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../../defendant'
-import { EventLog } from '../../event-log'
-import { Case } from '../models/case.model'
-import { CaseString } from '../models/caseString.model'
+import {
+  Case,
+  CaseString,
+  Defendant,
+  DefendantEventLog,
+  EventLog,
+} from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {
-  return defendants?.map((defendant) => ({
-    ...defendant.toJSON(),
-    sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getEventLogDateByEventType(
-          DefendantEventType.SENT_TO_PRISON_ADMIN,
-          defendant.eventLogs,
-        )
-      : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.OPENED_BY_PRISON_ADMIN,
-      defendant.eventLogs,
-    ),
-  }))
+  return defendants?.map((defendant) => {
+    const { verdict } = defendant
+    return {
+      ...defendant.toJSON(),
+      ...(verdict
+        ? {
+            verdict: {
+              ...verdict.toJSON(),
+              verdictDeliveredToNationalCommissionersOffice:
+                DefendantEventLog.getEventLogDateByEventType(
+                  DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+                  defendant.eventLogs,
+                ),
+            },
+          }
+        : {}),
+      sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        defendant.eventLogs,
+      ),
+    }
+  })
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {

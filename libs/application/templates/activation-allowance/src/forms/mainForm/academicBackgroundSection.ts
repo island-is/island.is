@@ -44,11 +44,48 @@ export const academicBackgroundSection = buildSection({
                   })) ?? []
                 )
               },
+              setOnChange: async (
+                optionValue,
+                application,
+                index,
+                _activeField,
+              ) => {
+                // This setOnChange is responsible for auto-filling degree and subject if there is only 1 option to select
+                const education =
+                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                    application.externalData,
+                    'activityGrantApplication.data.activationGrant.supportData.educationPrograms',
+                  ) ?? []
+                const chosenLevelDegrees = education?.filter(
+                  (program) => program.id === optionValue,
+                )[0]?.degrees
+                if (chosenLevelDegrees && chosenLevelDegrees.length === 1) {
+                  const returnValues = [
+                    {
+                      key: `academicBackground.education[${index}].degree`,
+                      value: chosenLevelDegrees[0].id,
+                    },
+                  ]
+                  const chosenDegreeSubjects = chosenLevelDegrees[0].subjects
+                  if (
+                    chosenDegreeSubjects &&
+                    chosenDegreeSubjects.length === 1
+                  ) {
+                    returnValues.push({
+                      key: `academicBackground.education[${index}].subject`,
+                      value: chosenDegreeSubjects[0].id,
+                    })
+                  }
+                  return returnValues
+                }
+                return []
+              },
             },
             degree: {
               label: academicBackground.labels.degree,
               component: 'select',
               required: true,
+
               options: (application, activeField, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -73,6 +110,7 @@ export const academicBackgroundSection = buildSection({
             subject: {
               label: academicBackground.labels.subject,
               component: 'select',
+              required: true,
               options: (application, activeField) => {
                 const education = getValueViaPath<
                   GaldurDomainModelsEducationProgramDTO[]
@@ -129,22 +167,9 @@ export const academicBackgroundSection = buildSection({
                   label: academicBackground.labels.currentlyStudying,
                 },
               ],
-              setOnChange: async (
-                option,
-                _application,
-                index,
-                _activeField,
-              ) => {
-                if (option && option.length > 0 && option[0] === YES) {
-                  return [
-                    {
-                      key: `academicBackground.education[${index}].endOfStudy`,
-                      value: undefined,
-                    },
-                  ]
-                }
-                return []
-              },
+              clearOnChange: (index: number) => [
+                `academicBackground.education[${index}].endOfStudy`,
+              ],
             },
           },
         }),

@@ -1,6 +1,14 @@
 import { useIntl } from 'react-intl'
 
-import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Icon,
+  LinkV2,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 
 import { m } from '../../screens/OfficialJournalOfIceland/messages'
 import { formatDate } from './OJOIUtils'
@@ -28,9 +36,9 @@ export const OJOIAdvertCard = ({
   const { formatMessage } = useIntl()
 
   return (
-    <Box display="flex" flexDirection="column" rowGap={1} className={s.wrapper}>
-      {(institution || department || publicationDate) && (
-        <Box display="flex" justifyContent="spaceBetween">
+    <Box className={s.wrapper}>
+      <GridRow>
+        <GridColumn span={'6/12'}>
           {institution && (
             <Box>
               <Text variant="eyebrow" color="blueberry400">
@@ -38,8 +46,10 @@ export const OJOIAdvertCard = ({
               </Text>
             </Box>
           )}
+        </GridColumn>
+        <GridColumn span={'6/12'}>
           {(department || publicationDate) && (
-            <Box>
+            <Box display="flex" justifyContent="flexEnd">
               <Text variant="eyebrow" color="blueberry400">
                 {department}
                 {department && publicationDate && ' - '}
@@ -48,50 +58,66 @@ export const OJOIAdvertCard = ({
               </Text>
             </Box>
           )}
-        </Box>
-      )}
-      {publicationNumber && (
-        <Box>
-          <Text variant="h3">{publicationNumber}</Text>
-        </Box>
-      )}
-      {title && (
-        <Box>
-          <Text>{title}</Text>
-        </Box>
-      )}
-      <Box
-        display="flex"
-        flexWrap="wrap"
-        justifyContent="spaceBetween"
-        marginTop={2}
-        rowGap={1}
-      >
-        {categories && categories.length > 0 && (
-          <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
-            {categories.map((cat) => {
-              return (
-                <Tag key={cat} variant="blue" outlined disabled>
-                  {cat}
-                </Tag>
-              )
-            })}
-          </Box>
-        )}
-        {link && (
-          <LinkV2
-            href={link}
-            color="blue400"
-            underline="normal"
-            underlineVisibility="always"
-          >
-            <Text as="span" fontWeight="medium" variant="small">
-              {formatMessage(m.general.seeMore)}
-            </Text>{' '}
-            <Icon icon="open" type="outline" size="small" />
-          </LinkV2>
-        )}
-      </Box>
+        </GridColumn>
+      </GridRow>
+      <GridRow marginTop={1}>
+        <GridColumn span={'12/12'}>
+          {publicationNumber && (
+            <Box>
+              <Text variant="h3">{publicationNumber}</Text>
+            </Box>
+          )}
+        </GridColumn>
+      </GridRow>
+      <GridRow marginTop={1}>
+        <GridColumn span={'9/12'}>
+          {title && (
+            <Box>
+              <Text>{title}</Text>
+            </Box>
+          )}
+
+          {categories && categories.length > 0 && (
+            <Box
+              marginTop={2}
+              display="flex"
+              rowGap={1}
+              columnGap={1}
+              flexWrap="wrap"
+            >
+              {categories.map((cat) => {
+                return (
+                  <Tag key={cat} variant="blue" outlined disabled>
+                    {cat}
+                  </Tag>
+                )
+              })}
+            </Box>
+          )}
+        </GridColumn>
+        <GridColumn span={'3/12'}>
+          {link && (
+            <Box
+              display="flex"
+              height="full"
+              justifyContent="flexEnd"
+              alignItems="flexEnd"
+            >
+              <LinkV2
+                href={link}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
+              >
+                <Text as="span" fontWeight="medium" variant="small">
+                  {formatMessage(m.general.seeMore)}
+                </Text>{' '}
+                <Icon icon="open" type="outline" size="small" />
+              </LinkV2>
+            </Box>
+          )}
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

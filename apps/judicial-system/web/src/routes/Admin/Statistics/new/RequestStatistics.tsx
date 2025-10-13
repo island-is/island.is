@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence } from 'motion/react'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
@@ -120,7 +121,7 @@ const RequestStatistics = () => {
   // We extract the initial call to fetch the request statistics data to a specific parent component
   // to fetch defined statistical constraints (minDate) once. The child component is
   // currently re-rendered on each filter change.
-  const { data } = useRequestCaseStatisticsQuery({
+  const { data, loading } = useRequestCaseStatisticsQuery({
     variables: {
       input: {},
     },
@@ -128,7 +129,13 @@ const RequestStatistics = () => {
   })
   const minDate = data?.requestCaseStatistics?.minDate ?? new Date()
 
-  return <RequestStatisticsBody minDate={new Date(minDate)} />
+  return loading && !data ? (
+    <SkeletonLoader height={800} />
+  ) : (
+    <AnimatePresence mode="wait">
+      <RequestStatisticsBody minDate={new Date(minDate)} />
+    </AnimatePresence>
+  )
 }
 
 export default RequestStatistics

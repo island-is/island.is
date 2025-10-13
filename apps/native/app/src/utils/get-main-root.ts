@@ -92,7 +92,7 @@ export function getMainRoot(): Layout {
         bottomTabs: {
           testID: testIDs.TABBAR_MAIN,
           currentTabIndex: 2,
-          tabsAttachMode: 'together',
+          tabsAttachMode: 'onSwitchToTab',
         },
       },
       children: [

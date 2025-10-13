@@ -14,8 +14,10 @@ import {
   getAcademicInfo,
   getApplicantInfo,
   getBankInfo,
+  getCanStartAt,
   getContactInfo,
   getCVInfo,
+  getIncome,
   getJobHistoryInfo,
   getJobWishesInfo,
   getLanguageInfo,
@@ -29,7 +31,7 @@ import { errorMsgs } from '@island.is/application/templates/activation-allowance
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { CV_ID } from './constants'
 
 @Injectable()
@@ -52,6 +54,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
   async createApplication({
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
     try {
       const application =
@@ -67,7 +70,11 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
         throw new TemplateApiError(
           {
             title: errorMsgs.cannotApplyErrorTitle,
-            summary: errorMsgs.cannotApplyErrorSummary,
+            summary:
+              currentUserLocale === 'en'
+                ? application.userMessageEN || errorMsgs.cannotApplyErrorSummary
+                : application.userMessageIS ||
+                  errorMsgs.cannotApplyErrorSummary,
           },
           400,
         )
@@ -109,17 +116,22 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const languageSkillInfo = getLanguageInfo(answers, externalData)
     const education = getAcademicInfo(answers)
     const startingLocale = getStartingLocale(externalData)
+    const incomeInfo = getIncome(answers, externalData)
     const cvInfo = await getCVInfo(
       answers,
       this.s3Service,
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const additionalCVInfo = getValueViaPath<string>(answers, 'cv.other')
+    const canStartAt = getCanStartAt(answers)
+    const hasCV = getValueViaPath<string | undefined>(answers, 'cv.haveCV')
     const emptyApplicationOriginal =
       getValueViaPath<GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO>(
         externalData,
         'activityGrantApplication.data.activationGrant',
       )
+
     const emptyApplication = { ...emptyApplicationOriginal }
     delete emptyApplication.supportData
 
@@ -160,6 +172,9 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
             },
           },
         )
+      if (!cvResponse.success) {
+        throw new Error(cvResponse.errorMessage || 'creating attachment failed')
+      }
     }
 
     const payload: ActivationGrantCreateActivationGrantRequest = {
@@ -172,18 +187,22 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
                 emptyApplication?.applicationInformation?.created || '',
               ),
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
-              additionalInformation: cvInfo?.other,
+              additionalInformation: additionalCVInfo
+                ? additionalCVInfo
+                : undefined,
               contactConnection: contact?.connection,
               contactEmail: contact?.email,
               contactName: contact?.name,
               contactPhoneNumber: contact?.phone,
+              incomes: incomeInfo,
+              hasCV: hasCV === YES ? true : false,
             },
             personalInformation: {
               ...personalInfo,
             },
             otherInformation: {
               ...emptyApplication?.otherInformation,
-              canStartAt: new Date(),
+              canStartAt,
             },
             preferredJobs: {
               jobs: jobWishesPayload,

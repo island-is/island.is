@@ -69,12 +69,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     // Detect possible OAuth needed
     if (networkError.name === 'ServerParseError') {
-      const redirectUrl = (networkError as any).response?.url
+      const redirectUrl = (networkError as { response?: { url: string } })
+        .response?.url
       if (
         redirectUrl &&
         redirectUrl.indexOf('cognito.shared.devland.is') >= 0
       ) {
         authStore.setState({ cognitoAuthUrl: redirectUrl })
+
         if (config.isTestingApp && authStore.getState().authorizeResult) {
           openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
         }

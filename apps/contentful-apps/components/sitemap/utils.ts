@@ -135,8 +135,9 @@ export const addNode = async (
   type: TreeNodeType,
   sdk: FieldExtensionSDK,
   root: Tree,
-  createNew?: boolean,
+  createNew: boolean,
   entryType: EntryType = 'organizationParentSubpage',
+  entries: Record<string, EntryProps>,
 ) => {
   let entryId = ''
 
@@ -189,9 +190,31 @@ export const addNode = async (
       chosenEntryType = entry.sys.contentType.sys.id as EntryType
     }
   } else if (type === TreeNodeType.CATEGORY) {
-    const otherCategories = parentNode.childNodes.filter(
-      (child) => child.type === TreeNodeType.CATEGORY,
+    const otherCategoriesAndEntryNodes = parentNode.childNodes.filter(
+      (child) =>
+        child.type === TreeNodeType.CATEGORY ||
+        child.type === TreeNodeType.ENTRY,
     )
+
+    const otherSlugs = otherCategoriesAndEntryNodes
+      .map((child) =>
+        child.type === TreeNodeType.CATEGORY
+          ? child.slug
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['is-IS']
+          : '',
+      )
+      .filter(Boolean)
+
+    const otherSlugsEN = otherCategoriesAndEntryNodes
+      .map((child) =>
+        child.type === TreeNodeType.CATEGORY
+          ? child.slugEN
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['en']
+          : '',
+      )
+      .filter(Boolean)
 
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
@@ -204,16 +227,8 @@ export const addNode = async (
           slugEN: '',
           descriptionEN: '',
         },
-        otherCategorySlugs: otherCategories
-          .map((child) =>
-            child.type === TreeNodeType.CATEGORY ? child.slug : '',
-          )
-          .filter(Boolean),
-        otherCategorySlugsEN: otherCategories
-          .map((child) =>
-            child.type === TreeNodeType.CATEGORY ? child.slugEN : '',
-          )
-          .filter(Boolean),
+        otherSlugs,
+        otherSlugsEN,
       },
       minHeight: CATEGORY_DIALOG_MIN_HEIGHT,
     })

@@ -3,15 +3,23 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   NO,
   YES,
 } from '@island.is/application/core'
-import { OptionsType } from '../../../utils/constants'
+import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import { OptionsType } from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getDefaultYESNOValue,
+  hasDefaultAllergies,
+  hasDefaultFoodAllergiesOrIntolerances,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
@@ -40,6 +48,11 @@ export const healthProtectionSubSection = buildSubSection({
                   .hasFoodAllergiesOrIntolerances,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultFoodAllergiesOrIntolerances(application.externalData) ===
+            YES
+              ? [YES]
+              : [],
         }),
         buildCustomField(
           {
@@ -54,6 +67,12 @@ export const healthProtectionSubSection = buildSubSection({
                 getApplicationAnswers(answers)
 
               return hasFoodAllergiesOrIntolerances?.includes(YES)
+            },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.foodAllergiesOrIntolerances ?? []
             },
           },
           {
@@ -73,6 +92,8 @@ export const healthProtectionSubSection = buildSubSection({
               label: newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultAllergies(application.externalData) === YES ? [YES] : [],
         }),
         buildCustomField(
           {
@@ -83,6 +104,12 @@ export const healthProtectionSubSection = buildSubSection({
               const { hasOtherAllergies } = getApplicationAnswers(answers)
 
               return hasOtherAllergies?.includes(YES)
+            },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.allergies ?? []
             },
           },
           {
@@ -138,6 +165,13 @@ export const healthProtectionSubSection = buildSubSection({
               hasOtherAllergies?.includes(YES)
             )
           },
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(healthProfile?.usesEpipen)
+          },
         }),
         buildRadioField({
           id: 'healthProtection.hasConfirmedMedicalDiagnoses',
@@ -162,6 +196,15 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.hasConfirmedMedicalDiagnoses,
+            )
+          },
         }),
         buildDescriptionField({
           id: 'healthProtection.requestsMedicationAdministrationDescription',
@@ -191,6 +234,15 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.requestsMedicationAdministration,
+            )
+          },
         }),
         buildAlertMessageField({
           id: 'healthProtection.schoolNurseAlertMessage',
@@ -211,6 +263,10 @@ export const healthProtectionSubSection = buildSubSection({
               requestsMedicationAdministration === YES
             )
           },
+        }),
+        buildHiddenInput({
+          id: 'healthProtection.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

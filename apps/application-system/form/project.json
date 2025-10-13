@@ -23,7 +23,8 @@
         "styles": ["apps/application-system/form/src/styles.css"],
         "scripts": [],
         "webpackConfig": "apps/application-system/form/webpack.config.js",
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "memoryLimit": 8192
       },
       "configurations": {
         "production": {
@@ -64,8 +65,7 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "port": 4242,
-        "buildTarget": "application-system-form:build",
-        "proxyConfig": "apps/application-system/form/proxy.config.json"
+        "buildTarget": "application-system-form:build"
       },
       "configurations": {
         "production": {

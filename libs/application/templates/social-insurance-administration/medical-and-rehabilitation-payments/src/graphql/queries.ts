@@ -6,7 +6,6 @@ export const siaRehabilitationPlanQuery = gql`
       referenceId
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -56,6 +55,7 @@ export const siaRehabilitationPlanQuery = gql`
         domesticLife
         mainDailyLifeAreas
         leisureAndHobbies
+        expression
       }
       startDate
       plannedEndDate
@@ -72,6 +72,7 @@ export const siaRehabilitationPlanQuery = gql`
         goalDescription
         measures
       }
+      typeAppliedFor
     }
   }
 `
@@ -80,6 +81,7 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
   query SiaCertificateForSicknessAndRehabilitation {
     socialInsuranceCertificateForSicknessAndRehabilitation {
       referenceId
+      isAlmaCertificate
       doctor {
         name
         doctorNumber
@@ -118,17 +120,99 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
         explanation
       }
       other
-      confirmation {
-        type {
+    }
+  }
+`
+
+export const siaConfirmedTreatmentQuery = gql`
+  query SiaConfirmedTreatment {
+    socialInsuranceConfirmedTreatment {
+      referenceId
+      created
+      serviceProvider {
+        serviceProviderName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      requestedTreatment {
+        treatmentTypes {
           value
           name
           display
         }
-        typeName
-        treatmentMeasures
-        explanation
-        progress
+        otherTreatmentDescription
       }
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+      typeAppliedFor
+    }
+  }
+`
+
+export const siaConfirmationOfPendingResolutionQuery = gql`
+  query SiaConfirmationOfPendingResolution {
+    socialInsuranceConfirmationOfPendingResolution {
+      referenceId
+      created
+      serviceProvider {
+        serviceProviderName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      requestedTreatment {
+        treatmentTypes {
+          value
+          name
+          display
+        }
+        otherTreatmentDescription
+      }
+      treatmentExplanation
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+      typeAppliedFor
+    }
+  }
+`
+
+export const siaConfirmationOfIllHealthQuery = gql`
+  query SiaConfirmationOfIllHealth {
+    socialInsuranceConfirmationOfIllHealth {
+      referenceId
+      created
+      serviceProvider {
+        serviceProviderName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      currentMedicalStatus
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+      typeAppliedFor
     }
   }
 `

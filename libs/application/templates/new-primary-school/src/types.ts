@@ -1,4 +1,11 @@
-import { AffiliationOrganizationType, AffiliationRole } from './utils/constants'
+import { NO, YES } from '@island.is/application/core'
+import {
+  AffiliationOrganizationType,
+  AffiliationRole,
+  CaseWorkerInputTypeEnum,
+} from './utils/constants'
+
+export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
 export interface RelativesRow {
   fullName: string
@@ -39,6 +46,11 @@ export type ChildInformation = {
   usePronounAndPreferredName?: string[]
 }
 
+export type SelectOption = {
+  label: string
+  value: string
+}
+
 export type Person = {
   nationalId: string
   fullName: string
@@ -52,21 +64,17 @@ export type Person = {
   }
   requiresInterpreter: string[]
   preferredLanguage?: string
-  citizenshipCode?: string
 }
 
-export type SelectOption = {
-  label: string
-  value: string
-}
-
-export type Agent = {
+export type AgentModel = {
   id: string
   name: string
-  role: string
   email: string
   phone: string
   nationalId: string
+  type: AffiliationRole
+  preferredLanguage: string | null
+  requiresInterpreter: boolean
 }
 
 export type Affiliation = {
@@ -97,14 +105,6 @@ export type AddressModel = {
   municipalityId: string | null // Is set as object in MMS data
 }
 
-export type AllergyModel = {
-  id: string
-  title: string // Is set as object in MMS data
-  group: string // Is set as object in MMS data
-  code: string
-  foodAllergy: boolean
-}
-
 export type SpecialNeedsModel = {
   id: string
   title: string // Is set as object in MMS data
@@ -115,10 +115,36 @@ export type SpecialNeedsModel = {
 export type HealthProfileModel = {
   id: string
   userId: string
-  allergies: AllergyModel[]
+  allergies: string[]
+  foodAllergiesOrIntolerances: string[]
   specialNeeds: SpecialNeedsModel[]
   createdAt: Date
   updatedAt: Date
+  usesEpipen: boolean
+  hasConfirmedMedicalDiagnoses: boolean
+  requestsMedicationAdministration: boolean
+}
+
+export type CaseWorker = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  type: CaseWorkerInputTypeEnum
+}
+
+export type SocialProfile = {
+  hasDiagnoses: boolean
+  hasIntegratedServices: boolean
+  caseWorkers: CaseWorker[] | null
+  hasHadSupport: boolean
+}
+
+export type LanguageProfile = {
+  languageEnvironment: string
+  signLanguage: boolean
+  preferredLanguage: string
+  languages: string[]
 }
 
 export type FriggChildInformation = {
@@ -135,11 +161,12 @@ export type FriggChildInformation = {
   healthProfile: HealthProfileModel | null
   primaryOrgId: string // Is set as object in MMS data
   affiliations: Affiliation[] | null
-  agents: Agent[] | null
-  spokenLanguages: string[]
+  agents: AgentModel[] | null
   preferredLanguage: string | null
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
+  socialProfile: SocialProfile | null
+  languageProfile: LanguageProfile | null
 }
 
 export type CurrentSchool = {

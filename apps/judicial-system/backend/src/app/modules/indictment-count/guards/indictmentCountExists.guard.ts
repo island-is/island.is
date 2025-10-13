@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 import { IndictmentCountService } from '../indictmentCount.service'
 
 @Injectable()

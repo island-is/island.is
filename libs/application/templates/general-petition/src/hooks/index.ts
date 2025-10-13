@@ -4,7 +4,7 @@ import {
   Endorsement,
   EndorsementList,
   ExistsEndorsementResponse,
-} from '../types/schema'
+} from '@island.is/api/schema'
 
 interface EndorsementData {
   endorsementSystemGetEndorsements?: Endorsement[]

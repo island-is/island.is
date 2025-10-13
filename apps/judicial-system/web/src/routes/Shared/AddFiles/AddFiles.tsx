@@ -266,18 +266,18 @@ const AddFiles: FC = () => {
         <Modal
           title={formatMessage(strings.filesSentModalTitle)}
           text={formatMessage(strings.filesSentModalText)}
-          primaryButtonText={formatMessage(
-            strings.filesConfirmedModalButtonText,
-          )}
-          secondaryButtonText={formatMessage(
-            strings.filesDismissedModalButtonText,
-          )}
-          onClose={() => setVisibleModal(undefined)}
-          onSecondaryButtonClick={() => setVisibleModal(undefined)}
-          isPrimaryButtonDisabled={!allFilesDoneOrError}
-          onPrimaryButtonClick={async () => {
-            await handleNextButtonClick()
+          primaryButton={{
+            text: formatMessage(strings.filesConfirmedModalButtonText),
+            onClick: async () => {
+              await handleNextButtonClick()
+            },
+            isDisabled: !allFilesDoneOrError,
           }}
+          secondaryButton={{
+            text: formatMessage(strings.filesDismissedModalButtonText),
+            onClick: () => setVisibleModal(undefined),
+          }}
+          onClose={() => setVisibleModal(undefined)}
         />
       )}
     </PageLayout>

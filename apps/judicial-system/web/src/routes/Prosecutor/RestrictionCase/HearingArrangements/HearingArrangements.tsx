@@ -205,28 +205,30 @@ export const HearingArrangements = () => {
             text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
               caseType: workingCase.type,
             })}
-            primaryButtonText="Senda tilkynningu"
-            secondaryButtonText="Halda áfram með kröfu"
+            primaryButton={{
+              text: 'Senda tilkynningu',
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            }}
+            secondaryButton={{
+              text: 'Halda áfram með kröfu',
+              onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+            }}
             onClose={() => setNavigateTo(undefined)}
-            onSecondaryButtonClick={() =>
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            onPrimaryButtonClick={async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                NotificationType.HEADS_UP,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              }
-            }}
-            isPrimaryButtonLoading={isSendingNotification}
           />
         )}
       </>

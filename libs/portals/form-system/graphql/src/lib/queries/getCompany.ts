@@ -5,7 +5,8 @@ export const GET_COMPANY_BY_NATIONALID = gql`
     formSystemCompanyByNationalId(input: $input) {
       name
       address {
-        ...CompanyAddress
+        streetAddress
+        postalCode
       }
     }
   }

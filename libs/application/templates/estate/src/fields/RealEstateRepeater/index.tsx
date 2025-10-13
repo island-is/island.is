@@ -34,6 +34,7 @@ export const RealEstateRepeater: FC<
     if (fields.length === 0 && estateData.estate?.assets) {
       replace(estateData.estate.assets)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddProperty = () =>
@@ -128,7 +129,7 @@ export const RealEstateRepeater: FC<
           </Box>
         )
       })}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"

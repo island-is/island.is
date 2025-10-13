@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 
-import { Button, Divider, Input, InputRow } from '../../ui'
+import { Button, Divider, Input, InputRow, Problem } from '../../ui'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -54,7 +54,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
   const isError = !!error
   const noInfo = data?.vehiclesDetail === null
-  const isMileageRequired = mainInfo?.requiresMileageRegistration
 
   if (noInfo && !loading) {
     return (
@@ -68,7 +67,14 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     )
   }
 
+  if (isError) {
+    return <Problem withContainer error={error} />
+  }
+
   const inputLoading = loading && !data
+  const allowMilageRegistration =
+    mainInfo?.requiresMileageRegistration ||
+    mainInfo?.availableMileageRegistration
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
@@ -138,7 +144,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             )}
           </InputRow>
 
-          {isMileageRequired && (
+          {allowMilageRegistration && (
             <Button
               title={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
               onPress={() => {

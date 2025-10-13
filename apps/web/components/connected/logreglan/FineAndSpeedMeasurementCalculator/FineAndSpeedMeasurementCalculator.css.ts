@@ -1,20 +1,29 @@
 import { style } from '@vanilla-extract/css'
 
-import { themeUtils } from '@island.is/island-ui/theme'
-
 export const totalContainer = style({
-  ...themeUtils.responsiveStyle({
-    xs: {
+  '@media': {
+    [`screen and (min-width: 0px)`]: {
       minWidth: '70px',
     },
-    sm: {
-      minWidth: '140px',
+    [`screen and (min-width: 400px)`]: {
+      minWidth: '130px',
     },
-    lg: {
-      minWidth: '160px',
-    },
-    xl: {
+    [`screen and (min-width: 576px)`]: {
       minWidth: '180px',
     },
-  }),
+    [`screen and (min-width: 767px)`]: {
+      minWidth: '160px',
+    },
+    [`screen and (min-width: 992px)`]: {
+      minWidth: '200px',
+    },
+    [`screen and (min-width: 1440px)`]: {
+      minWidth: '240px',
+    },
+  },
+})
+
+export const totalOuterContainer = style({
+  position: 'sticky',
+  top: '130px',
 })

@@ -40,3 +40,8 @@ export enum HashAlgorithm {
   MD5 = 'MD5',
   SHA256 = 'SHA256',
 }
+
+export enum PoliceFileTypeCode {
+  SUBPOENA = 'BRTNG',
+  VERDICT = 'BRTNG_DOMUR',
+}

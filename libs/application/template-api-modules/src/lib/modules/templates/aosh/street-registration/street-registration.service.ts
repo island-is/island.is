@@ -136,7 +136,7 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     }
 
     const userInfo = exrtactUserInfo(answers, application.externalData)
-    const machineId = answers.machine.id || answers.pickMachine.id
+    const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }

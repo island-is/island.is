@@ -3,6 +3,7 @@ import { Text } from '@island.is/island-ui/core'
 interface EventTimeProps {
   startTime?: string
   endTime?: string
+  startDate?: string
   timePrefix?: string
   timeSuffix?: string
 }

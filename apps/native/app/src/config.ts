@@ -1,4 +1,3 @@
-import { Platform } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 import {
   EnvironmentConfig,
@@ -90,10 +89,6 @@ export const config = {
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',
   environmentsUrl: 'https://switcher.dev01.devland.is/environments',
-  codepush: Platform.select({
-    ios: '8And8KYL9BWRsUAhEBFFUxbVfVTdSM4QBQsr6',
-    android: '4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz',
-  }),
 }
 
 export function useConfig() {

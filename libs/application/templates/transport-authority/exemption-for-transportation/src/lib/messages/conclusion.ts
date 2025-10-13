@@ -19,8 +19,7 @@ export const conclusion = {
     },
     alertMessage: {
       id: 'ta.eft.application:conclusion.general.alertMessage',
-      defaultMessage:
-        'Eftirfarandi umsókn hefur verið send til Samgöngustofu til úrvinnslu.',
+      defaultMessage: 'Umsóknin hefur verið send.',
       description: 'Conclusion general alert message',
     },
     accordionTitle: {
@@ -30,7 +29,7 @@ export const conclusion = {
     },
     accordionText: {
       id: 'ta.eft.application:conclusion.general.accordionText#markdown',
-      defaultMessage: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
+      defaultMessage: `* Undanþágan verður yfirfarin af Samgöngustofu og Vegagerð og eftir atvikum öðrum hagsmunaaðilum. Niðurstaðan verður síðan send á umbeðin netföng. \n* Vakin er athygli á því að ekki er hægt að ábyrgjast að beiðnir um undanþágur vegna stærðar og þyngdar sem berast eftir kl. 13.00 verði afgreiddar samdægurs. \n* Vegagerðin gefur sér allt að tíu virka daga til að afgreiða undanþágur ef skoða þarf sérstaklega brú eða önnur umferðarmannvirki á flutningsleið.`,
       description: 'Conclusion accordion text',
     },
   }),

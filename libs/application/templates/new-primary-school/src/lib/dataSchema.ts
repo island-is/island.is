@@ -41,14 +41,16 @@ export const dataSchema = z.object({
         .optional(),
     })
     .refine(
-      ({ usePronounAndPreferredName, preferredName }) =>
-        usePronounAndPreferredName.includes(YES) ? !!preferredName : true,
+      ({ usePronounAndPreferredName, preferredName, pronouns }) =>
+        usePronounAndPreferredName.includes(YES)
+          ? !!preferredName || (pronouns && pronouns.length > 0)
+          : true,
       { path: ['preferredName'] },
     )
     .refine(
-      ({ usePronounAndPreferredName, pronouns }) =>
+      ({ usePronounAndPreferredName, pronouns, preferredName }) =>
         usePronounAndPreferredName.includes(YES)
-          ? !!pronouns && pronouns.length > 0
+          ? (!!pronouns && pronouns.length > 0) || !!preferredName
           : true,
       { path: ['pronouns'] },
     )

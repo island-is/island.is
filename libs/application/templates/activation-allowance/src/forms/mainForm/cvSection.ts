@@ -55,7 +55,7 @@ export const cvSection = buildSection({
           uploadHeader: cv.labels.uploadHeader,
           uploadDescription: cv.labels.uploadDescription,
           maxSize: 10000000,
-          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+          uploadAccept: '.pdf, .jpg, .jpeg, .png, .doc, .docx',
           condition: (answers) => {
             const haveCV = getValueViaPath<YesOrNoEnum>(answers, 'cv.haveCV')
             return haveCV === YES

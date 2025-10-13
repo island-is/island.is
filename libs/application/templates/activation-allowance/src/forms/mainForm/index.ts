@@ -11,6 +11,7 @@ import { languageSkillsSection } from './languageSkillsSection'
 import { cvSection } from './cvSection'
 import { incomeSection } from './incomeSection'
 import { applicantSection } from './personalInformationSection'
+import { reportingObligationSection } from './reportingObligationSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -22,12 +23,13 @@ export const MainForm = buildForm({
     applicantSection,
     paymentInformationSection,
     incomeSection,
-    jobHistorySection,
     jobWishesSection,
+    jobHistorySection,
     academicBackgroundSection,
     drivingLicensesSection,
     languageSkillsSection,
     cvSection,
     overviewSection,
+    reportingObligationSection,
   ],
 })

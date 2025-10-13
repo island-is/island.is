@@ -4,30 +4,36 @@ export const convoy = {
   general: defineMessages({
     sectionTitle: {
       id: 'ta.eft.application:convoy.general.sectionTitle',
-      defaultMessage: 'Vagnlest',
+      defaultMessage: 'Ökutæki',
       description: 'Title of convoy section',
     },
     pageTitle: {
       id: 'ta.eft.application:convoy.general.pageTitle',
-      defaultMessage: 'Veldu ökutæki sem á að nota við flutninginn',
+      defaultMessage: 'Ökutæki',
       description: 'Title of convoy page',
     },
-    description: {
-      id: 'ta.eft.application:convoy.general.description',
+    descriptionShortTerm: {
+      id: 'ta.eft.application:convoy.general.descriptionShortTerm',
       defaultMessage:
-        'Hér að neðan skaltu velja þau ökutæki sem verða notuð við flutning.  Hægt er að velja eitt ökutæki eða eitt ökutæki og einn eftirvagn.',
-      description: 'Description of convoy page',
+        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið bíl eða bíl með eftirvagni.',
+      description: 'Description of convoy page for short-term',
+    },
+    descriptionLongTerm: {
+      id: 'ta.eft.application:convoy.general.descriptionLongTerm',
+      defaultMessage:
+        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið bíl eða bíl með eftirvagni. Ef notast er við fleiri bíla eða vagnlestir er hægt að bæta því við með því að velja Bæta við vagnlest.',
+      description: 'Description of convoy page for long-term',
     },
   }),
   labels: defineMessages({
     vehiclePermno: {
       id: 'ta.eft.application:convoy.labels.vehiclePermno',
-      defaultMessage: 'Fastanúmer ökutækis',
+      defaultMessage: 'Fastanúmer bíls',
       description: 'Vehicle permno label',
     },
     vehicleMakeAndColor: {
       id: 'ta.eft.application:convoy.labels.vehicleMakeAndColor',
-      defaultMessage: 'Tegund og litur ökutækis',
+      defaultMessage: 'Tegund og litur bíls',
       description: 'Vehicle make and color label',
     },
     trailerPermno: {
@@ -67,7 +73,7 @@ export const convoy = {
     },
     vehicleTableHeader: {
       id: 'ta.eft.application:convoy.labels.vehicleTableHeader',
-      defaultMessage: 'Ökutæki',
+      defaultMessage: 'Bíll',
       description: 'Vehicle table header label',
     },
     trailerTableHeader: {
@@ -111,13 +117,13 @@ export const convoy = {
     notTrailer: {
       id: 'ta.eft.application:convoy.error.notTrailer',
       defaultMessage:
-        'Ætti að vera eftirvagn, en þetta bílnúmer er ekki fyrir eftirvagn',
+        'Ætti að vera eftirvagn, en þetta fastanúmer er ekki fyrir eftirvagn',
       description: 'Convoy error vehicle is not a trailer alert message',
     },
     shouldNotBeTrailer: {
       id: 'ta.eft.application:convoy.error.shouldNotBeTrailer',
       defaultMessage:
-        'Ætti að vera ökutæki, en þetta bílnúm er fyrir eftirvagn',
+        'Ætti að vera bíll, en þetta fastanúmer er fyrir eftirvagn',
       description: 'Convoy error vehicle should not be a trailer alert message',
     },
     notFound: {
@@ -144,7 +150,7 @@ export const convoy = {
     duplicateErrorMessage: {
       id: 'ta.eft.application:convoy.error.duplicateErrorMessage',
       defaultMessage:
-        'Ekki má setja inn sömu samsetningu af ökutæki og eftirvagn oftar en einu sinni',
+        'Ekki má setja inn sömu samsetningu af bíl og eftirvagn oftar en einu sinni',
       description: 'Convoy error duplicate alert message',
     },
   }),

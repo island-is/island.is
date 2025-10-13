@@ -72,6 +72,9 @@ export class Application extends Model<Application> {
   @HasMany(() => Value)
   files?: Value[]
 
+  @HasMany(() => Value)
+  values?: Value[]
+
   @ForeignKey(() => Form)
   @Column({
     type: DataType.STRING,

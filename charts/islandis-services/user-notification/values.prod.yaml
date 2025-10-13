@@ -19,7 +19,7 @@ global:
 name: 'user-notification'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
@@ -103,6 +103,7 @@ ingress:
 namespace: 'user-notification'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

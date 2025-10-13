@@ -15,8 +15,8 @@ import {
 import {
   allowedScopesAdmin,
   allowedScopesAdminAndMunicipality,
+  allowedScopesMunicipality,
 } from './lib/utils'
-import { AuthDelegationType } from '@island.is/api/schema'
 
 /* Parliamentary */
 const ParliamentaryRoot = lazy(() =>
@@ -28,7 +28,10 @@ const ParliamentaryConstituency = lazy(() =>
 const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 
 /* Presidential */
-const AllLists = lazy(() => import('./screens-presidential/AllLists'))
+const AllCandidates = lazy(() => import('./screens-presidential/AllCandidates'))
+const CandidateLists = lazy(() =>
+  import('./screens-presidential/CandidateLists'),
+)
 const List = lazy(() => import('./screens-presidential/List'))
 
 /* Municipal */
@@ -52,14 +55,13 @@ export const signatureCollectionModule: PortalModule = {
       path: SignatureCollectionPaths.MunicipalRoot,
       element: (
         <AllMunicipalities
-          // If the user is NOT an admin (LKS or ÞÍ) & have a procuration holder delegation type
-          isProcurationHolder={
-            !props.userInfo.scopes.some(
-              (scope) =>
-                allowedScopesAdmin.includes(scope) &&
-                props.userInfo.profile.delegationType?.includes(
-                  AuthDelegationType.ProcurationHolder,
-                ),
+          // If the user is NOT an admin (LKS or ÞÍ) but a municipality
+          isMunicipality={
+            !props.userInfo.scopes.some((scope) =>
+              allowedScopesAdmin.includes(scope),
+            ) &&
+            props.userInfo.scopes.some((scope) =>
+              allowedScopesMunicipality.includes(scope),
             )
           }
         />
@@ -130,10 +132,22 @@ export const signatureCollectionModule: PortalModule = {
     /* ------ Presidential ------ */
     {
       name: m.signatureListsTitle,
-      path: SignatureCollectionPaths.PresidentialLists,
-      element: <AllLists />,
+      path: SignatureCollectionPaths.PresidentialListOfCandidates,
+      element: <AllCandidates />,
       loader: presidentialListsLoader(props),
       // Hide the nav for this route if the user does not have the required scopes
+      navHide: !props.userInfo.scopes.some((scope) =>
+        allowedScopesAdmin.includes(scope),
+      ),
+      enabled: props.userInfo.scopes.some((scope) =>
+        allowedScopesAdmin.includes(scope),
+      ),
+    },
+    {
+      name: m.signatureListsTitle,
+      path: SignatureCollectionPaths.PresidentialCandidateLists,
+      element: <CandidateLists />,
+      loader: presidentialListsLoader(props),
       navHide: !props.userInfo.scopes.some((scope) =>
         allowedScopesAdmin.includes(scope),
       ),

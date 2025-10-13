@@ -70,7 +70,7 @@ export const MobileOverview: FC<Props> = ({
         />
       </Box>
       {!replyState?.replyOpen && (
-        <Box className={styles.modalContent}>
+        <Box className={styles.mobileHeaderContainer}>
           <DocumentHeader
             avatar={activeDocument.img}
             sender={activeDocument.sender}

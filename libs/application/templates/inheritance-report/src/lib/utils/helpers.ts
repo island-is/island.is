@@ -6,10 +6,11 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { ZodTypeAny } from 'zod'
-import { Answers } from '../../types'
+import type { Answers } from '../../types'
+import { DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
@@ -40,6 +41,25 @@ export const getEstateDataFromApplication = (
 
   return {
     inheritanceReportInfo: estateData,
+  }
+}
+
+export const parseDebtType = (debtType: ClientDebtType) => {
+  switch (debtType) {
+    case 'propertyFees':
+      return DebtTypes.PropertyFees
+    case 'overdraft':
+      return DebtTypes.Overdraft
+    case 'creditCard':
+      return DebtTypes.CreditCard
+    case 'insuranceCompany':
+      return DebtTypes.InsuranceInstitute
+    case 'loan':
+      return DebtTypes.Loan
+    case 'duties':
+      return DebtTypes.PublicCharges
+    default:
+      return DebtTypes.OtherDebts
   }
 }
 
@@ -97,19 +117,6 @@ export const getPrePaidTotalValueFromApplication = (
   return (
     money + stocksTotal + realEstateTotal + otherAssetsTotal + bankAccountTotal
   )
-}
-
-export const customZodError = (
-  zodValidation: ZodTypeAny,
-  errorMessage: MessageDescriptor,
-): ZodTypeAny => {
-  if (zodValidation._def.checks) {
-    for (const check of zodValidation._def.checks) {
-      check['params'] = errorMessage
-      check['code'] = 'custom_error'
-    }
-  }
-  return zodValidation
 }
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)

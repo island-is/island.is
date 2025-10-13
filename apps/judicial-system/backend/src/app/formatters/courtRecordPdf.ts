@@ -19,7 +19,7 @@ import {
 
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -65,7 +65,7 @@ const constructRestrictionCourtRecordPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -313,7 +313,7 @@ const constructInvestigationCourtRecordPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 

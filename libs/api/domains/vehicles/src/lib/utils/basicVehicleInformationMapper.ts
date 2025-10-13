@@ -181,6 +181,17 @@ export const basicVehicleInformationMapper = (
         }
       }) || undefined,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
+    latestMileageRegistration: data.latestMileageRegistration ?? undefined,
+    lastMileage: {
+      permno: undefined,
+      readDate: undefined,
+      originCode: undefined,
+      mileage: data.latestMileageRegistration
+        ? data.latestMileageRegistration.toString()
+        : undefined,
+      mileageNumber: data.latestMileageRegistration ?? undefined,
+      internalId: undefined,
+    },
   }
 
   return response

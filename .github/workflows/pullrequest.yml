@@ -188,16 +188,21 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
           # Need full repo for Nx to find the commits at NX_*
           fetch-depth: 0
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: NX format:check
-        run: yarn nx format:check
+      - name: NX format:write
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+        run: |
+          yarn nx format:write
+          node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
 
   lintfix-changed-files:
     name: Lintfix Changed Files
@@ -209,7 +214,7 @@ jobs:
         with:
           # Need full repo for Nx to find the commits at NX_* below
           fetch-depth: 0
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          persist-credentials: false
           # Need ref to know where to push to
           # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
           ref: ${{ github.event.pull_request.head.ref }}
@@ -229,7 +234,10 @@ jobs:
 
       - name: Commit changed files
         if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
-        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+        run: node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
 
   linting:
     needs:

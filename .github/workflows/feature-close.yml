@@ -80,4 +80,4 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
-          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\", \"delete_value_files\": false }}"

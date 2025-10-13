@@ -6,8 +6,8 @@ import {
   mapVehicleResponseDto,
 } from './dtos/vehiclesResponse.dto'
 import { GetVehiclesInput } from './input/getVehicles.input'
-import { OwnershipReportInput } from './input/ownershipReport.input'
 import { VehicleHistoryInput } from './input/vehicleHistory.input'
+import { mapVehicleDataToNestedArray } from './dtos/tableData.dto'
 
 @Injectable()
 export class VehiclesClientService {
@@ -35,6 +35,7 @@ export class VehiclesClientService {
     ).currentvehicleswithmileageandinspGet({
       page: input.page,
       pageSize: input.pageSize,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles: input.onlyMileageRegisterableVehicles,
       onlyMileageRequiredVehicles: input.onlyMileageRequiredVehicles,
       permno: input.query
@@ -47,6 +48,28 @@ export class VehiclesClientService {
     return mapVehicleResponseDto(res)
   }
 
+  getVehiclesUnknownArray = async (
+    user: User,
+    input: GetVehiclesInput,
+  ): Promise<unknown[][] | null> => {
+    const res = await this.vehiclesApiWithAuth(
+      user,
+    ).currentvehicleswithmileageandinspGet({
+      page: input.page,
+      pageSize: input.pageSize,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
+      onlyMileageRegisterableVehicles: input.onlyMileageRegisterableVehicles,
+      onlyMileageRequiredVehicles: input.onlyMileageRequiredVehicles,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
+    })
+
+    return mapVehicleDataToNestedArray(res)
+  }
+
   vehicleReport = async (
     user: User,
     { vehicleId }: VehicleHistoryInput,
@@ -56,9 +79,6 @@ export class VehiclesClientService {
   ownershipReportExcel = async (user: User): Promise<Blob> =>
     this.excelApiWithAuth(user).ownershipReportExcelGet()
 
-  ownershipReportPdf = (
-    user: User,
-    { personNationalId }: OwnershipReportInput,
-  ): Promise<Blob> =>
-    this.pdfApiWithAuth(user).ownershipReportPdfGet({ ssn: personNationalId })
+  ownershipReportPdf = (user: User): Promise<Blob> =>
+    this.pdfApiWithAuth(user).ownershipReportPdfGet()
 }

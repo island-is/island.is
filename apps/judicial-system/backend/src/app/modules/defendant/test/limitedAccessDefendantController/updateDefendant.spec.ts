@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { MessageService } from '@island.is/judicial-system/message'
@@ -10,9 +10,8 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant

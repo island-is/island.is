@@ -15,6 +15,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Innritun í grunnskóla',
       description: 'Enrollment in primary school',
     },
+    newPrimarySchoolApplicationName: {
+      id: 'nps.application:new.primary.school.application.name',
+      defaultMessage: 'Umsókn í nýjan skóla',
+      description: 'Application for a new school',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -147,18 +152,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:external.data.section',
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
-    },
-
-    // Application type
-    applicationTypeSubSectionTitle: {
-      id: 'nps.application:application.type.sub.section.title',
-      defaultMessage: 'Tegund umsóknar',
-      description: 'Application type',
-    },
-    applicationTypeSubSectionDescription: {
-      id: 'nps.application:application.type.sub.section.description',
-      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
-      description: 'Please select application type',
     },
 
     // Data collection
@@ -1069,5 +1062,33 @@ export const errorMessages = defineMessages({
     id: 'nps.application:error.other.allergies.required',
     defaultMessage: 'Það þarf að velja að minnsta kosti eitt ofnæmi',
     description: 'At least one allergy must be selected',
+  },
+})
+
+export const statesMessages = defineMessages({
+  applicationApproved: {
+    id: 'nps.application:application.approved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Application approved',
+  },
+  applicationApprovedDescription: {
+    id: 'nps.application:application.approved.description',
+    defaultMessage: 'Umsókn um grunnskóla samþykkt',
+    description: 'The application for primary school has been approved',
+  },
+  applicationRejected: {
+    id: 'nps.application:application.rejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationRejectedDescription: {
+    id: 'nps.application:application.rejected.description',
+    defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
+    description: 'The application for primary school has been rejected',
+  },
+  applicationReceivedTitle: {
+    id: 'nps.application:application.received.title',
+    defaultMessage: 'Móttekin',
+    description: 'Received',
   },
 })

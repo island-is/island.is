@@ -159,7 +159,7 @@ export const ActorProfileEmails = ({
               <Select
                 options={options}
                 value={selectedOption}
-                size="sm"
+                size="xs"
                 onChange={(option) => handleEmailChange(option as EmailOption)}
               />
             )}

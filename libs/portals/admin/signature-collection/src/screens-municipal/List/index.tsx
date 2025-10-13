@@ -62,7 +62,7 @@ const List = () => {
             />
           </Box>
           <IntroHeader
-            title={list?.title}
+            title={list?.candidate?.name}
             intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
@@ -73,20 +73,22 @@ const List = () => {
                   Actions.LockList,
                   Actions.ReviewComplete,
                   Actions.ExtendDeadline,
-                  Actions.RemoveCandidate,
+                  Actions.RemoveList,
                 ]}
                 withManagers
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />
           <Signees list={list} />
-          <PaperSignees
-            listId={list?.id}
-            collectionType={list.collectionType}
-          />
+          {!list.reviewed && (
+            <PaperSignees
+              listId={list?.id}
+              collectionType={list.collectionType}
+            />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

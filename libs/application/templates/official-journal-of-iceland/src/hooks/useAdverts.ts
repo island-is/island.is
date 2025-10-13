@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE } from '../lib/constants'
 import { ADVERTS_QUERY } from '../graphql/queries'
-import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 
 /**
  * Fetches adverts from the API
@@ -27,10 +27,6 @@ type Props = {
   dateTo?: Date
 }
 
-type AdvertsResponse = {
-  officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
-}
-
 export const useAdverts = ({
   page = DEFAULT_PAGE,
   pageSize = DEFAULT_PAGE_SIZE,
@@ -42,7 +38,7 @@ export const useAdverts = ({
   dateFrom,
   dateTo,
 }: Props) => {
-  const { data, loading, error } = useQuery<AdvertsResponse>(ADVERTS_QUERY, {
+  const { data, loading, error } = useQuery<Query>(ADVERTS_QUERY, {
     variables: {
       input: {
         page,
@@ -59,8 +55,8 @@ export const useAdverts = ({
   })
 
   return {
-    adverts: data?.officialJournalOfIcelandAdverts.adverts,
-    paging: data?.officialJournalOfIcelandAdverts.paging,
+    adverts: data?.officialJournalOfIcelandAdvertsFull.adverts,
+    paging: data?.officialJournalOfIcelandAdvertsFull.paging,
     loading,
     error,
   }

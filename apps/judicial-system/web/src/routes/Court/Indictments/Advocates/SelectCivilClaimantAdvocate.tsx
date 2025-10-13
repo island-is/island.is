@@ -246,20 +246,22 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
             spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
           })}
-          primaryButtonText={formatMessage(
-            strings.confirmModalPrimaryButtonText,
-            { isConfirming: !civilClaimant.isSpokespersonConfirmed },
-          )}
-          onPrimaryButtonClick={() => {
-            handleSetAndSendCivilClaimantToServer({
-              isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
-            })
-            setDisplayModal(false)
+          primaryButton={{
+            text: formatMessage(strings.confirmModalPrimaryButtonText, {
+              isConfirming: !civilClaimant.isSpokespersonConfirmed,
+            }),
+            onClick: () => {
+              handleSetAndSendCivilClaimantToServer({
+                isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
+              })
+
+              setDisplayModal(false)
+            },
           }}
-          secondaryButtonText={formatMessage(
-            strings.confirmModalSecondaryButtonText,
-          )}
-          onSecondaryButtonClick={() => setDisplayModal(false)}
+          secondaryButton={{
+            text: formatMessage(strings.confirmModalSecondaryButtonText),
+            onClick: () => setDisplayModal(false),
+          }}
         />
       )}
     </BlueBox>

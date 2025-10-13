@@ -14,6 +14,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
 import { UserService } from '../../user'
 import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
@@ -21,9 +22,6 @@ import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
-import { CivilClaimant } from '../models/civilClaimant.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')

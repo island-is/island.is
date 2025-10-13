@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
+import { Case } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 
 interface Then {

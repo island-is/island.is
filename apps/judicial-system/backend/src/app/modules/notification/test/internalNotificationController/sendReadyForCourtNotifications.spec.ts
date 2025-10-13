@@ -26,11 +26,9 @@ import {
 } from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case'
-import { Institution } from '../../../institution/institution.model'
+import { Case, Institution, Notification, Recipient } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {

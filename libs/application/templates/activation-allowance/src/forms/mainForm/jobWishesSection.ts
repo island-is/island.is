@@ -30,6 +30,7 @@ export const jobWishesSection = buildSection({
           id: 'jobWishes.jobs',
           title: jobWishes.labels.jobs,
           isMulti: true,
+          doesNotRequireAnswer: true,
           options: (
             application: Application,
             _field: Field,

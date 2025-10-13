@@ -14,6 +14,7 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { DefaultEvents } from '@island.is/application/types'
+import { SignatureCollectionArea } from '@island.is/api/schema'
 
 export const overview = buildSection({
   id: 'overview',
@@ -92,18 +93,51 @@ export const overview = buildSection({
         buildActionCardListField({
           id: 'createdListsInOverview',
           doesNotRequireAnswer: true,
-          items: ({ answers }) => {
-            const constituency =
-              getValueViaPath<string[]>(answers, 'constituency') || []
-            return constituency?.map((constituency) => ({
-              heading: constituency.split('|')[1],
-              eyebrow: getValueViaPath<string>(answers, 'list.name'),
-              progressMeter: {
-                currentProgress: 0,
-                maxProgress: 350,
-                withLabel: true,
-              },
-            }))
+          items: ({ externalData, answers }) => {
+            // Constituencies selected by the user
+            const selected =
+              getValueViaPath<string[]>(answers, 'constituency') ?? []
+
+            // Official list of constituencies with the correct order
+            const areas = getValueViaPath<SignatureCollectionArea[]>(
+              externalData,
+              'parliamentaryCollection.data.areas',
+            )
+
+            // Build a lookup map: { id → index }
+            const order = areas
+              ? new Map(
+                  areas.map((area, i) => [
+                    area.id,
+                    { index: i, max: area.min },
+                  ]),
+                )
+              : null
+
+            // Sort selected constituencies to match the official order
+            const constituencies = order
+              ? [...selected].sort(
+                  (a, b) =>
+                    (order.get(a.split('|')[0])?.index ?? 0) -
+                    (order.get(b.split('|')[0])?.index ?? 0),
+                )
+              : selected
+
+            // Map to display items
+            return constituencies.map((c) => {
+              const [id, name] = c.split('|')
+              const max = order?.get(id)?.max ?? 0
+
+              return {
+                heading: name,
+                eyebrow: getValueViaPath<string>(answers, 'list.name'),
+                progressMeter: {
+                  currentProgress: 0,
+                  maxProgress: max,
+                  withLabel: true,
+                },
+              }
+            })
           },
         }),
         buildSubmitField({

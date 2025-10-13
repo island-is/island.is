@@ -2,6 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    senderNationalIdDescription: {
+      id: 'web.landspitali.directGrants:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     grantLabel: {
       id: 'web.landspitali.directGrants:info.grantLabel',
       defaultMessage: 'Veldu nafn styrktarsjóðs úr listanum',
@@ -37,6 +43,11 @@ export const m = {
       defaultMessage: 'Nafn',
       description: 'Nafn',
     },
+    senderEmailLabel: {
+      id: 'web.landspitali.directGrants:info.senderEmailLabel',
+      defaultMessage: 'Netfang',
+      description: 'Netfang',
+    },
     senderNationalIdLabel: {
       id: 'web.landspitali.directGrants:info.senderNationalIdLabel',
       defaultMessage: 'Kennitala',
@@ -56,6 +67,11 @@ export const m = {
       id: 'web.landspitali.directGrants:info.senderPlaceLabel',
       defaultMessage: 'Staður',
       description: 'Staður',
+    },
+    senderNationalIdSkippedLabel: {
+      id: 'web.landspitali.directGrants:info.senderNationalIdSkippedLabel',
+      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
+      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
     },
     senderGrantExplanation: {
       id: 'web.landspitali.directGrants:info.senderGrantExplanation',
@@ -82,12 +98,58 @@ export const m = {
       defaultMessage: 'Greiða',
       description: 'Halda áfram í greiðslu takki',
     },
+    continuingEducationProject: {
+      id: 'web.landspitali.directGrants:info.continuingEducationProject',
+      defaultMessage: 'Endurmenntun',
+      description: 'Endurmenntun',
+    },
+    researchProject: {
+      id: 'web.landspitali.directGrants:info.researchProject',
+      defaultMessage: 'Rannsóknir',
+      description: 'Rannsóknir',
+    },
+    equipmentPurchaseProject: {
+      id: 'web.landspitali.directGrants:info.equipmentPurchaseProject',
+      defaultMessage: 'Tækjakaup',
+      description: 'Tækjakaup',
+    },
+    otherProjects: {
+      id: 'web.landspitali.directGrants:info.otherProjects',
+      defaultMessage: 'Önnur verkefni',
+      description: 'Önnur verkefni',
+    },
   }),
   validation: defineMessages({
-    invalidNationalId: {
-      id: 'web.landspitali.directGrants:validation.invalidNationalId',
+    genericFormErrorMessage: {
+      id: 'web.landspitali.directGrants:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
+    errorTitle: {
+      id: 'web.landspitali.directGrants:validation.errorTitle',
+      defaultMessage: 'Villa',
+      description: 'Titill á villuskilaboðum',
+    },
+    errorMessage: {
+      id: 'web.landspitali.directGrants:validation.errorMessage',
+      defaultMessage: 'Ekki tókst að áframsenda þig á greiðslusíðuna',
+      description: 'Villuskilaboð',
+    },
+    invalidNationalIdLength: {
+      id: 'web.landspitali.directGrants:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',
       description: 'Kennitala verður að vera 10 tölustafir',
+    },
+    invalidNationalIdFormat: {
+      id: 'web.landspitali.directGrants:validation.invalidNationalIdFormat',
+      defaultMessage: 'Kennitala er ekki gild',
+      description: 'Kennitala er ekki gild',
+    },
+    invalidEmail: {
+      id: 'web.landspitali.directGrants:validation.invalidEmail',
+      defaultMessage: 'Netfang er ekki gilt',
+      description: 'Netfang er ekki gilt',
     },
     required: {
       id: 'web.landspitali.directGrants:validation.required',

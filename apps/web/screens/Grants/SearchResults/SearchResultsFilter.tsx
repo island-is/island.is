@@ -41,7 +41,7 @@ export const GrantsSearchResultsFilter = ({
   variant = 'default',
   hits,
 }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, locale } = useIntl()
 
   const sortedFilters = {
     categories: sortBy(
@@ -136,11 +136,17 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannis',
+                    value:
+                      locale === 'is'
+                        ? 'rannis'
+                        : 'the-icelandic-centre-for-research',
                     label: 'Rannís',
                   },
                   {
-                    value: 'umhverfisstofnun',
+                    value:
+                      locale === 'is'
+                        ? 'Umhverfis- og orkustofnun'
+                        : 'Environment and Energy Agency',
                     label: 'Umhverfis- og orkustofnun',
                   },
                 ],

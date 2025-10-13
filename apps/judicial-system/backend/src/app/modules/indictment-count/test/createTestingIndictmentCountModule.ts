@@ -12,10 +12,9 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { CaseService } from '../../case'
+import { IndictmentCount, Offense } from '../../repository'
 import { IndictmentCountController } from '../indictmentCount.controller'
 import { IndictmentCountService } from '../indictmentCount.service'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')

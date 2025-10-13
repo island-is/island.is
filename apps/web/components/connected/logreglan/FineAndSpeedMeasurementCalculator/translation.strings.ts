@@ -12,6 +12,11 @@ export const m = {
       defaultMessage: 'Samtals',
       description: 'Samtals',
     },
+    totalMobileDrawer: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.totalMobileDrawer',
+      defaultMessage: 'Samtals:',
+      description: 'Samtals:',
+    },
     inputPlaceholder: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.inputPlaceholder',
       defaultMessage: 'Leitaðu að sekt',
@@ -44,6 +49,11 @@ export const m = {
     },
   }),
   results: defineMessages({
+    showBreakdown: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.showBreakdown',
+      defaultMessage: 'Sjá sundurliðun',
+      description: 'Sjá sundurliðun',
+    },
     heading: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.heading',
       defaultMessage: 'Sundurliðun',

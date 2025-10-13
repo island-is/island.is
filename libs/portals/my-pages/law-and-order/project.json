@@ -6,7 +6,7 @@
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/portals/my-pages/law-and-order/**/*.{ts,tsx,js,jsx}"

@@ -1,12 +1,12 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { InternalServerErrorException } from '@nestjs/common'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
+import { CaseFile } from '../../../repository'
 import { UpdateFileDto } from '../../dto/updateFile.dto'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: CaseFile[]

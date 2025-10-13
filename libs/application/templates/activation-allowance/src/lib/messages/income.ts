@@ -48,7 +48,7 @@ export const income = {
     },
     endOfEmployment: {
       id: 'aa.application:income.labels.endOfEmployment',
-      defaultMessage: 'Hvenær laukst/lýkur þú störfum?',
+      defaultMessage: 'Hvenær lýkur þú störfum?',
       description: 'When do you/did you end employment label',
     },
     endOfEmploymentDate: {
@@ -76,42 +76,6 @@ export const income = {
       id: 'aa.application:income.labels.explanationPlaceholder',
       defaultMessage: 'Styrkir, uppgjör launagreiðanda...',
       description: 'Income explanation placeholder',
-    },
-    leaveDescription: {
-      id: 'aa.application:income.labels.leaveDescription',
-      defaultMessage: 'Áttirðu ótekið orlof þegar þú hættir í starfi?',
-      description: 'Had remaining leave days description label',
-    },
-    numberAndUsageOfLeaveDescription: {
-      id: 'aa.application:income.labels.numberAndUsageOfLeaveDescription',
-      defaultMessage:
-        'Vinsamlegast tilgreindu fjölda orlofsdaga og hvenær þú ætlar að nýta þá',
-      description: 'If user has leave days left, label for that',
-    },
-    numberOfLeaveDays: {
-      id: 'aa.application:income.labels.numberOfLeaveDays',
-      defaultMessage: 'Fjöldi orlofsdaga',
-      description: 'Number of leave days left label',
-    },
-    dateFrom: {
-      id: 'aa.application:income.labels.dateFrom',
-      defaultMessage: 'Dagsetning frá',
-      description: 'Date from label',
-    },
-    dateTo: {
-      id: 'aa.application:income.labels.dateTo',
-      defaultMessage: 'Dagsetning til',
-      description: 'Date to label',
-    },
-    pickDatePlaceHolder: {
-      id: 'aa.application:income.labels.pickDatePlaceHolder',
-      defaultMessage: 'Veldu dagsetningu',
-      description: 'Pick a date placeholder label',
-    },
-    addLine: {
-      id: 'aa.application:income.labels.addLine',
-      defaultMessage: 'Bæta við línu',
-      description: 'Add line button label',
     },
   }),
 }

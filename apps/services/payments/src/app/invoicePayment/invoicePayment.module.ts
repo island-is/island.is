@@ -6,19 +6,20 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { InvoicePaymentController } from './invoicePayment.controller'
-import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import {
   PaymentFlow,
   PaymentFlowCharge,
 } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
-import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
+import { InvoicePaymentService } from './invoicePayment.service'
+import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
+import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { JwksModule } from '../jwks/jwks.module'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
+import { InvoicePaymentModuleConfig } from './invoicePayment.config'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 
 @Module({
   imports: [
@@ -26,19 +27,18 @@ import { JwksConfig } from '../jwks/jwks.config'
       PaymentFlow,
       PaymentFlowCharge,
       PaymentFlowEvent,
-      PaymentFlowFjsChargeConfirmation,
-      PaymentFlowPaymentConfirmation,
+      FjsCharge,
+      CardPaymentDetails,
+      PaymentFulfillment,
     ]),
     ConfigModule.forRoot({
-      load: [PaymentFlowModuleConfig, JwksConfig],
+      load: [PaymentFlowModuleConfig, JwksConfig, InvoicePaymentModuleConfig],
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
-    NationalRegistryV3ClientModule,
-    CompanyRegistryClientModule,
     JwksModule,
   ],
   controllers: [InvoicePaymentController],
-  providers: [PaymentFlowService],
+  providers: [InvoicePaymentService, PaymentFlowService],
 })
 export class InvoicePaymentModule {}

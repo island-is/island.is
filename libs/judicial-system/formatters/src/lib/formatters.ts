@@ -1,6 +1,9 @@
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import _uniq from 'lodash/uniq'
 
 import {
@@ -13,8 +16,12 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  InformationForDefendant,
+  informationForDefendantMap,
   isRestrictionCase,
+  ServiceRequirement,
   ServiceStatus,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -122,7 +129,7 @@ export const laws = {
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (
-  rulingDecision?: CaseIndictmentRulingDecision,
+  rulingDecision?: CaseIndictmentRulingDecision | null,
 ) => {
   switch (rulingDecision) {
     case CaseIndictmentRulingDecision.RULING:
@@ -522,4 +529,50 @@ export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
     : serviceStatus === ServiceStatus.EXPIRED
     ? 'Rann út á tíma'
     : 'Í birtingarferli' // This should never happen
+}
+
+export const getRulingInstructionItems = (
+  serviceInformationForDefendant: InformationForDefendant[],
+) =>
+  pipe(
+    serviceInformationForDefendant ?? [],
+    filterMap((information) => {
+      const value = informationForDefendantMap.get(information)
+      if (!value) {
+        return option.none
+      }
+
+      return option.some({
+        label: value.label,
+        value: value.description.replace(/\n/g, ''),
+        type: 'accordion',
+      })
+    }),
+  )
+
+export const getServiceRequirementText = (
+  serviceRequirement?: ServiceRequirement,
+) => {
+  switch (serviceRequirement) {
+    case ServiceRequirement.REQUIRED:
+      return 'Birta skal dómfellda dóminn'
+    case ServiceRequirement.NOT_REQUIRED:
+      return 'Birting dóms ekki þörf'
+    case ServiceRequirement.NOT_APPLICABLE:
+      return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
+    default:
+      return null
+  }
+}
+
+export const getDefendantVerdictAppealDecisionLabel = (
+  appealDecision: VerdictAppealDecision,
+) => {
+  if (appealDecision === VerdictAppealDecision.POSTPONE) {
+    return 'Dómfelldi tekur áfrýjunarfrest'
+  }
+  if (appealDecision === VerdictAppealDecision.ACCEPT) {
+    return 'Dómfelldi unir'
+  }
+  return ''
 }

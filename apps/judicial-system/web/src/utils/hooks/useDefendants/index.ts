@@ -60,6 +60,7 @@ const useDefendants = () => {
         return Boolean(data?.deleteDefendant?.deleted)
       } catch (error) {
         toast.error(formatMessage(errors.deleteDefendant))
+
         return false
       }
     },
@@ -78,6 +79,7 @@ const useDefendants = () => {
         return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+
         return false
       }
     },
@@ -96,6 +98,7 @@ const useDefendants = () => {
         return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+
         return false
       }
     },

@@ -43,7 +43,7 @@ interface Defendant {
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
   subpoenaType?: SubpoenaType
-  verdict: Verdict
+  verdict?: Verdict
 }
 
 interface DateLog {

@@ -4,4 +4,5 @@ export const SectionTypes = {
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
   SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 }

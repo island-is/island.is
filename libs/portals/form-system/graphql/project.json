@@ -3,10 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/form-system/graphql/src",
   "projectType": "library",
-  "tags": ["lib:form-system", "scope:form-system", "scope:portals-mypages"],
+  "tags": ["lib:form-system", "scope:form-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/portals/form-system/graphql/**/*.ts"]

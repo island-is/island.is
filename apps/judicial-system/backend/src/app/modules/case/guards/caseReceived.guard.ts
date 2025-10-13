@@ -8,7 +8,7 @@ import {
 
 import { CaseState, isCompletedCase } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
+import { Case } from '../../repository'
 
 @Injectable()
 export class CaseReceivedGuard implements CanActivate {

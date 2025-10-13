@@ -1,5 +1,4 @@
 import {
-  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -96,7 +95,12 @@ const template: ApplicationTemplate<
           status: 'completed',
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000,
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: [
             VerifyPaymentApi.configure({
               order: 0,
@@ -111,6 +115,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
+              delete: true,
             },
           ],
         },

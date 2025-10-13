@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
@@ -11,6 +11,7 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -48,7 +49,7 @@ import {
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
+import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
 
@@ -350,8 +351,16 @@ const Indictment = () => {
         workingCase.indictmentCounts &&
         workingCase.indictmentCounts.length > 1
       ) {
-        await deleteIndictmentCount(workingCase.id, indictmentCountId)
+        const deleted = await deleteIndictmentCount(
+          workingCase.id,
+          indictmentCountId,
+        )
 
+        if (!deleted) {
+          return
+        }
+
+        // Remove the deleted indictment count from the working case
         const indictmentCounts = workingCase.indictmentCounts?.filter(
           (count) => count.id !== indictmentCountId,
         )
@@ -405,6 +414,15 @@ const Indictment = () => {
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
+
+  const indictmentCounts = useMemo(() => {
+    const indictmentCounts = workingCase.indictmentCounts ?? []
+
+    // We don't want to mutate the original array, so we create a copy
+    return [...indictmentCounts].sort(
+      getIndictmentCountCompare(workingCase.policeCaseNumbers),
+    )
+  }, [workingCase.indictmentCounts, workingCase.policeCaseNumbers])
 
   return (
     <PageLayout
@@ -460,9 +478,9 @@ const Indictment = () => {
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        {workingCase.indictmentCounts?.map((indictmentCount, index) => (
+        {indictmentCounts.map((indictmentCount, index) => (
           <motion.div
-            key={index}
+            key={indictmentCount.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}

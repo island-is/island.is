@@ -11,6 +11,11 @@ export const application = defineMessages({
     defaultMessage: 'Vinnumálastofnun',
     description: `Institution's name`,
   },
+  actionCardApplicationSent: {
+    id: 'aa.application:actionCardApplicationSent',
+    defaultMessage: 'Innsend',
+    description: 'Label for the action card when application in submitted',
+  },
   actionCardDraft: {
     id: 'aa.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',

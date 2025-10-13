@@ -23,7 +23,11 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   unionSickPay?: UnionSickPay
   preQuestionnaire?: PreQuestionnaire
   selfAssessment?: SelfAssessment
-  baseCertificateReference: string
+  baseCertificateReference?: string
+  isAlmaCertificate?: boolean
   rehabilitationPlanReference?: string
   incomePlan?: IncomePlanInfo
+  confirmedTreatmentReference?: string
+  confirmationOfPendingResolutionReference?: string
+  confirmationOfIllHealthReference?: string
 }

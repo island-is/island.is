@@ -1,4 +1,6 @@
-mutation SignatureCollectionLockList($input: SignatureCollectionListIdInput!) {
+mutation SignatureCollectionLockList(
+  $input: SignatureCollectionLockListInput!
+) {
   signatureCollectionLockList(input: $input) {
     reasons
     success

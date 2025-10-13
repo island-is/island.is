@@ -437,6 +437,7 @@ export class ApplicationController {
     await this.historyService.saveStateTransition(
       updatedApplication.id,
       updatedApplication.state,
+      user,
     )
 
     // Trigger meta.onEntry for initial state on application creation
@@ -1000,6 +1001,10 @@ export class ApplicationController {
       )
     }
 
+    this.logger.info(
+      `Running onDelete actions for application ${id} with template ${template.name}`,
+    )
+
     let onDeleteActions = new ApplicationTemplateHelper(
       existingApplication,
       template,
@@ -1038,11 +1043,12 @@ export class ApplicationController {
       }
     }
 
+    this.logger.info(
+      `Deleting charge for application ${existingApplication.id}`,
+    )
+
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
-
-    // delete the entry in Payment table to prevent FK error
-    await this.paymentService.delete(existingApplication.id, user)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 

@@ -17,8 +17,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
+import { LawyerRegistry } from '../repository'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
-import { LawyerRegistry } from './lawyerRegistry.model'
 
 type Lawyer = {
   name: string

@@ -15,7 +15,7 @@ import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories')

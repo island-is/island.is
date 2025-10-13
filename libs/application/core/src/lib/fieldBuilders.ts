@@ -254,6 +254,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   } = data
 
   return {
@@ -270,6 +271,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   }
 }
 
@@ -675,8 +677,13 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
-    data
+  const {
+    message,
+    alertType,
+    links,
+    shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -686,6 +693,7 @@ export const buildAlertMessageField = (
     component: FieldComponents.ALERT_MESSAGE,
     links,
     shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
   }
 }
 
@@ -1193,6 +1201,7 @@ export const buildBankAccountField = (
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,

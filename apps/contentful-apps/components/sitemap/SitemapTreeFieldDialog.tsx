@@ -279,11 +279,10 @@ const UrlForm = ({
 export const SitemapTreeFieldDialog = () => {
   const sdk = useSDK<DialogExtensionSDK>()
 
-  const { node, otherCategorySlugs, otherCategorySlugsEN } = sdk.parameters
-    .invocation as {
+  const { node, otherSlugs, otherSlugsEN } = sdk.parameters.invocation as {
     node: TreeNode
-    otherCategorySlugs?: string[]
-    otherCategorySlugsEN?: string[]
+    otherSlugs?: string[]
+    otherSlugsEN?: string[]
   }
 
   const [categoryFormError, setCategoryFormError] = useState({
@@ -303,7 +302,7 @@ export const SitemapTreeFieldDialog = () => {
           icon={<CloseIcon />}
           aria-label="Close"
           onClick={() => {
-            sdk.close(node)
+            sdk.close()
           }}
         />
       </div>
@@ -313,10 +312,10 @@ export const SitemapTreeFieldDialog = () => {
           initialState={node}
           onSubmit={(state) => {
             const error = { slug: '', slugEN: '', label: '' }
-            if (otherCategorySlugs?.includes(state.slug)) {
+            if (otherSlugs?.includes(state.slug)) {
               error.slug = 'Slug already exists'
             }
-            if (otherCategorySlugsEN?.includes(state.slugEN)) {
+            if (otherSlugsEN?.includes(state.slugEN)) {
               error.slugEN = 'Slug already exists'
             }
             if (!state.label) {

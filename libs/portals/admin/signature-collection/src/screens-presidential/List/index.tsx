@@ -11,9 +11,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
 } from '@island.is/island-ui/core'
-import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
@@ -49,10 +47,17 @@ export const List = () => {
               items={[
                 {
                   title: formatMessage(m.signatureListsTitlePresidential),
-                  href: `/stjornbord${SignatureCollectionPaths.PresidentialLists}`,
+                  href: `/stjornbord${SignatureCollectionPaths.PresidentialListOfCandidates}`,
                 },
                 {
-                  title: list.title,
+                  title: list?.candidate.name,
+                  href: `/stjornbord${SignatureCollectionPaths.PresidentialCandidateLists.replace(
+                    ':candidateId',
+                    list?.candidate.id || '',
+                  )}`,
+                },
+                {
+                  title: list.area.name,
                 },
               ]}
             />
@@ -71,34 +76,21 @@ export const List = () => {
                       Actions.LockList,
                       Actions.ReviewComplete,
                       Actions.ExtendDeadline,
-                      Actions.RemoveCandidate,
                     ]}
                     withManagers
                   />
                 }
-                marginBottom={4}
+                marginBottom={3}
               />
               <Divider />
               <Box marginTop={9} />
-              {!!list.collectors?.length && (
-                <Box marginBottom={5}>
-                  <Text variant="h5">{formatMessage(m.collectors)}</Text>
-                  {list.collectors?.map((collector) => (
-                    <Text variant="medium" key={collector.name}>
-                      {collector.name +
-                        ' ' +
-                        '(' +
-                        formatNationalId(collector.nationalId) +
-                        ')'}
-                    </Text>
-                  ))}
-                </Box>
-              )}
               <Signees list={list} />
-              <PaperSignees
-                listId={list.id}
-                collectionType={list.collectionType}
-              />
+              {!list.reviewed && (
+                <PaperSignees
+                  listId={list.id}
+                  collectionType={list.collectionType}
+                />
+              )}
             </Box>
           )}
         </GridColumn>

@@ -2,7 +2,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const wrapper = style({
-  maxWidth: '432px',
+  width: '100%',
 })
 
 export const searchButton = style({})

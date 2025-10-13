@@ -3,7 +3,7 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
+import { useNavigationComponentDidDisappear } from 'react-native-navigation-hooks'
 import { WebView, WebViewNavigation } from 'react-native-webview'
 import { authStore } from '../../stores/auth-store'
 

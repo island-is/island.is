@@ -74,6 +74,7 @@ export const Form = () => {
                   )}
                   currentSection={state.currentSection}
                   currentScreen={state.currentScreen}
+                  hasSummaryScreen={state.application.hasSummaryScreen ?? false}
                 />
               </Box>
             </Column>

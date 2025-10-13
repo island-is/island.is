@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { History } from './history.model'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class HistoryService {
@@ -20,6 +21,7 @@ export class HistoryService {
   async saveStateTransition(
     applicationId: string,
     newStateKey: string,
+    auth: User,
     exitEvent?: string,
   ): Promise<History> {
     //Do we have a current state to move from. Look for a state that has not been exited.
@@ -34,6 +36,10 @@ export class HistoryService {
           ...lastState,
           exitTimestamp: new Date(),
           exitEvent,
+          exitEventSubjectNationalId: auth.nationalId,
+          exitEventActorNationalId: auth.actor
+            ? auth.actor.nationalId
+            : auth.nationalId,
         },
         { where: { id: lastState.id } },
       )
@@ -45,6 +51,20 @@ export class HistoryService {
       entryTimestamp: new Date(),
       previousState: lastState ? lastState.id : null,
     })
+  }
+
+  async postPruneHistoryByApplicationId(applicationId: string): Promise<void> {
+    await this.historyModel.update(
+      {
+        exitEventSubjectNationalId: null,
+        exitEventActorNationalId: null,
+      },
+      {
+        where: {
+          application_id: applicationId,
+        },
+      },
+    )
   }
 
   async deleteHistoryByApplicationId(applicationId: string): Promise<void> {

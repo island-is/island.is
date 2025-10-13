@@ -10,6 +10,15 @@ export class CreateApplicantDtoInput {
   applicantTypeId!: string
 }
 
+@InputType('DeleteFormSystemApplicantDtoInput')
+export class DeleteApplicantDtoInput {
+  @Field(() => String)
+  formId!: string
+
+  @Field(() => String)
+  applicantTypeId!: string
+}
+
 @InputType('UpdateFormSystemApplicantDtoInput')
 export class FormSystemUpdateApplicantDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -24,8 +33,8 @@ export class CreateApplicantInput {
 
 @InputType('DeleteFormSystemApplicantInput')
 export class DeleteApplicantInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => DeleteApplicantDtoInput, { nullable: true })
+  deleteFormApplicantTypeDto?: DeleteApplicantDtoInput
 }
 
 @InputType('UpdateFormSystemApplicantInput')

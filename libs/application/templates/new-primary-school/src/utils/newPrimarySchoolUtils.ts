@@ -1,10 +1,11 @@
-import { NO, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
@@ -12,24 +13,29 @@ import {
   Child,
   ChildInformation,
   FriggChildInformation,
+  HealthProfileModel,
   Person,
   RelativesRow,
   SelectOption,
   SiblingsRow,
+  SocialProfile,
+  YesOrNoOrEmpty,
 } from '../types'
 import {
+  AffiliationRole,
   ApplicationType,
+  CaseWorkerInputTypeEnum,
+  FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  let applicationType = getValueViaPath<ApplicationType>(
+  const applicationType = getValueViaPath<ApplicationType>(
     answers,
     'applicationType',
   )
-
-  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
 
   const childNationalId = getValueViaPath<string>(answers, 'childNationalId')
 
@@ -88,7 +94,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(
       answers,
       'healthProtection.hasFoodAllergiesOrIntolerances',
-    ) ?? [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    ) ?? []
 
   const foodAllergiesOrIntolerances =
     getValueViaPath<string[]>(
@@ -98,7 +104,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hasOtherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.hasOtherAllergies') ??
-    [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    []
 
   const otherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.otherAllergies') ?? []
@@ -160,11 +166,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   )
 
-  // TODO: Skoða betur defaultValue??
   const requestingMeeting = getValueViaPath<YesOrNo>(
     answers,
     'support.requestingMeeting[0]',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedStartDate = getValueViaPath<string>(
@@ -177,11 +182,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'startingSchool.expectedStartDateHiddenInput',
   )
 
-  // TODO: Skoða betur defaultValue??
   const temporaryStay = getValueViaPath<YesOrNo>(
     answers,
     'startingSchool.temporaryStay',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedEndDate = getValueViaPath<string>(
@@ -346,14 +350,13 @@ export const getApplicationExternalData = (
     'childInformation.data.affiliations',
   )
 
-  const childCitizenshipCode = getValueViaPath<string>(
+  const healthProfile = getValueViaPath<HealthProfileModel | null>(
     externalData,
-    'citizenship.data.childCitizenshipCode',
+    'childInformation.data.healthProfile',
   )
-
-  const otherGuardianCitizenshipCode = getValueViaPath<string>(
+  const socialProfile = getValueViaPath<SocialProfile | null>(
     externalData,
-    'citizenship.data.otherGuardianCitizenshipCode',
+    'childInformation.data.socialProfile',
   )
 
   return {
@@ -371,8 +374,8 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
-    childCitizenshipCode,
-    otherGuardianCitizenshipCode,
+    healthProfile,
+    socialProfile,
   }
 }
 
@@ -465,9 +468,13 @@ export const determineNameFromApplicationAnswers = (
 ) => {
   const { applicationType } = getApplicationAnswers(application.answers)
 
+  if (!applicationType) {
+    return newPrimarySchoolMessages.shared.applicationName
+  }
+
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
-    : newPrimarySchoolMessages.shared.applicationName
+    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
@@ -556,4 +563,105 @@ export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
 export const getInternationalSchoolsIds = () => {
   // Since the data from Frigg is not structured for international schools, we need to manually identify them
   return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
+}
+
+export const getApplicationType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { childNationalId } = getApplicationAnswers(answers)
+  const { childInformation } = getApplicationExternalData(externalData)
+
+  const currentYear = new Date().getFullYear()
+  const firstGradeYear = currentYear - FIRST_GRADE_AGE
+  const nationalId = childNationalId || ''
+
+  if (!isValid(nationalId)) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+
+  const nationalIdInfo = info(nationalId)
+  const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  if (!yearOfBirth) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+
+  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
+  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
+  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    if (!childInformation?.primaryOrgId) {
+      return yearOfBirth === firstGradeYear
+        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        : ApplicationType.NEW_PRIMARY_SCHOOL
+    }
+  }
+
+  return ApplicationType.NEW_PRIMARY_SCHOOL
+}
+
+export const getGuardianByNationalId = (
+  externalData: ExternalData,
+  nationalId: string,
+) => {
+  if (!nationalId) {
+    return undefined
+  }
+
+  const { childInformation } = getApplicationExternalData(externalData)
+
+  return childInformation?.agents?.find(
+    (agent) =>
+      agent.nationalId === nationalId &&
+      agent.type === AffiliationRole.Guardian,
+  )
+}
+
+export const hasDefaultFoodAllergiesOrIntolerances = (
+  externalData: ExternalData,
+) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.foodAllergiesOrIntolerances?.length ?? 0) > 0
+    ? YES
+    : NO
+}
+
+export const hasDefaultAllergies = (externalData: ExternalData) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.allergies?.length ?? 0) > 0 ? YES : NO
+}
+
+export const getDefaultSupportCaseworker = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+) => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  return socialProfile?.caseWorkers?.find(
+    (caseWorker) => caseWorker.type === type,
+  )
+}
+
+export const hasDefaultSupportCaseworker = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+): YesOrNoOrEmpty => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  // If no child information is available (not registered in Frigg), return an empty string
+  if (!socialProfile || !socialProfile?.caseWorkers) {
+    return ''
+  }
+
+  return getDefaultSupportCaseworker(externalData, type) ? YES : NO
+}
+
+export const getDefaultYESNOValue = (
+  value: boolean | null | undefined,
+): YesOrNoOrEmpty => {
+  // If no child information is available (not registered in Frigg), return an empty string
+  // else return YES or NO based on the boolean value comming from Frigg
+  return value ? YES : value === false ? NO : ''
 }

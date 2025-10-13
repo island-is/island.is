@@ -29,14 +29,6 @@ export interface IListItem {
   isSelected: boolean
 }
 
-export enum ApplicationTemplateStatus {
-  Þýðing = -2,
-  Kerfi = -1,
-  Óútgefið = 0,
-  Útgefið = 2,
-  tekiðÚrNotkun = 4,
-}
-
 export type ButtonTypes =
   | 'CHANGE_NAME'
   | 'CHANGE_FORM_NAME'

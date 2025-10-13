@@ -27,11 +27,14 @@
       "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/auth/ids-api",
         "main": "apps/services/auth/ids-api/src/main.ts",
         "tsConfig": "apps/services/auth/ids-api/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           "apps/services/auth/ids-api/src/assets",
           {
@@ -54,14 +57,12 @@
             "input": "libs/auth-api-lib",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -93,13 +94,16 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d",
+        "commands": [
+          "docker compose up -d",
+          "docker compose -f ../../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/services/auth/ids-api"
       }
     },

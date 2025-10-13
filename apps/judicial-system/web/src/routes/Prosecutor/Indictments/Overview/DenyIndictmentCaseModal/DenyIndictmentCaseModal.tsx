@@ -82,10 +82,14 @@ const DenyIndictmentCaseModal: FC<Props> = ({
       title={formatMessage(strings.title)}
       text={formatMessage(strings.text)}
       onClose={() => onClose()}
-      primaryButtonText={formatMessage(strings.denyAndReturnToProsecutor)}
-      secondaryButtonText={formatMessage(strings.stopModal)}
-      onPrimaryButtonClick={handleDenyIndictmentCase}
-      onSecondaryButtonClick={onClose}
+      primaryButton={{
+        text: formatMessage(strings.denyAndReturnToProsecutor),
+        onClick: handleDenyIndictmentCase,
+      }}
+      secondaryButton={{
+        text: formatMessage(strings.stopModal),
+        onClick: onClose,
+      }}
     >
       <Box marginBottom={5}>
         <Input

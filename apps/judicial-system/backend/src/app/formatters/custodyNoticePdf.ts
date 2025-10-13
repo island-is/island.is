@@ -12,7 +12,7 @@ import {
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import { custodyNotice } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
@@ -40,7 +40,7 @@ const constructCustodyNoticePdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 

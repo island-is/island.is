@@ -11,6 +11,14 @@ export const FileItem = ({ fileName, fileSize, fileType }: Props) => {
     <Box>
       <ActionCard
         heading={fileName}
+        renderHeading={(headingEl) => (
+          <Box
+            minWidth={0}
+            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+          >
+            {headingEl}
+          </Box>
+        )}
         text={fileSize ?? ''}
         headingVariant="h4"
         cta={{

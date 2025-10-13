@@ -77,7 +77,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   }, [loading])
 
   return (
-    <AuthGuard permission="recycledVehicles" loading={loading}>
+    <AuthGuard permission="recycledVehicles" loading={loading && !data}>
       <PartnerPageLayout side={<NavigationLinks activeSection={0} />}>
         <Stack space={4}>
           <Breadcrumbs

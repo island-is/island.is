@@ -36,15 +36,13 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
 
   // Ships
-  const ships = getValueViaPath(
-    application.externalData,
-    'directoryOfFisheries.data.ships',
-  ) as FishingLicenseShip[]
-  const shipIndex = getValueViaPath(
-    answers,
-    'shipSelection.ship',
-    '0',
-  ) as string
+  const ships =
+    getValueViaPath<FishingLicenseShip[]>(
+      application.externalData,
+      'directoryOfFisheries.data.ships',
+    ) ?? []
+  const shipIndex =
+    getValueViaPath<string>(answers, 'shipSelection.ship') ?? '0'
   const ship = ships[parseInt(shipIndex)]
 
   // ChargeItem
@@ -58,11 +56,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     chargeItemName: string
     priceAmount: number
   }[]
-  const chargeItemCode = getValueViaPath(
+  const chargeItemCode = getValueViaPath<string>(
     answers,
     'fishingLicense.chargeType',
-  ) as string
-  getValueViaPath(answers, 'fishingLicense.chargeType', '') as string
+  )
+  getValueViaPath<string>(answers, 'fishingLicense.chargeType', '')
 
   useEffect(() => {
     catalogItems?.map((item) => {

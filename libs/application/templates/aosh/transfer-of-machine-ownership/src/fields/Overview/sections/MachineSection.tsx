@@ -50,7 +50,6 @@ export const MachineSection: FC<
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text>{getValueViaPath(answers, 'vehicle.type', '') as string}</Text>
           <Text>{regNumber ? regNumber : ''}</Text>
           <Text>
             {type ? `${type} - ` : ''}

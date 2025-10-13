@@ -47,7 +47,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   name: applicationName,
   codeOwner: CodeOwners.NordaApplications,
   dataSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
