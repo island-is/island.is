@@ -97,8 +97,8 @@ export class HmsResolver {
   }
 
   /**
- * Returns Array<FasteignAsset> serialized as JSON.
- */
+   * Returns Array<FasteignAsset> serialized as JSON.
+   */
   @Query(() => [GraphQLJSONObject], {
     name: 'hmsPropertyByPropertyCode',
     nullable: true,
