@@ -490,19 +490,19 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolSubSectionDescription: {
       id: 'nps.application:primary.school.school.sub.section.description',
       defaultMessage:
-        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Einstaka sveitarfélög úthluta barni námsvist í hverfisskóla eða sem næst þeirra lögheimili. Í báðun tilfellum geta foreldrar sótt um annan skóla hvort sem er innan sveitarfélags eða utan. Ekki er þó víst að nýr skóli sjái sér fært að taka á móti barni. Er það ávalt háð aðstæðum hverju sinni.',
+        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Langflest sveitarfélög úthluta barni skólavist í hverfisskóla eða sem næst þeirra heimili. Eftir sem áður er það réttur forsjáraðila að sækja um annan skóla fyrir barnið sitt, hvort sem er innan sveitarfélagsins, utan þess eða í sjálfstætt starfandi skóla. Ekki er þó víst að sá skóli geti tekið á móti barninu og fer það eftir þeim reglum sem sveitarfélagið setur og aðstæðum í nýjum skóla hverju sinni.',
       description:
-        'Children have the right to attend school in the municipality where they have their registered domicile. Some municipalities assign a child to a neighbourhood school or the school closest to their domicile. In both cases, parents can apply for another school, whether within the municipality or outside it. However, it is not certain that the new school will be able to accept the child. This is always subject to the circumstances at the time.',
+        'Children have the right to attend school in the municipality where they are registered as legal residents. Most municipalities assign children to their district school or the one closest to their home. However, it is the right of the guardian to apply for another school for their child, whether within the municipality, outside it, or in an independent school. However, it is not certain that the school will be able to accept the child, and this depends on the rules set by the municipality and the circumstances in the new school each time.',
     },
-    schoolApplyForNeighbourhoodSchoolLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.label',
+    schoolApplyForPreferredSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.label',
       defaultMessage: 'Staðfesta innritun í hverfisskóla',
       description: 'Confirm enrollment in the neighbourhood school',
     },
-    schoolApplyForNeighbourhoodSchoolSubLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {neighbourhoodSchoolName}',
-      description: 'Your neighbourhood school is: {neighbourhoodSchoolName}',
+    schoolApplyForPreferredSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.sub.label',
+      defaultMessage: 'Hverfisskólinn ykkar er: {preferredSchoolName}',
+      description: 'Your neighbourhood school is: {preferredSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',
@@ -512,9 +512,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolApplyForOtherSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.sub.label',
       defaultMessage:
-        'Þú getur sótt um fyrir barnið þitt í skóla utan þíns skólahverfis, en ekki er víst að skólinn geti tekið við barninu.',
+        'Ef forsjáraðili velur að hafna innritun í hverfisskóla þá býðst honum sjálfkrafa sá möguleiki að sækja um annan skóla fyrir barnið sitt.',
       description:
-        'You can apply for your child to attend a school outside your school district, but it is not certain that the school will be able to accept your child.',
+        'If the guardian chooses to decline enrollment in the neighbourhood school, they are automatically offered the option to apply for another school for their child.',
     },
 
     // Apply to a new school

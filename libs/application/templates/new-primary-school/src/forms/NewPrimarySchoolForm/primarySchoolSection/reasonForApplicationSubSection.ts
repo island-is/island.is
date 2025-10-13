@@ -21,12 +21,12 @@ export const reasonForApplicationSubSection = buildSubSection({
   title:
     newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
   condition: (answers) => {
-    const { applyForNeighbourhoodSchool, applicationType } =
+    const { applyForPreferredSchool, applicationType } =
       getApplicationAnswers(answers)
     return (
       applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
       (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForNeighbourhoodSchool === NO)
+        applyForPreferredSchool === NO)
     )
   },
   children: [

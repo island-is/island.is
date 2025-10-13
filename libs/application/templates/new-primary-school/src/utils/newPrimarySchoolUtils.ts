@@ -5,6 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -14,6 +15,7 @@ import {
   ChildInformation,
   FriggChildInformation,
   HealthProfileModel,
+  Organization,
   Person,
   RelativesRow,
   SelectOption,
@@ -29,7 +31,6 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicationType = getValueViaPath<ApplicationType>(
@@ -223,9 +224,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentNursery.nursery',
   )
 
-  const applyForNeighbourhoodSchool = getValueViaPath<YesOrNo>(
+  const applyForPreferredSchool = getValueViaPath<YesOrNo>(
     answers,
-    'school.applyForNeighbourhoodSchool',
+    'school.applyForPreferredSchool',
   )
 
   const currentSchoolId = getValueViaPath<string>(
@@ -275,7 +276,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
-    applyForNeighbourhoodSchool,
+    applyForPreferredSchool,
     currentSchoolId,
   }
 }
@@ -359,6 +360,11 @@ export const getApplicationExternalData = (
     'childInformation.data.socialProfile',
   )
 
+  const preferredSchool = getValueViaPath<Organization | null>(
+    externalData,
+    'preferredSchool.data',
+  )
+
   return {
     children,
     applicantName,
@@ -376,6 +382,7 @@ export const getApplicationExternalData = (
     childAffiliations,
     healthProfile,
     socialProfile,
+    preferredSchool,
   }
 }
 
@@ -447,20 +454,10 @@ export const getCurrentSchoolName = (externalData: ExternalData) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getNeighbourhoodSchoolName = (externalData: ExternalData) => {
-  const { primaryOrgId, childAffiliations } =
-    getApplicationExternalData(externalData)
+export const getPreferredSchoolName = (externalData: ExternalData) => {
+  const { preferredSchool } = getApplicationExternalData(externalData)
 
-  if (!primaryOrgId || !childAffiliations) {
-    return undefined
-  }
-
-  // This function needs to be improved when Juni is ready with the neighbourhood school data
-
-  // Find the school name since we only have primary org id
-  return childAffiliations
-    .map((affiliation) => affiliation.organization)
-    .find((organization) => organization?.id === primaryOrgId)?.name
+  return preferredSchool?.name
 }
 
 export const determineNameFromApplicationAnswers = (

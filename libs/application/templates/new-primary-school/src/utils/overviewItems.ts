@@ -1,4 +1,5 @@
 import { ApolloClient } from '@apollo/client'
+import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
   ExternalData,
@@ -22,7 +23,6 @@ import {
   friggOrganizationsByTypeQuery,
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import {
   ApplicationType,
   LanguageEnvironmentOptions,
@@ -36,7 +36,7 @@ import {
   getApplicationExternalData,
   getCurrentSchoolName,
   getGenderMessage,
-  getNeighbourhoodSchoolName,
+  getPreferredSchoolName,
   getSelectedOptionLabel,
 } from './newPrimarySchoolUtils'
 
@@ -341,7 +341,7 @@ export const schoolItems = async (
     applicationType,
     expectedStartDate,
     selectedSchool,
-    applyForNeighbourhoodSchool,
+    applyForPreferredSchool,
     selectedSchoolType,
     temporaryStay,
     expectedEndDate,
@@ -358,12 +358,12 @@ export const schoolItems = async (
     {
       width: 'half',
       keyText:
-        applyForNeighbourhoodSchool === YES
+        applyForPreferredSchool === YES
           ? newPrimarySchoolMessages.overview.neighbourhoodSchool
           : newPrimarySchoolMessages.overview.selectedSchool,
       valueText:
-        applyForNeighbourhoodSchool === YES
-          ? getNeighbourhoodSchoolName(externalData)
+        applyForPreferredSchool === YES
+          ? getPreferredSchoolName(externalData)
           : selectedSchoolName,
     },
   ]
