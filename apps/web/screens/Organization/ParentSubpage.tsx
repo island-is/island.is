@@ -53,8 +53,10 @@ const OrganizationParentSubpage: Screen<
   useLocalLinkTypeResolver()
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
+  const showTableOfContents = parentSubpage.childLinks.length > 1
+
   let pageTitle = subpage?.title ?? ''
-  if (parentSubpage.childLinks?.length > 1) {
+  if (showTableOfContents) {
     pageTitle = `${parentSubpage?.title ?? ''}${
       Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
     }${subpage?.title ?? ''}`
@@ -97,7 +99,7 @@ const OrganizationParentSubpage: Screen<
                 offset={['0', '0', '1/9']}
               >
                 <Stack space={3}>
-                  {parentSubpage.childLinks.length > 1 && (
+                  {showTableOfContents && (
                     <Stack space={4}>
                       <Text variant="h1" as="h1">
                         {parentSubpage.title}
@@ -159,6 +161,7 @@ const OrganizationParentSubpage: Screen<
             subpageTitleVariant={
               parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
             }
+            paddingTop={showTableOfContents ? 4 : 0}
           />
         </Box>
       }
