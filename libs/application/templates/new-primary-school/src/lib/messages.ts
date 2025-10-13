@@ -883,6 +883,47 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
+
+    // Payer
+    payerSubSectionTitle: {
+      id: 'nps.application:different.needs.payer.sub.section.title',
+      defaultMessage: 'Greiðandi',
+      description: 'Payer',
+    },
+    payerTitle: {
+      id: 'nps.application:different.needs.payer.title',
+      defaultMessage: 'Hver greiðir fyrir skólavist barnsins?',
+      description: 'Who pays the child’s school fees',
+    },
+    payerDescription: {
+      id: 'nps.application:different.needs.payer.description',
+      defaultMessage:
+        'Hér er átt við greiðslu gjalda eins og innritunargjald, staðfestingargjald, efnisgjald, foreldrafélagsgjald og skólagjald þar sem það á við.',
+      description:
+        'This refers to the payment of fees such as enrolment fees, confirmation fees, materials fees, parent association fees and school fees where applicable',
+    },
+    payerOptionApplicant: {
+      id: 'nps.application:different.needs.payer.option.applicant',
+      defaultMessage: 'Umsækjandi',
+      description: 'Applicant',
+    },
+    payerOptionOther: {
+      id: 'nps.application:different.needs.payer.option.other',
+      defaultMessage: 'Annar',
+      description: 'Other',
+    },
+    payerInformation: {
+      id: 'nps.application:different.needs.payer.information',
+      defaultMessage: 'Upplýsingar um greiðanda',
+      description: 'Payer information',
+    },
+    payerInformationDescription: {
+      id: 'nps.application:different.needs.payer.information.description',
+      defaultMessage:
+        'Greiðandi verður beðinn um að staðfesta greiðsluþátttöku með rafrænum skilríkjum áður en umsókn er send inn.',
+      description:
+        'The payer will be asked to confirm the payment participation with electronic ID before submitting the application.',
+    },
   }),
 
   overview: defineMessages({
@@ -992,6 +1033,60 @@ export const newPrimarySchoolMessages: MessageDir = {
   }),
 }
 
+export const payerApprovalMessages = defineMessages({
+  formTitle: {
+    id: 'nps.application:payer.approval.form.title',
+    defaultMessage:
+      'Þú hefur verið skráð/ur sem greiðandi fyrir skólavist hjá eftirfarandi barni',
+    description:
+      'You have been registered as the payer for the school fees of the below child',
+  },
+  tabTitle: {
+    id: 'nps.application:payer.approval.tab.title',
+    defaultMessage: 'Staðfesting greiðanda',
+    description: 'Payer confirmation',
+  },
+  childName: {
+    id: 'nps.application:payer.approval.child.name',
+    defaultMessage: 'Nafn barns',
+    description: 'Child’s name',
+  },
+  confirm: {
+    id: 'nps.application:payer.approval.confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm',
+  },
+  reject: {
+    id: 'nps.application:payer.approval.reject',
+    defaultMessage: 'Hafna',
+    description: 'Reject',
+  },
+  thanksDescription: {
+    id: 'nps.application:payer.approval.thanks.description',
+    defaultMessage: 'Staðfesting vegna greiðslu skólavistar er skráð.',
+    description: 'Confirmation for the payment of school fees is registered.',
+  },
+})
+
+export const payerRejectedMessages = defineMessages({
+  formTitle: {
+    // TODO: MMS needs to update the text
+    id: 'nps.application:payer.rejected.form.title',
+    defaultMessage: 'Greiðandi hafnaði umsókn...',
+    description: '',
+  },
+  tabTitle: {
+    id: 'nps.application:payer.rejected.tab.title',
+    defaultMessage: 'Höfnun greiðanda',
+    description: 'Payer rejection',
+  },
+  edit: {
+    id: 'nps.application:payer.rejected.edit',
+    defaultMessage: 'Breyta umsókn',
+    description: 'Edit application',
+  },
+})
+
 export const errorMessages = defineMessages({
   phoneNumber: {
     id: 'nps.application:error.phone.number',
@@ -1066,29 +1161,64 @@ export const errorMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
-  applicationApproved: {
-    id: 'nps.application:application.approved',
-    defaultMessage: 'Umsókn samþykkt',
-    description: 'Application approved',
+  applicationReceivedTag: {
+    id: 'nps.application:application.received.tag',
+    defaultMessage: 'Móttekin',
+    description: 'Received',
   },
+})
+
+export const pendingActionMessages = defineMessages({
   applicationApprovedDescription: {
-    id: 'nps.application:application.approved.description',
+    id: 'nps.application:pending.action.application.approved.description',
     defaultMessage: 'Umsókn um grunnskóla samþykkt',
     description: 'The application for primary school has been approved',
   },
-  applicationRejected: {
-    id: 'nps.application:application.rejected',
-    defaultMessage: 'Umsókn hafnað',
-    description: 'Application rejected',
-  },
   applicationRejectedDescription: {
-    id: 'nps.application:application.rejected.description',
+    id: 'nps.application:pending.action.application.rejected.description',
     defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
     description: 'The application for primary school has been rejected',
   },
-  applicationReceivedTitle: {
-    id: 'nps.application:application.received.title',
-    defaultMessage: 'Móttekin',
-    description: 'Received',
+  payerApprovalAssigneeDescription: {
+    id: 'nps.application:pending.action.payer.approval.assignee.description',
+    defaultMessage:
+      'Þú hefur verið skráð/ur sem greiðandi fyrir skólavist barns.',
+    description:
+      'You have been registered as the payer for a child’s school fees.',
+  },
+  payerApprovalApplicantDescription: {
+    id: 'nps.application:pending.action.payer.approval.applicant.description',
+    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá greiðanda.',
+    description: 'Your application is pending approval from the payer.',
+  },
+  payerRejectedTitle: {
+    id: 'nps.application:pending.action.payer.rejected.title',
+    defaultMessage: 'Greiðandi hefur hafnað umsókn',
+    description: 'The payer has rejected the application',
+  },
+  payerRejectedDescription: {
+    id: 'nps.application:pending.action.payer.rejected.description',
+    defaultMessage:
+      'Greiðandi hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
+    description:
+      'The payer has rejected the application, please make changes to the application.',
+  },
+})
+
+export const historyMessages = defineMessages({
+  payerApprovalApproved: {
+    id: 'nps.application:history.payer.approval.approved',
+    defaultMessage: 'Greiðandi samþykkti umsókn',
+    description: 'The payer approved the application',
+  },
+  payerApprovalRejected: {
+    id: 'nps.application:history.payer.approval.rejected',
+    defaultMessage: 'Greiðandi hafnaði umsókn',
+    description: 'The payer rejected the application',
+  },
+  payerRejectedEdit: {
+    id: 'nps.application:history.payer.rejected.edit',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
   },
 })

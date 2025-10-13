@@ -1,11 +1,19 @@
 import { ExternalData } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
-import { hasOtherGuardian, showPreferredLanguageFields } from './conditionUtils'
+import {
+  hasOtherGuardian,
+  hasOtherPayer,
+  hasPayer,
+  needsPayerApproval,
+  showPreferredLanguageFields,
+} from './conditionUtils'
 import {
   ApplicationType,
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
+  PayerOption,
+  SchoolType,
 } from './constants'
 import {
   getApplicationType,
@@ -214,5 +222,116 @@ describe('getApplicationType', () => {
     expect(getApplicationType(answers, externalData)).toBe(
       ApplicationType.NEW_PRIMARY_SCHOOL,
     )
+  })
+})
+
+describe('hasPayer', () => {
+  it('should return true if the selected school is a private school', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+        type: SchoolType.PRIVATE_SCHOOL,
+      },
+    }
+
+    expect(hasPayer(answers)).toBe(true)
+  })
+
+  it('should return false if the selected school is not a private school', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PUBLIC_SCHOOL}`,
+        type: SchoolType.PUBLIC_SCHOOL,
+      },
+    }
+
+    expect(hasPayer(answers)).toBe(false)
+  })
+})
+
+describe('hasOtherPayer', () => {
+  it('should return true when payer is OTHER', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+        type: SchoolType.PRIVATE_SCHOOL,
+      },
+      payer: {
+        option: PayerOption.OTHER,
+      },
+    }
+
+    expect(hasOtherPayer(answers)).toBe(true)
+  })
+
+  it('should return false when payer is APPLICANT', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+        type: SchoolType.PRIVATE_SCHOOL,
+      },
+      payer: {
+        option: PayerOption.APPLICANT,
+      },
+    }
+
+    expect(hasOtherPayer(answers)).toBe(false)
+  })
+})
+
+describe('needsPayerApproval', () => {
+  it('should return true if the selected school is a private school and payer is OTHER', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+        type: SchoolType.PRIVATE_SCHOOL,
+      },
+      payer: {
+        option: PayerOption.OTHER,
+        other: {
+          name: 'John Doe',
+          nationalId: '1234567890',
+        },
+      },
+    }
+
+    expect(needsPayerApproval(answers)).toBe(true)
+  })
+
+  it('should return false if the selected school is not a private school or payer is APPLICANT', () => {
+    const answers1 = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PUBLIC_SCHOOL}`,
+        type: SchoolType.PUBLIC_SCHOOL,
+      },
+      payer: {
+        option: PayerOption.OTHER,
+        other: {
+          name: 'John Doe',
+          nationalId: '1234567890',
+        },
+      },
+    }
+
+    expect(needsPayerApproval(answers1)).toBe(false)
+
+    const answers2 = {
+      newSchool: {
+        municipality: '3000',
+        school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+        type: SchoolType.PRIVATE_SCHOOL,
+      },
+      payer: {
+        option: PayerOption.APPLICANT,
+      },
+    }
+
+    expect(needsPayerApproval(answers2)).toBe(false)
   })
 })

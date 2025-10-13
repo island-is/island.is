@@ -9,6 +9,8 @@ export enum Actions {
 export const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  PAYER_APPROVAL = 'payerApproval',
+  PAYER_REJECTED = 'payerRejected',
   SUBMITTED = 'submitted',
   REJECTED = 'rejected',
   APPROVED = 'approved',
@@ -18,15 +20,19 @@ export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
   sendApplication = 'sendApplication',
+  assignPayer = 'assignPayer',
+  notifyApplicantOfRejectionFromPayer = 'notifyApplicantOfRejectionFromPayer',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
   ORGANIZATION_REVIEWER = 'organizationReviewer',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ReasonForApplicationOptions {
@@ -85,4 +91,9 @@ export enum SchoolType {
 export enum CaseWorkerInputTypeEnum {
   CaseManager = 'caseManager',
   SupportManager = 'supportManager',
+}
+
+export enum PayerOption {
+  APPLICANT = 'applicant',
+  OTHER = 'other',
 }

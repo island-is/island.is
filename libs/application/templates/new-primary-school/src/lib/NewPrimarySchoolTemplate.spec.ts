@@ -7,7 +7,8 @@ import {
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
-import { States } from '../utils/constants'
+import { uuid } from 'uuidv4'
+import { PayerOption, SchoolType, States } from '../utils/constants'
 import NewPrimarySchoolTemplate from './NewPrimarySchoolTemplate'
 
 const buildApplication = (data: {
@@ -15,7 +16,7 @@ const buildApplication = (data: {
   externalData?: ExternalData
   state?: string
 }): Application => {
-  const { answers = {}, externalData = {}, state = 'draft' } = data
+  const { answers = {}, externalData = {}, state = States.DRAFT } = data
   return {
     id: '12345',
     assignees: [],
@@ -35,12 +36,11 @@ describe('New Primary School Template', () => {
   it('should transition from draft to submitted on submit', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
-        answers: {
-          confirmCorrectInfo: true,
-        },
+        state: States.DRAFT,
       }),
       NewPrimarySchoolTemplate,
     )
+
     const [hasChanged, newState] = helper.changeState({
       type: DefaultEvents.SUBMIT,
     })
@@ -76,5 +76,121 @@ describe('New Primary School Template', () => {
     })
     expect(hasChanged).toBe(true)
     expect(newState).toBe(States.REJECTED)
+  })
+
+  it('should transition from draft to payerApproval on submit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.DRAFT,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+            type: SchoolType.PRIVATE_SCHOOL,
+          },
+          payer: {
+            option: PayerOption.OTHER,
+            other: {
+              name: 'John Doe',
+              nationalId: '1234567890',
+            },
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.PAYER_APPROVAL)
+  })
+
+  it('should transition from payerApproval to submitted on approve', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PAYER_APPROVAL,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+            type: SchoolType.PRIVATE_SCHOOL,
+          },
+          payer: {
+            option: PayerOption.OTHER,
+            other: {
+              name: 'John Doe',
+              nationalId: '1234567890',
+            },
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.APPROVE,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.SUBMITTED)
+  })
+
+  it('should transition from payerApproval to payerRejected on reject', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PAYER_APPROVAL,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+            type: SchoolType.PRIVATE_SCHOOL,
+          },
+          payer: {
+            option: PayerOption.OTHER,
+            other: {
+              name: 'John Doe',
+              nationalId: '1234567890',
+            },
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.REJECT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.PAYER_REJECTED)
+  })
+
+  it('should transition from payerRejected to draft on edit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PAYER_REJECTED,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
+            type: SchoolType.PRIVATE_SCHOOL,
+          },
+          payer: {
+            option: PayerOption.OTHER,
+            other: {
+              name: 'John Doe',
+              nationalId: '1234567890',
+            },
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.EDIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.DRAFT)
   })
 })

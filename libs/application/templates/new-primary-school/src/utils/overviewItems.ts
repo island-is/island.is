@@ -1,4 +1,5 @@
 import { ApolloClient } from '@apollo/client'
+import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
   ExternalData,
@@ -22,11 +23,11 @@ import {
   friggOrganizationsByTypeQuery,
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
+  PayerOption,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
@@ -788,4 +789,43 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...welfareContactItems2,
     ...baseItems2,
   ]
+}
+
+export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
+  const { payer, payerName, payerNationalId, payerEmail } =
+    getApplicationAnswers(answers)
+
+  const baseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      valueText:
+        payer === PayerOption.APPLICANT
+          ? newPrimarySchoolMessages.differentNeeds.payerOptionApplicant
+          : newPrimarySchoolMessages.differentNeeds.payerOptionOther,
+    },
+  ]
+
+  const otherPayerItems: Array<KeyValueItem> =
+    payer === PayerOption.OTHER
+      ? [
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.shared.fullName,
+            valueText: payerName,
+          },
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.shared.nationalId,
+            valueText: formatKennitala(payerNationalId ?? ''),
+          },
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.shared.email,
+            valueText: payerEmail,
+          },
+        ]
+      : []
+
+  return [...baseItems, ...otherPayerItems]
 }

@@ -12,6 +12,8 @@ import {
   CaseWorkerInputTypeEnum,
   RegistrationInput,
 } from '@island.is/clients/mms/frigg'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -173,4 +175,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   }
 
   return newPrimarySchoolDTO
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./new-primary-school-assets/${file}`)
 }

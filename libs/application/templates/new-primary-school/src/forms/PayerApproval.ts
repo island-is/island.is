@@ -1,0 +1,88 @@
+import {
+  buildDescriptionField,
+  buildForm,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
+  buildTextField,
+  coreMessages,
+} from '@island.is/application/core'
+import { Application, DefaultEvents, Form } from '@island.is/application/types'
+import {
+  newPrimarySchoolMessages,
+  payerApprovalMessages,
+} from '../lib/messages'
+import { getApplicationAnswers } from '../utils/newPrimarySchoolUtils'
+
+export const PayerApproval: Form = buildForm({
+  id: 'newPrimarySchoolPayerApproval',
+  children: [
+    buildSection({
+      id: 'payerApproval',
+      tabTitle: payerApprovalMessages.tabTitle,
+      children: [
+        buildMultiField({
+          id: 'payerApproval',
+          title: payerApprovalMessages.formTitle,
+          children: [
+            buildTextField({
+              id: 'payerApproval.name',
+              title: payerApprovalMessages.childName,
+              width: 'full',
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { childInfo } = getApplicationAnswers(application.answers)
+                return childInfo?.name
+              },
+            }),
+            buildTextField({
+              id: 'payerApproval.nationalId',
+              title: newPrimarySchoolMessages.shared.nationalId,
+              width: 'full',
+              format: '######-####',
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { childInfo } = getApplicationAnswers(application.answers)
+                return childInfo?.nationalId
+              },
+            }),
+            buildTextField({
+              // TODO: Need to update when we get config/school type from Júní - Need to display school name (we only have the school id in answers)
+              id: 'payerApproval.selectedSchool',
+              title: newPrimarySchoolMessages.overview.selectedSchool,
+              width: 'full',
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { selectedSchool } = getApplicationAnswers(
+                  application.answers,
+                )
+                return selectedSchool
+              },
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: payerApprovalMessages.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: payerApprovalMessages.confirm,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'payerApproval.thanks',
+          title: coreMessages.thanks,
+          description: payerApprovalMessages.thanksDescription,
+        }),
+      ],
+    }),
+  ],
+})

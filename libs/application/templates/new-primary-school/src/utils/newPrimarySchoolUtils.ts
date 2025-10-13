@@ -1,13 +1,24 @@
-import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import {
+  NO,
+  YES,
+  YesOrNo,
+  getValueViaPath,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
+  PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  newPrimarySchoolMessages,
+  pendingActionMessages,
+} from '../lib/messages'
 import {
   Affiliation,
   Child,
@@ -26,10 +37,11 @@ import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  PayerOption,
   ReasonForApplicationOptions,
+  Roles,
   SchoolType,
 } from './constants'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicationType = getValueViaPath<ApplicationType>(
@@ -172,6 +184,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
+
+  const payerName = getValueViaPath<string>(answers, 'payer.other.name')
+
+  const payerNationalId = getValueViaPath<string>(
+    answers,
+    'payer.other.nationalId',
+  )
+
+  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
+
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -266,6 +289,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    payer,
+    payerName,
+    payerNationalId,
+    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -664,4 +691,23 @@ export const getDefaultYESNOValue = (
   // If no child information is available (not registered in Frigg), return an empty string
   // else return YES or NO based on the boolean value comming from Frigg
   return value ? YES : value === false ? NO : ''
+}
+
+export const payerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.payerApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
 }
