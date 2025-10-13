@@ -21,6 +21,7 @@ import {
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
   VerdictAppealDecision,
@@ -280,29 +281,6 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    const getPoliceDocumentDeliveryStatus = ({
-      delivered,
-      deliveredToDefendant,
-      deliveredOnPaper,
-      deliveredOnIslandis,
-      deliveredToLawyer,
-    }: UpdatePoliceDocumentDeliveryDto) => {
-      if (delivered) {
-        if (deliveredOnPaper || deliveredToDefendant) {
-          return ServiceStatus.IN_PERSON
-        }
-        if (deliveredOnIslandis) {
-          return ServiceStatus.ELECTRONICALLY
-        }
-        if (deliveredToLawyer) {
-          return ServiceStatus.DEFENDER
-        }
-        return ServiceStatus.FAILED
-      }
-
-      return undefined
-    }
-
     if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
       const appealDecision =
         updatePoliceDocumentDelivery.deliverySupplements.appealDecision
@@ -320,13 +298,19 @@ export class AppService {
       }
     }
 
+    const serviceStatus = mapPoliceVerdictDeliveryStatus({
+      delivered: updatePoliceDocumentDelivery.delivered,
+      deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+      deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+      deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+    })
+
     const parsedPoliceUpdate = {
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
-      serviceStatus: getPoliceDocumentDeliveryStatus(
-        updatePoliceDocumentDelivery,
-      ),
+      serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
       appealDecision:
