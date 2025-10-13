@@ -98,6 +98,10 @@ const Disabled = () => {
         type="no_data"
         title={intl.formatMessage({ id: 'airDiscount.disabledTitle' })}
         message={intl.formatMessage({ id: 'airDiscount.disabledDescription' })}
+        detailLink={{
+          text: intl.formatMessage({ id: 'button.moreInfoHere' }),
+          url: 'https://island.is/minarsidur/loftbru',
+        }}
       />
     </View>
   )

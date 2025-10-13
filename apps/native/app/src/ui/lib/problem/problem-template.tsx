@@ -8,6 +8,10 @@ import { Link } from '../link/link'
 import { useIntl } from 'react-intl'
 
 type Variant = 'info' | 'error' | 'warning'
+export type DetailLink = {
+  text: string
+  url: string
+}
 
 export type ProblemTemplateBaseProps = {
   variant: Variant
@@ -15,7 +19,7 @@ export type ProblemTemplateBaseProps = {
   message: string | ReactNode
   withContainer?: boolean
   size?: 'small' | 'large'
-  detailLink?: string
+  detailLink?: DetailLink
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -160,11 +164,8 @@ export const ProblemTemplate = ({
               flexWrap: 'wrap',
             }}
           >
-            <Typography textAlign="center">
-              {intl.formatMessage({ id: 'button.moreInfo' })}{' '}
-            </Typography>
-            <Link url={detailLink}>
-              {intl.formatMessage({ id: 'button.moreInfoLink' })}
+            <Link underlined={true} url={detailLink.url}>
+              {detailLink.text}
             </Link>
           </View>
         )}

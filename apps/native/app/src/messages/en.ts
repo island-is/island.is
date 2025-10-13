@@ -4,8 +4,7 @@ export const en: TranslatedMessages = {
   // General buttons
   'button.change': 'Change',
   'button.open': 'Open',
-  'button.moreInfo': 'More info',
-  'button.moreInfoLink': 'here',
+  'button.moreInfoHere': 'More info here',
 
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
@@ -645,9 +644,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
-  'airDiscount.disabledTitle': 'Temporary closure',
+  'airDiscount.disabledTitle': 'Loftbru closed',
   'airDiscount.disabledDescription':
-    'The Loftbrú Air discount codes will be available again on 1 January 2026.',
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',

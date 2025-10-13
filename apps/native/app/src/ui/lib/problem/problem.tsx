@@ -2,7 +2,11 @@ import { useEffect } from 'react'
 
 import { useTranslate } from '../../../hooks/use-translate'
 import { useOfflineStore } from '../../../stores/offline-store'
-import { ProblemTemplate, ProblemTemplateBaseProps } from './problem-template'
+import {
+  ProblemTemplate,
+  ProblemTemplateBaseProps,
+  DetailLink,
+} from './problem-template'
 import { getOrganizationSlugFromError } from '../../../utils/get-organization-slug-from-error'
 import { ThirdPartyServiceError } from './third-party-service-error'
 
@@ -22,7 +26,7 @@ type ProblemBaseProps = {
   error?: Error
   title?: string
   message?: string
-  detailLink?: string
+  detailLink?: DetailLink
   logError?: boolean
 } & Pick<ProblemTemplateBaseProps, 'withContainer' | 'size'>
 
@@ -40,7 +44,7 @@ interface NoDataBaseProps extends ProblemBaseProps {
   error?: never
   title?: string
   message?: string
-  detailLink?: string
+  detailLink?: DetailLink
 }
 
 interface NoDataWithIconProps extends NoDataBaseProps {

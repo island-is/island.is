@@ -14,7 +14,7 @@ interface LinkProps {
   children: React.ReactNode
 }
 
-export function Link({ url, children, underlined = true }: LinkProps) {
+export function Link({ url, children, underlined = false }: LinkProps) {
   const handlePress = useCallback(async () => {
     const supported = await Linking.canOpenURL(url)
 
