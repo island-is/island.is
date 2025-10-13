@@ -11,7 +11,7 @@ import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/Op
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
 import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
-import { CategoryStatisticsSortBy } from '@island.is/api/schema'
+import { DocumentProviderDashboardCategoryStatisticsSortBy } from '@island.is/api/schema'
 import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
 import { useGetProviderStatisticsBreakdownByProviderId } from '../../shared/useGetProviderStatisticsBreakdownByProviderId'
 
@@ -26,7 +26,7 @@ export const InstitutionDocumentProviderDashboard = ({ providerId }: Props) => {
       providerId,
       undefined,
       undefined,
-      CategoryStatisticsSortBy.Date,
+      DocumentProviderDashboardCategoryStatisticsSortBy.Date,
       true,
       1,
       6,

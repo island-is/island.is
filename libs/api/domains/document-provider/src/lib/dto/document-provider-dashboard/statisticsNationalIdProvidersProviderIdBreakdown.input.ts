@@ -1,8 +1,8 @@
 import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
-import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
+import { DocumentProviderDashboardCategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
 
-@InputType('GetStatisticsBreakdownByProviderId')
-export class GetStatisticsBreakdownByProviderId {
+@InputType('DocumentProviderDashboardGetStatisticsBreakdownByProviderId')
+export class DocumentProviderDashboardGetStatisticsBreakdownByProviderId {
   @Field()
   providerId!: string
 
@@ -12,8 +12,8 @@ export class GetStatisticsBreakdownByProviderId {
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => CategoryStatisticsSortBy, { nullable: true })
-  sortBy?: CategoryStatisticsSortBy
+  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, { nullable: true })
+  sortBy?: DocumentProviderDashboardCategoryStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true })
   desc?: boolean

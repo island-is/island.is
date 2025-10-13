@@ -7,25 +7,25 @@ import {
 } from '@nestjs/graphql'
 import { Min } from 'class-validator'
 
-export enum StatisticsSortBy {
+export enum DocumentProviderDashboardStatisticsSortBy {
   Name = 'Name',
   Published = 'Published',
   Opened = 'Opened',
   Failures = 'Failures',
 }
 
-registerEnumType(StatisticsSortBy, { name: 'StatisticsSortBy' })
+registerEnumType(DocumentProviderDashboardStatisticsSortBy, { name: 'DocumentProviderDashboardStatisticsSortBy' })
 
-@InputType('GetStatisticsProvidersNationalId')
-export class GetStatisticsProvidersNationalId {
+@InputType('DocumentProviderDashboardGetStatisticsProvidersNationalId')
+export class DocumentProviderDashboardGetStatisticsProvidersNationalId {
   @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => StatisticsSortBy, { nullable: true })
-  sortBy?: StatisticsSortBy
+  @Field(() => DocumentProviderDashboardStatisticsSortBy, { nullable: true })
+  sortBy?: DocumentProviderDashboardStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true })
   desc?: boolean

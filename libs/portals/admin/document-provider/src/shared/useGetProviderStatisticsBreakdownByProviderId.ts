@@ -2,9 +2,9 @@ import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
-  GetStatisticsBreakdownByProviderId,
-  CategoryStatisticsSortBy,
-  ProviderStatisticsBreakdown,
+  DocumentProviderDashboardGetStatisticsBreakdownByProviderId,
+  DocumentProviderDashboardCategoryStatisticsSortBy,
+  DocumentProviderDashboardProviderStatisticsBreakdown,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID } from '../queries'
 import { useLocale } from '@island.is/localization'
@@ -25,12 +25,12 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownReturnType => {
-  const statisticsInput: GetStatisticsBreakdownByProviderId = {
+  const statisticsInput: DocumentProviderDashboardGetStatisticsBreakdownByProviderId = {
     providerId: providerId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
     sortBy:
-      (sortBy as CategoryStatisticsSortBy) ?? CategoryStatisticsSortBy.Date,
+      (sortBy as DocumentProviderDashboardCategoryStatisticsSortBy) ?? DocumentProviderDashboardCategoryStatisticsSortBy.Date,
     desc,
     page,
     pageSize,
@@ -64,7 +64,7 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
     breakdown.items.length
       ? breakdown.items.map(
           (
-            item: ProviderStatisticsBreakdown,
+            item: DocumentProviderDashboardProviderStatisticsBreakdown,
           ): DocumentProviderDashboardChartData => ({
             name:
               item.year && item.month

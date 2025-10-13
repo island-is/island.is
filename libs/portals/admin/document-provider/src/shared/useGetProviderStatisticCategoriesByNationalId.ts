@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
-import { GetStatisticsCategoriesByNationalId } from '@island.is/api/schema'
+import { DocumentProviderDashboardGetStatisticsCategoriesByNationalId } from '@island.is/api/schema'
 import { GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
@@ -15,7 +15,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   fromDate?: Date,
   toDate?: Date,
 ): GetProviderStatisticCategoriesReturnType => {
-  const statisticsInput: GetStatisticsCategoriesByNationalId = {
+  const statisticsInput: DocumentProviderDashboardGetStatisticsCategoriesByNationalId = {
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }

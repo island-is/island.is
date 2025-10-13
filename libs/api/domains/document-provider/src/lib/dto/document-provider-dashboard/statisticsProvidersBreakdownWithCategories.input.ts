@@ -7,15 +7,15 @@ import {
 } from '@nestjs/graphql'
 import { IsBoolean, IsOptional, IsUUID, Max, Min } from 'class-validator'
 
-export enum CategoryStatisticsSortBy {
+export enum DocumentProviderDashboardCategoryStatisticsSortBy {
   Date = 'Date',
   Published = 'Published',
 }
 
-registerEnumType(CategoryStatisticsSortBy, { name: 'CategoryStatisticsSortBy' })
+registerEnumType(DocumentProviderDashboardCategoryStatisticsSortBy, { name: 'DocumentProviderDashboardCategoryStatisticsSortBy' })
 
-@InputType('GetStatisticsBreakdownWithCategoriesByProviderId')
-export class GetStatisticsBreakdownWithCategoriesByProviderId {
+@InputType('DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId')
+export class DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId {
   @Field()
   @IsUUID('4', { message: 'providerId must be a UUID v4' })
   providerId!: string
@@ -26,8 +26,8 @@ export class GetStatisticsBreakdownWithCategoriesByProviderId {
   @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
-  @Field(() => CategoryStatisticsSortBy, { nullable: true })
-  sortBy?: CategoryStatisticsSortBy
+  @Field(() => DocumentProviderDashboardCategoryStatisticsSortBy, { nullable: true })
+  sortBy?: DocumentProviderDashboardCategoryStatisticsSortBy
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsOptional()

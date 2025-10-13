@@ -11,7 +11,7 @@ import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useG
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { m } from '../../lib/messages'
 import subMonths from 'date-fns/subMonths'
-import { TotalStatisticsSortBy } from '@island.is/api/schema'
+import { DocumentProviderDashboardTotalStatisticsSortBy } from '@island.is/api/schema'
 import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 
@@ -24,7 +24,7 @@ export const InstitutionDocumentProvidersDashboard = () => {
     useGetProviderStatisticsBreakdownWCategoriesByNationalId(
       sixMonthsAgo,
       new Date(),
-      TotalStatisticsSortBy.Date,
+      DocumentProviderDashboardTotalStatisticsSortBy.Date,
       true,
       1,
       6,

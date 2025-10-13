@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('ProviderStatisticInfo')
-export class ProviderStatisticInfo {
+@ObjectType('DocumentProviderDashboardProviderStatisticInfo')
+export class DocumentProviderDashboardProviderStatisticInfo {
   @Field(() => Int)
   published!: number
 

@@ -1,7 +1,7 @@
 import { Field, Int, InputType, GraphQLISODateTime } from '@nestjs/graphql'
 
-@InputType('GetStatisticsByNationalId')
-export class GetStatisticsByNationalId {
+@InputType('DocumentProviderDashboardGetStatisticsByNationalId')
+export class DocumentProviderDashboardGetStatisticsByNationalId {
   @Field(() => [Int], { nullable: true })
   categories?: Array<number>
 

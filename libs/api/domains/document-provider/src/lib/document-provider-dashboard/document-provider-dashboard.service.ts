@@ -1,32 +1,32 @@
-import { StatisticsApi } from '@island.is/clients/document-provider-dashboard'
+import { StatisticsApi, TotalStatisticsSortBy, CategoryStatisticsSortBy, StatisticsSortBy   } from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { GetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
-import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
-import { StatisticsSortBy } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
-import { CategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
-import { GetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
-import { StatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
-import { GetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
-import { ProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
-import { GetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
-import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
+import { DocumentProviderDashboardGetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { DocumentProviderDashboardProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
+import { DocumentProviderDashboardStatisticsSortBy } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { DocumentProviderDashboardCategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
+import { DocumentProviderDashboardGetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
+import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
+import { DocumentProviderDashboardGetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
+import { DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
+import { DocumentProviderDashboardGetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
+import { DocumentProviderDashboardProviderStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
 import {
-  GetStatisticsBreakdownByNationalId,
-  TotalStatisticsSortBy,
+  DocumentProviderDashboardGetStatisticsBreakdownByNationalId,
+  DocumentProviderDashboardTotalStatisticsSortBy,
 } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdown.input'
-import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
-import { ProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
+import { DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
+import { DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
 import {
-  GetStatisticsBreakdownWithCategoriesByProviderId,
-  CategoryStatisticsSortBy,
+  DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId,
+  DocumentProviderDashboardCategoryStatisticsSortBy,
 } from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
 import {
   mapBreakdownItems,
   mapCategoryStatisticsItems,
   mapStatistics,
 } from '../utils/mappers'
-import { GetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
+import { DocumentProviderDashboardGetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
 import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
@@ -37,9 +37,9 @@ export class DocumentProviderDashboardService {
   ) {}
 
   async getStatisticProvidersByNationalId(
-    input: GetStatisticsProvidersNationalId,
+    input: DocumentProviderDashboardGetStatisticsProvidersNationalId,
     user: User,
-  ): Promise<ProviderStatisticsPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsPaginationResponse | null> {
     const statisticProviders =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersGet({
         ...input,
@@ -71,9 +71,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsCategories(
-    input: GetStatisticsCategoriesByNationalId,
+    input: DocumentProviderDashboardGetStatisticsCategoriesByNationalId,
     user: User,
-  ): Promise<Array<CategoryStatistics> | null> {
+  ): Promise<Array<DocumentProviderDashboardCategoryStatistics> | null> {
     const statisticCategories =
       await this.statisticsApi.apiV1StatisticsNationalIdCategoriesGet({
         ...input,
@@ -84,7 +84,7 @@ export class DocumentProviderDashboardService {
       return null
     }
 
-    return (statisticCategories as Array<CategoryStatistics>)
+    return (statisticCategories as Array<DocumentProviderDashboardCategoryStatistics>)
       .filter((category) => category.name !== null)
       .map((category) => ({
         ...category,
@@ -93,9 +93,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsByNationalId(
-    input: GetStatisticsByNationalId,
+    input: DocumentProviderDashboardGetStatisticsByNationalId,
     user: User,
-  ): Promise<StatisticsOverview | null> {
+  ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     const statistics = await this.statisticsApi.apiV1StatisticsNationalIdGet({
       ...input,
       nationalId: user.nationalId,
@@ -114,9 +114,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownByProviderId(
-    input: GetStatisticsBreakdownByProviderId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownByProviderId,
     user: User,
-  ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownGet(
         {
@@ -138,9 +138,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsByProviderId(
-    input: GetStatisticsCategoriesByProviderId,
+    input: DocumentProviderDashboardGetStatisticsCategoriesByProviderId,
     user: User,
-  ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsOverview | null> {
     const statistic =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdGet({
         ...input,
@@ -158,9 +158,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownByNationalId(
-    input: GetStatisticsBreakdownByNationalId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownByNationalId,
     user: User,
-  ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdBreakdownGet({
         ...input,
@@ -180,9 +180,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownWithCategoriesByNationalId(
-    input: GetStatisticsBreakdownWithCategoriesByNationalId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId,
     user: User,
-  ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdBreakdownCategoriesGet({
         ...input,
@@ -202,9 +202,9 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownWithCategoriesByProviderId(
-    input: GetStatisticsBreakdownWithCategoriesByProviderId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId,
     user: User,
-  ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGet(
         {

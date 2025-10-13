@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { DocumentProviderDashboardStatistics } from './providerStatistics.model'
-@ObjectType('ProviderStatisticsPaginationResponse')
-export class ProviderStatisticsPaginationResponse {
+@ObjectType('DocumentProviderDashboardProviderStatisticsPaginationResponse')
+export class DocumentProviderDashboardProviderStatisticsPaginationResponse {
   @Field(() => Int)
   totalCount!: number
 

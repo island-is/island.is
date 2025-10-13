@@ -15,20 +15,20 @@ import {
   FeatureFlagService,
 } from '@island.is/nest/feature-flags'
 import { DocumentProviderDashboardService } from './document-provider-dashboard.service'
-import { GetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
-import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
-import { CategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
-import { GetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
-import { GetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
-import { GetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
-import { StatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
-import { ProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
-import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
-import { GetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
-import { GetStatisticsBreakdownByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdown.input'
-import { ProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
-import { GetStatisticsBreakdownWithCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
-import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
+import { DocumentProviderDashboardGetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { DocumentProviderDashboardProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
+import { DocumentProviderDashboardCategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
+import { DocumentProviderDashboardGetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
+import { DocumentProviderDashboardGetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
+import { DocumentProviderDashboardGetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
+import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
+import { DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
+import { DocumentProviderDashboardProviderStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
+import { DocumentProviderDashboardGetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
+import { DocumentProviderDashboardGetStatisticsBreakdownByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdown.input'
+import { DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
+import { DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
+import { DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(AdminPortalScope.documentProviderInstitution)
@@ -40,14 +40,14 @@ export class DocumentProviderDashboardResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Query(() => ProviderStatisticsPaginationResponse, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsPaginationResponse, {
     nullable: true,
     name: 'statisticProvidersByNationalId',
   })
   async statisticProvidersByNationalId(
-    @Args('input') input: GetStatisticsProvidersNationalId,
+    @Args('input') input: DocumentProviderDashboardGetStatisticsProvidersNationalId,
     @CurrentUser() user: User,
-  ): Promise<ProviderStatisticsPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsPaginationResponse | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -70,14 +70,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => [CategoryStatistics], {
+  @Query(() => [DocumentProviderDashboardCategoryStatistics], {
     nullable: true,
     name: 'statisticsCategories',
   })
   async statisticsCategories(
-    @Args('input') input: GetStatisticsCategoriesByNationalId,
+    @Args('input') input: DocumentProviderDashboardGetStatisticsCategoriesByNationalId,
     @CurrentUser() user: User,
-  ): Promise<Array<CategoryStatistics> | null> {
+  ): Promise<Array<DocumentProviderDashboardCategoryStatistics> | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -110,14 +110,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => StatisticsOverview, {
+  @Query(() => DocumentProviderDashboardStatisticsOverview, {
     nullable: true,
     name: 'statisticsByNationalId',
   })
   async statisticsByNationalId(
-    @Args('input') input: GetStatisticsByNationalId,
+    @Args('input') input: DocumentProviderDashboardGetStatisticsByNationalId,
     @CurrentUser() user: User,
-  ): Promise<StatisticsOverview | null> {
+  ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -143,15 +143,15 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => ProviderStatisticsBreakdownPaginationResponse, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownByProviderId',
   })
   async statisticsBreakdownByProviderId(
     @Args('input')
-    input: GetStatisticsBreakdownByProviderId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownByProviderId,
     @CurrentUser() user: User,
-  ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -176,15 +176,15 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => DocumentProviderDashboardStatisticsOverview, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsOverview, {
     nullable: true,
     name: 'statisticsOverviewByProviderId',
   })
   async statisticsOverviewByProviderId(
     @Args('input')
-    input: GetStatisticsCategoriesByProviderId,
+    input: DocumentProviderDashboardGetStatisticsCategoriesByProviderId,
     @CurrentUser() user: User,
-  ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsOverview | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -211,14 +211,14 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => ProviderStatisticsBreakdownPaginationResponse, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownByNationalId',
   })
   async statisticsBreakdownByNationalId(
-    @Args('input') input: GetStatisticsBreakdownByNationalId,
+    @Args('input') input: DocumentProviderDashboardGetStatisticsBreakdownByNationalId,
     @CurrentUser() user: User,
-  ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -242,15 +242,15 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => ProviderStatisticsCategoryBreakdownPaginationResponse, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownWithCategoriesByNationalId',
   })
   async statisticsBreakdownWithCategoriesByNationalId(
     @Args('input')
-    input: GetStatisticsBreakdownWithCategoriesByNationalId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId,
     @CurrentUser() user: User,
-  ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -273,15 +273,15 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Query(() => ProviderStatisticsCategoryBreakdownPaginationResponse, {
+  @Query(() => DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownWithCategoriesByProviderId',
   })
   async statisticsBreakdownWithCategoriesByProviderId(
     @Args('input')
-    input: GetStatisticsBreakdownWithCategoriesByProviderId,
+    input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId,
     @CurrentUser() user: User,
-  ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
+  ): Promise<DocumentProviderDashboardProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {
       const data = await this.auditService.auditPromise(
         {

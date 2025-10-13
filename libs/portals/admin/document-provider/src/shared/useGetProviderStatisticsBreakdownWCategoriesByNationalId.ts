@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
-  GetStatisticsBreakdownWithCategoriesByNationalId,
-  TotalStatisticsSortBy,
+  DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId,
+  DocumentProviderDashboardTotalStatisticsSortBy,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
@@ -20,15 +20,15 @@ import format from 'date-fns/format'
 export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   fromDate?: Date,
   toDate?: Date,
-  sortBy?: TotalStatisticsSortBy,
+  sortBy?: DocumentProviderDashboardTotalStatisticsSortBy,
   desc = false,
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
-  const statisticsInput: GetStatisticsBreakdownWithCategoriesByNationalId = {
+  const statisticsInput: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId = {
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-    sortBy: sortBy ?? TotalStatisticsSortBy.Date,
+    sortBy: sortBy ?? DocumentProviderDashboardTotalStatisticsSortBy.Date,
     desc,
     page,
     pageSize,

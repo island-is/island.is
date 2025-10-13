@@ -1,11 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { ProviderStatisticsBreakdown } from './providerStatisticsBreakdown.model'
+import { DocumentProviderDashboardProviderStatisticsBreakdown } from './providerStatisticsBreakdown.model'
 
-@ObjectType('ProviderStatisticsBreakdownPaginationResponse')
-export class ProviderStatisticsBreakdownPaginationResponse {
+@ObjectType('DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse')
+export class DocumentProviderDashboardProviderStatisticsBreakdownPaginationResponse {
   @Field(() => Int)
   totalCount!: number
 
-  @Field(() => [ProviderStatisticsBreakdown])
-  items!: Array<ProviderStatisticsBreakdown>
+  @Field(() => [DocumentProviderDashboardProviderStatisticsBreakdown])
+  items!: Array<DocumentProviderDashboardProviderStatisticsBreakdown>
 }

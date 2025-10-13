@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('DocumentProviderCategoryStatistics')
-export class CategoryStatistics {
+@ObjectType('DocumentProviderDashboardCategoryStatistics')
+export class DocumentProviderDashboardCategoryStatistics {
   @Field(() => Int, { nullable: true })
   categoryId?: number
 

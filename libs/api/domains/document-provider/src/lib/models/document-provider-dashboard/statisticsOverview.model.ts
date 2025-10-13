@@ -1,11 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { ProviderStatisticInfo } from './providerStatisticInfo.model'
+import { DocumentProviderDashboardProviderStatisticInfo } from './providerStatisticInfo.model'
 
-@ObjectType('StatisticsOverview')
-export class StatisticsOverview {
+@ObjectType('DocumentProviderDashboardStatisticsOverview')
+export class DocumentProviderDashboardStatisticsOverview {
   @Field(() => Int, { nullable: true })
   providerCount?: number
 
-  @Field(() => ProviderStatisticInfo, { nullable: true })
-  statistics?: ProviderStatisticInfo
+  @Field(() => DocumentProviderDashboardProviderStatisticInfo, { nullable: true })
+  statistics?: DocumentProviderDashboardProviderStatisticInfo
 }

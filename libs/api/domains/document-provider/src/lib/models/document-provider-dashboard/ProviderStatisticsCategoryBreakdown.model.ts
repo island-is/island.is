@@ -1,14 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { CategoryStatistics } from './categoryStatistics.model'
+import { DocumentProviderDashboardCategoryStatistics } from './categoryStatistics.model'
 
-@ObjectType('ProviderStatisticsCategoryBreakdown')
-export class ProviderStatisticsCategoryBreakdown {
+@ObjectType('DocumentProviderDashboardProviderStatisticsCategoryBreakdown')
+export class DocumentProviderDashboardProviderStatisticsCategoryBreakdown {
   @Field(() => Int, { nullable: true })
   year?: number
 
   @Field(() => Int, { nullable: true })
   month?: number
 
-  @Field(() => [CategoryStatistics], { nullable: true })
-  categoryStatistics?: Array<CategoryStatistics>
+  @Field(() => [DocumentProviderDashboardCategoryStatistics], { nullable: true })
+  categoryStatistics?: Array<DocumentProviderDashboardCategoryStatistics>
 }

@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_STATISTIC_PROVIDERS_BY_NATIONALID = gql`
   query StatisticProvidersByNationalId(
-    $input: GetStatisticsProvidersNationalId!
+    $input: DocumentProviderDashboardGetStatisticsProvidersNationalId!
   ) {
     statisticProvidersByNationalId(input: $input) {
       totalCount
@@ -22,7 +22,7 @@ export const GET_STATISTIC_PROVIDERS_BY_NATIONALID = gql`
 
 export const GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID = gql`
   query StatisticProviderCategoriesByNationalId(
-    $input: GetStatisticsCategoriesByNationalId!
+    $input: DocumentProviderDashboardGetStatisticsCategoriesByNationalId!
   ) {
     statisticsCategories(input: $input) {
       name
@@ -32,7 +32,7 @@ export const GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID = gql`
 `
 
 export const GET_STATISTICS_BY_NATIONALID = gql`
-  query StatisticsByNationalId($input: GetStatisticsByNationalId!) {
+  query StatisticsByNationalId($input: DocumentProviderDashboardGetStatisticsByNationalId!) {
     statisticsByNationalId(input: $input) {
       providerCount
       statistics {
@@ -47,7 +47,7 @@ export const GET_STATISTICS_BY_NATIONALID = gql`
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID = gql`
   query ProviderStatisticsBreakdownByProviderId(
-    $input: GetStatisticsBreakdownByProviderId!
+    $input: DocumentProviderDashboardGetStatisticsBreakdownByProviderId!
   ) {
     statisticsBreakdownByProviderId(input: $input) {
       totalCount
@@ -67,7 +67,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID = gql`
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID = gql`
   query ProviderStatisticsBreakdownWithCategoriesByProviderId(
-    $input: GetStatisticsBreakdownWithCategoriesByProviderId!
+    $input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByProviderId!
   ) {
     statisticsBreakdownWithCategoriesByProviderId(input: $input) {
       totalCount
@@ -85,7 +85,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID = gql
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID = gql`
   query ProviderStatisticsBreakdownWithCategoriesByNationalId(
-    $input: GetStatisticsBreakdownWithCategoriesByNationalId!
+    $input: DocumentProviderDashboardGetStatisticsBreakdownWithCategoriesByNationalId!
   ) {
     statisticsBreakdownWithCategoriesByNationalId(input: $input) {
       totalCount
@@ -103,7 +103,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID = gql
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID = gql`
   query ProviderStatisticsBreakdownByNationalId(
-    $input: GetStatisticsBreakdownByNationalId!
+    $input: DocumentProviderDashboardGetStatisticsBreakdownByNationalId!
   ) {
     statisticsBreakdownByNationalId(input: $input) {
       totalCount
@@ -123,7 +123,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID = gql`
 
 export const GET_STATISTICS_OVERVIEW_BY_PROVIDERID = gql`
   query StatisticsOverviewByProviderId(
-    $input: GetStatisticsCategoriesByProviderId!
+    $input: DocumentProviderDashboardGetStatisticsCategoriesByProviderId!
   ) {
     statisticsOverviewByProviderId(input: $input) {
       name
