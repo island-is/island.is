@@ -3,13 +3,10 @@ import { Alert, Linking } from 'react-native'
 import styled from 'styled-components/native'
 import { Typography } from '../typography/typography'
 
-const Host = styled.TouchableOpacity`
-  border-bottom-color: ${(props) => props.theme.color.blue400};
-`
+const Host = styled.TouchableOpacity``
 
 interface LinkProps {
   url: string
-  underlined?: boolean
   children: React.ReactNode
 }
 
