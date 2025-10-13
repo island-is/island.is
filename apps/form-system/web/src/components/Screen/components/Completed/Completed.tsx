@@ -21,8 +21,15 @@ export const Completed = () => {
   const supportEmail = 'island@island.is'
   const { slug } = useParams()
   const { state } = useApplicationContext()
-  const { title, confirmationHeader, confirmationText, additionalInfo } = state
-    .application.completedSectionInfo as FormSystemCompletedSectionInfo
+  const completed = state.application.completedSectionInfo as
+    | Partial<FormSystemCompletedSectionInfo>
+    | undefined
+  const t = completed?.title?.[lang]
+  const header =
+    completed?.confirmationHeader?.[lang] ?? formatMessage(m.completedHeader)
+  const text =
+    completed?.confirmationText?.[lang] ?? formatMessage(m.completedText)
+  const infos = completed?.additionalInfo ?? []
 
   const stafraentIslandForm = () => (
     <Box marginTop={5}>
@@ -78,14 +85,12 @@ export const Completed = () => {
     stafraentIslandForm()
   ) : (
     <Stack space={3}>
-      <Text variant="h2" as="h2" marginBottom={1}>
-        {title[lang]}
-      </Text>
-      <AlertMessage
-        type="success"
-        title={confirmationHeader[lang]}
-        message={confirmationText[lang]}
-      />
+      {t && (
+        <Text variant="h2" as="h2" marginBottom={1}>
+          {t}
+        </Text>
+      )}
+      <AlertMessage type="success" title={header} message={text} />
       <Box
         width="full"
         border="standard"
@@ -103,15 +108,13 @@ export const Completed = () => {
             label={formatMessage(m.completedAccordionTitle)}
             startExpanded
           >
-            {additionalInfo.length === 1 ? (
+            {infos.length === 1 ? (
               <Box marginBottom={2}>
-                <Text className={styles.preserveLines}>
-                  {additionalInfo[0][lang]}
-                </Text>
+                <Text className={styles.preserveLines}>{infos[0][lang]}</Text>
               </Box>
             ) : (
               <BulletList space={1}>
-                {additionalInfo.map((info, index) => (
+                {infos.map((info, index) => (
                   <Bullet key={index}>
                     <Text className={styles.preserveLines}>{info[lang]}</Text>
                   </Bullet>

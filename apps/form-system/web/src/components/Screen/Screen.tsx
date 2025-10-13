@@ -13,7 +13,7 @@ import { Summary } from './components/Summary/Summary'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
-  const { lang, formatMessage } = useLocale()
+  const { lang } = useLocale()
   const { currentSection, currentScreen } = state
 
   const screenTitle =
