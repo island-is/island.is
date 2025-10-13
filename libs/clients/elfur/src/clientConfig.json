@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API",
-    "description": "<h2>API's to fetch and send data to FJS</h2><h3>Account</h3><p>This is currently not used.</p><h3>Employee</h3><p>Fetch information about employees from Orri.</p><h3>Organization</h3><p>This controller is used to fetch information about organizations. In icelandic 'Stofnanir'.</p><p>Here you can find which Organization Units belong to an organization and get details about an organization.</p><h3>Organization Employee</h3><p>This controller is used to fetch information about employees in organizations or in organization units. In icelandic 'Stofnanir' or 'deildir / stofnunareiningar'.</p><p>Here you can find which employees belong to an organization or an organization unit.</p><h3>OrganizationUnit</h3><p>This controller gives more details about an organization unit. In icelandic 'deildir / stofnunareiningar'.</p><h3>TimeRegistration</h3><p>This controller contains endpoints to import, create, read, update and delete time registrations and import groups. One endpoint is used to send a batch of timeregistrations from Elfur to Orri.</p><h4>Import time registration processes explained:</h4><p>First the timeregistrations are saved to Elfur database. When the time registration \"batch\", called \"Import Group\" in Elfur, is ready, they are sent to Orri as a batch.</p><p>There are two ways to import time registrations to Elfur database. Via excel file or manually adding them to an import group.</p><p><strong>Importing time registrations from an excel file, then process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>import_from_excel</strong>\r\n     - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n     - We get the importGroupId from step 1, the excel import.\r\n\r\n<strong>Create an import group and add time registrations to it. When all time registrations are added, process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>create_import_group</strong>\r\n     - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>add_timeregistrations_to_import_group/{importGroupId}/{isFinalized}</strong>\r\n     - Add time registrations to the import group. One or more at a time.\r\n     - When last time registration is added, set isFinalized to true.\r\n 3. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n\r\n<p>Time registrations are now in Orri.</p><h3>Vacancy</h3><p>This controller contains endpoints to create, fetch, and modify vacancies and submit vacancy statistics.</p><p>Refer to the <strong>NewVacancyDto</strong> schema at the bottom of this page for what fields are available when creating a vacancy.<br>Refer to the <strong>UpdateVacancyDto</strong> schema at the bottom of this page for what fields are available when updating a vacancy.</p><p>When updating a vacancy, any number of fields can be included  - only those included will be changed. However, the <strong>\"updatedBy\"</strong> field must always be included.</p><p><strong><strong>When creating a vacancy, the following fields are required and must not be empty:</strong></strong></p><ul><li><strong>\"heading\"</strong>: \"string\"</li><li><strong>\"jobTitle\"</strong>: \"string\"</li><li><strong>\"publishDate\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"openTo\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"introduction\"</strong>: \"string\"</li><li><strong>\"assignments\"</strong>: \"string\"</li><li><strong>\"qualifications\"</strong>: \"string\"</li><li><strong>\"moreInfo\"</strong>: \"string\"</li><li><strong>\"orgName\"</strong>: \"string\"</li><li><strong>\"contact1Name\"</strong>: \"string\"</li><li><strong>\"contact1JobTitle\"</strong>: \"string\"</li><li><strong>\"contact1EmailAddress\"</strong>: \"string\"</li><li><strong>\"contact1PhoneNumber\"</strong>: \"string\"</li><li><strong>\"webLinkUrl\"</strong>: \"string\"</li><li><strong>\"hoursRatio\"</strong>: \"string\"</li><li><strong>\"unionName\"</strong>: \"string\"</li><li><strong>\"locations\"</strong>: \"string\"</li><li><strong>\"createdBy\"</strong>: \"string\"</li><li><strong>\"sourceSystem\"</strong>: \"string\"</li></ul><p><strong><strong>When updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"openTo\"</strong> must be at least 10 days later from when the vacancy is updated.</ul><p><strong><strong>When creating OR updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"publishDate\"</strong> and<strong> \"openTo\"</strong> must be in the future</li><li><strong>\"publishDate\"</strong> must be at least 10 days earlier than <strong>\"openTo\"</strong></li><li><strong>\"openTo\"</strong> must be a working day (not a weekend day nor an Icelandic holiday (rauður dagur))</li><li>If <strong>\"contact2Name\"</strong> is provided then <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> must be provided as well <ul><li><i>When updating, this only applies if <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> do not already exist in the vacancy</i></li></ul><li><strong>\"contact1PhoneNumber\"</strong> and <strong>\"contact2PhoneNumber\"</strong> can only contain numbers and optionally phone number related characters (\"-\", \"+\", \"(\", \")\", or whitespace)</li><li><strong>\"webLinkUrl\"</strong> must be a valid URL that returns a valid response</li></ul><p>There is also an endpoint to add vacancy statistics which users are <strong><strong>required</strong></strong> to use to once the hiring process for the corresponding vacancy is finished.<br>Refer to the <strong>NewVacancyStatsDto</strong> schema at the bottom of this page for what fields should be included when submitting.</p><h3>OpenInvoices</h3><p>This controller provides endpoints to fetch data related to open invoices.</p>",
+    "description": "<h2>API's to fetch and send data to FJS</h2><h3>Account</h3><p>This is currently not used.</p><h3>Employee</h3><p>Fetch information about employees from Orri.</p><h3>Organization</h3><p>This controller is used to fetch information about organizations. In icelandic 'Stofnanir'.</p><p>Here you can find which Organization Units belong to an organization and get details about an organization.</p><h3>Organization Employee</h3><p>This controller is used to fetch information about employees in organizations or in organization units. In icelandic 'Stofnanir' or 'deildir / stofnunareiningar'.</p><p>Here you can find which employees belong to an organization or an organization unit.</p><h3>OrganizationUnit</h3><p>This controller gives more details about an organization unit. In icelandic 'deildir / stofnunareiningar'.</p><h3>TimeRegistration</h3><p>This controller contains endpoints to import, create, read, update and delete time registrations and import groups. One endpoint is used to send a batch of timeregistrations from Elfur to Orri.</p><h4>Import time registration processes explained:</h4><p>First the timeregistrations are saved to Elfur database. When the time registration \"batch\", called \"Import Group\" in Elfur, is ready, they are sent to Orri as a batch.</p><p>There are two ways to import time registrations to Elfur database. Via excel file or manually adding them to an import group.</p><p><strong>Importing time registrations from an excel file, then process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>import_from_excel</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n - We get the importGroupId from step 1, the excel import.\r\n\r\n<strong>Create an import group and add time registrations to it. When all time registrations are added, process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>create_import_group</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>add_timeregistrations_to_import_group/{importGroupId}/{isFinalized}</strong>\r\n - Add time registrations to the import group. One or more at a time.\r\n - When last time registration is added, set isFinalized to true.\r\n 3. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n\r\n<p>Time registrations are now in Orri.</p><h3>Vacancy</h3><p>This controller contains endpoints to create, fetch, and modify vacancies and submit vacancy statistics.</p><p>Refer to the <strong>NewVacancyDto</strong> schema at the bottom of this page for what fields are available when creating a vacancy.<br>Refer to the <strong>UpdateVacancyDto</strong> schema at the bottom of this page for what fields are available when updating a vacancy.</p><p>When updating a vacancy, any number of fields can be included - only those included will be changed. However, the <strong>\"updatedBy\"</strong> field must always be included.</p><p><strong><strong>When creating a vacancy, the following fields are required and must not be empty:</strong></strong></p><ul><li><strong>\"heading\"</strong>: \"string\"</li><li><strong>\"jobTitle\"</strong>: \"string\"</li><li><strong>\"publishDate\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"openTo\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"introduction\"</strong>: \"string\"</li><li><strong>\"assignments\"</strong>: \"string\"</li><li><strong>\"qualifications\"</strong>: \"string\"</li><li><strong>\"moreInfo\"</strong>: \"string\"</li><li><strong>\"orgName\"</strong>: \"string\"</li><li><strong>\"contact1Name\"</strong>: \"string\"</li><li><strong>\"contact1JobTitle\"</strong>: \"string\"</li><li><strong>\"contact1EmailAddress\"</strong>: \"string\"</li><li><strong>\"contact1PhoneNumber\"</strong>: \"string\"</li><li><strong>\"webLinkUrl\"</strong>: \"string\"</li><li><strong>\"hoursRatio\"</strong>: \"string\"</li><li><strong>\"unionName\"</strong>: \"string\"</li><li><strong>\"locations\"</strong>: \"string\"</li><li><strong>\"createdBy\"</strong>: \"string\"</li><li><strong>\"sourceSystem\"</strong>: \"string\"</li></ul><p><strong><strong>When updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"openTo\"</strong> must be at least 10 days later from when the vacancy is updated.</ul><p><strong><strong>When creating OR updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"publishDate\"</strong> and<strong> \"openTo\"</strong> must be in the future</li><li><strong>\"publishDate\"</strong> must be at least 10 days earlier than <strong>\"openTo\"</strong></li><li><strong>\"openTo\"</strong> must be a working day (not a weekend day nor an Icelandic holiday (rauður dagur))</li><li>If <strong>\"contact2Name\"</strong> is provided then <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> must be provided as well <ul><li><i>When updating, this only applies if <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> do not already exist in the vacancy</i></li></ul><li><strong>\"contact1PhoneNumber\"</strong> and <strong>\"contact2PhoneNumber\"</strong> can only contain numbers and optionally phone number related characters (\"-\", \"+\", \"(\", \")\", or whitespace)</li><li><strong>\"webLinkUrl\"</strong> must be a valid URL that returns a valid response</li></ul><p>There is also an endpoint to add vacancy statistics which users are <strong><strong>required</strong></strong> to use to once the hiring process for the corresponding vacancy is finished.<br>Refer to the <strong>NewVacancyStatsDto</strong> schema at the bottom of this page for what fields should be included when submitting.</p><h3>OpenInvoices</h3><p>This controller provides endpoints to fetch data related to open invoices.</p>",
     "version": "1.0"
   },
   "paths": {
@@ -15,26 +15,19 @@
             "name": "account",
             "in": "query",
             "description": "Account Id.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "ledger",
             "in": "query",
             "description": "Ledger Id.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "date",
             "in": "query",
             "description": "Confirmation date.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -62,19 +55,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -82,25 +69,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -112,21 +91,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -140,21 +107,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -169,9 +124,7 @@
             "name": "X-Param-NationalId",
             "in": "header",
             "description": "Employee nationalId (ie. kennitala). Sent with the header as \"X-Param-NationalId\".",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -179,19 +132,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Employee"
-                }
+                "schema": { "$ref": "#/components/schemas/Employee" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Employee"
-                }
+                "schema": { "$ref": "#/components/schemas/Employee" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Employee"
-                }
+                "schema": { "$ref": "#/components/schemas/Employee" }
               }
             }
           },
@@ -199,19 +146,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -219,25 +160,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -250,21 +183,13 @@
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -292,25 +217,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -323,21 +240,13 @@
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -365,25 +274,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -395,21 +296,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -424,27 +313,19 @@
             "name": "limit",
             "in": "query",
             "description": "The maximum number of items to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor to get items after (for next page).",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor to get items before (for previous page).",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -472,19 +353,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -492,19 +367,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -512,25 +381,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -542,21 +403,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -571,58 +420,37 @@
             "name": "validFrom",
             "in": "query",
             "description": "(Optional) Filter by date. The start date of the organization.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "validTo",
             "in": "query",
             "description": "(Optional) Filter by date. The end date of the organization.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "filter",
             "in": "query",
             "description": "(Optional) Filter to filter down the organization list.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "isSalaryPayer",
             "in": "query",
             "description": "If 1 then we get all organizations that pay salarys, it is the default value. If 0 then we get all projects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -659,19 +487,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -679,25 +501,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -710,19 +524,13 @@
             "name": "organizationNumber",
             "in": "query",
             "description": "The organization number to fetch details about.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "isSalaryPayer",
             "in": "query",
             "description": "If 1 then we get all organizations that pay salarys, it is the default value. If 0 then we get all projects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           }
         ],
         "responses": {
@@ -750,19 +558,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -770,25 +572,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -800,21 +594,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -830,39 +612,25 @@
             "name": "organizationNumber",
             "in": "query",
             "description": "Organization number (ie. stofnun).",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "organizationUnitNumber",
             "in": "query",
             "description": "(Optional) Organization unit number (ie. deild). If used, only employees for the given OU will be returned. If not set or set to 0, all employees for that organization will be returned.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -899,19 +667,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -919,25 +681,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -949,21 +703,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -978,47 +720,31 @@
             "name": "organizationNumber",
             "in": "query",
             "description": "The organization number (fjárlaganúmer stofnunar) to get a list of OU's for.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "validFrom",
             "in": "query",
             "description": "(Optional) Filter by date. The start date of the organization unit.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "validTo",
             "in": "query",
             "description": "(Optional) Filter by date. The end date of the organization unit.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -1055,19 +781,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1075,25 +795,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1106,10 +818,7 @@
             "name": "organizationUnitNumber",
             "in": "query",
             "description": "The organization unit number (fjárlaganúmer einingar/deildar) to fetch details about.",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "schema": { "type": "integer", "format": "int64" }
           }
         ],
         "responses": {
@@ -1137,19 +846,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1157,25 +860,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1188,50 +883,29 @@
             "name": "organizationUnitNumber",
             "in": "query",
             "description": "The organization unit number to fetch the name for.",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "schema": { "type": "integer", "format": "int64" }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1239,25 +913,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1269,21 +935,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1298,27 +952,19 @@
             "name": "X-Param-NationalId",
             "in": "header",
             "description": "Employee nationalId (ie. kennitala). Sent with the header as \"X-Param-NationalId\".",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "dateFrom",
             "in": "query",
             "description": "Registration date from (YYYY-MM-DD).",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "description": "Registration date to (YYYY-MM-DD).",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -1355,25 +1001,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1387,10 +1025,7 @@
             "in": "path",
             "description": "The import group Id to fetch.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -1418,25 +1053,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1451,25 +1078,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               }
             }
@@ -1478,25 +1099,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1511,25 +1124,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportGroup"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportGroup" }
                 }
               }
             }
@@ -1538,25 +1145,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1571,17 +1170,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "excelFile": {
-                    "type": "string",
-                    "format": "binary"
-                  }
+                  "excelFile": { "type": "string", "format": "binary" }
                 }
               },
-              "encoding": {
-                "excelFile": {
-                  "style": "form"
-                }
-              }
+              "encoding": { "excelFile": { "style": "form" } }
             }
           }
         },
@@ -1590,19 +1182,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResultExcelImport"
-                }
+                "schema": { "$ref": "#/components/schemas/ResultExcelImport" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResultExcelImport"
-                }
+                "schema": { "$ref": "#/components/schemas/ResultExcelImport" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResultExcelImport"
-                }
+                "schema": { "$ref": "#/components/schemas/ResultExcelImport" }
               }
             }
           },
@@ -1610,25 +1196,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1641,26 +1219,16 @@
             "name": "importGroupId",
             "in": "query",
             "description": "The id of the import group (ie. batch) to send to Orri.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "validateOnly",
             "in": "query",
             "description": "(Optional) Flag to indicate if the batch should only be validated and not processed. Default is 'N' which means the batch will be processed.",
-            "schema": {
-              "type": "string",
-              "default": "N"
-            }
+            "schema": { "type": "string", "default": "N" }
           }
         ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
+        "responses": { "500": { "description": "Internal Server Error" } }
       }
     },
     "/v1/time_registration/create_import_group": {
@@ -1672,28 +1240,15 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1707,55 +1262,38 @@
             "in": "path",
             "description": "The import group id to add the new time registrations.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "isFinalized",
             "in": "path",
             "description": "(Optional) Default false. Set as true if those are the last time registrations for this group. Then the item group will be marked as ready to send to Orri.",
             "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "requestBody": {
           "description": "List of time registrations to add.",
+          "required": false,
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TimeRegistrationImportDto"
-                }
+                "$ref": "#/components/schemas/AddTimeRegistrationsDto"
               }
             },
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TimeRegistrationImportDto"
-                }
+                "$ref": "#/components/schemas/AddTimeRegistrationsDto"
               }
             },
             "text/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TimeRegistrationImportDto"
-                }
+                "$ref": "#/components/schemas/AddTimeRegistrationsDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TimeRegistrationImportDto"
-                }
+                "$ref": "#/components/schemas/AddTimeRegistrationsDto"
               }
             }
           }
@@ -1767,35 +1305,24 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
+                  "items": { "type": "string", "format": "uuid" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
+                  "items": { "type": "string", "format": "uuid" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
+                  "items": { "type": "string", "format": "uuid" }
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1808,39 +1335,26 @@
             "name": "importGroupId",
             "in": "query",
             "description": "The import group id to delete.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1853,10 +1367,7 @@
             "name": "importGroupId",
             "in": "query",
             "description": "The import group id to delete time registrations from.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "requestBody": {
@@ -1865,68 +1376,46 @@
             "application/json-patch+json": {
               "schema": {
                 "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "items": { "type": "string", "format": "uuid" }
               }
             },
             "application/json": {
               "schema": {
                 "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "items": { "type": "string", "format": "uuid" }
               }
             },
             "text/json": {
               "schema": {
                 "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "items": { "type": "string", "format": "uuid" }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "items": { "type": "string", "format": "uuid" }
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1938,54 +1427,36 @@
           "description": "The updated import group information.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportGroupDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ImportGroupDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportGroupDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ImportGroupDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportGroupDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ImportGroupDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportGroupDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ImportGroupDto" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2019,32 +1490,22 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2086,25 +1547,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2117,21 +1570,13 @@
             "name": "rowOffset",
             "in": "query",
             "description": "Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -2168,25 +1613,17 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2198,21 +1635,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2227,48 +1652,31 @@
             "name": "openFrom",
             "in": "query",
             "description": "(Optional) Filter by date. The start date of the application period.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "openTo",
             "in": "query",
             "description": "(Optional) Filter by date. The end date of the application period.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "filter",
             "in": "query",
             "description": "(Optional) Filter to filter down the vacancy list.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "rowOffset",
             "in": "query",
             "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
             "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           }
         ],
         "responses": {
@@ -2278,25 +1686,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VacancyResponseDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/VacancyResponseDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VacancyResponseDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/VacancyResponseDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VacancyResponseDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/VacancyResponseDto" }
                 }
               }
             }
@@ -2305,19 +1707,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2325,25 +1721,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2356,9 +1744,7 @@
             "name": "vacancyId",
             "in": "query",
             "description": "The vacancy ID to fetch details about.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -2366,19 +1752,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/VacancyResponseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/VacancyResponseDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VacancyResponseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/VacancyResponseDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VacancyResponseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/VacancyResponseDto" }
               }
             }
           },
@@ -2386,19 +1766,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2406,25 +1780,17 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2436,24 +1802,16 @@
           "description": "The new vacancy information.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyDto" }
             }
           }
         },
@@ -2462,28 +1820,15 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2496,38 +1841,26 @@
             "name": "vacancyId",
             "in": "query",
             "description": "The GUID of the vacancy to deactivate.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2539,54 +1872,36 @@
           "description": "The updated vacancy information.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateVacancyDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateVacancyDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateVacancyDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVacancyDto"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateVacancyDto" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "404": {
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2598,24 +1913,16 @@
           "description": "The new vacancy statistics.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyStatsDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyStatsDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyStatsDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyStatsDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyStatsDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyStatsDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewVacancyStatsDto"
-              }
+              "schema": { "$ref": "#/components/schemas/NewVacancyStatsDto" }
             }
           }
         },
@@ -2624,28 +1931,15 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2657,21 +1951,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2902,9 +2184,7 @@
           },
           "assignments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Assignment"
-            },
+            "items": { "$ref": "#/components/schemas/Assignment" },
             "description": "Assignment list",
             "nullable": true
           }
@@ -3095,9 +2375,7 @@
         "properties": {
           "results": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Employee"
-            },
+            "items": { "$ref": "#/components/schemas/Employee" },
             "description": "Expected result collection",
             "nullable": true
           },
@@ -3134,9 +2412,7 @@
             "description": "Name of the import file",
             "nullable": true
           },
-          "status": {
-            "$ref": "#/components/schemas/ImportGroupStatus"
-          },
+          "status": { "$ref": "#/components/schemas/ImportGroupStatus" },
           "batchName": {
             "maxLength": 30,
             "type": "string",
@@ -3160,9 +2436,7 @@
           },
           "timeRegistrations": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TimeRegistrationImport"
-            },
+            "items": { "$ref": "#/components/schemas/TimeRegistrationImport" },
             "description": "Collection of lines in the import group",
             "nullable": true
           },
@@ -3213,9 +2487,7 @@
             "description": "Name of the batch",
             "nullable": true
           },
-          "status": {
-            "$ref": "#/components/schemas/ImportGroupStatus"
-          },
+          "status": { "$ref": "#/components/schemas/ImportGroupStatus" },
           "totalCount": {
             "type": "integer",
             "description": "Total lines in the import group",
@@ -3273,9 +2545,7 @@
             "description": "Name of the batch",
             "nullable": true
           },
-          "status": {
-            "$ref": "#/components/schemas/ImportGroupStatus"
-          },
+          "status": { "$ref": "#/components/schemas/ImportGroupStatus" },
           "totalCount": {
             "type": "integer",
             "description": "Total lines in the import group",
@@ -3310,9 +2580,7 @@
           },
           "lineValidationErrorList": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "Gets or sets the list of line validation errors.",
             "nullable": true
           }
@@ -3536,9 +2804,7 @@
             "description": "Gets or sets the list of invoice details.",
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
           "totalCount": {
             "type": "integer",
             "description": "Gets or sets the total count of items available.",
@@ -3994,29 +3260,13 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "ResultExcelImport": {
         "type": "object",
@@ -4048,9 +3298,7 @@
           },
           "validationResults": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LineValidationResult"
-            },
+            "items": { "$ref": "#/components/schemas/LineValidationResult" },
             "description": "Gets or sets the list of line validation results.",
             "nullable": true
           }
@@ -4134,12 +3382,8 @@
             "description": "Unique identifier for an import group (all lines in a single import document should have the same groupId)",
             "format": "uuid"
           },
-          "importGroup": {
-            "$ref": "#/components/schemas/ImportGroup"
-          },
-          "status": {
-            "$ref": "#/components/schemas/ImportStatus"
-          },
+          "importGroup": { "$ref": "#/components/schemas/ImportGroup" },
+          "status": { "$ref": "#/components/schemas/ImportStatus" },
           "errorDescription": {
             "maxLength": 1024,
             "type": "string",
@@ -4282,6 +3526,17 @@
         "additionalProperties": false,
         "description": "Data class for time registration import"
       },
+      "AddTimeRegistrationsDto": {
+        "type": "object",
+        "properties": {
+          "timeRegistrations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TimeRegistrationDto" }
+          }
+        },
+        "additionalProperties": false,
+        "description": "Add time registrations dto"
+      },
       "TimeRegistrationImportDto": {
         "type": "object",
         "properties": {
@@ -4296,9 +3551,7 @@
             "description": "Import group id",
             "format": "uuid"
           },
-          "status": {
-            "$ref": "#/components/schemas/ImportStatus"
-          },
+          "status": { "$ref": "#/components/schemas/ImportStatus" },
           "errorDescription": {
             "type": "string",
             "description": "Error description if status is Error",
@@ -4389,11 +3642,7 @@
             "description": "´Skyring",
             "nullable": true
           },
-          "fi": {
-            "type": "string",
-            "description": "F.I.",
-            "nullable": true
-          },
+          "fi": { "type": "string", "description": "F.I.", "nullable": true },
           "organizationCode": {
             "type": "string",
             "description": "Skammstofun stofnun (SkSt)",
@@ -4782,15 +4031,9 @@
     }
   },
   "security": [
-    {
-      "Bearer": []
-    },
-    {
-      "ExecuteAsUsername": []
-    },
-    {
-      "ExecuteAsPassword": []
-    }
+    { "Bearer": [] },
+    { "ExecuteAsUsername": [] },
+    { "ExecuteAsPassword": [] }
   ],
   "tags": [
     {
