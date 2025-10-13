@@ -36,19 +36,16 @@ const getSortedAndFilteredDrivingInstructors = (
     .split(' ')
 
   const fullSearchString: string = searchTerms.join(' ')
-  const brokersStartingWithFullSearchString: DrivingInstructor[] = []
-  const brokersContainingAllTerm: DrivingInstructor[] = []
+  const instructorsStartingWithFullSearchString: DrivingInstructor[] = []
+  const instructorsContainingAllTerm: DrivingInstructor[] = []
 
   const startsWithFullSearchString = (
     instructor: DrivingInstructor,
   ): boolean => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     return (
       instructor.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       instructor.postalCode?.trim().startsWith(fullSearchString) ||
-      (instructor.municipality &&
-        String(instructor.municipality).startsWith(fullSearchString))
+      instructor.municipality?.trim().startsWith(fullSearchString)
     )
   }
 
@@ -57,8 +54,7 @@ const getSortedAndFilteredDrivingInstructors = (
       return (
         instructor.name?.trim().toLowerCase().includes(searchTerm) ||
         instructor.postalCode?.trim().includes(searchTerm) ||
-        (instructor.municipality &&
-          String(instructor.municipality).includes(searchTerm))
+        instructor.municipality?.trim().includes(searchTerm)
       )
     })
   }
@@ -66,14 +62,16 @@ const getSortedAndFilteredDrivingInstructors = (
   // Categorize the instructors into two arrays based on the matching criteria
   for (const instructor of instructors) {
     if (startsWithFullSearchString(instructor)) {
-      brokersStartingWithFullSearchString.push(instructor)
+      instructorsStartingWithFullSearchString.push(instructor)
     } else if (containsAllTerms(instructor)) {
-      brokersContainingAllTerm.push(instructor)
+      instructorsContainingAllTerm.push(instructor)
     }
   }
 
   // Concatenate the arrays with, starting with the instructors that start with the full search string.
-  return brokersStartingWithFullSearchString.concat(brokersContainingAllTerm)
+  return instructorsStartingWithFullSearchString.concat(
+    instructorsContainingAllTerm,
+  )
 }
 
 interface DrivingInstructorListProps {
