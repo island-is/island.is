@@ -98,9 +98,6 @@ jobs:
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
     runs-on: arc-shared
-    permissions:
-      contents: 'read'
-      actions: 'read'
     steps:
       - name: Set outputs
         id: set-outputs
