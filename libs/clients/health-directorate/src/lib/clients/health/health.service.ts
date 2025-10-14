@@ -1,5 +1,5 @@
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { dataOr404Null } from '@island.is/clients/middlewares'
+import { data } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -45,7 +45,7 @@ export class HealthDirectorateHealthService {
     locale: string,
   ): Promise<Array<DispensationHistoryItemDto> | null> {
     const dispensations = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
           path: {
             atcCode,
@@ -69,7 +69,7 @@ export class HealthDirectorateHealthService {
     locale: string,
   ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         mePrescriptionDispensationControllerGetGroupedDispensationsV1({
           query: {
             locale: this.mapLocale(locale),
@@ -91,7 +91,7 @@ export class HealthDirectorateHealthService {
     locale: string,
   ): Promise<Array<PrescribedItemDto> | null> {
     const prescriptions = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         mePrescriptionControllerGetPrescriptionsV1({
           query: {
             locale: this.mapLocale(locale),
@@ -113,7 +113,7 @@ export class HealthDirectorateHealthService {
     id: string,
     input: PrescriptionRenewalRequestDto,
   ) {
-    return await dataOr404Null(
+    return await data(
       mePrescriptionControllerRenewPrescriptionV1({
         path: {
           id,
@@ -129,7 +129,7 @@ export class HealthDirectorateHealthService {
     productId: string,
   ): Promise<ProductDocumentDto[] | null> {
     const pdf = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         mePrescriptionControllerGetPrescribedItemDocumentsV1({
           path: {
             productId,
@@ -151,7 +151,7 @@ export class HealthDirectorateHealthService {
     locale: string,
   ): Promise<Array<ReferralDto> | null> {
     const referrals = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         meReferralControllerGetReferralsV1({
           query: {
             locale: this.mapLocale(locale),
@@ -173,7 +173,7 @@ export class HealthDirectorateHealthService {
     locale: string,
   ): Promise<Array<WaitingListEntryDto> | null> {
     const waitlists = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         meWaitingListControllerGetWaitingListEntriesV1({
           query: {
             locale: this.mapLocale(locale),
@@ -194,7 +194,7 @@ export class HealthDirectorateHealthService {
     input: Locale,
   ): Promise<OrganDonorDto | null> {
     const organDonation = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         meDonorStatusControllerGetOrganDonorStatusV1({
           query: {
             locale: this.mapLocale(input),
@@ -219,7 +219,7 @@ export class HealthDirectorateHealthService {
     locale: Locale,
   ): Promise<void> {
     await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         meDonorStatusControllerUpdateOrganDonorStatusV1({
           body: input,
           query: {
@@ -235,7 +235,7 @@ export class HealthDirectorateHealthService {
     input: Locale,
   ): Promise<Array<OrganDto> | null> {
     const donationExceptions = await withAuthContext(auth, () =>
-      dataOr404Null(
+      data(
         donationExceptionControllerGetOrgansV1({
           query: {
             locale: this.mapLocale(input),
