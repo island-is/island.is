@@ -167,10 +167,10 @@ export class HealthDirectorateService {
         return {
           id: item.id,
           lastUpdated: item.lastUpdated,
-          name: item.name,
+          name: item.name ?? '',
           waitBegan: item.waitBeganDate,
-          organization: item.organizationName.toString(),
-          status: item.statusDisplay?.toString(),
+          organization: item.organizationName?.toString() ?? '',
+          status: item.statusDisplay?.toString() ?? '',
         }
       }) ?? []
 
@@ -211,7 +211,7 @@ export class HealthDirectorateService {
           serviceName: item.serviceName,
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
-          stateDisplay: item.stateDisplay,
+          stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
@@ -250,6 +250,7 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
+
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
@@ -265,7 +266,7 @@ export class HealthDirectorateService {
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
-          totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          totalPrescribedAmount: item.totalPrescribedAmount?.toString(),
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
@@ -282,14 +283,14 @@ export class HealthDirectorateService {
               id: item.id,
               agentName: item.dispensingAgentName,
               date: item.dispensationDate,
-              count: item.dispensedItemsCount,
-              items: item.dispensedItems.map((item) => {
+              count: item.dispensedItems.length ?? 0,
+              items: item.dispensedItems.map((disp) => {
                 return {
-                  id: item.productId,
-                  name: item.productName,
-                  strength: item.productStrength,
-                  amount: item.dispensedAmountDisplay,
-                  numberOfPackages: item.numberOfPackages?.toString(),
+                  id: disp.productId,
+                  name: disp.productName,
+                  strength: disp.productStrength,
+                  amount: disp.dispensedAmountDisplay,
+                  numberOfPackages: disp.dispensedAmount?.toString(),
                 }
               }),
             }
