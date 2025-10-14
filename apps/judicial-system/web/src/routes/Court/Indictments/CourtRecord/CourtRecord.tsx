@@ -136,7 +136,7 @@ const CourtRecord: FC = () => {
             caseId={workingCase.id}
             title="Þingbók - PDF"
             pdfType="courtRecord"
-            disabled={workingCase.courtSessions?.some((c) => !c.isConfirmed)}
+            disabled={!!workingCase.courtSessions?.[0].startDate}
           />
         </Box>
       </FormContentContainer>
