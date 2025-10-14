@@ -61,7 +61,6 @@ const InstitutionOverview = () => {
     ssr: false,
     variables: {
       input: {
-        nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
         applicantNationalId:
