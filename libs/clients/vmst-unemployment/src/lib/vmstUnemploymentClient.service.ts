@@ -113,11 +113,10 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
       'Activation Grant API auth failed',
     )
-    const res = await api.attachmentAttachmentTypes({ onlyVisible: false })
-    console.log('res', res)
+    return await api.attachmentAttachmentTypes({ onlyVisible: false })
   }
 
-  async createAttachmentForActivationGrant(
+  async createAttachmentForApplication(
     requestParameter: AttachmentCreateAttachmentRequest,
   ): Promise<GaldurDomainModelsAttachmentsAttachmentViewModel> {
     const api = await this.createApiClient(

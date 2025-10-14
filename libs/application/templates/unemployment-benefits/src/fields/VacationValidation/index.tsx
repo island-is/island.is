@@ -26,8 +26,8 @@ export const VacationValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const getIsVacationValidCallback = useCallback(
     async (input: {
       hasUnpaidVacationTime: boolean
-      unpaidVacations: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnpaidVacationDTO>
-      resignationEnds: Date
+      unpaidVacations?: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnpaidVacationDTO>
+      resignationEnds?: Date
     }) => {
       const { data } = await getIsValidVacationInformation({
         variables: { input },
@@ -71,7 +71,7 @@ export const VacationValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     try {
       const response = await getIsVacationValidCallback({
         hasUnpaidVacationTime: hasUnpaidVacationTime,
-        unpaidVacations: unpaidVacations,
+        unpaidVacations: unpaidVacations.filter((x) => !!x.unpaidVacationDays),
         resignationEnds: predictedEndDate
           ? new Date(predictedEndDate)
           : new Date(),

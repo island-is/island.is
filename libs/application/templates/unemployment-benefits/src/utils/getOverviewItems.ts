@@ -253,6 +253,7 @@ export const usePayoutOverviewItems = (
     _externalData,
     locale,
   )
+  console.log('otherPaymentsAnswers', otherPaymentsAnswers)
   return [
     {
       width: 'half',

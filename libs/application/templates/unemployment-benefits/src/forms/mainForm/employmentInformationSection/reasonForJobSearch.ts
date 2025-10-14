@@ -235,8 +235,36 @@ export const reasonForJobSearchSubSection = buildSubSection({
           alertType: 'info',
           doesNotRequireAnswer: true,
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.bankruptsyReasonRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required: boolean | undefined = false
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
+                if (reason.id === value) {
+                  required = reason.bankruptcyReason
+                }
+              })
+            })
+
+            return required
+          },
+        }),
         buildCheckboxField({
           id: 'reasonForJobSearch.bankruptsyReason',
+          required: true,
           options: [
             {
               value: YES,
@@ -257,6 +285,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'reasonForJobSearch.agreementConfirmation',
+          required: true,
           options: [
             {
               value: YES,

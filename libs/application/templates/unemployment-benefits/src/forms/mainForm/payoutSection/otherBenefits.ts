@@ -276,7 +276,7 @@ export const otherBenefitsSubSection = buildSubSection({
             dateTo: {
               component: 'date',
               required: true,
-              label: payoutMessages.otherBenefits.dateFrom,
+              label: payoutMessages.otherBenefits.dateTo,
               width: 'half',
               condition: (application, activeField, _) => {
                 if (!activeField) {

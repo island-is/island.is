@@ -61,8 +61,8 @@ export const useOtherPaymentsAnswers = (
       } ${
         subCategory
           ? locale === 'is'
-            ? ` - ${subCategory?.name || ''}`
-            : ` - ${subCategory?.english || ''}`
+            ? `${subCategory?.name || ''}`
+            : `${subCategory?.english || ''}`
           : ''
       }${privatePensionString ? ` - ${privatePensionString}` : ''}${
         unionString ? ` - ${unionString}` : ''
@@ -88,12 +88,12 @@ export const useOtherPaymentsAnswers = (
 
   return [
     ...paymentsList,
-    `${formatMessage(overviewMessages.labels.payout.capitalIncome)}${
-      total
-        ? `: ${formatCurrency(total)} ${formatMessage(
-            overviewMessages.labels.payout.paymentPerMonth,
-          )}`
-        : ''
-    }`,
+    total
+      ? `${formatMessage(
+          overviewMessages.labels.payout.capitalIncome,
+        )}${`: ${formatCurrency(total)} ${formatMessage(
+          overviewMessages.labels.payout.paymentPerMonth,
+        )}`}`
+      : '',
   ]
 }

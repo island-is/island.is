@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { FileSchema } from './fileSchema'
+import { YES } from '@island.is/application/core'
 
 export const reasonForJobSearchSchema = z
   .object({
@@ -10,8 +11,9 @@ export const reasonForJobSearchSchema = z
     additionalReasonText: z.string().optional(),
     healthReasonRequired: z.boolean().optional(),
     healthReason: z.array(FileSchema).optional(),
+    bankruptsyReasonRequired: z.boolean().optional(),
     bankruptsyReason: z.array(z.string()).optional(),
-    agreementConfirmation: z.array(z.string()).optional(),
+    agreementConfirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   })
   .refine(
     ({ additionalReasonText, additionalReasonTextRequired }) => {
@@ -30,6 +32,15 @@ export const reasonForJobSearchSchema = z
       return true
     },
     { path: ['healthReason'] },
+  )
+  .refine(
+    ({ bankruptsyReason, bankruptsyReasonRequired }) => {
+      if (bankruptsyReasonRequired === true) {
+        return !!bankruptsyReason && bankruptsyReason.length > 0
+      }
+      return true
+    },
+    { path: ['bankruptsyReason'] },
   )
   .refine(
     ({ additionalReason, additionalReasonRequired }) => {

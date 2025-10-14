@@ -10,6 +10,8 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
+  GaldurDomainModelsAttachmentsAttachmentViewModel,
+  GaldurDomainModelsAttachmentsCreateAttachmentRequest,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   UnemploymentApplicationCreateUnemploymentApplicationRequest,
   VmstUnemploymentClientService,
@@ -51,6 +53,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
+import { FileResponse } from './types'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -183,8 +186,42 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const licenseInformation = getLicenseInformation(answers)
 
     //attachments
-    const attachmentList: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsFileDTO> =
+    const attachmentList: Array<GaldurDomainModelsAttachmentsCreateAttachmentRequest> =
       []
+
+    const attachmentPromises: Promise<void>[] = []
+
+    const safeGetFileInfo = async (
+      file: FileSchemaInAnswers,
+      attachmentTypeId: string,
+    ) => {
+      try {
+        const attachment = await getFileInfo(
+          this.s3Service,
+          application.id,
+          this.config.templateApi.attachmentBucket,
+          file,
+        )
+
+        if (attachment) {
+          attachmentList.push({
+            attachmentTypeId,
+            fileName: attachment.fileName,
+            fileType: attachment.fileType,
+            data: attachment.data,
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching file info:', error, file)
+        throw new TemplateApiError(
+          {
+            title: errorMsgs.errorUploadingFile,
+            summary: errorMsgs.errorUploadingFile,
+          },
+          400,
+        )
+      }
+    }
 
     // Læknistvottorð - ástæða atvinnuleitar
     const medicalCertificateFiles =
@@ -193,42 +230,28 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         'reasonForJobSearch.healthReason',
         [],
       ) ?? []
-    medicalCertificateFiles.forEach(async (file) => {
-      const attachment = await getFileInfo(
-        this.s3Service,
-        application.id,
-        this.config.templateApi.attachmentBucket,
-        file,
+
+    medicalCertificateFiles.forEach((file) => {
+      attachmentPromises.push(
+        safeGetFileInfo(file, FileTypeIds.MEDICAL_CERTIFICATE_RESIGNATION),
       )
-      if (attachment)
-        attachmentList.push({
-          attachmentTypeId: FileTypeIds.MEDICAL_CERTIFICATE_RESIGNATION,
-          name: attachment.fileName,
-        })
     })
+
     // Staðfesting á námi/prófgráðu - menntun
     const educationAnswers = getValueViaPath<EducationInAnswers>(
       answers,
       'education',
     )
-    educationAnswers?.currentEducation?.degreeFile?.forEach(async (file) => {
-      const attachment = await getFileInfo(
-        this.s3Service,
-        application.id,
-        this.config.templateApi.attachmentBucket,
-        file,
-      )
+    educationAnswers?.currentEducation?.degreeFile?.forEach((file) => {
+      let fileTypeId: string
 
       // We need to return a specific type of file depending on how the user answered the education questions
-      let fileTypeId
       if (educationAnswers.typeOfEducation === EducationType.LAST_YEAR) {
         fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
-      }
-      if (educationAnswers.typeOfEducation === EducationType.CURRENT) {
+      } else if (educationAnswers.typeOfEducation === EducationType.CURRENT) {
         fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
-      }
-      //only option left is LAST_SEMESTER
-      else {
+      } else {
+        // only option left is LAST_SEMESTER
         if (educationAnswers.didFinishLastSemester === YES) {
           fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_WITH_DEGREE
         } else {
@@ -236,29 +259,18 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         }
       }
 
-      if (attachment)
-        attachmentList.push({
-          attachmentTypeId: fileTypeId,
-          name: attachment.fileName,
-        })
+      attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
     })
+
     // starfhæfnisvottorð - vinnufærni - answers.
     const workingAbility = getValueViaPath<WorkingAbilityInAnswers>(
       answers,
       'workingAbility',
     )
-    workingAbility?.medicalReport?.forEach(async (file) => {
-      const attachment = await getFileInfo(
-        this.s3Service,
-        application.id,
-        this.config.templateApi.attachmentBucket,
-        file,
+    workingAbility?.medicalReport?.forEach((file) => {
+      attachmentPromises.push(
+        safeGetFileInfo(file, FileTypeIds.JOB_ABILITY_CERTIFICATE),
       )
-      if (attachment)
-        attachmentList.push({
-          attachmentTypeId: FileTypeIds.JOB_ABILITY_CERTIFICATE,
-          name: attachment.fileName,
-        })
     })
 
     // staðfsting á sjúkradagpeningum - aðrar bætur og lífeyrir
@@ -268,50 +280,24 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       'otherBenefits',
     )
     otherBenefits?.payments?.forEach((payments) => {
-      payments.sicknessAllowanceFile?.forEach(async (file) => {
-        const attachment = await getFileInfo(
-          this.s3Service,
-          application.id,
-          this.config.templateApi.attachmentBucket,
-          file,
+      payments.sicknessAllowanceFile?.forEach((file) => {
+        attachmentPromises.push(
+          safeGetFileInfo(file, FileTypeIds.SICKNESS_BENEFIT_PAYMENTS),
         )
-        if (attachment)
-          attachmentList.push({
-            attachmentTypeId: FileTypeIds.SICKNESS_BENEFIT_PAYMENTS,
-            name: attachment.fileName,
-          })
       })
 
-      payments.paymentPlanFile?.map(async (file) => {
-        const attachment = await getFileInfo(
-          this.s3Service,
-          application.id,
-          this.config.templateApi.attachmentBucket,
-          file,
-        )
-        if (attachment)
-          attachmentList.push({
-            attachmentTypeId: FileTypeIds.PAYMENT_PLAN,
-            name: attachment.fileName,
-          })
+      payments.paymentPlanFile?.forEach((file) => {
+        attachmentPromises.push(safeGetFileInfo(file, FileTypeIds.PAYMENT_PLAN))
       })
     })
 
     // ferilskrá - ferilskrá
     const resume = getValueViaPath<ResumeInAnswers>(answers, 'resume')
-    resume?.resumeFile?.forEach(async (file) => {
-      const attachment = await getFileInfo(
-        this.s3Service,
-        application.id,
-        this.config.templateApi.attachmentBucket,
-        file,
-      )
-      if (attachment)
-        attachmentList.push({
-          attachmentTypeId: FileTypeIds.CV,
-          name: attachment.fileName,
-        })
+    resume?.resumeFile?.forEach((file) => {
+      attachmentPromises.push(safeGetFileInfo(file, FileTypeIds.CV))
     })
+
+    await Promise.all(attachmentPromises)
 
     //childrenSupported
     const childrenSupported = getSupportedChildren(answers)
@@ -366,6 +352,60 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     //educationalQuestions
     const educationalQuestions = getEducationalQuestions(answers)
 
+    const submitAttachment = async (
+      file: GaldurDomainModelsAttachmentsCreateAttachmentRequest,
+    ): Promise<
+      GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
+    > => {
+      try {
+        const res =
+          await this.vmstUnemploymentClientService.createAttachmentForApplication(
+            {
+              galdurDomainModelsAttachmentsCreateAttachmentRequest: {
+                attachmentTypeId: file.attachmentTypeId,
+                fileName: file?.fileName,
+                fileType: file?.fileType,
+                data: file?.data,
+              },
+            },
+          )
+        if (!res.success) {
+          throw new TemplateApiError(
+            {
+              title: res.errorMessage
+                ? res.errorMessage
+                : errorMsgs.errorUploadingFile,
+              summary: res.errorMessage
+                ? res.errorMessage
+                : errorMsgs.errorUploadingFile,
+            },
+            400,
+          )
+        }
+        return res
+      } catch (error) {
+        console.error('Error fetching file info:', error, file)
+        throw new TemplateApiError(
+          {
+            title: errorMsgs.errorUploadingFile,
+            summary: errorMsgs.errorUploadingFile,
+          },
+          400,
+        )
+      }
+    }
+
+    const submitAttachmentPromises: Promise<
+      GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
+    >[] = []
+    let successfullAttachments = []
+
+    attachmentList.forEach((attachment) => {
+      submitAttachmentPromises.push(submitAttachment(attachment))
+    })
+
+    successfullAttachments = await Promise.all(submitAttachmentPromises)
+
     const submitResponse: UnemploymentApplicationCreateUnemploymentApplicationRequest =
       {
         galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
@@ -380,7 +420,11 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               educationHistory: educationInformation,
               jobCareer: jobCareer,
               drivingLicense: licenseInformation,
-              attachments: { files: attachmentList },
+              attachments: {
+                files: successfullAttachments.map((x) => {
+                  return { id: x?.attachment?.id }
+                }),
+              },
               childrenSupported: childrenSupported,
               bankingPensionUnion: bankingPensionUnion,
               personalTaxCredit: personalTaxCredit,

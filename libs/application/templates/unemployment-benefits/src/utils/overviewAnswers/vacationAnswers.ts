@@ -20,13 +20,15 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
   const intendedUsage = getValueViaPath<VacationInAnswers>(answers, 'vacation')
 
   const intendedUsageItems =
-    intendedUsage?.vacationDays?.map((intendedUsageItem) => {
-      return `${formatMessage(
-        overviewMessages.labels.payout.vacationDaysFrom,
-      )}: ${formatDate(intendedUsageItem.startDate || '')} - ${formatDate(
-        intendedUsageItem.endDate || '',
-      )}`
-    }) || []
+    intendedUsage?.vacationDays
+      ?.filter((x) => !!x.amount)
+      .map((intendedUsageItem) => {
+        return `${formatMessage(
+          overviewMessages.labels.payout.vacationDaysFrom,
+        )}: ${formatDate(intendedUsageItem.startDate || '')} - ${formatDate(
+          intendedUsageItem.endDate || '',
+        )}`
+      }) || []
 
   const valueItems = [hasVacationString]
   if (hasVacation === YES) {

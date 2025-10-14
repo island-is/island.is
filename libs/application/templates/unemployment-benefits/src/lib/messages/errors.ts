@@ -41,6 +41,12 @@ export const serviceErrors = defineMessages({
       'Tókst ekki að sækja ferilskrá, vinsamlegast reyndu aftur eða fjarlægðu ferilskrá, ef villa endurtekur sig hafið samband við Ísland.is',
     description: `Error summary when s3 fetching fails`,
   },
+  errorUploadingFile: {
+    id: 'vmst.ub.application:errorUploadingFile',
+    defaultMessage:
+      'Tókst ekki að hlaða upp skrá, vinsamlegast reyndu aftur. Ef villa endurtekur sig, hafið samband við Ísland.is',
+    description: `Error summary when file upload fails`,
+  },
   iUnderstandError: {
     id: 'vmst.ub.application:iUnderstandError',
     defaultMessage:
