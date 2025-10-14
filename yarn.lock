@@ -11162,6 +11162,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hey-api/openapi-ts@patch:@hey-api/openapi-ts@npm%3A0.84.4#~/.yarn/patches/@hey-api-openapi-ts-npm-0.84.4-da4969c0b2.patch":
+  version: 0.84.4
+  resolution: "@hey-api/openapi-ts@patch:@hey-api/openapi-ts@npm%3A0.84.4#~/.yarn/patches/@hey-api-openapi-ts-npm-0.84.4-da4969c0b2.patch::version=0.84.4&hash=3b1f9f"
+  dependencies:
+    "@hey-api/codegen-core": "npm:^0.2.0"
+    "@hey-api/json-schema-ref-parser": "npm:1.1.0"
+    ansi-colors: "npm:4.1.3"
+    c12: "npm:2.0.1"
+    color-support: "npm:1.1.3"
+    commander: "npm:13.0.0"
+    handlebars: "npm:4.7.8"
+    open: "npm:10.1.2"
+    semver: "npm:7.7.2"
+  peerDependencies:
+    typescript: ">=5.5.3"
+  bin:
+    openapi-ts: bin/index.cjs
+  checksum: 10/03df21d376ab0628f7f4005596d5a0be14f32d4ff66dfb2f80dd1d2b964587277c79ee6ce22dcac0607adfeb456f6ac2d7c94e50eaa5289abb9192d69351afee
+  languageName: node
+  linkType: hard
+
 "@hookform/error-message@npm:2.0.1":
   version: 2.0.1
   resolution: "@hookform/error-message@npm:2.0.1"
@@ -35907,7 +35928,7 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": "npm:3.3.3"
     "@graphql-codegen/typescript-resolvers": "npm:2.7.3"
     "@hey-api/client-fetch": "npm:0.13.1"
-    "@hey-api/openapi-ts": "npm:0.84.4"
+    "@hey-api/openapi-ts": "patch:@hey-api/openapi-ts@npm%3A0.84.4#~/.yarn/patches/@hey-api-openapi-ts-npm-0.84.4-da4969c0b2.patch"
     "@hookform/error-message": "npm:2.0.1"
     "@hookform/resolvers": "npm:5.0.1"
     "@ibm-cloud/cloudant": "npm:0.11.0"

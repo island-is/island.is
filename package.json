@@ -360,7 +360,7 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
-    "@hey-api/openapi-ts": "0.84.4",
+    "@hey-api/openapi-ts": "patch:@hey-api/openapi-ts@npm%3A0.84.4#~/.yarn/patches/@hey-api-openapi-ts-npm-0.84.4-da4969c0b2.patch",
     "@mockoon/cli": "8.4.0",
     "@nestjs/schematics": "11.0.5",
     "@nestjs/testing": "10.0.5",

@@ -29,6 +29,7 @@ export class HealthDirectorateHealthModule {
         name: 'clients-health-directorate-health',
         organizationSlug: 'landlaeknir',
         logErrorResponseBody: true,
+        authSource: 'context',
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'tokenExchange',

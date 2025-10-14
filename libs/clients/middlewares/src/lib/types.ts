@@ -24,3 +24,5 @@ export interface ApiResponse<T> {
   raw: Response
   value(): Promise<T>
 }
+
+export type AuthSource = 'context' | 'request'
