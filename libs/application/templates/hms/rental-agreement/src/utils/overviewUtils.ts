@@ -662,7 +662,7 @@ export const depositOverview = (
     [SecurityDepositTypeOptions.INSURANCE_COMPANY]:
       deposit?.insuranceCompanyInfo || '-',
     [SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND]:
-      deposit?.landlordsMutualFundInfo || '-',
+      deposit?.mutualFundInfo || '-',
   }
 
   const securityName =
