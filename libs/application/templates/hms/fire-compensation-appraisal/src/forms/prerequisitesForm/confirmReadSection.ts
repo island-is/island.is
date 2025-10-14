@@ -35,13 +35,13 @@ export const confirmReadSection = buildSection({
           ],
         }),
         buildTitleField({
-          title: 'Aðrar eignir.',
+          title: m.realEstateMessages.otherPropertiesTitle,
         }),
         buildCheckboxField({
           id: 'otherPropertiesThanIOwnCheckbox',
           options: [
             {
-              label: 'Ég er að sækja um eign sem ég á ekki.',
+              label: m.realEstateMessages.applyingForOtherProperty,
               value: YES,
             },
           ],

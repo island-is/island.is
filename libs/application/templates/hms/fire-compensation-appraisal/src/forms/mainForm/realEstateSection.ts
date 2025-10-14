@@ -72,13 +72,13 @@ export const realEstateSection = buildSection({
         ),
         buildAsyncSelectField({
           id: 'selectedPropertyByCode',
-          title: 'Eignir',
+          title: m.realEstateMessages.usageUnit,
           condition: (answers) => {
-            const properties = getValueViaPath<unknown[]>(
+            const otherPropertiesThanIOwn = getValueViaPath<string[]>(
               answers,
-              'anyonesProperty.propertiesByAddressCode',
+              'otherPropertiesThanIOwnCheckbox',
             )
-            return (properties?.length ?? 0) > 0
+            return !!otherPropertiesThanIOwn?.includes(YES)
           },
           loadingError: 'Loading error',
           loadOptions: async ({ application }) => {

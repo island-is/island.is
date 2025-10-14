@@ -38,4 +38,14 @@ export const realEstateMessages = defineMessages({
     defaultMessage: 'Heildar brunabótamat fasteignar',
     description: 'Total fire compensation',
   },
+  otherPropertiesTitle: {
+    id: 'hms.fireCompensationAppraisal.confirmRead.otherPropertiesTitle',
+    defaultMessage: 'Aðrar eignir.',
+    description: 'Title for other properties section',
+  },
+  applyingForOtherProperty: {
+    id: 'hms.fireCompensationAppraisal.confirmRead.applyingForOtherProperty',
+    defaultMessage: 'Ég er að sækja um eign sem ég á ekki.',
+    description: 'Checkbox label for applying on behalf of property owner',
+  },
 })
