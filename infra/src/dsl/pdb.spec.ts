@@ -30,7 +30,7 @@ describe('PodDisruptionBudget definitions', () => {
     )
     expect(
       serviceDef.services.api.podDisruptionBudget?.unhealthyPodEvictionPolicy,
-    ).toEqual('AlwaysAllow')
+    ).toEqual('IfHealthyBudget')
   })
   it('Service should have minAvailable: 2, thus overriding the default', async () => {
     const sut: ServiceBuilder<'api'> = service('api').podDisruption({

@@ -56,7 +56,7 @@ auth-admin-web:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1200
@@ -176,7 +176,7 @@ identity-server:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -299,7 +299,7 @@ services-auth-admin-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -411,7 +411,7 @@ services-auth-delegation-api:
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -554,7 +554,7 @@ services-auth-ids-api:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -634,7 +634,7 @@ services-auth-ids-api-cleanup:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -726,7 +726,7 @@ services-auth-personal-representative:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -803,7 +803,7 @@ services-auth-personal-representative-public:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -911,7 +911,7 @@ services-auth-public-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

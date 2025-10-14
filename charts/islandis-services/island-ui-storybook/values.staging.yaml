@@ -56,7 +56,7 @@ ingress:
 namespace: 'storybook'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 pvcs: []
 replicaCount:
   default: 1

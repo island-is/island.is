@@ -78,7 +78,7 @@ ingress:
 namespace: 'portals-my-pages'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
