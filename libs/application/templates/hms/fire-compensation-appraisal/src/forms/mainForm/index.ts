@@ -6,6 +6,7 @@ import { changesSection } from './changesSection'
 import { realEstateSection } from './realEstateSection'
 import { photoSection } from './photoSection'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
+import { realEstateSearchSection } from './realEstateSearchSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -16,6 +17,7 @@ export const MainForm = buildForm({
   children: [
     personalInformationSection,
     realEstateSection,
+    realEstateSearchSection,
     changesSection,
     photoSection,
     overviewSection,

@@ -10,6 +10,9 @@ import type { LayoutProps } from '@island.is/web/layouts/main'
 import OrganizationSubPageGenericListItem, {
   OrganizationSubPageGenericListItemProps,
 } from '@island.is/web/screens/GenericList/OrganizationSubPageGenericListItem'
+import OrganizationCategory, {
+  type OrganizationCategoryProps,
+} from '@island.is/web/screens/Organization/Category/Category'
 import Home, {
   type HomeProps,
 } from '@island.is/web/screens/Organization/Home/Home'
@@ -65,6 +68,7 @@ enum PageType {
   NEWS_DETAILS = 'news-details',
   EVENT_DETAILS = 'event-details',
   GENERIC_LIST_ITEM = 'generic-list-item',
+  CATEGORY = 'category',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,6 +96,7 @@ const pageMap: Record<PageType, FC<any>> = {
   [PageType.GENERIC_LIST_ITEM]: (props) => (
     <OrganizationSubPageGenericListItem {...props} />
   ),
+  [PageType.CATEGORY]: (props) => <OrganizationCategory {...props} />,
 }
 
 interface Props {
@@ -172,6 +177,13 @@ interface Props {
         type: PageType.GENERIC_LIST_ITEM
         props: OrganizationSubPageGenericListItemProps
       }
+    | {
+        type: PageType.CATEGORY
+        props: {
+          layoutProps: LayoutProps
+          componentProps: OrganizationCategoryProps
+        }
+      }
 }
 
 export const Component: ScreenType<Props> = ({ page }: Props) => {
@@ -190,6 +202,7 @@ Component.getProps = async (context) => {
       input: {
         slug: slugs[0],
         lang: locale,
+        subpageSlugs: slugs.slice(1),
       },
     },
   })
@@ -316,11 +329,23 @@ Component.getProps = async (context) => {
       }
     }
 
-    return {
-      page: {
-        type: PageType.SUBPAGE,
-        props: await SubPage.getProps(modifiedContext),
-      },
+    try {
+      return {
+        page: {
+          type: PageType.SUBPAGE,
+          props: await SubPage.getProps(modifiedContext),
+        },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
+      }
+      return {
+        page: {
+          type: PageType.CATEGORY,
+          props: await OrganizationCategory.getProps(modifiedContext),
+        },
+      }
     }
   }
 

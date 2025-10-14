@@ -1,4 +1,13 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -17,8 +26,13 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   BlueBox,
   DateTime,
+  FormContext,
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -37,6 +51,7 @@ import {
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
@@ -101,6 +116,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
   } = props
+  const { isCaseUpToDate } = useContext(FormContext)
   const { courtDocument } = useCourtDocuments()
   const { updateCourtSession } = useCourtSessions()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
@@ -109,27 +125,95 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
 
   const {
+    judges,
     districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
-  const patchSession = (
-    courtSessionId: string,
-    updates: Partial<CourtSessionResponse>,
-    { persist = false } = {},
-  ) => {
-    setWorkingCase((prev) => ({
-      ...prev,
-      courtSessions: prev.courtSessions?.map((session) =>
-        session.id === courtSessionId ? { ...session, ...updates } : session,
-      ),
-    }))
+  const patchSession = useCallback(
+    (
+      courtSessionId: string,
+      updates: Partial<CourtSessionResponse>,
+      { persist = false } = {},
+    ) => {
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
+          session.id === courtSessionId ? { ...session, ...updates } : session,
+        ),
+      }))
 
-    if (persist) {
-      updateCourtSession({ ...updates, courtSessionId, caseId: workingCase.id })
+      if (persist) {
+        updateCourtSession({
+          ...updates,
+          courtSessionId,
+          caseId: workingCase.id,
+        })
+      }
+    },
+    [setWorkingCase, updateCourtSession, workingCase.id],
+  )
+
+  const getInitialAttendees = useCallback(() => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
     }
-  }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        attendees.push(`\n${defendant.name} ákærði`)
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
+  }, [workingCase.prosecutor, workingCase.defendants])
+
+  const initialize = useCallback(() => {
+    const update = {
+      judgeId: courtSession.judgeId ?? workingCase.judge?.id,
+      startDate:
+        courtSession.startDate ??
+        workingCase.courtDate?.date ??
+        workingCase.arraignmentDate?.date,
+      location:
+        courtSession.location ??
+        (workingCase.court?.name
+          ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+          : ''),
+      attendees: courtSession.attendees ?? getInitialAttendees(),
+      endDate: courtSession.endDate
+        ? courtSession.endDate
+        : courtSession.startDate
+        ? courtSession.startDate
+        : new Date().toString(),
+    }
+
+    patchSession(courtSession.id, update, { persist: true })
+  }, [
+    courtSession,
+    workingCase.judge?.id,
+    workingCase.courtDate?.date,
+    workingCase.arraignmentDate?.date,
+    workingCase.court?.name,
+    getInitialAttendees,
+    patchSession,
+  ])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const defaultJudge = judges?.find(
+    (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
+  )
 
   const handleDeleteFile = async (file: TUploadFile) => {
     if (!file.id) {
@@ -366,6 +450,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
+
   return (
     <AccordionItem
       id={`courtRecordAccordionItem-${courtSession.id}`}
@@ -376,7 +466,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       onToggle={onToggle}
     >
       <LayoutGroup>
-        <Box className={styles.containerGrid}>
+        <Box
+          id={`courtRecordAccordionItemFirstSection-${courtSession.id}`}
+          className={styles.containerGrid}
+        >
           <BlueBox>
             <div className={styles.grid}>
               <DateTime
@@ -384,7 +477,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þingfestingar"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={courtSession.startDate}
+                selectedDate={
+                  courtSession.startDate ??
+                  workingCase.courtDate?.date ??
+                  workingCase.arraignmentDate?.date
+                }
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
                     patchSession(
@@ -398,12 +495,46 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 blueBox={false}
                 required
               />
+              <Select
+                name="judge"
+                label="Veldu dómara/aðstoðarmann"
+                placeholder="Veldu héraðsdómara"
+                value={defaultJudge}
+                options={judges}
+                onChange={(selectedOption) => {
+                  const selectedUser = judges.find(
+                    (u) => u.value === selectedOption?.value,
+                  )
+                  if (!selectedUser) {
+                    return
+                  }
+                  patchSession(courtSession.id, {
+                    judge: {
+                      id: selectedUser.value || '',
+                      name: selectedUser.label,
+                    },
+                  })
+
+                  patchSession(
+                    courtSession.id,
+                    { judgeId: selectedUser.value },
+                    { persist: true },
+                  )
+                }}
+                required
+                isDisabled={usersLoading || courtSession.isConfirmed || false}
+              />
               <Input
                 data-testid="courtLocation"
                 name="courtLocation"
                 tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
                 label="Hvar var dómþing haldið?"
-                value={courtSession.location || ''}
+                value={
+                  courtSession.location ??
+                  (workingCase.court?.name
+                    ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+                    : '')
+                }
                 placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
                 onChange={(event) => {
                   setLocationErrorMessage('')
@@ -517,7 +648,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={courtSession.attendees || ''}
+            value={courtSession.attendees ?? getInitialAttendees()}
             placeholder="Skrifa hér..."
             onChange={(event) => {
               patchSession(courtSession.id, {
