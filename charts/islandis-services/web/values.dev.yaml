@@ -70,6 +70,8 @@ namespace: 'islandis'
 podDisruptionBudget:
   maxUnavailable: 1
   unhealthyPodEvictionPolicy: 'AlwaysAllow'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -88,3 +90,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/web'
+  create: true
+  name: 'web'

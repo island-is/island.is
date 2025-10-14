@@ -89,6 +89,20 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
+  async getPreferredSchool({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getPreferredSchool(
+      auth,
+      childNationalId,
+    )
+  }
+
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
