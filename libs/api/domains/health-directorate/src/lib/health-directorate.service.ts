@@ -11,7 +11,10 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
+} from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
 import { Referral, Referrals } from './models/referrals.model'
@@ -43,16 +46,15 @@ export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
+    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data: OrganDonorDto | null = await this.healthApi.getOrganDonation(
-      auth,
-      lang,
-    )
+    const data: OrganDonorDto | null =
+      await this.organDonationApi.getOrganDonation(auth, lang)
     if (data === null) {
       return null
     }
@@ -80,7 +82,8 @@ export class HealthDirectorateService {
     locale: Locale,
   ): Promise<Array<Organ>> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data = await this.healthApi.getDonationExceptions(auth, lang)
+    const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+
     const limitations: Array<Organ> =
       data?.map((item) => {
         return {
@@ -100,7 +103,7 @@ export class HealthDirectorateService {
     const filteredList =
       input.organLimitations?.filter((item) => item !== 'other') ?? []
 
-    return await this.healthApi.updateOrganDonation(
+    return await this.organDonationApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,

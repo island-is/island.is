@@ -9,6 +9,7 @@ export {
   HealthDirectorateVaccinationsService,
   HealthDirectorateClientService,
   HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
   OrganDonorDto,
   Locale,
   organLocale,
