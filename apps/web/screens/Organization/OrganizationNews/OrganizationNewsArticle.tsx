@@ -181,6 +181,7 @@ OrganizationNewsArticle.getProps = async ({
             input: {
               slug: organizationPageSlug,
               lang: locale as Locale,
+              subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
             },
           },
         })

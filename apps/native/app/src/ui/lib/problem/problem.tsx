@@ -2,7 +2,11 @@ import { useEffect } from 'react'
 
 import { useTranslate } from '../../../hooks/use-translate'
 import { useOfflineStore } from '../../../stores/offline-store'
-import { ProblemTemplate, ProblemTemplateBaseProps } from './problem-template'
+import {
+  ProblemTemplate,
+  ProblemTemplateBaseProps,
+  DetailLink,
+} from './problem-template'
 import { getOrganizationSlugFromError } from '../../../utils/get-organization-slug-from-error'
 import { ThirdPartyServiceError } from './third-party-service-error'
 
@@ -22,6 +26,7 @@ type ProblemBaseProps = {
   error?: Error
   title?: string
   message?: string
+  detailLink?: DetailLink
   logError?: boolean
 } & Pick<ProblemTemplateBaseProps, 'withContainer' | 'size'>
 
@@ -39,6 +44,7 @@ interface NoDataBaseProps extends ProblemBaseProps {
   error?: never
   title?: string
   message?: string
+  detailLink?: DetailLink
 }
 
 interface NoDataWithIconProps extends NoDataBaseProps {
@@ -65,6 +71,7 @@ export const Problem = ({
   withContainer,
   showIcon,
   size = 'large',
+  detailLink,
 }: ProblemProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
@@ -128,6 +135,7 @@ export const Problem = ({
           title={title ?? t('problem.noData.title')}
           message={message ?? t('problem.noData.message')}
           size={size}
+          detailLink={detailLink}
         />
       )
 
