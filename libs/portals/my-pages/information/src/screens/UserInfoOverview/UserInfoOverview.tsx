@@ -28,11 +28,6 @@ const UserInfoOverview = () => {
 
   const { data, error, loading } = useUserInfoOverviewQuery()
 
-  const { data: testData, error: testError } = useTestQueryQuery()
-
-  console.log('data', testData)
-  console.log('error', testError)
-
   const { spouse, childCustody, biologicalChildren } =
     data?.nationalRegistryPerson || {}
 
