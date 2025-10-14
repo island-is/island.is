@@ -1,27 +1,27 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 
 import {
   FormsApi,
   FormsControllerCreateRequest,
   FormsControllerDeleteRequest,
-  FormsControllerPublishRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
+  FormsControllerPublishRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import {
   CreateFormInput,
   DeleteFormInput,
-  PublishFormInput,
   GetFormInput,
   GetFormsInput,
+  PublishFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { FormResponse } from '../../models/form.model'
 
 @Injectable()
@@ -50,7 +50,6 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth).formsControllerCreate(
       input as FormsControllerCreateRequest,
     )
-
     return response as FormResponse
   }
 
@@ -70,7 +69,6 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth).formsControllerFindOne(
       input as FormsControllerFindOneRequest,
     )
-
     return response as FormResponse
   }
 

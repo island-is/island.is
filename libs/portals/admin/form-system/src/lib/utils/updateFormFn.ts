@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  OperationVariables,
   ApolloCache,
   DefaultContext,
   MutationFunctionOptions,
+  OperationVariables,
 } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
-import { ControlState } from '../../hooks/controlReducer'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { ControlState } from '../../hooks/controlReducer'
 
 export const updateFormFn = async (
   control: ControlState,
@@ -46,7 +46,25 @@ export const updateFormFn = async (
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
             hasSummaryScreen: newForm.hasSummaryScreen,
-            completedMessage: newForm.completedMessage,
+            completedSectionInfo: {
+              title: {
+                is: newForm.completedSectionInfo?.title?.is ?? '',
+                en: newForm.completedSectionInfo?.title?.en ?? '',
+              },
+              confirmationHeader: {
+                is: newForm.completedSectionInfo?.confirmationHeader?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationHeader?.en ?? '',
+              },
+              confirmationText: {
+                is: newForm.completedSectionInfo?.confirmationText?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationText?.en ?? '',
+              },
+              additionalInfo:
+                newForm.completedSectionInfo?.additionalInfo?.map((info) => ({
+                  is: info?.is ?? '',
+                  en: info?.en ?? '',
+                })) ?? [],
+            },
             dependencies: newForm.dependencies ?? [],
           },
         },

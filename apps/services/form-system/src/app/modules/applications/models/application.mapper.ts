@@ -1,14 +1,14 @@
+import { SectionTypes } from '@island.is/form-system/shared'
 import { Injectable } from '@nestjs/common'
-import { Form } from '../../forms/models/form.model'
-import { ApplicationDto } from './dto/application.dto'
-import { Application } from './application.model'
+import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
+import { Form } from '../../forms/models/form.model'
+import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
-import { Dependency } from '../../../dataTypes/dependency.model'
+import { Application } from './application.model'
+import { ApplicationDto } from './dto/application.dto'
 import { ValueDto } from './dto/value.dto'
-import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
-import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationMapper {
@@ -33,6 +33,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
+      completedSectionInfo: form.completedSectionInfo,
     }
 
     form.sections
