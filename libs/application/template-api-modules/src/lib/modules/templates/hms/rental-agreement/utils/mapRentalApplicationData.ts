@@ -65,7 +65,7 @@ export const mapRentalApplicationData = (
     bankGuaranteeInfo,
     thirdPartyGuaranteeInfo,
     insuranceCompanyInfo,
-    landlordsMutualFundInfo,
+    mutualFundInfo,
     housingFundPayee,
     housingFundAmount,
     electricityCostPayee,
@@ -171,7 +171,7 @@ export const mapRentalApplicationData = (
               bankGuaranteeInfo,
               thirdPartyGuaranteeInfo,
               insuranceCompanyInfo,
-              landlordsMutualFundInfo,
+              mutualFundInfo,
             )
           : null,
         amount: securityDepositAmount as DepositAmount,
