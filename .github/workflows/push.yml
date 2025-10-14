@@ -80,12 +80,23 @@ jobs:
 
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
+      - name: Get token
+        id: get-token
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
+        # Edtit this
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.get-token.outputs.token }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Prepare pre-release
@@ -551,16 +562,6 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
           working-directory: monorepo
-
-      - name: Get token
-        id: get-token
-        working-directory: monorepo
-        shell: bash
-        env:
-          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
-          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
-        run: |
-          node scripts/ci/docker/get-github-token.mjs
 
       - name: Dispatch workflow to helm-values repository
         env:
