@@ -88,7 +88,6 @@ jobs:
           corepack enable && CI=true yarn install --immutable
       - name: Get token
         id: get-token
-        working-directory: ${{ inputs.working-directory }}
         shell: bash
         env:
           # APP_ID
@@ -458,7 +457,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
       - name: Get token
         id: get-token
-        working-directory: ${{ inputs.working-directory }}
         shell: bash
         env:
           # APP_ID
