@@ -172,6 +172,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Get GitHub App token
+        id: get-token
+        uses: ./.github/actions/get-github-token
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_ID }}
+          private-key: ${{ secrets.ISLAND_IS_PRIVATE_KEY }}
       - uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}

@@ -19,6 +19,12 @@ jobs:
     name: Lint PR title
     runs-on: arc-shared
     steps:
+      - name: Get GitHub App token
+        id: get-token
+        uses: ./.github/actions/get-github-token
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_ID }}
+          private-key: ${{ secrets.ISLAND_IS_PRIVATE_KEY }}
       - uses: amannn/action-semantic-pull-request@v5
         with:
           types: |
@@ -35,4 +41,4 @@ jobs:
             chore
             revert
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}

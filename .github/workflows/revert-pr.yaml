@@ -18,9 +18,6 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   detect-failure:
     name: Determine Failure
@@ -30,6 +27,12 @@ jobs:
       PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     steps:
       - uses: actions/checkout@v4
+      - name: Get GitHub App token
+        id: get-token
+        uses: ./.github/actions/get-github-token
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_ID }}
+          private-key: ${{ secrets.ISLAND_IS_PRIVATE_KEY }}
 
       - name: Debug
         run: |
@@ -37,6 +40,8 @@ jobs:
 
       - name: Fetch PR
         id: fetch-pr
+        env:
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         run: |
           COMMIT_SHA="${{ github.event.workflow_run.head_commit.id }}"
           if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "${COMMIT_SHA}"); then
@@ -52,6 +57,8 @@ jobs:
 
       - name: Add Revert Label
         id: add-revert-label
+        env:
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         if: ${{ steps.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
         run: |
           PR_NUMBER="${{ steps.fetch-pr.outputs.PR_NUMBER }}"
@@ -71,6 +78,12 @@ jobs:
     if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: arc-shared
     steps:
+      - name: Get GitHub App token
+        id: get-token
+        uses: ./.github/actions/get-github-token
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_ID }}
+          private-key: ${{ secrets.ISLAND_IS_PRIVATE_KEY }}
       - name: Debug
         run: |
           PR_NUMBER=${{ needs.detect-failure.outputs.PR_NUMBER }}
@@ -78,6 +91,8 @@ jobs:
 
       - name: Execute PR revert
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         run: |
           REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${PR_NUMBER}")
           gh pr edit "$REVERT_PR" --add-label "automerge,high priority"
@@ -91,9 +106,16 @@ jobs:
         run: |
           echo "actor: ${{ github.actor }}"
           echo "Reverting PR: ${{ github.event.pull_request.number }}"
-
+      - name: Get GitHub App token
+        id: get-token
+        uses: ./.github/actions/get-github-token
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_ID }}
+          private-key: ${{ secrets.ISLAND_IS_PRIVATE_KEY }}
       - name: Execute PR revert
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         run: |
           REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
           gh pr edit "$REVERT_PR" --add-label "automerge,high priority"

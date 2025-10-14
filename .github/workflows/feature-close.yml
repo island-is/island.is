@@ -60,7 +60,7 @@ jobs:
         uses: ./.github/actions/feature-checkout
         id: prepare-docker-tag
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.get-token.outputs.token }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Dispatch workflow to helm-values repository
