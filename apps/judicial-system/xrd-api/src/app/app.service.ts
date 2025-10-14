@@ -281,9 +281,12 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
-      const appealDecision =
-        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.deliverySupplements?.find(
+        (supplement) => supplement.code === 'APPEAL_DECISION',
+      )
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision?.value
 
       if (
         !Object.values(VerdictAppealDecision).includes(
