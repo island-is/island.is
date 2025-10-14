@@ -16,15 +16,10 @@ import {
 } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-<<<<<<< HEAD:apps/judicial-system/backend/src/app/modules/verdict/test/creatingTestingVerdictModule.ts
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { EventLogService } from '../../event-log'
-=======
-import { CaseService, PdfService } from '../../case'
-import { DefendantService } from '../../defendant'
->>>>>>> fb8cfe3ccccb44d2b15f62fc738bc4dffd695ab7:apps/judicial-system/backend/src/app/modules/verdict/test/createTestingVerdictModule.ts
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
@@ -39,16 +34,12 @@ jest.mock('../../case/case.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/pdf.service')
-<<<<<<< HEAD:apps/judicial-system/backend/src/app/modules/verdict/test/creatingTestingVerdictModule.ts
 jest.mock('../../event/event.service')
 jest.mock('../../event-log/eventLog.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../user/user.service')
 jest.mock('../../case/internalCase.service')
-=======
-jest.mock('../../defendant/defendant.service')
 jest.mock('../../lawyer-registry/lawyerRegistry.service')
->>>>>>> fb8cfe3ccccb44d2b15f62fc738bc4dffd695ab7:apps/judicial-system/backend/src/app/modules/verdict/test/createTestingVerdictModule.ts
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
@@ -66,15 +57,11 @@ export const createTestingVerdictModule = async () => {
       PoliceService,
       FileService,
       PdfService,
-<<<<<<< HEAD:apps/judicial-system/backend/src/app/modules/verdict/test/creatingTestingVerdictModule.ts
       EventService,
-      DefendantService,
       UserService,
       EventLogService,
-=======
       DefendantService,
       LawyerRegistryService,
->>>>>>> fb8cfe3ccccb44d2b15f62fc738bc4dffd695ab7:apps/judicial-system/backend/src/app/modules/verdict/test/createTestingVerdictModule.ts
       {
         provide: LOGGER_PROVIDER,
         useValue: {

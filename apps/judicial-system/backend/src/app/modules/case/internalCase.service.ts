@@ -625,9 +625,9 @@ export class InternalCaseService {
               },
             },
           ],
-          where: {
-            '$eventLogs.id$': { [Op.is]: null }, // get defendants that do not have verdict certificate delivered to police
-          },
+          // where: {
+          //   '$eventLogs.id$': { [Op.is]: null }, // get defendants that do not have verdict certificate delivered to police
+          // },
         },
       ],
       where: {

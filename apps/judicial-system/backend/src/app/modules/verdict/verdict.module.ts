@@ -12,14 +12,10 @@ import { Verdict } from '../repository'
 import {
   CaseModule,
   DefendantModule,
-<<<<<<< HEAD
   EventLogModule,
   EventModule,
   FileModule,
-=======
-  FileModule,
   LawyerRegistryModule,
->>>>>>> fb8cfe3ccccb44d2b15f62fc738bc4dffd695ab7
   PoliceModule,
 } from '..'
 import { InternalVerdictController } from './internalVerdict.controller'
@@ -35,11 +31,8 @@ import { VerdictService } from './verdict.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
     forwardRef(() => DefendantModule),
-<<<<<<< HEAD
     forwardRef(() => EventLogModule),
-=======
     forwardRef(() => LawyerRegistryModule),
->>>>>>> fb8cfe3ccccb44d2b15f62fc738bc4dffd695ab7
     SequelizeModule.forFeature([Verdict]),
     ConfigModule.forRoot({
       isGlobal: true,
