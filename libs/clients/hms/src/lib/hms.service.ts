@@ -216,7 +216,12 @@ export class HmsService {
         }) ?? [],
       )
     } catch (e) {
-      throw new Error(`Failed to fetch properties: ${e.message}`)
+      console.error('Failed to fetch properties:', e)
+      const errorMessage =
+      e.response?.data?.message || e.message || 'Unknown error'
+    throw new Error(
+      `Failed to fetch properties: ${errorMessage}`,
+    )
     }
 
     return properties

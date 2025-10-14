@@ -352,15 +352,18 @@ export const PropertySearch = ({ field, errors }: Props) => {
         )}
       </Box>
 
-      {selectedAddress && !onlyAddressSearch && (
-        <Box marginTop={propertySectionHasContent ? 6 : 0}>
+      {selectedAddress && (
+        <Box
+          marginTop={propertySectionHasContent && !onlyAddressSearch ? 6 : 0}
+        >
           {propertySearchLoading ? (
             <div style={{ textAlign: 'center' }}>
               <LoadingDots large />
             </div>
           ) : (
             propertiesByAddressCode &&
-            propertiesByAddressCode.length > 0 && (
+            propertiesByAddressCode.length > 0 &&
+            !onlyAddressSearch && (
               <Table.Table id="searchresults.table">
                 <PropertyTableHeader />
                 <PropertyTableBody

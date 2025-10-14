@@ -74,11 +74,11 @@ export const realEstateSection = buildSection({
           id: 'selectedPropertyByCode',
           title: m.realEstateMessages.usageUnit,
           condition: (answers) => {
-            const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+            const props = getValueViaPath<unknown[]>(
               answers,
-              'otherPropertiesThanIOwnCheckbox',
+              'anyonesProperty.propertiesByAddressCode',
             )
-            return !!otherPropertiesThanIOwn?.includes(YES)
+            return !!props?.length
           },
           loadingError: 'Loading error',
           loadOptions: async ({ application }) => {
