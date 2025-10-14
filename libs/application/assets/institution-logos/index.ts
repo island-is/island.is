@@ -12,6 +12,7 @@ export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEcon
 export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries'
 export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo'
 export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
+export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 
 // Municipality logos
