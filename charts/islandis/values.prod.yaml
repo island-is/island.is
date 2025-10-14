@@ -162,6 +162,8 @@ air-discount-scheme-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -188,6 +190,11 @@ air-discount-scheme-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/air-discount-scheme-backend'
+    create: true
+    name: 'air-discount-scheme-backend'
 air-discount-scheme-web:
   enabled: true
   env:
@@ -505,6 +512,11 @@ api:
     DOCUMENT_PROVIDER_CLIENTID_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST'
     DOCUMENT_PROVIDER_CLIENT_SECRET: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET'
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
+    DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH: '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH'
+    DOCUMENT_PROVIDER_DASHBOARD_CLIENTID: '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENTID'
+    DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET: '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET'
+    DOCUMENT_PROVIDER_DASHBOARD_SCOPE: '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_SCOPE'
+    DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL: '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
     DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD'
@@ -1034,6 +1046,8 @@ application-system-form:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1053,6 +1067,11 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/application-system-form'
+    create: true
+    name: 'application-system-form'
 cms-importer-worker:
   args:
     - 'main.cjs'
@@ -1160,6 +1179,8 @@ consultation-portal:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -1179,6 +1200,11 @@ consultation-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/consultation-portal'
+    create: true
+    name: 'consultation-portal'
 contentful-apps:
   enabled: true
   env:
@@ -1580,6 +1606,8 @@ form-system-web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -1600,6 +1628,11 @@ form-system-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/form-system-web'
+    create: true
+    name: 'form-system-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -1684,6 +1717,8 @@ icelandic-names-registry-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1702,6 +1737,11 @@ icelandic-names-registry-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/icelandic-names-registry'
+    create: true
+    name: 'icelandic-names-registry'
 island-ui-storybook:
   enabled: true
   env:
@@ -1817,6 +1857,8 @@ license-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -1856,6 +1898,11 @@ license-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/license-api'
+    create: true
+    name: 'license-api'
 namespaces:
   labels: {}
   namespaces:
@@ -1939,6 +1986,8 @@ payments:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1960,6 +2009,11 @@ payments:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/payments'
+    create: true
+    name: 'payments'
 portals-admin:
   enabled: true
   env:
@@ -2009,6 +2063,8 @@ portals-admin:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -2028,6 +2084,11 @@ portals-admin:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/portals-admin'
+    create: true
+    name: 'portals-admin'
 regulations-admin-backend:
   enabled: true
   env:
@@ -2102,6 +2163,8 @@ regulations-admin-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -2126,6 +2189,11 @@ regulations-admin-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/regulations-admin-backend'
+    create: true
+    name: 'regulations-admin-backend'
 search-indexer-service:
   enabled: true
   env:
@@ -2312,6 +2380,8 @@ service-portal:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -2331,6 +2401,11 @@ service-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal'
+    create: true
+    name: 'service-portal'
 service-portal-api:
   enabled: true
   env:
@@ -2473,7 +2548,7 @@ services-bff-portals-admin:
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2562,7 +2637,7 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2783,6 +2858,8 @@ services-form-system-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -2805,6 +2882,11 @@ services-form-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-form-system-api'
+    create: true
+    name: 'services-form-system-api'
 services-payment-flow-update-handler:
   enabled: true
   env:
@@ -2971,6 +3053,8 @@ services-payments:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -3004,6 +3088,11 @@ services-payments:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments'
+    create: true
+    name: 'services-payments'
 services-sessions:
   enabled: true
   env:
@@ -3055,6 +3144,8 @@ services-sessions:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3073,6 +3164,11 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-sessions'
+    create: true
+    name: 'services-sessions'
 services-sessions-cleanup:
   args:
     - 'main.cjs'
@@ -3497,6 +3593,8 @@ skilavottord-web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -3519,6 +3617,11 @@ skilavottord-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/skilavottord-web'
+    create: true
+    name: 'skilavottord-web'
 skilavottord-ws:
   enabled: true
   env:
@@ -3591,6 +3694,8 @@ skilavottord-ws:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -3619,6 +3724,11 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/skilavottord-ws'
+    create: true
+    name: 'skilavottord-ws'
 user-notification:
   args:
     - '--no-experimental-fetch'
@@ -4116,6 +4226,8 @@ web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -4134,6 +4246,11 @@ web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/web'
+    create: true
+    name: 'web'
 xroad-collector:
   args:
     - '--no-experimental-fetch'

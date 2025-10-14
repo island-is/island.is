@@ -13,6 +13,7 @@ export const serviceSetup = (services: {
     .image('consultation-portal')
     .namespace('consultation-portal')
     .codeOwner(CodeOwners.Advania)
+    .serviceAccount('consultation-portal')
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
