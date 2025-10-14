@@ -19,7 +19,6 @@ import {
   InstitutionNationalIds,
   FormModes,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { SeminarAnswersSchema } from './dataSchema'
 import {
   getIndividualValidityApi,
@@ -55,7 +54,6 @@ const template: ApplicationTemplate<
   initialQueryParameter: 'seminarId',
   dataSchema: SeminarAnswersSchema,
   requiredScopes: [ApiScope.vinnueftirlitid],
-  featureFlag: Features.SeminarRegistrationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

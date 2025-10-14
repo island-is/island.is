@@ -218,6 +218,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const { activeLocale } = useI18n()
 
+  const sendType = watch('sendType')
+
   if (submitted) {
     const data = methods.getValues()
     const amountISK =
@@ -239,7 +241,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.senderAddress)} {data.senderAddress}
           </Text>
           <Text>
-            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}
+            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}{' '}
+            {data.senderPlace}
           </Text>
         </Stack>
         <Stack space={2}>
@@ -247,13 +250,28 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
           <Text>
             {formatMessage(m.overview.recipientName)} {data.recipientName}
           </Text>
-          <Text>
-            {formatMessage(m.overview.recipientAddress)} {data.recipientAddress}
-          </Text>
-          <Text>
-            {formatMessage(m.overview.recipientPostalCode)}{' '}
-            {data.recipientPostalCode}
-          </Text>
+
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientAddress)}{' '}
+              {data.recipientAddress}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientPostalCode)}{' '}
+              {data.recipientPostalCode} {data.recipientPlace}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email && (
+            <Text>
+              {formatMessage(m.overview.recipientEmail)} {data.recipientEmail}
+            </Text>
+          )}
+
           <Text>
             {formatMessage(m.overview.inMemoryOf)} {data.inMemoryOf}
           </Text>
@@ -356,8 +374,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       message: formatMessage(m.validation.required),
     },
   }
-
-  const sendType = watch('sendType')
 
   return (
     <FormProvider {...methods}>

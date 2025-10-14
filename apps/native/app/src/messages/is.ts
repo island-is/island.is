@@ -3,6 +3,7 @@ export const is = {
   // General buttons
   'button.change': 'Breyta',
   'button.open': 'Skoða',
+  'button.moreInfoHere': 'Nánari upplýsingar hér',
 
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
@@ -644,6 +645,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Loftbrú lokuð',
+  'airDiscount.disabledDescription':
+    'Afsláttarkóðar Loftbrúar eru ekki í gildi í augnablikinu.',
 
   // offline
   'offline.title': 'Ekkert netsamband',

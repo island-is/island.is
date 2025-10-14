@@ -658,9 +658,9 @@ services-auth-ids-api-cleanup:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-ids-api'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-ids-api-cleanup'
     create: true
-    name: 'services-auth-ids-api'
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
