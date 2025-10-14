@@ -9,5 +9,5 @@ export class Location {
   description?: string
 
   @Field({ nullable: true })
-  postalCode?: string;
+  postalCode?: string
 }

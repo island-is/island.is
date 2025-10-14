@@ -312,9 +312,10 @@ export const serviceSetup = (services: {
         prod: '@fjs.is/hugsmidjan',
       },
       ELFUR_BASE_PATH: {
-        dev:'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
-        staging:'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
-        prod:'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
+        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+        staging:
+          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
+        prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
       },
       HMS_CONTRACTS_AUTH_TENANT_ID: {
         dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
@@ -366,10 +367,8 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
-      ELFUR_CLIENT_SECRET:
-        '/k8s/api/ELFUR_CLIENT_SECRET',
-      ELFUR_USERNAME_KEY:
-        '/k8s/api/ELFUR_API_USERNAME_KEY',
+      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_CLIENT_SECRET',
+      ELFUR_USERNAME_KEY: '/k8s/api/ELFUR_API_USERNAME_KEY',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',

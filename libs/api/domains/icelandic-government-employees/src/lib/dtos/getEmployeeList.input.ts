@@ -6,5 +6,4 @@ export class EmployeesInput {
   @IsString()
   @Field()
   organizationId!: string
-
 }

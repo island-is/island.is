@@ -1,1 +1,1 @@
-export {IcelandicGovernmentEmployeesModule} from './lib/employees.module'
+export { IcelandicGovernmentEmployeesModule } from './lib/employees.module'

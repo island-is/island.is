@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { OrganizationEmployeeApiProvider } from './apiConfig';
-import { ElfurClientService } from './elfur.service';
+import { OrganizationEmployeeApiProvider } from './apiConfig'
+import { ElfurClientService } from './elfur.service'
 
 @Module({
   providers: [OrganizationEmployeeApiProvider, ElfurClientService],
