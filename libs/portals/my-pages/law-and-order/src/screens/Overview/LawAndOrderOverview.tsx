@@ -1,9 +1,9 @@
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Divider, Text } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
   m,
   InfoLine,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,29 +13,36 @@ const LawAndOrderOverview = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
   return (
-    <>
-      <IntroHeader
-        title={m.overview}
-        intro={m.lawAndOrderDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    <IntroWrapper
+      title={m.overview}
+      intro={m.lawAndOrderDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
+      <Text variant="eyebrow" color="purple400" marginBottom={2}>
+        {formatMessage(messages.myData)}
+      </Text>
+      <InfoLine
+        label={formatMessage(messages.courtCases)}
+        button={{
+          type: 'link',
+          to: LawAndOrderPaths.CourtCases,
+          label: formatMessage(messages.seeInfo),
+          icon: 'arrowForward',
+        }}
       />
-      <Box>
-        <Text variant="eyebrow" color="purple400" marginBottom={2}>
-          {formatMessage(messages.myData)}
-        </Text>
-        <InfoLine
-          label={formatMessage(messages.courtCases)}
-          button={{
-            type: 'link',
-            to: LawAndOrderPaths.CourtCases,
-            label: formatMessage(messages.seeInfo),
-            icon: 'arrowForward',
-          }}
-        />
-        <Divider />
-      </Box>
-    </>
+      <Divider />
+      <InfoLine
+        label={formatMessage(messages.policeCases)}
+        button={{
+          type: 'link',
+          to: LawAndOrderPaths.PoliceCases,
+          label: formatMessage(messages.seeInfo),
+          icon: 'arrowForward',
+        }}
+      />
+      <Divider />
+    </IntroWrapper>
   )
 }
 export default LawAndOrderOverview
