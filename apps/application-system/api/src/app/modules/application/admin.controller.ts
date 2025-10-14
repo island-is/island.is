@@ -10,7 +10,12 @@ import {
 import { ApiTags, ApiHeader, ApiBearerAuth } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
-import {IdsUserGuard, ScopesGuard, Scopes, CurrentUser} from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { ApplicationService } from '@island.is/application/api/core'
