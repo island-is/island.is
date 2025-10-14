@@ -80,6 +80,15 @@ jobs:
 
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Install modules
+        run: |
+          corepack enable && yarn install
+      - name: Install infra modules
+        working-directory: infra
+        run: |
+          corepack enable && CI=true yarn install --immutable
       - name: Get token
         id: get-token
         working-directory: ${{ inputs.working-directory }}
@@ -170,14 +179,6 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: load-deps
         uses: ./.github/actions/load-deps
