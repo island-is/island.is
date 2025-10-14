@@ -472,6 +472,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  const isLastCourtSession =
+    index >= 1 && index + 1 === workingCase.courtSessions?.length
+
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -494,7 +497,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         rowGap={5}
         paddingY={3}
       >
-        {index >= 1 && index + 1 === workingCase.courtSessions?.length && (
+        {isLastCourtSession && (
           <Button
             variant="text"
             colorScheme="destructive"
