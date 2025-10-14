@@ -3,6 +3,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
   ApplicationType,
+  AttachmentOptions,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
 } from '../utils/constants'
@@ -391,6 +392,13 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+  attachments: z.object({
+    answer: z.enum([
+    AttachmentOptions.ONLY_ELECTRONIC,
+    AttachmentOptions.ONLY_ON_PAPER,
+    AttachmentOptions.ELECTRONIC_AND_PAPER
+    ]),
+  }),   
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

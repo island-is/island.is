@@ -883,7 +883,58 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
-  }),
+
+    //Attachments
+    attachmentsPageTitle: {
+      id: 'nps.application:attachments.page.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
+    attachmentsPageDescription: {
+      id: 'nps.application:attachments.page.description',
+      defaultMessage:
+        'Hér getur þú skilað öllum þeim gögnum sem skólinn gæti þarfnast varðandi barn þitt.',
+      description:
+        'Below you can submit attachments regarding your child.',
+    },
+    attachmentButton: {
+      id: 'nps.application:attachments.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'nps.application:attachments.header',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'nps.application:attachments.description',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
+      description:
+        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
+    },
+    attachmentMaxSizeError: {
+      id: 'nps.application:attachments.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    electronicAttachmentOption: {
+      id: 'nps.application:attachments.options.electronic',
+      defaultMessage: 'Öll gögn berast rafrænt með umsókn',
+      description: 'All documents will be submitted electronically with the application',
+    },
+    paperAttachmentOption: {
+      id: 'nps.application:attachments.options.paper',
+      defaultMessage: 'Öll gögn berast á pappírsformi til skólastjóra',
+      description: 'All documents will be submitted on paper to the school',
+    },
+    electronicAndPaperAttachmentOption: {
+      id: 'nps.application:attachments.options.electronic.and.paper',
+      defaultMessage: 'Hluti gagna berast rafrænt og hluti á pappírsformi',
+      description: 'Some documents will be submitted electronically and some submitted on paper to the school',
+    }
+  }),  
 
   overview: defineMessages({
     sectionTitle: {

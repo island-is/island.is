@@ -9,6 +9,7 @@ import {
   childItems,
   currentNurseryItems,
   currentSchoolItems,
+  fileItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
@@ -142,6 +143,13 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+    }),
+    buildOverviewField({
+      id: 'overview.attachments',
+      title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
+      attachments: fileItems,
+      hideIfEmpty: true,
+      bottomLine: true,
     }),
   ]
 }
