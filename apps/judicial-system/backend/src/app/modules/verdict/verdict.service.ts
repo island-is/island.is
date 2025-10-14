@@ -391,6 +391,7 @@ export class VerdictService {
     const defendantsWithCases =
       await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
 
+    console.log({ defendantsWithCases: defendantsWithCases.length })
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
         if (!theCase) {

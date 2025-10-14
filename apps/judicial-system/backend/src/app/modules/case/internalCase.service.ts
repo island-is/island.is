@@ -595,14 +595,6 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         {
-          model: EventLog,
-          as: 'eventLogs',
-          required: false,
-          where: {
-            eventType: EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
-          },
-        },
-        {
           model: Defendant,
           as: 'defendants',
           required: true,
@@ -611,6 +603,10 @@ export class InternalCaseService {
               model: DefendantEventLog,
               as: 'eventLogs',
               required: false,
+              where: {
+                eventType:
+                  DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              },
             },
             {
               model: Verdict,
@@ -627,30 +623,24 @@ export class InternalCaseService {
               },
             },
           ],
+          where: {
+            '$eventLogs.id$': { [Op.is]: null }, // get defendants that do not have verdict certificate delivered to police
+          },
         },
       ],
       where: {
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        // excludes cases that already have delivered all applicable verdict service certificates
-        '$eventLogs.id$': { [Op.is]: null },
       },
     })
 
+    console.log({ cases: cases.length })
     return cases.flatMap((theCase) =>
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          const isVerdictServiceCertificateDelivered =
-            DefendantEventLog.getEventLogByEventType(
-              DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-              defendant.eventLogs,
-            )
-          if (
-            !isVerdictServiceCertificateDelivered &&
-            defendant.verdict?.serviceDate
-          ) {
+          if (defendant.verdict?.serviceDate) {
             const appealDeadline = getIndictmentAppealDeadlineDate({
               baseDate: defendant.verdict?.serviceDate,
               isFine: false,
