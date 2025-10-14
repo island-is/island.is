@@ -23,6 +23,7 @@ import { PropertySearchInput } from './components/PropertySearchInput'
 import { PropertyTableBody } from './components/PropertyTableBody'
 import * as m from '../../lib/messages'
 import { HmsPropertyInfo } from '@island.is/api/schema'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 const ERROR_ID = 'registerProperty'
 
@@ -305,6 +306,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
           }
         : undefined,
     )
+    // Apply clearOnChange for this custom field (if configured in field config)
+    if (Array.isArray(field.clearOnChange) && field.clearOnChange.length > 0) {
+      clearInputsOnChange(field.clearOnChange, setValue)
+    }
     clearErrors(ERROR_ID)
     if (selectedOption?.addressCode) {
       hmsPropertyInfo({

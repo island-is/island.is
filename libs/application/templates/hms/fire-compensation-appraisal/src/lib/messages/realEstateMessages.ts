@@ -17,6 +17,11 @@ export const realEstateMessages = defineMessages({
       'Veldu eina af þínum fasteignum úr listanum hér fyrir neðan. Því næst þarftu að velja hvaða notkunareiningar innan fasteignarinnar á að endurmeta brunabótamat fyrir.',
     description: 'Real estate section description',
   },
+  units: {
+    id: 'fca.application:realEstate.units',
+    defaultMessage: 'Einingar',
+    description: 'Unit',
+  },
   usageUnit: {
     id: 'fca.application:realEstate.usageUnit',
     defaultMessage: 'Notkunareining',

@@ -33,7 +33,6 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
 
         setValue('anyProperties', data?.hmsPropertyByPropertyCode ?? [])
       } catch (error) {
-        console.error('Error fetching properties:', error)
         setValue('anyProperties', [])
       }
     })()

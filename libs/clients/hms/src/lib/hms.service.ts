@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   Adalmatseining,
   AdalmatseiningApi,
@@ -14,6 +14,8 @@ import {
   Fasteign as FasteignAsset,
   FasteignirApi,
 } from '@island.is/clients/assets'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class HmsService {
@@ -22,6 +24,8 @@ export class HmsService {
     private readonly fasteignApi: FasteignApi,
     private readonly adalmatseiningApi: AdalmatseiningApi,
     private propertiesApi: FasteignirApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   private apiWithAuth = <T extends BaseAPI>(api: T, user: User): T =>
@@ -216,7 +220,7 @@ export class HmsService {
         }) ?? [],
       )
     } catch (e) {
-      console.error('Failed to fetch properties:', e)
+      this.logger.error('Failed to fetch properties:', e)
       const errorMessage =
       e.response?.data?.message || e.message || 'Unknown error'
       throw new Error(
