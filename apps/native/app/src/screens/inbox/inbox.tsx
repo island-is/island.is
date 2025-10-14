@@ -213,9 +213,10 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
   const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
     usePostMailActionMutationMutation()
 
-  const availableSenders = res.data?.senders ?? []
+  const availableSenders = res.data?.documentsV2?.senders ?? []
+
   const availableCategories = useMemo(() => {
-    return res.data?.categories ?? []
+    return res.data?.documentsV2?.categories ?? []
   }, [res.data])
 
   const allDocumentsSelected =
