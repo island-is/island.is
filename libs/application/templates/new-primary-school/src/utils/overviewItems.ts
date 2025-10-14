@@ -800,11 +800,11 @@ export const fileItems = (answers: FormValue): Array<AttachmentItem> => {
     const nameArray = fullName.split('.')
     const fileType = nameArray.pop()?.toUpperCase()
     const fileName = nameArray.join('.')
-      
-      return {
-        width: 'full',
-        fileName: fileName,
-        fileType: fileType || undefined,
-      }
+
+    return {
+      width: 'full',
+      fileName: fileName,
+      fileType: fileType || undefined,
+    }
   })
 }

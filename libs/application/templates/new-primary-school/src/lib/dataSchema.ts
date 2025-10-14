@@ -394,11 +394,11 @@ export const dataSchema = z.object({
     ),
   attachments: z.object({
     answer: z.enum([
-    AttachmentOptions.ONLY_ELECTRONIC,
-    AttachmentOptions.ONLY_ON_PAPER,
-    AttachmentOptions.ELECTRONIC_AND_PAPER
+      AttachmentOptions.ONLY_ELECTRONIC,
+      AttachmentOptions.ONLY_ON_PAPER,
+      AttachmentOptions.ELECTRONIC_AND_PAPER,
     ]),
-  }),   
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

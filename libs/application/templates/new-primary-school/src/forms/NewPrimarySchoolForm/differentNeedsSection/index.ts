@@ -8,5 +8,10 @@ import { attachmentSubSection } from './attachmentSubSection'
 export const differentNeedsSection = buildSection({
   id: 'differentNeedsSection',
   title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
-  children: [languageSubSection, healthProtectionSubSection, supportSubSection, attachmentSubSection],
+  children: [
+    languageSubSection,
+    healthProtectionSubSection,
+    supportSubSection,
+    attachmentSubSection,
+  ],
 })

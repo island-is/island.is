@@ -894,8 +894,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:attachments.page.description',
       defaultMessage:
         'Hér getur þú skilað öllum þeim gögnum sem skólinn gæti þarfnast varðandi barn þitt.',
-      description:
-        'Below you can submit attachments regarding your child.',
+      description: 'Below you can submit attachments regarding your child.',
     },
     attachmentButton: {
       id: 'nps.application:attachments.button',
@@ -922,7 +921,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     electronicAttachmentOption: {
       id: 'nps.application:attachments.options.electronic',
       defaultMessage: 'Öll gögn berast rafrænt með umsókn',
-      description: 'All documents will be submitted electronically with the application',
+      description:
+        'All documents will be submitted electronically with the application',
     },
     paperAttachmentOption: {
       id: 'nps.application:attachments.options.paper',
@@ -932,9 +932,10 @@ export const newPrimarySchoolMessages: MessageDir = {
     electronicAndPaperAttachmentOption: {
       id: 'nps.application:attachments.options.electronic.and.paper',
       defaultMessage: 'Hluti gagna berast rafrænt og hluti á pappírsformi',
-      description: 'Some documents will be submitted electronically and some submitted on paper to the school',
-    }
-  }),  
+      description:
+        'Some documents will be submitted electronically and some submitted on paper to the school',
+    },
+  }),
 
   overview: defineMessages({
     sectionTitle: {
