@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { PortalModuleComponent } from '@island.is/portals/core'
 
-const MyCategories: PortalModuleComponent = ({ userInfo }) => {
+const MyCategories: PortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   return (

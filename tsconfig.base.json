@@ -708,6 +708,9 @@
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
+      "@island.is/clients/document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
+      ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/documents-v2": [
         "libs/clients/documents-v2/src/index.ts"
@@ -1072,6 +1075,9 @@
       "@island.is/portals/admin/document-provider": [
         "libs/portals/admin/document-provider/src/index.ts"
       ],
+      "@island.is/portals/admin/document-provider-dashboard": [
+        "libs/portals/admin/document-provider-dashboard/src/index.ts"
+      ],
       "@island.is/portals/admin/form-system": [
         "libs/portals/admin/form-system/src/index.ts"
       ],
@@ -1257,7 +1263,11 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
-    }
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
+      ]
+    },
+    "resolveJsonModule": true
   }
 }

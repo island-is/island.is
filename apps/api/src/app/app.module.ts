@@ -230,6 +230,8 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
+import { DocumentProviderDashboardClientModule } from '@island.is/clients/document-provider-dashboard'
 import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
@@ -344,6 +346,7 @@ const environment = getConfig
     HmsLoansModule,
     HousingBenefitsModule,
     PassportModule,
+    DocumentProviderDashboardClientModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     NotificationsModule,
@@ -433,6 +436,7 @@ const environment = getConfig
         EnergyFundsClientConfig,
         DocumentClientConfig,
         DocumentsClientV2Config,
+        DocumentProviderDashboardClientConfig,
         ZenterSignupConfig,
         CampaignMonitorSignupConfig,
         PaymentScheduleClientConfig,
