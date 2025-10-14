@@ -191,6 +191,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
           : ''),
       attendees: courtSession.attendees ?? getInitialAttendees(),
+      endDate: courtSession.endDate
+        ? new Date(courtSession.endDate)
+        : courtSession.startDate
+        ? new Date(courtSession.startDate)
+        : new Date(),
     }
 
     patchSession(courtSession.id, update, { persist: true })
