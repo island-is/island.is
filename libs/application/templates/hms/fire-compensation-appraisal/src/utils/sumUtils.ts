@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { Fasteign } from '@island.is/clients/assets'
 
@@ -6,12 +6,18 @@ export const sumUsageUnitsFireCompensation = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const realEstateId = getValueViaPath<string>(answers, 'realEstate')
+  const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+    answers,
+    'otherPropertiesThanIOwnCheckbox',
+  )?.includes(YES)
+  const realEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
   const usageUnits = getValueViaPath<Array<string>>(answers, 'usageUnits')
-  const properties = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )
+
+  const properties = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
@@ -36,11 +42,18 @@ export const totalFireCompensation = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const realEstateId = getValueViaPath<string>(answers, 'realEstate')
-  const properties = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )
+  const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+    answers,
+    'otherPropertiesThanIOwnCheckbox',
+  )?.includes(YES)
+
+  const realEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
+
+  const properties = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
