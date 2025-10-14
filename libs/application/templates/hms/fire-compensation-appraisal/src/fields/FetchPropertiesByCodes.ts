@@ -15,7 +15,6 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
 
   useEffect(() => {
     if (!selectedCode) return
-
     ;(async () => {
       if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
         const mockData = getValueViaPath<Array<Fasteign>>(
