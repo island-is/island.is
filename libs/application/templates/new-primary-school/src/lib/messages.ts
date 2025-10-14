@@ -893,8 +893,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     termsSubSectionDescription: {
       id: 'nps.application:different.needs.terms.description#markdown',
       defaultMessage:
-        'Í umsókninni felst þríhliða samkomulag milli forsjáraðila, heimaskóla barns og þess skóla sem tekur tímabundið við barni. \n\nAllir aðilar skuldbinda sig til að vinna saman að velferð barns með það að markmiðið að tryggja farsæla endurkomu þess í heimaskóla. Í því felst meðal annars að taka þátt í samstarfi um úrlausnir fyrir barnið, viðhalda virkum samskiptum milli allra aðila, fara eftir markmiðum og áætlun eftir bestu getu, og taka þátt í endurmati á stöðu mála.',
-      description: 'Terms',
+        'Í umsókninni felst þríhliða samkomulag milli forsjáraðila, heimaskóla barns og þess skóla sem tekur tímabundið við barni. \n\nAllir aðilar skuldbinda sig til að vinna saman að velferð barns með það að markmiði að tryggja farsæla endurkomu þess í heimaskóla. Í því felst meðal annars að taka þátt í samstarfi um úrlausnir fyrir barnið, viðhalda virkum samskiptum milli allra aðila, fara eftir markmiðum og áætlun eftir bestu getu, og taka þátt í endurmati á stöðu mála.',
+      description: 'The application includes a tripartite agreement between the custodians, the child’s home school and the school that temporarily accepts the child. \n\nAll parties commit to working together on the welfare of the child, with the aim of ensuring a successful return to their home school. This includes participating in collaborative solutions for the child, maintaining active communication between all parties, following objectives and plans to the best of their ability, and participating in the reassessment of the situation.',
     },
     termsCheckbox: {
       id: 'nps.application:different.needs.terms.checkbox',

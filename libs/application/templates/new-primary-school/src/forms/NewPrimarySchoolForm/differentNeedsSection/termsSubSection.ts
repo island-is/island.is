@@ -14,7 +14,7 @@ export const termsSubSection = buildSubSection({
   },
   children: [
     buildCheckboxField({
-      id: 'termsCheckbox',
+      id: 'acceptTerms',
       title: newPrimarySchoolMessages.differentNeeds.termsSubSectionTitle,
       description:
         newPrimarySchoolMessages.differentNeeds.termsSubSectionDescription,
