@@ -82,9 +82,6 @@ jobs:
         uses: ./.github/actions/set-shas
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-      - name: Install modules
-        run: |
-          corepack enable && yarn install
       - name: Install infra modules
         working-directory: infra
         run: |
