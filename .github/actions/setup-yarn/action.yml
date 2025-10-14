@@ -1,6 +1,24 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 inputs:
+  RUNS_ON_S3_BUCKET_CACHE:
+    description: ''
+    required: true
+  YARN_NPM_REGISTRY_SERVER:
+    description: ''
+    required: true
+  AWS_ACCOUNT_ID:
+    description: ''
+    required: false
+    default: '821090935708'
+  AWS_REGION:
+    description: ''
+    required: false
+    default: 'eu-west-1'
+  SKIP_CACHE:
+    description: 'Skip cache restore'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -23,6 +41,22 @@ runs:
         node -v
         yarn --version
         ls -l "$(which node)"
+
+    - name: Setup NPM pull-through
+      shell: bash
+      run: |
+        yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
+
+        CODEARTIFACT_AUTH_TOKEN="$(aws codeartifact get-authorization-token --domain npm-upstream \
+          --domain-owner ${{ inputs.AWS_ACCOUNT_ID }} --region ${{ inputs.AWS_REGION }} \
+          --query authorizationToken --output text)"
+
+        export CODEARTIFACT_AUTH_TOKEN="$CODEARTIFACT_AUTH_TOKEN"
+
+        [ "${CODEARTIFACT_AUTH_TOKEN}" != "" ] && echo "We have token" || echo "Token missing"
+
+        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "$CODEARTIFACT_AUTH_TOKEN"
+        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAlwaysAuth' "true"
 
     - name: Get Cache Directory Paths
       working-directory: ${{ inputs.working-directory }}
@@ -54,6 +88,7 @@ runs:
     - name: Cache Dependencies
       uses: runs-on/cache@v4
       id: restore-cache
+      if: ${{ inputs.SKIP_CACHE != 'true' }}
       with:
         path: |
           ${{ steps.cache-paths.outputs.yarn-cache }}

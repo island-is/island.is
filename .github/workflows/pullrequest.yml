@@ -67,6 +67,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -98,6 +101,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -146,7 +152,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-
   linting-workspace:
     needs:
       - prepare
@@ -158,6 +163,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -198,6 +206,12 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: NX format:write
         env:
@@ -206,6 +220,14 @@ jobs:
         run: |
           yarn nx format:write
           node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
+
+      # - name: NX format:write
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: |
+      # TODO: If this step will be commented back in then it needs to take into account
+      #       to exclude formatting on .yarnrc.yml file since we are changing the file in the setup-yarn action.
+      #     ./scripts/ci/20_check-formatting.sh "write"
+      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   lintfix-changed-files:
     name: Lintfix Changed Files
@@ -224,6 +246,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Run lintfix
         id: lintfix
@@ -231,7 +256,12 @@ jobs:
         # and causes unintended lint changes when using a different commit
         run: |
           yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
-          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+
+          # We have to exclude the .yarnrc.yml from linting since we are changing the file
+          # when the setup-yarn action is run.
+          diff_message=$(git diff --base -- ":(exclude).yarnrc.yml")
+
+          if [[ -n "$diff_message" ]]; then
             echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
           fi
 
@@ -261,6 +291,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Create output directory for lint output
         run: |
@@ -308,7 +341,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           clean: false
-
   build:
     needs:
       - prepare
@@ -327,6 +359,10 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          SKIP_CACHE: 'true'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
