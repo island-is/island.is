@@ -1,0 +1,9 @@
+{
+  "name": "github-token-helpers",
+  "version": "0.0.1",
+  "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.0",
+    "universal-github-app-jwt": "2.2.0"
+  }
+}

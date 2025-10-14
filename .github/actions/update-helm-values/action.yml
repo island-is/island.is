@@ -28,16 +28,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Get token
+    - uses: ./.github/actions/get-github-token
       id: get-token
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      env:
-        APP_ID: ${{ inputs.app-id }}
-        PRIVATE_KEY: ${{ inputs.ssh-key }}
-      run: |
-        node scripts/ci/docker/get-github-token.mjs
-
+      with:
+        app-id: ${{ inputs.app-id }}
+        ssh-key: ${{ inputs.ssh-key }}
     - name: Checkout helm-values repository
       uses: actions/checkout@v4
       with:

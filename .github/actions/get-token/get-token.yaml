@@ -1,0 +1,44 @@
+name: 'Get GitHub App token'
+description: |
+  Cache and install deps for scripts/ci/github-token, then run the token generator script.
+  Exposes the generated token as an output named `token`.
+
+inputs:
+  app-id:
+    description: 'GitHub App ID'
+    required: true
+  ssh-key:
+    description: 'GitHub App private key (PEM)'
+    required: true
+outputs:
+  token:
+    description: 'Generated GitHub App installation token'
+    value: ${{ steps.get-token-internal.outputs.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache node_modules (scripts/ci/github-token)
+      id: cache-node-modules
+      uses: actions/cache@v4
+      with:
+        path: scripts/ci/github-token/node_modules
+        key: ${{ runner.os }}-github-token-${{ hashFiles('scripts/ci/github-token/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-github-token-
+
+    - name: Install dependencies (yarn)
+      if: steps.cache-node-modules.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: scripts/ci/github-token
+      run: |
+        yarn install --frozen-lockfile
+
+    - name: Get token
+      id: get-token-internal
+      shell: bash
+      env:
+        APP_ID: ${{ inputs.app-id }}
+        PRIVATE_KEY: ${{ inputs.ssh-key }}
+      run: |
+        node scripts/ci/github-token/get-github-token.mjs

@@ -86,17 +86,11 @@ jobs:
         working-directory: infra
         run: |
           corepack enable && CI=true yarn install --immutable
-      - name: Get token
+      - uses: ./.github/actions/get-github-token
         id: get-token
-        shell: bash
-        env:
-          # APP_ID
-          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-        run: |
-          node scripts/ci/docker/get-github-token.mjs
-
-        # Edtit this
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_KEY }}
+          ssh-key: ${{ secrets.ISLAND_IS_SSH_KEY }
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
@@ -455,16 +449,11 @@ jobs:
           PUBLISH: 'true'
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-      - name: Get token
+      - uses: ./.github/actions/get-github-token
         id: get-token
-        shell: bash
-        env:
-          # APP_ID
-          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-        run: |
-          node scripts/ci/docker/get-github-token.mjs
-
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_KEY }}
+          ssh-key: ${{ secrets.ISLAND_IS_SSH_KEY }
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
@@ -570,15 +559,11 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
           working-directory: monorepo
-      - name: Get token
+      - uses: ./.github/actions/get-github-token
         id: get-token
-        shell: bash
-        env:
-          # APP_ID
-          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-        run: |
-          node scripts/ci/docker/get-github-token.mjs
+        with:
+          app-id: ${{ secrets.ISLAND_IS_APP_KEY }}
+          ssh-key: ${{ secrets.ISLAND_IS_SSH_KEY }
       - name: Dispatch workflow to helm-values repository
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}

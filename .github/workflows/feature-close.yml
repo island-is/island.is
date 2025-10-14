@@ -51,16 +51,11 @@ jobs:
 
           FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
           echo "FEATURE_NAME=$FEATURE_NAME" >> "$GITHUB_OUTPUT"
-
-      - name: Get token
+      - uses: ./.github/actions/get-github-token
         id: get-token
-        shell: bash
-        env:
-          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
-          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
-        run: |
-          node scripts/ci/docker/get-github-token.mjs
-
+        with:
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
       - name: Prepare feature deployment tag
         uses: ./.github/actions/feature-checkout
         id: prepare-docker-tag

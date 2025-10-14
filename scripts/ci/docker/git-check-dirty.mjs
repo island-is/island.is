@@ -2,7 +2,7 @@
 import { execSync, spawnSync } from 'node:child_process'
 // @ts-ignore - current tsconfig does not support ESM modules etc. This is just for typing.
 import path from 'node:path'
-import { getGithubToken } from './get-github-token-helper.mjs'
+import { getGithubToken } from '../github-token/get-github-token-helper.mjs'
 
 // This creates circular problems!
 const IGNORED_FILES = ['tsconfig.base.json', '.yarnrc.yml']
@@ -99,6 +99,9 @@ async function commitAsDirtyBot() {
   console.info(`Setting user as Dirty Bot`)
   if (!appId || !privateKey) {
     console.error(
+      `Error: ${APP_ID} or ${PRIVATE_KEY} environment variable is not`,
+    )
+    throw new Error(
       `Error: ${APP_ID} or ${PRIVATE_KEY} environment variable is not`,
     )
   }
