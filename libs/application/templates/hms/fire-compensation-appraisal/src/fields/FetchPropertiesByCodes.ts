@@ -16,7 +16,7 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
   useEffect(() => {
     if (!selectedCode) return
 
-    (async () => {
+    ;(async () => {
       if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
         const mockData = getValueViaPath<Array<Fasteign>>(
           application.externalData,
@@ -27,16 +27,16 @@ export const FetchPropertiesByCodes = ({ application }: FieldBaseProps) => {
       }
 
       try {
-      const { data } = await apolloClient.query({
-        query: getPropertiesByPropertyCodeQuery,
-        variables: { input: { fasteignNrs: [selectedCode] } },
-      })
+        const { data } = await apolloClient.query({
+          query: getPropertiesByPropertyCodeQuery,
+          variables: { input: { fasteignNrs: [selectedCode] } },
+        })
 
-      setValue('anyProperties', data?.hmsPropertyByPropertyCode ?? [])
-    } catch (error) {
-      console.error('Error fetching properties:', error)
-      setValue('anyProperties', [])
-    }
+        setValue('anyProperties', data?.hmsPropertyByPropertyCode ?? [])
+      } catch (error) {
+        console.error('Error fetching properties:', error)
+        setValue('anyProperties', [])
+      }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCode, apolloClient, setValue])
