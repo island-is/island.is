@@ -526,6 +526,11 @@ export const m = defineMessages({
     defaultMessage: '+ Bæta við gildi',
     description: 'Add list item',
   },
+  add: {
+    id: 'form.system:add',
+    defaultMessage: 'Bæta við',
+    description: 'Add',
+  },
   finish: {
     id: 'form.system:finish',
     defaultMessage: 'Ljúka',
@@ -970,6 +975,46 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið ',
     description: 'If you need further information, you can email us at ',
+  },
+  completedTitleLabel: {
+    id: 'form.system:completed-title-label',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu',
+    description: 'Completed page title',
+  },
+  completedTitleLabelEnglish: {
+    id: 'form.system:completed-title-label-english',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu á ensku',
+    description: 'Completed page title in English',
+  },
+  confirmationHeaderLabel: {
+    id: 'form.system:confirmation-header-label',
+    defaultMessage: 'Yfirskrift fyrir græna kassann',
+    description: 'Confirmation header',
+  },
+  confirmationHeaderLabelEnglish: {
+    id: 'form.system:confirmation-header-label-english',
+    defaultMessage: 'Yfirskrift fyrir græna kassann á ensku',
+    description: 'Confirmation header in English',
+  },
+  confirmationTextLabel: {
+    id: 'form.system:confirmation-text-label',
+    defaultMessage: 'Texti fyrir græna kassann',
+    description: 'Confirmation text',
+  },
+  confirmationTextLabelEnglish: {
+    id: 'form.system:confirmation-text-label-english',
+    defaultMessage: 'Texti fyrir græna kassann á ensku',
+    description: 'Confirmation text in English',
+  },
+  icelandic: {
+    id: 'form.system:icelandic',
+    defaultMessage: 'Íslenska',
+    description: 'Icelandic',
+  },
+  english: {
+    id: 'form.system:english',
+    defaultMessage: 'Enska',
+    description: 'English',
   },
   deleteFormWarning: {
     id: 'form.system:delete-form-warning',
