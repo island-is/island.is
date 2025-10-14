@@ -80,12 +80,28 @@ jobs:
 
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Install infra modules
+        working-directory: infra
+        run: |
+          corepack enable && CI=true yarn install --immutable
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
+        # Edtit this
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.get-token.outputs.token }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Prepare pre-release
@@ -159,14 +175,6 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -445,12 +453,23 @@ jobs:
           } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
@@ -551,17 +570,15 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
           working-directory: monorepo
-
       - name: Get token
         id: get-token
-        working-directory: monorepo
         shell: bash
         env:
-          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
-          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
         run: |
           node scripts/ci/docker/get-github-token.mjs
-
       - name: Dispatch workflow to helm-values repository
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
