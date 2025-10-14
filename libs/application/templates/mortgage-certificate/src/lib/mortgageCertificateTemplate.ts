@@ -41,9 +41,8 @@ const template: ApplicationTemplate<
   name: application.general.name,
   codeOwner: CodeOwners.Origo,
   institution: application.general.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.MortgageCertificate.translation,
-  ],
   dataSchema: MortgageCertificateSchema,
   allowedDelegations: [
     {

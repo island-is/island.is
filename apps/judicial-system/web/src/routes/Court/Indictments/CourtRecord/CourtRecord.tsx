@@ -144,7 +144,6 @@ const CourtRecord: FC = () => {
         <FormFooter
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          // onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
         />
       </FormContentContainer>
     </PageLayout>

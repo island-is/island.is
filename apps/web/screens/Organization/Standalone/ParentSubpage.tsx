@@ -149,8 +149,8 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   query,
   organizationPage,
 }) => {
-  const [organizationPageSlug, parentSubpageSlug, subpageSlug] = (query.slugs ??
-    []) as string[]
+  const querySlugs = (query.slugs ?? []) as string[]
+  const [organizationPageSlug, parentSubpageSlug, subpageSlug] = querySlugs
 
   const [
     {
@@ -168,6 +168,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
             input: {
               slug: organizationPageSlug,
               lang: locale as ContentLanguage,
+              subpageSlugs: querySlugs.slice(1),
             },
           },
         })
