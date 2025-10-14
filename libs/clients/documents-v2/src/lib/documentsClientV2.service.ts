@@ -62,6 +62,7 @@ export class DocumentsClientV2Service {
 
     const inputObject = sanitizeObject({
       ...input,
+      categoryId: input.categoryId === '' ? undefined : input.categoryId,
       kennitala: input.nationalId,
       page: input.page ?? 1,
       senderKennitala:

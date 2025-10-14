@@ -2,11 +2,14 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  getVerdictAppealDecision,
+} from '@island.is/judicial-system/formatters'
 import { hasTimestamp } from '@island.is/judicial-system/types'
 import {
   UserRole,
-  VerdictAppealDecision,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -20,19 +23,6 @@ import {
   addNormalText,
   setTitle,
 } from './pdfHelpers'
-
-const getVerdictAppealDecision = (
-  verdictAppealDecision?: VerdictAppealDecision,
-): string => {
-  switch (verdictAppealDecision) {
-    case VerdictAppealDecision.ACCEPT:
-      return 'Unir dómi'
-    case VerdictAppealDecision.POSTPONE:
-      return 'Tekur áfrýjunarfrest'
-    default:
-      return 'Ekki skráð'
-  }
-}
 
 const getRole = (userRole?: UserRole) => {
   switch (userRole) {
