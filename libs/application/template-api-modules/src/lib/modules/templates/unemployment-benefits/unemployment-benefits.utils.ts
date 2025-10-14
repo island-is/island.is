@@ -71,7 +71,7 @@ export const getJobWishes = (answers: FormValue) => {
     requestedWorkRatioType:
       jobWishes?.wantedJobPercentage === '100' ? '0' : '1',
     canStartAt: new Date(jobWishes?.jobTimelineStartDate || ''),
-    //TODO check what alternateServiceAreas are -> If we have it then otherInformationFromService is uneccesary
+    alternateServiceAreas: jobWishes?.location,
     introductoryMeetingLanguage: introductoryMeeting?.language,
   }
 }
@@ -369,10 +369,10 @@ export const getEducationalQuestions = (answers: FormValue) => {
       education?.typeOfEducation === EducationType.LAST_SEMESTER,
     educationFinishedWithDiploma:
       education?.didFinishLastSemester === YES ||
-      education?.typeOfEducation === EducationType.LAST_YEAR, // TODO is this right?
+      education?.typeOfEducation === EducationType.LAST_YEAR,
     educationFinishedWithinLast12Months:
       education?.didFinishLastSemester === YES ||
-      education?.typeOfEducation === EducationType.LAST_YEAR, // TODO is this right?
+      education?.typeOfEducation === EducationType.LAST_YEAR,
     educationRegisteredNextSemester: education?.appliedForNextSemester === YES,
   }
 }
@@ -513,7 +513,18 @@ export const getPensionAndOtherPayments = (
               privatePensionFundId: payment.pensionFund,
             }
           }),
-        // TODO NEED FIELD TO RETURN SJUKRADAGPENINGAR
+        sicknessBenefitPayments: otherBenefits.payments
+          ?.filter(
+            (x) => x.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID,
+          )
+          .map((payment) => {
+            return {
+              incomeTypeId: payment.typeOfPayment,
+              estimatedIncome: parseInt(payment.paymentAmount || ''),
+              realIncome: parseInt(payment.paymentAmount || ''),
+              unionId: payment.union,
+            }
+          }),
       }
     : null
 }

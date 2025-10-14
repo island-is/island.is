@@ -36,9 +36,8 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   featureFlag: Features.UnemploymentBenefitsEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.UnemploymentBenefits.translation,
-  ],
   dataSchema: UnemploymentBenefitsSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

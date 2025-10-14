@@ -29,8 +29,8 @@ export enum PaymentTypeIds {
   PENSION_FUND_TYPE_ID = '3f42d28e-0962-4ebd-b64d-6abfe1dd2350', // Greiðslur frá lífeyrissjóð
   SICKNESS_PAYMENTS_TYPE_ID = 'e960485c-e878-437a-9a68-0d6d16dbe3e7', // Greiðslur sjúkradagpeninga
   INSURANCE_PAYMENTS_TYPE_ID = '40f3f704-668c-4dd2-8a41-87657da9daef', // Greiðslur frá Tryggingastofnun
-  REHAB_PENSION_ID = 'asdf', // sjúkra og endurhæfingalífeyrir TODO
-  SPOUSE_PENSION = '1234', // Makalífeyrir TODO
+  REHAB_PENSION_ID = 'b3b47559-87c1-4ebe-a6e9-08d7e532c7e6', // Sjúkra og endurhæfingalífeyrir
+  SPOUSE_PENSION = '4bf573f4-51ed-4c1f-882e-08d680850aba', // Makalífeyrir
 }
 
 export enum EmploymentStatus {

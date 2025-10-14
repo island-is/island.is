@@ -465,7 +465,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
     slug: 'atvinnuleysisbaetur',
-    translation: 'vmst.ub.application',
+    translation: ['vmst.ub.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',

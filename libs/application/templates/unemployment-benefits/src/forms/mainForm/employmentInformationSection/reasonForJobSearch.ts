@@ -65,6 +65,33 @@ export const reasonForJobSearchSubSection = buildSubSection({
             })
           },
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.additionalReasonRequired',
+          watchValue: 'reasonForJobSearch.mainReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required = false
+            unemploymentReasonCategories.forEach((cat) => {
+              if (cat.id === value) {
+                required =
+                  !!cat.unemploymentReasons &&
+                  cat.unemploymentReasons.length > 0
+              }
+            })
+
+            return required
+          },
+        }),
         buildSelectField({
           id: 'reasonForJobSearch.additionalReason',
           title:
@@ -129,7 +156,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
                 'unemploymentApplication.data.supportData.unemploymentReasonCategories',
                 [],
               ) || []
-            let required: boolean | undefined
+            let required: boolean | undefined = false
             unemploymentReasonCategories.forEach((cat) => {
               cat.unemploymentReasons?.forEach((reason) => {
                 if (reason.id === value) {
@@ -175,7 +202,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
                 'unemploymentApplication.data.supportData.unemploymentReasonCategories',
                 [],
               ) || []
-            let required: boolean | undefined
+            let required: boolean | undefined = false
             unemploymentReasonCategories.forEach((cat) => {
               cat.unemploymentReasons?.forEach((reason) => {
                 if (reason.id === value) {

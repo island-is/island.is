@@ -4,10 +4,11 @@ import { FileSchema } from './fileSchema'
 export const reasonForJobSearchSchema = z
   .object({
     mainReason: z.string(),
-    additionalReason: z.string(),
-    additionalReasonTextRequired: z.boolean(),
+    additionalReason: z.string().optional(),
+    additionalReasonRequired: z.boolean().optional(),
+    additionalReasonTextRequired: z.boolean().optional(),
     additionalReasonText: z.string().optional(),
-    healthReasonRequired: z.boolean(),
+    healthReasonRequired: z.boolean().optional(),
     healthReason: z.array(FileSchema).optional(),
     bankruptsyReason: z.array(z.string()).optional(),
     agreementConfirmation: z.array(z.string()).optional(),
@@ -29,4 +30,13 @@ export const reasonForJobSearchSchema = z
       return true
     },
     { path: ['healthReason'] },
+  )
+  .refine(
+    ({ additionalReason, additionalReasonRequired }) => {
+      if (additionalReasonRequired === true) {
+        return !!additionalReason
+      }
+      return true
+    },
+    { path: ['additionalReason'] },
   )
