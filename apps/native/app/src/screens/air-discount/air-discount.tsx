@@ -24,6 +24,7 @@ import {
   Typography,
 } from '../../ui'
 import { AirfaresUsageTable } from './airfares-usage-table'
+import { getConfig } from '../../config'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -100,7 +101,7 @@ const Disabled = ({ componentId }: { componentId: string }) => {
         message={intl.formatMessage({ id: 'airDiscount.disabledDescription' })}
         detailLink={{
           text: intl.formatMessage({ id: 'button.moreInfoHere' }),
-          url: 'https://island.is/minarsidur/loftbru',
+          url: `${getConfig().apiUrl.replace(/api$/, '')}minarsidur/loftbru`,
           componentId: componentId,
         }}
       />
