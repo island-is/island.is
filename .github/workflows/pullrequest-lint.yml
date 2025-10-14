@@ -19,6 +19,12 @@ jobs:
     name: Lint PR title
     runs-on: arc-shared
     steps:
+      - name: Checkout only workflows and token script
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            .github
+            scripts/ci/github-token
       - name: Get GitHub App token
         id: get-token
         uses: ./.github/actions/get-github-token
