@@ -34,6 +34,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseState,
   CaseTransition,
@@ -248,19 +249,11 @@ const Overview: FC = () => {
             )}
           </Box>
         )}
-        <Box
-          marginBottom={
-            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
-          }
-        >
+        <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {userCanAddDocuments && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button
               size="small"
               icon="add"
@@ -275,7 +268,7 @@ const Overview: FC = () => {
           </Box>
         )}
         {userCanSendIndictmentToCourt && (
-          <Box marginBottom={10}>
+          <Box marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
               required
@@ -304,6 +297,16 @@ const Overview: FC = () => {
             </BlueBox>
           </Box>
         )}
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title="Viðurlög - athugasemdir sækjanda"
+            tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
+          />
+          <InputPenalties
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
