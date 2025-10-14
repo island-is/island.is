@@ -5,6 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -14,6 +15,7 @@ import {
   ChildInformation,
   FriggChildInformation,
   HealthProfileModel,
+  Organization,
   Person,
   RelativesRow,
   SelectOption,
@@ -29,7 +31,6 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicationType = getValueViaPath<ApplicationType>(
@@ -94,7 +95,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(
       answers,
       'healthProtection.hasFoodAllergiesOrIntolerances',
-    ) ?? [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    ) ?? []
 
   const foodAllergiesOrIntolerances =
     getValueViaPath<string[]>(
@@ -104,7 +105,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hasOtherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.hasOtherAllergies') ??
-    [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
+    []
 
   const otherAllergies =
     getValueViaPath<string[]>(answers, 'healthProtection.otherAllergies') ?? []
@@ -166,11 +167,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   )
 
-  // TODO: Skoða betur defaultValue??
   const requestingMeeting = getValueViaPath<YesOrNo>(
     answers,
     'support.requestingMeeting[0]',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedStartDate = getValueViaPath<string>(
@@ -183,11 +183,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'startingSchool.expectedStartDateHiddenInput',
   )
 
-  // TODO: Skoða betur defaultValue??
   const temporaryStay = getValueViaPath<YesOrNo>(
     answers,
     'startingSchool.temporaryStay',
-    NO, // TODO: Þarf deafultValue hérna?
+    NO,
   )
 
   const expectedEndDate = getValueViaPath<string>(
@@ -225,9 +224,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentNursery.nursery',
   )
 
-  const applyForNeighbourhoodSchool = getValueViaPath<YesOrNo>(
+  const applyForPreferredSchool = getValueViaPath<YesOrNo>(
     answers,
-    'school.applyForNeighbourhoodSchool',
+    'school.applyForPreferredSchool',
   )
 
   const currentSchoolId = getValueViaPath<string>(
@@ -277,7 +276,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
-    applyForNeighbourhoodSchool,
+    applyForPreferredSchool,
     currentSchoolId,
   }
 }
@@ -361,14 +360,9 @@ export const getApplicationExternalData = (
     'childInformation.data.socialProfile',
   )
 
-  const childCitizenshipCode = getValueViaPath<string>(
+  const preferredSchool = getValueViaPath<Organization | null>(
     externalData,
-    'citizenship.data.childCitizenshipCode',
-  )
-
-  const otherGuardianCitizenshipCode = getValueViaPath<string>(
-    externalData,
-    'citizenship.data.otherGuardianCitizenshipCode',
+    'preferredSchool.data',
   )
 
   return {
@@ -388,8 +382,7 @@ export const getApplicationExternalData = (
     childAffiliations,
     healthProfile,
     socialProfile,
-    childCitizenshipCode,
-    otherGuardianCitizenshipCode,
+    preferredSchool,
   }
 }
 
@@ -461,20 +454,10 @@ export const getCurrentSchoolName = (externalData: ExternalData) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getNeighbourhoodSchoolName = (externalData: ExternalData) => {
-  const { primaryOrgId, childAffiliations } =
-    getApplicationExternalData(externalData)
+export const getPreferredSchoolName = (externalData: ExternalData) => {
+  const { preferredSchool } = getApplicationExternalData(externalData)
 
-  if (!primaryOrgId || !childAffiliations) {
-    return undefined
-  }
-
-  // This function needs to be improved when Juni is ready with the neighbourhood school data
-
-  // Find the school name since we only have primary org id
-  return childAffiliations
-    .map((affiliation) => affiliation.organization)
-    .find((organization) => organization?.id === primaryOrgId)?.name
+  return preferredSchool?.name
 }
 
 export const determineNameFromApplicationAnswers = (

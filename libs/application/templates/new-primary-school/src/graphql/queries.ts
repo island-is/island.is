@@ -16,9 +16,9 @@ export const friggOptionsQuery = gql`
   }
 `
 
-export const friggSchoolsByMunicipalityQuery = gql`
-  query FriggSchoolsByMunicipality {
-    friggSchoolsByMunicipality {
+export const friggOrganizationsByTypeQuery = gql`
+  query FriggOrganizationsByType {
+    friggOrganizationsByType {
       id
       unitId
       nationalId

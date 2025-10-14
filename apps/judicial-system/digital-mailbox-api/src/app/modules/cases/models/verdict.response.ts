@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   formatDate,
   getRulingInstructionItems,
+  getVerdictAppealDecision,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -10,7 +11,6 @@ import {
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
   ServiceRequirement,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -26,9 +26,6 @@ export class VerdictResponse {
 
   @ApiProperty({ type: String })
   subtitle?: string
-
-  @ApiProperty({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
@@ -72,8 +69,6 @@ export class VerdictResponse {
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      // subtitle: 'TODO subtitle (if needed)',
-      appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -90,6 +85,16 @@ export class VerdictResponse {
               t.appealDeadline,
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
+            ...(isAppealDeadlineExpired
+              ? [
+                  [
+                    t.appealDecision,
+                    getVerdictAppealDecision(
+                      defendant?.verdict?.appealDecision,
+                    ),
+                  ],
+                ]
+              : []),
           ].map((item) => ({
             label: item[0],
             value: item[1],
@@ -100,9 +105,7 @@ export class VerdictResponse {
           label: t.ruling,
           items: [
             {
-              // This should be replaced with the actual ruling text
-              // but we don't have that stored right now.
-              value: 'TODO Ruling text goes here',
+              value: internalCase.courtSessions?.[0]?.ruling ?? '',
               type: 'text',
             },
           ],

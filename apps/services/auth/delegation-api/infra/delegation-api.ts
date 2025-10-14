@@ -31,6 +31,7 @@ export const serviceSetup = (services: {
     .namespace('identity-server-delegation')
     .image('services-auth-delegation-api')
     .codeOwner(CodeOwners.Aranja)
+    .serviceAccount('auth-delegation-api')
     .db({
       name: 'servicesauth',
     })

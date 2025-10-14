@@ -319,6 +319,11 @@ export const serviceSetup = (services: {
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
       ),
+      WEB_DOMAIN: {
+        dev: 'beta.dev01.devland.is',
+        staging: 'beta.staging01.devland.is',
+        prod: 'island.is',
+      },
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',

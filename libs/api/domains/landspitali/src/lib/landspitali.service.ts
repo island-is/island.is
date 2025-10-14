@@ -22,6 +22,15 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 const LANDSPITALI_NATIONAL_ID = '5003002130'
 const FEE_CHARGE_ITEM_CODE = 'MR101'
 
+const LANDSPITALI_BASE_PATH = {
+  is: `/s/landspitali`,
+  en: `/en/o/landspitali`,
+}
+const LANDSPITALI_RETURN_PATH = {
+  is: `${LANDSPITALI_BASE_PATH.is}/greidsla-tokst`,
+  en: `${LANDSPITALI_BASE_PATH.en}/payment-successful`,
+}
+
 @Injectable()
 export class LandspitaliService {
   constructor(
@@ -37,6 +46,53 @@ export class LandspitaliService {
     return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       LANDSPITALI_NATIONAL_ID,
     )
+  }
+
+  private getProtocol() {
+    return 'https'
+  }
+
+  private extractValidCancelUrl(
+    input: CreateMemorialCardPaymentUrlInput | CreateDirectGrantPaymentUrlInput,
+  ): string {
+    const defaultUrl = `${this.getProtocol()}://${this.config.webDomain}${
+      LANDSPITALI_BASE_PATH[input.locale === 'en' ? 'en' : 'is']
+    }`
+    if (!input.cancelUrl) {
+      return defaultUrl
+    }
+    try {
+      const url = new URL(input.cancelUrl)
+      const allowedHosts = new Set([
+        this.config.webDomain,
+        `www.${this.config.webDomain}`,
+      ])
+      if (!allowedHosts.has(url.host)) {
+        this.logger.warn(
+          'Landspitali web payment cancel URL domain is not the same as the web domain',
+          {
+            cancelUrl: input.cancelUrl,
+            webDomain: this.config.webDomain,
+          },
+        )
+        return defaultUrl
+      }
+      return url.toString()
+    } catch (error) {
+      this.logger.warn('Landspitali web payment cancel URL is not valid', {
+        cancelUrl: input.cancelUrl,
+        error,
+      })
+      return defaultUrl
+    }
+  }
+
+  private extractValidReturnUrl(
+    input: CreateMemorialCardPaymentUrlInput | CreateDirectGrantPaymentUrlInput,
+  ): string {
+    return `${this.getProtocol()}://${this.config.webDomain}${
+      LANDSPITALI_RETURN_PATH[input.locale === 'en' ? 'en' : 'is']
+    }`
   }
 
   async createMemorialCardPaymentUrl(
@@ -55,6 +111,7 @@ export class LandspitaliService {
     }
 
     const locale = input.locale !== 'en' ? 'is' : 'en'
+
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
@@ -65,10 +122,9 @@ export class LandspitaliService {
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
-          returnUrl:
-            locale === 'is'
-              ? 'https://island.is/s/landspitali'
-              : 'https://island.is/en/o/landspitali',
+          cancelUrl: this.extractValidCancelUrl(input),
+          returnUrl: this.extractValidReturnUrl(input),
+          redirectToReturnUrlOnSuccess: true,
           charges: [
             {
               price: input.amountISK,
@@ -193,10 +249,9 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
-          returnUrl:
-            locale === 'is'
-              ? 'https://island.is/s/landspitali'
-              : 'https://island.is/en/o/landspitali',
+          returnUrl: this.extractValidReturnUrl(input),
+          redirectToReturnUrlOnSuccess: true,
+          cancelUrl: this.extractValidCancelUrl(input),
           payerNationalId:
             input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,

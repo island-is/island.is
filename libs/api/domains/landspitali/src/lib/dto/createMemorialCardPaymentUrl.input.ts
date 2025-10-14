@@ -15,6 +15,11 @@ registerEnumType(WebLandspitaliCreateMemorialCardPaymentUrlInputSendType, {
 
 @InputType('WebLandspitaliCreateMemorialCardPaymentUrlInput')
 export class CreateMemorialCardPaymentUrlInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  cancelUrl?: string
+
   @Field(() => String)
   locale = 'is'
 

@@ -368,6 +368,17 @@ export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
+export const isRulingOrDismissalCase = (
+  rulingDecision?: CaseIndictmentRulingDecision | null,
+) => {
+  return Boolean(
+    rulingDecision &&
+      [
+        CaseIndictmentRulingDecision.RULING,
+        CaseIndictmentRulingDecision.DISMISSAL,
+      ].includes(rulingDecision),
+  )
+}
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {

@@ -789,6 +789,21 @@ export const m = defineMessages({
     defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
     description: '',
   },
+  attachmentsDescriptionUndividedEstate: {
+    id: 'es.application:attachmentsDescriptionUndividedEstate#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsDescriptionEstateWithoutAssets: {
+    id: 'es.application:attachmentsDescriptionEstateWithoutAssets#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:attachmentsDescriptionDivisionOfEstateByHeirs#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
   attachmentsButton: {
     id: 'es.application:attachmentsButton',
     defaultMessage: 'Velja skjöl',
@@ -921,6 +936,26 @@ export const m = defineMessages({
   doneTitle: {
     id: 'es.application:doneTitle',
     defaultMessage: 'Beiðni móttekin',
+    description: '',
+  },
+  privateDivisionDoneTitle: {
+    id: 'es.application:privateDivisionDoneTitle',
+    defaultMessage: 'Beiðni um einkaskipti móttekin',
+    description: '',
+  },
+  undividedEstateDoneTitle: {
+    id: 'es.application:undividedEstateDoneTitle',
+    defaultMessage: 'Beiðni um leyfi til setu í óskiptu búi móttekin',
+    description: '',
+  },
+  estateWithoutAssetsDoneTitle: {
+    id: 'es.application:estateWithoutAssetsDoneTitle',
+    defaultMessage: 'Yfirlýsing um eignaleysi dánarbús móttekin',
+    description: '',
+  },
+  officialDivisionDoneTitle: {
+    id: 'es.application:officialDivisionDoneTitle',
+    defaultMessage: 'Yfirlýsing um opinber skipti móttekin',
     description: '',
   },
   divisionOfEstateDoneSubtitle: {

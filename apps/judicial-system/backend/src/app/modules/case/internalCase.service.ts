@@ -31,6 +31,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  CourtSessionRulingType,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadlineDate,
@@ -73,6 +74,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  CourtSession,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -1520,6 +1522,25 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         { model: DateLog, as: 'dateLogs' },
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['created', 'DESC']],
+          attributes: ['ruling'],
+          where: {
+            ruling_type: CourtSessionRulingType.JUDGEMENT,
+          },
+        },
       ],
       attributes: [
         'courtCaseNumber',

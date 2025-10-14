@@ -17,7 +17,21 @@ export const done: Form = buildForm({
   children: [
     buildMultiField({
       id: 'done',
-      title: m.doneTitle,
+      title: (application) => {
+        const selectedEstate = getValueViaPath(
+          application.answers,
+          'selectedEstate',
+        )
+        return selectedEstate === EstateTypes.officialDivision
+          ? m.officialDivisionDoneTitle
+          : selectedEstate === EstateTypes.estateWithoutAssets
+          ? m.estateWithoutAssetsDoneTitle
+          : selectedEstate === EstateTypes.permitForUndividedEstate
+          ? m.undividedEstateDoneTitle
+          : selectedEstate === EstateTypes.divisionOfEstateByHeirs
+          ? m.privateDivisionDoneTitle
+          : m.doneTitle
+      },
       description: (application) => {
         const selectedEstate = getValueViaPath(
           application.answers,

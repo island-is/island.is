@@ -1,8 +1,8 @@
 import { NO, YES } from '@island.is/application/core'
 import {
-  AffiliationOrganizationType,
   AffiliationRole,
   CaseWorkerInputTypeEnum,
+  OrganizationType,
 } from './utils/constants'
 
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
@@ -64,7 +64,6 @@ export type Person = {
   }
   requiresInterpreter: string[]
   preferredLanguage?: string
-  citizenshipCode?: string
 }
 
 export type AgentModel = {
@@ -84,14 +83,14 @@ export type Affiliation = {
   classificationId: string
   beginDate: Date
   endDate: Date | null
-  organization?: AffiliationOrganization
+  organization?: Organization
 }
 
-export type AffiliationOrganization = {
+export type Organization = {
   id: string
   nationalId: string | null
   name: string
-  type: AffiliationOrganizationType
+  type: OrganizationType
 }
 
 export type AddressModel = {

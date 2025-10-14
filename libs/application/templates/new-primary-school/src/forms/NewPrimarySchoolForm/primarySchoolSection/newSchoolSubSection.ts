@@ -6,7 +6,7 @@ import {
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -15,22 +15,19 @@ import {
   getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
-import {
-  Application,
-  OrganizationModelTypeEnum,
-  Query,
-} from '@island.is/api/schema'
+import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
-    const { applyForNeighbourhoodSchool, applicationType } =
+    const { applyForPreferredSchool, applicationType } =
       getApplicationAnswers(answers)
+
     return (
       applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
       (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForNeighbourhoodSchool === NO)
+        applyForPreferredSchool === NO)
     )
   },
   children: [
@@ -56,14 +53,14 @@ export const newSchoolSubSection = buildSubSection({
             )
 
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
             })
 
             return (
-              data?.friggSchoolsByMunicipality
+              data?.friggOrganizationsByType
                 ?.filter(
                   ({ type, managing }) =>
-                    type === OrganizationModelTypeEnum.Municipality &&
+                    type === OrganizationTypeEnum.Municipality &&
                     managing &&
                     managing.length > 0 &&
                     managing.filter(({ gradeLevels }) =>
@@ -92,7 +89,7 @@ export const newSchoolSubSection = buildSubSection({
             selectedValues,
           }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
             })
 
             const municipalityCode = selectedValues?.[0]
@@ -103,9 +100,9 @@ export const newSchoolSubSection = buildSubSection({
 
             // Find all private owned schools by municipality
             const privateOwnedSchools =
-              data?.friggSchoolsByMunicipality
+              data?.friggOrganizationsByType
                 ?.filter(
-                  ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
+                  ({ type }) => type === OrganizationTypeEnum.PrivateOwner,
                 )
                 ?.flatMap(
                   ({ managing }) =>
@@ -115,7 +112,7 @@ export const newSchoolSubSection = buildSubSection({
                           unitId &&
                           getMunicipalityCodeBySchoolUnitId(unitId) ===
                             municipalityCode &&
-                          type === OrganizationModelTypeEnum.School &&
+                          type === OrganizationTypeEnum.School &&
                           (!childGradeLevel
                             ? true
                             : gradeLevels?.includes(childGradeLevel)),
@@ -132,12 +129,12 @@ export const newSchoolSubSection = buildSubSection({
 
             // Find all municipality schools
             const municipalitySchools =
-              data?.friggSchoolsByMunicipality
+              data?.friggOrganizationsByType
                 ?.find(({ unitId }) => unitId === municipalityCode)
                 ?.managing?.filter(
                   ({ type, gradeLevels }) =>
                     // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
-                    type === OrganizationModelTypeEnum.School &&
+                    type === OrganizationTypeEnum.School &&
                     (!childGradeLevel
                       ? true
                       : gradeLevels?.includes(childGradeLevel)),
