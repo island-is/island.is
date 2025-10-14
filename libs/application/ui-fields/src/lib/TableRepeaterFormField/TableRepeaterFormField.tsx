@@ -92,7 +92,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
 
   const methods = useFormContext<TableRepeaterForm>()
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control: methods.control,
     name: data.id,
   })
@@ -104,32 +104,13 @@ export const TableRepeaterFormField: FC<Props> = ({
   const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const [activeIndex, setActiveIndex] = useState(
-    values?.findIndex((x) => x?.isUnsaved) ?? -1,
+    fields?.findIndex((x) => x?.isUnsaved) ?? -1,
   )
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
   const savedFields = fields.filter((_, index) => index !== activeIndex)
 
   const staticData = getStaticTableData?.(application)
-
-  // Creates a copy of the values to avoid mutating the original form state directly,
-  // which is important to keep React Hook Form state consistent.
-  const updateRowValue = (
-    index: number,
-    key: keyof TableRepeaterRow,
-    value: unknown,
-  ) => {
-    const oldValues = methods.getValues(data.id) || []
-    const currentRow = oldValues[index]
-
-    if (!currentRow) return
-
-    if (currentRow[key] !== value) {
-      const newValues = [...oldValues]
-      newValues[index] = { ...currentRow, [key]: value }
-      methods.setValue(data.id, newValues)
-    }
-  }
 
   // Update other form values (if necessary) after saving a single row
   const updateFormAfterSavingRow = async () => {
@@ -154,22 +135,26 @@ export const TableRepeaterFormField: FC<Props> = ({
     }
   }
 
+  const safeUpdate = (index: number, changes: Partial<TableRepeaterRow>) => {
+    const current = values[index] || {}
+    update(index, { ...current, ...changes })
+  }
+
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
       shouldFocus: true,
     })
 
     if (isValid) {
-      // Set isUnsaved=false for the current row
-      updateRowValue(index, 'isUnsaved', false)
-
+      safeUpdate(index, { isUnsaved: false })
       setActiveIndex(-1)
       await updateFormAfterSavingRow()
+      setIsEditing(false)
     }
-    setIsEditing(false)
   }
 
   const handleCancelItem = (index: number) => {
+    safeUpdate(index, { isUnsaved: false })
     setActiveIndex(-1)
     if (!isEditing) {
       remove(index)
@@ -184,11 +169,12 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleRemoveItem = (index: number) => {
-    updateRowValue(index, 'isRemoved', true)
+    safeUpdate(index, { isRemoved: true, isUnsaved: false })
     if (activeIndex === index) setActiveIndex(-1)
   }
 
   const handleEditItem = (index: number) => {
+    safeUpdate(index, { isUnsaved: true })
     setActiveIndex(index)
     setIsEditing(true)
   }
@@ -249,19 +235,21 @@ export const TableRepeaterFormField: FC<Props> = ({
           ]
         }
 
-        // Remove deleted rows and isUnsaved flags
-        const oldValues = methods.getValues(data.id) || []
-        const cleanedValues = [...oldValues]
-          .filter((row) => !row.isRemoved)
-          .map(({ isUnsaved, ...rest }) => rest)
-        methods.setValue(data.id, cleanedValues)
+        // Remove deleted rows
+        // Iterate in reverse so removing doesn't break indices
+        for (let i = fields.length - 1; i >= 0; i--) {
+          const row = fields[i]
+          if (row.isRemoved) {
+            remove(i)
+          }
+        }
 
         setErrorMessage(null)
         return [true, null]
       },
       { allowMultiple: true, customCallbackId: callbackIdRef.current },
     )
-  }, [data.id, formatMessage, methods, setBeforeSubmitCallback])
+  }, [fields, formatMessage, remove, setBeforeSubmitCallback])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
