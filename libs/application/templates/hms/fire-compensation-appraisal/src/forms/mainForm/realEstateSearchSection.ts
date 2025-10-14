@@ -1,13 +1,13 @@
 import {
   buildMultiField,
   buildSection,
-  buildSelectField,
   buildCheckboxField,
   getValueViaPath,
   buildDisplayField,
+  buildCustomField,
   YES,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
-import { Fasteign } from '@island.is/clients/assets'
 import { notkunareiningarOptions } from '../../utils/notkunareiningarUtils'
 import * as m from '../../lib/messages/realEstateMessages'
 import {
@@ -15,16 +15,17 @@ import {
   totalFireCompensation,
 } from '../../utils/sumUtils'
 import { usageUnitsCondition } from '../../utils/conditionUtils'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
-export const realEstateSection = buildSection({
-  id: 'realEstateSection',
+export const realEstateSearchSection = buildSection({
+  id: 'realEstateSearchSection',
   title: m.realEstateMessages.title,
   condition: (answers) => {
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
       answers,
       'otherPropertiesThanIOwnCheckbox',
     )
-    return !otherPropertiesThanIOwn?.includes(YES)
+    return !!otherPropertiesThanIOwn?.includes(YES)
   },
   children: [
     buildMultiField({
@@ -32,24 +33,49 @@ export const realEstateSection = buildSection({
       title: m.realEstateMessages.multifieldTitle,
       description: m.realEstateMessages.description,
       children: [
-        buildSelectField({
-          id: 'realEstate',
-          title: 'Fasteign',
-          options: (application) => {
-            const properties = getValueViaPath<Array<Fasteign>>(
-              application.externalData,
-              'getProperties.data',
-            )
-
-            return (
-              properties?.map((property) => ({
-                label: `(${property.fasteignanumer}) ${property?.sjalfgefidStadfang?.birting} `,
-                value: property.fasteignanumer ?? '',
-              })) ?? []
-            )
+        buildCustomField(
+          {
+            id: 'anyonesProperty',
+            component: 'PropertySearch',
+            clearOnChange: ['selectedPropertyByCode'],
           },
+          {
+            onlyAddressSearch: true,
+          },
+        ),
+        buildAsyncSelectField({
+          id: 'selectedPropertyByCode',
+          title: m.realEstateMessages.units,
+          condition: (answers) => {
+            const props = getValueViaPath<unknown[]>(
+              answers,
+              'anyonesProperty.propertiesByAddressCode',
+            )
+            return !!props?.length
+          },
+          loadingError: 'Loading error',
+          loadOptions: async ({ selectedValues }) => {
+            const watched = (selectedValues?.[0] ??
+              []) as Array<HmsPropertyInfo>
+            return watched.map((prop) => ({
+              label: `(${prop.propertyCode?.toString()}) ${prop.address}`,
+              value: prop.propertyCode?.toString() ?? '',
+            }))
+          },
+          updateOnSelect: ['anyonesProperty.propertiesByAddressCode'],
           clearOnChange: ['usageUnits'],
           marginBottom: 4,
+        }),
+        buildCustomField({
+          id: 'fetchPropertiesByCodes',
+          component: 'FetchPropertiesByCodes',
+          condition: (answers) => {
+            const properties = getValueViaPath<string>(
+              answers,
+              'selectedPropertyByCode',
+            )
+            return !!properties
+          },
         }),
         buildCheckboxField({
           condition: usageUnitsCondition,

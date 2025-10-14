@@ -110,7 +110,7 @@ export const getMockedFasteign = (
 
 export const mockGetProperties = (): Array<Fasteign> => {
   return [
-    getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F2240134', [
+    getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F2283056', [
       {
         notkunBirting: 'Íbúð á hæð',
         brunabotamat: 100000000,

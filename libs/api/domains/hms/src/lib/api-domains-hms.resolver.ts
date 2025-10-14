@@ -17,6 +17,9 @@ import {
   HmsPropertyInfoInput,
 } from './dto/hmsPropertyInfo.input'
 import { PropertyInfos } from './models/hmsPropertyInfo.model'
+import { HmsPropertyByPropertyCodeInput } from './dto/hmsPropertyByPropertyCode'
+import { Fasteign as FasteignAsset } from '@island.is/clients/assets'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -91,5 +94,34 @@ export class HmsResolver {
       throw new Error('Property not found')
     }
     return { address: addressInfo }
+  }
+
+  /**
+   * Returns Array<FasteignAsset> serialized as JSON.
+   */
+  @Query(() => [GraphQLJSONObject], {
+    name: 'hmsPropertyByPropertyCode',
+    nullable: true,
+  })
+  @Audit()
+  async getHmsPropertyByPropertyCode(
+    @CurrentUser() user: User,
+    @Args('input') input: HmsPropertyByPropertyCodeInput,
+  ): Promise<Array<FasteignAsset>> {
+    try {
+      const propertyInfos = await this.hmsService.hmsPropertyByPropertyCode(
+        user,
+        {
+          ...input,
+        },
+      )
+      if (!propertyInfos) {
+        throw new Error('Property not found')
+      }
+      return propertyInfos
+    } catch (error) {
+      this.logger.error('Error fetching HMS properties:', error)
+      throw new Error('Failed to fetch properties')
+    }
   }
 }

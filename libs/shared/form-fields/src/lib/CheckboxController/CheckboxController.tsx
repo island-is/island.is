@@ -91,7 +91,7 @@ export const CheckboxController: FC<
             <GridColumn
               span={['1/1', split]}
               paddingBottom={spacing}
-              key={`option-${option.value}`}
+              key={`option-${option.value}-${index}`}
             >
               <Checkbox
                 disabled={disabled || option.disabled}

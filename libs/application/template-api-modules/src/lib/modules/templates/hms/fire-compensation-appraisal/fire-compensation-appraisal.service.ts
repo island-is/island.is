@@ -35,8 +35,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     )
   }
 
-  async getProperties({ auth }: TemplateApiModuleActionProps) {
+  async getProperties({ auth, application }: TemplateApiModuleActionProps) {
     let properties: Array<Fasteign> = []
+    const otherPropertiesThanIOwn = getValueViaPath<boolean>(
+      application.answers,
+      'otherPropertiesThanIOwnCheckbox',
+    )
 
     // Mock for dev, since there is no dev service for the propertiesApi
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
@@ -67,7 +71,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       }
     }
 
-    if (properties?.length === 0) {
+    if (properties?.length === 0 && !otherPropertiesThanIOwn) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.noPropertiesFoundTitle,
