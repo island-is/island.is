@@ -7,10 +7,10 @@ export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýsl
 export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
 export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
 export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
-export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo'
-export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo'
-export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries'
-export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo'
+export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo' // Samband íslenskra sveitafelaga
+export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo' // Fjármála og efnahagsráðuneytið
+export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries' // Fiskistofa
+export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo' // Landlæknisembættið
 export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
 export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
