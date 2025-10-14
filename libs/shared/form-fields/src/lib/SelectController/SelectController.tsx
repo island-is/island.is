@@ -167,7 +167,6 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             errorMessage={error}
             name={name}
             options={options}
-            // defaultValue={defaultValue ? defaultValue : undefined}
             label={label}
             dataTestId={dataTestId}
             placeholder={placeholder}

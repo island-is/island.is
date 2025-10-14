@@ -44,7 +44,6 @@ import {
   WorkingAbilityInAnswers,
   OtherBenefitsInAnswers,
   ResumeInAnswers,
-  PaymentTypeIds,
   EducationType,
   EmploymentStatus,
   EmploymentStatusIds,

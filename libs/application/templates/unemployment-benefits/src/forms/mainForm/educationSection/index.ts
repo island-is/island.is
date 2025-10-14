@@ -22,7 +22,6 @@ import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import {
   appliedForNextSemester,
   didYouFinishLastSemester,
-  isCurrentlyStudying,
   showAppliedForNextSemester,
   showCurrentEducationFields,
   wasStudyingInTheLastYear,
