@@ -41,7 +41,10 @@ interface Props extends FieldBaseProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TableRepeaterRow = Record<string, any> & { isNew?: boolean }
+type TableRepeaterRow = Record<string, any> & {
+  isUnsaved?: boolean
+  isRemoved?: boolean
+}
 type TableRepeaterForm = Record<string, TableRepeaterRow[]>
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -101,25 +104,29 @@ export const TableRepeaterFormField: FC<Props> = ({
   const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const [activeIndex, setActiveIndex] = useState(
-    values?.findIndex((x) => x?.isNew) ?? -1,
+    values?.findIndex((x) => x?.isUnsaved) ?? -1,
   )
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
-  const savedFields = fields.filter(
-    (_, index) => index !== activeIndex && !values[index]?.isNew,
-  )
+  const savedFields = fields.filter((_, index) => index !== activeIndex)
 
   const staticData = getStaticTableData?.(application)
 
-  // Update the `isNew` flag for a specific row.
   // Creates a copy of the values to avoid mutating the original form state directly,
   // which is important to keep React Hook Form state consistent.
-  const updateIsNewValueForRow = (index: number, isNewValue: boolean) => {
+  const updateRowValue = (
+    index: number,
+    key: keyof TableRepeaterRow,
+    value: unknown,
+  ) => {
     const oldValues = methods.getValues(data.id) || []
     const currentRow = oldValues[index]
-    if (currentRow?.isNew) {
+
+    if (!currentRow) return
+
+    if (currentRow[key] !== value) {
       const newValues = [...oldValues]
-      newValues[index] = { ...currentRow, isNew: isNewValue }
+      newValues[index] = { ...currentRow, [key]: value }
       methods.setValue(data.id, newValues)
     }
   }
@@ -153,8 +160,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     })
 
     if (isValid) {
-      // Set isNew=false for the current row
-      updateIsNewValueForRow(index, false)
+      // Set isUnsaved=false for the current row
+      updateRowValue(index, 'isUnsaved', false)
 
       setActiveIndex(-1)
       await updateFormAfterSavingRow()
@@ -171,15 +178,14 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleNewItem = () => {
-    append({ isNew: true })
+    append({ isUnsaved: true })
     setActiveIndex(fields.length)
     methods.clearErrors()
   }
 
   const handleRemoveItem = (index: number) => {
+    updateRowValue(index, 'isRemoved', true)
     if (activeIndex === index) setActiveIndex(-1)
-    if (activeIndex > index) setActiveIndex(activeIndex - 1)
-    remove(index)
   }
 
   const handleEditItem = (index: number) => {
@@ -190,13 +196,13 @@ export const TableRepeaterFormField: FC<Props> = ({
   const formatTableValue = (
     key: string,
     item: Record<string, string>,
-    index: number,
+    displayIndex: number,
     application: Application,
   ) => {
     item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn
-      ? formatFn(item[key], index, application)
+      ? formatFn(item[key], displayIndex, application)
       : item[key]
     return typeof formatted === 'string'
       ? formatted
@@ -212,7 +218,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (initActiveFieldIfEmpty && oldValues.length === 0) {
       // Using setObjectValue to handle nested ids
       const newValues = {}
-      setObjectWithNestedKey(newValues, data.id, [{ isNew: true }])
+      setObjectWithNestedKey(newValues, data.id, [{ isUnsaved: true }])
       methods.reset({
         ...newValues,
       })
@@ -242,12 +248,20 @@ export const TableRepeaterFormField: FC<Props> = ({
             formatMessage(coreErrorMessages.needToFinishRegistration),
           ]
         }
+
+        // Remove deleted rows and isUnsaved flags
+        const oldValues = methods.getValues(data.id) || []
+        const cleanedValues = [...oldValues]
+          .filter((row) => !row.isRemoved)
+          .map(({ isUnsaved, ...rest }) => rest)
+        methods.setValue(data.id, cleanedValues)
+
         setErrorMessage(null)
         return [true, null]
       },
       { allowMultiple: true, customCallbackId: callbackIdRef.current },
     )
-  }, [formatMessage, setBeforeSubmitCallback])
+  }, [data.id, formatMessage, methods, setBeforeSubmitCallback])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -297,69 +311,82 @@ export const TableRepeaterFormField: FC<Props> = ({
                   </T.Row>
                 ))}
               {values &&
-                savedFields.map((field, index) => (
-                  <T.Row key={field.id}>
-                    <T.Data>
-                      <Box display="flex" alignItems="center">
-                        <Tooltip
-                          placement="left"
-                          text={formatText(
-                            removeButtonTooltipText,
-                            application,
-                            formatMessage,
-                          )}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(index)}
-                          >
-                            <Icon icon="trash" type="outline" color="blue400" />
-                          </button>
-                        </Tooltip>
-                        &nbsp;&nbsp;
-                        {editField && (
+                savedFields.map((field, index) => {
+                  if (field.isUnsaved || field.isRemoved) return null
+
+                  // Compute display index (based only on visible rows)
+                  const displayIndex = fields
+                    .filter((f) => !f.isUnsaved && !f.isRemoved)
+                    .findIndex((f) => f.id === field.id)
+
+                  return (
+                    <T.Row key={field.id}>
+                      <T.Data>
+                        <Box display="flex" alignItems="center">
                           <Tooltip
                             placement="left"
                             text={formatText(
-                              editButtonTooltipText,
+                              removeButtonTooltipText,
                               application,
                               formatMessage,
                             )}
                           >
                             <button
                               type="button"
-                              onClick={() => handleEditItem(index)}
+                              onClick={() => handleRemoveItem(index)}
                             >
                               <Icon
-                                icon="pencil"
-                                color="blue400"
+                                icon="trash"
                                 type="outline"
-                                size="small"
+                                color="blue400"
                               />
                             </button>
                           </Tooltip>
-                        )}
-                      </Box>
-                    </T.Data>
-                    {tableRows.map((item, idx) => (
-                      <T.Data
-                        key={`${item}-${idx}`}
-                        disabled={
-                          values[index].disabled === 'true' ? true : false
-                        }
-                      >
-                        {formatTableValue(
-                          item,
-                          customMappedValues.length
-                            ? customMappedValues[index]
-                            : values[index],
-                          index,
-                          application,
-                        )}
+                          &nbsp;&nbsp;
+                          {editField && (
+                            <Tooltip
+                              placement="left"
+                              text={formatText(
+                                editButtonTooltipText,
+                                application,
+                                formatMessage,
+                              )}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => handleEditItem(index)}
+                              >
+                                <Icon
+                                  icon="pencil"
+                                  color="blue400"
+                                  type="outline"
+                                  size="small"
+                                />
+                              </button>
+                            </Tooltip>
+                          )}
+                        </Box>
                       </T.Data>
-                    ))}
-                  </T.Row>
-                ))}
+                      {tableRows.map((item, idx) => (
+                        <T.Data
+                          key={`${item}-${idx}`}
+                          disabled={
+                            values[index].disabled === 'true' ? true : false
+                          }
+                        >
+                          {formatTableValue(
+                            item,
+                            customMappedValues.length
+                              ? customMappedValues[index]
+                              : values[index],
+                            displayIndex,
+                            application,
+                          )}
+                        </T.Data>
+                      ))}
+                    </T.Row>
+                  )
+                })}
             </T.Body>
           </T.Table>
           {activeField ? (
@@ -410,7 +437,12 @@ export const TableRepeaterFormField: FC<Props> = ({
                 type="button"
                 onClick={handleNewItem}
                 icon="add"
-                disabled={maxRows ? savedFields.length >= maxRows : false}
+                disabled={
+                  maxRows
+                    ? savedFields.filter((x) => !x.isUnsaved && !x.isRemoved)
+                        .length >= maxRows
+                    : false
+                }
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>

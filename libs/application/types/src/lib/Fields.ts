@@ -795,7 +795,7 @@ export type TableRepeaterField = BaseField & {
       string,
       (
         value: string,
-        index: number,
+        displayIndex: number,
         application?: Application,
       ) => string | StaticText
     >
