@@ -84,7 +84,7 @@ const Empty = () => {
   )
 }
 
-const Disabled = () => {
+const Disabled = ({ componentId }: { componentId: string }) => {
   const intl = useIntl()
   const theme = useTheme()
 
@@ -101,6 +101,7 @@ const Disabled = () => {
         detailLink={{
           text: intl.formatMessage({ id: 'button.moreInfoHere' }),
           url: 'https://island.is/minarsidur/loftbru',
+          componentId: componentId,
         }}
       />
     </View>
@@ -144,7 +145,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
     ).length === data?.airDiscountSchemeDiscounts?.length
 
   if (ffIsAppAirDiscountPageDisabled) {
-    return <Disabled />
+    return <Disabled componentId={componentId} />
   }
 
   return (

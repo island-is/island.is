@@ -11,6 +11,7 @@ type Variant = 'info' | 'error' | 'warning'
 export type DetailLink = {
   text: string
   url: string
+  componentId?: string
 }
 
 export type ProblemTemplateBaseProps = {
@@ -170,7 +171,7 @@ export const ProblemTemplate = ({
               borderBottomColor: theme.color.blue400,
             }}
             onPress={() => {
-              openBrowser(detailLink.url)
+              openBrowser(detailLink.url, detailLink.componentId)
             }}
           >
             <Typography variant="body" color={theme.color.blue400} weight="600">
