@@ -454,12 +454,24 @@ jobs:
           } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Get token
+        id: get-token
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
