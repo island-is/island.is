@@ -192,10 +192,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           : ''),
       attendees: courtSession.attendees ?? getInitialAttendees(),
       endDate: courtSession.endDate
-        ? new Date(courtSession.endDate)
+        ? courtSession.endDate
         : courtSession.startDate
-        ? new Date(courtSession.startDate)
-        : new Date(),
+        ? courtSession.startDate
+        : new Date().toString(),
     }
 
     patchSession(courtSession.id, update, { persist: true })
