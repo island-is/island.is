@@ -242,6 +242,9 @@ export const webRenderConnectedComponent = (
     case 'Syslumenn/DrivingInstructorList':
       connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
       break
+    case 'FSRE/EmployeeList':
+      connectedComponent = <ConnectedTeamList slice={slice} />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
