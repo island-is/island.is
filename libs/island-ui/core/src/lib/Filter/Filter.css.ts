@@ -42,21 +42,43 @@ globalStyle(`${filterCountButton} > span`, {
 
 /* Mobile drawer */
 
-export const drawer = style({
-  position: 'fixed',
-  bottom: 0,
-  width: '100%',
-  transition: 'transform 400ms ease-in-out',
-  transform: 'translateY(100%)',
-  selectors: {
-    '&[data-enter]': {
-      transform: 'translate3d(0, 0, 0)',
-    },
-  },
-  opacity: 0.9,
+export const modal = style({
+  backgroundColor: 'rgba(0, 0, 60, 0.3)',
 })
 
-export const drawerLine = style({
+export const mobilePopoverContainer = style({
+  zIndex: 100,
+  width: '100%',
+})
+
+const drawerTop = '50px' // Gap on top of filter modal
+const sheetRadius = theme.border.radius.lg
+
+export const sheet = style({
+  left: 0,
+  right: 0,
+  bottom: 0,
+  maxHeight: `calc(100vh - ${drawerTop})`, // this is fallback, use 100dvh if supported
+  borderTopLeftRadius: sheetRadius,
+  borderTopRightRadius: sheetRadius,
+  // Enter animation from the bottom
+  transform: 'translateY(100%)',
+  transition: 'transform 300ms ease',
+  willChange: 'transform', // Optimize for animation
+  selectors: {
+    '&[data-enter]': {
+      transform: 'translateY(0)',
+    },
+  },
+})
+
+/** Small grabber area at the top to hint swiping */
+export const grabber = style({
+  padding: theme.spacing['2'],
+})
+
+export const grabberLine = style({
+  display: 'block',
   width: 40,
   height: 4,
   borderRadius: 2,
@@ -64,17 +86,43 @@ export const drawerLine = style({
   backgroundColor: theme.color.dark200,
 })
 
-export const closeButton = style({
-  position: 'absolute',
-  top: theme.spacing['2'],
-  right: theme.spacing['2'],
-  zIndex: 2,
+export const header = style({
+  zIndex: 1,
+  // subtle fade to indicate content under it can scroll
+  '::after': {
+    content: '',
+    position: 'absolute',
+    top: 57,
+    left: 0,
+    height: 16,
+    width: '100%',
+
+    background:
+      'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+  },
 })
 
-export const showResultsButton = style({
-  zIndex: 21,
+/** The only scrollable area */
+export const content = style({
+  flex: 1,
+  minHeight: 0, // important for flex children to allow overflow
+  overflowY: 'auto',
+  WebkitOverflowScrolling: 'touch',
+  padding: `0 ${theme.spacing['3']}`,
+  paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
+})
+
+/** Footer sticks to the bottom of the sheet and remains visible */
+export const footer = style({
+  position: 'sticky',
+  bottom: 0,
+  background: 'white',
+  zIndex: 1,
+  padding: `${theme.spacing['2']} ${theme.spacing['3']}`,
+  // safe area for iOS home indicator
+  // paddingBottom: `calc(${theme.spacing['3']} + env(safe-area-inset-bottom))`, // NOT WORKING ?? CHECK
   '::before': {
-    content: '',
+    content: '""',
     position: 'absolute',
     bottom: 77,
     left: 0,
@@ -85,38 +133,10 @@ export const showResultsButton = style({
   },
 })
 
-export const topBar = style({
-  '::after': {
-    content: '',
-    position: 'absolute',
-    top: 57,
-    left: 0,
-    height: 16,
-    width: '100%',
-    zIndex: 21,
-    background:
-      'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+/** dvh override (modern browsers only) */
+globalStyle(`@supports (height: 100dvh)`, {
+  // Vanilla Extract doesn't support nested @supports in style(), so use globalStyle
+  [`${sheet}`]: {
+    maxHeight: 'calc(100dvh - 50px)',
   },
-})
-
-export const mobilePopoverContainer = style({
-  zIndex: 100,
-  width: '100%',
-})
-
-export const mobileDrawerContainer = style({
-  maxHeight: `calc(100vh - 145px)`,
-})
-
-export const mobileInnerContainer = style({
-  maxHeight: `calc(100vh - 96px)`,
-})
-
-export const overflow = style({
-  overflowY: 'scroll',
-  width: '100vw',
-  WebkitOverflowScrolling: 'touch',
-  scrollBehavior: 'smooth', // Force smooth scrolling
-  maxHeight: `calc(100vh - 96px)`,
-  zIndex: theme.zIndex.modal,
 })
