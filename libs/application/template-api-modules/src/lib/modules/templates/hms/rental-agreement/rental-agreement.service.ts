@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { applicationAnswers } from '@island.is/application/templates/hms/rental-agreement'
+import {
+  applicationAnswers,
+  draftAnswers,
+} from '@island.is/application/templates/hms/rental-agreement'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
@@ -11,7 +14,6 @@ import {
   listOfLastMonths,
   FinancialIndexationEntry,
 } from './utils/utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
@@ -30,18 +32,15 @@ export class RentalAgreementService extends BaseTemplateApiService {
     return await fetchFinancialIndexationForMonths(months)
   }
 
-  async sendDraft(/*{ application, auth }: TemplateApiModuleActionProps*/) {
-    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-      // Don't send draft when running locally or on dev because
-      // the application will not exist on the system HMS is calling which is prod or staging
-      return
-    }
-
-    // return await this.homeApiWithAuth(auth).contractSendDraftPost({
-    //   contractId: application.id,
-    // }) // The draft endpoint is not ready as is, uncomment when fixed
-
-    return
+  async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    return await this.homeApiWithAuth(auth).contractSendDraftPost({
+      draftRequest: {
+        ...draftAnswers(
+          applicationAnswers(application.answers),
+          application.id,
+        ),
+      },
+    })
   }
 
   async submitApplicationToHmsRentalService({
