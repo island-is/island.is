@@ -29,7 +29,7 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   useEffect(() => {
     if (watchedValue) {
       const finalValue = valueModifier
-        ? valueModifier(watchedValue)
+        ? valueModifier(watchedValue, application)
         : watchedValue
       setValue(id, finalValue)
     } else {

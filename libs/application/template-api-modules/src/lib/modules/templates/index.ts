@@ -1,3 +1,5 @@
+import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
+import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
 import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
 import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
@@ -251,6 +253,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
@@ -340,6 +343,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,

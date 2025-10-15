@@ -66,6 +66,7 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
@@ -136,6 +137,7 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        WorkMachinesClientConfig,
         BankInfoClientConfig,
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,

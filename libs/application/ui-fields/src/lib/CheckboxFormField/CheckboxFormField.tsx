@@ -97,7 +97,7 @@ export const CheckboxFormField = ({
           backgroundColor={backgroundColor}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? [] : undefined)
           }
           strong={strong}

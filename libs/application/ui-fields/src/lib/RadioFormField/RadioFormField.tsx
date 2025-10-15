@@ -101,7 +101,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           name={id}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({

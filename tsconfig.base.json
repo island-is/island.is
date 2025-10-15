@@ -620,6 +620,9 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
+      "@island.is/application/templates/unemployment-benefits": [
+        "libs/application/templates/unemployment-benefits/src/index.ts"
+      ],
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
@@ -994,6 +997,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
