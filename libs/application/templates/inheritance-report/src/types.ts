@@ -293,6 +293,7 @@ export interface EstateMember {
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
+export const heirNationalIdSameAsExecutorValidation = 'heirNationalIdSameAsExecutorValidation'
 
 export enum DebtTypes {
   Overdraft = 'Yfirdráttur',
