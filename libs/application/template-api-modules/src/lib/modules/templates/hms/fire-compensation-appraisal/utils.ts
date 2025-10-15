@@ -62,12 +62,21 @@ export const mapAnswersToApplicationDto = (
 ): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
-  const selectedRealEstateId = getValueViaPath<string>(answers, 'realEstate')
-  const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
+  const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+    answers,
+    'otherPropertiesThanIOwnCheckbox',
+  )?.includes(YES)
+  const selectedRealEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
 
+  const realEstates = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
+
+  const selectedRealEstate = realEstates?.find(
+    (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+  )
   const parsedFiles = files?.map((file) => {
     const parts = file.key.split('.')
     const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
