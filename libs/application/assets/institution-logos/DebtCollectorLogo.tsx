@@ -1,6 +1,7 @@
+// Logo for Debt collector - Innheimtumaður (Skatturinn?)
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const DebtCollectorLogo: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="318"
     height="112"
