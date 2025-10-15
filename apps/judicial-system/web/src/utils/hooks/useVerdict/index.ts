@@ -92,22 +92,6 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
-  // TODO: pass in defendant ids
-  // iterate through ids
-  // deleteVerdict
-  // deleteVerdictFromState
-
-  // const deleteVerdicts = useCallback(
-  //   (
-  //     defendants: UpdateVerdictInput,
-  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
-  //   ) => {
-  //     updateDefendantVerdictState(update, setWorkingCase)
-  //     updateVerdict(update)
-  //   },
-  //   [updateDefendantVerdictState, updateVerdict],
-  // )
-
   const skip =
     !currentVerdict ||
     !currentVerdict?.externalPoliceDocumentId ||
