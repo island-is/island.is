@@ -97,6 +97,7 @@ import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
+import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import ConnectedTeamList from '../components/connected/TeamList/TeamList'
@@ -240,6 +241,8 @@ export const webRenderConnectedComponent = (
       break
     case 'FSRE/EmployeeList':
       connectedComponent = <ConnectedTeamList slice={slice} />
+    case 'Syslumenn/DrivingInstructorList':
+      connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

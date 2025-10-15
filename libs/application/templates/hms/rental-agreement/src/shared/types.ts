@@ -185,7 +185,7 @@ export interface SecurityDepositSection {
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
   insuranceCompanyInfo: string | undefined
-  landlordsMutualFundInfo: string | undefined
+  mutualFundInfo: string | undefined
   otherInfo: string | undefined
   securityDepositAmount: string | undefined
   securityAmountOther: string | undefined
