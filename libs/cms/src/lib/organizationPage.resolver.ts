@@ -96,9 +96,10 @@ export class OrganizationPageResolver {
         lang,
         organizationPage,
       )
+      if (!label || !href) return null
       return {
-        label: label ?? '',
-        href: href ?? '',
+        label,
+        href,
         isCategory: false,
       }
     }
