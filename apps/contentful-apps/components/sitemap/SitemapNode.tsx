@@ -548,7 +548,7 @@ export const SitemapNode = ({
                       addNode(node, type, entries, createNew, entryType)
                     }}
                     options={
-                      indent > 1 || node.type === TreeNodeType.ENTRY
+                      indent > 0 || node.type === TreeNodeType.ENTRY
                         ? [TreeNodeType.ENTRY, TreeNodeType.URL]
                         : [
                             TreeNodeType.CATEGORY,
