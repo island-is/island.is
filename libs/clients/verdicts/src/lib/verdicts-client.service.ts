@@ -74,7 +74,7 @@ export class VerdictsClientService {
               itemsPerPage: ITEMS_PER_PAGE,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
-              courts: input.courtLevel ? [input.courtLevel] : [],
+              courts: input.courtLevel ? input.courtLevel.split(',') : [],
               keywords: input.keywords,
               caseCategories: input.caseCategories,
               caseNumber: input.caseNumber,
@@ -312,6 +312,7 @@ export class VerdictsClientService {
     court?: string
     dateFrom?: string
     dateTo?: string
+    lawyer?: string
   }) {
     const onlyFetchSupremeCourtAgendas = input.court === 'Hæstiréttur'
     const pageNumber = input.page ?? 1
@@ -336,6 +337,7 @@ export class VerdictsClientService {
             itemsPerPage,
             dateFrom: input.dateFrom ? input.dateFrom : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
+            lawyer: input.lawyer,
           }),
     ])
 
@@ -387,16 +389,16 @@ export class VerdictsClientService {
 
   private isLawyerValid(lawyer: {
     isRemovedFromLawyersList?: boolean
-    recordID?: string
     name?: string
+    idNumber?: string
   }): lawyer is {
     isRemovedFromLawyersList?: boolean
-    recordID: string
+    idNumber: string
     name: string
   } {
     return (
       !lawyer?.isRemovedFromLawyersList &&
-      Boolean(lawyer?.recordID) &&
+      Boolean(lawyer?.idNumber) &&
       Boolean(lawyer.name)
     )
   }
@@ -406,7 +408,7 @@ export class VerdictsClientService {
     const items = (response.items ?? [])
       .filter(this.isLawyerValid)
       .map((lawyer) => ({
-        id: lawyer.recordID,
+        id: lawyer.idNumber,
         name: lawyer.name,
       }))
     items.sort(sortAlpha('name'))
