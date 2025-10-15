@@ -1,4 +1,4 @@
-// Logo for Directorate of Labour - Vinnumálastofnun
+// Logo for the Directorate of Labour - Vinnumálastofnun
 import React, { FC } from 'react'
 
 export const DirectorateOfLabourLogo: FC<
