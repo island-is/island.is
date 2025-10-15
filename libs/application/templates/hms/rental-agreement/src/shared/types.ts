@@ -19,6 +19,16 @@ export type ApplicantsInfo = {
   isRepresentative?: boolean
 }
 
+export type AnswerApplicant = {
+  city: string
+  name: string
+  email: string
+  address: string
+  nationalId: string
+  postalCode: string
+  phoneNumber: string
+}
+
 export type LandlordInfo = {
   nationalIdWithName: { name: string; nationalId: string }
   phone: string
@@ -233,94 +243,25 @@ export interface DraftNationalIdWithName {
   name: string
   nationalId: string
 }
-export interface DraftTenantInfo {
-  table: DraftPartyContact[]
-}
 
-export interface DraftLandlordInfo {
-  table: DraftPartyContact[]
-  shouldShowRepresentativeTable: string[]
-  representativeTable: DraftPartyContact[]
-}
-export interface DraftParties {
-  tenantInfo: DraftTenantInfo
-  landlordInfo: DraftLandlordInfo
-}
-export interface DraftResultsFile {
-  key: string
-  name: string
-}
-export interface DraftCondition {
-  inspector: string
-  resultsFiles: DraftResultsFile[]
-  resultsDescription: string
-}
-export interface DraftOtherFees {
-  otherCosts: string[]
-  heatingCost: string
-  housingFund: string
-  electricityCost: string
-}
-export interface DraftPropertyInfo {
-  categoryType: string
-  categoryClass: string
-}
-
-export interface DraftBankAccountNumber {
-  ledger: string
-  bankNumber: string
-  accountNumber: string
-}
-
-export interface DraftRentalAmount {
-  amount: string
-  isIndexConnected: string[]
-  paymentDateOptions: string
-  paymentMethodOptions: string
-  rentalPeriodStartDate: string
-  rentalPeriodIsDefinite: string[]
-  paymentMethodNationalId: string
-  securityDepositRequired: string[]
-  paymentMethodBankAccountNumber: DraftBankAccountNumber
-}
-
-export interface DraftRentalPeriod {
-  endDate: string
-  startDate: string
-  isDefinite: string[]
-}
-
-export interface DraftFireProtections {
-  fireBlanket: string
-  propertySize: PropertyUnit[]
-  emergencyExits: string
-  smokeDetectors: string
-  fireExtinguisher: string
-}
-
-export interface DraftRegisterProperty {
-  searchresults: DraftSearchResults
-}
-
-export interface DraftSearchResults {
-  label: string
-  units: PropertyUnit[]
-  value: string
-  address: string
-  landCode: number
-  numOfRooms: object
-  postalCode: number
-  addressCode: number
-  checkedUnits: object
-  municipalityCode: number
-  municipalityName: string
-  changedValueOfUnitSize: object
-  propertiesByAddressCode: DraftPropertyByAddressCode[]
-  numOfConnectedProperties: number
+export interface DraftPropertyUnit {
+  address?: string
+  addressCode?: number
+  appraisalUnitCode?: number
+  fireInsuranceValuation?: number
+  propertyCode?: number
+  propertyUsageDescription?: string
+  propertyValue?: number
+  size?: number
+  sizeUnit?: string
+  unitCode?: string
+  checked?: boolean
+  changedSize?: number
+  numOfRooms?: number
 }
 
 export interface DraftAppraisalUnit {
-  units: PropertyUnit[]
+  units: DraftPropertyUnit[]
   address: string
   unitCode: string
   addressCode: number
@@ -347,19 +288,41 @@ export interface DraftPropertyByAddressCode {
   propertyUsageDescription: string
 }
 
-export interface DraftSpecialProvisions {
-  rulesInput: string
-  descriptionInput: string
-  propertySearchUnits: PropertyUnit[]
-}
-export interface DraftAnswersObject {
-  parties?: DraftParties
-  condition?: DraftCondition
-  otherFees?: DraftOtherFees
-  propertyInfo?: DraftPropertyInfo
-  rentalAmount?: DraftRentalAmount
-  rentalPeriod?: DraftRentalPeriod
-  fireProtections?: DraftFireProtections
-  registerProperty?: DraftRegisterProperty
-  specialProvisions?: DraftSpecialProvisions
+export interface DraftAnswers {
+  contractId: string
+  landlords: DraftPartyContact[]
+  landlordRepresentatives: DraftPartyContact[]
+  tenants: DraftPartyContact[]
+  units: DraftPropertyUnit[]
+  startDate: string
+  endDate: string
+  amount: string
+  paymentMethodOther?: string
+  paymentDateOptions: string
+  paymentDayOther?: string
+  paymentMethodOptions: string
+  paymentMethodBankAccountNumber: BankAccount
+  categoryType: string
+  categoryClass: string
+  description: string
+  rules: string
+  conditionDescription: string
+  inspector: string
+  inspectorName?: string
+  smokeDetectors: string
+  fireExtinguisher: string
+  fireBlanket: string
+  emergencyExits: string
+  housingFundPayee: string
+  housingFundAmount?: string
+  electricityCostPayee: string
+  electricityCostMeterStatusDate?: string
+  electricityCostMeterNumber?: string
+  electricityCostMeterStatus?: string
+  heatingCostPayee: string
+  heatingCostMeterStatusDate?: string
+  heatingCostMeterNumber?: string
+  heatingCostMeterStatus?: string
+  otherCostPayedByTenant: YesOrNoEnum
+  otherCostItems: CostField[]
 }
