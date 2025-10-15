@@ -24,7 +24,7 @@ import {
   Typography,
 } from '../../ui'
 import { AirfaresUsageTable } from './airfares-usage-table'
-import { getConfig } from '../../config'
+import { useConfig } from '../../config'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -88,6 +88,7 @@ const Empty = () => {
 const Disabled = ({ componentId }: { componentId: string }) => {
   const intl = useIntl()
   const theme = useTheme()
+  const config = useConfig()
 
   return (
     <View
@@ -101,7 +102,7 @@ const Disabled = ({ componentId }: { componentId: string }) => {
         message={intl.formatMessage({ id: 'airDiscount.disabledDescription' })}
         detailLink={{
           text: intl.formatMessage({ id: 'button.moreInfoHere' }),
-          url: `${getConfig().apiUrl.replace(/api$/, '')}minarsidur/loftbru`,
+          url: `${config.apiUrl.replace(/api$/, '')}minarsidur/loftbru`,
           componentId: componentId,
         }}
       />
