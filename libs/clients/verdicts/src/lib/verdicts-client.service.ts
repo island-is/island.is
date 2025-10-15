@@ -418,6 +418,7 @@ export class VerdictsClientService {
   private isLawyerValid(lawyer: {
     isRemovedFromLawyersList?: boolean
     name?: string
+    idNumber?: string
   }): lawyer is {
     isRemovedFromLawyersList?: boolean
     name: string
