@@ -74,7 +74,7 @@ export class VerdictsClientService {
               itemsPerPage: ITEMS_PER_PAGE,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
-              courtLevel: input.courtLevel,
+              courts: input.courtLevel ? [input.courtLevel] : [],
               keywords: input.keywords,
               caseCategories: input.caseCategories,
               caseNumber: input.caseNumber,
@@ -120,7 +120,7 @@ export class VerdictsClientService {
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
-          court: goproItem.court ?? '',
+          court: goproItem.court?.code ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
           presidentJudge: goproItem.judges?.find((judge) =>
@@ -186,7 +186,7 @@ export class VerdictsClientService {
           item: {
             pdfString: response.item.docContent,
             title: response.item.title ?? '',
-            court: response.item.court ?? '',
+            court: response.item.court?.code ?? '',
             verdictDate: response.item.verdictDate,
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
@@ -332,7 +332,7 @@ export class VerdictsClientService {
         ? { status: 'rejected', items: [], total: 0 }
         : this.goproCourtAgendasApi.getPublishedBookings({
             pageNumber: pageNumber,
-            court: input.court ?? '',
+            courts: input.court ? [input.court] : [],
             itemsPerPage,
             dateFrom: input.dateFrom ? input.dateFrom : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
