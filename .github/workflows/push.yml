@@ -520,8 +520,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
-        with:
-          working-directory: monorepo
 
       - name: Install infra modules
         id: install-infra-modules
