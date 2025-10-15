@@ -17,7 +17,6 @@ import { ApplicationsTable } from '../../components/ApplicationsTable/Applicatio
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { AdminApplication } from '../../types/adminApplication'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
@@ -46,7 +45,6 @@ const InstitutionOverview = () => {
     defaultMultiChoiceFilters,
   )
 
-  const userInfo = useUserInfo()
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
@@ -61,7 +59,6 @@ const InstitutionOverview = () => {
     ssr: false,
     variables: {
       input: {
-        nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
         applicantNationalId:

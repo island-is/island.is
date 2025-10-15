@@ -22,7 +22,7 @@ export class ApplicationApplicationsAdminInput extends PartialType(
 
 @InputType()
 export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
-  ApplicationApplicationsAdminInput,
+  FiltersAdminInput,
   ['typeId'],
 ) {
   @Field(() => Number)
