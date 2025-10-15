@@ -1,6 +1,7 @@
+// Logo for the Directorate of Education and School Services - MMS - Miðstöð menntunar og skólaþjónustu (áður Menntamálastofnun)
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const MmsLogo: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="318"
     height="116"

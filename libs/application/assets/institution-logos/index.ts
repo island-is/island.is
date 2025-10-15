@@ -14,6 +14,7 @@ export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo' // Landlækn
 export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
 export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
+export { MmsLogo } from './MmsLogo' // Miðstöð menntunar og skólaþjónustu
 export { DebtCollectorLogo } from './DebtCollectorLogo' // Innheimtumaður (Skatturinn?)
 
 // Municipality logos
