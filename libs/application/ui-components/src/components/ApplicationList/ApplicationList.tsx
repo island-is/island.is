@@ -18,7 +18,14 @@ const pageSize = 5
 
 type ApplicationFields = Pick<
   Application,
-  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  | 'actionCard'
+  | 'id'
+  | 'typeId'
+  | 'status'
+  | 'modified'
+  | 'name'
+  | 'progress'
+  | 'formSystemSlug'
 >
 
 interface Props {
@@ -38,6 +45,8 @@ const ApplicationList = ({
 }: Props) => {
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
+
+  console.log('combinedApplications in applicationList', applications)
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,

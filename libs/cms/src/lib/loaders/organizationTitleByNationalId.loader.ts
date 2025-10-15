@@ -26,6 +26,7 @@ export class OrganizationTitleByNationalIdLoader
         'is',
       )
 
+    console.log('organizationTitles', organizationTitles)
     return organizationTitles
   }
 

@@ -23,13 +23,6 @@ export class Organization extends Model<Organization> {
   })
   id!: string
 
-  @Column({
-    type: DataType.JSON,
-    allowNull: false,
-    defaultValue: () => new LanguageType(),
-  })
-  name!: LanguageType
-
   @CreatedAt
   created!: CreationOptional<Date>
 

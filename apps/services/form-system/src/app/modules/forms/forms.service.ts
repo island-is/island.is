@@ -54,6 +54,7 @@ import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { UrlTypes } from '@island.is/form-system/enums'
 import { Application } from '../applications/models/application.model'
+import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 
 @Injectable()
 export class FormsService {
@@ -98,18 +99,7 @@ export class FormsService {
     if (!organization) {
       organization = await this.organizationModel.create({
         nationalId: nationalId,
-        name: { is: '', en: '' },
       } as Organization)
-    }
-
-    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
-    // if Admin is logged in then the token.nationalId is always the nationalId of Digital Iceland
-    if (nationalId === token.nationalId) {
-      organization.name = {
-        is: token.name ?? 'unknown',
-        en: organization.name.en,
-      }
-      await organization.save()
     }
 
     const forms = await this.formModel.findAll({
@@ -148,14 +138,14 @@ export class FormsService {
         .then((organizations) => organizations.map((org) => org.nationalId)),
       organizations: await this.organizationModel
         .findAll({
-          attributes: ['nationalId', 'name'],
+          attributes: ['nationalId'],
         })
         .then((organizations) =>
           organizations.map(
             (org) =>
               ({
                 value: org.nationalId,
-                label: org.name.is,
+                label: '',
                 isSelected: org.nationalId === nationalId,
               } as Option),
           ),

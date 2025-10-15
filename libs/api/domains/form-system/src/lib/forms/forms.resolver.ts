@@ -34,6 +34,7 @@ import {
   OrganizationTitleEnByNationalIdLoader,
   ShortTitle,
 } from '@island.is/cms'
+import { GetOrganizationAdminInput } from '../../dto/organization.input'
 
 @Resolver(() => Form)
 @UseGuards(IdsUserGuard)
@@ -102,6 +103,21 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<UpdateFormResponse> {
     return this.formsService.updateForm(user, input)
+  }
+
+  @Query(() => String, {
+    name: 'formSystemOrganizationTitle',
+    nullable: true,
+  })
+  async getOrganizationTitle(
+    @Args('input', { type: () => GetOrganizationAdminInput })
+    input: GetOrganizationAdminInput,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @CurrentUser() _user: User,
+  ): Promise<ShortTitle> {
+    console.log('input', input.nationalId)
+    return organizationTitleLoader.load(input.nationalId)
   }
 
   @CacheControl({ maxAge: 600, scope: 'PUBLIC' })

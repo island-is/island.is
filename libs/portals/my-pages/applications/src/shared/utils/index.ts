@@ -66,6 +66,7 @@ export const sortApplicationsOrganizations = (
   )
   // Sort alphabetically
   institutions.sort((a, b) => a.label.localeCompare(b.label))
+
   return institutions
 }
 
@@ -106,7 +107,9 @@ export const getFilteredApplicationsByStatus = (
       // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
       // otherwise it filters it.
       (activeInstitution !== ''
-        ? institutionMapper[application.typeId].slug === activeInstitution
+        ? application.formSystemSlug
+          ? application.institution === activeInstitution
+          : institutionMapper[application.typeId].slug === activeInstitution
         : true),
   )
   return sortApplicationsStatus(filteredApps)

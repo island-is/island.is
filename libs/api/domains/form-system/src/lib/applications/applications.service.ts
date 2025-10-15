@@ -29,7 +29,7 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { MyPagesApplication } from '../../models/myPagesApplication.model'
+import { Application as MyPagesApplication } from '../../../../application/src/lib/application.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -109,6 +109,7 @@ export class ApplicationsService {
     auth: User,
     locale: string,
   ): Promise<MyPagesApplication[]> {
+    console.log('inside myPagesApplications resolver service')
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerFindAllByUser({
         nationalId: auth.nationalId,

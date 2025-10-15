@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const GET_COMPANY = gql`
+export const FORM_SYSTEM_APPLICATIONS = gql`
   query myPagesApplications($locale: String) {
     formSystemMyPagesApplications(locale: $locale) {
       id

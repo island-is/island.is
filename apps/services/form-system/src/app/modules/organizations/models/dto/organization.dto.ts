@@ -6,9 +6,6 @@ export class OrganizationDto {
   @ApiProperty()
   id?: string
 
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
-
   @ApiProperty({ type: String })
   nationalId!: string
 

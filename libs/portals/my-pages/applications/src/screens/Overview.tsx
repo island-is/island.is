@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   useApplications,
+  useFormSystemApplications,
   useGetOrganizationsQuery,
 } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -49,6 +50,12 @@ const Overview = () => {
   useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
+  const {
+    data: formSystemApplications,
+    loading: formSystemLoading,
+    error: formSystemError,
+    refetch: formSystemRefetch,
+  } = useFormSystemApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
@@ -137,6 +144,8 @@ const Overview = () => {
       applicationsSortedByStatus.inProgress.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.completed &&
       applicationsSortedByStatus.finished.length === 0)
+
+  console.log('formSystemApplications', formSystemApplications)
 
   return (
     <>

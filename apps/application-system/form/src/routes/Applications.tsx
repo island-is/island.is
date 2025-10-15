@@ -7,6 +7,7 @@ import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
 } from '@island.is/application/graphql'
+import { FORM_SYSTEM_APPLICATIONS } from '@island.is/form-system/graphql'
 import {
   Text,
   Box,
@@ -36,6 +37,7 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
+import { form } from 'libs/application/templates/general-petition/src/forms/form'
 
 type UseParams = {
   slug: string
@@ -69,17 +71,54 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   useApplicationNamespaces(type)
 
   const {
-    data,
-    loading,
+    data: applicationsData,
+    loading: applicationsLoading,
     error: applicationsError,
-    refetch,
+    refetch: refetchApplications,
   } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
-    variables: {
-      input: { typeId: type },
-    },
+    variables: { input: { typeId: type } },
     skip: !type && !delegationsChecked,
     fetchPolicy: 'cache-and-network',
   })
+
+  const {
+    data: formSystemData,
+    loading: formSystemLoading,
+    error: formSystemError,
+    refetch: refetchFormSystemApplications,
+  } = useLocalizedQuery(FORM_SYSTEM_APPLICATIONS, {
+    skip: !type && !delegationsChecked,
+    fetchPolicy: 'cache-and-network',
+  })
+
+  // Combine and sort applications from both sources
+  const applicationsA = applicationsData?.applicationApplications ?? []
+  const applicationsB = formSystemData?.formSystemApplications ?? []
+
+  const combinedApplications: Application[] = React.useMemo(() => {
+    if (!applicationsA.length && !applicationsB.length) return []
+    const map = new Map<string, Application>()
+    ;[...applicationsA, ...applicationsB].forEach((app) => {
+      if (app) {
+        // Last one wins if duplicate ids appear
+        map.set(app.id, app)
+      }
+    })
+    return Array.from(map.values()).sort((a, b) => {
+      const aTime = a.modified ? new Date(a.modified).getTime() : 0
+      const bTime = b.modified ? new Date(b.modified).getTime() : 0
+      return bTime - aTime
+    })
+  }, [applicationsA, applicationsB])
+
+  console.log('combinedApplications', combinedApplications)
+
+  const loading = applicationsLoading || formSystemLoading
+  const error = applicationsError || formSystemError
+
+  const refetch = async () => {
+    await Promise.all([refetchApplications(), refetchFormSystemApplications()])
+  }
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -116,15 +155,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   }, [type, template])
 
   useEffect(() => {
-    if (
-      type &&
-      data &&
-      isEmpty(data.applicationApplications) &&
-      delegationsChecked
-    ) {
+    if (type && isEmpty(combinedApplications) && delegationsChecked) {
       createApplication()
     }
-  }, [type, data, delegationsChecked])
+  }, [type, combinedApplications, delegationsChecked])
 
   if (loading) {
     return <ApplicationLoading />
@@ -174,7 +208,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
+  const numberOfApplicationsInDraft = combinedApplications.filter(
     (x: Application) => x.state === 'draft',
   ).length
 
@@ -187,7 +221,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <Page>
       <GridContainer>
-        {!loading && !isEmpty(data?.applicationApplications) && (
+        {!loading && !isEmpty(combinedApplications) && (
           <Box marginBottom={5}>
             <Box
               marginTop={5}
@@ -215,9 +249,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
               ) : null}
             </Box>
 
-            {data?.applicationApplications && (
+            {combinedApplications && (
               <ApplicationList
-                applications={data.applicationApplications}
+                applications={combinedApplications}
                 onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
               />

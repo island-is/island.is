@@ -23,7 +23,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
-import { MyPagesApplication } from '../../models/myPagesApplication.model'
+import { Application as MyPagesApplication } from '../../../../application/src/lib/application.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)

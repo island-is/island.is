@@ -314,14 +314,14 @@ export class ApplicationsService {
     applicationResponseDto.total = total
     applicationResponseDto.organizations = await this.organizationModel
       .findAll({
-        attributes: ['nationalId', 'name'],
+        attributes: ['nationalId'],
       })
       .then((organizations) =>
         organizations.map(
           (org) =>
             ({
               value: org.nationalId,
-              label: org.name.is,
+              label: '',
               isSelected: org.nationalId === organizationNationalId,
             } as Option),
         ),
@@ -361,7 +361,7 @@ export class ApplicationsService {
     const organization = await this.organizationModel.findByPk(
       form.organizationId,
     )
-    applicationDto.organizationName = organization?.name
+    applicationDto.organizationName = form.organizationDisplayName
 
     return applicationDto
   }
