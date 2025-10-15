@@ -1,8 +1,4 @@
 import {
-  Request as NodeFetchRequest,
-  Headers as NodeFetchHeaders,
-} from 'node-fetch'
-import {
   FetchAPI as NodeFetchAPI,
   RequestInit,
   MiddlewareAPI,
@@ -10,7 +6,6 @@ import {
   Request,
 } from './nodeFetch'
 import { EnhancedFetchAPI, AuthSource } from './types'
-import { Readable } from 'stream'
 
 export function buildFetch(actualFetch: NodeFetchAPI, authSource?: AuthSource) {
   let nextMiddleware: MiddlewareAPI = actualFetch
