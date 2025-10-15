@@ -1,4 +1,4 @@
-// Logo for directorate of fisheries - Fiskistofa
+// Logo for the Directorate of Fisheries - Fiskistofa
 import React, { FC } from 'react'
 
 export const DirectorateOfFisheriesLogo: FC<
