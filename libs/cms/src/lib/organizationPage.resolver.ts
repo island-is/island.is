@@ -90,6 +90,18 @@ export class OrganizationPageResolver {
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
   ): Breadcrumb | undefined | null {
+    if (node.type === SitemapTreeNodeType.URL) {
+      const { label, href } = this.getUrlLabelAndHref(
+        node,
+        lang,
+        organizationPage,
+      )
+      return {
+        label: label ?? '',
+        href: href ?? '',
+        isCategory: false,
+      }
+    }
     if (node.type === SitemapTreeNodeType.ENTRY) {
       const entryItem = entryMap.get(node.entryId)
       if (!entryItem) return null
@@ -237,6 +249,52 @@ export class OrganizationPageResolver {
     }
   }
 
+  private getUrlLabelAndHref(
+    node: SitemapTreeNode,
+    lang: string,
+    organizationPage: OrganizationPage,
+  ) {
+    if (node.type !== SitemapTreeNodeType.URL) {
+      return {
+        label: '',
+        href: '',
+      }
+    }
+    const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
+      organizationPage.slug
+    }`
+
+    switch (node.urlType) {
+      case 'organizationFrontpage':
+        return {
+          label: lang === 'en' ? node.labelEN : node.label,
+          href: baseUrl,
+        }
+      case 'organizationNewsOverview':
+        return {
+          label: lang === 'en' ? node.labelEN : node.label,
+          href: `${baseUrl}/${lang === 'en' ? 'news' : 'frett'}`,
+        }
+      case 'organizationPublishedMaterial':
+        return {
+          label: lang === 'en' ? node.labelEN : node.label,
+          href: `${baseUrl}/${
+            lang === 'en' ? 'published-material' : 'utgefid-efni'
+          }`,
+        }
+      case 'organizationEventOverview':
+        return {
+          label: lang === 'en' ? node.labelEN : node.label,
+          href: `${baseUrl}/${lang === 'en' ? 'events' : 'vidburdir'}`,
+        }
+      default:
+        return {
+          label: lang === 'en' ? node.labelEN : node.label,
+          href: lang === 'en' ? node.urlEN : node.url,
+        }
+    }
+  }
+
   private getNodeLabelAndHref(
     node: SitemapTreeNode,
     lang: string,
@@ -259,38 +317,7 @@ export class OrganizationPageResolver {
       }
     }
     if (node.type === SitemapTreeNodeType.URL) {
-      const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
-        organizationPage.slug
-      }`
-      switch (node.urlType) {
-        case 'organizationFrontpage':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: baseUrl,
-          }
-        case 'organizationNewsOverview':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${lang === 'en' ? 'news' : 'frett'}`,
-          }
-        case 'organizationPublishedMaterial':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${
-              lang === 'en' ? 'published-material' : 'utgefid-efni'
-            }`,
-          }
-        case 'organizationEventOverview':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${lang === 'en' ? 'events' : 'vidburdir'}`,
-          }
-        default:
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: lang === 'en' ? node.urlEN : node.url,
-          }
-      }
+      return this.getUrlLabelAndHref(node, lang, organizationPage)
     }
     if (node.type === SitemapTreeNodeType.ENTRY) {
       const entryItem = entryMap.get(node.entryId)
