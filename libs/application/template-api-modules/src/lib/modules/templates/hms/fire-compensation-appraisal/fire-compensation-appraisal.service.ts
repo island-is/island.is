@@ -148,6 +148,11 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     const selectedRealEstate = realEstates?.find(
       (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
     )
+
+    if (!selectedRealEstate) {
+      if (allowFail) return
+      throw new TemplateApiError('Selected real estate is not set', 500)
+    }
     
     const applicant = getApplicant(application.answers)
     const { nationalId: applicantNationalId, name: applicantName } = applicant
