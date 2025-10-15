@@ -391,6 +391,7 @@ export const HeirsRepeater: FC<
         field.nationalId === spouseNationalId,
     )
     setHasHeirWithNationalIdSameAsExecutor(match)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values])
 
   return (
@@ -707,7 +708,9 @@ export const HeirsRepeater: FC<
         </Box>
       ) : errors && errors[heirNationalIdSameAsExecutorValidation] ? (
         <Box marginTop={4}>
-          <InputError errorMessage={formatMessage(m.heirNationalIdValidation)} />
+          <InputError
+            errorMessage={formatMessage(m.heirNationalIdValidation)}
+          />
         </Box>
       ) : null}
       {!!fields.length && props.sumField && (
