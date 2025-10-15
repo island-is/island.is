@@ -7,7 +7,7 @@ export const ruling = style({
   justifyContent: 'center',
   border: `1px solid ${theme.color.blue200}`,
   width: '100%',
-  height: '500px',
+  height: '330px',
   overflow: 'auto',
   marginBottom: theme.spacing[5],
   marginTop: -theme.spacing[1],
