@@ -136,7 +136,7 @@ const CourtRecord: FC = () => {
             caseId={workingCase.id}
             title="Þingbók - PDF"
             pdfType="courtRecord"
-            disabled={workingCase.courtSessions?.some((c) => !c.isConfirmed)}
+            disabled={!workingCase.courtSessions?.[0].startDate}
           />
         </Box>
       </FormContentContainer>
@@ -144,7 +144,6 @@ const CourtRecord: FC = () => {
         <FormFooter
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          // onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
         />
       </FormContentContainer>
     </PageLayout>

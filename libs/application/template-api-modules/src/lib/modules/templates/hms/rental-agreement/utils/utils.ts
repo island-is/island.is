@@ -66,7 +66,7 @@ export const getSecurityDepositTypeDescription = (
   bankGuaranteeInfo: string | undefined,
   thirdPartyGuaranteeInfo: string | undefined,
   insuranceCompanyInfo: string | undefined,
-  landlordsMutualFundInfo: string | undefined,
+  mutualFundInfo: string | undefined,
 ) => {
   if (
     type === SecurityDepositType.Capital ||
@@ -84,7 +84,7 @@ export const getSecurityDepositTypeDescription = (
     case SecurityDepositType.InsuranceCompany:
       return insuranceCompanyInfo
     case SecurityDepositType.LandlordMutualFund:
-      return landlordsMutualFundInfo
+      return mutualFundInfo
     default:
       return null
   }
