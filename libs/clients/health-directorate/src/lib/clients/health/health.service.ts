@@ -26,13 +26,13 @@ import {
   meDonorStatusControllerUpdateOrganDonorStatusV1,
 } from './gen/fetch'
 
-const LOG_CATEGORY = 'health-directorate-health-api'
-
 import { Locale } from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
+    this.logger = logger.child({ context: 'HealthDirectorateHealthService' })
+  }
 
   private mapLocale(locale: string): Locale {
     return locale === 'is' ? Locale.IS : Locale.EN
@@ -113,13 +113,15 @@ export class HealthDirectorateHealthService {
     id: string,
     input: PrescriptionRenewalRequestDto,
   ) {
-    return await data(
-      mePrescriptionControllerRenewPrescriptionV1({
-        path: {
-          id,
-        },
-        body: input,
-      }),
+    return await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerRenewPrescriptionV1({
+          path: {
+            id,
+          },
+          body: input,
+        }),
+      ),
     )
   }
 
@@ -204,9 +206,7 @@ export class HealthDirectorateHealthService {
     )
 
     if (!organDonation) {
-      this.logger.warn('No organ donations data returned', {
-        category: LOG_CATEGORY,
-      })
+      this.logger.warn('No organ donations data returned')
       return null
     }
 
@@ -243,10 +243,9 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
+
     if (!donationExceptions) {
-      this.logger.warn('No organ donations exceptions returned', {
-        category: LOG_CATEGORY,
-      })
+      this.logger.warn('No organ donations exceptions returned')
       return null
     }
 
