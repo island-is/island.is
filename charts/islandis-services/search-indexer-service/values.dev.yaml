@@ -121,7 +121,7 @@ initContainer:
 namespace: 'search-indexer'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 progressDeadlineSeconds: 1500
