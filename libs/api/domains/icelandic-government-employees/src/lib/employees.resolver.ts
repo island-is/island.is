@@ -1,17 +1,11 @@
-import {
-  IdsUserGuard,
-  CurrentUser,
-  type User,
-} from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { IcelandicGovernmentEmployeesService } from './employees.service'
 import { EmployeeList } from './models/employeeList.model'
 import { EmployeesInput } from './dtos/getEmployeeList.input'
+import { BypassAuth } from '@island.is/auth-nest-tools'
 
 @Resolver()
-@UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/icelandic-government-employees' })
 export class IcelandicGovernmentEmployeesResolver {
   constructor(
@@ -22,12 +16,11 @@ export class IcelandicGovernmentEmployeesResolver {
     name: 'icelandicGovernmentEmployees',
     nullable: true,
   })
-  @Audit()
+  @BypassAuth()
   async getEmployeeList(
-    @CurrentUser() user: User,
     @Args('input', { type: () => EmployeesInput })
     input: EmployeesInput,
   ): Promise<EmployeeList | null> {
-    return this.employeeService.getEmployees(user, input.organizationId)
+    return this.employeeService.getEmployees(input.organizationId)
   }
 }

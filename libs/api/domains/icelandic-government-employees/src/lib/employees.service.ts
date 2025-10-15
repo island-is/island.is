@@ -10,11 +10,9 @@ export class IcelandicGovernmentEmployeesService {
   constructor(private elfurService: ElfurClientService) {}
 
   async getEmployees(
-    user: User,
     organizationId: string,
   ): Promise<EmployeeList> {
     const data = await this.elfurService.getOrganizationEmployees(
-      user,
       organizationId,
     )
 

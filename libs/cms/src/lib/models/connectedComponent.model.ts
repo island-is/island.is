@@ -22,9 +22,11 @@ export class ConnectedComponent {
   // should ideally handle its own data fetching) to get data from contentful in case we can't
   // fetch it from the API and also to quickly change the graphql endpoint for the data.
   @Field(() => graphqlTypeJson, { nullable: true })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   json?: Record<string, any> | null
 
   @Field(() => graphqlTypeJson, { nullable: true })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   configJson?: Record<string, any> | null
 
   @CacheField(() => GraphQLJSONObject, { nullable: true })
