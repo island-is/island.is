@@ -316,9 +316,7 @@ export class AppService {
       serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
-      appealDecision:
-        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
-        undefined,
+      appealDecision: deliveredAppealDecision ?? undefined,
     }
     try {
       const res = await fetch(
@@ -332,8 +330,6 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
-      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
-      // once service date has been recorded for the verdict
 
       const response = await res.json()
 
