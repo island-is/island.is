@@ -211,16 +211,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     ).filter((id) => typeof id === 'string' && id !== '')
 
     const results = await Promise.allSettled(
-      recipients.map((recipient) =>
+      recipients.map((recipientNationalId) =>
         this.notificationsService.sendNotification({
           type: NotificationType.FireCompensationAppraisal,
           messageParties: {
-            recipient,
+            recipient: recipientNationalId,
             sender: applicantNationalId,
           },
           applicationId: application.id,
           args: {
-            applicantName: applicantName,
+            applicantName: recipientNationalId === applicantNationalId ? 'Þú' : applicantName,
             applicationId: application.id,
             appliedForAddress: fullAddress,
           },
