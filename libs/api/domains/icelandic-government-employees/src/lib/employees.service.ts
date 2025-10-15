@@ -1,4 +1,3 @@
-import { type User } from '@island.is/auth-nest-tools'
 import { ElfurClientService } from '@island.is/clients/elfur'
 import { Injectable } from '@nestjs/common'
 import { EmployeeList } from './models/employeeList.model'

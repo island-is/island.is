@@ -12,10 +12,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
 import { maskString } from '@island.is/shared/utils'
-import {
-  useTestQueryQuery,
-  useUserInfoOverviewQuery,
-} from './UserInfoOverview.generated'
+import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 
