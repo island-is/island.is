@@ -55,7 +55,11 @@ export const NotificationConfig = {
   },
   [NotificationType.FireCompensationAppraisal]: {
     templateId: 'HNIPP.AS.HMS.FCA.NOTIFICATION',
-    keys: {} as { applicantName: string; applicationId: string; appliedForAddress: string },
+    keys: {} as {
+      applicantName: string
+      applicationId: string
+      appliedForAddress: string
+    },
   },
 }
 

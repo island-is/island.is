@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationTypes, NotificationType } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  NotificationType,
+} from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -9,7 +12,11 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   getApplicant,
   mapAnswersToApplicationDto,
@@ -129,7 +136,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
   }
 
-  async sendNotificationToAllInvolved({application}: TemplateApiModuleActionProps) {
+  async sendNotificationToAllInvolved({
+    application,
+  }: TemplateApiModuleActionProps) {
     const allowFail = false
 
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
@@ -138,12 +147,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     )?.includes(YES)
 
     const selectedRealEstateId = otherPropertiesThanIOwn
-    ? 'F' + getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
-    : getValueViaPath<string>(application.answers, 'realEstate')
+      ? 'F' +
+        getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
+      : getValueViaPath<string>(application.answers, 'realEstate')
 
     const realEstates = otherPropertiesThanIOwn
       ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
-      : getValueViaPath<Array<Fasteign>>(application.externalData, 'getProperties.data')
+      : getValueViaPath<Array<Fasteign>>(
+          application.externalData,
+          'getProperties.data',
+        )
 
     const selectedRealEstate = realEstates?.find(
       (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
@@ -161,10 +174,13 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       if (allowFail) return
       throw new TemplateApiError('Applicant is not set', 500)
     }
-    
-    const owners = selectedRealEstate?.thinglystirEigendur?.thinglystirEigendur ?? []
-    const address = selectedRealEstate?.sjalfgefidStadfang?.birtingStutt?.toString()
-    const postalCode = selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString()
+
+    const owners =
+      selectedRealEstate?.thinglystirEigendur?.thinglystirEigendur ?? []
+    const address =
+      selectedRealEstate?.sjalfgefidStadfang?.birtingStutt?.toString()
+    const postalCode =
+      selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString()
 
     if (!address || !postalCode) {
       if (allowFail) return
@@ -172,21 +188,28 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
 
     const fullAddress = address + ', ' + postalCode
-    
+
     // string[] after filter
     const ownersSsn = owners
       .map((o) => o.kennitala)
-      .filter((ssn): ssn is string => typeof ssn === 'string' && ssn !== '' && isPerson(ssn))
-    
+      .filter(
+        (ssn): ssn is string =>
+          typeof ssn === 'string' && ssn !== '' && isPerson(ssn),
+      )
+
     if (ownersSsn.length === 0) {
       if (allowFail) return
-      throw new TemplateApiError('No valid owners found for the selected real estate', 500)
+      throw new TemplateApiError(
+        'No valid owners found for the selected real estate',
+        500,
+      )
     }
-    
+
     // deduplicate and filter
-    const recipients = Array.from(new Set<string>([applicantNationalId, ...ownersSsn]))
-      .filter((id) => typeof id === 'string' && id !== '')
-    
+    const recipients = Array.from(
+      new Set<string>([applicantNationalId, ...ownersSsn]),
+    ).filter((id) => typeof id === 'string' && id !== '')
+
     const results = await Promise.allSettled(
       recipients.map((recipient) =>
         this.notificationsService.sendNotification({
@@ -204,24 +227,29 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         }),
       ),
     )
-    
+
     const failed = results
       .map((result, i) => ({ result, recipient: recipients[i] }))
       .filter(
         (x): x is { result: PromiseRejectedResult; recipient: string } =>
           x.result.status === 'rejected',
       )
-    
+
     if (failed.length > 0) {
-      const details = failed.map(
-        (failedResult) =>
-          `${failedResult.recipient}: ${
-            (failedResult.result.reason as Error)?.message ?? String(failedResult.result.reason)
-          }`
-      ).join('; ')
+      const details = failed
+        .map(
+          (failedResult) =>
+            `${failedResult.recipient}: ${
+              (failedResult.result.reason as Error)?.message ??
+              String(failedResult.result.reason)
+            }`,
+        )
+        .join('; ')
 
       withLoggingContext({ applicationId: application.id }, () => {
-        this.logger.error(`Failed to send notification to ${failed.length} recipient(s): ${details}`)
+        this.logger.error(
+          `Failed to send notification to ${failed.length} recipient(s): ${details}`,
+        )
       })
     }
   }
