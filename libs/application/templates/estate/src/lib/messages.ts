@@ -416,7 +416,8 @@ export const m = defineMessages({
   },
   reminderInfoDescription: {
     id: 'es.application:reminderInfoDescription#markdown',
-    defaultMessage: 'Hér á eftir eru tvær staðhæfingar sem mikilvægt er að þú hafir í huga áður en þú heldur áfram með umsóknina. Þú þarft að samþykkja báðar staðhæfingarnar til að geta haldið áfram með umsóknina.',
+    defaultMessage:
+      'Hér á eftir eru tvær staðhæfingar sem mikilvægt er að þú hafir í huga áður en þú heldur áfram með umsóknina. Þú þarft að samþykkja báðar staðhæfingarnar til að geta haldið áfram með umsóknina.',
     description: '',
   },
   reminderInfoAssetsAndDebts: {
@@ -426,12 +427,14 @@ export const m = defineMessages({
   },
   reminderInfoAssetsAndDebtsDescription: {
     id: 'es.application:reminderInfoAssetsAndDebtsDescription#markdown',
-    defaultMessage: 'Athugaðu að þú hafir skráð allar eignir og skuldir lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    defaultMessage:
+      'Athugaðu að þú hafir skráð allar eignir og skuldir lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     description: '',
   },
   reminderInfoAssetsAndDebtsCheckbox: {
     id: 'es.application:reminderInfoAssetsAndDebtsCheckbox',
-    defaultMessage: 'Já, ég skil að ég þurfi að skrá inn allar eignir og skuldir eftirlifandi maka',
+    defaultMessage:
+      'Já, ég skil að ég þurfi að skrá inn allar eignir og skuldir eftirlifandi maka',
     description: '',
   },
   reminderInfoAttachments: {
@@ -447,7 +450,8 @@ export const m = defineMessages({
   },
   reminderInfoAttachmentsCheckbox: {
     id: 'es.application:reminderInfoAttachmentsCheckbox',
-    defaultMessage: 'Já, ég skil að ég þurfi að láta fylgja með öll nauðsynleg skjöl',
+    defaultMessage:
+      'Já, ég skil að ég þurfi að láta fylgja með öll nauðsynleg skjöl',
     description: '',
   },
   additionalInfo: {

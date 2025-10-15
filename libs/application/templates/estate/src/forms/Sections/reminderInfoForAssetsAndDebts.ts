@@ -21,7 +21,7 @@ export const reminderInfoForAssetsAndDebts = buildSection({
           title: m.reminderInfoAssetsAndDebts,
           titleVariant: 'h3',
           marginBottom: 'gutter',
-          description: m.reminderInfoAssetsAndDebtsDescription
+          description: m.reminderInfoAssetsAndDebtsDescription,
         }),
         buildCheckboxField({
           id: 'reminderInfo.assetsAndDebtsCheckbox',
