@@ -2,6 +2,8 @@ import {
   Dispatch,
   FC,
   SetStateAction,
+  useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -30,6 +32,7 @@ import {
 import {
   BlueBox,
   DateTime,
+  FormContext,
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -48,6 +51,7 @@ import {
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
@@ -112,6 +116,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
   } = props
+  const { isCaseUpToDate } = useContext(FormContext)
   const { courtDocument } = useCourtDocuments()
   const { updateCourtSession } = useCourtSessions()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
@@ -126,26 +131,89 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
+  const patchSession = useCallback(
+    (
+      courtSessionId: string,
+      updates: Partial<CourtSessionResponse>,
+      { persist = false } = {},
+    ) => {
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
+          session.id === courtSessionId ? { ...session, ...updates } : session,
+        ),
+      }))
+
+      if (persist) {
+        updateCourtSession({
+          ...updates,
+          courtSessionId,
+          caseId: workingCase.id,
+        })
+      }
+    },
+    [setWorkingCase, updateCourtSession, workingCase.id],
+  )
+
+  const getInitialAttendees = useCallback(() => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
+    }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        attendees.push(`\n${defendant.name} ákærði`)
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
+  }, [workingCase.prosecutor, workingCase.defendants])
+
+  const initialize = useCallback(() => {
+    const update = {
+      judgeId: courtSession.judgeId ?? workingCase.judge?.id,
+      startDate:
+        courtSession.startDate ??
+        workingCase.courtDate?.date ??
+        workingCase.arraignmentDate?.date,
+      location:
+        courtSession.location ??
+        (workingCase.court?.name
+          ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+          : ''),
+      attendees: courtSession.attendees ?? getInitialAttendees(),
+      endDate: courtSession.endDate
+        ? courtSession.endDate
+        : courtSession.startDate
+        ? courtSession.startDate
+        : new Date().toString(),
+    }
+
+    patchSession(courtSession.id, update, { persist: true })
+  }, [
+    courtSession,
+    workingCase.judge?.id,
+    workingCase.courtDate?.date,
+    workingCase.arraignmentDate?.date,
+    workingCase.court?.name,
+    getInitialAttendees,
+    patchSession,
+  ])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
   const defaultJudge = judges?.find(
     (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
   )
-
-  const patchSession = (
-    courtSessionId: string,
-    updates: Partial<CourtSessionResponse>,
-    { persist = false } = {},
-  ) => {
-    setWorkingCase((prev) => ({
-      ...prev,
-      courtSessions: prev.courtSessions?.map((session) =>
-        session.id === courtSessionId ? { ...session, ...updates } : session,
-      ),
-    }))
-
-    if (persist) {
-      updateCourtSession({ ...updates, courtSessionId, caseId: workingCase.id })
-    }
-  }
 
   const handleDeleteFile = async (file: TUploadFile) => {
     if (!file.id) {
@@ -380,29 +448,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       (acc, session) => (acc += session.filedDocuments?.length || 0),
       0,
     )
-  }
-
-  const getInitialAttendees = () => {
-    const attendees = []
-    if (workingCase.prosecutor) {
-      attendees.push(
-        `${workingCase.prosecutor.name} ${lowercase(
-          workingCase.prosecutor.title,
-        )}`,
-      )
-    }
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
-      workingCase.defendants.forEach((defendant) => {
-        if (defendant.defenderName) {
-          attendees.push(
-            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
-          )
-        }
-        attendees.push(`\n${defendant.name} ákærði`)
-      })
-    }
-
-    return attendees.length > 0 ? attendees.join('') : undefined
   }
 
   useEffect(() => {
