@@ -316,7 +316,7 @@ export class AppService {
       serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
-      appealDecision: deliveredAppealDecision ?? undefined,
+      appealDecision: deliveredAppealDecision?.value,
     }
     try {
       const res = await fetch(
