@@ -105,11 +105,6 @@ export const m = {
       defaultMessage: 'Kennitala',
       description: 'Kennitala',
     },
-    senderNationalIdSkippedLabel: {
-      id: 'web.landspitali.memorialCard:info.senderNationalIdSkippedLabel',
-      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-    },
     senderAddressLabel: {
       id: 'web.landspitali.memorialCard:info.senderAddressLabel',
       defaultMessage: 'Heimilisfang',

@@ -68,11 +68,6 @@ export const m = {
       defaultMessage: 'Staður',
       description: 'Staður',
     },
-    senderNationalIdSkippedLabel: {
-      id: 'web.landspitali.directGrants:info.senderNationalIdSkippedLabel',
-      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-    },
     senderGrantExplanation: {
       id: 'web.landspitali.directGrants:info.senderGrantExplanation',
       defaultMessage: 'Skýring á styrk',
