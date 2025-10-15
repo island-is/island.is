@@ -8,7 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
