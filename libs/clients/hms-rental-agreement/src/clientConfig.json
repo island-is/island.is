@@ -8,9 +8,7 @@
   "paths": {
     "/contract": {
       "post": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -39,9 +37,7 @@
     },
     "/contract/send-draft": {
       "post": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -70,9 +66,7 @@
     },
     "/contract/kt/{kt}": {
       "get": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "parameters": [
           {
             "name": "kt",
@@ -118,9 +112,7 @@
     },
     "/contract/cancel": {
       "post": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -149,9 +141,7 @@
     },
     "/contract/terminate": {
       "post": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -397,11 +387,7 @@
         "additionalProperties": false
       },
       "AppraisalUnit": {
-        "required": [
-          "appraisalUnitId",
-          "rooms",
-          "size"
-        ],
+        "required": ["appraisalUnitId", "rooms", "size"],
         "type": "object",
         "properties": {
           "appraisalUnitId": {
@@ -736,12 +722,7 @@
         "additionalProperties": false
       },
       "DepositAmount": {
-        "enum": [
-          "OneMonth",
-          "TwoMonths",
-          "ThreeMonths",
-          "Other"
-        ],
+        "enum": ["OneMonth", "TwoMonths", "ThreeMonths", "Other"],
         "type": "string"
       },
       "FireProtections": {
@@ -781,10 +762,7 @@
         "additionalProperties": false
       },
       "InspectorType": {
-        "enum": [
-          "ContractParties",
-          "Indipendant"
-        ],
+        "enum": ["ContractParties", "Indipendant"],
         "type": "string"
       },
       "Lease": {
@@ -913,9 +891,7 @@
         "additionalProperties": false
       },
       "MiscellaneousFees": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
@@ -958,10 +934,7 @@
         "additionalProperties": false
       },
       "Payer": {
-        "enum": [
-          "Landlord",
-          "Tenant"
-        ],
+        "enum": ["Landlord", "Tenant"],
         "type": "string"
       },
       "Payment": {
@@ -993,29 +966,15 @@
         "additionalProperties": false
       },
       "PaymentDay": {
-        "enum": [
-          "First",
-          "Last",
-          "Other"
-        ],
+        "enum": ["First", "Last", "Other"],
         "type": "string"
       },
       "PaymentMethod": {
-        "enum": [
-          "BankTransfer",
-          "PaymentSlip",
-          "Other"
-        ],
+        "enum": ["BankTransfer", "PaymentSlip", "Other"],
         "type": "string"
       },
       "Person": {
-        "required": [
-          "address",
-          "email",
-          "name",
-          "nationalId",
-          "phone"
-        ],
+        "required": ["address", "email", "name", "nationalId", "phone"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -1093,24 +1052,15 @@
         "additionalProperties": false
       },
       "PropertyPart": {
-        "enum": [
-          "Whole",
-          "Part"
-        ],
+        "enum": ["Whole", "Part"],
         "type": "string"
       },
       "PropertyType": {
-        "enum": [
-          "House_Apartment",
-          "Room",
-          "Commercial"
-        ],
+        "enum": ["House_Apartment", "Room", "Commercial"],
         "type": "string"
       },
       "Rent": {
-        "required": [
-          "amount"
-        ],
+        "required": ["amount"],
         "type": "object",
         "properties": {
           "amount": {
@@ -1129,10 +1079,7 @@
         "additionalProperties": false
       },
       "RentIndex": {
-        "enum": [
-          "None",
-          "ConsumerPriceIndex"
-        ],
+        "enum": ["None", "ConsumerPriceIndex"],
         "type": "string"
       },
       "SecurityDeposit": {
