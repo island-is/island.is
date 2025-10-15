@@ -1,6 +1,9 @@
+// Logo for the National Registry (Registers Iceland) - Þjóðskrá
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const NationalRegistryLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="80"
     height="80"
@@ -43,5 +46,3 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
     </defs>
   </svg>
 )
-
-export default Logo
