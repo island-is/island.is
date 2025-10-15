@@ -108,8 +108,6 @@ export const TableRepeaterFormField: FC<Props> = ({
   )
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
-  const savedFields = fields.filter((_, index) => index !== activeIndex)
-
   const staticData = getStaticTableData?.(application)
 
   // Update other form values (if necessary) after saving a single row
@@ -136,7 +134,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const safeUpdate = (index: number, changes: Partial<TableRepeaterRow>) => {
-    const current = values[index] || {}
+    const current = methods.getValues(`${data.id}.${index}`) || {}
     update(index, { ...current, ...changes })
   }
 
@@ -154,7 +152,6 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleCancelItem = (index: number) => {
-    safeUpdate(index, { isUnsaved: false })
     setActiveIndex(-1)
     if (!isEditing) {
       remove(index)
@@ -169,12 +166,11 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleRemoveItem = (index: number) => {
-    safeUpdate(index, { isRemoved: true, isUnsaved: false })
+    safeUpdate(index, { isRemoved: true })
     if (activeIndex === index) setActiveIndex(-1)
   }
 
   const handleEditItem = (index: number) => {
-    safeUpdate(index, { isUnsaved: true })
     setActiveIndex(index)
     setIsEditing(true)
   }
@@ -299,8 +295,13 @@ export const TableRepeaterFormField: FC<Props> = ({
                   </T.Row>
                 ))}
               {values &&
-                savedFields.map((field, index) => {
-                  if (field.isUnsaved || field.isRemoved) return null
+                fields.map((field, index) => {
+                  if (
+                    index === activeIndex ||
+                    field.isUnsaved ||
+                    field.isRemoved
+                  )
+                    return null
 
                   // Compute display index (based only on visible rows)
                   const displayIndex = fields
@@ -358,9 +359,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                       {tableRows.map((item, idx) => (
                         <T.Data
                           key={`${item}-${idx}`}
-                          disabled={
-                            values[index].disabled === 'true' ? true : false
-                          }
+                          disabled={values[index].disabled === 'true'}
                         >
                           {formatTableValue(
                             item,
@@ -427,7 +426,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 icon="add"
                 disabled={
                   maxRows
-                    ? savedFields.filter((x) => !x.isUnsaved && !x.isRemoved)
+                    ? fields.filter((x) => !x.isUnsaved && !x.isRemoved)
                         .length >= maxRows
                     : false
                 }
