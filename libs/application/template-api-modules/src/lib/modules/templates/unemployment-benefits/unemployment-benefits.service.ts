@@ -5,7 +5,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsFileDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
@@ -53,7 +52,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
-import { FileResponse } from './types'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
