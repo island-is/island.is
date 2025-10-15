@@ -107,6 +107,16 @@ const getApplicantsItem = (
     'userProfile.data',
   )
 
+  const email =
+    getValueViaPath<string>(answers, 'applicant.email') ??
+    userProfile?.email ??
+    ''
+  const phone = formatPhoneNumber(
+    getValueViaPath<string>(answers, 'applicant.phoneNumber') ??
+      userProfile?.mobilePhoneNumber ??
+      '',
+  )
+
   return [
     {
       width: 'full' as const,
@@ -121,12 +131,12 @@ const getApplicantsItem = (
     {
       width: 'half' as const,
       keyText: m.misc.email,
-      valueText: userProfile?.email ?? '',
+      valueText: email,
     },
     {
       width: 'half' as const,
       keyText: m.misc.phoneNumber,
-      valueText: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
+      valueText: phone,
     },
   ]
 }
