@@ -29,11 +29,11 @@ export const InventoryFields: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const currentInfo = getValues(infoFieldId)
       const currentValue = getValues(valueFieldId)
 
-      if (currentInfo === undefined && prefill.info) {
+      if (!currentInfo && prefill.info !== null) {
         setValue(infoFieldId, prefill.info)
       }
 
-      if (currentValue === undefined && prefill.value) {
+      if (!currentValue && prefill.value !== null) {
         setValue(valueFieldId, prefill.value)
       }
     }
