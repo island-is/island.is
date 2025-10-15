@@ -570,8 +570,8 @@ jobs:
         working-directory: monorepo
         env:
           # APP_ID
-          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
         run: |
           node ./scripts/ci/docker/get-github-token.mjs
       - name: Dispatch workflow to helm-values repository
