@@ -158,8 +158,6 @@ export const getMunicipalityLogo = (
   municipalityId: string | undefined,
 ): MunicipalityLogoComponent => {
   if (!municipalityId || !municipalityLogoMap[municipalityId]) {
-    console.log('hér')
-
     return IcelandicAssociationOfLocalAuthoritiesLogo
   }
   return municipalityLogoMap[municipalityId]
