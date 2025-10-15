@@ -1564,7 +1564,7 @@ export const m = defineMessages({
     description: '',
   },
   heirNationalIdValidation: {
-    id: 'ir.application:heirNationaIdValidation',
+    id: 'ir.application:heirNationalIdValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem erfingi má ekki vera sá sami og arfleifandi',
     description: '',
