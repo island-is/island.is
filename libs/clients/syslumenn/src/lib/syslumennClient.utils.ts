@@ -31,6 +31,7 @@ import {
   Skip,
   Brennuleyfi,
   TrufelogOgLisskodunarfelogModel,
+  Okukennarar,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -78,6 +79,7 @@ import {
   ReligiousOrganization,
   InheritanceReportFuneralAsset,
   FuneralAssetItem,
+  DrivingInstructor,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -713,6 +715,16 @@ export const mapReligiousOrganization = (
     name: religiousOrganization.nafnFelags ?? '',
     postalCode: religiousOrganization.postnumer,
     municipality: religiousOrganization.sveitarfelag,
+  }
+}
+
+export const mapDrivingInstructor = (
+  instructor: Okukennarar,
+): DrivingInstructor => {
+  return {
+    name: instructor.nafn ?? '',
+    postalCode: instructor.postnumer ?? '',
+    municipality: instructor.sveitafelag ?? '',
   }
 }
 
