@@ -41,7 +41,10 @@ import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import { VerdictService } from '../verdict/verdict.service'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -90,7 +93,7 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal')
 @ApiTags('internal verdict')
-// @UseGuards(TokenGuard)
+@UseGuards(TokenGuard)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -234,11 +237,7 @@ export class InternalVerdictController {
   })
   @Post('verdict/deliverVerdictServiceCertificates')
   async deliverVerdictServiceCertificatesToPolice(): Promise<
-    {
-      delivered: boolean
-      caseId: string
-      defendantId: string
-    }[]
+    VerdictServiceCertificateDelivery[]
   > {
     this.logger.debug(
       `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,

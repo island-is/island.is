@@ -659,50 +659,6 @@ export class InternalCaseService {
     )
   }
 
-  async getSelectedCases(caseIds: string[]) {
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: User,
-          as: 'judge',
-          required: false,
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: EventLog,
-          as: 'eventLogs',
-          required: false,
-          separate: true,
-        },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: false,
-          order: [['created', 'ASC']],
-          include: [
-            {
-              model: DefendantEventLog,
-              as: 'eventLogs',
-              required: false,
-              separate: true,
-            },
-            {
-              model: Verdict,
-              as: 'verdict',
-              required: false,
-            },
-          ],
-          separate: true,
-        },
-      ],
-      where: {
-        id: {
-          [Op.in]: caseIds,
-        },
-      },
-    })
-  }
-
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0))
     const endOfDay = new Date(date.setHours(23, 59, 59, 999))

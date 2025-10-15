@@ -50,7 +50,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'hashAlgorithm'
 >
 
-type VerdictServiceCertificateDelivery = {
+export type VerdictServiceCertificateDelivery = {
   delivered: boolean
   caseId: string
   defendantId: string
