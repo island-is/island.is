@@ -14,7 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { Answers, EstateMember, heirAgeValidation, heirNationalIdSameAsExecutorValidation } from '../../types'
+import {
+  Answers,
+  EstateMember,
+  heirAgeValidation,
+  heirNationalIdSameAsExecutorValidation,
+} from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -59,7 +64,10 @@ export const HeirsRepeater: FC<
     name: id,
   })
 
-  const [hasHeirWithNationalIdSameAsExecutor, setHasHeirWithNationalIdSameAsExecutor] = useState(false)
+  const [
+    hasHeirWithNationalIdSameAsExecutor,
+    setHasHeirWithNationalIdSameAsExecutor,
+  ] = useState(false)
 
   const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
 
@@ -329,7 +337,7 @@ export const HeirsRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
-    if(!hasHeirWithNationalIdSameAsExecutor) {
+    if (!hasHeirWithNationalIdSameAsExecutor) {
       clearErrors(heirNationalIdSameAsExecutorValidation)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -382,7 +390,7 @@ export const HeirsRepeater: FC<
         field.nationalId === executorNationalId ||
         field.nationalId === spouseNationalId,
     )
-    setHasHeirWithNationalIdSameAsExecutor(match) 
+    setHasHeirWithNationalIdSameAsExecutor(match)
   }, [values])
 
   return (
