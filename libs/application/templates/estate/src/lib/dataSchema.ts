@@ -97,6 +97,12 @@ export const estateSchema = z.object({
 
   estateInfoSelection: z.string().min(1),
 
+  // Undivided estate reminder screen
+  reminderInfo: z.object({
+    assetsAndDebtsCheckbox: z.array(z.enum([YES])).length(1),
+    attachmentsCheckbox: z.array(z.enum([YES])).length(1),
+  }),
+
   // Eignir
   estate: z.object({
     inventory: z

@@ -13,6 +13,7 @@ import { approvePrivateDivisionSubmission } from './Sections/approveSubmission'
 import { overview } from './Overviews'
 import { estateWithoutAssets } from './Sections/estateWithoutAssets'
 import { applicationDescription } from './Sections/description'
+import { reminderInfoForAssetsAndDebts } from './Sections/reminderInfoForAssetsAndDebts'
 
 /* EINKASKIPTI */
 export const privateDivisionForm: Form = buildForm({
@@ -48,6 +49,7 @@ export const undividedEstateForm: Form = buildForm({
     announcerInfo,
     estateMembers,
     testamentInfo,
+    reminderInfoForAssetsAndDebts,
     estateAssets,
     estateDebts,
     attachments,

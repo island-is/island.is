@@ -409,6 +409,51 @@ export const m = defineMessages({
     defaultMessage: 'Er til leyfi til setu í óskiptu búi?',
     description: '',
   },
+  reminderInfoTitle: {
+    id: 'es.application:reminderInfoTitle',
+    defaultMessage: 'Áminningar',
+    description: '',
+  },
+  reminderInfoDescription: {
+    id: 'es.application:reminderInfoDescription#markdown',
+    defaultMessage:
+      'Hér á eftir eru tvær staðhæfingar sem mikilvægt er að þú hafir í huga áður en þú heldur áfram með umsóknina. Þú þarft að samþykkja báðar staðhæfingarnar til að geta haldið áfram með umsóknina.',
+    description: '',
+  },
+  reminderInfoAssetsAndDebts: {
+    id: 'es.application:reminderInfoAssetsAndDebts',
+    defaultMessage: 'Áminning fyrir eignir og skuldir',
+    description: '',
+  },
+  reminderInfoAssetsAndDebtsDescription: {
+    id: 'es.application:reminderInfoAssetsAndDebtsDescription#markdown',
+    defaultMessage:
+      'Athugaðu að þú hafir skráð allar eignir og skuldir lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    description: '',
+  },
+  reminderInfoAssetsAndDebtsCheckbox: {
+    id: 'es.application:reminderInfoAssetsAndDebtsCheckbox',
+    defaultMessage:
+      'Já, ég skil að ég þurfi að skrá inn allar eignir og skuldir eftirlifandi maka',
+    description: '',
+  },
+  reminderInfoAttachments: {
+    id: 'es.application:reminderInfoAttachments',
+    defaultMessage: 'Áminning fyrir skjöl sem þurfa að fylgja',
+    description: '',
+  },
+  reminderInfoAttachmentsDescription: {
+    id: 'es.application:reminderInfoAttachmentsDescription#markdown',
+    defaultMessage:
+      'Athugaðu að þú ert með öll gögn sem þarf að láta fylgja með, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    description: '',
+  },
+  reminderInfoAttachmentsCheckbox: {
+    id: 'es.application:reminderInfoAttachmentsCheckbox',
+    defaultMessage:
+      'Já, ég skil að ég þurfi að láta fylgja með öll nauðsynleg skjöl',
+    description: '',
+  },
   additionalInfo: {
     id: 'es.application:additionalInfo',
     defaultMessage: 'Athugasemdir',
