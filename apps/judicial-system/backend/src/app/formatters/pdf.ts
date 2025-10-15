@@ -147,6 +147,20 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     }
   }
 
+  const scaleToA4 = (page: PDFPage) => {
+    const { width, height } = page.getSize()
+    const targetWidth = 595.28 // A4 width in points
+    const targetHeight = 841.89 // A4 height in points
+    const scaleX = targetWidth / width
+    const scaleY = targetHeight / height
+    const scale = Math.min(scaleX, scaleY)
+
+    page.scaleContent(scale, scale)
+    page.setSize(targetWidth, targetHeight)
+
+    return page
+  }
+
   const pdfDocument = {
     addPage: (position = rawDocument.getPageCount()) => {
       rawDocument.insertPage(position)
@@ -296,7 +310,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         filePdfDoc.getPageIndices(),
       )
 
-      pages.forEach((page) => rawDocument.addPage(page))
+      pages.forEach((page) => rawDocument.addPage(scaleToA4(page)))
 
       return pdfDocument
     },
