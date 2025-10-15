@@ -9,9 +9,7 @@ import { isDefined } from '@island.is/shared/utils'
 export class IcelandicGovernmentEmployeesService {
   constructor(private elfurService: ElfurClientService) {}
 
-  async getEmployees(
-    organizationId: string,
-  ): Promise<EmployeeList> {
+  async getEmployees(organizationId: string): Promise<EmployeeList> {
     const data = await this.elfurService.getOrganizationEmployees(
       organizationId,
     )

@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag'
 
 export const GET_ORGANIZATION_TEAM_MEMBERS = gql`
   query getOrgTeamMembers($input: IcelandicGovernmentEmployeesInput!) {
