@@ -18,6 +18,7 @@ export { MmsLogo } from './MmsLogo' // Miðstöð menntunar og skólaþjónustu
 export { NationalRegistryLogo } from './NationalRegistry' // Þjóðskrá
 export { SocialInsuranceAdministrationLogo } from './SocialInsuranceAdministrationLogo' // Tryggingastofnun
 export { DebtCollectorLogo } from './DebtCollectorLogo' // Innheimtumaður (Skatturinn?)
+export { TransportAuthorityLogo } from './TransportAuthorityLogo' // Samgöngustofa
 
 // Municipality logos
 export { AkrahreppurLogo } from './municipalities/akrahreppur'

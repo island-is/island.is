@@ -1,6 +1,9 @@
+// Logo for the Icelandic Transport Authority - Samgöngustofa
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const TransportAuthorityLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="318"
     height="112"
