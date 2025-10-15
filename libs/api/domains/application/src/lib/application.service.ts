@@ -102,7 +102,6 @@ export class ApplicationService {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerFindAllInstitutionAdmin({
-      nationalId: input.nationalId,
       page: input.page,
       count: input.count,
       locale,
