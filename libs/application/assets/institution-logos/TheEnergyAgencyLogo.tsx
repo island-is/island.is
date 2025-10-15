@@ -1,3 +1,4 @@
+// Logo for the Energy Agency - Orkustofnun
 import React, { FC } from 'react'
 
 export const TheEnergyAgencyLogo: FC<React.PropsWithChildren<unknown>> = () => (
