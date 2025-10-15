@@ -138,7 +138,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async sendNotificationToAllInvolved({
     application,
-  }: TemplateApiModuleActionProps) : Promise<void> {
+  }: TemplateApiModuleActionProps): Promise<void> {
     const allowFail = false
 
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
