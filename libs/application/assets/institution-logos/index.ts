@@ -1,24 +1,27 @@
-export { IcelandHealthLogo } from './IcelandHealthLogo' // Sjúkratryggingar
-export { DirectorateOfLabourLogo } from './DirectorateOfLabourLogo' // Vinnumálastofnun
-export { AoshLogo } from './AoshLogo' // Vinnueftirlitið
-export { TheIcelandicRecyclingFundLogo } from './TheIcelandicRecyclingFundLogo' // Úrvinnslusjóður
+// Institution logos
 export { AlthingiOmbudsmanLogo } from './AlthingiOmbudsmanLogo' // Umboðsmaður Alþingis
-export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn
-export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
-export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
-export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
-export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo' // Samband íslenskra sveitafelaga
-export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo' // Fjármála og efnahagsráðuneytið
+export { AoshLogo } from './AoshLogo' // Vinnueftirlitið
+export { DebtCollectorLogo } from './DebtCollectorLogo' // Innheimtumaður (Skatturinn?)
 export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries' // Fiskistofa
 export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo' // Landlæknisembættið
+export { DirectorateOfLabourLogo } from './DirectorateOfLabourLogo' // Vinnumálastofnun
+export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn
 export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
+export { IcelandHealthLogo } from './IcelandHealthLogo' // Sjúkratryggingar
+export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo' // Samband íslenskra sveitafelaga
 export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
-export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
+export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
+export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo' // Fjármála og efnahagsráðuneytið
 export { MmsLogo } from './MmsLogo' // Miðstöð menntunar og skólaþjónustu
 export { NationalRegistryLogo } from './NationalRegistry' // Þjóðskrá
 export { SocialInsuranceAdministrationLogo } from './SocialInsuranceAdministrationLogo' // Tryggingastofnun
-export { DebtCollectorLogo } from './DebtCollectorLogo' // Innheimtumaður (Skatturinn?)
+export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
+export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
+export { TheIcelandicRecyclingFundLogo } from './TheIcelandicRecyclingFundLogo' // Úrvinnslusjóður
 export { TransportAuthorityLogo } from './TransportAuthorityLogo' // Samgöngustofa
+
+// Coat of arms
+export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 
 // Municipality logos
 export { AkrahreppurLogo } from './municipalities/akrahreppur'
