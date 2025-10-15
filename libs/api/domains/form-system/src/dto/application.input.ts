@@ -1,11 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { LanguageTypeInput } from './languageType.input'
-import { SectionInput } from './section.input'
-import { DependencyInput } from './form.input'
-import { FormCertificationTypeDtoInput } from './certification.input'
 import { FormApplicantTypeDtoInput } from './applicant.input'
-import { ValueInput } from './value.input'
+import { FormCertificationTypeDtoInput } from './certification.input'
+import { CompletedSectionInfoInput } from './completedSectionInfo.input'
+import { DependencyInput } from './form.input'
+import { LanguageTypeInput } from './languageType.input'
 import { ScreenInput } from './screen.input'
+import { SectionInput } from './section.input'
+import { ValueInput } from './value.input'
 
 @InputType('CreateFormSystemApplicationDtoInput')
 export class CreateApplicationDtoInput {
@@ -119,6 +120,9 @@ export class ApplicationInput {
 
   @Field(() => [FormApplicantTypeDtoInput], { nullable: 'itemsAndList' })
   applicantTypes?: FormApplicantTypeDtoInput[]
+
+  @Field(() => CompletedSectionInfoInput, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfoInput
 }
 
 @InputType('UpdateFormSystemApplicationDependenciesInput')
