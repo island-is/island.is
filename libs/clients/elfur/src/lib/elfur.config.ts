@@ -2,7 +2,6 @@ import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const schema = z.object({
-  scope: z.array(z.string()),
   basePath: z.string().url(),
   clientId: z.string(),
   clientSecret: z.string(),
