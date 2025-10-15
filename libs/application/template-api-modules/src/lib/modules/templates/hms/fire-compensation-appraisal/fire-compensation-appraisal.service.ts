@@ -166,7 +166,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       if (allowFail) return
       throw new TemplateApiError('Selected real estate is not set', 500)
     }
-    
+
     const applicant = getApplicant(application.answers)
     const { nationalId: applicantNationalId, name: applicantName } = applicant
 
@@ -220,7 +220,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           },
           applicationId: application.id,
           args: {
-            applicantName: recipientNationalId === applicantNationalId ? 'Þú' : applicantName,
+            applicantName:
+              recipientNationalId === applicantNationalId
+                ? 'Þú'
+                : applicantName,
             applicationId: application.id,
             appliedForAddress: fullAddress,
           },
