@@ -567,8 +567,7 @@ jobs:
       - name: Get token
         id: get-token
         shell: bash
-        with:
-          working-directory: monorepo
+        working-directory: monorepo
         env:
           # APP_ID
           APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
