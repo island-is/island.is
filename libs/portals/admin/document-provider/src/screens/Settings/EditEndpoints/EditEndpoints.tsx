@@ -8,7 +8,7 @@ import {
 } from '../../../components/Forms/EndpointsForm'
 import { PortalModuleComponent } from '@island.is/portals/core'
 
-const EditEndpoints: PortalModuleComponent = ({ userInfo }) => {
+const EditEndpoints: PortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   const submitFormData = async (formData: EndpointsFormData) => {

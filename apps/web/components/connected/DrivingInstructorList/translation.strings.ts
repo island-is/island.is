@@ -19,7 +19,7 @@ export const translation = defineMessages({
   noResultsFound: {
     id: 'web.drivingInstructorList:noResultsFound',
     defaultMessage: 'Engir ökukennarar fundust',
-    description: 'Texti þegar engin námskeið finnast',
+    description: 'Texti þegar engir ökukennarar finnast',
   },
   name: {
     id: 'web.drivingInstructorList:name',
