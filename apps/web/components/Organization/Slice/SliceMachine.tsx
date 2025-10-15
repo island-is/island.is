@@ -125,7 +125,6 @@ interface SliceMachineProps {
   fullWidth?: boolean
   slug?: string
   marginBottom?: ResponsiveSpace
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>
   paddingBottom?: ResponsiveSpace
   wrapWithGridContainer?: boolean

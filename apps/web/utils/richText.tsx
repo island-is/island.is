@@ -239,9 +239,6 @@ export const webRenderConnectedComponent = (
     case 'Landspitali/DirectGrants':
       connectedComponent = <DirectGrants slice={slice} />
       break
-    case 'FSRE/EmployeeList':
-      connectedComponent = <ConnectedTeamList slice={slice} />
-      break
     case 'Syslumenn/DrivingInstructorList':
       connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
       break
