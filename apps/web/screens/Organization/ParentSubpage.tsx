@@ -53,11 +53,20 @@ const OrganizationParentSubpage: Screen<
   useLocalLinkTypeResolver()
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
+  const showTableOfContents = parentSubpage.childLinks.length > 1
+
+  let pageTitle = subpage?.title ?? ''
+  if (showTableOfContents) {
+    pageTitle = `${parentSubpage?.title ?? ''}${
+      Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
+    }${subpage?.title ?? ''}`
+  }
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage?.title ?? ''}
+      pageTitle={pageTitle}
       organizationPage={organizationPage}
       fullWidthContent={true}
       pageFeaturedImage={
@@ -90,7 +99,7 @@ const OrganizationParentSubpage: Screen<
                 offset={['0', '0', '1/9']}
               >
                 <Stack space={3}>
-                  {parentSubpage.childLinks.length > 1 && (
+                  {showTableOfContents && (
                     <Stack space={4}>
                       <Text variant="h1" as="h1">
                         {parentSubpage.title}
@@ -152,6 +161,7 @@ const OrganizationParentSubpage: Screen<
             subpageTitleVariant={
               parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
             }
+            paddingTop={showTableOfContents ? 4 : 0}
           />
         </Box>
       }

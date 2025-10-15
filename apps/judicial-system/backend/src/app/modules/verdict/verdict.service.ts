@@ -46,6 +46,8 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
+  | 'hash'
+  | 'hashAlgorithm'
 >
 
 export class VerdictService {
@@ -383,7 +385,11 @@ export class VerdictService {
     }
 
     // update existing verdict with the external document id returned from the police
-    await this.updateVerdict(verdict, createdDocument)
+    await this.updateVerdict(verdict, {
+      ...createdDocument,
+      hash: verdictFile.hash,
+      hashAlgorithm: verdictFile.hashAlgorithm,
+    })
 
     await this.defendantService.createDefendantEvent({
       caseId: theCase.id,

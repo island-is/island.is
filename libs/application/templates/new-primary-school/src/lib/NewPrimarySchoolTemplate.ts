@@ -77,12 +77,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               action: ApiModuleActions.getChildInformation,
               externalDataId: 'childInformation',
               throwOnError: true,
-              order: 0,
             }),
             defineTemplateApi({
-              action: ApiModuleActions.getCitizenship,
-              externalDataId: 'citizenship',
-              order: 1,
+              action: ApiModuleActions.getPreferredSchool,
+              externalDataId: 'preferredSchool',
+              throwOnError: true,
             }),
           ],
           roles: [

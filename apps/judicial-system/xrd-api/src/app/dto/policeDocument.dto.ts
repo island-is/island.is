@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator'
@@ -49,10 +50,20 @@ export class UpdatePoliceDocumentDeliveryDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
+  deliveredToDefendant?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean, required: false })
   deliveredOnIslandis?: boolean // delivered electronically on island.is
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
   deliveredToLawyer?: boolean
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional({ type: 'object', required: false })
+  deliverySupplements?: Record<string, unknown>
 }

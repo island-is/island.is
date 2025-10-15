@@ -576,3 +576,16 @@ export const getDefendantVerdictAppealDecisionLabel = (
   }
   return ''
 }
+
+export const getVerdictAppealDecision = (
+  verdictAppealDecision?: VerdictAppealDecision,
+): string => {
+  switch (verdictAppealDecision) {
+    case VerdictAppealDecision.ACCEPT:
+      return 'Unir dómi'
+    case VerdictAppealDecision.POSTPONE:
+      return 'Tekur áfrýjunarfrest'
+    default:
+      return 'Ekki skráð'
+  }
+}

@@ -80,7 +80,7 @@ const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   return null
 }
 
-const generateOrganizationSubpageLink = (
+export const generateOrganizationSubpageLink = (
   subpage: IOrganizationSubpage | IOrganizationParentSubpage,
 ) => {
   const prefix = getOrganizationPageUrlPrefix(subpage.sys.locale)
