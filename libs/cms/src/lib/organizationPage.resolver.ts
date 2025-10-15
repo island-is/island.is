@@ -264,33 +264,34 @@ export class OrganizationPageResolver {
     const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
       organizationPage.slug
     }`
+    const label = lang === 'en' ? node.labelEN : node.label
 
     switch (node.urlType) {
       case 'organizationFrontpage':
         return {
-          label: lang === 'en' ? node.labelEN : node.label,
+          label,
           href: baseUrl,
         }
       case 'organizationNewsOverview':
         return {
-          label: lang === 'en' ? node.labelEN : node.label,
+          label,
           href: `${baseUrl}/${lang === 'en' ? 'news' : 'frett'}`,
         }
       case 'organizationPublishedMaterial':
         return {
-          label: lang === 'en' ? node.labelEN : node.label,
+          label,
           href: `${baseUrl}/${
             lang === 'en' ? 'published-material' : 'utgefid-efni'
           }`,
         }
       case 'organizationEventOverview':
         return {
-          label: lang === 'en' ? node.labelEN : node.label,
+          label,
           href: `${baseUrl}/${lang === 'en' ? 'events' : 'vidburdir'}`,
         }
       default:
         return {
-          label: lang === 'en' ? node.labelEN : node.label,
+          label,
           href: lang === 'en' ? node.urlEN : node.url,
         }
     }
