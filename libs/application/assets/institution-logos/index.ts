@@ -16,6 +16,7 @@ export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 export { MmsLogo } from './MmsLogo' // Miðstöð menntunar og skólaþjónustu
 export { NationalRegistryLogo } from './NationalRegistry' // Þjóðskrá
+export { SocialInsuranceAdministrationLogo } from './SocialInsuranceAdministrationLogo' // Tryggingastofnun
 export { DebtCollectorLogo } from './DebtCollectorLogo' // Innheimtumaður (Skatturinn?)
 
 // Municipality logos
