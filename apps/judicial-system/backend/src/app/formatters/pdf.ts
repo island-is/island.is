@@ -161,6 +161,33 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     return page
   }
 
+  const a = () => {
+    const pageNumberRightMargin = 10
+    const pageNumberBottomMargin = 15
+    const pageNumberFontSize = 20
+
+    let pageNumber = 0
+
+    rawDocument.getPages().forEach((page) => {
+      const pageNumberText = `${++pageNumber}`
+      const pageNumberTextWidth = boldFont.widthOfTextAtSize(
+        pageNumberText,
+        pageNumberFontSize,
+      )
+
+      drawTextAbsolute(
+        page,
+        pageNumberText,
+        page.getWidth() - pageNumberRightMargin - pageNumberTextWidth,
+        pageNumberBottomMargin,
+        boldFont,
+        pageNumberFontSize,
+      )
+    })
+
+    return pdfDocument
+  }
+
   const pdfDocument = {
     addPage: (position = rawDocument.getPageCount()) => {
       rawDocument.insertPage(position)
@@ -303,6 +330,11 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
 
     mergeDocument: async (buffer: Buffer) => {
+      const pageNumberRightMargin = 10
+      const pageNumberBottomMargin = 15
+      const pageNumberFontSize = 20
+
+      let pageNumber = 0
       const filePdfDoc = await PDFDocument.load(new Uint8Array(buffer))
 
       const pages = await rawDocument.copyPages(
@@ -310,7 +342,33 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         filePdfDoc.getPageIndices(),
       )
 
-      pages.forEach((page) => rawDocument.addPage(scaleToA4(page)))
+      pages.forEach((page) => {
+        // TODO: Put into function
+        const { width, height } = page.getSize()
+        const pageNumberText = `${++pageNumber}`
+        const pageNumberTextWidth = boldFont.widthOfTextAtSize(
+          pageNumberText,
+          pageNumberFontSize,
+        )
+
+        console.log(page.getSize(), pageNumberFontSize)
+
+        drawTextAbsolute(
+          page,
+          pageNumberText,
+          page.getWidth() -
+            pageNumberRightMargin -
+            pageNumberTextWidth -
+            (width > 1000 && height > 1000 ? 70 : 0),
+          pageNumberBottomMargin + (width > 1000 && height > 1000 ? 60 : 0),
+          boldFont,
+          width > 1000 && height > 1000
+            ? pageNumberFontSize * 5
+            : pageNumberFontSize,
+        )
+
+        rawDocument.addPage(scaleToA4(page))
+      })
 
       return pdfDocument
     },

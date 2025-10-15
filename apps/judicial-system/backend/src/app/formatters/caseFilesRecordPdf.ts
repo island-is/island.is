@@ -249,7 +249,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
-  pdfDocument.addPageNumbers()
+  // pdfDocument.addPageNumbers()
 
   return pdfDocument.getContents()
 }
