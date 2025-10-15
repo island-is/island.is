@@ -1,3 +1,4 @@
+// Logo for the Icelandic Coat of Arms - Íslenska skjaldarmerkið
 import React from 'react'
 
 export const CoatOfArms: React.FC<React.PropsWithChildren<unknown>> = () => (
