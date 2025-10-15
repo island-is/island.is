@@ -48,10 +48,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async getProperties({ auth, application }: TemplateApiModuleActionProps) {
     let properties: Array<Fasteign> = []
-    const otherPropertiesThanIOwn = getValueViaPath<boolean>(
+    const otherPropertiesThanIOwn = getValueViaPath<string[]>(
       application.answers,
       'otherPropertiesThanIOwnCheckbox',
-    )
+    )?.includes(YES)
 
     // Mock for dev, since there is no dev service for the propertiesApi
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
@@ -138,7 +138,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async sendNotificationToAllInvolved({
     application,
-  }: TemplateApiModuleActionProps) {
+  }: TemplateApiModuleActionProps) : Promise<void> {
     const allowFail = false
 
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
@@ -189,21 +189,13 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
     const fullAddress = address + ', ' + postalCode
 
-    // string[] after filter
+    // Filter out companies and organizations since we dont send them notifications
     const ownersSsn = owners
       .map((o) => o.kennitala)
       .filter(
         (ssn): ssn is string =>
           typeof ssn === 'string' && ssn !== '' && isPerson(ssn),
       )
-
-    if (ownersSsn.length === 0) {
-      if (allowFail) return
-      throw new TemplateApiError(
-        'No valid owners found for the selected real estate',
-        500,
-      )
-    }
 
     // deduplicate and filter
     const recipients = Array.from(
