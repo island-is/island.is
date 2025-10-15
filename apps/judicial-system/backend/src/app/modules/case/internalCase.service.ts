@@ -605,10 +605,6 @@ export class InternalCaseService {
               model: DefendantEventLog,
               as: 'eventLogs',
               required: false,
-              where: {
-                eventType:
-                  DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-              },
             },
             {
               model: Verdict,
@@ -625,9 +621,15 @@ export class InternalCaseService {
               },
             },
           ],
-          // where: {
-          //   '$eventLogs.id$': { [Op.is]: null }, // get defendants that do not have verdict certificate delivered to police
-          // },
+          where: {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                                      (SELECT defendant_id
+                                        FROM defendant_event_log
+                                        WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
+                                    `),
+            },
+          },
         },
       ],
       where: {
@@ -637,7 +639,6 @@ export class InternalCaseService {
       },
     })
 
-    console.log({ cases: cases.length })
     return cases.flatMap((theCase) =>
       pipe(
         theCase.defendants ?? [],
