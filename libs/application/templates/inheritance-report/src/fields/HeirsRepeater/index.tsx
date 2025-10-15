@@ -707,7 +707,9 @@ export const HeirsRepeater: FC<
         </Box>
       ) : errors && errors[heirNationalIdSameAsExecutorValidation] ? (
         <Box marginTop={4}>
-          <InputError errorMessage={formatMessage(m.heirNationalIdValidation)} />
+          <InputError
+            errorMessage={formatMessage(m.heirNationalIdValidation)}
+          />
         </Box>
       ) : null}
       {!!fields.length && props.sumField && (
