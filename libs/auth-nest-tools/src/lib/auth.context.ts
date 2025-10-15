@@ -7,7 +7,7 @@ const authContextStorage = new AsyncLocalStorage<Auth>()
  * Provides an async context for authentication information (`auth`) using AsyncLocalStorage.
  *
  * This context is used to store and retrieve the current authentication state (the `Auth` object)
- * throughout the lifetime of an asynchronous operation, such as a request in a NestJS application.
+ * throughout the lifetime of an asynchronous operation.
  *
  * The `withAuthContext` function sets the current `auth` context for a callback and its async descendants.
  * The `getAuthContext` function retrieves the current `auth` context from anywhere in the call stack.

@@ -19,7 +19,7 @@ export function buildFetch(actualFetch: NodeFetchAPI, authSource?: AuthSource) {
       const firstMiddleware = nextMiddleware
 
       // Maps between DOM fetch API types and Node Fetch API types.
-      return async (input, init?) => {
+      return (input, init?) => {
         // Normalize Request.
         const request = new Request(
           input as RequestInfo,
