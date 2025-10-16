@@ -211,38 +211,33 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
             renewal: undefined,
-            lastNode: {
-              type: 'action',
-              label: formatMessage(messages.renew),
-              action: () => openModal(rowItem),
-              icon: { icon: 'arrowForward', type: 'outline' },
-            },
-            //   rowItem.renewalStatus ===
-            //   RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
-            //     ? {
-            //         type: 'info',
-            //         label: formatMessage(messages.renewalInProgress),
-            //         text: formatMessage(messages.renewalInProgress),
-            //       }
-            //     : rowItem.renewalStatus ===
-            //       RightsPortalAidOrNutritionRenewalStatus.VALID
-            //     ? {
-            //         type: 'text',
-            //         label: formatMessage(messages.valid),
-            //       }
-            //     : rowItem.renewalStatus ===
-            //       RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
-            //     ? {
-            //         type: 'action',
-            //         label: formatMessage(messages.renew),
-            //         action: () => openModal(rowItem),
-            //         icon: { icon: 'arrowForward', type: 'outline' },
-            //       }
-            //     : {
-            //         type: 'info',
-            //         label: formatMessage(messages.notValidForRenewal),
-            //         text: formatMessage(messages.notValidForRenewalDetail),
-            //       },
+            lastNode:
+              rowItem.renewalStatus ===
+              RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
+                ? {
+                    type: 'info',
+                    label: formatMessage(messages.renewalInProgress),
+                    text: formatMessage(messages.renewalInProgress),
+                  }
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID
+                ? {
+                    type: 'text',
+                    label: formatMessage(messages.valid),
+                  }
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                ? {
+                    type: 'action',
+                    label: formatMessage(messages.renew),
+                    action: () => openModal(rowItem),
+                    icon: { icon: 'arrowForward', type: 'outline' },
+                  }
+                : {
+                    type: 'info',
+                    label: formatMessage(messages.notValidForRenewal),
+                    text: formatMessage(messages.notValidForRenewalDetail),
+                  },
             children: (
               <NestedInfoLines
                 data={generateFoldedValues(rowItem)}
