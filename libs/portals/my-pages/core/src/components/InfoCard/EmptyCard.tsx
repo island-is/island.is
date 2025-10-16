@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { useWindowSize } from 'react-use'
@@ -25,7 +19,6 @@ export const EmptyCard: React.FC<EmptyCardProps> = ({
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   return (
     <Box

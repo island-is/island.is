@@ -39,15 +39,15 @@ import {
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { useWindowSize } from 'react-use'
-import LinkResolver from '../LinkResolver/LinkResolver'
-import * as styles from './InfoCard.css'
-import LoaderCard from './LoaderCard'
-import TimeCard from './TimeCard'
-import EmptyCard from './EmptyCard'
 import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
+import LinkResolver from '../LinkResolver/LinkResolver'
+import { EmptyCard } from './EmptyCard'
+import * as styles from './InfoCard.css'
+import { LoaderCard } from './LoaderCard'
+import { TimeCard } from './TimeCard'
 
 interface InfoCardDetail {
   label: string

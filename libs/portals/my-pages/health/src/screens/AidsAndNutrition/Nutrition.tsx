@@ -38,7 +38,7 @@ const Nutrition = ({ data, refetch }: Props) => {
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false)
 
-  const [renewAidsAndNutrition, { data: postData, error: postError, loading }] =
+  const [renewAidsAndNutrition, { error: postError, loading }] =
     useRenewAidsAndNutritionMutation()
 
   const handleSubmit = async (item: RightsPortalAidOrNutrition) => {
@@ -57,7 +57,8 @@ const Nutrition = ({ data, refetch }: Props) => {
       toast.success(formatMessage(messages.renewalFormSuccess))
       refetch()
     }
-    if (error) {
+    if (postError || error) {
+      console.error(error, postError)
       toast.error(formatMessage(messages.renewalFormError))
     }
   }
@@ -164,7 +165,8 @@ const Nutrition = ({ data, refetch }: Props) => {
                     type: 'text',
                     label: formatMessage(messages.valid),
                   }
-                : RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
                 ? {
                     type: 'action',
                     label: formatMessage(messages.renew),
@@ -242,7 +244,10 @@ const Nutrition = ({ data, refetch }: Props) => {
       {locationModalItem && (
         <LocationModal
           item={locationModalItem}
-          onClose={() => setLocationModalItem(null)}
+          onClose={() => {
+            setLocationModalItem(null)
+            setIsLocationModalVisible(false)
+          }}
           isVisible={!!isLocationModalVisible}
         />
       )}

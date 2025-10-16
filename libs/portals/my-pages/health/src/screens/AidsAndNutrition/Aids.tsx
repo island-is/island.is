@@ -4,12 +4,12 @@ import {
 } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   Icon,
+  Inline,
   Text,
   Tooltip,
   toast,
-  Button,
-  Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -287,7 +287,10 @@ const Aids = ({ data, refetch }: Props) => {
       {locationModalItem && (
         <LocationModal
           item={locationModalItem}
-          onClose={() => setLocationModalItem(null)}
+          onClose={() => {
+            setLocationModalItem(null)
+            setIsLocationModalVisible(false)
+          }}
           isVisible={!!isLocationModalVisible}
         />
       )}

@@ -1,22 +1,12 @@
 import React from 'react'
 
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
-import {
-  InfoLineStack,
-  Modal,
-  NestedLines,
-} from '@island.is/portals/my-pages/core'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
-import * as styles from './AidsAndNutrition.css'
-import cn from 'classnames'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Modal } from '@island.is/portals/my-pages/core'
+import cn from 'classnames'
 import { messages } from '../../lib/messages'
+import * as styles from './AidsAndNutrition.css'
 
 interface LocationModalProps {
   item: RightsPortalAidOrNutrition

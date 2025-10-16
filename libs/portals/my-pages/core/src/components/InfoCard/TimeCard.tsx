@@ -40,7 +40,7 @@ interface AppointmentCardProps {
 //   },
 // },
 
-const TimeCard: React.FC<AppointmentCardProps> = ({
+export const TimeCard: React.FC<AppointmentCardProps> = ({
   title,
   description,
   data,

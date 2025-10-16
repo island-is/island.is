@@ -89,10 +89,10 @@ const BasicInformation: React.FC<Props> = ({
 
           {
             title: formatMessage(messages.organDonation),
-            description: donor.data?.isDonor
-              ? formatMessage(messages.youAreOrganDonor)
-              : donor.data?.limitations?.hasLimitations
+            description: donor.data?.limitations?.hasLimitations
               ? formatMessage(messages.youAreOrganDonorWithExceptions)
+              : donor.data?.isDonor
+              ? formatMessage(messages.youAreOrganDonor)
               : formatMessage(messages.youAreNotOrganDonor),
 
             to: HealthPaths.HealthOrganDonation,
