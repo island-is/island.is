@@ -682,6 +682,8 @@ export class ApplicationController {
 
       const templateApis: TemplateApi[] = []
 
+      console.log('Providers from role:', providersFromRole)
+
       for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
         const found = providersFromRole.find(
           (x) => x.actionId === externalDataDto.dataProviders[i].actionId,

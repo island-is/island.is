@@ -95,6 +95,7 @@ export enum ApplicationTypes {
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
+  REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
 }
 
 export const ApplicationConfigurations = {
@@ -485,5 +486,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
     slug: 'undanthaga-vegna-flutnings',
     translation: ['ta.eft.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
+    slug: 'skraning-fasteignanumera',
+    translation: ['ronp.application', 'uiForms.application'],
   },
 }
