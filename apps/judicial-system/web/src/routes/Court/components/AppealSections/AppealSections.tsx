@@ -18,6 +18,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isNullOrUndefined } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
@@ -25,9 +26,24 @@ import * as styles from './AppealSections.css'
 interface Props {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
+  onChange?: ({
+    accusedAppealDecision,
+    accusedAppealAnnouncement,
+    prosecutorAppealDecision,
+    prosecutorAppealAnnouncement,
+  }: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => void
 }
 
-const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
+const AppealSections: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
   const [checkedAccusedRadio, setCheckedAccusedRadio] =
@@ -35,6 +51,55 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
 
+  const handleChange = (update: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => {
+    setAndSendCaseToServer(
+      [
+        ...(!isNullOrUndefined(update.accusedAppealDecision)
+          ? [
+              {
+                accusedAppealDecision: update.accusedAppealDecision,
+                force: true,
+              },
+            ]
+          : []),
+        ...(!isNullOrUndefined(update.accusedAppealAnnouncement)
+          ? [
+              {
+                accusedAppealAnnouncement: update.accusedAppealAnnouncement,
+                force: true,
+              },
+            ]
+          : []),
+        ...(!isNullOrUndefined(update.prosecutorAppealDecision)
+          ? [
+              {
+                prosecutorAppealDecision: update.prosecutorAppealDecision,
+                force: true,
+              },
+            ]
+          : []),
+        ...(!isNullOrUndefined(update.prosecutorAppealAnnouncement)
+          ? [
+              {
+                prosecutorAppealAnnouncement:
+                  update.prosecutorAppealAnnouncement,
+                force: true,
+              },
+            ]
+          : []),
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+    if (onChange) {
+      onChange(update)
+    }
+  }
   return (
     <>
       <Box marginBottom={2}>
@@ -75,30 +140,21 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                       CaseAppealDecision.APPEAL)
                 }
                 onChange={() => {
+                  const update = {
+                    accusedAppealDecision: CaseAppealDecision.APPEAL,
+                    accusedAppealAnnouncement:
+                      workingCase.sessionArrangements ===
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                        ? formatMessage(
+                            m.defendantAnnouncementAutofillSpokespersonAppealV2,
+                          )
+                        : formatMessage(
+                            m.defendantAnnouncementAutofillAppealV2,
+                            { caseType: workingCase.type },
+                          ),
+                  }
                   setCheckedAccusedRadio(CaseAppealDecision.APPEAL)
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        accusedAppealDecision: CaseAppealDecision.APPEAL,
-                        force: true,
-                      },
-                      {
-                        accusedAppealAnnouncement:
-                          workingCase.sessionArrangements ===
-                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                            ? formatMessage(
-                                m.defendantAnnouncementAutofillSpokespersonAppealV2,
-                              )
-                            : formatMessage(
-                                m.defendantAnnouncementAutofillAppealV2,
-                                { caseType: workingCase.type },
-                              ),
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleChange(update)
                 }}
                 large
                 backgroundColor="white"
@@ -115,21 +171,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                       CaseAppealDecision.ACCEPT)
                 }
                 onChange={() => {
+                  const update = {
+                    accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                    accusedAppealAnnouncement: '',
+                  }
                   setCheckedAccusedRadio(CaseAppealDecision.ACCEPT)
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                        force: true,
-                      },
-                      {
-                        accusedAppealAnnouncement: '',
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleChange(update)
                 }}
                 large
                 backgroundColor="white"
@@ -148,21 +195,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                       CaseAppealDecision.POSTPONE)
                 }
                 onChange={() => {
+                  const update = {
+                    accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                    accusedAppealAnnouncement: '',
+                  }
                   setCheckedAccusedRadio(CaseAppealDecision.POSTPONE)
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                        force: true,
-                      },
-                      {
-                        accusedAppealAnnouncement: '',
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleChange(update)
                 }}
                 large
                 backgroundColor="white"
@@ -179,22 +217,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                       CaseAppealDecision.NOT_APPLICABLE)
                 }
                 onChange={() => {
+                  const update = {
+                    accusedAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
+                    accusedAppealAnnouncement: '',
+                  }
                   setCheckedAccusedRadio(CaseAppealDecision.NOT_APPLICABLE)
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        accusedAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
-                        force: true,
-                      },
-                      {
-                        accusedAppealAnnouncement: '',
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleChange(update)
                 }}
                 large
                 backgroundColor="white"
@@ -214,15 +242,19 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   setWorkingCase,
                 )
               }
-              onBlur={(event) =>
+              onBlur={(event) => {
+                const accusedAppealAnnouncement = event.target.value
                 validateAndSendToServer(
                   'accusedAppealAnnouncement',
-                  event.target.value,
+                  accusedAppealAnnouncement,
                   [],
                   workingCase,
                   updateCase,
                 )
-              }
+                if (onChange) {
+                  onChange({ accusedAppealAnnouncement })
+                }
+              }}
               textarea
               rows={7}
               autoExpand={{ on: true, maxHeight: 300 }}
@@ -251,23 +283,14 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     CaseAppealDecision.APPEAL)
               }
               onChange={() => {
+                const update = {
+                  prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                  prosecutorAppealAnnouncement: formatMessage(
+                    m.prosecutorAnnoncementAutofillAppealV2,
+                  ),
+                }
                 setCheckedProsecutorRadio(CaseAppealDecision.APPEAL)
-                setAndSendCaseToServer(
-                  [
-                    {
-                      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                      force: true,
-                    },
-                    {
-                      prosecutorAppealAnnouncement: formatMessage(
-                        m.prosecutorAnnoncementAutofillAppealV2,
-                      ),
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
+                handleChange(update)
               }}
               large
               backgroundColor="white"
@@ -285,21 +308,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     CaseAppealDecision.ACCEPT)
               }
               onChange={() => {
+                const update = {
+                  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                  prosecutorAppealAnnouncement: '',
+                }
                 setCheckedProsecutorRadio(CaseAppealDecision.ACCEPT)
-                setAndSendCaseToServer(
-                  [
-                    {
-                      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                      force: true,
-                    },
-                    {
-                      prosecutorAppealAnnouncement: '',
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
+                handleChange(update)
               }}
               large
               backgroundColor="white"
@@ -318,21 +332,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     CaseAppealDecision.POSTPONE)
               }
               onChange={() => {
+                const update = {
+                  prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                  prosecutorAppealAnnouncement: '',
+                }
                 setCheckedProsecutorRadio(CaseAppealDecision.POSTPONE)
-                setAndSendCaseToServer(
-                  [
-                    {
-                      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                      force: true,
-                    },
-                    {
-                      prosecutorAppealAnnouncement: '',
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
+                handleChange(update)
               }}
               large
               backgroundColor="white"
@@ -350,22 +355,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     CaseAppealDecision.NOT_APPLICABLE)
               }
               onChange={() => {
+                const update = {
+                  prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
+                  prosecutorAppealAnnouncement: '',
+                }
                 setCheckedProsecutorRadio(CaseAppealDecision.NOT_APPLICABLE)
-                setAndSendCaseToServer(
-                  [
-                    {
-                      prosecutorAppealDecision:
-                        CaseAppealDecision.NOT_APPLICABLE,
-                      force: true,
-                    },
-                    {
-                      prosecutorAppealAnnouncement: '',
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
+                handleChange(update)
               }}
               large
               backgroundColor="white"
@@ -386,15 +381,19 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   setWorkingCase,
                 )
               }
-              onBlur={(event) =>
+              onBlur={(event) => {
+                const prosecutorAppealAnnouncement = event.target.value
                 validateAndSendToServer(
                   'prosecutorAppealAnnouncement',
-                  event.target.value,
+                  prosecutorAppealAnnouncement,
                   [],
                   workingCase,
                   updateCase,
                 )
-              }
+                if (onChange) {
+                  onChange({ prosecutorAppealAnnouncement })
+                }
+              }}
               textarea
               rows={7}
               autoExpand={{ on: true, maxHeight: 300 }}

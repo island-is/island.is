@@ -696,3 +696,6 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
 }
+
+export const isNullOrUndefined = <T>(value?: T) =>
+  value === undefined || value === null
