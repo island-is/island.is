@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import {
-  CaseTableType,
   getCaseTableGroups,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
