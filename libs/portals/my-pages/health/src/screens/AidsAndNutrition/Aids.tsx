@@ -228,8 +228,8 @@ const Aids = ({ data, refetch }: Props) => {
                   }
                 : {
                     type: 'info',
-                    label: formatMessage(messages.notValidForRenewalDetail),
-                    text: formatMessage(messages.notValidForRenewal),
+                    label: formatMessage(messages.notValidForRenewal),
+                    text: formatMessage(messages.notValidForRenewalDetail),
                   },
             children: (
               <NestedInfoLines

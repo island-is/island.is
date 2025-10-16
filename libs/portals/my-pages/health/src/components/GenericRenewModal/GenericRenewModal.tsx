@@ -119,8 +119,10 @@ const GenericRenewModal = <T extends { id?: string }>({
                           </Text>
                         </Box>
                       </GridColumn>
-                      <GridColumn span={columnWidth} className={styles.data}>
-                        <Text variant="small">{item.value}</Text>
+                      <GridColumn span={columnWidth}>
+                        <Box display={'flex'} flexWrap={'wrap'}>
+                          <Text variant="small">{item.value}</Text>
+                        </Box>
                       </GridColumn>
                     </GridRow>
                   </GridContainer>

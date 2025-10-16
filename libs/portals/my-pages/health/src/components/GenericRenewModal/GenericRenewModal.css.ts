@@ -52,9 +52,3 @@ export const blue = style({
 export const titleCol = style({
   paddingLeft: theme.spacing[2],
 })
-
-export const data = style({})
-
-globalStyle(`${data} > p`, {
-  textOverflow: 'ellipsis',
-})
