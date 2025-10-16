@@ -42,7 +42,7 @@ export const dataSchema = z.object({
         params: m.photoMessages.alertMessage,
         code: z.ZodIssueCode.custom,
       })
-    } else if (data.length > 10) {
+    } else if (data.length > 20) {
       ctx.addIssue({
         params: m.photoMessages.maxPhotos,
         code: z.ZodIssueCode.custom,

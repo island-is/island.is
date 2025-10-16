@@ -132,6 +132,20 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'photos',
       ])
 
+      const missingFiles = files.filter(
+        (file) => !file.fileContent || file.fileContent.trim().length === 0,
+      )
+
+      if (missingFiles.length > 0) {
+        this.logger.error('Missing file content for attachments', {
+          missingKeys: missingFiles.map((file) => file.key),
+        })
+        throw new TemplateApiError(
+          'Failed to submit application, missing file content',
+          500,
+        )
+      }
+
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
