@@ -19,11 +19,12 @@ class Request extends NodeFetchRequest {
   ) {
     super(input as NodeRequestInfo, init)
 
-    if (init?.auth) {
-      this.auth = init.auth
-    } else if (input instanceof Request) {
-      this.auth = input.auth
-    } else if (authSource === 'context') {
+    if (authSource === 'request') {
+      this.auth =
+        init?.auth ?? (input instanceof Request ? input.auth : undefined)
+    }
+
+    if (authSource === 'context') {
       const authInAsyncContext = getAuthContext()
       this.auth = authInAsyncContext ?? undefined
     }
