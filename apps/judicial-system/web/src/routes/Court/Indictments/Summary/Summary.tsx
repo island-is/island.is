@@ -64,7 +64,7 @@ const Summary: FC = () => {
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
   const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'TODO:REMOVE'
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
   >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
@@ -119,8 +119,6 @@ const Summary: FC = () => {
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
-  // TODO: REMOVE
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRuling = async () => {
     const showError = () => toast.error('Dómur fannst ekki')
 
@@ -145,16 +143,14 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    // TODO: Uncomment when CORS bug is fixed
-    // if (
-    //   workingCase.indictmentRulingDecision ===
-    //   CaseIndictmentRulingDecision.RULING
-    // ) {
-    //   await handleRuling()
-    // } else {
-    //   setModalVisible('CONFIRM_INDICTMENT')
-    // }
-    setModalVisible('CONFIRM_INDICTMENT')
+    if (
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+    ) {
+      await handleRuling()
+    } else {
+      setModalVisible('CONFIRM_INDICTMENT')
+    }
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -306,7 +302,7 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'TODO:REMOVE' && (
+      {modalVisible === 'CONFIRM_RULING' && (
         <Modal
           title="Viltu staðfesta dómsúrlausn og ljúka máli?"
           text={
@@ -348,7 +344,7 @@ const Summary: FC = () => {
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
-            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
+            isDisabled: !hasReviewed || pdfError,
           }}
           secondaryButton={{
             text: 'Hætta við',
@@ -381,8 +377,7 @@ const Summary: FC = () => {
           )}
         </Modal>
       )}
-      {(modalVisible === 'CONFIRM_INDICTMENT' ||
-        modalVisible === 'CONFIRM_RULING') && (
+      {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
           text={
