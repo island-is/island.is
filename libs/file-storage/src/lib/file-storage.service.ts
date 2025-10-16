@@ -17,7 +17,7 @@ export class FileStorageService {
     private config: ConfigType<typeof FileStorageConfig>,
     private readonly s3Service: S3Service,
   ) {}
-
+//hi
   generatePresignedPost(filename: string): Promise<PresignedPost> {
     if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')
