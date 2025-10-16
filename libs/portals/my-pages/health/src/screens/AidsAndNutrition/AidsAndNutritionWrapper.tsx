@@ -2,15 +2,7 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
-import {
-  Box,
-  Button,
-  Icon,
-  Inline,
-  Text,
-  Tooltip,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Inline, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -26,16 +18,17 @@ import GenericRenewModal, {
 } from '../../components/GenericRenewModal/GenericRenewModal'
 import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 import { messages } from '../../lib/messages'
-import { exportAidTable } from '../../utils/FileBreakdown'
+import { exportAidTable, exportNutritionFile } from '../../utils/FileBreakdown'
 import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
 import LocationModal from './LocationModal'
 
 interface Props {
+  type: 'AID' | 'NUTRITION'
   data: Array<RightsPortalAidOrNutrition>
   refetch: () => void
 }
 
-const Aids = ({ data, refetch }: Props) => {
+const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [activeItem, setActiveItem] =
@@ -46,42 +39,45 @@ const Aids = ({ data, refetch }: Props) => {
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false)
 
-  const [renewAidsAndNutrition, { data: postData, error: postError, loading }] =
+  const [renewAidsAndNutrition, { loading }] =
     useRenewAidsAndNutritionMutation()
 
+  const isAid = type === 'AID'
   const generateFoldedValues = (rowItem: RightsPortalAidOrNutrition) => {
     const foldedValues = []
 
-    foldedValues.push({
-      title: formatMessage(messages.location),
-      value:
-        rowItem.location && rowItem.location.length > 6 ? (
-          <Inline space={2}>
-            <Text variant="small">
-              {formatMessage(messages.manyDispensationLocations)}
-            </Text>
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => openLocationModal(rowItem)}
-            >
-              {formatMessage(messages.seeList)}
-            </Button>
-          </Inline>
-        ) : (
-          rowItem.location ?? ''
-        ),
-    })
+    isAid &&
+      foldedValues.push({
+        title: formatMessage(messages.location),
+        value:
+          rowItem.location && rowItem.location.length > 6 ? (
+            <Inline space={2}>
+              <Text variant="small">
+                {formatMessage(messages.manyDispensationLocations)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => openLocationModal(rowItem)}
+              >
+                {formatMessage(messages.seeList)}
+              </Button>
+            </Inline>
+          ) : (
+            rowItem.location ?? ''
+          ),
+      })
 
     foldedValues.push({
       title: formatMessage(messages.availableTo),
       value: rowItem.validUntil ? formatDate(rowItem.validUntil) : '',
     })
 
-    foldedValues.push({
-      title: formatMessage(messages.availableEvery12Months),
-      value: rowItem.allowed12MonthPeriod ? rowItem.allowed12MonthPeriod : '',
-    })
+    isAid &&
+      foldedValues.push({
+        title: formatMessage(messages.availableEvery12Months),
+        value: rowItem.allowed12MonthPeriod ? rowItem.allowed12MonthPeriod : '',
+      })
 
     foldedValues.push({
       title: formatMessage(messages.extraDetail),
@@ -91,41 +87,38 @@ const Aids = ({ data, refetch }: Props) => {
     return foldedValues
   }
 
-  const expiringIcon = (
-    <Tooltip
-      text={formatMessage(messages.timeRemainingOfRefund)}
-      placement="top"
-    >
-      <Box>
-        <Icon icon="time" type="outline" color="blue400" size="large" />
-      </Box>
-    </Tooltip>
-  )
-
   const handleSubmit = async (item: RightsPortalAidOrNutrition) => {
-    const result = await renewAidsAndNutrition({
-      variables: {
-        input: {
-          id: item.id,
+    try {
+      const result = await renewAidsAndNutrition({
+        variables: {
+          input: {
+            id: item.id,
+          },
         },
-      },
-    })
+      })
 
-    const success = result?.data?.rightsPortalRenewAidOrNutrition?.success
-    const error = result?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
+      const success = result?.data?.rightsPortalRenewAidOrNutrition?.success
+      const error = result?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
 
-    if (success) {
-      refetch()
-      toast.success(formatMessage(messages.renewalFormSuccess))
-    }
-    if (error) {
+      if (success) {
+        refetch()
+        toast.success(formatMessage(messages.renewalFormSuccess))
+      }
+      if (error) {
+        console.error(error)
+        toast.error(formatMessage(messages.renewalFormError))
+      }
+    } catch (e) {
+      console.error(e)
       toast.error(formatMessage(messages.renewalFormError))
     }
   }
 
   const getFields = (item: RightsPortalAidOrNutrition): ModalField[] => [
     {
-      title: formatMessage(messages.aids),
+      title: isAid
+        ? formatMessage(messages.aids)
+        : formatMessage(messages.nutrition),
       value: item.name ?? '',
     },
     {
@@ -184,8 +177,15 @@ const Aids = ({ data, refetch }: Props) => {
           expandable
           labels={{
             aidsName: formatMessage(messages.name),
-            maxUnitRefund: formatMessage(messages.maxUnitRefund),
-            insuranceRatio: formatMessage(messages.insuranceRatio),
+            maxUnitRefund: isAid
+              ? formatMessage(messages.maxUnitRefund)
+              : formatMessage(messages.maxAmountPerMonth),
+            insuranceRatio: isAid
+              ? formatMessage(messages.insuranceRatio)
+              : formatMessage(messages.maxAmountPerMonth),
+            insuranceRatioOrInitialApplicantPayment: formatMessage(
+              messages.insuranceRatioOrInitialApplicantPayment,
+            ),
             availableRefund: formatMessage(messages.availableRefund),
             nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
             renewal: formatMessage(messages.renew),
@@ -195,12 +195,19 @@ const Aids = ({ data, refetch }: Props) => {
           items={data.map((rowItem, idx) => ({
             id: rowItem.id ?? idx,
             aidsName: rowItem.name ? rowItem.name.split('/').join(' / ') : '',
-            maxUnitRefund: rowItem.maxUnitRefund ?? '',
-            insuranceRatio: rowItem.refund
-              ? rowItem.refund.type === 'amount'
-                ? amountFormat(rowItem.refund.value)
-                : `${rowItem.refund.value}%`
+            maxUnitRefund: isAid
+              ? rowItem.maxUnitRefund ?? ''
+              : rowItem.maxMonthlyAmount
+              ? amountFormat(rowItem.maxMonthlyAmount)
               : '',
+            insuranceRatio:
+              rowItem.refund.type === 'amount'
+                ? rowItem.refund.value
+                  ? amountFormat(rowItem.refund.value)
+                  : ''
+                : rowItem.refund.value
+                ? `${rowItem.refund.value}%`
+                : '',
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
             renewal: undefined,
@@ -251,18 +258,31 @@ const Aids = ({ data, refetch }: Props) => {
           buttons={[
             {
               text: formatMessage(m.getAsExcel),
-              onClick: () => exportAidTable(data ?? [], 'xlsx'),
+              onClick: () =>
+                isAid
+                  ? exportAidTable(data ?? [], 'xlsx')
+                  : exportNutritionFile(data ?? [], 'xlsx'),
             },
           ]}
         />
       </Box>
       <Box paddingTop={4}>
         <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages.aidsDisclaimer)}
+          {isAid
+            ? formatMessage(messages.aidsDisclaimer)
+            : formatMessage(messages.nutritionDisclaimer)}
         </Text>
         <LinkButton
-          to={formatMessage(messages.aidsDescriptionLink)}
-          text={formatMessage(messages.aidsDescriptionInfo)}
+          to={
+            isAid
+              ? formatMessage(messages.aidsDescriptionLink)
+              : formatMessage(messages.nutritionDescriptionLink)
+          }
+          text={
+            isAid
+              ? formatMessage(messages.aidsDescriptionInfo)
+              : formatMessage(messages.nutritionDescriptionInfo)
+          }
           variant="text"
         />
       </Box>
@@ -275,8 +295,16 @@ const Aids = ({ data, refetch }: Props) => {
           setActiveItem={setActiveItem}
           onSubmit={handleSubmit}
           getDataFields={getFields}
-          modalTitle={formatMessage(messages.renewalAidRequest)}
-          modalText={formatMessage(messages.renewalAidRequestDetail)}
+          modalTitle={
+            isAid
+              ? formatMessage(messages.renewalAidRequest)
+              : formatMessage(messages.renewalNutritionRequest)
+          }
+          modalText={
+            isAid
+              ? formatMessage(messages.renewalAidRequestDetail)
+              : formatMessage(messages.renewalNutritionRequestDetail)
+          }
           cancelLabel={formatMessage(m.buttonCancel)}
           confirmLabel={formatMessage(messages.renew)}
           errorMessage={formatMessage(messages.renewalFormError)}
@@ -298,4 +326,4 @@ const Aids = ({ data, refetch }: Props) => {
   )
 }
 
-export default Aids
+export default AidsAndNutritionWrapper

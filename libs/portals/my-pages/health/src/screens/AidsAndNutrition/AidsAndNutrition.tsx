@@ -9,9 +9,8 @@ import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
 import { CONTENT_GAP_SM } from '../../utils/constants'
-import Aids from './Aids'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
-import Nutrition from './Nutrition'
+import AidsAndNutritionWrapper from './AidsAndNutritionWrapper'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -34,13 +33,21 @@ const AidsAndNutrition = () => {
     aids.length > 0
       ? {
           label: formatMessage(messages.aids),
-          content: <Aids data={aids} refetch={refetch} />,
+          content: (
+            <AidsAndNutritionWrapper type="AID" data={aids} refetch={refetch} />
+          ),
         }
       : null,
     nutrition.length > 0
       ? {
           label: formatMessage(messages.nutrition),
-          content: <Nutrition data={nutrition} refetch={refetch} />,
+          content: (
+            <AidsAndNutritionWrapper
+              type="NUTRITION"
+              data={nutrition}
+              refetch={refetch}
+            />
+          ),
         }
       : null,
   ].filter(isDefined)
