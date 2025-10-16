@@ -178,11 +178,14 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

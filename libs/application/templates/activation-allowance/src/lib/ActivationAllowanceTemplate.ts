@@ -26,7 +26,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { ApiActions } from '../utils/enums'
 
@@ -199,22 +198,15 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  stateMachineOptions: {},
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 
