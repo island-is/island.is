@@ -17,7 +17,7 @@ export class OrganizationSubpageSyncService
   implements CmsSyncProvider<IOrganizationSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationSubpage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationSubpage =>
         entry.sys.contentType.sys.id === 'organizationSubpage' &&
         !!entry.fields.title &&
@@ -33,6 +33,10 @@ export class OrganizationSubpageSyncService
         // Subpages should not be searchable if they belong to a parent subpage
         !entry.fields.organizationParentSubpage,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IOrganizationSubpage[]) {
