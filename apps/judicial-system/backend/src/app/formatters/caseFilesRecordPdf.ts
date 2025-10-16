@@ -113,7 +113,6 @@ export const createCaseFilesRecord = async (
       marginTop: 7,
       newLine: false,
     })
-    .addPageNumber('1')
 
   for (const defendant of theCase.defendants ?? []) {
     pdfDocument.addParagraph(
@@ -250,7 +249,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
-  // pdfDocument.addPageNumbers()
+  pdfDocument.addPageNumbers()
 
   return pdfDocument.getContents()
 }
