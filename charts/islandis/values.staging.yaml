@@ -54,7 +54,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -169,7 +169,7 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -255,7 +255,7 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
@@ -487,7 +487,7 @@ api:
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -821,7 +821,7 @@ application-system-api:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -963,7 +963,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1051,7 +1051,7 @@ application-system-form:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1113,7 +1113,7 @@ cms-importer-worker:
   namespace: 'cms-importer'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
@@ -1181,7 +1181,7 @@ consultation-portal:
   namespace: 'consultation-portal'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1278,7 +1278,7 @@ download-service:
   namespace: 'download-service'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1403,7 +1403,7 @@ endorsement-system-api:
   namespace: 'endorsement-system'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1476,7 +1476,7 @@ form-system-web:
   namespace: 'form-system-web'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1587,7 +1587,7 @@ icelandic-names-registry-backend:
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1653,7 +1653,7 @@ island-ui-storybook:
   namespace: 'storybook'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
@@ -1727,7 +1727,7 @@ license-api:
   namespace: 'license-api'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1852,7 +1852,7 @@ payments:
   namespace: 'payments'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1926,7 +1926,7 @@ portals-admin:
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2026,7 +2026,7 @@ regulations-admin-backend:
   namespace: 'regulations-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2163,7 +2163,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -2241,7 +2241,7 @@ service-portal:
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2357,7 +2357,7 @@ service-portal-api:
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2454,7 +2454,7 @@ services-bff-portals-admin:
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2541,7 +2541,7 @@ services-bff-portals-my-pages:
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2628,7 +2628,7 @@ services-documents:
   namespace: 'services-documents'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2715,7 +2715,7 @@ services-form-system-api:
   namespace: 'services-form-system-api'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2791,7 +2791,7 @@ services-payment-flow-update-handler:
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2910,7 +2910,7 @@ services-payments:
   namespace: 'services-payments'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3001,7 +3001,7 @@ services-sessions:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3070,7 +3070,7 @@ services-sessions-cleanup:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
@@ -3161,7 +3161,7 @@ services-sessions-worker:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3289,7 +3289,7 @@ services-university-gateway:
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3375,7 +3375,7 @@ services-university-gateway-worker:
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3447,7 +3447,7 @@ skilavottord-web:
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3545,7 +3545,7 @@ skilavottord-ws:
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3668,7 +3668,7 @@ user-notification:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3769,7 +3769,7 @@ user-notification-birthday-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3869,7 +3869,7 @@ user-notification-cleanup-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3990,7 +3990,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -4075,7 +4075,7 @@ web:
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -4143,7 +4143,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podDisruptionBudget:
     maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
