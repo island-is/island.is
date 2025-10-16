@@ -15,7 +15,10 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene } from '@island.is/judicial-system/types'
+import {
+  CrimeScene,
+  deprecatedIndictmentSubtypes,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -108,6 +111,7 @@ export const PoliceCase: FC<Props> = ({
   const options = useMemo(
     () =>
       Object.values(IndictmentSubtype)
+        .filter((subtype) => !deprecatedIndictmentSubtypes.includes(subtype))
         .map((subtype) => ({
           label: capitalize(indictmentSubtypes[subtype]),
           value: subtype,
