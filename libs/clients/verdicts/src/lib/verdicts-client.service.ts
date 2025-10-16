@@ -131,7 +131,7 @@ export class VerdictsClientService {
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
-          court: goproItem.court?.code ?? '',
+          court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
           presidentJudge: goproItem.judges?.find((judge) =>
@@ -197,7 +197,7 @@ export class VerdictsClientService {
           item: {
             pdfString: response.item.docContent,
             title: response.item.title ?? '',
-            court: response.item.court?.code ?? '',
+            court: response.item.court?.name ?? '',
             verdictDate: response.item.verdictDate,
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
@@ -356,7 +356,7 @@ export class VerdictsClientService {
             itemsPerPage,
             dateFrom: input.dateFrom ? input.dateFrom : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
-            lawyer: input.lawyer,
+            lawyer: input.lawyer ? input.lawyer : undefined,
           }),
     ])
 
@@ -398,7 +398,7 @@ export class VerdictsClientService {
           courtRoom: agenda.courtRoom ?? '',
           judges: agenda.judges ?? [],
           lawyers: agenda.lawyers ?? [],
-          court: (agenda as { court?: string }).court ?? '',
+          court: agenda.court?.name ?? '',
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
         })

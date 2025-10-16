@@ -946,7 +946,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       variables: {
         input: {
           page: 1,
-          court,
+          court: extractCourtLevelFromState(court),
           dateFrom,
           dateTo,
           lawyer,
