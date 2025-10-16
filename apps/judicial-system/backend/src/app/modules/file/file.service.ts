@@ -443,6 +443,7 @@ export class FileService {
 
       if (
         isIndictmentCase(theCase.type) &&
+        theCase.withCourtSessions &&
         theCase.state === CaseState.RECEIVED &&
         file.category &&
         [

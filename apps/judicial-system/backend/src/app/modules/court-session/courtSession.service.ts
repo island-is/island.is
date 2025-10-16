@@ -5,9 +5,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CourtDocumentType,
+  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -33,7 +35,7 @@ export class CourtSessionService {
     )
 
     // If this is not the first court session, then we are done
-    if (!theCase.courtSessions || theCase.courtSessions.length === 0) {
+    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
       return courtSession
     }
 
@@ -85,13 +87,15 @@ export class CourtSessionService {
 
     // Add all case files records
     for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      const name = `Skjalaskrá ${policeCaseNumber}`
+
       await this.courtDocumentService.createInCourtSession(
         theCase.id,
         courtSession.id,
         {
           documentType: CourtDocumentType.GENERATED_DOCUMENT,
-          name: `Skjalaskrá ${policeCaseNumber}`,
-          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}`,
+          name,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}/${name}`,
         },
         transaction,
       )
@@ -121,6 +125,52 @@ export class CourtSessionService {
         },
         transaction,
       )
+    }
+
+    for (const defendant of (theCase.defendants ?? []).filter(
+      (defendant) => !defendant.isAlternativeService,
+    )) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const subpoenaName = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentService.createInCourtSession(
+          theCase.id,
+          courtSession.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: subpoenaName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${subpoenaName}`,
+          },
+          transaction,
+        )
+
+        const wasSubpoenaSuccessfullyServed =
+          subpoena.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        if (!wasSubpoenaSuccessfullyServed) {
+          continue
+        }
+
+        const certificateName = `Birtingarvottorð ${defendant.name}`
+
+        await this.courtDocumentService.createInCourtSession(
+          theCase.id,
+          courtSession.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: certificateName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${certificateName}`,
+          },
+          transaction,
+        )
+      }
     }
 
     return courtSession

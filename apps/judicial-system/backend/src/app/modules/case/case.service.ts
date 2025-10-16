@@ -2205,6 +2205,10 @@ export class CaseService {
                   defendant.subpoenaType,
                 )
 
+                if (!theCase.withCourtSessions) {
+                  return
+                }
+
                 const name = `Fyrirkall ${defendant.name} ${formatDate(
                   subpoena.created,
                 )}`

@@ -239,7 +239,7 @@ export class SubpoenaService {
         ].includes(serviceStatus)
 
       // File the service certificate as a court document
-      if (wasSubpoenaSuccessfullyServed) {
+      if (wasSubpoenaSuccessfullyServed && theCase.withCourtSessions) {
         const name = `Birtingarvottorð ${defendant.name}`
 
         return this.courtDocumentService.create(
@@ -247,7 +247,7 @@ export class SubpoenaService {
           {
             documentType: CourtDocumentType.GENERATED_DOCUMENT,
             name,
-            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
           },
           transaction,
         )
