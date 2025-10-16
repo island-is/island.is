@@ -1,17 +1,20 @@
 import addDays from 'date-fns/addDays'
 import endOfDay from 'date-fns/endOfDay'
 
-const VERDICT_APPEAL_WINDOW_DAYS = 28
+export const VERDICT_APPEAL_WINDOW_DAYS = 28
 const FINE_APPEAL_WINDOW_DAYS = 3
 
 const APPEAL_WINDOW_DAYS = 3
 
 export const hasDatePassed = (deadline: Date) => Date.now() > deadline.getTime()
 
-export const getIndictmentAppealDeadlineDate = (
-  baseDate: Date,
-  isFine?: boolean,
-) => {
+export const getIndictmentAppealDeadlineDate = ({
+  baseDate,
+  isFine,
+}: {
+  baseDate: Date
+  isFine?: boolean
+}) => {
   const windowDays = isFine
     ? FINE_APPEAL_WINDOW_DAYS
     : VERDICT_APPEAL_WINDOW_DAYS

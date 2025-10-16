@@ -58,7 +58,7 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda
   RVVS = 'RVVS', // Viðbótargögn sækjanda
   RVFK = 'RVFK', // Fyrirkall
-  RVBD = 'RVBD', // Birtingarvottorð dóms - TODO: Not supported by RLS?
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
 }
 
 export interface PoliceDocument {

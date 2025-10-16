@@ -109,7 +109,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.serviceDate &&
-        getIndictmentAppealDeadlineDate(dates.serviceDate, false).toISOString())
+        getIndictmentAppealDeadlineDate({
+          baseDate: dates.serviceDate,
+          isFine: false,
+        }).toISOString())
 
     return getAppealExpirationInfo(
       deadline,

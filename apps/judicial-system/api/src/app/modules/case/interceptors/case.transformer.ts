@@ -163,10 +163,10 @@ export const getIndictmentInfo = ({
   }
 
   const theRulingDate = new Date(rulingDate)
-  const indictmentAppealDeadline = getIndictmentAppealDeadlineDate(
-    theRulingDate,
+  const indictmentAppealDeadline = getIndictmentAppealDeadlineDate({
+    baseDate: theRulingDate,
     isFine,
-  ).toISOString()
+  }).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
@@ -205,7 +205,10 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
       ? verdict.serviceDate
       : theCase.rulingDate
     const verdictAppealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFine)
+      ? getIndictmentAppealDeadlineDate({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
       : undefined
     const isVerdictAppealDeadlineExpired =
       !!verdictAppealDeadline && hasDatePassed(verdictAppealDeadline)

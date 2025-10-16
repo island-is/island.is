@@ -43,7 +43,7 @@ export class VerdictResponse {
 
     const isServiceRequired =
       defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFineCase =
+    const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
@@ -52,7 +52,10 @@ export class VerdictResponse {
       : internalCase.rulingDate
 
     const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFineCase)
+      ? getIndictmentAppealDeadlineDate({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
       : null
 
     const isAppealDeadlineExpired = appealDeadline

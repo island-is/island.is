@@ -39,8 +39,12 @@ import {
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
+import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import { VerdictService } from '../verdict/verdict.service'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -76,10 +80,10 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate(
-    new Date(baseDate),
+  const appealDeadline = getIndictmentAppealDeadlineDate({
+    baseDate: new Date(baseDate),
     isFine,
-  )
+  })
   if (hasDatePassed(appealDeadline)) {
     throw new BadRequestException(
       `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
@@ -94,6 +98,7 @@ export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -224,5 +229,25 @@ export class InternalVerdictController {
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }
+  }
+
+  @ApiOkResponse({
+    description:
+      'Delivers a service certificate to the police for all defendants where appeal deadline is expired',
+  })
+  @Post('verdict/deliverVerdictServiceCertificates')
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    VerdictServiceCertificateDelivery[]
+  > {
+    this.logger.debug(
+      `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
+    )
+
+    const delivered =
+      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
+
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
+
+    return delivered
   }
 }

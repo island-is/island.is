@@ -12,6 +12,8 @@ import { Verdict } from '../repository'
 import {
   CaseModule,
   DefendantModule,
+  EventLogModule,
+  EventModule,
   FileModule,
   LawyerRegistryModule,
   PoliceModule,
@@ -25,9 +27,11 @@ import { VerdictService } from './verdict.service'
     AuditTrailModule,
     MessageModule,
     forwardRef(() => CaseModule),
+    forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
     forwardRef(() => DefendantModule),
+    forwardRef(() => EventLogModule),
     forwardRef(() => LawyerRegistryModule),
     SequelizeModule.forFeature([Verdict]),
     ConfigModule.forRoot({

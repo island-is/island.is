@@ -88,6 +88,10 @@ export class AppService {
       execute: () =>
         this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
     },
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.deliverVerdictServiceCertificateToPolice(),
+    },
   ]
 
   private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
@@ -190,6 +194,31 @@ export class AppService {
     } catch (error) {
       throw new BadGatewayException(
         `Failed to reset lawyer registry: ${error.message}`,
+      )
+    }
+  }
+
+  private async deliverVerdictServiceCertificateToPolice() {
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/verdict/deliverVerdictServiceCertificates`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while delivering verdict service certificates',
+        )
+      }
+    } catch (error) {
+      throw new BadGatewayException(
+        `Failed to deliver verdict service certificates: ${error.message}`,
       )
     }
   }
