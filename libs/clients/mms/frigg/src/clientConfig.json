@@ -168,6 +168,8 @@
             "required": false,
             "in": "query",
             "description": "Comma-separated grade levels (e.g. gradeLevels=01,02,03)",
+            "style": "form",
+            "explode": false,
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
