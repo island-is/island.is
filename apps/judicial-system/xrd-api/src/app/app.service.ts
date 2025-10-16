@@ -281,9 +281,12 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
-      const appealDecision =
-        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.deliverySupplements?.find(
+        (supplement) => supplement.code === 'APPEAL_DECISION',
+      )
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision?.value
 
       if (
         !Object.values(VerdictAppealDecision).includes(
@@ -313,9 +316,7 @@ export class AppService {
       serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
-      appealDecision:
-        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
-        undefined,
+      appealDecision: deliveredAppealDecision?.value,
     }
     try {
       const res = await fetch(
@@ -329,8 +330,6 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
-      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
-      // once service date has been recorded for the verdict
 
       const response = await res.json()
 
