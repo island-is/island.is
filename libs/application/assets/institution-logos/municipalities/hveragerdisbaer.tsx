@@ -1,42 +1,23 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface HveragerdisbaerLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const HveragerdisbaerLogo: React.FC<HveragerdisbaerLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const HveragerdisbaerLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M76.572 68.5759C76.3369 75.9412 73.2811 82.9148 67.9922 88.0078C62.7032 93.1009 55.6513 96 48.286 96C40.9207 96 33.8688 93.1401 28.5798 88.0078C23.2909 82.8756 20.2351 75.9412 20 68.5759V16H76.572V68.5759Z"
         fill="#2B5B9B"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M45.2687 60.427C47.3059 59.1341 48.4813 63.6395 49.0689 67.7531C49.4215 70.378 50.7144 72.7678 52.6732 74.5308C54.6321 78.4485 60.1953 82.3271 71.4783 82.2095C67.2863 89.5357 58.2364 94.8638 48.3637 95.0989C38.1776 94.8246 29.206 89.4182 24.6223 81.3868L50.9886 81.3476L46.0523 72.3369C44.8769 76.7639 40.254 80.0548 35.0826 80.094C28.971 80.1332 24.6223 75.2752 24.5439 69.6728C24.4656 64.0705 29.1669 59.8785 35.5136 59.0166C29.0885 56 25.6409 51.5729 25.2883 44.0509C25.4842 35.902 32.6145 29.5553 40.1757 29.3202C49.1081 28.6934 54.9847 35.8628 54.1228 44.2076C55.6899 42.6797 58.1189 40.9951 60.4303 40.9951C65.9543 40.9167 69.2844 44.9128 68.7359 50.045C68.0307 54.7463 64.6223 58.1547 60.9005 58.7032C56.1992 52.9833 53.2217 52.8266 51.0278 53.4142C46.6399 54.7855 45.4646 59.1733 45.2687 60.427Z"
         fill="#D9EAF8"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M45.2695 60.3879C47.3459 59.2517 48.4429 63.5612 49.0697 67.6748C49.3831 70.3389 50.676 72.7679 52.674 74.5308C62.6642 80.76 69.5203 66.6954 70.4605 61.9941C65.2499 63.9922 62.7034 61.4848 60.9013 58.7032C56.2 52.9442 53.2225 52.8266 51.0286 53.3751C46.6407 54.7855 45.4654 59.1342 45.2695 60.3879Z"
         fill="#159CD8"
       />

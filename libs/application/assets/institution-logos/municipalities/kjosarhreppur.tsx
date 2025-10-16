@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface KjosarhreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const KjosarhreppurLogo: React.FC<KjosarhreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const KjosarhreppurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57883)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57883)">
         <path
           d="M15.625 59.3298C15.6494 59.4031 15.6617 59.4642 15.6861 59.5375C15.6617 59.4642 15.6372 59.4031 15.625 59.3298Z"
           fill="#EDF8F6"

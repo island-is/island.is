@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface HunathingVestraLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const HunathingVestraLogo: React.FC<HunathingVestraLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const HunathingVestraLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M81.3572 16C81.2765 17.2109 81.3572 45.9495 81.3572 56.1211C81.3572 82.115 48.5015 96 48.0979 96C48.0979 96 15 82.0343 15 56.1211V16H81.3572Z"
         fill="#038FD9"

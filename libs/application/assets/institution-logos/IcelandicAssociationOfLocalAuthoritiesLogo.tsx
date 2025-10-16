@@ -1,25 +1,11 @@
 // Logo for Icelandic Association of local Authorities - Samband íslenskra sveitarfélaga
-import React from 'react'
+import React, { FC } from 'react'
 
-interface SambandidLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const IcelandicAssociationOfLocalAuthoritiesLogo: React.FC<
-  SambandidLogoProps
-> = ({ className, width, height, ...props }) => {
+export const IcelandicAssociationOfLocalAuthoritiesLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"

@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface StrandabyggdLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const StrandabyggdLogo: React.FC<StrandabyggdLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const StrandabyggdLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57920)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57920)">
         <path
           d="M47.5271 95.6802C43.7963 92.1625 18.2666 80.6502 18.2666 64.5543C18.2666 49.6842 18.2666 16.3198 18.2666 16.3198H76.8409C76.8409 16.3198 76.8409 49.7375 76.8409 64.5543C76.8409 80.5969 51.3112 92.1092 47.5271 95.6802Z"
           fill="white"
@@ -34,7 +15,7 @@ export const StrandabyggdLogo: React.FC<StrandabyggdLogoProps> = ({
         <path
           d="M47.5271 95.6802C43.7963 92.1625 18.2666 80.6502 18.2666 64.5543C18.2666 49.6842 18.2666 16.3198 18.2666 16.3198H76.8409C76.8409 16.3198 76.8409 49.7375 76.8409 64.5543C76.8409 80.5969 51.3112 92.1092 47.5271 95.6802Z"
           stroke="#0B3673"
-          stroke-miterlimit="10"
+          strokeMiterlimit="10"
         />
         <path
           d="M52.2175 34.1213L42.7305 42.7022V22.8221L37.1875 28.2052V49.3644L52.2175 36.0933V76.0133L58.1335 74.2012V34.1213H52.2175Z"
@@ -90,8 +71,8 @@ export const StrandabyggdLogo: React.FC<StrandabyggdLogoProps> = ({
           y2="52.2482"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#86AFCF" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#86AFCF" />
         </linearGradient>
         <clipPath id="clip0_2491:57920">
           <rect

@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface ArborgLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const ArborgLogo: React.FC<ArborgLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const ArborgLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M18.0273 22.1689H76.6316V67.4073L65.8361 84.3717L47.8436 94.1391L29.3369 84.3717L18.0273 67.4073V22.1689Z"
         fill="white"

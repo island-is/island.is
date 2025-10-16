@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface NordurthingLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const NordurthingLogo: React.FC<NordurthingLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const NordurthingLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57871)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57871)">
         <path
           d="M76.3379 67.6844C75.3145 68.7079 74.291 69.7314 73.2676 70.7548C74.291 69.7314 75.4851 68.7079 76.3379 67.6844Z"
           fill="#55B1E1"

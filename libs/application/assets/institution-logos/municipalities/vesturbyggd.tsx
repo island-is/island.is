@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface VesturbyggdLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const VesturbyggdLogo: React.FC<VesturbyggdLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const VesturbyggdLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M63.7102 57.069L68.6099 52.1693H63.7102H61.6612H60.8594V66.7795L63.7102 62.7706V57.069Z"
         fill="black"

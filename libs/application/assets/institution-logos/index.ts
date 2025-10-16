@@ -98,4 +98,3 @@ export {
   municipalityLogoMap,
   getMunicipalityLogo,
 } from './municipalities/municipalityLogoMap'
-export type { MunicipalityLogoComponent } from './municipalities/municipalityLogoMap'

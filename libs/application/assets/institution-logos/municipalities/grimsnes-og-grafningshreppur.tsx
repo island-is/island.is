@@ -1,31 +1,17 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface GrimsnesOgGrafningshreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const GrimsnesOgGrafningshreppurLogo: React.FC<
-  GrimsnesOgGrafningshreppurLogoProps
-> = ({ className, width, height, ...props }) => {
+export const GrimsnesOgGrafningshreppurLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57886)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57886)">
         <path
           d="M47.7439 16.5684H77.8918V59.1726C77.8918 76.784 63.2625 90.3101 47.7171 95.4117C32.1918 90.3101 17.5625 76.784 17.5625 59.1726V16.5684H47.7439Z"
           fill="white"
           stroke="#007BC1"
-          stroke-width="1.68"
-          stroke-miterlimit="3.86"
+          strokeWidth="1.68"
+          strokeMiterlimit="3.86"
         />
         <path
           d="M24.4882 78.3819C24.4882 78.3819 28.413 70.8734 32.8526 74.163C38.6963 78.5157 41.7854 75.5537 41.7854 73.8888C41.7854 72.224 44.393 68.2323 49.1401 71.1809C54.1882 74.3368 56.7089 68.1989 56.7089 68.1989C56.7089 68.1989 57.7987 64.4012 62.6796 66.3C67.5605 68.1989 68.3696 65.4843 69.1853 63.8596C70.001 62.2348 71.6257 60.6034 73.5179 61.6933C74.6733 62.3371 76.0263 62.5301 77.3157 62.2348L77.3959 63.9732C77.3959 63.9732 74.7816 65.5712 73.5981 64.7488C72.4147 63.9264 71.833 66.514 70.6763 68.2658C69.5196 70.0175 64.4715 71.2946 62.1314 70.5591C59.7912 69.8236 59.5572 76.3025 56.4013 77.145C53.2455 77.9874 49.8088 74.4304 47.7494 76.0953C45.6901 77.7601 44.3194 83.5169 39.9801 83.2628C35.6408 83.0088 36.3094 81.2169 33.9625 81.8654C31.6157 82.514 30.3587 86.1111 30.3587 86.1111L25.558 79.9331L24.4749 78.3819H24.4882ZM17.5547 16.5282H77.8372V28.3226C77.8372 28.3226 69.4728 34.173 61.67 34.28C53.8673 34.387 50.7849 41.0597 50.3503 41.1667C49.0131 41.5077 44.7273 46.8433 42.9153 47.6189C40.6353 48.5951 37.3992 53.5428 26.4272 52.4998C24.1539 52.2791 17.6483 52.4998 17.6483 52.4998L17.5547 16.5282Z"

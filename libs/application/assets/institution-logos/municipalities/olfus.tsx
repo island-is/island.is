@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface OlfusLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const OlfusLogo: React.FC<OlfusLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const OlfusLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M66.5993 86.0953C61.5708 90.2858 55.3232 92.8762 49.1517 93.2572L47.5517 91.6572L45.9517 93.2572C39.7803 92.8762 33.4565 90.2858 28.5041 86.0953C23.247 81.6762 20.1993 76.1143 19.7422 70.2477L21.3422 68.6477L19.666 66.9715V44.9524L21.3422 43.2762L19.666 41.6V19.8858L20.7327 18.8191H45.9517L47.5517 20.4191L49.1517 18.8191H74.447L75.4374 19.8096V39.0096L73.8374 40.6096L75.4374 42.2096V66.9715L73.8374 68.5715L75.4374 70.1715C74.9041 76.0381 71.8565 81.6762 66.5993 86.0953Z"
         fill="white"

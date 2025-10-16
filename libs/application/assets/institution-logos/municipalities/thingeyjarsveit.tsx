@@ -1,33 +1,14 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface ThingeyjarsveitLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const ThingeyjarsveitLogo: React.FC<ThingeyjarsveitLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const ThingeyjarsveitLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57877)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57877)">
         <path
           d="M18 34.8764V16H77.2135"
           stroke="#0090D9"
-          stroke-width="0.034058"
-          stroke-linejoin="round"
+          strokeWidth="0.034058"
+          strokeLinejoin="round"
         />
         <path
           d="M25.5279 42.5169L24.9661 36.5618L24.4043 35.8877C25.0785 35.1011 25.865 34.5393 26.8762 34.2023L27.2133 34.7641V41.1686C26.5391 41.5056 25.9773 41.9551 25.5279 42.5169Z"
@@ -44,9 +25,9 @@ export const ThingeyjarsveitLogo: React.FC<ThingeyjarsveitLogoProps> = ({
         <path
           d="M18 66.3371C18 74.5393 21.3708 82.4045 27.4382 88.0225"
           stroke="black"
-          stroke-width="0.034012"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.034012"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M41.7079 52.7416C46.6517 54.8764 50.9213 58.0225 54.4045 62.0674L72.2697 82.6292C63.2809 96.3371 44.9663 100.157 31.2584 91.1686C23.0562 85.6629 18 76.3371 18 66.3371V33.9775L21.9326 37.3483C22.4944 37.7978 22.8315 38.4719 22.9438 39.1461L23.7303 44.2023C23.8427 44.6517 24.1798 45.1011 24.6292 45.3259L41.7079 52.7416Z"

@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface MulathingLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const MulathingLogo: React.FC<MulathingLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const MulathingLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M48.0976 95.3347H47.266C29.5251 95.3347 15.1107 80.9203 15.1662 63.124L15.3325 16.1663H80.1419L80.2528 63.1795C80.2528 80.9203 65.8938 95.3347 48.0976 95.3347Z"
         fill="white"

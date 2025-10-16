@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface SnaefellsbaerLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const SnaefellsbaerLogo: React.FC<SnaefellsbaerLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const SnaefellsbaerLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M21 16V67.4286C21 76.5042 25.5938 84.3473 34.2213 90.0616C40.7199 94.3193 47.1064 95.888 47.3305 95.888L47.5546 96L47.7787 95.888C48.0028 95.7759 54.5014 94.3193 61 90.0616C69.7395 84.3473 74.4454 76.5042 74.4454 67.4286V16H21Z"
         fill="white"

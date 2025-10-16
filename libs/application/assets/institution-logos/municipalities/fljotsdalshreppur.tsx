@@ -1,28 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface FljotsdalshreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const FljotsdalshreppurLogo: React.FC<FljotsdalshreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const FljotsdalshreppurLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57904)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57904)">
         <path
           d="M48.536 16.0339C38.324 16.0339 28.078 16.0679 17.866 16C16.3732 16 16 16.3393 16 17.866C16.0679 33.0653 16.0679 48.2646 16.0339 63.464C16.0339 70.3851 18.0017 76.6616 21.9712 82.3613C32.4207 97.3571 54.2358 100.58 68.4512 89.1468C73.3707 85.2112 76.8991 80.3596 78.9347 74.2528C79.9864 71.1315 80.8346 68.0441 80.8685 64.7871C80.9364 49.0789 80.9025 33.3707 80.9364 17.6624C80.9364 16.2714 80.4614 16 79.2061 16C68.9941 16.0679 58.7481 16.0339 48.536 16.0339Z"
           fill="#F8FAF7"

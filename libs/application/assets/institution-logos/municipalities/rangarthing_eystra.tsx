@@ -1,27 +1,10 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface Rangarthing_eystraLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const Rangarthing_eystraLogo: React.FC<Rangarthing_eystraLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const Rangarthing_eystraLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M80.7364 56.3273C80.7364 65.2204 75.7316 74.2676 69.8028 80.9663C63.2388 88.3773 49.2831 95.846 47.6854 95.5188C45.9722 95.153 42.1609 93.4398 38.3688 91.0722C31.362 86.6064 29.6873 85.4322 24.8365 80.2156C17.2331 72.0732 15.7124 65.3167 14.5382 57.8287C14.2687 56.1733 14.8846 53.2859 14.5382 47.2416C14.4419 36.3465 14.6729 20.7738 14.5382 17.2127C14.5382 16.77 14.5382 16.539 14.5574 16.539H80.7749C80.7749 16.539 80.7364 46.3946 80.7364 56.3273Z"
         fill="white"

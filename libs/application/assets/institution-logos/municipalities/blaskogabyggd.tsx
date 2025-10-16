@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface BlaskogabyggdLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const BlaskogabyggdLogo: React.FC<BlaskogabyggdLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const BlaskogabyggdLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57874)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57874)">
         <path
           d="M47.7015 16.0252C36.9725 16.0252 26.2436 16.0505 15.5399 16C14.3282 16 14 16.3282 14 17.5399C14.0505 29.9097 14.0252 42.2543 14.0252 54.6242C14.0252 57.3506 14.4039 60.0265 14.9593 62.7024C16.2468 68.7359 19.0994 73.9867 22.9366 78.7075C29.3992 86.6343 37.7046 92.0366 47.1209 95.8738C47.4743 96.0252 47.8782 96.0505 48.2316 95.899C50.6551 94.7883 53.1543 93.8037 55.4768 92.491C64.2619 87.6188 71.7091 81.2572 76.7075 72.3711C79.4339 67.5241 81.1505 62.2985 81.201 56.7447C81.3525 43.6175 81.2263 30.5156 81.2768 17.3885C81.2768 16.2524 80.9233 16 79.8378 16C69.1341 16.0505 58.4052 16.0252 47.7015 16.0252Z"
           fill="#FCFCFC"

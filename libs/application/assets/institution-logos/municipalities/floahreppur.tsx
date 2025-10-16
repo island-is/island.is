@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface FloahreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const FloahreppurLogo: React.FC<FloahreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const FloahreppurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57869)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57869)">
         <path
           d="M47.7194 16.024C37.9353 16.024 28.1511 16.048 18.3669 16C17.2638 16 17 16.2878 17 17.3909C17.048 31.3477 17.024 45.3285 17.024 59.3093C17.024 65.1127 18.4628 70.5324 21.3645 75.5204C27.1918 85.5204 35.9928 91.8513 46.6882 95.8321C47.4796 96.1199 48.1511 96.024 48.8705 95.7602C56.3285 93.0264 62.9233 88.9736 68.3669 83.1463C74.482 76.5995 78.271 68.9736 78.3429 59.8609C78.4388 45.6403 78.3669 31.4436 78.3909 17.223C78.3909 16.2878 78.1511 16.024 77.1918 16.024C67.3597 16.048 57.5516 16.024 47.7194 16.024Z"
           fill="#FDFEFE"

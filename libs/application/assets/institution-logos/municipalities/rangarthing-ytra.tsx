@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface RangarthingYtraLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const RangarthingYtraLogo: React.FC<RangarthingYtraLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const RangarthingYtraLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M47.692 16H47.4754H16L16.1564 76.376V76.4241C16.1805 76.773 16.8182 84.9186 31.9663 90.6819C37.9823 92.968 42.3498 94.5441 44.9728 95.3623C45.9233 95.6631 46.6332 95.8556 47.0904 95.9398C47.1987 95.9639 47.331 95.988 47.4634 95.988C47.5115 95.988 47.5476 96 47.5957 96C47.7762 96 47.9567 95.9639 48.089 95.9398C48.5462 95.8556 49.2561 95.6631 50.2066 95.3623C52.8296 94.5441 57.1972 92.968 63.2131 90.6819C78.3733 84.9186 79.011 76.773 79.023 76.4241L79.1794 16H47.692Z"
         fill="white"

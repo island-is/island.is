@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface VogarLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const VogarLogo: React.FC<VogarLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const VogarLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57868)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57868)">
         <path
           d="M16.0191 16L16.0003 62.2603C15.9626 72.8604 19.8035 81.5025 27.7301 88.5818C38.4997 98.2029 55.5013 98.7677 67.4947 88.6006C78.0572 79.2619 79.4505 69.9233 79.3375 62.1285L79.4128 16.0188L16.0191 16Z"
           fill="white"

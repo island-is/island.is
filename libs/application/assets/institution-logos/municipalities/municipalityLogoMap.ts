@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { IcelandicAssociationOfLocalAuthoritiesLogo } from '../index'
 import {
   AkrahreppurLogo,
@@ -71,14 +71,11 @@ import {
   VopnafjardarhreppurLogo,
 } from '../index'
 
-export type MunicipalityLogoComponent = React.FC<{
-  className?: string
-  width?: number | string
-  height?: number | string
-}>
-
 // Mapping from municipality codes to TSX logo components
-export const municipalityLogoMap: Record<string, MunicipalityLogoComponent> = {
+export const municipalityLogoMap: Record<
+  string,
+  FC<React.PropsWithChildren<unknown>>
+> = {
   '5706': AkrahreppurLogo,
   '3000': AkranesLogo,
   '6000': AkureyriLogo,
@@ -156,7 +153,7 @@ export const municipalityLogoMap: Record<string, MunicipalityLogoComponent> = {
  */
 export const getMunicipalityLogo = (
   municipalityId: string | undefined,
-): MunicipalityLogoComponent => {
+): FC<React.PropsWithChildren<unknown>> => {
   if (!municipalityId || !municipalityLogoMap[municipalityId]) {
     return IcelandicAssociationOfLocalAuthoritiesLogo
   }

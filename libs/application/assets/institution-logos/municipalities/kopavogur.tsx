@@ -1,42 +1,23 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface KopavogurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const KopavogurLogo: React.FC<KopavogurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const KopavogurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M74.2716 65.4208C74.2716 72.5869 68.5926 77.2818 63.8395 81.9151L47.7284 96L30.7531 81.9151C26.1235 77.2818 21 72.6486 21 65.4826V16.0618L74.3333 16L74.2716 65.4208Z"
         fill="#008C44"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M73.5304 63.444V62.1467H59.1476C59.1476 62.1467 58.4069 56.4015 57.9131 53.7452H73.5304V52.3861H63.2217C62.481 48.3089 61.7402 45.6525 60.0118 40.3398C58.3452 35.027 55.5674 27.7374 53.7155 24.7722C51.8637 21.8069 49.9501 19.6448 47.6662 19.6448C45.3822 19.6448 43.4069 21.8069 41.6168 24.7722C39.7649 27.7374 36.9871 35.027 35.3205 40.3398C33.6538 45.6525 32.9131 48.3089 32.1106 52.3861H21.7402V53.7452H37.3575C36.802 56.3398 36.1229 62.1467 36.1229 62.1467H21.7402V63.444H73.5304Z"
         fill="white"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M57.6054 62.0849C57.1733 55.8455 55.8153 49.2973 54.3955 44.2316C52.9758 39.166 52.1733 37.0038 51.6795 35.8301C51.1857 34.6564 49.5807 31.8764 47.7906 31.8764H47.7289C45.9388 31.8764 44.3338 34.6564 43.84 35.8301C43.3462 37.0038 42.5437 39.2278 41.1239 44.2316C39.7042 49.2355 38.2844 55.7838 37.9141 62.0849H57.6054Z"
         fill="#008C44"
       />

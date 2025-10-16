@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface DalabyggdLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const DalabyggdLogo: React.FC<DalabyggdLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const DalabyggdLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M47.9761 96L47.7884 95.8976C28.6928 85.6587 19 74.0205 19 61.3072V16H76.9352V61.3072C76.9352 74.0205 67.2423 85.6587 48.1468 95.8976L47.9761 96Z"
         fill="white"

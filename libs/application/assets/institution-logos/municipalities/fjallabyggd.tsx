@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface FjallabyggdLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const FjallabyggdLogo: React.FC<FjallabyggdLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const FjallabyggdLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57866)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57866)">
         <path
           d="M50.667 46.3651V32.9047L68.8257 32.0793L86.9845 32.9047V56.4603C86.921 66.1111 77.9686 74.4921 68.8257 78.873C59.5559 74.5555 50.667 66.2381 50.667 56.5238V54.873V46.3651Z"
           fill="white"

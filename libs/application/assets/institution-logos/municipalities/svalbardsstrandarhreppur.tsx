@@ -1,25 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface SvalbardsstrandarhreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const SvalbardsstrandarhreppurLogo: React.FC<
-  SvalbardsstrandarhreppurLogoProps
-> = ({ className, width, height, ...props }) => {
+export const SvalbardsstrandarhreppurLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57913)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57913)">
         <path
           d="M77.7859 44.301C77.7373 36.8738 77.7859 26.4854 77.7859 19.2524C77.5917 16.2912 73.2228 17.7476 71.1839 17.0679C66.3781 16.6311 61.4266 16.1456 56.5237 16.0971C44.2422 15.7573 32.4946 16.2427 20.8927 17.6019C17.7859 17.7476 19.582 23.4272 19.1451 25.3689C19.1451 34.0097 19.0965 45.5145 19.1451 54.1553L19.0965 54.1068C19.1451 58.0874 18.9995 62.1165 19.1451 66.0971C19.4849 68.1845 19.8732 70.3204 20.5043 72.3592H20.3587C21.1354 74.6408 22.3975 76.7281 23.6597 78.767C24.048 80.5631 26.0868 81.6311 27.0577 83.1844C29.048 85.7087 31.9606 87.6019 34.8247 89.6408C38.4655 92.165 42.1063 93.8641 46.9121 95.6602L46.8635 95.6116C50.5043 96.9223 55.9897 92.6019 58.7082 91.534C66.6694 86.9709 71.7179 82.0679 75.2131 74.8349C76.3296 72.4078 77.1063 69.7379 77.2033 67.0679C77.1548 66.6311 77.4946 66.1456 77.5431 65.7573C77.7373 60.7573 77.5431 55.5145 77.5917 50.466H77.6888C77.7859 49.6893 77.8344 44.9806 77.7859 44.301Z"
           fill="white"

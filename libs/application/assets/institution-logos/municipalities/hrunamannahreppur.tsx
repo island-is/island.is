@@ -1,27 +1,10 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface HrunamannahreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const HrunamannahreppurLogo: React.FC<HrunamannahreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const HrunamannahreppurLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M48.1955 96C47.7633 96 47.3312 95.919 46.818 95.7029C42.4966 94.0284 38.3103 91.7866 34.421 89.0587C30.4777 86.2768 27.5878 83.603 25.3731 80.605C20.3494 73.9068 17.6215 65.5611 17.0544 55.1627C17.0544 54.9467 17.0273 50.1931 17.0544 49.788C17.0544 46.763 17.0544 43.765 17.0544 40.767V40.578C17.0544 32.8535 17.0544 24.8589 17.0273 17.0263C17.0273 16.4321 17.1894 16.2701 17.2434 16.2161C17.3244 16.108 17.4325 16 17.8106 16C17.9186 16 17.9997 16 18.1077 16H18.3238C18.3238 16 37.392 16 46.845 16C56.3251 16 65.8052 16 75.2853 16C76.1225 16 76.9868 16 77.8241 16.027H79.1475H79.6337V51.0034C79.6337 51.6786 79.4446 54.1364 79.0395 58.1067C78.8234 60.1323 78.4993 62.212 78.0402 64.4267C76.4737 71.8542 73.6377 77.7421 69.3703 82.4686C64.2387 88.1134 57.7296 92.4348 49.4379 95.6759C49.0327 95.919 48.6006 96 48.1955 96Z"
         fill="#FAFBFA"

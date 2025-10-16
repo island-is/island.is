@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface SeltjarnarnesLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const SeltjarnarnesLogo: React.FC<SeltjarnarnesLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const SeltjarnarnesLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57905)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57905)">
         <path
           d="M45.8764 94.8474C40.828 92.2052 36.3524 89.0104 32.7127 85.4246C27.826 80.6255 24.8468 75.5029 23.4853 69.5782L23 67.8999V16H73.5519V67.7314L73.1744 69.3895C72.6217 71.8295 72.3251 72.7799 71.523 74.6536C68.4495 81.8387 62.4439 88.06 53.385 93.432C51.7741 94.3891 48.559 96.0067 48.2827 96C48.1681 95.9933 47.0829 95.481 45.8764 94.8474Z"
           fill="white"

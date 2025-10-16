@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface HelgafellssveitLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const HelgafellssveitLogo: React.FC<HelgafellssveitLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const HelgafellssveitLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M47.606 96C30.4519 89.1714 16.7516 75.392 17.0034 58.353V16.6189C17.0034 16.4547 17.0686 16.2973 17.1847 16.1813C17.3007 16.0652 17.4581 16 17.6222 16H77.5826C77.6645 15.9991 77.7457 16.0144 77.8216 16.0451C77.8976 16.0757 77.9666 16.1212 78.0248 16.1787C78.0831 16.2363 78.1293 16.3048 78.1609 16.3804C78.1924 16.4559 78.2086 16.537 78.2086 16.6189V58.353C78.4533 75.392 64.753 89.1714 47.606 96Z"
         fill="#848484"

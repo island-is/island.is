@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface MyrdalshreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const MyrdalshreppurLogo: React.FC<MyrdalshreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const MyrdalshreppurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M48.4513 96H47.8716L47.6232 95.9172C47.0435 95.6687 34.3727 90.2029 27.4162 83.2464C20.7909 76.4555 14 67.8427 14 54.5921V16H82.323V54.5921C82.323 67.8427 75.5321 76.4555 68.824 83.1636C61.8675 90.1201 49.1967 95.6687 48.617 95.8344L48.4513 96Z"
         fill="#527F66"

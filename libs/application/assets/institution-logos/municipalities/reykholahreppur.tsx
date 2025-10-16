@@ -1,28 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface ReykholahreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const ReykholahreppurLogo: React.FC<ReykholahreppurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const ReykholahreppurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57919)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57919)">
         <path
           d="M77.1971 55.9926C77.1971 78.0575 63.9553 95.9555 47.6142 95.9555C31.2731 95.9555 18.0312 78.0723 18.0312 55.9926C18.0312 33.9129 31.288 16.0297 47.6142 16.0297C63.9404 16.0297 77.1971 33.9277 77.1971 55.9926Z"
           fill="white"
@@ -54,7 +35,7 @@ export const ReykholahreppurLogo: React.FC<ReykholahreppurLogoProps> = ({
         <path
           d="M77.1971 55.9926C77.1971 78.0575 63.9553 95.9555 47.6142 95.9555C31.2731 95.9555 18.0312 78.0723 18.0312 55.9926C18.0312 33.9129 31.288 16.0297 47.6142 16.0297C63.9404 16.0297 77.1971 33.9277 77.1971 55.9926Z"
           stroke="#808080"
-          stroke-width="0.4842"
+          strokeWidth="0.4842"
         />
       </g>
       <path

@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface SkagafjordurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const SkagafjordurLogo: React.FC<SkagafjordurLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const SkagafjordurLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M47.9809 96C30.3165 96 16 81.6676 16 64.0032V16H79.9777V64.0032C79.9777 81.6676 65.6612 96 47.9809 96Z"
         fill="#033390"

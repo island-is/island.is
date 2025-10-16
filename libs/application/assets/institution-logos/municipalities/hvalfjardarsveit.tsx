@@ -1,31 +1,14 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface HvalfjardarsveitLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const HvalfjardarsveitLogo: React.FC<HvalfjardarsveitLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const HvalfjardarsveitLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57925)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57925)">
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M47.648 16.2542H81.3044C82.321 16.2542 82.3334 16.2542 82.3359 17.2508C82.3359 31.256 82.3783 45.2588 82.3135 59.264C82.3011 61.3968 81.865 63.5371 81.5137 65.6549C80.9968 68.5884 80.0268 71.4237 78.6384 74.0591C76.6763 77.8554 74.023 81.2522 70.8148 84.0753C67.0425 87.4364 62.762 89.9828 58.2124 92.0484C55.2499 93.3988 52.1653 94.4727 49.138 95.6711C48.7043 95.8709 48.2592 96.0448 47.805 96.1919C47.5246 96.2713 47.2264 96.2599 46.9529 96.1595C44.3765 95.0482 41.8027 93.9345 39.2513 92.7684C37.8358 92.1487 36.4559 91.4508 35.1178 90.678C32.5415 89.1357 29.9502 87.5959 27.4985 85.8642C23.9835 83.389 20.9518 80.2906 18.5537 76.7226C16.2546 73.3224 14.6461 69.5035 13.8197 65.483C13.2493 62.5732 12.978 59.6128 13.0099 56.6478C12.9967 43.5022 12.9967 30.3558 13.0099 17.2084C13.0099 16.2492 13.0099 16.2492 14.1261 16.2492H47.648V16.2542Z"
           fill="white"
         />

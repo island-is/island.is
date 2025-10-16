@@ -1,27 +1,10 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface StykkisholmsbaerLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const StykkisholmsbaerLogo: React.FC<StykkisholmsbaerLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const StykkisholmsbaerLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M47.9057 16.0943C47.8113 16.0943 47.717 16.0943 47.717 16C47.717 16 47.6226 16 47.5283 16.0943C33.566 21.0943 29.3208 22.5094 18 26.4717C18 30.3396 18 41.0943 18 53.9245V56.566C18 56.6604 18 56.6604 18.0943 56.6604C19.0377 77.6981 31.1132 96 47.1509 96C47.3396 96 47.6226 96 47.8113 96C48 96 48.1887 96 48.4717 96C64.5094 96 76.4906 77.6981 77.5283 56.6604C77.5283 56.6604 77.6226 56.6604 77.6226 56.566V53.9245C77.6226 41.1887 77.6226 30.3396 77.6226 26.4717C66.1132 22.5094 61.8679 21.0943 47.9057 16.0943Z"
         fill="#002E6D"

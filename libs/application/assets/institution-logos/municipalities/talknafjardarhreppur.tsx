@@ -1,25 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface TalknafjardarhreppurLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const TalknafjardarhreppurLogo: React.FC<
-  TalknafjardarhreppurLogoProps
-> = ({ className, width, height, ...props }) => {
+export const TalknafjardarhreppurLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g clip-path="url(#clip0_2491:57901)">
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_2491:57901)">
         <path
           d="M15.0001 16C15.0001 16.3395 15.0001 16.6143 15.0001 16.8729C15.0001 32.3427 14.984 47.8125 15.0163 63.2661C15.0163 64.9634 15.081 66.6607 15.3073 68.3419C16.5358 77.4912 20.9811 84.7492 28.5463 90.0028C35.4325 94.7876 43.1594 96.5819 51.4681 95.8383C57.5784 95.2887 63.2038 93.3166 68.1503 89.6472C76.7338 83.2621 81.0014 74.6462 81.0175 63.9612C81.0498 48.4106 81.0175 32.86 81.0175 17.3255C81.0175 16.9052 81.0175 16.4849 81.0175 16.0162C58.9686 16 37.049 16 15.0001 16Z"
           fill="white"

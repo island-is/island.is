@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface ReykjanesbaerLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const ReykjanesbaerLogo: React.FC<ReykjanesbaerLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const ReykjanesbaerLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M59.2816 35.9642C61.3567 35.034 63.5034 35.034 62.7163 35.678C62.1438 36.1073 62.0007 36.6082 62.7878 36.6082C63.6465 36.6798 64.0043 36.322 65.4354 36.322C67.5821 36.2504 69.371 37.1807 67.5821 37.3238C66.5088 37.3953 63.6465 37.6816 65.0776 38.6118C65.8648 39.1843 68.1546 38.5402 70.015 38.8265C72.0902 39.1843 73.6644 41.1163 72.9488 41.9034C72.4479 42.4043 72.3048 41.6172 69.8004 41.3309C60.5696 40.4007 57.4927 47.9857 56.1331 52.2075C53.8433 59.7209 55.5606 63.9427 48.4766 73.4597C52.6984 63.9427 49.4784 59.7925 50.4801 51.0626C51.4104 43.6923 54.9166 37.9678 59.2816 35.9642Z"
         fill="white"

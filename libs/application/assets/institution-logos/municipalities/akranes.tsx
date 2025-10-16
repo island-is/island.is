@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface AkranesLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const AkranesLogo: React.FC<AkranesLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const AkranesLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M77.6139 16.1544V58.471C77.7683 62.9498 77.6139 67.583 75.6062 71.444C70.0463 82.2548 58.7722 91.6757 47.807 96C43.4826 94.1467 39.1583 91.9846 35.2973 89.0502C30.0463 85.0347 24.9498 79.7838 21.7066 74.3784C19.5444 70.9807 18.3089 67.2741 18 63.2587V16L77.6139 16.1544Z"
         fill="#005596"

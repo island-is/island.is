@@ -1,27 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-interface AkureyriLogoProps {
-  className?: string
-  width?: number | string
-  height?: number | string
-}
-
-export const AkureyriLogo: React.FC<AkureyriLogoProps> = ({
-  className,
-  width,
-  height,
-  ...props
-}) => {
+export const AkureyriLogo: FC<React.PropsWithChildren<unknown>> = () => {
   return (
-    <svg
-      className={className}
-      width={width}
-      height={height}
-      viewBox="0 0 318 112"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg viewBox="0 0 318 112" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M81.9364 17.0487V16H15C15 16 15 16.3755 15 17.0487C15 22.5124 15.3755 48.303 22.7682 63.4769C31.9089 82.2243 43.9626 93.2552 48.2093 95.8446L48.4682 96L48.7142 95.8446C52.9738 93.2552 65.0275 82.1596 74.1552 63.4769C81.5609 48.303 81.9493 22.5124 81.9364 17.0487Z"
         fill="#0072BC"
