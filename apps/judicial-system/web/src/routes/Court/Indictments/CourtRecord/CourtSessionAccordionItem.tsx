@@ -680,7 +680,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             }
             isLoading={courtDocument.create.loading}
           >
-            <Box display="flex" flexDirection="column" rowGap={2} marginTop={2}>
+            <Box display="flex" flexDirection="column" rowGap={2}>
               {index > 0 && (
                 <Box
                   background="white"
