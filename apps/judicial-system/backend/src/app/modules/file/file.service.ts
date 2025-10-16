@@ -447,7 +447,7 @@ export class FileService {
         theCase.state === CaseState.RECEIVED &&
         theCase.withCourtSessions &&
         theCase.courtSessions &&
-        theCase.courtSessions.length === 0 &&
+        theCase.courtSessions.length > 0 &&
         file.category &&
         [
           CaseFileCategory.PROSECUTOR_CASE_FILE,

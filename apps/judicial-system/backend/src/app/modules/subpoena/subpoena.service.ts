@@ -254,7 +254,7 @@ export class SubpoenaService {
         wasSubpoenaSuccessfullyServed &&
         theCase.withCourtSessions &&
         theCase.courtSessions &&
-        theCase.courtSessions.length === 0
+        theCase.courtSessions.length > 0
       ) {
         const name = `Birtingarvottorð ${defendant.name}`
 

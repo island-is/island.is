@@ -177,7 +177,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       courtSession.startDate ??
       workingCase.courtDate?.date ??
       workingCase.arraignmentDate?.date ??
-      new Date().toString()
+      formatDateForServer(new Date())
     const judgeId = courtSession.judgeId ?? workingCase.judge?.id
     const location =
       courtSession.location ??
