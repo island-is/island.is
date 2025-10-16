@@ -59,6 +59,7 @@ export const NotificationConfig = {
       applicantName: string
       applicationId: string
       appliedForAddress: string
+      realEstateId: string
     },
   },
 }

@@ -139,7 +139,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   async sendNotificationToAllInvolved({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const allowFail = false
+    const allowFail = true
 
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
       application.answers,
@@ -150,6 +150,11 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       ? 'F' +
         getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
       : getValueViaPath<string>(application.answers, 'realEstate')
+
+    if (!selectedRealEstateId) {
+      if (allowFail) return
+      throw new TemplateApiError('Selected real estate id is not set', 500)
+    }
 
     const realEstates = otherPropertiesThanIOwn
       ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
@@ -218,6 +223,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
                 : applicantName,
             applicationId: application.id,
             appliedForAddress: fullAddress,
+            realEstateId: selectedRealEstateId,
           },
         }),
       ),
