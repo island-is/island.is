@@ -3,8 +3,8 @@ import { logger } from '@island.is/logging'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
-  // insuranceToXML,
-  // transformApplicationToHealthInsuranceDTO,
+  insuranceToXML,
+  transformApplicationToHealthInsuranceDTO,
   errorMapper,
 } from './health-insurance.utils'
 import {
@@ -61,27 +61,24 @@ export class HealthInsuranceService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     logger.info(`Start send Health Insurance application for ${application.id}`)
 
-    // const inputs = transformApplicationToHealthInsuranceDTO(application)
-    // const xml = await insuranceToXML(
-    //   inputs.vistaskjal,
-    //   inputs.attachmentNames,
-    //   this.s3Service,
-    // )
-
-    // try {
-    //   await this.documentApi.documentPost({
-    //     document: { doc: xml, documentType: 570 },
-    //   })
-    // } catch (error) {
-    //   if (error.status === 412) {
-    //     error.status = 500
-    //   }
-    //   throw await errorMapper(error)
-    // }
-    throw await errorMapper(
-      new Response('{"errorList":[{"errorType":"s570_umsoknnrvantar"}]}'),
+    const inputs = transformApplicationToHealthInsuranceDTO(application)
+    const xml = await insuranceToXML(
+      inputs.vistaskjal,
+      inputs.attachmentNames,
+      this.s3Service,
     )
 
-    // logger.info(`Finished send Health Insurance application`)
+    try {
+      await this.documentApi.documentPost({
+        document: { doc: xml, documentType: 570 },
+      })
+    } catch (error) {
+      if (error.status === 412) {
+        error.status = 500
+      }
+      throw await errorMapper(error)
+    }
+
+    logger.info(`Finished send Health Insurance application`)
   }
 }
