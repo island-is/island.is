@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
@@ -9,7 +9,7 @@ import {
   type ApiV2VerdictGetAgendasPostRequest,
   DefaultApi,
 } from '../../gen/fetch/supreme-court'
-import { logger } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
@@ -29,6 +29,7 @@ const convertHtmlToContentfulRichText = async (html: string, id: string) => {
 const safelyConvertStringToDate = (
   dateString: string | undefined,
   variableName: string,
+  logger: Logger,
 ) => {
   if (!dateString) return undefined
   try {
@@ -50,6 +51,8 @@ export class VerdictsClientService {
     private readonly supremeCourtApi: DefaultApi,
     private readonly goproCourtAgendasApi: BookingApi,
     private readonly goproLawyersApi: LawyerApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async getVerdicts(input: {
@@ -97,8 +100,16 @@ export class VerdictsClientService {
               caseNumber: input.caseNumber,
               caseTypes: input.caseTypes,
               laws: input.laws,
-              dateFrom: safelyConvertStringToDate(input.dateFrom, 'dateFrom'),
-              dateTo: safelyConvertStringToDate(input.dateTo, 'dateTo'),
+              dateFrom: safelyConvertStringToDate(
+                input.dateFrom,
+                'dateFrom',
+                this.logger,
+              ),
+              dateTo: safelyConvertStringToDate(
+                input.dateTo,
+                'dateTo',
+                this.logger,
+              ),
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -120,7 +131,7 @@ export class VerdictsClientService {
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
-          court: goproItem.court?.code ?? '',
+          court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
           presidentJudge: goproItem.judges?.find((judge) =>
@@ -186,7 +197,7 @@ export class VerdictsClientService {
           item: {
             pdfString: response.item.docContent,
             title: response.item.title ?? '',
-            court: response.item.court?.code ?? '',
+            court: response.item.court?.name ?? '',
             verdictDate: response.item.verdictDate,
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
@@ -324,8 +335,16 @@ export class VerdictsClientService {
             agendaSearchRequest: {
               page: pageNumber,
               limit: itemsPerPage,
-              dateFrom: safelyConvertStringToDate(input.dateFrom, 'dateFrom'),
-              dateTo: safelyConvertStringToDate(input.dateTo, 'dateTo'),
+              dateFrom: safelyConvertStringToDate(
+                input.dateFrom,
+                'dateFrom',
+                this.logger,
+              ),
+              dateTo: safelyConvertStringToDate(
+                input.dateTo,
+                'dateTo',
+                this.logger,
+              ),
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -333,11 +352,11 @@ export class VerdictsClientService {
         ? { status: 'rejected', items: [], total: 0 }
         : this.goproCourtAgendasApi.getPublishedBookings({
             pageNumber: pageNumber,
-            courts: input.court ? [input.court] : [],
+            courts: input.court ? input.court.split(',') : [],
             itemsPerPage,
             dateFrom: input.dateFrom ? input.dateFrom : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
-            lawyer: input.lawyer,
+            lawyer: input.lawyer ? input.lawyer : undefined,
           }),
     ])
 
@@ -361,7 +380,12 @@ export class VerdictsClientService {
           title: agenda.title ?? '',
         })
       }
+    } else {
+      this.logger.error('Failed to fetch supreme court agendas', {
+        error: supremeCourtResponse.reason,
+      })
     }
+
     if (goproResponse.status === 'fulfilled') {
       total += Number(goproResponse.value.total ?? 0)
       for (const agenda of goproResponse.value.items ?? []) {
@@ -374,11 +398,15 @@ export class VerdictsClientService {
           courtRoom: agenda.courtRoom ?? '',
           judges: agenda.judges ?? [],
           lawyers: agenda.lawyers ?? [],
-          court: (agenda as { court?: string }).court ?? '',
+          court: agenda.court?.name ?? '',
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
         })
       }
+    } else {
+      this.logger.error('Failed to fetch gopro agendas', {
+        error: goproResponse.reason,
+      })
     }
 
     return {
@@ -393,25 +421,21 @@ export class VerdictsClientService {
     idNumber?: string
   }): lawyer is {
     isRemovedFromLawyersList?: boolean
-    idNumber: string
     name: string
   } {
-    return (
-      !lawyer?.isRemovedFromLawyersList &&
-      Boolean(lawyer?.idNumber) &&
-      Boolean(lawyer.name)
-    )
+    return !lawyer?.isRemovedFromLawyersList && Boolean(lawyer.name)
   }
 
   async getLawyers() {
     const response = await this.goproLawyersApi.getLawyers({})
-    const items = (response.items ?? [])
+    const lawyerNames = (response.items ?? [])
       .filter(this.isLawyerValid)
-      .map((lawyer) => ({
-        id: lawyer.idNumber,
-        name: lawyer.name,
-      }))
-    items.sort(sortAlpha('name'))
-    return items
+      .map((lawyer) => lawyer.name)
+    const lawyers = Array.from(new Set(lawyerNames)).map((name) => ({
+      id: name,
+      name,
+    }))
+    lawyers.sort(sortAlpha('name'))
+    return lawyers
   }
 }

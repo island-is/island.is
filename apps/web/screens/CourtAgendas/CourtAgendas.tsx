@@ -60,7 +60,42 @@ const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
 
 const ALL_COURTS_TAG = ''
-const DEFAULT_DISTRICT_COURT_TAG = 'hd-reykjavik'
+const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
+
+const DISTRICT_COURT_TAGS = [
+  {
+    label: 'Reykjavík',
+    value: 'hd-reykjavik',
+  },
+  {
+    label: 'Vesturland',
+    value: 'hd-vesturland',
+  },
+  {
+    label: 'Vestfirðir',
+    value: 'hd-vestfirdir',
+  },
+  {
+    label: 'Norðurland vestra',
+    value: 'hd-nordurland-vestra',
+  },
+  {
+    label: 'Norðurland eystra',
+    value: 'hd-nordurland-eystra',
+  },
+  {
+    label: 'Austurland',
+    value: 'hd-austurland',
+  },
+  {
+    label: 'Suðurland',
+    value: 'hd-sudurland',
+  },
+  {
+    label: 'Reykjanes',
+    value: 'hd-reykjanes',
+  },
+]
 
 enum QueryParam {
   COURT = 'court',
@@ -78,8 +113,12 @@ interface CourtAgendasProps {
   lawyers: GetVerdictLawyersQuery['webVerdictLawyers']['lawyers']
 }
 
-const extractCourtLevelFromState = (court: string | null | undefined) =>
-  court || ALL_COURTS_TAG
+const extractCourtLevelFromState = (court: string | null | undefined) => {
+  if (court === DEFAULT_DISTRICT_COURT_TAG) {
+    return DISTRICT_COURT_TAGS.map((tag) => tag.value).join(',')
+  }
+  return court || ALL_COURTS_TAG
+}
 
 const useCourtAgendasState = (props: CourtAgendasProps) => {
   const initialRender = useRef(true)
@@ -470,39 +509,12 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   const districtCourtTags = useMemo(() => {
     return [
       {
-        label: 'Reykjavík',
+        label: formatMessage(m.listPage.showAllDistrictCourts),
         value: DEFAULT_DISTRICT_COURT_TAG,
       },
-      {
-        label: 'Vesturland',
-        value: 'hd-vesturland',
-      },
-      {
-        label: 'Vestfirðir',
-        value: 'hd-vestfirdir',
-      },
-      {
-        label: 'Norðurland vestra',
-        value: 'hd-nordurland-vestra',
-      },
-      {
-        label: 'Norðurland eystra',
-        value: 'hd-nordurland-eystra',
-      },
-      {
-        label: 'Austurland',
-        value: 'hd-austurland',
-      },
-      {
-        label: 'Suðurland',
-        value: 'hd-sudurland',
-      },
-      {
-        label: 'Reykjanes',
-        value: 'hd-reykjanes',
-      },
+      ...DISTRICT_COURT_TAGS,
     ]
-  }, [])
+  }, [formatMessage])
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
@@ -934,7 +946,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       variables: {
         input: {
           page: 1,
-          court,
+          court: extractCourtLevelFromState(court),
           dateFrom,
           dateTo,
           lawyer,
