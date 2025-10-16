@@ -2205,7 +2205,12 @@ export class CaseService {
                   defendant.subpoenaType,
                 )
 
-                if (!theCase.withCourtSessions) {
+                // Only add a court document if a court session exists
+                if (
+                  !theCase.withCourtSessions ||
+                  !theCase.courtSessions ||
+                  theCase.courtSessions.length === 0
+                ) {
                   return
                 }
 
