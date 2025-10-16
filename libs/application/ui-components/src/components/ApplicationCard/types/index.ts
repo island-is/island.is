@@ -4,14 +4,7 @@ import { MessageDescriptor } from 'react-intl'
 
 export type ApplicationCardFields = Pick<
   Application,
-  | 'actionCard'
-  | 'id'
-  | 'typeId'
-  | 'status'
-  | 'modified'
-  | 'name'
-  | 'progress'
-  | 'formSystemSlug'
+  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
 >
 
 export interface DefaultCardData {

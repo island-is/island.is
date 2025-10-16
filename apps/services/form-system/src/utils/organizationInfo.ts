@@ -3,17 +3,20 @@ import {
   InstitutionContentfulIds,
   InstitutionTypes,
 } from '@island.is/application/types'
+import { NotFoundException } from '@nestjs/common'
 
 export const getOrganizationInfoByNationalId = (nationalId: string) => {
-  console.log('nationalId in shared lib', nationalId)
+  if (!nationalId) {
+    throw new Error('nationalId is required')
+  }
+
   // Find the key that matches the given nationalId
   const key = Object.entries(InstitutionNationalIds).find(
     ([_, value]) => value === nationalId,
   )?.[0]
 
   if (!key) {
-    console.log('key not found for nationalId in shared lib', nationalId)
-    return null // not found
+    throw new NotFoundException(`key not found for nationalId: ${nationalId}`)
   }
 
   return {

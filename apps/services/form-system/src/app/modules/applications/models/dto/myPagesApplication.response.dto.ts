@@ -192,5 +192,15 @@ export class MyPagesApplicationResponseDto {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
-  formSystemSlug?: string
+  formSystemFormSlug?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  formSystemOrgSlug?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  formSystemOrgContentfulId?: string
 }

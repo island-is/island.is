@@ -7,17 +7,22 @@ const getBaseUrl = () => {
   return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
 }
 
+const getFormSystemBaseUrl = () => {
+  const path = window.location.origin
+  const isLocalhost = path.includes('localhost')
+  return isLocalhost ? 'http://localhost:4201/form' : `${path}/form`
+}
+
 export const useOpenApplication = (
-  application: Pick<Application, 'id' | 'typeId' | 'formSystemSlug'>,
+  application: Pick<Application, 'id' | 'typeId' | 'formSystemFormSlug'>,
 ) => {
-  console.log('application in useOpenApplication', application)
-  const baseUrl = getBaseUrl()
-  const slug = application.formSystemSlug
-    ? application.formSystemSlug
+  const baseUrl = application.formSystemFormSlug
+    ? getFormSystemBaseUrl()
+    : getBaseUrl()
+  const slug = application.formSystemFormSlug
+    ? application.formSystemFormSlug
     : getSlugFromType(application.typeId)
-  const url = application.formSystemSlug
-    ? `form/${slug}/${application.id}`
-    : `${baseUrl}/${slug}/${application.id}`
+  const url = `${baseUrl}/${slug}/${application.id}`
 
   const openApplication = () => {
     window.open(url)

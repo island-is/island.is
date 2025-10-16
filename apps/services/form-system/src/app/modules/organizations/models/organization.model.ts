@@ -8,7 +8,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
 import { OrganizationPermission } from '../../organizationPermissions/models/organizationPermission.model'

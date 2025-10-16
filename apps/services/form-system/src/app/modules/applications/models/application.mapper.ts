@@ -238,13 +238,15 @@ export class ApplicationMapper {
         historyButton: 'historyButton',
       },
       attachments: {},
-      typeId: 'CriminalRecord',
+      typeId: 'ExampleCommonActions', // TODO: What to put here?
       answers: { approveExternalData: true },
       externalData: {},
-      name: '',
+      name: app.formName,
       status: app.status,
       pruned: false,
-      formSystemSlug: app.slug,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
     } as MyPagesApplicationResponseDto
   }
 
@@ -267,30 +269,23 @@ export class ApplicationMapper {
         deleteButton: false,
         pendingAction: {
           displayStatus: 'success',
-          title:
-            'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+          title: app.completedMessage,
         },
-        history: [
-          {
-            date: new Date('2025-09-23T13:36:05.027Z'),
-            log: 'Greiðsla móttekin',
-          },
-          {
-            date: new Date('2025-09-23T13:35:36.309Z'),
-            log: 'Greiðsluferli hafið',
-          },
-        ],
+        history: [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
         historyButton: 'historyButton',
       },
       attachments: {},
-      typeId: 'CriminalRecord',
+      typeId: 'ExampleCommonActions', // TODO: What to put here?
       answers: { approveExternalData: true },
       externalData: {},
-      name: '',
+      name: app.formName,
       status: app.status,
       pruned: false,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
     }
   }
 }

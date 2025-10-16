@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
@@ -49,9 +49,14 @@ const defaultFilterValues: FilterValues = {
 const Overview = () => {
   useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
-  const { data: applications, loading, error, refetch } = useApplications()
   const {
-    data: formSystemApplications,
+    data: applicationsData,
+    loading: applicationsLoading,
+    error: applicationsError,
+    refetch: applicationsRefetch,
+  } = useApplications()
+  const {
+    data: formSystemData,
     loading: formSystemLoading,
     error: formSystemError,
     refetch: formSystemRefetch,
@@ -67,6 +72,36 @@ const Overview = () => {
       },
     },
   })
+
+  // Combine and sort applications from both sources
+  const applicationsA = applicationsData ?? []
+  const applicationsB = formSystemData ?? []
+
+  const combinedApplications: Application[] = useMemo(() => {
+    if (!applicationsA.length && !applicationsB.length) return []
+    const map = new Map<string, Application>()
+    ;[...applicationsA, ...applicationsB].forEach((app) => {
+      if (app) {
+        // Last one wins if duplicate ids appear
+        map.set(app.id, app)
+      }
+    })
+    return Array.from(map.values()).sort((a, b) => {
+      const aTime = a.modified ? new Date(a.modified).getTime() : 0
+      const bTime = b.modified ? new Date(b.modified).getTime() : 0
+      return bTime - aTime
+    })
+  }, [applicationsA, applicationsB])
+
+  console.log('formSystemData', formSystemData)
+  console.log('combinedApplications', combinedApplications)
+
+  const loading = applicationsLoading || formSystemLoading
+  const error = applicationsError || formSystemError
+
+  const refetch = async () => {
+    await Promise.all([applicationsRefetch(), formSystemRefetch()])
+  }
 
   defaultInstitution.label = formatMessage(m.defaultInstitutionLabel)
 
@@ -91,19 +126,19 @@ const Overview = () => {
 
   const institutions = getInstitutions(
     defaultInstitution,
-    applications,
+    combinedApplications,
     organizations,
   )
 
-  if (applications && location.hash) {
-    focusedApplication = applications.find(
+  if (combinedApplications && location.hash) {
+    focusedApplication = combinedApplications.find(
       (item: Application) => item.id === location.hash.slice(1),
     )
   }
 
   const applicationsSortedByStatus = getFilteredApplicationsByStatus(
     filterValue,
-    applications,
+    combinedApplications,
     focusedApplication?.id,
   )
 
@@ -137,15 +172,13 @@ const Overview = () => {
   }
 
   const noApplications =
-    (applications.length === 0 && !focusedApplication) ||
+    (combinedApplications.length === 0 && !focusedApplication) ||
     (statusToShow === ApplicationOverViewStatus.incomplete &&
       applicationsSortedByStatus.incomplete.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.inProgress &&
       applicationsSortedByStatus.inProgress.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.completed &&
       applicationsSortedByStatus.finished.length === 0)
-
-  console.log('formSystemApplications', formSystemApplications)
 
   return (
     <>
@@ -155,11 +188,11 @@ const Overview = () => {
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-      {(error || (!loading && !applications)) && (
+      {(error || (!loading && !combinedApplications)) && (
         <Problem error={error} noBorder={false} />
       )}
-      {applications &&
-        applications.length > 0 &&
+      {combinedApplications &&
+        combinedApplications.length > 0 &&
         orgData &&
         !loading &&
         !loadingOrg &&

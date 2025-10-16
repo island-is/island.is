@@ -38,6 +38,7 @@ import { FormStatus } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { SectionTypes } from '@island.is/form-system/shared'
+import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 
 @Injectable()
 export class ApplicationsService {
@@ -441,7 +442,7 @@ export class ApplicationsService {
         app.formName = locale === 'is' ? form.name.is : form.name.en
       }
       if (form && form.slug) {
-        app.slug = form.slug
+        app.formSlug = form.slug
       }
       if (app.status === ApplicationStatus.DRAFT) {
         app.tagLabel = locale === 'is' ? 'Í vinnslu' : 'In progress'
@@ -450,7 +451,16 @@ export class ApplicationsService {
       if (app.status === ApplicationStatus.COMPLETED) {
         app.tagLabel = locale === 'is' ? 'Innsend' : 'Completed'
         app.tagVariant = 'mint'
+        app.completedMessage =
+          locale === 'is' ? 'Umsókn móttekin' : 'Application received'
       }
+
+      const organizationInfo = getOrganizationInfoByNationalId(
+        form?.organizationNationalId ?? '',
+      )
+
+      app.orgSlug = organizationInfo?.type
+      app.orgContentfulId = organizationInfo?.contentfulId
     }
 
     // console.log('form-system applications:', applicationsByUser)

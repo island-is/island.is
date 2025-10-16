@@ -13,7 +13,10 @@ export const FORM_SYSTEM_APPLICATIONS = gql`
       progress
       status
       institution
-      formSystemSlug
+      formSystemFormSlug
+      formSystemOrgContentfulId
+      formSystemOrgSlug
+      pruned
       actionCard {
         draftTotalSteps
         draftFinishedSteps

@@ -135,7 +135,10 @@ export class Application extends Model<Application> {
   organizationId!: string
 
   formName?: string
-  slug?: string
+  formSlug?: string
+  orgSlug?: string
+  orgContentfulId?: string
   tagLabel?: string
   tagVariant?: string
+  completedMessage?: string
 }
