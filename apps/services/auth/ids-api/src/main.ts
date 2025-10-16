@@ -5,7 +5,7 @@ import { environment } from './environments'
 import { openApi } from './openApi'
 
 const job = processJob()
-
+// hi
 if (job === 'cleanup') {
   import('./app/cleanup/cleanup-worker')
     .then((app) => app.worker())
