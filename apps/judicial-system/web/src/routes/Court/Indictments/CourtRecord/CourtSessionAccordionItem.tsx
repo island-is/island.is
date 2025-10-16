@@ -171,24 +171,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    const update = {
-      judgeId: courtSession.judgeId ?? workingCase.judge?.id,
-      startDate:
-        courtSession.startDate ??
-        workingCase.courtDate?.date ??
-        workingCase.arraignmentDate?.date,
-      location:
-        courtSession.location ??
-        (workingCase.court?.name
-          ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
-          : ''),
-      attendees: courtSession.attendees ?? getInitialAttendees(),
-      endDate: courtSession.endDate
-        ? courtSession.endDate
-        : courtSession.startDate
-        ? courtSession.startDate
-        : new Date().toString(),
-    }
+    const startDate =
+      courtSession.startDate ??
+      workingCase.courtDate?.date ??
+      workingCase.arraignmentDate?.date ??
+      new Date().toString()
+    const judgeId = courtSession.judgeId ?? workingCase.judge?.id
+    const location =
+      courtSession.location ??
+      (workingCase.court?.name
+        ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+        : '')
+    const attendees = courtSession.attendees ?? getInitialAttendees()
+    const endDate = courtSession.endDate ?? startDate
+
+    const update = { startDate, judgeId, location, attendees, endDate }
 
     patchSession(courtSession.id, update, { persist: true })
   }, [
