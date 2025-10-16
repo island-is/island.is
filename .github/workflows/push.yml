@@ -523,11 +523,10 @@ jobs:
         with:
           working-directory: monorepo
 
-      - name: Install infra modules
-        id: install-infra-modules
-        working-directory: monorepo/infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
+      - name: Setup yarn
+        uses: ./monorepo/.github/actions/setup-yarn
+        with:
+          working-directory: monorepo/infra
 
       - name: Generate islandis feature-deployment charts for ArgoCD
         working-directory: monorepo/infra
@@ -538,11 +537,6 @@ jobs:
         run: |
           IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
           ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
-
-      - name: load-deps
-        uses: ./monorepo/.github/actions/load-deps
-        with:
-          working-directory: monorepo
 
       - name: Prepare artifact to be uploaded
         working-directory: monorepo
@@ -573,12 +567,13 @@ jobs:
       - name: Get token
         id: get-token
         shell: bash
+        working-directory: monorepo
         env:
           # APP_ID
-          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
         run: |
-          node scripts/ci/docker/get-github-token.mjs
+          node ./scripts/ci/docker/get-github-token.mjs
       - name: Dispatch workflow to helm-values repository
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
