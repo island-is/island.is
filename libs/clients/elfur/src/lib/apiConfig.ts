@@ -2,19 +2,15 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
   IdsClientConfig,
-  LazyDuringDevScope,
 } from '@island.is/nest/config'
-import { Configuration, OrganizationEmployeeApi } from '../../gen/fetch'
+import { Configuration } from '../../gen/fetch'
 import { ElfurClientConfig } from './elfur.config'
 
-export const ApiConfigFactory = (scopes: Array<string>) => ({
-  provide: 'ElfurClientProviderConfiguration',
-  scope: LazyDuringDevScope,
-  useFactory: (
-    config: ConfigType<typeof ElfurClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) =>
-    new Configuration({
+export const apiConfigFactory = (
+  scopes: Array<string>,
+  config: ConfigType<typeof ElfurClientConfig>,
+  idsClientConfig: ConfigType<typeof IdsClientConfig>
+) => new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-elfur',
         organizationSlug: 'fjarsysla-rikisins',
@@ -35,6 +31,4 @@ export const ApiConfigFactory = (scopes: Array<string>) => ({
         'X-Executeasusername': config.apiUsernameKey,
         Accept: 'application/json',
       },
-    }),
-  inject: [ElfurClientConfig.KEY, IdsClientConfig.KEY],
-})
+    })

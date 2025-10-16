@@ -19,7 +19,7 @@ export class ElfurClientService {
     })
   }
 
-  public async getOpenInvoices(requestParams: V1OpeninvoicesInvoicesGetRequest): Promise<OpenInvoiceDetailPaginatedResponseDto> {
+  public async getOpenInvoices(requestParams: V1OpeninvoicesInvoicesGetRequest = {}): Promise<OpenInvoiceDetailPaginatedResponseDto> {
     return this.invoicesApi.v1OpeninvoicesInvoicesGet(requestParams)
   }
 }

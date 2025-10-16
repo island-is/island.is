@@ -1,19 +1,19 @@
 import { Audit } from '@island.is/nest/audit'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { IcelandicGovernmentEmployeesService } from './employees.service'
-import { EmployeeList } from './models/employeeList.model'
-import { EmployeesInput } from './dtos/getEmployeeList.input'
 import { BypassAuth } from '@island.is/auth-nest-tools'
+import { EmployeeList } from '../models/employeeList.model'
+import { EmployeesInput } from '../dtos/getEmployeeList.input'
+import { EmployeesService } from '../services/employees.service'
 
 @Resolver()
-@Audit({ namespace: '@island.is/api/icelandic-government-employees' })
-export class IcelandicGovernmentEmployeesResolver {
+@Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
+export class EmployeesResolver {
   constructor(
-    private readonly employeeService: IcelandicGovernmentEmployeesService,
+    private readonly employeeService: EmployeesService,
   ) {}
 
   @Query(() => EmployeeList, {
-    name: 'icelandicGovernmentEmployees',
+    name: 'icelandicGovernmentInstitutionsEmployees',
     nullable: true,
   })
   @BypassAuth()

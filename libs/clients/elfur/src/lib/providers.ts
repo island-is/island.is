@@ -1,10 +1,11 @@
 import { Provider } from '@nestjs/common'
 import {
-  Configuration,
   OpenInvoicesApi,
   OrganizationEmployeeApi,
 } from '../../gen/fetch'
-import { ApiConfigFactory } from './apiConfig'
+import { apiConfigFactory } from './apiConfig'
+import { ConfigType, IdsClientConfig, LazyDuringDevScope } from '@island.is/nest/config'
+import { ElfurClientConfig } from './elfur.config'
 
 const apiLedger = [{
   api: OrganizationEmployeeApi,
@@ -16,8 +17,12 @@ const apiLedger = [{
 
 export const apiProviders: Array<Provider> = apiLedger.map(({api, scopes}) => ({
   provide: api,
-  useFactory: (configuration: Configuration) => {
-    return new api(configuration)
+  scope: LazyDuringDevScope,
+  useFactory: (
+    config: ConfigType<typeof ElfurClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>
+  ) => {
+    return new api(apiConfigFactory(scopes, config, idsClientConfig))
   },
-  inject: [ApiConfigFactory(scopes).provide],
+  inject: [ElfurClientConfig.KEY, IdsClientConfig.KEY],
 }))

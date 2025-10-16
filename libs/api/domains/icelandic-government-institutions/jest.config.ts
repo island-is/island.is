@@ -1,5 +1,5 @@
 export default {
-  displayName: 'api-domains-icelandic-government-employees',
+  displayName: 'api-domains-icelandic-government-institutions',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/icelandic-government-employees',
+    '../../../../coverage/libs/api/domains/icelandic-government-institutions',
 }
