@@ -104,8 +104,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     variables: { locale: useLocale() },
   })
 
-  console.log('applicationsRes', applicationsRes)
-
   const applications = useMemo(
     () => applicationsRes.data?.applicationApplications ?? [],
     [applicationsRes],
