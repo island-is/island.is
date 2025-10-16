@@ -728,11 +728,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               inputPlaceholder="Skrá inn heiti á skjali hér"
               buttonText="Bæta við skjali"
               name="indictmentCourtDocuments"
-              isDisabled={() =>
+              isButtonDisabled={() =>
                 courtDocument.create.loading ||
                 courtSession.isConfirmed ||
                 false
               }
+              isDisabled={courtSession.isConfirmed || false}
               isLoading={courtDocument.create.loading}
             >
               <Box
