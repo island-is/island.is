@@ -555,6 +555,7 @@ export class CaseController {
         !hasGeneratedCourtRecordPdf(
           theCase.state,
           theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
           theCase.courtSessions,
           user,
         )

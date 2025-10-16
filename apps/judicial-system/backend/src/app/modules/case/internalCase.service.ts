@@ -28,7 +28,6 @@ import {
   CaseType,
   CourtSessionRulingType,
   EventType,
-  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -1123,14 +1122,7 @@ export class InternalCaseService {
         }) ?? [],
     )
       .then(async (courtDocuments) => {
-        if (
-          hasGeneratedCourtRecordPdf(
-            theCase.state,
-            theCase.indictmentRulingDecision,
-            theCase.courtSessions,
-            user,
-          )
-        ) {
+        if (theCase.withCourtSessions) {
           const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
             theCase,
             user,

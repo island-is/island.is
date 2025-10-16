@@ -10,8 +10,12 @@ import {
   RadioButton,
   Select,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_COURT_RECORD_ROUTE,
+  INDICTMENTS_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
@@ -125,6 +129,7 @@ const Conclusion: FC = () => {
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )
@@ -269,15 +274,12 @@ const Conclusion: FC = () => {
     }
 
     const isCourtRecordValid = (): boolean =>
-      hasGeneratedCourtRecord
-        ? Boolean(
-            workingCase.courtSessions?.every((session) => session.endDate),
-          )
-        : uploadFiles.some(
-            (file) =>
-              file.category === CaseFileCategory.COURT_RECORD &&
-              file.status === FileUploadStatus.done,
-          )
+      hasGeneratedCourtRecord ||
+      uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.COURT_RECORD &&
+          file.status === FileUploadStatus.done,
+      )
 
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
@@ -581,7 +583,7 @@ const Conclusion: FC = () => {
             )}
           </>
         )}
-        {selectedAction && !hasGeneratedCourtRecord && (
+        {selectedAction && !workingCase.withCourtSessions && (
           <Box
             component="section"
             marginBottom={selectedDecision === 'RULING' ? 5 : 10}
@@ -620,7 +622,7 @@ const Conclusion: FC = () => {
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
             <Box
               component="section"
-              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+              marginBottom={workingCase.withCourtSessions ? 5 : 10}
             >
               <SectionHeading
                 title={formatMessage(
@@ -655,13 +657,14 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-        {selectedAction && hasGeneratedCourtRecord && (
+        {selectedAction && workingCase.withCourtSessions && (
           <Box component="section" marginBottom={10}>
             <PdfButton
               caseId={workingCase.id}
               title="Þingbók - PDF"
               pdfType="courtRecord"
               elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
             />
           </Box>
         )}
@@ -669,14 +672,14 @@ const Conclusion: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
-                ? constants.INDICTMENTS_SUMMARY_ROUTE
+                ? INDICTMENTS_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
                 ? getStandardUserDashboardRoute(user)
-                : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+                : INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }
           nextButtonText={
