@@ -61,12 +61,12 @@ export class HealthInsuranceService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     logger.info(`Start send Health Insurance application for ${application.id}`)
 
-    const inputs = transformApplicationToHealthInsuranceDTO(application)
-    const xml = await insuranceToXML(
-      inputs.vistaskjal,
-      inputs.attachmentNames,
-      this.s3Service,
-    )
+    // const inputs = transformApplicationToHealthInsuranceDTO(application)
+    // const xml = await insuranceToXML(
+    //   inputs.vistaskjal,
+    //   inputs.attachmentNames,
+    //   this.s3Service,
+    // )
 
     // try {
     //   await this.documentApi.documentPost({
@@ -82,6 +82,6 @@ export class HealthInsuranceService extends BaseTemplateApiService {
       new Response('{"errorList":[{"errorType":"s570_umsoknnrvantar"}]}'),
     )
 
-    logger.info(`Finished send Health Insurance application`)
+    // logger.info(`Finished send Health Insurance application`)
   }
 }
