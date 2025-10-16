@@ -725,7 +725,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             <MultipleValueList
               onAddValue={(val) => handleAddCourtDocument(val, courtSession.id)}
               inputLabel="Heiti dómskjals"
-              inputPlaceholder="Skrá inn heiti á skjali hér"
+              inputPlaceholder={
+                !courtSession.isConfirmed ? 'Skrá inn heiti á skjali hér' : ''
+              }
               buttonText="Bæta við skjali"
               name="indictmentCourtDocuments"
               isButtonDisabled={() =>
