@@ -48,6 +48,7 @@ export interface PdfDocument {
   getPageLink: (pageNumber: number) => PageLink
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
   setCurrentLine: (lineLink: LineLink) => PdfDocument
+  addPageNumber: (pageNumber: string) => void
   setMargins: (
     top: number,
     right: number,
@@ -159,6 +160,35 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     page.setSize(targetWidth, targetHeight)
 
     return page
+  }
+
+  let pageNumber = 2
+
+  const addPageNumber = (page: PDFPage) => {
+    const pageNumberRightMargin = 10
+    const pageNumberBottomMargin = 15
+    const pageNumberFontSize = 20
+
+    const { width, height } = page.getSize()
+    const pageNumberText = `${++pageNumber}`
+    const pageNumberTextWidth = boldFont.widthOfTextAtSize(
+      pageNumberText,
+      pageNumberFontSize,
+    )
+
+    drawTextAbsolute(
+      page,
+      pageNumberText,
+      page.getWidth() -
+        pageNumberRightMargin -
+        pageNumberTextWidth -
+        (width > 1000 && height > 1000 ? 70 : 0),
+      pageNumberBottomMargin + (width > 1000 && height > 1000 ? 60 : 0),
+      boldFont,
+      width > 1000 && height > 1000
+        ? pageNumberFontSize * 5
+        : pageNumberFontSize,
+    )
   }
 
   const pdfDocument = {
@@ -303,11 +333,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
 
     mergeDocument: async (buffer: Buffer) => {
-      const pageNumberRightMargin = 10
-      const pageNumberBottomMargin = 15
-      const pageNumberFontSize = 20
-
-      let pageNumber = 0
       const filePdfDoc = await PDFDocument.load(new Uint8Array(buffer))
 
       const pages = await rawDocument.copyPages(
@@ -316,34 +341,39 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       )
 
       pages.forEach((page) => {
-        // TODO: Put into function
-        const { width, height } = page.getSize()
-        const pageNumberText = `${++pageNumber}`
-        const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-          pageNumberText,
-          pageNumberFontSize,
-        )
-
-        console.log(page.getSize(), pageNumberFontSize)
-
-        drawTextAbsolute(
-          page,
-          pageNumberText,
-          page.getWidth() -
-            pageNumberRightMargin -
-            pageNumberTextWidth -
-            (width > 1000 && height > 1000 ? 70 : 0),
-          pageNumberBottomMargin + (width > 1000 && height > 1000 ? 60 : 0),
-          boldFont,
-          width > 1000 && height > 1000
-            ? pageNumberFontSize * 5
-            : pageNumberFontSize,
-        )
-
+        addPageNumber(page)
         rawDocument.addPage(scaleToA4(page))
       })
 
       return pdfDocument
+    },
+
+    addPageNumber: (pageNumber: string) => {
+      const page = rawDocument.getPage(currentPage)
+
+      const pageNumberRightMargin = 10
+      const pageNumberBottomMargin = 15
+      const pageNumberFontSize = 20
+
+      const { width, height } = page.getSize()
+      const pageNumberTextWidth = boldFont.widthOfTextAtSize(
+        pageNumber,
+        pageNumberFontSize,
+      )
+
+      drawTextAbsolute(
+        page,
+        pageNumber,
+        page.getWidth() -
+          pageNumberRightMargin -
+          pageNumberTextWidth -
+          (width > 1000 && height > 1000 ? 70 : 0),
+        pageNumberBottomMargin + (width > 1000 && height > 1000 ? 60 : 0),
+        boldFont,
+        width > 1000 && height > 1000
+          ? pageNumberFontSize * 5
+          : pageNumberFontSize,
+      )
     },
 
     setCurrentLine: (lineLink: LineLink) => {
