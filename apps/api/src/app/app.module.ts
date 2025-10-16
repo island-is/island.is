@@ -160,6 +160,10 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
 import { PracticalExamsClientConfig } from '@island.is/clients/practical-exams-ver'
 
 import {
@@ -222,12 +226,9 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
 import { HmsConfig } from '@island.is/clients/hms'
-import {
-  VmstUnemploymentClientConfig,
-  VmstUnemploymentClientModule,
-} from '@island.is/clients/vmst-unemployment'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
@@ -487,9 +488,10 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
         PaymentsApiModuleConfig,
-        BankInfoClientConfig,
         VmstUnemploymentClientConfig,
+        BankInfoClientConfig,
         LandspitaliApiModuleConfig,
       ],
     }),

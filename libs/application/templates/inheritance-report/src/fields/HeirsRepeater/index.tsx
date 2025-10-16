@@ -14,7 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { Answers, EstateMember, heirAgeValidation } from '../../types'
+import {
+  Answers,
+  EstateMember,
+  heirAgeValidation,
+  heirNationalIdSameAsExecutorValidation,
+} from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -58,6 +63,11 @@ export const HeirsRepeater: FC<
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
+
+  const [
+    hasHeirWithNationalIdSameAsExecutor,
+    setHasHeirWithNationalIdSameAsExecutor,
+  ] = useState(false)
 
   const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
 
@@ -107,6 +117,13 @@ export const HeirsRepeater: FC<
         type: 'custom',
       })
       return [false, 'invalid member age']
+    }
+
+    if (hasHeirWithNationalIdSameAsExecutor) {
+      setError(heirNationalIdSameAsExecutorValidation, {
+        type: 'custom',
+      })
+      return [false, 'heir nationalId matches executor nationalId']
     }
 
     return [true, null]
@@ -320,11 +337,15 @@ export const HeirsRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!hasHeirWithNationalIdSameAsExecutor) {
+      clearErrors(heirNationalIdSameAsExecutorValidation)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
+    hasHeirWithNationalIdSameAsExecutor,
     clearErrors,
   ])
 
@@ -353,6 +374,25 @@ export const HeirsRepeater: FC<
       setValue('heirs.hasModified', true)
     }
   }, [])
+
+  useEffect(() => {
+    const executorNationalId = getValueViaPath(
+      answers,
+      'executors.executor.nationalId',
+    )
+    const spouseNationalId = getValueViaPath(
+      answers,
+      'executors.spouse.nationalId',
+    )
+
+    const match = values.heirs.data.some(
+      (field: any) =>
+        field.nationalId === executorNationalId ||
+        field.nationalId === spouseNationalId,
+    )
+    setHasHeirWithNationalIdSameAsExecutor(match)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values])
 
   return (
     <Box>
@@ -642,7 +682,7 @@ export const HeirsRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error[index] ?? null}
+              error={error[index] ?? error}
               isPrepaid={isPrePaidApplication}
             />
           </Box>
@@ -664,6 +704,12 @@ export const HeirsRepeater: FC<
         <Box marginTop={4}>
           <InputError
             errorMessage={formatMessage(m.inheritanceAgeValidation)}
+          />
+        </Box>
+      ) : errors && errors[heirNationalIdSameAsExecutorValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.heirNationalIdValidation)}
           />
         </Box>
       ) : null}
