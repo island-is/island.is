@@ -307,6 +307,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
         token: auth.authorization,
+        nationalId: auth.nationalId,
       })
     } catch (error) {
       throw new TemplateApiError(
