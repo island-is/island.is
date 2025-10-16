@@ -39,7 +39,7 @@ export const Image = ({
         className={styles.image}
       />
       {caption && (
-        <Text variant="medium" fontWeight="light" marginTop={1}>
+        <Text variant="small" fontWeight="light" marginTop={1}>
           {caption}
         </Text>
       )}

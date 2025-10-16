@@ -20,7 +20,7 @@ export const PaymentInformationValidation: FC<
   const { formatMessage } = useLocale()
   const [getIsValidBankInformation] = useLazyIsBankInfoValid()
 
-  const getIsCompanyValidCallback = useCallback(
+  const getIsBankValidCallback = useCallback(
     async (input: {
       bankNumber: string
       ledger: string
@@ -75,7 +75,7 @@ export const PaymentInformationValidation: FC<
     }
 
     try {
-      const isValid = await getIsCompanyValidCallback({
+      const isValid = await getIsBankValidCallback({
         bankNumber: paymentInfo.bankNumber || '',
         ledger: paymentInfo.ledger || '',
         accountNumber: paymentInfo.accountNumber?.padStart(6, '0') || '',
