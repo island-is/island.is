@@ -109,14 +109,13 @@ export class ApplicationsService {
     auth: User,
     locale: string,
   ): Promise<MyPagesApplication[]> {
-    console.log('inside myPagesApplications resolver service')
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerFindAllByUser({
         nationalId: auth.nationalId,
         locale,
       })
       .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get applications'),
+        handle4xx(e, this.handleError, 'failed to get mypages applications'),
       )
     return response as MyPagesApplication[]
   }

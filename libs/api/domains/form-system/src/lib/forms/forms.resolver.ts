@@ -116,7 +116,6 @@ export class FormsResolver {
     organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
     @CurrentUser() _user: User,
   ): Promise<ShortTitle> {
-    console.log('input', input.nationalId)
     return organizationTitleLoader.load(input.nationalId)
   }
 

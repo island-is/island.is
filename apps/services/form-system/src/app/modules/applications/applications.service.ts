@@ -121,7 +121,6 @@ export class ApplicationsService {
 
       // TODO: finna út aðilana með því að skoða tókenið frá usernum.
       // búa bara til aðila screens og fields fyrir þá aðila sem eru hlutaðeigandi þessarar umsóknar
-      // console.log('user:', JSON.stringify(user, null, 2))
 
       await Promise.all(
         form.sections.map((section) =>
@@ -242,7 +241,6 @@ export class ApplicationsService {
 
     const success: boolean = await this.serviceManager.send(applicationDto)
 
-    console.log('success', success)
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
@@ -432,10 +430,6 @@ export class ApplicationsService {
       delegatorNationalId,
     )
 
-    // console.log('user', user)
-    // console.log('nationalId:', nationalId)
-    // console.log('locale:', locale)
-
     for (const app of applicationsByUser) {
       const form = await this.formModel.findByPk(app.formId)
       if (form && form.name) {
@@ -463,7 +457,6 @@ export class ApplicationsService {
       app.orgContentfulId = organizationInfo?.contentfulId
     }
 
-    // console.log('form-system applications:', applicationsByUser)
     const mappedApplications =
       await this.applicationMapper.mapApplicationsToMyPagesApplications(
         applicationsByUser,
@@ -685,7 +678,6 @@ export class ApplicationsService {
     screenId: string,
     submitScreenDto: SubmitScreenDto,
   ): Promise<ScreenDto> {
-    console.log('inside saveScreen')
     const screen = await this.screenModel.findByPk(screenId)
 
     if (!screen) {
@@ -778,7 +770,6 @@ export class ApplicationsService {
   }
 
   async submitSection(applicationId: string, sectionId: string): Promise<void> {
-    console.log('inside submitSection')
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {

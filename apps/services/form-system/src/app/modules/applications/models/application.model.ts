@@ -84,14 +84,14 @@ export class Application extends Model<Application> {
   pruneAt?: Date
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
   })
   draftFinishedSteps!: number
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
   })

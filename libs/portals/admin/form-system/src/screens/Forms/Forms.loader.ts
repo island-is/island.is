@@ -17,7 +17,7 @@ import {
   LoaderResponse,
 } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
-import { useQuery } from '@apollo/client'
+
 export interface FormsLoaderQueryResponse {
   formSystemForms: FormSystemFormResponse
 }
@@ -95,14 +95,16 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       }),
     ) as FormSystemOption[]
 
-    organizations.forEach(async (org) => {
-      const { data: titleData } = await client.query({
-        query: GET_ORGANIZATION_TITLE,
-        variables: { input: { nationalId: org.value } },
-        fetchPolicy: 'cache-first',
-      })
-      org.label = titleData?.formSystemOrganizationTitle || org.value
-    })
+    await Promise.all(
+      organizations.map(async (org) => {
+        const { data: titleData } = await client.query({
+          query: GET_ORGANIZATION_TITLE,
+          variables: { input: { nationalId: org.value } },
+          fetchPolicy: 'cache-first',
+        })
+        org.label = titleData?.formSystemOrganizationTitle || org.value
+      }),
+    )
 
     const applications = dataApplications.formSystemApplications?.applications
       ?.filter((application) => application !== null)

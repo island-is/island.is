@@ -49,7 +49,7 @@ class History {
   @IsDate()
   date!: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsString()
   log?: string
@@ -87,12 +87,12 @@ class ActionCardMetaData {
   @ApiPropertyOptional({ type: [History], default: [] })
   history?: History[]
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsNumber()
   draftFinishedSteps?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsNumber()
   draftTotalSteps?: number
@@ -184,7 +184,7 @@ export class MyPagesApplicationResponseDto {
   @IsString()
   status!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsBoolean()
   pruned?: boolean
