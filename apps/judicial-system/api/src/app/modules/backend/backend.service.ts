@@ -515,6 +515,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.patch(`case/${caseId}/verdicts`, createVerdicts)
+  }
+
   updateVerdict(
     caseId: string,
     defendantId: string,

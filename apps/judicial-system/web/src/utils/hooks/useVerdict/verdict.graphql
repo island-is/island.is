@@ -13,5 +13,6 @@ query Verdict($input: VerdictQueryInput!) {
     comment
     deliveredToDefenderNationalId
     servedBy
+    isDefaultJudgement
   }
 }

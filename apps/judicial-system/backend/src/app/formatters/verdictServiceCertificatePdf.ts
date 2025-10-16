@@ -155,15 +155,21 @@ export const createVerdictServiceCertificate = ({
 
   addEmptyLines(doc, 3)
 
-  // TODO: we don't know if a verdict ruling was made when the defendant was not present in court (útivist)
-  // When we have that information stored we have to add the following text for that scenario:
-  // Dómur ásamt leiðbeiningum um rétt til endurupptöku málsins hefur verið birt fyrir dómfellda.
-  addNormalText(
-    doc,
-    'Dómur ásamt leiðbeiningum um áfrýjun og áfrýjunarfrest hefur verið birt fyrir dómfellda.',
-    'Times-Bold',
-    true,
-  )
+  if (verdict.isDefaultJudgement) {
+    addNormalText(
+      doc,
+      'Dómur ásamt leiðbeiningum um rétt til endurupptöku málsins hefur verið birt fyrir dómfellda.',
+      'Times-Bold',
+      true,
+    )
+  } else {
+    addNormalText(
+      doc,
+      'Dómur ásamt leiðbeiningum um áfrýjun og áfrýjunarfrest hefur verið birt fyrir dómfellda.',
+      'Times-Bold',
+      true,
+    )
+  }
 
   addEmptyLines(doc)
   addEmptyLines(doc)

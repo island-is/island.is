@@ -138,4 +138,9 @@ export class Verdict extends Model {
   })
   @ApiPropertyOptional({ type: String })
   deliveredToDefenderNationalId?: string
+
+  // this is set to true when a default ruling or judgement is made in court when defendant is not present
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefaultJudgement?: boolean
 }

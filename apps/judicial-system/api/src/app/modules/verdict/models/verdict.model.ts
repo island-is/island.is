@@ -64,4 +64,7 @@ export class Verdict {
 
   @Field(() => String, { nullable: true })
   deliveredToDefenderNationalId?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isDefaultJudgement?: boolean
 }

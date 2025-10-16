@@ -29,6 +29,7 @@ import { DefendantService } from '../defendant'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { Case, Defendant, Verdict } from '../repository'
+import { CreateVerdictDto } from './dto/createVerdict.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
@@ -44,6 +45,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
+  | 'isDefaultJudgement'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -94,11 +96,63 @@ export class VerdictService {
   }
 
   async createVerdict(
-    defendantId: string,
     caseId: string,
+    verdict: CreateVerdictDto,
     transaction: Transaction,
   ): Promise<Verdict> {
-    return this.verdictModel.create({ defendantId, caseId }, { transaction })
+    const currentVerdict = await this.verdictModel.findOne({
+      where: { defendantId: verdict.defendantId },
+    })
+    if (!currentVerdict) {
+      return this.verdictModel.create({ caseId, ...verdict }, { transaction })
+    }
+    return currentVerdict
+  }
+
+  // upsert: if the verdict exist, we update the values otherwise we insert it
+  async createVerdicts(
+    caseId: string,
+    verdicts: CreateVerdictDto[],
+    defendants?: Defendant[],
+  ): Promise<Verdict[]> {
+    return this.sequelize.transaction(async (transaction) => {
+      return await Promise.all(
+        verdicts.map((verdict) => {
+          const currentVerdict = defendants?.find(
+            (defendant) => verdict.defendantId === defendant.id,
+          )?.verdict
+          if (currentVerdict) {
+            const { defendantId, ...update } = verdict
+            return this.updateVerdict(currentVerdict, update, transaction)
+          } else {
+            return this.createVerdict(caseId, verdict, transaction)
+          }
+        }),
+      )
+    })
+  }
+
+  async deleteVerdict(
+    caseId: string,
+    defendantId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    const numberOfAffectedRows = await this.verdictModel.destroy({
+      where: { defendantId, caseId },
+      transaction,
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting verdict for defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete verdict of ${defendantId} of case ${caseId}`,
+      )
+    }
+    return true
   }
 
   private async handleServiceRequirementUpdate(
