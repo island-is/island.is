@@ -357,9 +357,6 @@ export class ApplicationsService {
       application,
     )
 
-    const organization = await this.organizationModel.findByPk(
-      form.organizationId,
-    )
     applicationDto.organizationName = form.organizationDisplayName
 
     return applicationDto
@@ -420,6 +417,7 @@ export class ApplicationsService {
       where: {
         nationalId,
         pruned: false,
+        isTest,
       },
       include: [{ model: Value, as: 'values' }],
     })

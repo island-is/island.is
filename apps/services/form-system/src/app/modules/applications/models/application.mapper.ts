@@ -201,9 +201,7 @@ export class ApplicationMapper {
 
     // Sort newest first (optional)
     mapped.sort(
-      (a, b) =>
-        new Date(b.modified as any).getTime() -
-        new Date(a.modified as any).getTime(),
+      (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime(),
     )
 
     return mapped

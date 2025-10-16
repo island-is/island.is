@@ -15,7 +15,6 @@ import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Value } from './value.model'
 import { ApplicationStatus } from '@island.is/form-system/shared'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {

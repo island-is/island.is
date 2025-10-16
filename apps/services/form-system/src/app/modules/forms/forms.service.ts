@@ -54,7 +54,6 @@ import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { UrlTypes } from '@island.is/form-system/enums'
 import { Application } from '../applications/models/application.model'
-import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 
 @Injectable()
 export class FormsService {

@@ -29,7 +29,7 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { Application as MyPagesApplication } from '../../../../application/src/lib/application.model'
+import { Application as MyPagesApplication } from '@island.is/api/domains/application'
 
 @Injectable()
 export class ApplicationsService {
