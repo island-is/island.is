@@ -41,8 +41,8 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala fannst ekki í þjóðskrá',
     description: 'Application national ID not found summary',
   },
-  applicantDecesed: {
-    id: 'hi.application:error.applicantDecesedTitle',
+  applicantDeacesed: {
+    id: 'hi.application:error.applicantDeceasedTitle',
     defaultMessage: 'Umsækjandi er skráður látinn',
     description: 'Applicant deceased title',
   },
