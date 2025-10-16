@@ -118,7 +118,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
         <SelectController
           required={buildFieldRequired(application, required)}
           dataTestId={field.dataTestId}
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application, locale)}
           label={formatTextWithLocale(
             title,
             application,
