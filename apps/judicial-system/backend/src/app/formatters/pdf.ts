@@ -161,33 +161,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     return page
   }
 
-  const a = () => {
-    const pageNumberRightMargin = 10
-    const pageNumberBottomMargin = 15
-    const pageNumberFontSize = 20
-
-    let pageNumber = 0
-
-    rawDocument.getPages().forEach((page) => {
-      const pageNumberText = `${++pageNumber}`
-      const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-        pageNumberText,
-        pageNumberFontSize,
-      )
-
-      drawTextAbsolute(
-        page,
-        pageNumberText,
-        page.getWidth() - pageNumberRightMargin - pageNumberTextWidth,
-        pageNumberBottomMargin,
-        boldFont,
-        pageNumberFontSize,
-      )
-    })
-
-    return pdfDocument
-  }
-
   const pdfDocument = {
     addPage: (position = rawDocument.getPageCount()) => {
       rawDocument.insertPage(position)
