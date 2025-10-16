@@ -26,7 +26,6 @@ import {
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import { isPerson } from 'kennitala'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
