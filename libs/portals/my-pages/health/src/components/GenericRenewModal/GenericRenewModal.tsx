@@ -100,9 +100,7 @@ const GenericRenewModal = <T extends { id?: string }>({
           </Text>
         </Box>
         <Text marginBottom={3}>{modalText}</Text>
-        <Text variant="small" fontWeight="medium" marginBottom={1}>
-          {'Information'}
-        </Text>
+
         <Box>
           <GridContainer className={styles.grid}>
             <GridRow>
@@ -136,7 +134,7 @@ const GenericRenewModal = <T extends { id?: string }>({
                   flexDirection="row"
                   justifyContent="spaceBetween"
                   alignItems="center"
-                  marginTop={5}
+                  marginTop={[1, 1, 1, 5]}
                 >
                   <Button size="small" variant="ghost" onClick={closeModal}>
                     {cancelLabel}
