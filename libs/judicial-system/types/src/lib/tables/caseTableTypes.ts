@@ -45,6 +45,7 @@ interface CaseTableDescriptor {
   route: string
   title: string
   description: string
+  includeCounter?: boolean
 }
 
 export interface CaseTableGroup {

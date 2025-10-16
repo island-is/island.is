@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import {
+  CaseTableType,
   getCaseTableGroups,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -49,7 +50,9 @@ const CaseTableGroups: FC = () => {
                   title={t.title}
                   description={t.description}
                   href={`${router.asPath}/${t.route}`}
+                  type={t.type}
                   key={idx}
+                  includeCounter={t.includeCounter}
                 />
               ))}
             </CasesDashboardLayout>
