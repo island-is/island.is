@@ -9,13 +9,11 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { UserProfileApi } from '@island.is/application/types'
 import { ReferenceDataApi, NationalRegistryApi } from '../../dataProviders'
-import { ThingeyjarsveitLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  logo: ThingeyjarsveitLogo,
   children: [
     buildSection({
       id: 'conditions',
