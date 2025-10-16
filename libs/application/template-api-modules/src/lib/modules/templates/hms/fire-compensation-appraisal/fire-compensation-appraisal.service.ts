@@ -139,119 +139,118 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   async sendNotificationToAllInvolved({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const allowFail = true
+    try {
+      const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+        application.answers,
+        'otherPropertiesThanIOwnCheckbox',
+      )?.includes(YES)
 
-    const otherPropertiesThanIOwn = getValueViaPath<string[]>(
-      application.answers,
-      'otherPropertiesThanIOwnCheckbox',
-    )?.includes(YES)
+      const selectedRealEstateId = otherPropertiesThanIOwn
+        ? 'F' +
+          getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
+        : getValueViaPath<string>(application.answers, 'realEstate')
 
-    const selectedRealEstateId = otherPropertiesThanIOwn
-      ? 'F' +
-        getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
-      : getValueViaPath<string>(application.answers, 'realEstate')
+      if (!selectedRealEstateId) {
+        throw new TemplateApiError('Selected real estate id is not set', 500)
+      }
 
-    if (!selectedRealEstateId) {
-      if (allowFail) return
-      throw new TemplateApiError('Selected real estate id is not set', 500)
-    }
+      const realEstates = otherPropertiesThanIOwn
+        ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
+        : getValueViaPath<Array<Fasteign>>(
+            application.externalData,
+            'getProperties.data',
+          )
 
-    const realEstates = otherPropertiesThanIOwn
-      ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
-      : getValueViaPath<Array<Fasteign>>(
-          application.externalData,
-          'getProperties.data',
-        )
-
-    const selectedRealEstate = realEstates?.find(
-      (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
-    )
-
-    if (!selectedRealEstate) {
-      if (allowFail) return
-      throw new TemplateApiError('Selected real estate is not set', 500)
-    }
-
-    const applicant = getApplicant(application.answers)
-    const { nationalId: applicantNationalId, name: applicantName } = applicant
-
-    if (!applicantNationalId || !applicantName) {
-      if (allowFail) return
-      throw new TemplateApiError('Applicant is not set', 500)
-    }
-
-    const owners =
-      selectedRealEstate?.thinglystirEigendur?.thinglystirEigendur ?? []
-    const address =
-      selectedRealEstate?.sjalfgefidStadfang?.birtingStutt?.toString()
-    const postalCode =
-      selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString()
-
-    if (!address || !postalCode) {
-      if (allowFail) return
-      throw new TemplateApiError('Address or postal code is not set', 500)
-    }
-
-    const fullAddress = address + ', ' + postalCode
-
-    // Filter out companies and organizations since we dont send them notifications
-    const ownersSsn = owners
-      .map((o) => o.kennitala)
-      .filter(
-        (ssn): ssn is string =>
-          typeof ssn === 'string' && ssn !== '' && isPerson(ssn),
+      const selectedRealEstate = realEstates?.find(
+        (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
       )
 
-    // deduplicate and filter
-    const recipients = Array.from(
-      new Set<string>([applicantNationalId, ...ownersSsn]),
-    ).filter((id) => typeof id === 'string' && id !== '')
+      if (!selectedRealEstate) {
+        throw new TemplateApiError('Selected real estate is not set', 500)
+      }
 
-    const results = await Promise.allSettled(
-      recipients.map((recipientNationalId) =>
-        this.notificationsService.sendNotification({
-          type: NotificationType.FireCompensationAppraisal,
-          messageParties: {
-            recipient: recipientNationalId,
-            sender: applicantNationalId,
-          },
-          applicationId: application.id,
-          args: {
-            applicantName:
-              recipientNationalId === applicantNationalId
-                ? 'Þú'
-                : applicantName,
+      const applicant = getApplicant(application.answers)
+      const { nationalId: applicantNationalId, name: applicantName } = applicant
+
+      if (!applicantNationalId || !applicantName) {
+        throw new TemplateApiError('Applicant is not set', 500)
+      }
+
+      const owners =
+        selectedRealEstate?.thinglystirEigendur?.thinglystirEigendur ?? []
+      const address =
+        selectedRealEstate?.sjalfgefidStadfang?.birtingStutt?.toString()
+      const postalCode =
+        selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString()
+
+      if (!address || !postalCode) {
+        throw new TemplateApiError('Address or postal code is not set', 500)
+      }
+
+      const fullAddress = address + ', ' + postalCode
+
+      // Filter out companies and organizations since we dont send them notifications
+      const ownersSsn = owners
+        .map((o) => o.kennitala)
+        .filter(
+          (ssn): ssn is string =>
+            typeof ssn === 'string' && ssn !== '',
+        )
+
+      // deduplicate and filter
+      const recipients = Array.from(
+        new Set<string>([applicantNationalId, ...ownersSsn]),
+      ).filter((id) => typeof id === 'string' && id !== '')
+
+      const results = await Promise.allSettled(
+        recipients.map((recipientNationalId) =>
+          this.notificationsService.sendNotification({
+            type: NotificationType.FireCompensationAppraisal,
+            messageParties: {
+              recipient: recipientNationalId,
+              sender: applicantNationalId,
+            },
             applicationId: application.id,
-            appliedForAddress: fullAddress,
-            realEstateId: selectedRealEstateId,
-          },
-        }),
-      ),
-    )
-
-    const failed = results
-      .map((result, i) => ({ result, recipient: recipients[i] }))
-      .filter(
-        (x): x is { result: PromiseRejectedResult; recipient: string } =>
-          x.result.status === 'rejected',
+            args: {
+              applicantName:
+                recipientNationalId === applicantNationalId
+                  ? 'þú'
+                  : applicantName,
+              applicationId: application.id,
+              appliedForAddress: fullAddress,
+              realEstateId: selectedRealEstateId,
+            },
+          }),
+        ),
       )
 
-    if (failed.length > 0) {
-      const details = failed
-        .map(
-          (failedResult) =>
-            `${failedResult.recipient}: ${
-              (failedResult.result.reason as Error)?.message ??
-              String(failedResult.result.reason)
-            }`,
+      const failed = results
+        .map((result, i) => ({ result, recipient: recipients[i] }))
+        .filter(
+          (x): x is { result: PromiseRejectedResult; recipient: string } =>
+            x.result.status === 'rejected',
         )
-        .join('; ')
 
-      withLoggingContext({ applicationId: application.id }, () => {
-        this.logger.error(
-          `Failed to send notification to ${failed.length} recipient(s): ${details}`,
-        )
-      })
+      if (failed.length > 0) {
+        const details = failed
+          .map(
+            (failedResult) =>
+              `${failedResult.recipient}: ${
+                (failedResult.result.reason as Error)?.message ??
+                String(failedResult.result.reason)
+              }`,
+          )
+          .join('; ')
+
+        withLoggingContext({ applicationId: application.id }, () => {
+          this.logger.error(
+            `Failed to send notification to ${failed.length} recipient(s): ${details}`,
+          )
+        })
+      }
+    } catch (e) {
+      this.logger.error('Failed to send notification to all involved:', e.message)
+      throw new TemplateApiError(e, 500)
     }
   }
 
