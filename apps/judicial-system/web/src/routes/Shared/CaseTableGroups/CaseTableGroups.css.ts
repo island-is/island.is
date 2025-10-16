@@ -24,3 +24,13 @@ export const infoContainer = style({
     },
   },
 })
+
+export const createContainer = style({
+  maxWidth: '100%',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      maxWidth: '46%',
+    },
+  },
+})

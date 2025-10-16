@@ -1,8 +1,8 @@
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
-  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator'
@@ -10,6 +10,28 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { PoliceFileTypeCode } from '@island.is/judicial-system/types'
+
+class Supplement {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  deliveryId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  code?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  value?: string
+}
 
 export class UpdatePoliceDocumentDeliveryDto {
   @IsNotEmpty()
@@ -55,7 +77,7 @@ export class UpdatePoliceDocumentDeliveryDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
-  deliveredOnIslandis?: boolean // delivered electronically on island.is
+  deliveredOnIslandis?: boolean
 
   @IsOptional()
   @IsBoolean()
@@ -63,7 +85,7 @@ export class UpdatePoliceDocumentDeliveryDto {
   deliveredToLawyer?: boolean
 
   @IsOptional()
-  @IsObject()
-  @ApiPropertyOptional({ type: 'object', required: false })
-  deliverySupplements?: Record<string, unknown>
+  @IsArray()
+  @ApiPropertyOptional({ type: () => Supplement, isArray: true })
+  deliverySupplements?: Supplement[]
 }
