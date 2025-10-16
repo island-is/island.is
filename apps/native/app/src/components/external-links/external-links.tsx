@@ -2,7 +2,8 @@ import { Pressable, View } from 'react-native'
 import { Icon, theme, Typography } from '../../ui'
 import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
-import { navigateTo } from '../../lib/deep-linking'
+import { useBrowser } from '../../lib/use-browser'
+import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
 
 export interface ExternalLink {
   link: string
@@ -15,6 +16,7 @@ export interface ExternalLinksProps {
   fontWeight?: '300' | '400' | '500' | '600' | '700'
   borderBottom?: boolean
   fontSize?: number
+  componentId: string
 }
 
 export const ExternalLinks = ({
@@ -22,14 +24,21 @@ export const ExternalLinks = ({
   fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
+  componentId,
 }: ExternalLinksProps) => {
+  const { openBrowser } = useBrowser()
+  const overlay = useDropdownOverlay()
+
+  const handlePress = () => {
+    if (overlay?.componentId) {
+      overlay.close()
+    }
+    openBrowser(links.link, componentId)
+  }
+
   return (
     <Pressable
-      onPress={() =>
-        navigateTo('/webview', {
-          source: { uri: links.link },
-        })
-      }
+      onPress={handlePress}
       style={{
         flexDirection: 'row',
         alignItems: 'center',

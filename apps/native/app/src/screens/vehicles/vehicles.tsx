@@ -262,7 +262,11 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
               </Typography>
               <View style={{ marginHorizontal: -16 }}>
                 {externalLinks.map((link) => (
-                  <ExternalLinks links={link} key={link.title} />
+                  <ExternalLinks
+                    links={link}
+                    key={link.title}
+                    componentId={componentId}
+                  />
                 ))}
               </View>
             </View>

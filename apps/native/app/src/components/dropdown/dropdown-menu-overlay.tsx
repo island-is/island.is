@@ -10,6 +10,7 @@ import {
   getDropdownContent,
   clearDropdownContent,
 } from './dropdown-content-registry'
+import { DropdownOverlayProvider } from './dropdown-overlay-context'
 
 export interface DropdownMenuOverlayProps {
   children?: ReactNode
@@ -64,16 +65,19 @@ export const DropdownMenuOverlay: NavigationFunctionComponent<
               elevation: 6,
             }}
           >
-            <Pressable
-              onPress={() => {}}
-              style={{
-                minWidth: 150,
-                backgroundColor: theme.color.white,
-                borderRadius: 8,
-              }}
+            <DropdownOverlayProvider
+              value={{ componentId, close: handleClose }}
             >
-              {children ?? (contentId ? getDropdownContent(contentId) : null)}
-            </Pressable>
+              <View
+                style={{
+                  minWidth: 150,
+                  backgroundColor: theme.color.white,
+                  borderRadius: 8,
+                }}
+              >
+                {children ?? (contentId ? getDropdownContent(contentId) : null)}
+              </View>
+            </DropdownOverlayProvider>
           </View>
         </View>
       </SafeAreaView>

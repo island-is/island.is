@@ -100,6 +100,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         <View>
           {items.map((item, index) => (
             <ExternalLinks
+              componentId={componentId}
               key={item.title}
               links={{ link: item.link, title: item.title }}
               borderBottom={index !== items.length - 1}
