@@ -180,10 +180,10 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
     return undefined
