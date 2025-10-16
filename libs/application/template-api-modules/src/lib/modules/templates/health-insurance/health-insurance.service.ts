@@ -3,8 +3,8 @@ import { logger } from '@island.is/logging'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
-  insuranceToXML,
-  transformApplicationToHealthInsuranceDTO,
+  // insuranceToXML,
+  // transformApplicationToHealthInsuranceDTO,
   errorMapper,
 } from './health-insurance.utils'
 import {
