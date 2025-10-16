@@ -494,6 +494,11 @@ codemagic.yaml                                                                  
 /libs/api/domains/secondary-school/                                                                                         @island-is/origo
 /libs/clients/secondary-school/                                                                                             @island-is/origo
 
+/libs/application/templates/unemployment-benefits/                                                                          @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/unemployment-benefits/                                     @island-is/origo
+/libs/api/domains/vmst-applications/                                                                                        @island-is/origo
+/libs/clients/vmst-unemployment/                                                                                            @island-is/origo
+
 # DevOps
 /.github/                                                                                                                   @island-is/devops
 /.githooks/                                                                                                                 @island-is/devops
