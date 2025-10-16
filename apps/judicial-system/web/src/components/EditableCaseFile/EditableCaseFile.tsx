@@ -16,6 +16,7 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -155,6 +156,7 @@ const EditableCaseFile: FC<Props> = (props) => {
         [styles.done]: !backgroundColor && styleIndex === FileUploadStatus.done,
         [styles.uploading]:
           !backgroundColor && styleIndex === FileUploadStatus.uploading,
+        [styles.disabled]: disabled,
       })}
     >
       {enableDrag && (
@@ -276,6 +278,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      ...(disabled ? { color: theme.color.dark300 } : {}),
                     }}
                   >
                     {displayName}

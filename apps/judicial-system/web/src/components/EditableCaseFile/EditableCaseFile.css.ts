@@ -37,6 +37,11 @@ export const uploading = style({
   borderColor: theme.color.blue200,
 })
 
+export const disabled = style({
+  background: theme.color.blue100,
+  borderColor: 'transparent',
+})
+
 export const editCaseFileInputContainer = style({
   display: 'flex',
   flexDirection: 'row',
