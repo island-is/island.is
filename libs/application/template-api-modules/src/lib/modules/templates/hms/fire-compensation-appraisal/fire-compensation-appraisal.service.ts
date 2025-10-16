@@ -192,10 +192,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // Filter out companies and organizations since we dont send them notifications
       const ownersSsn = owners
         .map((o) => o.kennitala)
-        .filter(
-          (ssn): ssn is string =>
-            typeof ssn === 'string' && ssn !== '',
-        )
+        .filter((ssn): ssn is string => typeof ssn === 'string' && ssn !== '')
 
       // deduplicate and filter
       const recipients = Array.from(
@@ -249,7 +246,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         })
       }
     } catch (e) {
-      this.logger.error('Failed to send notification to all involved:', e.message)
+      this.logger.error(
+        'Failed to send notification to all involved:',
+        e.message,
+      )
       throw new TemplateApiError(e, 500)
     }
   }
