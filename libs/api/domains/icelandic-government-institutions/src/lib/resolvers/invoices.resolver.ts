@@ -7,9 +7,7 @@ import { InvoicesInput } from '../dtos/getEmployeeList.input'
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class InvoicesResolver {
-  constructor(
-    private readonly employeeService: InvoicesService,
-  ) {}
+  constructor(private readonly employeeService: InvoicesService) {}
 
   @Query(() => EmployeeList, {
     name: 'icelandicGovernmentInstitutionsInvoices',

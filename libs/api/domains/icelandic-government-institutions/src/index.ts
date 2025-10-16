@@ -1,1 +1,1 @@
-export { IcelandicGovernmentInstitutionsModule } from './lib/icelandicGovernmentInstitutions.module';
+export { IcelandicGovernmentInstitutionsModule } from './lib/icelandicGovernmentInstitutions.module'

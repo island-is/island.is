@@ -5,9 +5,6 @@ import { EmployeesService } from './services/employees.service'
 
 @Module({
   imports: [ElfurClientModule],
-  providers: [
-    EmployeesService,
-    EmployeesResolver,
-  ],
+  providers: [EmployeesService, EmployeesResolver],
 })
 export class IcelandicGovernmentInstitutionsModule {}

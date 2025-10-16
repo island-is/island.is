@@ -8,9 +8,7 @@ import { EmployeesService } from '../services/employees.service'
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class EmployeesResolver {
-  constructor(
-    private readonly employeeService: EmployeesService,
-  ) {}
+  constructor(private readonly employeeService: EmployeesService) {}
 
   @Query(() => EmployeeList, {
     name: 'icelandicGovernmentInstitutionsEmployees',
