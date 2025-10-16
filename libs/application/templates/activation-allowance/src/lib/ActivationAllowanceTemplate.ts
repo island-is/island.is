@@ -26,7 +26,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { ApiActions } from '../utils/enums'
 
