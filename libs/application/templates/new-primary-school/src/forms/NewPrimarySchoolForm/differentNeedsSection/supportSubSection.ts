@@ -221,7 +221,7 @@ export const supportSubSection = buildSubSection({
             getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )?.name || '',
+            )?.name,
         }),
         buildTextField({
           id: 'support.caseManager.email',
@@ -233,7 +233,7 @@ export const supportSubSection = buildSubSection({
             getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )?.email || '',
+            )?.email,
         }),
         buildRadioField({
           id: 'support.hasIntegratedServices',
