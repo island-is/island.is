@@ -29,6 +29,18 @@ jobs:
               exit 1
             fi
           fi
+      - name: Setup yarn
+        if: env.CHECK == 'true'
+        uses: ./.github/actions/setup-yarn
+      - name: Get token
+        id: get-token
+        if: env.CHECK == 'true'
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
       - name: Check indentation
         if: env.CHECK == 'true'
         run: |
@@ -52,4 +64,4 @@ jobs:
           OWNER_CHECKER_REPOSITORY="island-is/island.is" \
           ~/codeowners-validator
         env:
-          GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
+          GH_TOKEN: ${{ steps.get-token.outputs.token }}
