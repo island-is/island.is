@@ -883,6 +883,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
+    hasBeenTreatedBySpecialist: {
+      id: 'nps.application:different.needs.has.had.specialist',
+      defaultMessage: 'Hefur barnið verið í meðferð hjá sérfræðingum?',
+      description: 'Has the child been treated by specialists?',
+    },
+    specialistTitle: {
+      id: 'nps.application:different.needs.specialist.title',
+      defaultMessage: 'Hjá hverjum?',
+      description: 'By whom?',
+    },
+    specialist: {
+      id: 'nps.application:different.needs.specialist',
+      defaultMessage: 'Sérfræðingur',
+      description: 'Specialist',
+    },
+    specialistPlaceholder: {
+      id: 'nps.application:different.needs.specialist.placeholder',
+      defaultMessage: 'Veldu sérfræðing',
+      description: 'Select specialist',
+    },
   }),
 
   overview: defineMessages({

@@ -17,6 +17,7 @@ import {
   schoolItems,
   siblingsTable,
   supportItems,
+  supportSpecialSchoolDisabilityItems,
 } from './overviewItems'
 
 const MAX_GUARDIANS = 2
@@ -142,6 +143,19 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+      condition: (answers) => {
+        const { isSerdeild } = getApplicationAnswers(answers)
+        return !isSerdeild //TODO
+      },
+    }),
+    buildOverviewField({
+      id: 'overview.support',
+      backId: editable ? 'support' : undefined,
+      items: supportSpecialSchoolDisabilityItems,
+      condition: (answers) => {
+        const { isSerdeild } = getApplicationAnswers(answers)
+        return isSerdeild //TODO
+      },
     }),
   ]
 }
