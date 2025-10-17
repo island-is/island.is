@@ -6,7 +6,7 @@ import { birthdayFlag } from './utils'
 
 const job = processJob()
 const birthday = birthdayFlag()
-//hi
+
 if (job === 'cleanup') {
   import('./cleanup').then((app) => app.cleanup())
 } else if (birthday && job === 'worker') {
