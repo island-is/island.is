@@ -371,10 +371,23 @@ export const errorMapper = async (error: Response) => {
           400,
         )
       default:
-        return error
+        return new TemplateApiError(
+          {
+            title: errorMessages.defaultTemplateApiError.defaultMessage,
+            summary:
+              errorMessages.defaultTemplateApiErrorSummary.defaultMessage,
+          },
+          500,
+        )
     }
   } catch (_) {
-    // ignore parsing error and just return the original error
-    return error
+    // ignore parsing error and just return the default error
+    return new TemplateApiError(
+      {
+        title: errorMessages.defaultTemplateApiError.defaultMessage,
+        summary: errorMessages.defaultTemplateApiErrorSummary.defaultMessage,
+      },
+      500,
+    )
   }
 }

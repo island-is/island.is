@@ -95,4 +95,15 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ekki er hægt að sækja um fyrir aðila skráða sem nemendur ',
     description: 'Applicant student attachment missing summary',
   },
+  defaultTemplateApiError: {
+    id: 'hi.application:error.defaultTemplateApiErrorTitle',
+    defaultMessage: 'Villa kom upp',
+    description: 'Default template api error title',
+  },
+  defaultTemplateApiErrorSummary: {
+    id: 'hi.application:error.defaultTemplateApiErrorSummary',
+    defaultMessage:
+      'Vinsamlegast hafið samband við þjónustumiðstöð Sjúkratrygginga',
+    description: 'Default template api error summary',
+  },
 })
