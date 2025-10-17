@@ -19,7 +19,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { NationalRegistryApi, propertiesApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { InstitutionNationalIds } from '@island.is/application/types'
@@ -220,17 +219,6 @@ const template: ApplicationTemplate<
           ],
         },
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole: (
