@@ -1,20 +1,21 @@
 import { Audit } from '@island.is/nest/audit'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
-import { EmployeeList } from '../models/employeeList.model'
 import { IInvoicesService } from '../services/invoices/invoices.service.interface'
+import { InvoiceList } from '../models/invoiceList.model'
+import { Inject } from '@nestjs/common'
 
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class InvoicesResolver {
-  constructor(private readonly employeeService: IInvoicesService) {}
+  constructor(@Inject('IInvoicesService') private readonly invoiceService: IInvoicesService) {}
 
-  @Query(() => EmployeeList, {
+  @Query(() => InvoiceList, {
     name: 'icelandicGovernmentInstitutionsInvoices',
     nullable: true,
   })
   @BypassAuth()
-  async getInvoices(): Promise<EmployeeList | null> {
-    return this.employeeService.getInvoices(input.organizationId)
+  async getInvoices(): Promise<InvoiceList | null> {
+    return this.invoiceService.getOpenInvoices()
   }
 }

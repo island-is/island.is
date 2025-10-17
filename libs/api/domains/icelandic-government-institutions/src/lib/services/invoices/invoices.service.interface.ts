@@ -1,5 +1,5 @@
+import { InvoiceList } from "../../models/invoiceList.model";
 
 export interface IInvoicesService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getOpenInvoices(): Promise<any>
+  getOpenInvoices(): Promise<InvoiceList | null>
 }
