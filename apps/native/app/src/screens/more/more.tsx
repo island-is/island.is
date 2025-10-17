@@ -1,6 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import {
+  SafeAreaView,
+  ScrollView,
+  TouchableHighlight,
+  View,
+} from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -19,13 +24,15 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { getMyPagesLinks } from '../../lib/my-pages-links'
-import { MoreCard, Typography } from '../../ui'
+import { FamilyMemberCard, MoreCard, Typography } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
+import { useAuthStore } from '../../stores/auth-store'
+import { formatNationalId } from '../../lib/format-national-id'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -93,6 +100,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const intl = useIntl()
   const theme = useTheme()
+  const authStore = useAuthStore()
   const myPagesLinks = getMyPagesLinks()
 
   useConnectivityIndicator({
@@ -137,6 +145,21 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
           paddingVertical: 16,
         }}
       >
+        <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
+          <TouchableHighlight
+            underlayColor={
+              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+            }
+            onPress={() => {
+              navigateTo('/personalinfo')
+            }}
+          >
+            <FamilyMemberCard
+              name={authStore.userInfo?.name ?? ''}
+              nationalId={formatNationalId(authStore.userInfo?.nationalId)}
+            />
+          </TouchableHighlight>
+        </SafeAreaView>
         <Row>
           <MoreCard
             title={intl.formatMessage({ id: 'profile.family' })}
