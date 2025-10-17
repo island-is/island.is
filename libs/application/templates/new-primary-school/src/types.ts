@@ -175,3 +175,8 @@ export type CurrentSchool = {
   school?: string
   municipality?: string
 }
+
+export type FileType = {
+  key: string
+  name: string
+}
