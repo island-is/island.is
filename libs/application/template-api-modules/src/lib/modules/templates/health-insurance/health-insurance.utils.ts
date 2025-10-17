@@ -327,8 +327,8 @@ export const errorMapper = async (error: Response) => {
       case ErrorCodes.APPLICANT_DECEASED:
         return new TemplateApiError(
           {
-            title: errorMessages.applicantDeacesed.defaultMessage,
-            summary: errorMessages.applicantDecesedSummary.defaultMessage,
+            title: errorMessages.applicantDeceased.defaultMessage,
+            summary: errorMessages.applicantDeceasedSummary.defaultMessage,
           },
           400,
         )
