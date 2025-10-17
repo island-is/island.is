@@ -266,7 +266,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'Failed to send notification to all involved:',
         e.message,
       )
-      throw new TemplateApiError(e, 500)
+      // Dont throw error since this happens when the application has already been sent
     }
   }
 

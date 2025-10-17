@@ -125,7 +125,7 @@ const template: ApplicationTemplate<
           ],
           onEntry: [
             defineTemplateApi({
-              action: TemplateApiActions.sendNotificationToAllInvolved,
+              action: TemplateApiActions.testHnipp,
             }),
           ],
           roles: [
