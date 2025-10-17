@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    showAllDistrictCourts: {
+      id: 'web.courtAgendas:listPage.showAllDistrictCourts',
+      defaultMessage: 'Allir héraðsdómstólar',
+      description: 'Allir héraðsdómstólar',
+    },
     lawyerSelectLabel: {
       id: 'web.courtAgendas:listPage.lawyerSelectLabel',
       defaultMessage: 'Veldu lögmann',
