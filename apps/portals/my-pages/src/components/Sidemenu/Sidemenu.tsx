@@ -68,8 +68,8 @@ const Sidemenu = ({
             display="flex"
             flexDirection="row"
             alignItems="center"
-            marginBottom={1}
-            marginTop={2}
+            // marginBottom={1}
+            // marginTop={[1, 1, 1, 2]}
           >
             <Box
               borderRadius="full"
