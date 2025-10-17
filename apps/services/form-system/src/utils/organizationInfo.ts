@@ -3,11 +3,10 @@ import {
   InstitutionContentfulIds,
   InstitutionTypes,
 } from '@island.is/application/types'
-import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 export const getOrganizationInfoByNationalId = (nationalId: string) => {
   if (!nationalId) {
-    throw new BadRequestException('nationalId is required')
+    return null
   }
 
   // Find the key that matches the given nationalId
@@ -16,9 +15,7 @@ export const getOrganizationInfoByNationalId = (nationalId: string) => {
   )?.[0]
 
   if (!key) {
-    throw new NotFoundException(
-      `key not found for provided nationalId: ${nationalId}`,
-    )
+    return null
   }
 
   return {
