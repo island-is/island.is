@@ -265,7 +265,7 @@ const environment = getConfig
     ConsultationPortalModule,
     FormSystemModule,
     CmsModule,
-    IcelandicGovernmentInstitutionsModule,
+    IcelandicGovernmentInstitutionsModule.register({ useMocks: true }),
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
