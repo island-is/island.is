@@ -129,7 +129,7 @@ const CourtRecord: FC = () => {
           <Box width="half" marginBottom={10}>
             <AlertMessage
               title="Sjálfvirkni ekki í boði"
-              message="Þetta mál var móttekið af héraðsdómi áður en sjáfvirkni við gerð þingbókar var virkjuð."
+              message="Þetta mál var móttekið af héraðsdómi áður en sjálfvirkni við gerð þingbókar var virkjuð."
               type="info"
             />
           </Box>
