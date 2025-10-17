@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
-  EmptyState,
   FootNote,
   IntroHeader,
   m as coreMessage,
@@ -73,28 +72,20 @@ const Overview = () => {
     },
   })
 
-  // Combine and sort applications from both sources
-  const applicationsA = applicationsData ?? []
-  const applicationsB = formSystemData ?? []
-
   const combinedApplications: Application[] = useMemo(() => {
-    if (!applicationsA.length && !applicationsB.length) return []
+    const a = applicationsData ?? []
+    const b = formSystemData ?? []
+    if (!a.length && !b.length) return []
     const map = new Map<string, Application>()
-    ;[...applicationsA, ...applicationsB].forEach((app) => {
-      if (app) {
-        // Last one wins if duplicate ids appear
-        map.set(app.id, app)
-      }
+    ;[...a, ...b].forEach((app) => {
+      if (app) map.set(app.id, app)
     })
-    return Array.from(map.values()).sort((a, b) => {
-      const aTime = a.modified ? new Date(a.modified).getTime() : 0
-      const bTime = b.modified ? new Date(b.modified).getTime() : 0
-      return bTime - aTime
+    return Array.from(map.values()).sort((x, y) => {
+      const xt = x.modified ? new Date(x.modified).getTime() : 0
+      const yt = y.modified ? new Date(y.modified).getTime() : 0
+      return yt - xt
     })
-  }, [applicationsA, applicationsB])
-
-  console.log('formSystemData', formSystemData)
-  console.log('combinedApplications', combinedApplications)
+  }, [applicationsData, formSystemData])
 
   const loading = applicationsLoading || formSystemLoading
   const error = applicationsError || formSystemError
