@@ -46,10 +46,10 @@ export const newSchoolSubSection = buildSubSection({
 
             return applicantMunicipalityCode
           },
-          loadOptions: async ({ application, apolloClient }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
+          loadOptions: async ({ apolloClient }) => {
+            // const { childGradeLevel } = getApplicationExternalData(
+            //   application.externalData,
+            // )
 
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
