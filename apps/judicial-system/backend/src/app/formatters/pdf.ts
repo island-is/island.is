@@ -152,8 +152,10 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   const scaleToA4 = (page: PDFPage, isLandscape: boolean) => {
     const { width, height } = page.getSize()
-    const scaleX = A4Width / width
-    const scaleY = A4Height / height
+    const targetWidth = isLandscape ? A4Height : A4Width
+    const targetHeight = isLandscape ? A4Width : A4Height
+    const scaleX = targetWidth / width
+    const scaleY = targetHeight / height
     const scale = Math.min(scaleX, scaleY)
 
     page.scaleContent(scale, scale)
