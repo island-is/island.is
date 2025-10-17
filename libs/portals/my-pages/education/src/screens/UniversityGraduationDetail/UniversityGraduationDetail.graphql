@@ -20,12 +20,12 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
       locale
       displayName
       fileName
+      downloadServiceURL
     }
     metadata {
       description
       footer
       unconfirmedData
     }
-    downloadServiceURL
   }
 }
