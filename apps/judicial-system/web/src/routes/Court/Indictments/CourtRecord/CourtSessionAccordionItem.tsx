@@ -173,11 +173,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
+    const now = formatDateForServer(new Date())
     const startDate =
       courtSession.startDate ??
       workingCase.courtDate?.date ??
       workingCase.arraignmentDate?.date ??
-      formatDateForServer(new Date())
+      now
     const judgeId = courtSession.judgeId ?? workingCase.judge?.id
     const location =
       courtSession.location ??
@@ -185,7 +186,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
         : '')
     const attendees = courtSession.attendees ?? getInitialAttendees()
-    const endDate = courtSession.endDate ?? startDate
+    const endDate = courtSession.endDate ?? (now > startDate ? now : startDate)
 
     const update = { startDate, judgeId, location, attendees, endDate }
 
