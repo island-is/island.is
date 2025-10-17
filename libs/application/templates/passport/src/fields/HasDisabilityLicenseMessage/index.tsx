@@ -30,10 +30,12 @@ export const HasDisabilityLicenseMessage: FC<
     if (data && !!data.hasDisabilityLicense) {
       setValue('personalInfo.hasDisabilityLicense', data.hasDisabilityLicense)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   useEffect(() => {
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { formatMessage } = useLocale()

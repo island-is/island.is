@@ -7,3 +7,12 @@ export const getFields = () => import('./fields/')
 
 export default PassportTemplate
 export type PassportSchema = z.TypeOf<typeof dataSchema>
+
+export { PassportChargeCodes } from './lib/constants'
+export {
+  getChargeCode,
+  ageCanHaveDiscount,
+  isChild,
+  isDisabled,
+  isElder,
+} from './lib/utils'
