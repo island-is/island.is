@@ -5,7 +5,6 @@ import { theme } from '@island.is/island-ui/theme'
 export const containerGrid = style({
   display: 'grid',
   gap: theme.spacing[5],
-  marginBottom: theme.spacing[3],
 })
 
 export const grid = style({

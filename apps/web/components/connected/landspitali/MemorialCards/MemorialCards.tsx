@@ -8,7 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -114,8 +113,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
   >(GET_LANDSPITALI_CATALOG)
-
-  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
   const fundOptions = useMemo(() => {
     const options = (
@@ -601,20 +598,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       id="senderNationalId"
                       label={formatMessage(m.info.senderNationalIdLabel)}
                       size="xs"
-                      error={
-                        nationalIdSkipped
-                          ? undefined
-                          : errors.senderNationalId?.message
-                      }
+                      error={errors.senderNationalId?.message}
                       type="text"
                       inputMode="numeric"
                       format="######-####"
-                      disabled={nationalIdSkipped}
                       rules={{
                         validate: (value) => {
-                          if (nationalIdSkipped) {
-                            return true
-                          }
                           if (!isValidKennitala(value)) {
                             return formatMessage(
                               m.validation.invalidNationalIdFormat,
@@ -624,19 +613,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                         },
                       }}
                       control={control}
-                    />
-                    <Checkbox
-                      id="senderNationalIdSkipped"
-                      label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                      checked={nationalIdSkipped}
-                      onChange={() => {
-                        const newValue = !nationalIdSkipped
-                        setNationalIdSkipped(newValue)
-                        if (newValue) {
-                          setValue('senderNationalId', '')
-                        }
-                      }}
-                      labelVariant="small"
                     />
                   </Stack>
                 </GridColumn>
