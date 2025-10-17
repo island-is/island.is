@@ -86,3 +86,15 @@ export interface VistaSkjalInput {
   hasHealthInsuranceRightInPreviousCountry: number
   attachmentsFileNames?: string[]
 }
+
+export enum ErrorCodes {
+  APPLICATION_ID_MISSING = 's570_umsoknnrvantar',
+  APPLICATION_ID_EXISTS = 's570_umsoknnrtil',
+  APPLICATION_DATE_IN_FUTURE = 's570_dagsumsoknar',
+  APPLICATION_NATIONAL_ID_NOT_FOUND = 's570_kteinstthj',
+  APPLICANT_DECEASED = 's570_kteinstlatinn',
+  APPLICANT_ALREADY_INSURED = 's570_einstsjukratr',
+  APPLICANT_HAS_ACTIVE_APPLICATION = 's570_umsoknivinnslu',
+  APPLICATION_ENCODING_WRONG = 's570_rangtencoding',
+  APPLICANT_STUDENT_ATTACHMENT_MISSING = 's570_student',
+}

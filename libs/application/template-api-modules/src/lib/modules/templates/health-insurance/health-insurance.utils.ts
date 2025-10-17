@@ -6,8 +6,11 @@ import { ApplicationWithAttachments as Application } from '@island.is/applicatio
 import { objectToXML } from '../../shared/shared.utils'
 import is from 'date-fns/locale/is'
 import format from 'date-fns/format'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { errorMessages } from '@island.is/application/templates/health-insurance'
 import {
   ApplyHealthInsuranceInputs,
+  ErrorCodes,
   Fylgiskjal,
   Fylgiskjol,
   GetVistaSkjalBody,
@@ -280,5 +283,111 @@ export const transformApplicationToHealthInsuranceDTO = (
     }
   } catch (error) {
     throw new Error(`Failed to convert application's information: ${error}`)
+  }
+}
+
+export const errorMapper = async (error: Response) => {
+  try {
+    const body = await error.json()
+    switch (body.errorList[0].errorType) {
+      case ErrorCodes.APPLICATION_ID_MISSING:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicationIdMissing.defaultMessage,
+            summary: errorMessages.applicationIdMissingSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICATION_ID_EXISTS:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicationIdExists.defaultMessage,
+            summary: errorMessages.applicationIdExistsSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICATION_DATE_IN_FUTURE:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicationDateInFuture.defaultMessage,
+            summary:
+              errorMessages.applicationDateInFutureSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICATION_NATIONAL_ID_NOT_FOUND:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicationNationalIdNotFound.defaultMessage,
+            summary:
+              errorMessages.applicationNationalIdNotFoundSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICANT_DECEASED:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicantDeceased.defaultMessage,
+            summary: errorMessages.applicantDeceasedSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICANT_ALREADY_INSURED:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicantAlreadyInsured.defaultMessage,
+            summary:
+              errorMessages.applicantAlreadyInsuredSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICANT_HAS_ACTIVE_APPLICATION:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicantHasActiveApplication.defaultMessage,
+            summary:
+              errorMessages.applicantHasActiveApplicationSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICATION_ENCODING_WRONG:
+        return new TemplateApiError(
+          {
+            title: errorMessages.applicationEncodingWrong.defaultMessage,
+            summary:
+              errorMessages.applicationEncodingWrongSummary.defaultMessage,
+          },
+          400,
+        )
+      case ErrorCodes.APPLICANT_STUDENT_ATTACHMENT_MISSING:
+        return new TemplateApiError(
+          {
+            title:
+              errorMessages.applicantStudentAttachmentMissing.defaultMessage,
+            summary:
+              errorMessages.applicantStudentAttachmentMissingSummary
+                .defaultMessage,
+          },
+          400,
+        )
+      default:
+        return new TemplateApiError(
+          {
+            title: errorMessages.defaultTemplateApiError.defaultMessage,
+            summary:
+              errorMessages.defaultTemplateApiErrorSummary.defaultMessage,
+          },
+          500,
+        )
+    }
+  } catch (_) {
+    // ignore parsing error and just return the default error
+    return new TemplateApiError(
+      {
+        title: errorMessages.defaultTemplateApiError.defaultMessage,
+        summary: errorMessages.defaultTemplateApiErrorSummary.defaultMessage,
+      },
+      500,
+    )
   }
 }
