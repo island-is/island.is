@@ -2318,16 +2318,40 @@ export class CaseService {
           )
         }
 
-        // create new verdict for each defendant when indictment is completed with ruling
+        // Ensure that verdicts exist at this stage, if they don't exist we create them
         if (completingIndictmentCaseWithRuling && theCase.defendants) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.verdictService.createVerdict(
-                defendant.id,
-                theCase.id,
-                transaction,
-              ),
-            ),
+            theCase.defendants.map((defendant) => {
+              if (!defendant.verdict) {
+                return this.verdictService.createVerdict(
+                  theCase.id,
+                  { defendantId: defendant.id },
+                  transaction,
+                )
+              }
+            }),
+          )
+        }
+
+        // if ruling decision is changed to other decision
+        // we have to clean up idle verdicts
+        if (
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.RULING &&
+          update.indictmentRulingDecision !==
+            CaseIndictmentRulingDecision.RULING &&
+          theCase.defendants
+        ) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (defendant.verdict) {
+                return this.verdictService.deleteVerdict(
+                  theCase.id,
+                  defendant.id,
+                  transaction,
+                )
+              }
+            }),
           )
         }
 

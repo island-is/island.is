@@ -17,30 +17,15 @@ export const friggOptionsQuery = gql`
 `
 
 export const friggOrganizationsByTypeQuery = gql`
-  query FriggOrganizationsByType {
-    friggOrganizationsByType {
+  query FriggOrganizationsByType($input: EducationFriggOrganizationInput) {
+    friggOrganizationsByType(input: $input) {
       id
       unitId
-      nationalId
       name
       type
-      email
-      phone
-      website
-      managing {
-        id
-        unitId
-        nationalId
-        name
-        type
-        gradeLevels
-        email
-        phone
-        website
-        address {
-          municipality
-        }
-      }
+      subType
+      sector
+      gradeLevels
     }
   }
 `
