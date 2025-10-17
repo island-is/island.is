@@ -25,4 +25,8 @@ export enum InstitutionTypes {
   DOMSMALARADUNEYTID = 'domsmalaraduneytid',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = 'midstod-menntunar-og-skolathjonustu',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'husnaedis-og-mannvirkjastofnun',
+
+  // fake institutions for testing (these are not published in contentful)
+  ARTIC_65 = 'arctic-65',
+  BLAMI_FJARFESTINGAFELAG = 'blami-fjarfestingafelag-ehf',
 }
