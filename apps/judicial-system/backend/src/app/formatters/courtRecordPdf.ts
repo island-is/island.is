@@ -194,6 +194,7 @@ const constructRestrictionCourtRecordPdf = (
     doc,
     theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
   )
+
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
@@ -203,7 +204,7 @@ const constructRestrictionCourtRecordPdf = (
 
   if (theCase.endOfSessionBookings) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
+    addNormalJustifiedText(doc, theCase.endOfSessionBookings, 'Times-Roman')
   }
 
   if (theCase.registrar) {
@@ -407,12 +408,11 @@ const constructInvestigationCourtRecordPdf = (
       theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
       'Times-Bold',
     )
-    addEmptyLines(doc, 2)
   }
 
   if (theCase.endOfSessionBookings) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
+    addNormalJustifiedText(doc, theCase.endOfSessionBookings, 'Times-Roman')
   }
 
   if (theCase.registrar) {
