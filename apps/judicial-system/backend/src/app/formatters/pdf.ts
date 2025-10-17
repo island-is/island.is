@@ -187,6 +187,35 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
+    addPageNumbers: () => {
+      const pageNumberRightMargin = 10
+      const pageNumberBottomMargin = 15
+      const pageNumberFontSize = 20
+
+      let pageNumber = 0
+
+      rawDocument.getPages().forEach((page, index) => {
+        const pageNumberText = `${++pageNumber}`
+        const pageNumberTextWidth = boldFont.widthOfTextAtSize(
+          pageNumberText,
+          pageNumberFontSize,
+        )
+        const pageIsScaled = scalePageIndexes.includes(index - 1)
+
+        drawTextAbsolute(
+          page,
+          pageNumberText,
+          (page.getWidth() - pageNumberRightMargin - pageNumberTextWidth) *
+            (pageIsScaled ? 5 : 1),
+          pageNumberBottomMargin * (pageIsScaled ? 4.5 : 1),
+          boldFont,
+          pageNumberFontSize * (pageIsScaled ? 4.5 : 1),
+        )
+      })
+
+      return pdfDocument
+    },
+
     addParagraph: (text: string, fontSize: number, x = margins.left) => {
       const page = rawDocument.getPage(currentPage)
 
@@ -308,35 +337,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
         rawDocument.addPage(scaleToA4(page))
       })
-      return pdfDocument
-    },
-
-    addPageNumbers: () => {
-      const pageNumberRightMargin = 10
-      const pageNumberBottomMargin = 15
-      const pageNumberFontSize = 20
-
-      let pageNumber = 0
-
-      rawDocument.getPages().forEach((page, index) => {
-        const pageNumberText = `${++pageNumber}`
-        const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-          pageNumberText,
-          pageNumberFontSize,
-        )
-        const pageIsScaled = scalePageIndexes.includes(index - 1)
-
-        drawTextAbsolute(
-          page,
-          pageNumberText,
-          (page.getWidth() - pageNumberRightMargin - pageNumberTextWidth) *
-            (pageIsScaled ? 5 : 1),
-          pageNumberBottomMargin * (pageIsScaled ? 4.5 : 1),
-          boldFont,
-          pageNumberFontSize * (pageIsScaled ? 4.5 : 1),
-        )
-      })
-
       return pdfDocument
     },
 
