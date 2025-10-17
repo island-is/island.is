@@ -49,7 +49,9 @@ const CaseTableGroups: FC = () => {
                   title={t.title}
                   description={t.description}
                   href={`${router.asPath}/${t.route}`}
+                  type={t.type}
                   key={idx}
+                  includeCounter={t.includeCounter}
                 />
               ))}
             </CasesDashboardLayout>

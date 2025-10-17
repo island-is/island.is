@@ -51,6 +51,7 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        modified
         caseId
         defendantId
         created
