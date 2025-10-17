@@ -59,7 +59,7 @@ const CourtRecord: FC = () => {
   useEffect(() => {
     if (
       workingCase.courtSessions?.length &&
-      workingCase.courtSessions.length >= 0
+      workingCase.courtSessions.length > 0
     ) {
       setExpandedIndex(workingCase.courtSessions.length - 1)
     }
