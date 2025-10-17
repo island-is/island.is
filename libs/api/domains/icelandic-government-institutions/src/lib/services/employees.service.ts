@@ -1,11 +1,11 @@
 import { ElfurClientService } from '@island.is/clients/elfur'
 import { Injectable } from '@nestjs/common'
-import { EmployeeList } from './models/employeeList.model'
-import { mapEmployee } from './mappers/employeeMapper'
+import { EmployeeList } from '../models/employeeList.model'
+import { mapEmployee } from '../mappers/employeeMapper'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
-export class IcelandicGovernmentEmployeesService {
+export class EmployeesService {
   constructor(private elfurService: ElfurClientService) {}
 
   async getEmployees(organizationId: string): Promise<EmployeeList> {
