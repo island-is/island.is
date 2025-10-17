@@ -67,6 +67,7 @@ query Case($input: CaseQueryInput!) {
         comment
         deliveredToDefenderNationalId
         servedBy
+        isDefaultJudgement
       }
     }
     defenderName
