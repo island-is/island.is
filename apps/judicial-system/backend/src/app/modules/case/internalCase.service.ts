@@ -1,4 +1,8 @@
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -23,11 +27,15 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtSessionRulingType,
+  DefendantEventType,
   EventType,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
   hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isProsecutionUser,
@@ -35,8 +43,11 @@ import {
   isRestrictionCase,
   NotificationType,
   restrictionCases,
+  ServiceRequirement,
   type User as TUser,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -66,6 +77,7 @@ import {
   CourtSession,
   DateLog,
   Defendant,
+  DefendantEventLog,
   EventLog,
   IndictmentCount,
   Institution,
@@ -570,6 +582,81 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
+    { theCase: Case; defendant: Defendant }[]
+  > {
+    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: true,
+              where: {
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                serviceStatus: {
+                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
+                },
+                serviceDate: {
+                  [Op.lte]: minDate,
+                },
+              },
+            },
+          ],
+          where: {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                                      (SELECT defendant_id
+                                        FROM defendant_event_log
+                                        WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
+                                    `),
+            },
+          },
+        },
+      ],
+      where: {
+        state: { [Op.eq]: CaseState.COMPLETED },
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      },
+    })
+
+    return cases.flatMap((theCase) =>
+      pipe(
+        theCase.defendants ?? [],
+        filterMap((defendant) => {
+          if (defendant.verdict?.serviceDate) {
+            const appealDeadline = getIndictmentAppealDeadlineDate({
+              baseDate: defendant.verdict?.serviceDate,
+              isFine: false,
+            })
+            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
+            if (isAppealDeadlineExpired) {
+              return option.some({ theCase, defendant })
+            }
+          }
+          return option.none
+        }),
+      ),
+    )
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
