@@ -1,6 +1,37 @@
 import { useLocalizedQuery } from '@island.is/localization'
+import { gql } from '@apollo/client'
 
-import { FORM_SYSTEM_APPLICATIONS } from '@island.is/form-system/graphql'
+export const FORM_SYSTEM_APPLICATIONS = gql`
+  query myPagesApplications($locale: String) {
+    formSystemMyPagesApplications(locale: $locale) {
+      id
+      created
+      modified
+      applicant
+      state
+      typeId
+      name
+      progress
+      status
+      institution
+      formSystemFormSlug
+      formSystemOrgContentfulId
+      formSystemOrgSlug
+      pruned
+      actionCard {
+        draftTotalSteps
+        draftFinishedSteps
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          title
+        }
+      }
+    }
+  }
+`
 
 export const useFormSystemApplications = () => {
   const { data, loading, error, refetch } = useLocalizedQuery(
