@@ -148,21 +148,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     }
   }
 
-  const getPageNumberPosition = (
-    page: PDFPage,
-    textWidth: number,
-    fontSize: number,
-  ) => {
-    const { width, height } = page.getSize()
-    const scale = width > 1000 && height > 1000 ? 5 : 1
-
-    return {
-      x: page.getWidth() - 10 - textWidth - (scale > 1 ? 70 : 0),
-      y: 15 + (scale > 1 ? 60 : 0),
-      scaledFontSize: fontSize * scale,
-    }
-  }
-
   const scaleToA4 = (page: PDFPage) => {
     const { width, height } = page.getSize()
     const targetWidth = 595.28 // A4 width in points
