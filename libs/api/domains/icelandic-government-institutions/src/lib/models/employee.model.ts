@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Location } from './location.model'
 
-@ObjectType('IcelandicGovernmentEmployee')
+@ObjectType('IcelandicGovernmentInstitutionsEmployee')
 export class Employee {
   @Field()
   name!: string
