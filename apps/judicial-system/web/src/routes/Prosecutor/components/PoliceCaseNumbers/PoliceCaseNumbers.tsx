@@ -152,27 +152,28 @@ export const PoliceCaseNumbers: FC<Props> = ({
     }
 
     return (
-      <Box display="flex" flexWrap="wrap" data-testid="policeCaseNumbers-list">
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        columnGap={1}
+        rowGap={1}
+        data-testid="policeCaseNumbers-list"
+      >
         {clientPoliceNumbers.map((policeCaseNumber, index) => (
-          <Box
+          <Tag
+            variant="darkerBlue"
+            onClick={onRemove(policeCaseNumber)}
+            aria-label={`Eyða númeri ${policeCaseNumber}`}
+            disabled={isLOKECase && index === 0}
             key={`${policeCaseNumber}-${index}`}
-            paddingRight={1}
-            paddingBottom={1}
           >
-            <Tag
-              variant="darkerBlue"
-              onClick={onRemove(policeCaseNumber)}
-              aria-label={`Eyða númeri ${policeCaseNumber}`}
-              disabled={isLOKECase && index === 0}
-            >
-              <Box display="flex" alignItems="center">
-                <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
-                {isLOKECase && index === 0 ? null : (
-                  <Icon icon="close" size="small" />
-                )}
-              </Box>
-            </Tag>
-          </Box>
+            <Box display="flex" alignItems="center">
+              <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
+              {isLOKECase && index === 0 ? null : (
+                <Icon icon="close" size="small" />
+              )}
+            </Box>
+          </Tag>
         ))}
       </Box>
     )
@@ -194,7 +195,8 @@ export const PoliceCaseNumbers: FC<Props> = ({
         })}
         onAddValue={onAdd}
         buttonText={formatMessage(m.buttonText)}
-        isDisabled={(value) => {
+        // this disables the button
+        isButtonDisabled={(value) => {
           if (!value) return true
           return !validatePoliceCaseNumber(value, clientPoliceNumbers ?? [])
             .isValid

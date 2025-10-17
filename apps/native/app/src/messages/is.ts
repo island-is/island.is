@@ -1,5 +1,10 @@
 // Source of truth for other languages
 export const is = {
+  // General buttons
+  'button.change': 'Breyta',
+  'button.open': 'Skoða',
+  'button.moreInfoHere': 'Nánari upplýsingar hér',
+
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
@@ -640,6 +645,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Loftbrú lokuð',
+  'airDiscount.disabledDescription':
+    'Afsláttarkóðar Loftbrúar eru ekki í gildi í augnablikinu.',
 
   // offline
   'offline.title': 'Ekkert netsamband',
@@ -706,6 +714,12 @@ export const is = {
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+  'health.overview.basicInformation': 'Grunnupplýsingar',
+  'health.overview.bloodType': 'Blóðflokkur',
+  'health.overview.bloodTypeDescription': 'Þú ert í blóðflokki {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
+  'health.overview.dentist': 'Tannlæknir',
+  'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',

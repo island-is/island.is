@@ -37,9 +37,8 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Húsnæðis og mannvirkjastofnun',
   featureFlag: Features.TerminateRentalAgreementEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.TerminateRentalAgreement.translation,
-  ],
   dataSchema,
   allowedDelegations: [
     {
@@ -233,7 +232,7 @@ const template: ApplicationTemplate<
     },
   },
   mapUserToRole: (
-    _nationalId: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined => {
     const contracts = getValueViaPath<Array<Contract>>(
@@ -244,7 +243,10 @@ const template: ApplicationTemplate<
       return Roles.NOCONTRACTS
     }
 
-    return Roles.APPLICANT
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

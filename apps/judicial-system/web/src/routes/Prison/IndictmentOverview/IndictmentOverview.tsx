@@ -11,10 +11,16 @@ import {
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  hasGeneratedCourtRecordPdf,
+  isCompletedCase,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   FeatureContext,
   FormContentContainer,
   FormContext,
@@ -104,6 +110,15 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
+  const showGeneratedCourtRecord =
+    !hasRuling &&
+    hasGeneratedCourtRecordPdf(
+      workingCase.state,
+      workingCase.indictmentRulingDecision,
+      workingCase.courtSessions,
+      user,
+    )
+
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {
       isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
@@ -185,6 +200,22 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {isCompletedCase(workingCase.state) &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) &&
+          workingCase.courtSessions?.at(-1)?.ruling && (
+            <Box component="section" marginBottom={5}>
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
@@ -202,6 +233,15 @@ const IndictmentOverview = () => {
               hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
             )}
           </Text>
+          {showGeneratedCourtRecord && (
+            <PdfButton
+              caseId={workingCase.id}
+              title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+              pdfType="courtRecord"
+              renderAs="row"
+              elementId="Þingbók"
+            />
+          )}
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={

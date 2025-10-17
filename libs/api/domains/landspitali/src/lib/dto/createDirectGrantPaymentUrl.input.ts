@@ -3,6 +3,11 @@ import { IsEmail, IsInt, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType('WebLandspitaliCreateDirectGrantPaymentUrlInput')
 export class CreateDirectGrantPaymentUrlInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  cancelUrl?: string
+
   @Field(() => String)
   locale = 'is'
 

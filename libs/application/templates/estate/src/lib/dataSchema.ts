@@ -97,6 +97,12 @@ export const estateSchema = z.object({
 
   estateInfoSelection: z.string().min(1),
 
+  // Undivided estate reminder screen
+  reminderInfo: z.object({
+    assetsAndDebtsCheckbox: z.array(z.enum([YES])).length(1),
+    attachmentsCheckbox: z.array(z.enum([YES])).length(1),
+  }),
+
   // Eignir
   estate: z.object({
     inventory: z
@@ -141,8 +147,8 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ foreignCitizenship, nationalId }) => {
-          return !foreignCitizenship?.length
+        ({ foreignCitizenship, nationalId, enabled }) => {
+          return enabled && !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
             : true
         },

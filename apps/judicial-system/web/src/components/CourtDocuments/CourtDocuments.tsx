@@ -109,7 +109,7 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
         inputLabel={formatMessage(courtDocuments.add.label)}
         inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
         buttonText={formatMessage(courtDocuments.add.buttonText)}
-        isDisabled={(value) => !value}
+        isButtonDisabled={(value) => !value}
       >
         <>
           <Box marginBottom={1}>

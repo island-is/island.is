@@ -60,6 +60,12 @@ export const LiveChatIncChatPanel = ({
       setLoading(false)
     })
 
+    window.LiveChatWidget.on('visibility_changed', ({ visibility }) => {
+      if (visibility === 'minimized' && !showLauncher) {
+        window.LiveChatWidget.call('hide')
+      }
+    })
+
     window.LiveChatWidget.call('maximize')
 
     return () => {

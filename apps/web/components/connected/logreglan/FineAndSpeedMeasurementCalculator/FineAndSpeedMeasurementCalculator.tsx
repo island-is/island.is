@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   Box,
   Button,
+  Hidden,
   Hyphen,
   Stack,
   Table,
@@ -13,6 +14,7 @@ import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import { FineCalculator } from './components/FineCalculator'
+import { MobileDrawer } from './components/MobileDrawer'
 import { SpeedMeasurementCalculator } from './components/SpeedMeasurementCalculator'
 import { m } from './translation.strings'
 import { calculateSpeedMeasurementFine } from './utils'
@@ -168,13 +170,6 @@ const FineCalculatorDetails = ({
 
   return (
     <Stack space={3}>
-      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Text variant="small" fontWeight="semiBold">
-            {formatMessage(m.results.jailTime, { days: jailTime })}
-          </Text>
-        </Box>
-      )}
       <Table.Table>
         <Table.Head>
           <Table.HeadData>
@@ -231,16 +226,27 @@ const FineCalculatorDetails = ({
           </Table.Row>
         </Table.Foot>
       </Table.Table>
+      {jailTime > 0 &&
+        Boolean(slice.configJson?.showJailTime) &&
+        (typeof slice.configJson?.stopDisplayingJailTimeAfterAmount === 'number'
+          ? totalFine < slice.configJson.stopDisplayingJailTimeAfterAmount
+          : true) && (
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(m.results.jailTime, { days: jailTime })}
+          </Text>
+        )}
     </Stack>
   )
 }
 
 interface FineAndSpeedMeasurementCalculatorProps {
   slice: ConnectedComponent
+  chatBubbleIsPushedUp?: boolean
 }
 
 export const FineAndSpeedMeasurementCalculator = ({
   slice,
+  chatBubbleIsPushedUp = false,
 }: FineAndSpeedMeasurementCalculatorProps) => {
   const { formatMessage } = useIntl()
   const breakdownRef = useRef<HTMLDivElement>(null)
@@ -249,7 +255,9 @@ export const FineAndSpeedMeasurementCalculator = ({
     slice.json?.speedLimitOptions ?? DEFAULT_SPEED_LIMIT_OPTIONS
 
   const [measuredSpeed, setMeasuredSpeed] = useState('')
-  const [speedLimit, setSpeedLimit] = useState(speedLimitOptions[0].value)
+  const [speedLimit, setSpeedLimit] = useState(
+    slice.configJson?.defaultSpeedLimitValue ?? speedLimitOptions[0]?.value,
+  )
   const [over3500kgOrWithTrailer, setOver3500kgOrWithTrailer] = useState(false)
 
   const [fines, setFines] = useState<FineState[]>(
@@ -279,106 +287,127 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   const points = finePoints + (speedMeasurementPoints ?? 0)
 
+  const onSeeBreakdownClick = useCallback(() => {
+    breakdownRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }, [])
+
   return (
-    <Stack space={3}>
-      <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
-        <Box position="relative">
-          <Box className={styles.totalOuterContainer}>
-            <Box display="flex" justifyContent="flexEnd">
-              <Box
-                borderRadius="standard"
-                background="purple100"
-                padding={[1, 2]}
-                className={styles.totalContainer}
-              >
-                <Stack space={2}>
-                  <Stack space={0}>
-                    <Text variant="eyebrow" fontWeight="semiBold">
-                      {formatMessage(m.fines.total)}
-                    </Text>
-                    <Text
-                      textAlign="right"
-                      variant="small"
-                      fontWeight="semiBold"
-                    >
-                      {formatCurrency(price)}
-                    </Text>
-                    <Text
-                      textAlign="right"
-                      variant="small"
-                      fontWeight="semiBold"
-                    >
-                      {points}
-                      {points === 1
-                        ? formatMessage(m.fines.pointsPostfixSingular)
-                        : formatMessage(m.fines.pointsPostfixPlural)}
-                    </Text>
+    <>
+      <Stack space={3}>
+        <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
+          <Box position="relative" display={['none', 'none', 'block', 'block']}>
+            <Box className={styles.totalOuterContainer}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Box
+                  borderRadius="standard"
+                  background="purple100"
+                  padding={[1, 2]}
+                  className={styles.totalContainer}
+                >
+                  <Stack space={2}>
+                    <Stack space={0}>
+                      <Text variant="eyebrow" fontWeight="semiBold">
+                        {formatMessage(m.fines.total)}
+                      </Text>
+                      <Text
+                        textAlign="right"
+                        variant="small"
+                        fontWeight="semiBold"
+                      >
+                        {formatCurrency(price)}
+                      </Text>
+                      <Text
+                        textAlign="right"
+                        variant="small"
+                        fontWeight="semiBold"
+                      >
+                        {points}
+                        {points === 1
+                          ? formatMessage(m.fines.pointsPostfixSingular)
+                          : formatMessage(m.fines.pointsPostfixPlural)}
+                      </Text>
+                    </Stack>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        onClick={onSeeBreakdownClick}
+                        variant="text"
+                        size="small"
+                      >
+                        <Hyphen>
+                          {formatMessage(m.results.showBreakdown)}
+                        </Hyphen>
+                      </Button>
+                    </Box>
                   </Stack>
-                  <Box display="flex" justifyContent="center">
-                    <Button
-                      onClick={() => {
-                        breakdownRef.current?.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'center',
-                        })
-                      }}
-                      variant="text"
-                      size="small"
-                    >
-                      <Hyphen>{formatMessage(m.results.showBreakdown)}</Hyphen>
-                    </Button>
-                  </Box>
-                </Stack>
+                </Box>
               </Box>
             </Box>
           </Box>
-        </Box>
 
-        <Box width="full">
-          <Stack space={3}>
-            <Stack space={2}>
-              <Text variant="h2" as="h2">
-                {formatMessage(m.speedMeasurementCalculator.heading)}
-              </Text>
-              <SpeedMeasurementCalculator
-                measuredSpeed={measuredSpeed}
-                speedLimit={speedLimit}
-                over3500kgOrWithTrailer={over3500kgOrWithTrailer}
-                setMeasuredSpeed={setMeasuredSpeed}
-                setSpeedLimit={setSpeedLimit}
-                setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
-                speedLimitOptions={speedLimitOptions}
-              />
+          <Box width="full">
+            <Stack space={3}>
+              <Stack space={2}>
+                <Text variant="h2" as="h2">
+                  {formatMessage(m.speedMeasurementCalculator.heading)}
+                </Text>
+                <SpeedMeasurementCalculator
+                  measuredSpeed={measuredSpeed}
+                  speedLimit={speedLimit}
+                  over3500kgOrWithTrailer={over3500kgOrWithTrailer}
+                  setMeasuredSpeed={setMeasuredSpeed}
+                  setSpeedLimit={setSpeedLimit}
+                  setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
+                  speedLimitOptions={speedLimitOptions}
+                />
+              </Stack>
+              <Stack space={2}>
+                <Text variant="h2" as="h2">
+                  {formatMessage(m.fines.heading)}
+                </Text>
+                <FineCalculator fines={fines} setFines={setFines} />
+              </Stack>
             </Stack>
-            <Stack space={2}>
-              <Text variant="h2" as="h2">
-                {formatMessage(m.fines.heading)}
-              </Text>
-              <FineCalculator fines={fines} setFines={setFines} />
-            </Stack>
+          </Box>
+        </Box>
+        <Box ref={breakdownRef}>
+          <Stack space={2}>
+            <Text variant="h2" as="h2">
+              {formatMessage(m.results.heading)}
+            </Text>
+            <FineCalculatorDetails
+              fines={fines}
+              slice={slice}
+              speedMeasurementData={{
+                points: speedMeasurementPoints ?? 0,
+                price: speedMeasurementPrice ?? 0,
+                measuredSpeed: Number(measuredSpeed),
+                vikmork,
+                speedLimit,
+                over3500kgOrWithTrailer,
+                akaera,
+              }}
+            />
           </Stack>
         </Box>
-      </Box>
-      <Box ref={breakdownRef}>
-        <Stack space={2}>
-          <Text variant="h2" as="h2">
-            {formatMessage(m.results.heading)}
-          </Text>
-          <FineCalculatorDetails
-            fines={fines}
-            slice={slice}
-            speedMeasurementData={{
-              points: speedMeasurementPoints ?? 0,
-              price: speedMeasurementPrice ?? 0,
-              measuredSpeed: Number(measuredSpeed),
-              vikmork,
-              speedLimit,
-              over3500kgOrWithTrailer,
-              akaera,
-            }}
-          />
-        </Stack>
-      </Box>
-    </Stack>
+      </Stack>
+      <Hidden above="sm">
+        <MobileDrawer
+          chatBubbleIsPushedUp={chatBubbleIsPushedUp}
+          totalText={formatMessage(m.fines.totalMobileDrawer)}
+          seeBreakdownText={formatMessage(m.results.showBreakdown)}
+          priceText={formatCurrency(price) ?? ''}
+          pointsText={`${points}
+                        ${
+                          points === 1
+                            ? formatMessage(m.fines.pointsPostfixSingular)
+                            : formatMessage(m.fines.pointsPostfixPlural)
+                        }`}
+          onSeeBreakdownClick={onSeeBreakdownClick}
+        />
+      </Hidden>
+    </>
   )
 }

@@ -40,8 +40,8 @@ import {
   checkHasSelectedConvoyInFreightPairing,
   getFreightItem,
   getFreightPairingItem,
-  getFreightPairingItemsByIndex,
   getAllFreightPairingItems,
+  getFreightPairingItemsByIndex,
 } from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
 import {
@@ -49,11 +49,19 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 
+const getAddressAndPostalCodeCityStr = (
+  address?: string,
+  postalCodeAndCity?: string,
+) => {
+  if (address && postalCodeAndCity) return `${address}, ${postalCodeAndCity}`
+  return address ?? postalCodeAndCity ?? ''
+}
+
 export const getUserInformationOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const getApplicant = (includeAddress: boolean) => [
+  const applicant = [
     getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName'),
     formatKennitala(
       getValueViaPath<string>(
@@ -61,24 +69,6 @@ export const getUserInformationOverviewItems = (
         'nationalRegistry.data.nationalId',
       ) || '',
     ),
-    ...(includeAddress
-      ? [
-          `${getValueViaPath<string>(
-            externalData,
-            'nationalRegistry.data.address.streetAddress',
-          )}, ${
-            getValueViaPath<string>(
-              externalData,
-              'nationalRegistry.data.address.postalCode',
-            ) ?? ''
-          } ${
-            getValueViaPath<string>(
-              externalData,
-              'nationalRegistry.data.address.locality',
-            ) ?? ''
-          }`,
-        ]
-      : []),
     formatPhoneNumber(
       removeCountryCode(
         getValueViaPath<string>(answers, 'applicant.phoneNumber') || '',
@@ -92,10 +82,6 @@ export const getUserInformationOverviewItems = (
     formatKennitala(
       getValueViaPath<string>(answers, 'transporter.nationalId') || '',
     ),
-    `${getValueViaPath<string>(
-      answers,
-      'transporter.address',
-    )}, ${getValueViaPath<string>(answers, 'transporter.postalCodeAndCity')}`,
     formatPhoneNumber(
       removeCountryCode(
         getValueViaPath<string>(answers, 'transporter.phone') || '',
@@ -121,13 +107,13 @@ export const getUserInformationOverviewItems = (
     {
       width: 'half',
       keyText: overview.userInformation.applicantSubtitle,
-      valueText: getApplicant(false),
+      valueText: applicant,
     },
     {
       width: 'half',
       keyText: overview.userInformation.transporterSubtitle,
       valueText: isSameAsApplicant(answers, 'transporter')
-        ? getApplicant(true)
+        ? applicant
         : transporter,
     },
     {
@@ -135,7 +121,7 @@ export const getUserInformationOverviewItems = (
       keyText: overview.userInformation.responsiblePersonSubtitle,
       valueText: shouldShowResponsiblePerson(answers)
         ? isSameAsApplicant(answers, 'responsiblePerson')
-          ? getApplicant(false)
+          ? applicant
           : responsiblePerson
         : '',
       hideIfEmpty: true,
@@ -185,20 +171,20 @@ export const getShortTermLocationOverviewItems = (
       ],
       inlineKeyText: true,
       valueText: [
-        `${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.addressFrom',
-        )}, ${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.postalCodeAndCityFrom',
-        )}`,
-        `${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.addressTo',
-        )}, ${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.postalCodeAndCityTo',
-        )}`,
+        getAddressAndPostalCodeCityStr(
+          getValueViaPath<string>(answers, 'location.shortTerm.addressFrom'),
+          getValueViaPath<string>(
+            answers,
+            'location.shortTerm.postalCodeAndCityFrom',
+          ),
+        ),
+        getAddressAndPostalCodeCityStr(
+          getValueViaPath<string>(answers, 'location.shortTerm.addressTo'),
+          getValueViaPath<string>(
+            answers,
+            'location.shortTerm.postalCodeAndCityTo',
+          ),
+        ),
         getValueViaPath<string>(answers, 'location.shortTerm.directions'),
       ],
     },
@@ -356,6 +342,7 @@ export const getFreightOverviewLongTermItems = (
   freightIndex: number,
 ): Array<KeyValueItem> => {
   const pairingItems = getFreightPairingItemsByIndex(answers, freightIndex)
+  const nonNullPairingItem = pairingItems.find((item) => item !== null)
   return [
     {
       width: 'full',
@@ -363,13 +350,13 @@ export const getFreightOverviewLongTermItems = (
         {
           ...overview.freight.lengthLabel,
           values: {
-            length: formatNumberWithMeters(pairingItems?.[0]?.length),
+            length: formatNumberWithMeters(nonNullPairingItem?.length),
           },
         },
         {
           ...overview.freight.weightLabel,
           values: {
-            weight: formatNumberWithTons(pairingItems?.[0]?.weight),
+            weight: formatNumberWithTons(nonNullPairingItem?.weight),
           },
         },
       ],
@@ -572,7 +559,6 @@ export const getSupportingDocumentsOverviewItems = (
 
 export const getSupportingDocumentsOverviewAttachments = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<AttachmentItem> => {
   const files = getValueViaPath<{ name: string; key: string }[]>(
     answers,
@@ -592,20 +578,22 @@ export const getOverviewErrorMessage = (
   answers: FormValue,
 ): StaticText | undefined => {
   // Convoy missing in freight pairing error
-  const convoyItems = getConvoyItems(answers)
-  const freightPairingAllItems = getAllFreightPairingItems(answers)
-  for (let idx = 0; idx < convoyItems.length; idx++) {
-    const convoyItem = convoyItems[idx]
-    const isPaired = freightPairingAllItems.some(
-      (x) => x.convoyId === convoyItem.convoyId,
-    )
-    if (!isPaired) {
-      return {
-        ...overview.freight.convoyMissingErrorMessage,
-        values: {
-          convoyNumber: idx + 1,
-          vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
-        },
+  if (checkIfExemptionTypeLongTerm(answers)) {
+    const convoyItems = getConvoyItems(answers)
+    const freightPairingAllItems = getAllFreightPairingItems(answers)
+    for (let idx = 0; idx < convoyItems.length; idx++) {
+      const convoyItem = convoyItems[idx]
+      const isPaired = freightPairingAllItems.some(
+        (x) => x.convoyId === convoyItem.convoyId,
+      )
+      if (!isPaired) {
+        return {
+          ...overview.freight.convoyMissingErrorMessage,
+          values: {
+            convoyNumber: idx + 1,
+            vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+          },
+        }
       }
     }
   }

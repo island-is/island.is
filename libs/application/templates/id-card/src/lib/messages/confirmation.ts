@@ -17,11 +17,6 @@ export const confirmation = {
       defaultMessage: 'Hvað gerist næst?',
       description: 'Confirmation accordion title',
     },
-    accordionText: {
-      id: 'id.application:confirmation.general.accordionText',
-      defaultMessage: `* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu nulla porta, luctus mi ac, pharetra mauris\n`,
-      description: 'Confirmation accordion text',
-    },
   }),
 }
 

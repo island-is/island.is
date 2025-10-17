@@ -41,9 +41,9 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.FireCompensationAppraisal.translation,
-  ],
+
   dataSchema,
   allowedDelegations: [
     {
@@ -234,14 +234,17 @@ const template: ApplicationTemplate<
     },
   },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    const { applicantActors = [] } = _application
+    const { applicantActors = [] } = application
     if (applicantActors.length > 0) {
       return Roles.DELEGATE
     }
-    return Roles.APPLICANT
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

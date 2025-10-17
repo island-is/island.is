@@ -249,11 +249,11 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
-      "@island.is/api/domains/vmst-applications": [
-        "libs/api/domains/vmst-applications/src/index.ts"
-      ],
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
+      ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
       ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
@@ -470,6 +470,9 @@
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
+      "@island.is/application/templates/hms/rental-agreement": [
+        "libs/application/templates/hms/rental-agreement/src/index.ts"
+      ],
       "@island.is/application/templates/hms/terminate-rental-agreement": [
         "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
       ],
@@ -539,9 +542,6 @@
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
-      "@island.is/application/templates/rental-agreement": [
-        "libs/application/templates/rental-agreement/src/index.ts"
-      ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
       ],
@@ -574,6 +574,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/disability-pension": [
+        "libs/application/templates/social-insurance-administration/disability-pension/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
@@ -616,6 +619,9 @@
       ],
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      ],
+      "@island.is/application/templates/unemployment-benefits": [
+        "libs/application/templates/unemployment-benefits/src/index.ts"
       ],
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
@@ -704,6 +710,9 @@
       "@island.is/clients/dmr": ["libs/clients/dmr/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
+      ],
+      "@island.is/clients/document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/documents-v2": [
@@ -988,6 +997,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
@@ -1068,6 +1078,9 @@
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/admin/document-provider": [
         "libs/portals/admin/document-provider/src/index.ts"
+      ],
+      "@island.is/portals/admin/document-provider-dashboard": [
+        "libs/portals/admin/document-provider-dashboard/src/index.ts"
       ],
       "@island.is/portals/admin/form-system": [
         "libs/portals/admin/form-system/src/index.ts"
@@ -1238,7 +1251,6 @@
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
@@ -1255,7 +1267,11 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
-    }
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
+      ]
+    },
+    "resolveJsonModule": true
   }
 }

@@ -11,6 +11,7 @@ export const serviceSetup = (services: {
   const web = service('web')
   web
     .namespace('islandis')
+    .serviceAccount('web')
     .codeOwner(CodeOwners.Stefna)
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),

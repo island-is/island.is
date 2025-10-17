@@ -193,7 +193,9 @@ export class SignatureCollectionSharedClientService {
       ? await this.getParticipatingAreas(electionId, electionApi)
       : []
 
-    const listsMapped = lists.map((list) => mapList(list, participatingAreas))
+    const listsMapped = lists.map((list) =>
+      mapList(list, participatingAreas, collectionType),
+    )
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
   }
 

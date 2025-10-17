@@ -80,7 +80,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           required={buildFieldRequired(application, required)}
           defaultValue={
             (getValueViaPath(application.answers, id) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
           label={formatTextWithLocale(
