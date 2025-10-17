@@ -26,8 +26,8 @@ import { CodeOwners } from '@island.is/shared/constants'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { ChildrenApi } from '../dataProviders'
 import { hasForeignLanguages } from '../utils/conditionUtils'
+import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   ApiModuleActions,
   Events,
@@ -100,7 +100,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ChildrenApi,
+                SchoolsApi,
+              ],
             },
           ],
         },

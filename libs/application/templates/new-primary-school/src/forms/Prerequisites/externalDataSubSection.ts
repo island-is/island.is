@@ -7,7 +7,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ChildrenApi } from '../../dataProviders'
+import { ChildrenApi, SchoolsApi } from '../../dataProviders'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
@@ -28,7 +28,6 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: ChildrenApi,
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
@@ -38,6 +37,9 @@ export const externalDataSubSection = buildSubSection({
         buildDataProviderItem({
           title: newPrimarySchoolMessages.pre.childInformationTitle,
           subTitle: newPrimarySchoolMessages.pre.childInformationSubTitle,
+        }),
+        buildDataProviderItem({
+          provider: SchoolsApi,
         }),
       ],
     }),
