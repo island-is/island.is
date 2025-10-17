@@ -1,5 +1,9 @@
 import { ApolloClient } from '@apollo/client'
-import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
+import {
+  EducationFriggOptionsListInput,
+  OrganizationTypeEnum,
+  Query,
+} from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
   ExternalData,
@@ -37,6 +41,7 @@ import {
   getCurrentSchoolName,
   getGenderMessage,
   getPreferredSchoolName,
+  getSchoolName,
   getSelectedOptionLabel,
 } from './newPrimarySchoolUtils'
 
@@ -263,29 +268,23 @@ export const relativesTable = async (
   }
 }
 
-export const currentSchoolItems = async (
+export const currentSchoolItems = (
   answers: FormValue,
   externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
   locale: Locale,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const { currentSchoolId } = getApplicationAnswers(answers)
   const { childGradeLevel, primaryOrgId } =
     getApplicationExternalData(externalData)
-
-  const { data } = await apolloClient.query<Query>({
-    query: friggOrganizationsByTypeQuery,
-  })
-  const selectedSchoolName = data?.friggOrganizationsByType
-    ?.flatMap((m) => m.managing ?? [])
-    .find((school) => school?.id === currentSchoolId)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.primarySchool.currentSchool,
-      valueText: getCurrentSchoolName(externalData) || selectedSchoolName,
+      valueText:
+        getCurrentSchoolName(externalData) ||
+        getSchoolName(externalData, currentSchoolId ?? ''),
     },
   ]
 
@@ -317,10 +316,15 @@ export const currentNurseryItems = async (
 
   const { data } = await apolloClient.query<Query>({
     query: friggOrganizationsByTypeQuery,
+    variables: {
+      input: {
+        type: OrganizationTypeEnum.ChildCare,
+      },
+    },
   })
-  const currentNurseryName = data?.friggOrganizationsByType
-    ?.flatMap((municipality) => municipality.managing)
-    .find((nursery) => nursery?.id === currentNursery)?.name
+  const currentNurseryName = data?.friggOrganizationsByType?.find(
+    (nursery) => nursery?.id === currentNursery,
+  )?.name
 
   return [
     {
@@ -331,12 +335,10 @@ export const currentNurseryItems = async (
   ]
 }
 
-export const schoolItems = async (
+export const schoolItems = (
   answers: FormValue,
   externalData: ExternalData,
-  _userNationalId: string,
-  apolloClient: ApolloClient<object>,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const {
     applicationType,
     expectedStartDate,
@@ -346,13 +348,6 @@ export const schoolItems = async (
     temporaryStay,
     expectedEndDate,
   } = getApplicationAnswers(answers)
-
-  const { data } = await apolloClient.query<Query>({
-    query: friggOrganizationsByTypeQuery,
-  })
-  const selectedSchoolName = data?.friggOrganizationsByType
-    ?.flatMap((municipality) => municipality.managing)
-    .find((school) => school?.id === selectedSchool)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -364,7 +359,7 @@ export const schoolItems = async (
       valueText:
         applyForPreferredSchool === YES
           ? getPreferredSchoolName(externalData)
-          : selectedSchoolName,
+          : getSchoolName(externalData, selectedSchool),
     },
   ]
 
