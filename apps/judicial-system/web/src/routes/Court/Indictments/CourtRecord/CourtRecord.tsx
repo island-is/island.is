@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
-import { Accordion, Box, Button } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import {
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_CONCLUSION_ROUTE,
@@ -86,42 +86,54 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Accordion dividerOnTop={false} singleExpand>
-          {workingCase.courtSessions?.map((courtSession, index) => (
-            <CourtSessionAccordionItem
-              key={courtSession.id}
-              index={index}
-              courtSession={courtSession}
-              isExpanded={expandedIndex === index}
-              onToggle={() =>
-                setExpandedIndex(index === expandedIndex ? -1 : index)
-              }
+        {workingCase.withCourtSessions ? (
+          <Box>
+            <Accordion dividerOnTop={false} singleExpand>
+              {workingCase.courtSessions?.map((courtSession, index) => (
+                <CourtSessionAccordionItem
+                  key={courtSession.id}
+                  index={index}
+                  courtSession={courtSession}
+                  isExpanded={expandedIndex === index}
+                  onToggle={() =>
+                    setExpandedIndex(index === expandedIndex ? -1 : index)
+                  }
+                />
+              ))}
+            </Accordion>
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              marginTop={5}
+              marginBottom={2}
+            >
+              <Button
+                variant="ghost"
+                onClick={handleCreateCourtSession}
+                disabled={!canCreateCourtSession}
+                icon="add"
+              >
+                Bæta við þinghaldi
+              </Button>
+            </Box>
+            <Box marginBottom={10}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Þingbók - PDF"
+                pdfType="courtRecord"
+                disabled={!hasGeneratedCourtRecord}
+              />
+            </Box>
+          </Box>
+        ) : (
+          <Box width="half" marginBottom={10}>
+            <AlertMessage
+              title="Sjálfvirkni ekki í boði"
+              message="Þetta mál var móttekið af héraðsdómi áður en sjáfvirkni við gerð þingbókar var virkjuð."
+              type="info"
             />
-          ))}
-        </Accordion>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          marginTop={5}
-          marginBottom={2}
-        >
-          <Button
-            variant="ghost"
-            onClick={handleCreateCourtSession}
-            disabled={!canCreateCourtSession}
-            icon="add"
-          >
-            Bæta við þinghaldi
-          </Button>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Þingbók - PDF"
-            pdfType="courtRecord"
-            disabled={!hasGeneratedCourtRecord}
-          />
-        </Box>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
