@@ -28,7 +28,7 @@ import {
 } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-// hæhæ
+
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {

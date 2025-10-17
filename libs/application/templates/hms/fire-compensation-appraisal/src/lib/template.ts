@@ -123,11 +123,6 @@ const template: ApplicationTemplate<
               order: 1,
             }),
           ],
-          onEntry: [
-            defineTemplateApi({
-              action: TemplateApiActions.testHnipp,
-            }),
-          ],
           roles: [
             {
               id: Roles.APPLICANT,

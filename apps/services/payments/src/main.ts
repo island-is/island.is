@@ -3,7 +3,7 @@ import { bootstrap } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 import { environment } from './environments'
-//asdasd
+
 bootstrap({
   appModule: AppModule,
   name: 'payments',
