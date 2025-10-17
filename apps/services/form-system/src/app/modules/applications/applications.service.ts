@@ -61,12 +61,6 @@ export class ApplicationsService {
     @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
-  private isTestEnv(): boolean {
-    // Prefer explicit config, fallback to NODE_ENV
-    const env = process.env.NODE_ENV
-    return env !== 'production'
-  }
-
   async create(
     slug: string,
     createApplicationDto: CreateApplicationDto,
@@ -417,13 +411,11 @@ export class ApplicationsService {
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const delegatorNationalId = hasDelegation ? user.nationalId : null
 
-    const isTest = this.isTestEnv()
-
     const applications = await this.applicationModel.findAll({
       where: {
         nationalId,
         pruned: false,
-        isTest,
+        isTest: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
