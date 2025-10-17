@@ -1,8 +1,10 @@
+import { Inject, Injectable } from '@nestjs/common'
+
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+
+import { data } from '../../../../../middlewares/src/lib/openapi-ts/utils'
 import {
   DispensationHistoryDto,
   DispensationHistoryItemDto,
@@ -25,7 +27,6 @@ import {
   donationExceptionControllerGetOrgansV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
 } from './gen/fetch'
-
 import { Locale } from './gen/fetch/types.gen'
 
 @Injectable()
