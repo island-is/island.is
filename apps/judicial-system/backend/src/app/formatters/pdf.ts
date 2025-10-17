@@ -35,7 +35,7 @@ export interface LineLink {
 
 export interface PdfDocument {
   addPage: (position?: number) => PdfDocument
-  addPageNumbers: () => PdfDocument
+  addPageNumbers: (tableOfContentsPageCount: number) => PdfDocument
   addParagraph: (text: string, fontSize: number, x?: number) => PdfDocument
   addText: (
     text: string,
@@ -177,7 +177,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
-    addPageNumbers: () => {
+    addPageNumbers: (tableOfContentsPageCount: number) => {
       const pageNumberRightMargin = 10
       const pageNumberBottomMargin = 15
       const pageNumberFontSize = 20
@@ -190,7 +190,9 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
           pageNumberText,
           pageNumberFontSize,
         )
-        const pageIsScaled = scalePageIndexes.includes(index - 1)
+        const pageIsScaled = scalePageIndexes.includes(
+          index - (tableOfContentsPageCount + 1),
+        )
 
         drawTextAbsolute(
           page,
