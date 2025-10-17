@@ -135,6 +135,23 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
   }
 
+  async testHnipp({ application }: TemplateApiModuleActionProps) {
+    this.notificationsService.sendNotification({
+      type: NotificationType.FireCompensationAppraisal,
+      messageParties: {
+        recipient: '0101302399',
+        sender: '0101302399',
+      },
+      applicationId: application.id,
+      args: {
+        applicantName: 'Testur',
+        applicationId: application.id,
+        appliedForAddress: 'Address 222',
+        realEstateId: 'F1234567890',
+      },
+    })
+  }
+
   async sendNotificationToAllInvolved({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {

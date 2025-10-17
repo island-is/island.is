@@ -123,6 +123,11 @@ const template: ApplicationTemplate<
               order: 1,
             }),
           ],
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.sendNotificationToAllInvolved,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

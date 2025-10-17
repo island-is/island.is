@@ -8,4 +8,5 @@ export enum TemplateApiActions {
   calculateAmount = 'calculateAmount',
   submitApplication = 'submitApplication',
   sendNotificationToAllInvolved = 'sendNotificationToAllInvolved',
+  testHnipp = 'testHnipp',
 }
