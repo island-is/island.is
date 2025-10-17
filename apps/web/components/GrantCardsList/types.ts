@@ -1,3 +1,5 @@
+import { GrantStatus } from '@island.is/web/graphql/schema'
+
 export type TranslationKeys = Partial<
   Record<
     | 'seeMore'
@@ -16,3 +18,9 @@ export type TranslationKeys = Partial<
     string
   >
 >
+
+export const OPEN_GRANT_STATUSES = [
+  GrantStatus.AlwaysOpen,
+  GrantStatus.Open,
+  GrantStatus.OpenWithNote,
+]
