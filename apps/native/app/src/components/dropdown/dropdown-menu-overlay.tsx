@@ -3,7 +3,7 @@ import {
   NavigationFunctionComponent,
   Navigation,
 } from 'react-native-navigation'
-import { Pressable, View, SafeAreaView } from 'react-native'
+import { Pressable, View, SafeAreaView, Platform } from 'react-native'
 
 import { theme } from '../../ui'
 import {
@@ -51,18 +51,21 @@ export const DropdownMenuOverlay: NavigationFunctionComponent<
           style={{
             flex: 1,
             alignItems: 'flex-end',
-            // backgroundColor: 'blue',
           }}
         >
           <View
             style={{
               marginTop: theme.spacing[5],
               marginRight: theme.spacing[1],
+              shadowRadius: 30,
               shadowColor: '#0061FF',
               shadowOpacity: 0.16,
               shadowOffset: { width: 0, height: 4 },
-              shadowRadius: 30,
               elevation: 6,
+              backgroundColor: Platform.select({
+                android: theme.color.white,
+                default: 'transparent',
+              }),
             }}
           >
             <DropdownOverlayProvider
