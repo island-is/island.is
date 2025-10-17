@@ -76,7 +76,6 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   ShareButton: `${prefix}.button.ShareButton`,
-  ProfileAvatarButton: `${prefix}.button.ProfileAvatarButton`,
 }
 
 export const StackRegistry = {

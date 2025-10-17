@@ -54,7 +54,7 @@ export function FamilyMemberCard({ name, nationalId }: FamilyMemberCardProps) {
     <Host>
       {name.length ? (
         <ImageWrap>
-          <Avatar name={name} size="medium" />
+          <Avatar name={name} isSmall />
         </ImageWrap>
       ) : null}
       <Content>
