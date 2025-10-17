@@ -124,7 +124,6 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {},
   mapUserToRole(
     nationalId: string,
     application: Application,
