@@ -115,5 +115,6 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  penalties?: string
   rulingSignatureDate?: Date | null
 }
