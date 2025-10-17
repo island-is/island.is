@@ -71,6 +71,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
   let currentPage = -1
   let currentYPosition = -1
   const scalePageIndexes: number[] = []
+  const A4Width = 595.28 // A4 width in points
+  const A4Height = 841.89 // A4 height in points
 
   const drawTextAbsolute = (
     page: PDFPage,
@@ -150,14 +152,12 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   const scaleToA4 = (page: PDFPage) => {
     const { width, height } = page.getSize()
-    const targetWidth = 595.28 // A4 width in points
-    const targetHeight = 841.89 // A4 height in points
-    const scaleX = targetWidth / width
-    const scaleY = targetHeight / height
+    const scaleX = A4Width / width
+    const scaleY = A4Height / height
     const scale = Math.min(scaleX, scaleY)
 
     page.scaleContent(scale, scale)
-    page.setSize(targetWidth, targetHeight)
+    page.setSize(A4Width, A4Height)
 
     return page
   }
@@ -314,14 +314,24 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       )
 
       pages.forEach((page) => {
-        const { width } = page.getSize()
+        const { width, height } = page.getSize()
+        const isLandscape = width > height
 
-        if (width > 1000) {
+        // Currently not scaling landscape pages
+        if (isLandscape) {
+          rawDocument.addPage(page)
+          return
+        } else if (width > A4Width && height > A4Height) {
+          const scaledPage = scaleToA4(page)
           scalePageIndexes.push(rawDocument.getPageCount())
-        }
+          rawDocument.addPage(scaledPage)
 
-        rawDocument.addPage(scaleToA4(page))
+          return
+        } else {
+          rawDocument.addPage(page)
+        }
       })
+
       return pdfDocument
     },
 
