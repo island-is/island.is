@@ -47,7 +47,7 @@ export const errorMessages = defineMessages({
     description: 'Applicant deceased title',
   },
   applicantDeceasedSummary: {
-    id: 'hi.application:error.applicantDecesedSummary',
+    id: 'hi.application:error.applicantDeceasedSummary',
     defaultMessage:
       'Einstaklingur með þessa kennitölu er skráður látinn í þjóðskrá miðað við dagsetningu umsóknar.',
     description: 'Applicant deceased summary',
