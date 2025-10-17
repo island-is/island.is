@@ -17,10 +17,11 @@ export class InvoicesService implements IInvoicesService {
     return {
       pageInfo: data.pageInfo,
       totalCount: data.totalCount,
-      data: data.invoices?.map((invoice) => ({
-        cacheId: invoice.cacheId,
-        number: invoice.id,
-      })) ?? []
+      data:
+        data.invoices?.map((invoice) => ({
+          cacheId: invoice.cacheId,
+          number: invoice.id,
+        })) ?? [],
     }
   }
 }

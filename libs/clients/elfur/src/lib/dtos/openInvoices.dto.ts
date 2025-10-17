@@ -1,10 +1,10 @@
 export interface OpenInvoicesDto {
-  invoices: Array<OpenInvoiceDto> | null;
+  invoices: Array<OpenInvoiceDto> | null
   pageInfo: {
-    hasNextPage: boolean;
-    hasPreviousPage?: boolean;
-    startCursor?: string;
-    endCursor?: string;
+    hasNextPage: boolean
+    hasPreviousPage?: boolean
+    startCursor?: string
+    endCursor?: string
   }
   totalCount: number
 }

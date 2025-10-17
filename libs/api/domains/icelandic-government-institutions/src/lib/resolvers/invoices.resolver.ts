@@ -8,7 +8,10 @@ import { Inject } from '@nestjs/common'
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class InvoicesResolver {
-  constructor(@Inject('IInvoicesService') private readonly invoiceService: IInvoicesService) {}
+  constructor(
+    @Inject('IInvoicesService')
+    private readonly invoiceService: IInvoicesService,
+  ) {}
 
   @Query(() => InvoiceList, {
     name: 'icelandicGovernmentInstitutionsInvoices',

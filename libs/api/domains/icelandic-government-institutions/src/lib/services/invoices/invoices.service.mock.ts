@@ -9,7 +9,7 @@ export class MockInvoicesService implements IInvoicesService {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
     this.logger.info('Using InvoicesServiceMock')
   }
-  async getOpenInvoices(): Promise<InvoiceList | null>{
+  async getOpenInvoices(): Promise<InvoiceList | null> {
     return MOCK_INVOICES
   }
 }

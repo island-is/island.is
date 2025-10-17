@@ -5,6 +5,6 @@ export class Invoice {
   @Field(() => ID)
   cacheId!: number
 
-  @Field({description: 'Invoice number'})
+  @Field({ description: 'Invoice number' })
   number!: string
 }
