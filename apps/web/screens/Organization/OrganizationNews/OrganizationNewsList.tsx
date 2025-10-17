@@ -243,6 +243,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
           input: {
             slug: organizationPageSlug,
             lang: locale as Locale,
+            subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
           },
         },
       }),

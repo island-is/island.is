@@ -8,7 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -115,8 +114,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     WebLandspitaliCatalogQueryVariables
   >(GET_LANDSPITALI_CATALOG)
 
-  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
-
   const fundOptions = useMemo(() => {
     const options = (
       (slice.json?.fundOptions as typeof DEFAULT_FUND_OPTIONS) ??
@@ -218,6 +215,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const { activeLocale } = useI18n()
 
+  const sendType = watch('sendType')
+
   if (submitted) {
     const data = methods.getValues()
     const amountISK =
@@ -239,7 +238,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.senderAddress)} {data.senderAddress}
           </Text>
           <Text>
-            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}
+            {formatMessage(m.overview.senderPostalCode)} {data.senderPostalCode}{' '}
+            {data.senderPlace}
           </Text>
         </Stack>
         <Stack space={2}>
@@ -247,13 +247,28 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
           <Text>
             {formatMessage(m.overview.recipientName)} {data.recipientName}
           </Text>
-          <Text>
-            {formatMessage(m.overview.recipientAddress)} {data.recipientAddress}
-          </Text>
-          <Text>
-            {formatMessage(m.overview.recipientPostalCode)}{' '}
-            {data.recipientPostalCode}
-          </Text>
+
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientAddress)}{' '}
+              {data.recipientAddress}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+            <Text>
+              {formatMessage(m.overview.recipientPostalCode)}{' '}
+              {data.recipientPostalCode} {data.recipientPlace}
+            </Text>
+          )}
+          {sendType ===
+            WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email && (
+            <Text>
+              {formatMessage(m.overview.recipientEmail)} {data.recipientEmail}
+            </Text>
+          )}
+
           <Text>
             {formatMessage(m.overview.inMemoryOf)} {data.inMemoryOf}
           </Text>
@@ -356,8 +371,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       message: formatMessage(m.validation.required),
     },
   }
-
-  const sendType = watch('sendType')
 
   return (
     <FormProvider {...methods}>
@@ -585,20 +598,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       id="senderNationalId"
                       label={formatMessage(m.info.senderNationalIdLabel)}
                       size="xs"
-                      error={
-                        nationalIdSkipped
-                          ? undefined
-                          : errors.senderNationalId?.message
-                      }
+                      error={errors.senderNationalId?.message}
                       type="text"
                       inputMode="numeric"
                       format="######-####"
-                      disabled={nationalIdSkipped}
                       rules={{
                         validate: (value) => {
-                          if (nationalIdSkipped) {
-                            return true
-                          }
                           if (!isValidKennitala(value)) {
                             return formatMessage(
                               m.validation.invalidNationalIdFormat,
@@ -608,19 +613,6 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                         },
                       }}
                       control={control}
-                    />
-                    <Checkbox
-                      id="senderNationalIdSkipped"
-                      label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                      checked={nationalIdSkipped}
-                      onChange={() => {
-                        const newValue = !nationalIdSkipped
-                        setNationalIdSkipped(newValue)
-                        if (newValue) {
-                          setValue('senderNationalId', '')
-                        }
-                      }}
-                      labelVariant="small"
                     />
                   </Stack>
                 </GridColumn>

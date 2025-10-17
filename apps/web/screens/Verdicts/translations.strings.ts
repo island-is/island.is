@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    showAllDistrictCourts: {
+      id: 'web.verdicts:listPage.showAllDistrictCourts',
+      defaultMessage: 'Allir héraðsdómstólar',
+      description: 'Allir héraðsdómstólar',
+    },
     revealMoreLabel: {
       id: 'web.verdicts:listPage.revealMoreLabel',
       defaultMessage: 'Sjá reifun',

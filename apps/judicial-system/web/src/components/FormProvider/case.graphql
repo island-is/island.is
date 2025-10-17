@@ -66,6 +66,7 @@ query Case($input: CaseQueryInput!) {
         comment
         deliveredToDefenderNationalId
         servedBy
+        isDefaultJudgement
       }
     }
     defenderName
@@ -255,6 +256,11 @@ query Case($input: CaseQueryInput!) {
       modified
       caseId
       location
+      judgeId
+      judge {
+        id
+        name
+      }
       startDate
       endDate
       isClosed

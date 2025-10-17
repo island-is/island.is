@@ -484,3 +484,9 @@ export enum DebtTypes {
   PropertyFees = 'propertyFees',
   OtherDebts = 'otherDebts',
 }
+
+export interface DrivingInstructor {
+  name: string
+  postalCode: string
+  municipality: string
+}

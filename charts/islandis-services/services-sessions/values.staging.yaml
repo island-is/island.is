@@ -66,7 +66,9 @@ ingress:
 namespace: 'services-sessions'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -85,3 +87,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-sessions'
+  create: true
+  name: 'services-sessions'

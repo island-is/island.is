@@ -574,6 +574,7 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
     validate([
       [courtSession.startDate, ['empty', 'date-format']],
       [courtSession.location, ['empty']],
+      [courtSession.judgeId, ['empty']],
       [courtSession.entries, ['empty']],
       [courtSession.rulingType, ['empty']],
       [courtSession.endDate, ['empty', 'date-format']],
@@ -695,3 +696,6 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
 }
+
+export const isNullOrUndefined = <T>(value?: T) =>
+  value === undefined || value === null

@@ -5,6 +5,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import {
   insuranceToXML,
   transformApplicationToHealthInsuranceDTO,
+  errorMapper,
 } from './health-insurance.utils'
 import {
   DocumentApi,
@@ -75,7 +76,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
       if (error.status === 412) {
         error.status = 500
       }
-      throw error
+      throw await errorMapper(error)
     }
 
     logger.info(`Finished send Health Insurance application`)
