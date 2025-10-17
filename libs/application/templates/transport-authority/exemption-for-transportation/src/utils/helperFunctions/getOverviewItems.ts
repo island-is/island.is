@@ -256,8 +256,12 @@ export const getConvoyOverviewItems = (
         ...overview.convoy.vehicleLabel,
         values: { permno: convoyItem.vehicle.permno },
       },
-      checkHasSingleDolly(answers) ? [overview.convoy.dollySingleLabel] : [],
-      checkHasDoubleDolly(answers) ? [overview.convoy.dollyDoubleLabel] : [],
+      ...(checkHasSingleDolly(answers)
+        ? [overview.convoy.dollySingleLabel]
+        : []),
+      ...(checkHasDoubleDolly(answers)
+        ? [overview.convoy.dollyDoubleLabel]
+        : []),
       ...(convoyItem.trailer?.permno
         ? [
             {
