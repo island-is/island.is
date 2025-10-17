@@ -3,6 +3,9 @@ import {
   AffiliationRole,
   CaseWorkerInputTypeEnum,
   OrganizationType,
+  OrganizationSubType,
+  OrganizationSector,
+  AgentType,
 } from './utils/constants'
 
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
@@ -67,14 +70,18 @@ export type Person = {
 }
 
 export type AgentModel = {
-  id: string
   name: string
-  email: string
-  phone: string
   nationalId: string
-  type: AffiliationRole
-  preferredLanguage: string | null
+  preferredName: string | null
+  nationality: string | null
+  pronouns: string[] | null
+  type: AgentType
+  relationTypeId: string | null
+  phone: string
+  email: string
+  domicile: AddressModel | null
   requiresInterpreter: boolean
+  preferredLanguage: string | null
 }
 
 export type Affiliation = {
@@ -83,33 +90,43 @@ export type Affiliation = {
   classificationId: string
   beginDate: Date
   endDate: Date | null
-  organization?: Organization
+  email: string
+  phone: string
+  organization: AffiliationOrganization | null
 }
 
-export type Organization = {
+export type ApplicationFeatureModel = {
+  key: string
+}
+
+export type ApplicationFeatureConfig = {
+  applicationType: string // "enum": ["registration"] // TODO: Á að búa til enum í constants fyrir þetta? (eins og OrganizationType)
+  applicationFeatures: ApplicationFeatureModel[]
+}
+
+export type ApplicationSettings = {
+  applicationConfigs: ApplicationFeatureConfig[]
+}
+
+export type AffiliationOrganization = {
   id: string
   nationalId: string | null
   name: string
   type: OrganizationType
+  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
+  sector: OrganizationSector | null // TODO: Getur þetta verið null?
 }
 
 export type AddressModel = {
   id: string
   address: string
-  municipality: string | null // Is set as object in MMS data
+  municipality: string | null
   postCode: string
-  country: string | null // Is set as object in MMS data
-  houseNumber: string | null // Is set as object in MMS data
-  streetNumber: string | null // Is set as object in MMS data
-  apartmentNumber: string | null // Is set as object in MMS data
-  municipalityId: string | null // Is set as object in MMS data
-}
-
-export type SpecialNeedsModel = {
-  id: string
-  title: string // Is set as object in MMS data
-  group: string // Is set as object in MMS data
-  code: string
+  country: string | null
+  houseNumber: number | null
+  streetNumber: number | null
+  apartmentNumber: number | null
+  municipalityId: string | null
 }
 
 export type HealthProfileModel = {
@@ -117,9 +134,6 @@ export type HealthProfileModel = {
   userId: string
   allergies: string[]
   foodAllergiesOrIntolerances: string[]
-  specialNeeds: SpecialNeedsModel[]
-  createdAt: Date
-  updatedAt: Date
   usesEpipen: boolean
   hasConfirmedMedicalDiagnoses: boolean
   requestsMedicationAdministration: boolean
@@ -134,6 +148,8 @@ export type CaseWorker = {
 }
 
 export type SocialProfile = {
+  id: string
+  userId: string
   hasDiagnoses: boolean
   hasIntegratedServices: boolean
   caseWorkers: CaseWorker[] | null
@@ -141,6 +157,8 @@ export type SocialProfile = {
 }
 
 export type LanguageProfile = {
+  id: string
+  userId: string
   languageEnvironment: string
   signLanguage: boolean
   preferredLanguage: string
@@ -150,21 +168,22 @@ export type LanguageProfile = {
 export type FriggChildInformation = {
   id: string
   nationalId: string
+  // nationalIdType // TODO: Bæta við nýrri enum týpu? ["unknown", "individual", "system"]
   name: string
   nationality: string | null
-  preferredName: string | null // Is set as object in MMS data
+  preferredName: string | null
   pronouns: string[]
   gradeLevel: string
-  email: string | null // Is set as object in MMS data
+  email: string | null
   domicile: AddressModel | null
   residence: AddressModel | null
   healthProfile: HealthProfileModel | null
-  primaryOrgId: string // Is set as object in MMS data
+  primaryOrgId: string
   affiliations: Affiliation[] | null
   agents: AgentModel[] | null
   preferredLanguage: string | null
-  phone: string // Is set as object in MMS data
-  mobile: string // Is set as object in MMS data
+  phone: string
+  mobile: string
   socialProfile: SocialProfile | null
   languageProfile: LanguageProfile | null
 }
@@ -174,4 +193,15 @@ export type CurrentSchool = {
   grade?: string
   school?: string
   municipality?: string
+}
+
+export type Organization = {
+  id: string
+  name: string
+  type: OrganizationType
+  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
+  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  gradeLevels: string[]
+  unitId: string | null
+  settings: ApplicationSettings | null
 }

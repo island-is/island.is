@@ -8,7 +8,7 @@ import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { Query } from '@island.is/api/schema'
+import { Query, OrganizationTypeEnum } from '@island.is/api/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
@@ -33,11 +33,16 @@ export const currentNurserySubSection = buildSubSection({
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
             })
 
             return (
-              data?.friggOrganizationsByType?.map(({ name }) => ({
-                value: name,
+              data?.friggOrganizationsByType?.map(({ unitId, name }) => ({
+                value: unitId || '',
                 label: name,
               })) ?? []
             )
@@ -52,17 +57,23 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-nursery',
           updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
+            const municipalityCode = selectedValues?.[0]
+
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.ChildCare,
+                  municipalityCode: municipalityCode,
+                },
+              },
             })
 
             return (
-              data?.friggOrganizationsByType
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.managing?.map((nursery) => ({
-                  value: nursery.id,
-                  label: nursery.name,
-                })) ?? []
+              data?.friggOrganizationsByType?.map(({ id, name }) => ({
+                value: id,
+                label: name,
+              })) ?? []
             )
           },
           condition: (answers) => {

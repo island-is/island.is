@@ -1,3 +1,4 @@
+import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
   buildHiddenInputWithWatchedValue,
@@ -7,15 +8,13 @@ import {
   NO,
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { ApplicationType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getInternationalSchoolsIds,
-  getMunicipalityCodeBySchoolUnitId,
+  getCurrentAndNextGrade,
 } from '../../../utils/newPrimarySchoolUtils'
-import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -47,28 +46,23 @@ export const newSchoolSubSection = buildSubSection({
 
             return applicantMunicipalityCode
           },
-          loadOptions: async ({ application, apolloClient }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
+          loadOptions: async ({ apolloClient }) => {
+            // const { childGradeLevel } = getApplicationExternalData(
+            //   application.externalData,
+            // )
 
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                  //   gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
+                },
+              },
             })
 
             return (
               data?.friggOrganizationsByType
-                ?.filter(
-                  ({ type, managing }) =>
-                    type === OrganizationTypeEnum.Municipality &&
-                    managing &&
-                    managing.length > 0 &&
-                    managing.filter(({ gradeLevels }) =>
-                      !childGradeLevel
-                        ? true
-                        : gradeLevels?.includes(childGradeLevel),
-                    )?.length > 0,
-                )
                 ?.map(({ name, unitId }) => ({
                   value: unitId || '',
                   label: name,
@@ -88,73 +82,28 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { data } = await apolloClient.query<Query>({
-              query: friggOrganizationsByTypeQuery,
-            })
-
             const municipalityCode = selectedValues?.[0]
 
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
 
-            // Find all private owned schools by municipality
-            const privateOwnedSchools =
-              data?.friggOrganizationsByType
-                ?.filter(
-                  ({ type }) => type === OrganizationTypeEnum.PrivateOwner,
-                )
-                ?.flatMap(
-                  ({ managing }) =>
-                    managing
-                      ?.filter(
-                        ({ type, gradeLevels, unitId }) =>
-                          unitId &&
-                          getMunicipalityCodeBySchoolUnitId(unitId) ===
-                            municipalityCode &&
-                          type === OrganizationTypeEnum.School &&
-                          (!childGradeLevel
-                            ? true
-                            : gradeLevels?.includes(childGradeLevel)),
-                      )
-                      ?.map((school) => ({
-                        ...school,
-                        type: getInternationalSchoolsIds().some(
-                          (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
-                        )
-                          ? SchoolType.INTERNATIONAL_SCHOOL
-                          : SchoolType.PRIVATE_SCHOOL,
-                      })) || [],
-                ) || []
-
-            // Find all municipality schools
-            const municipalitySchools =
-              data?.friggOrganizationsByType
-                ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.managing?.filter(
-                  ({ type, gradeLevels }) =>
-                    // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
-                    type === OrganizationTypeEnum.School &&
-                    (!childGradeLevel
-                      ? true
-                      : gradeLevels?.includes(childGradeLevel)),
-                )
-                ?.map((school) => ({
-                  ...school,
-                  type: SchoolType.PUBLIC_SCHOOL,
-                })) || []
-
-            // Merge the private owned schools and the municipality schools together
-            const allMunicipalitySchools = [
-              ...municipalitySchools,
-              ...privateOwnedSchools,
-            ]
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.School,
+                  municipalityCode: municipalityCode,
+                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
+                },
+              },
+            })
 
             // Piggyback the type as part of the value
             return (
-              allMunicipalitySchools
-                .map(({ id, type, name }) => ({
-                  value: `${id}::${type}`,
+              data?.friggOrganizationsByType
+                ?.map(({ id, name, subType, sector }) => ({
+                  value: `${id}::${subType ?? ''}::${sector ?? ''}`, // TODO: Skoða hvað á að setja hér! type, subType eða sector??
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
@@ -167,6 +116,8 @@ export const newSchoolSubSection = buildSubSection({
           },
         }),
         buildHiddenInputWithWatchedValue({
+          // TODO: Þarf þetta ef við erum að sækja þetta gildi í getApplicationAnswers() útfrá 'newSchool.school'?
+          // TODO: Þarf að skoða betur - Þetta er ekki lengur sama týpa og var áður!
           id: 'newSchool.type',
           watchValue: 'newSchool.school',
           valueModifier: (value) => value?.toString()?.split('::')[1],

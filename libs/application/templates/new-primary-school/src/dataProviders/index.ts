@@ -8,3 +8,9 @@ export const ChildrenApi = defineTemplateApi({
   externalDataId: 'children',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
+
+export const SchoolsApi = defineTemplateApi({
+  action: 'getSchools',
+  externalDataId: 'schools',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
