@@ -129,17 +129,6 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
   mapUserToRole(
     nationalId: string,
     application: Application,
