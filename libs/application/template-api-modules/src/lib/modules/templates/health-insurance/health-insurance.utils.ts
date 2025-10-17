@@ -373,7 +373,8 @@ export const errorMapper = async (error: Response) => {
       default:
         return error
     }
-  } catch (error) {
+  } catch (_) {
+    // ignore parsing error and just return the original error
     return error
   }
 }
