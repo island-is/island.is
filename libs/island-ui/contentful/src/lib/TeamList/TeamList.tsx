@@ -37,7 +37,7 @@ export interface TeamListProps {
       tagLabels: string[]
     }[]
     extraIntroProperties?: {
-      label: string;
+      label: string
       value: string
     }[]
   }[]

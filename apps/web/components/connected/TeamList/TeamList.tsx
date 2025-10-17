@@ -24,18 +24,23 @@ const parseOrganizationId = (
 const mapTeamMember = (
   member: IcelandicGovernmentInstitutionsEmployee,
 ): TeamListProps['teamMembers'][0] => {
-  const address = (member.location?.address && member.location.postalCode) ? `${member.location.address}, ${member.location.postalCode}` : undefined
+  const address =
+    member.location?.address && member.location.postalCode
+      ? `${member.location.address}, ${member.location.postalCode}`
+      : undefined
   return {
     title: member.job ?? '',
     name: member.name,
     email: member.email ?? '',
     phone: member.phoneNumber ? member.phoneNumber.toString() : undefined,
     extraIntroProperties: [
-      address ? {
-        label: 'Starfsstöð',
-        value: address
-      } : undefined,
-      ].filter(isDefined),
+      address
+        ? {
+            label: 'Starfsstöð',
+            value: address,
+          }
+        : undefined,
+    ].filter(isDefined),
   }
 }
 
@@ -46,7 +51,8 @@ const ConnectedTeamList = ({ slice }: Props) => {
     variables: { input: { organizationId } },
   })
 
-  const employeeList = data?.icelandicGovernmentInstitutionsEmployees?.data ?? []
+  const employeeList =
+    data?.icelandicGovernmentInstitutionsEmployees?.data ?? []
 
   const teamMembers = employeeList.map((e) => mapTeamMember(e))
 
