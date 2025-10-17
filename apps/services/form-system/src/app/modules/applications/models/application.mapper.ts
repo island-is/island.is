@@ -1,4 +1,3 @@
-import { SectionTypes } from '@island.is/form-system/shared'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
@@ -11,7 +10,6 @@ import { ApplicationDto } from './dto/application.dto'
 import { ValueDto } from './dto/value.dto'
 import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
-
 
 @Injectable()
 export class ApplicationMapper {
