@@ -102,9 +102,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   name: application.general.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.GeneralFishingLicense.translation,
-  ],
   dataSchema: GeneralFishingLicenseSchema,
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },

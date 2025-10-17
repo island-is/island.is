@@ -37,9 +37,8 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Húsnæðis og mannvirkjastofnun',
   featureFlag: Features.TerminateRentalAgreementEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.TerminateRentalAgreement.translation,
-  ],
   dataSchema,
   allowedDelegations: [
     {

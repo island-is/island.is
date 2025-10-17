@@ -52,9 +52,8 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.ExemptionForTransportation.translation,
-  ],
   dataSchema: ExemptionForTransportationSchema,
   featureFlag: Features.ExemptionForTransportation,
   stateMachineConfig: {

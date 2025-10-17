@@ -38,7 +38,7 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [ApplicationConfigurations.University.translation],
+  translationNamespaces: ApplicationConfigurations.University.translation,
   initialQueryParameter: 'program',
   dataSchema: UniversitySchema,
   featureFlag: Features.university,
