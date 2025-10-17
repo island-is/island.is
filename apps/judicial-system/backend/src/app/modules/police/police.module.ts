@@ -11,8 +11,8 @@ import { PoliceService } from './police.service'
     forwardRef(() => AwsS3Module),
     forwardRef(() => SubpoenaModule),
   ],
+  controllers: [PoliceController],
   providers: [PoliceService],
   exports: [PoliceService],
-  controllers: [PoliceController],
 })
 export class PoliceModule {}
