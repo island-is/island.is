@@ -75,7 +75,8 @@ export const environmentStore = create<EnvironmentStore>(
               },
             }).then((r) => r.json() as Promise<EnvironmentResponse>)
             const ids = res.results.ids.map((n) => {
-              const local = (environments as any)[n.id] ?? {}
+              const local =
+                environments[n.id as keyof typeof environments] ?? {}
               const remote = n as any
               return {
                 ...local,
@@ -95,9 +96,10 @@ export const environmentStore = create<EnvironmentStore>(
               })),
               environments.local,
               environments.mock,
-            ]
+            ] as EnvironmentConfig[]
             set({ loading: false, fetchedAt: Date.now(), result })
-            return result
+
+            return result as EnvironmentConfig[]
           } catch (err) {
             // noop
           }
