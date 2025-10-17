@@ -29,6 +29,9 @@ jobs:
               exit 1
             fi
           fi
+      - name: Setup yarn
+        if: env.CHECK == 'true'
+        uses: ./.github/actions/setup-yarn
       - name: Get token
         id: get-token
         if: env.CHECK == 'true'
