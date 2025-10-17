@@ -105,4 +105,10 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
     prosecutionIndictmentsWaitingForConfirmation,
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,
   PROSECUTION_INDICTMENTS_COMPLETED: prosecutionIndictmentsCompleted,
+  STATISTICS: {
+    title: '',
+    hasMyCasesFilter: false,
+    columnKeys: [],
+    columns: [],
+  },
 }
