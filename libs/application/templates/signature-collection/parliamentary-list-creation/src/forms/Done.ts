@@ -41,7 +41,7 @@ export const Done: Form = buildForm({
               id: 'copyLink',
               link: ({ externalData }) => {
                 const slug =
-                  getValueViaPath(externalData, 'createLists.data.slug') ??
+                  getValueViaPath(externalData, 'submit.data.slug') ??
                   'https://island.is/'
                 return `${document.location.origin}${slug}`
               },

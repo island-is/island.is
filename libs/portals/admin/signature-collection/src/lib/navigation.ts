@@ -7,7 +7,6 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   icon: {
     icon: 'receipt',
   },
-
   description: m.signatureListsDescription,
   path: SignatureCollectionPaths.MunicipalRoot,
   children: [
@@ -21,7 +20,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     },
     {
       name: m.collectionTitle,
-      path: SignatureCollectionPaths.PresidentialLists,
+      path: SignatureCollectionPaths.PresidentialListOfCandidates,
     },
   ],
 }

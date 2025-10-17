@@ -1,18 +1,25 @@
-type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
+type RepeaterType<T> = T & {
+  initial?: boolean
+  enabled?: boolean
+  dummy?: unknown
+}
 
 // A helper type that extracts values from an ArrayLike
-export type Extract<T extends ArrayLike<any> | Record<any, any>> =
-  T extends ArrayLike<any> ? T[number] : never
+export type Extract<T extends ArrayLike<unknown> | Record<string, unknown>> =
+  T extends ArrayLike<unknown> ? T[number] : never
 
 export const filterAndRemoveRepeaterMetadata = <T>(
   elements: RepeaterType<Extract<NonNullable<T>>>[],
 ): Omit<Extract<NonNullable<T>>, 'initial' | 'enabled' | 'dummy'>[] => {
-  elements.forEach((element) => {
-    delete element.initial
-    delete element.dummy
-  })
-
   return elements
+    .filter((element) => element?.enabled !== false)
+    .map((element) => {
+      const { initial, enabled, dummy, ...rest } = element
+      return rest as Omit<
+        Extract<NonNullable<T>>,
+        'initial' | 'enabled' | 'dummy'
+      >
+    })
 }
 
 export const filterEmptyObjects = <T extends Record<string, unknown>>(

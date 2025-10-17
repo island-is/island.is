@@ -6,7 +6,6 @@ export const siaRehabilitationPlanQuery = gql`
       referenceId
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -56,6 +55,7 @@ export const siaRehabilitationPlanQuery = gql`
         domesticLife
         mainDailyLifeAreas
         leisureAndHobbies
+        expression
       }
       startDate
       plannedEndDate
@@ -72,6 +72,7 @@ export const siaRehabilitationPlanQuery = gql`
         goalDescription
         measures
       }
+      typeAppliedFor
     }
   }
 `
@@ -119,17 +120,6 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
         explanation
       }
       other
-      confirmation {
-        type {
-          value
-          name
-          display
-        }
-        typeName
-        treatmentMeasures
-        explanation
-        progress
-      }
     }
   }
 `
@@ -138,44 +128,31 @@ export const siaConfirmedTreatmentQuery = gql`
   query SiaConfirmedTreatment {
     socialInsuranceConfirmedTreatment {
       referenceId
-      caseManager {
-        name
-        jobTitle
+      created
+      serviceProvider {
+        serviceProviderName
+        coordinatorTitle
         workplace
+        phoneNumber
       }
-      confirmationDate
-      previousTreatment {
-        description
-        application
-        type {
+      requestedTreatment {
+        treatmentTypes {
           value
           name
           display
         }
-        other
-        content
+        otherTreatmentDescription
       }
-      treatmentPlan {
-        applicationType
-        treatmentType {
-          value
-          name
-          display
-        }
-        explanation
-        discharge
-        plannedFollowup
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
       }
-      treatmentType {
-        value
-        name
-        display
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
       }
-      estimatedDuration {
-        start
-        end
-        months
-      }
+      typeAppliedFor
     }
   }
 `
@@ -184,15 +161,15 @@ export const siaConfirmationOfPendingResolutionQuery = gql`
   query SiaConfirmationOfPendingResolution {
     socialInsuranceConfirmationOfPendingResolution {
       referenceId
+      created
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
       }
       requestedTreatment {
-        treatmentType {
+        treatmentTypes {
           value
           name
           display
@@ -209,6 +186,7 @@ export const siaConfirmationOfPendingResolutionQuery = gql`
         endDate
         totalRequestedMonths
       }
+      typeAppliedFor
     }
   }
 `
@@ -217,9 +195,9 @@ export const siaConfirmationOfIllHealthQuery = gql`
   query SiaConfirmationOfIllHealth {
     socialInsuranceConfirmationOfIllHealth {
       referenceId
+      created
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -234,6 +212,7 @@ export const siaConfirmationOfIllHealthQuery = gql`
         endDate
         totalRequestedMonths
       }
+      typeAppliedFor
     }
   }
 `

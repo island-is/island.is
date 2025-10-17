@@ -12,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { courtSessionTypeNames } from '@island.is/judicial-system/types'
+import {
+  courtSessionTypeNames,
+  hasGeneratedCourtRecordPdf,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -24,10 +27,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
+  SelectableList,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -42,6 +48,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
@@ -94,6 +101,7 @@ const Conclusion: FC = () => {
   const { isUpdatingCase, setAndSendCaseToServer } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+  const { createVerdicts } = useVerdict()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -117,6 +125,37 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
+  const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
+    useState<SelectableItem[]>(
+      workingCase.defendants
+        ? workingCase.defendants?.map((defendant) => ({
+            id: defendant.id,
+            name: defendant.name ?? 'Nafn ekki skráð',
+            checked: defendant.verdict?.isDefaultJudgement ?? false,
+          }))
+        : [],
+    )
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.courtSessions,
+    user,
+  )
+
+  const handleVerdicts = useCallback(async () => {
+    const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
+      (item) => ({
+        defendantId: item.id,
+        isDefaultJudgement: item.checked,
+      }),
+    )
+
+    return createVerdicts({
+      caseId: workingCase.id,
+      verdicts: defendantVerdictsToCreate,
+    })
+  }, [createVerdicts, defendantsWithDefaultJudgments, workingCase])
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -174,6 +213,16 @@ const Conclusion: FC = () => {
         return
       }
 
+      if (
+        update.indictmentDecision === IndictmentDecision.COMPLETING &&
+        update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+      ) {
+        const success = await handleVerdicts()
+        if (!success) {
+          return
+        }
+      }
+
       router.push(
         selectedAction === IndictmentDecision.REDISTRIBUTING
           ? destination
@@ -183,6 +232,7 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
+      handleVerdicts,
       mergeCaseNumber,
       postponementReason,
       selectedAction,
@@ -243,6 +293,16 @@ const Conclusion: FC = () => {
     }
   }, [workingCase.mergeCaseNumber])
 
+  useEffect(() => {
+    setDefendantsWithDefaultJudgments(
+      (workingCase.defendants ?? []).map((d) => ({
+        id: d.id,
+        name: d.name ?? 'Nafn ekki skráð',
+        checked: d.verdict?.isDefaultJudgement ?? false,
+      })),
+    )
+  }, [workingCase.defendants])
+
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
 
@@ -257,6 +317,17 @@ const Conclusion: FC = () => {
       return false
     }
 
+    const isCourtRecordValid = (): boolean =>
+      hasGeneratedCourtRecord
+        ? Boolean(
+            workingCase.courtSessions?.every((session) => session.endDate),
+          )
+        : uploadFiles.some(
+            (file) =>
+              file.category === CaseFileCategory.COURT_RECORD &&
+              file.status === FileUploadStatus.done,
+          )
+
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
         return Boolean(postponementReason)
@@ -267,11 +338,7 @@ const Conclusion: FC = () => {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
             return (
-              uploadFiles.some(
-                (file) =>
-                  file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatus.done,
-              ) &&
+              isCourtRecordValid() &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
@@ -280,21 +347,15 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
           case CaseIndictmentRulingDecision.FINE:
-            return uploadFiles.some(
-              (file) =>
-                file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === FileUploadStatus.done,
-            )
+            return isCourtRecordValid()
           case CaseIndictmentRulingDecision.MERGE:
-            return Boolean(
-              uploadFiles.some(
-                (file) =>
-                  file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatus.done,
-              ) &&
-                (workingCase.mergeCase?.id ||
+            return (
+              isCourtRecordValid() &&
+              Boolean(
+                workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
-                    .isValid),
+                    .isValid,
+              )
             )
           default:
             return false
@@ -569,7 +630,7 @@ const Conclusion: FC = () => {
             )}
           </>
         )}
-        {selectedAction && (
+        {selectedAction && !hasGeneratedCourtRecord && (
           <Box
             component="section"
             marginBottom={selectedDecision === 'RULING' ? 5 : 10}
@@ -606,7 +667,7 @@ const Conclusion: FC = () => {
         {selectedAction === IndictmentDecision.COMPLETING &&
           (selectedDecision === CaseIndictmentRulingDecision.RULING ||
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-            <Box component="section" marginBottom={10}>
+            <Box component="section" marginBottom={5}>
               <SectionHeading
                 title={formatMessage(
                   selectedDecision === CaseIndictmentRulingDecision.RULING
@@ -640,6 +701,34 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
+        {selectedAction === IndictmentDecision.COMPLETING &&
+          selectedDecision === CaseIndictmentRulingDecision.RULING &&
+          workingCase.defendants &&
+          workingCase.defendants?.length > 0 && (
+            <Box
+              component="section"
+              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+            >
+              <SelectableList
+                selectAllText="Útivistardómur"
+                items={defendantsWithDefaultJudgments}
+                onChange={(selectableItems: SelectableItem[]) => {
+                  setDefendantsWithDefaultJudgments(selectableItems)
+                }}
+                isLoading={false}
+              />
+            </Box>
+          )}
+        {selectedAction && hasGeneratedCourtRecord && (
+          <Box component="section" marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Þingbók - PDF"
+              pdfType="courtRecord"
+              elementId="Þingbók"
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

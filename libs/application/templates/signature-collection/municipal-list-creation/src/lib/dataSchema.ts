@@ -11,7 +11,7 @@ export const dataSchema = z.object({
   }),
   list: z.object({
     municipality: z.string().min(1),
-    name: z.string().min(1),
+    name: z.string().trim().min(1),
   }),
   confirmCreationCheckbox: z.array(z.enum([YES])).length(1),
 })

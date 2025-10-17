@@ -178,12 +178,48 @@ describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-      application,
-      true,
-    )
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-10')
+  })
+
+  it('should return the selected child adoption date if adoption', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '',
+                adoptionDate: '2021-05-17',
+                dateOfBirth: '2021-01-01',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-01-01',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toEqual('2021-05-17')
   })
 })
 

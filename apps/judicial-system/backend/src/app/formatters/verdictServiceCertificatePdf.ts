@@ -2,10 +2,14 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  getVerdictAppealDecision,
+} from '@island.is/judicial-system/formatters'
+import { hasTimestamp } from '@island.is/judicial-system/types'
 import {
   UserRole,
-  VerdictAppealDecision,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -20,19 +24,6 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-const getVerdictAppealDecision = (
-  verdictAppealDecision?: VerdictAppealDecision,
-): string => {
-  switch (verdictAppealDecision) {
-    case VerdictAppealDecision.ACCEPT:
-      return 'Unir dómi'
-    case VerdictAppealDecision.POSTPONE:
-      return 'Tekur áfrýjunarfrest'
-    default:
-      return 'Ekki skráð'
-  }
-}
-
 const getRole = (userRole?: UserRole) => {
   switch (userRole) {
     case UserRole.DISTRICT_COURT_ASSISTANT: {
@@ -44,12 +35,19 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
-export const createVerdictServiceCertificate = (
-  theCase: Case,
-  defendant: Defendant,
-  verdict: Verdict,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+export const createVerdictServiceCertificate = ({
+  theCase,
+  defendant,
+  verdict,
+  deliveredToDefenderName,
+  formatMessage,
+}: {
+  theCase: Case
+  defendant: Defendant
+  verdict: Verdict
+  deliveredToDefenderName?: string
+  formatMessage: FormatMessage
+}): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -78,9 +76,10 @@ export const createVerdictServiceCertificate = (
   addEmptyLines(doc, 3)
 
   if (verdict.serviceDate) {
+    const format = hasTimestamp(verdict.serviceDate) ? 'PPPp' : 'PPP'
     addMediumCenteredText(
       doc,
-      `Birting tókst ${formatDate(verdict.serviceDate, 'PPPp')}`,
+      `Birting tókst ${formatDate(verdict.serviceDate, format)}`,
       'Times-Bold',
     )
   }
@@ -104,7 +103,7 @@ export const createVerdictServiceCertificate = (
       doc,
       verdict.serviceStatus === VerdictServiceStatus.DEFENDER
         ? `Birt fyrir verjanda ${
-            defendant.defenderName ? `- ${defendant.defenderName}` : '' // TODO: is it guaranteed that this is the correct defender
+            deliveredToDefenderName ? `- ${deliveredToDefenderName}` : ''
           }`
         : verdict.comment || 'Ekki skráð',
       'Times-Roman',
@@ -156,15 +155,21 @@ export const createVerdictServiceCertificate = (
 
   addEmptyLines(doc, 3)
 
-  // TODO: we don't know if a verdict ruling was made when the defendant was not present in court (útivist)
-  // When we have that information stored we have to add the following text for that scenario:
-  // Dómur ásamt leiðbeiningum um rétt til endurupptöku málsins hefur verið birt fyrir dómfellda.
-  addNormalText(
-    doc,
-    'Dómur ásamt leiðbeiningum um áfrýjun og áfrýjunarfrest hefur verið birt fyrir dómfellda.',
-    'Times-Bold',
-    true,
-  )
+  if (verdict.isDefaultJudgement) {
+    addNormalText(
+      doc,
+      'Dómur ásamt leiðbeiningum um rétt til endurupptöku málsins hefur verið birt fyrir dómfellda.',
+      'Times-Bold',
+      true,
+    )
+  } else {
+    addNormalText(
+      doc,
+      'Dómur ásamt leiðbeiningum um áfrýjun og áfrýjunarfrest hefur verið birt fyrir dómfellda.',
+      'Times-Bold',
+      true,
+    )
+  }
 
   addEmptyLines(doc)
   addEmptyLines(doc)

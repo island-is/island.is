@@ -28,7 +28,7 @@ import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
-import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionSummaryReport } from './models/summaryReport.model'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 import { SignatureCollectionAreaInput } from './dto'
@@ -81,6 +81,15 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists(input, admin)
+  }
+
+  @Query(() => [SignatureCollectionList])
+  @Audit()
+  async signatureCollectionAdminListsForCandidate(
+    @CurrentAdmin() admin: SignatureCollectionAdmin,
+    @Args('input') input: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionList[]> {
+    return this.signatureCollectionService.listsForCandidate(input, admin)
   }
 
   @Query(() => SignatureCollectionList)
@@ -241,13 +250,25 @@ export class SignatureCollectionAdminResolver {
     return this.signatureCollectionService.signatureLookup(admin, input)
   }
 
-  @Query(() => SignatureCollectionAreaSummaryReport)
+  @Query(() => SignatureCollectionSummaryReport)
   @Audit()
   async signatureCollectionAreaSummaryReport(
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionAreaSummaryReportInput,
-  ): Promise<SignatureCollectionAreaSummaryReport> {
+  ): Promise<SignatureCollectionSummaryReport> {
     return this.signatureCollectionService.getAreaSummaryReport(input, admin)
+  }
+
+  @Query(() => SignatureCollectionSummaryReport)
+  @Audit()
+  async signatureCollectionAdminCandidateReport(
+    @CurrentAdmin() admin: SignatureCollectionAdmin,
+    @Args('input') input: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return this.signatureCollectionService.getCandidateSummaryReport(
+      input,
+      admin,
+    )
   }
 
   @Mutation(() => SignatureCollectionSuccess)

@@ -3,9 +3,10 @@ import { uuid } from 'uuidv4'
 
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
 import { Case, Defendant, Verdict } from '../../../repository'
 import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: Verdict

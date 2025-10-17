@@ -8,7 +8,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   mapAnswersToApplicationDto,
   mapAnswersToApplicationFilesContentDto,
@@ -35,8 +35,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     )
   }
 
-  async getProperties({ auth }: TemplateApiModuleActionProps) {
+  async getProperties({ auth, application }: TemplateApiModuleActionProps) {
     let properties: Array<Fasteign> = []
+    const otherPropertiesThanIOwn = getValueViaPath<boolean>(
+      application.answers,
+      'otherPropertiesThanIOwnCheckbox',
+    )
 
     // Mock for dev, since there is no dev service for the propertiesApi
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
@@ -65,6 +69,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         this.logger.error('Failed to fetch properties:', e.message)
         throw new TemplateApiError(e, 500)
       }
+    }
+
+    if (properties?.length === 0 && !otherPropertiesThanIOwn) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noPropertiesFoundTitle,
+          summary: coreErrorMessages.noPropertiesFoundSummary,
+        },
+        400,
+      )
     }
 
     return properties
@@ -117,6 +131,20 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       const files = await this.attachmentService.getFiles(application, [
         'photos',
       ])
+
+      const missingFiles = files.filter(
+        (file) => !file.fileContent || file.fileContent.trim().length === 0,
+      )
+
+      if (missingFiles.length > 0) {
+        this.logger.error('Missing file content for attachments', {
+          missingKeys: missingFiles.map((file) => file.key),
+        })
+        throw new TemplateApiError(
+          'Failed to submit application, missing file content',
+          500,
+        )
+      }
 
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)

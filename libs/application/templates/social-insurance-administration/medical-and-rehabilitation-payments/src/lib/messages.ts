@@ -40,7 +40,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     managedBy: {
       id: 'marp.application:managed.by',
-      defaultMessage: 'Utanumhaldandi',
+      defaultMessage: 'Utanumhald',
       description: 'Managed by',
     },
     location: {
@@ -104,6 +104,31 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Ég staðfesti að upplýsingar að ofan eru réttar, enda eru þær forsenda fyrir áframhaldandi sjúkragreiðslum.',
       description:
         'I confirm that the above information is correct, as it is a prerequisite for ongoing medical payments.',
+    },
+    serviceProvider: {
+      id: 'marp.application:service.provider',
+      defaultMessage: 'Þjónustuaðili',
+      description: 'Service Provider',
+    },
+    treatmentTypes: {
+      id: 'marp.application:treatment.types',
+      defaultMessage: 'Tegundir meðferða',
+      description: 'Treatment types',
+    },
+    hasPreviousApproval: {
+      id: 'marp.application:has.previous.approval',
+      defaultMessage: 'Umsækjandi hefur áður nýtt sér úrræði',
+      description: 'The applicant has previously used resources',
+    },
+    previousApplicationDetails: {
+      id: 'marp.application:has.previous.application.details',
+      defaultMessage: 'Fyrri meðferð eða endurhæfing',
+      description: 'Previous treatment or rehabilitation',
+    },
+    otherTreatmentDescription: {
+      id: 'marp.application:other.treatment.description',
+      defaultMessage: 'Lýsing á annari meðferð',
+      description: 'Description of other treatment',
     },
   }),
 
@@ -176,9 +201,9 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     title: {
       id: 'marp.application:not.eligible.title',
       defaultMessage:
-        'Því miður átt þú ekki rétt á sjúkra- og endurhæfingargreiðslum',
+        'Því miður getur þú ekki sótt um sjúkra- og endurhæfingargreiðslur',
       description:
-        'Unfortunately, you are not eligible for medical and rehabilitation payments.',
+        'Unfortunately, you are not able to proceed with a medical and rehabilitation payments application',
     },
     applicantAlreadyHasPendingApplicationDescription: {
       id: 'marp.application:not.eligible.already.has.pending.applcation.description#markdown',
@@ -229,6 +254,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    baseCertDisabilityDateEmptyDescription: {
+      id: 'marp.application:not.eligible.base.cert.disability.date.empty.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert með grunnvottorð sem staðfestingu á óvinnufærni. Í grunnvottorðinu er ekki skilgreind dagsetning hvenær óvinnufærni átti sér stað. Þessi dagsetning verður að vera skilgreind.\n\nÞú þarft að hafa samband við þann aðila sem gefur út grunnvottorðið og láta tilgreina dagsetningu hvenær óvinnufærni átti sér stað, og láta uppfæra vottorðið eða senda inn nýtt.\n\nÞá getur þú reynt aftur að sækja um.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You have a certificate that confirms reduced capacity. The certificate does not include a date when disability occurred. This date must be defined.\n\nYou must contact the entity that issued the certificate and request that they include a date when incapacity occurred, have the certificated update or have a new one created.\n\nWhen this is done, you can apply again.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     latestMedicalDocumentNotFoundDescription: {
       id: 'marp.application:not.eligible.latest.medical.doc.not.found.description#markdown',
       defaultMessage:
@@ -242,6 +274,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         '* Ekki tókst að stofna viðskiptamann. Vinsamlegast reynið aftur síðar.\n\nEf vandamálið heldur áfram, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
         '* Unable to create user. Please try again later.\n\nIf the issue persists, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    unexpectedErrorDescription: {
+      id: 'marp.application:not.eligible.unexpected.error.description#markdown',
+      defaultMessage:
+        '* Óskilgreind villa kom upp við að sækja gögn eða staðfesta að þú uppfyllir skilyrði til þess að fá að sækja um sjúkra- og endurhæfingargreiðslur.\n\nVinsamlegast reyndu aftur síðar þar sem tenging við ytri aðila gæti legið niðri.\n\nEf þessi villa kemur aftur, vinsamlegast afritaðu textann, skráðu þig inn á minarsidur.tr.is og smelltu á "Hafa samband", smelltu svo á "Sjúkra- og endurhæfingargreiðslur" kassann og límdu svo textann af villunni inn í erindið og sendu það.',
+      description:
+        '* An unexpected error occurred while fetching data or confirming that you fulfil all conditions to be eligible for medical and rehabilitation payments.\n\nPlease try again later as an external connection could be temporarily unavailable.\n\nIf this error occurs again, please copy this text, sign into minarsidur.tr.is and navigate to “Hafa samband”, press the "Sjúkra- og endurhæfingargreiðslur" box and paste the error text into your message and send it.',
     },
   }),
 
@@ -598,18 +637,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Confirmation that you have a plan for vocational rehabilitation or treatment with an approved professional.',
     },
 
-    // Service Provider
-    serviceProvider: {
-      id: 'marp.application:rehabilitation.plan.service.provider',
-      defaultMessage: 'Þjónustuaðili: {serviceProvider}',
-      description: 'Service Provider: {serviceProvider}',
-    },
-    serviceProviderRehabilitationProvider: {
-      id: 'marp.application:rehabilitation.plan.service.provider.rehabilitation.provider',
-      defaultMessage: 'Endurhæfingaraðili',
-      description: 'Rehabilitation provider',
-    },
-
     // Information
     informationCurrentPosition: {
       id: 'marp.application:rehabilitation.plan.information.current.position',
@@ -775,6 +802,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'How is the applicant at participating in leisure activities, social activities or other events outside of the home.',
     },
+    comprehensiveAssessmentExpression: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.expression',
+      defaultMessage: 'Tjáskipti',
+      description: 'Expression',
+    },
 
     // Rehabilitation objective
     rehabilitationObjective: {
@@ -872,27 +904,19 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
 
     // Information
-    informationFurtherExplanationOfPreviousTreatment: {
-      id: 'marp.application:confirmed.treatment.information.further.explanation.of.previous.treatment',
-      defaultMessage: 'Nánari útskýring á fyrri meðferð',
-      description: 'Further explanation of previous treatment',
-    },
-    informationInformationRegardingTreatment: {
-      id: 'marp.application:confirmed.treatment.information.information.regarding.treatment',
-      defaultMessage: 'Upplýsingar um meðferð',
-      description: 'Information regarding treatment',
-    },
-    informationTreatmentType: {
-      id: 'marp.application:confirmed.treatment.information.treatment.type',
-      defaultMessage: 'Tegund meðferðar',
-      description: 'Treatment type',
+    informationHasPreviousApproval: {
+      id: 'marp.application:confirmed.treatment.information.has.previous.approval',
+      defaultMessage:
+        'Umsækjandi hefur áður verið í viðurkenndri meðferð eða endurhæfingu',
+      description:
+        'The applicant has previously been in confirmed treatment or rehabilitation',
     },
   }),
 
   confirmationOfPendingResolution: defineMessages({
     sectionTitle: {
       id: 'marp.application:confirmation.of.pending.resolution.section.title',
-      defaultMessage: 'Staðfesting á bið eftir úrræðum',
+      defaultMessage: 'Staðfesting á bið eftir úrræði',
       description: 'Confirmation of pending resolution',
     },
     description: {
@@ -906,18 +930,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     // Information
     informationResources: {
       id: 'marp.application:confirmation.of.pending.resolution.information.resources',
-      defaultMessage: 'Hvaða úrræði hefur verið sótt um og beðið er eftir:',
-      description: 'What resources have been requested and are still awaited:',
-    },
-    informationPreviousResourcesUsed: {
-      id: 'marp.application:confirmation.of.pending.resolution.information.previous.resources.used',
-      defaultMessage: 'Fyrri úrræði sem hafa verið nýtt',
-      description: 'Previous resources used',
-    },
-    informationFurtherExplanation: {
-      id: 'marp.application:confirmation.of.pending.resolution.information.further.explanation',
-      defaultMessage: 'Nánari útskýring',
-      description: 'Further explanation',
+      defaultMessage: 'Hvaða úrræði hefur verið sótt um og beðið er eftir',
+      description: 'What resources have been requested and are still awaited',
     },
 
     // Application for medical and rehabilitation payments
@@ -953,10 +967,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
 
     // Information
-    informationProgress: {
-      id: 'marp.application:confirmation.of.ill.health.information.progress',
-      defaultMessage: 'Upplýsingar um framvindu',
-      description: 'Information regarding progress',
+    informationCurrentMedicalStatus: {
+      id: 'marp.application:confirmation.of.ill.health.information.current.medical.status',
+      defaultMessage: 'Núverandi heilsubrestur',
+      description: 'Current ill health',
     },
 
     // Application for medical and rehabilitation payments

@@ -846,6 +846,21 @@ export const coreErrorMessages = defineMessages({
       'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
     description: 'No contract found summary',
   },
+  noPropertiesFoundTitle: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundTitle',
+    defaultMessage: 'Engar eignir fundust',
+    description: 'No properties found title',
+  },
+  noPropertiesFoundSummary: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundSummary',
+    defaultMessage: 'Engar eignir fundust skráðar fyrir þessa kennitölu.',
+    description: 'No properties found summary',
+  },
+  needToFinishRegistration: {
+    id: 'application.system:core.fetch.data.needToFinishRegistration',
+    defaultMessage: 'Vantar að klára skráningu',
+    description: 'Need to finish registration to continue',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

@@ -27,6 +27,10 @@ type LanguageTogglerProps = {
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
+  hrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export const LanguageToggler = ({
@@ -35,6 +39,7 @@ export const LanguageToggler = ({
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
+  hrefOverride,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
@@ -49,6 +54,10 @@ export const LanguageToggler = ({
   const getOtherLanguagePath = async () => {
     if (showDialog) {
       return null
+    }
+
+    if (hrefOverride?.[otherLanguage]) {
+      return goToOtherLanguagePage(hrefOverride[otherLanguage])
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
@@ -148,14 +157,24 @@ export const LanguageToggler = ({
       }
     }
 
-    // Special case for grants search since it's a custom page and doesn't have a title in english
+    // Special case for grants since it's a custom page and doesn't have slugs or title in english
     if ((type as string) === 'grantsplazasearch') {
       title = {
         is: 'Styrkjatorg - Leit',
-        en: 'Grantplaza - Search',
+        en: 'Grantsplaza - Search',
       }
     }
 
+    if ((type as string) === 'grantsplaza') {
+      title = {
+        is: 'Styrkjatorg',
+        en: 'Grantsplaza',
+      }
+
+      return goToOtherLanguagePage(
+        linkResolver('grantsplaza', [], otherLanguage).href,
+      )
+    }
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.

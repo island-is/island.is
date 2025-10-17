@@ -14,7 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { Answers, EstateMember, heirAgeValidation } from '../../types'
+import {
+  Answers,
+  EstateMember,
+  heirAgeValidation,
+  heirNationalIdSameAsExecutorValidation,
+} from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -34,6 +39,7 @@ import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
   PrePaidHeirsRelations,
+  RelationCharity,
   RelationSpouse,
 } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
@@ -58,12 +64,16 @@ export const HeirsRepeater: FC<
     name: id,
   })
 
+  const [
+    hasHeirWithNationalIdSameAsExecutor,
+    setHasHeirWithNationalIdSameAsExecutor,
+  ] = useState(false)
+
   const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
 
   const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
     return x.relation
   })
-
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
@@ -107,6 +117,13 @@ export const HeirsRepeater: FC<
         type: 'custom',
       })
       return [false, 'invalid member age']
+    }
+
+    if (hasHeirWithNationalIdSameAsExecutor) {
+      setError(heirNationalIdSameAsExecutorValidation, {
+        type: 'custom',
+      })
+      return [false, 'heir nationalId matches executor nationalId']
     }
 
     return [true, null]
@@ -247,28 +264,28 @@ export const HeirsRepeater: FC<
       const withCustomPercentage =
         (100 - Number(customSpouseSharePercentage)) * 2
 
+      const isCharity = currentHeir?.relation === RelationCharity
+
       // This is a complicated calculation that's difficult to reason about.
       // It's been confirmed to work to DC's standards and thus it remains
       // functionally unaltered when calculating the augmented percentageSplit
       // for heir percentages that finally add up to 100 (during user input)
       let taxFreeInheritanceValue
-      if (roughlySumsTo100) {
-        const taxablePropertySplit = integerPercentageSplit(
-          inheritanceTaxFreeLimit,
-          heirPercentages,
-        )
-        const heirSplit = taxablePropertySplit[index ?? 0]
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * heirSplit
-          : heirSplit
+
+      if (isCharity) {
+        taxFreeInheritanceValue = inheritanceValue
+      } else if (isSpouse) {
+        taxFreeInheritanceValue = inheritanceValue
       } else {
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
+        const baseAmount = roughlySumsTo100
+          ? integerPercentageSplit(inheritanceTaxFreeLimit, heirPercentages)[
+              index ?? 0
+            ]
           : inheritanceTaxFreeLimit * percentage
+
+        taxFreeInheritanceValue = customSpouseSharePercentage
+          ? (withCustomPercentage / 100) * baseAmount
+          : baseAmount
       }
 
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
@@ -320,11 +337,15 @@ export const HeirsRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!hasHeirWithNationalIdSameAsExecutor) {
+      clearErrors(heirNationalIdSameAsExecutorValidation)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
+    hasHeirWithNationalIdSameAsExecutor,
     clearErrors,
   ])
 
@@ -353,6 +374,25 @@ export const HeirsRepeater: FC<
       setValue('heirs.hasModified', true)
     }
   }, [])
+
+  useEffect(() => {
+    const executorNationalId = getValueViaPath(
+      answers,
+      'executors.executor.nationalId',
+    )
+    const spouseNationalId = getValueViaPath(
+      answers,
+      'executors.spouse.nationalId',
+    )
+
+    const match = values.heirs.data.some(
+      (field: any) =>
+        field.nationalId === executorNationalId ||
+        field.nationalId === spouseNationalId,
+    )
+    setHasHeirWithNationalIdSameAsExecutor(match)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values])
 
   return (
     <Box>
@@ -642,7 +682,7 @@ export const HeirsRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error[index] ?? null}
+              error={error[index] ?? error}
               isPrepaid={isPrePaidApplication}
             />
           </Box>
@@ -664,6 +704,12 @@ export const HeirsRepeater: FC<
         <Box marginTop={4}>
           <InputError
             errorMessage={formatMessage(m.inheritanceAgeValidation)}
+          />
+        </Box>
+      ) : errors && errors[heirNationalIdSameAsExecutorValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.heirNationalIdValidation)}
           />
         </Box>
       ) : null}

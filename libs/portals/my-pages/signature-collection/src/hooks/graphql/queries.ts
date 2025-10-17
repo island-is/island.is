@@ -106,6 +106,7 @@ export const GetListsForUser = gql`
       candidate {
         ownerName
         ownerBirthDate
+        name
       }
       endTime
       startTime
@@ -203,6 +204,25 @@ export const getPdfReport = gql`
       nrOfSignatures
       nrOfDigitalSignatures
       nrOfPaperSignatures
+      areaName
+    }
+  }
+`
+
+export const getPdfReportPresidentialCandidate = gql`
+  query signatureCollectionCandidateReport(
+    $input: SignatureCollectionCandidateIdInput!
+  ) {
+    signatureCollectionCandidateReport(input: $input) {
+      id
+      name
+      lists {
+        candidateName
+        listName
+        nrOfSignatures
+        nrOfDigitalSignatures
+        nrOfPaperSignatures
+      }
     }
   }
 `

@@ -23,7 +23,12 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
-import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
+import {
+  ListSummary,
+  mapCandidateSummaryReport,
+  mapListSummary,
+  SummaryReport,
+} from './types/summaryReport.dto'
 type Api =
   | MedmaelalistarApi
   | MedmaelasofnunApi
@@ -274,59 +279,63 @@ export class SignatureCollectionClientService {
     { collectionId, candidateId, areas, collectionType }: AddListsInput,
     auth: User,
   ): Promise<Success> {
-    const {
-      id,
-      isActive,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(collectionType)
+    try {
+      const {
+        id,
+        isActive,
+        areas: collectionAreas,
+      } = await this.getLatestCollectionForType(collectionType)
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
-      throw new Error('Collection is not open')
-    }
-    // check if user is already owner of lists
-
-    const { canCreate, canCreateInfo, name } = await this.getSignee(
-      auth,
-      collectionType,
-    )
-    if (!canCreate) {
-      // allow parliamentary owners to add more areas to their collection
-      const isPresidential = collectionType === CollectionType.Presidential
-      if (
-        !isPresidential &&
-        !(
-          canCreateInfo?.length === 1 &&
-          canCreateInfo[0] === ReasonKey.AlreadyOwner
-        )
-      ) {
-        return { success: false, reasons: canCreateInfo }
+      // check if collectionId is current collection and current collection is open
+      if (collectionId !== id.toString() || !isActive) {
+        throw new Error('Collection is not open')
       }
+      // check if user is already owner of lists
+
+      const { canCreate, canCreateInfo, name } = await this.getSignee(
+        auth,
+        collectionType,
+      )
+      if (!canCreate) {
+        // allow parliamentary owners to add more areas to their collection
+        const isPresidential = collectionType === CollectionType.Presidential
+        if (
+          !isPresidential &&
+          !(
+            canCreateInfo?.length === 1 &&
+            canCreateInfo[0] === ReasonKey.AlreadyOwner
+          )
+        ) {
+          return { success: false, reasons: canCreateInfo }
+        }
+      }
+
+      const filteredAreas = areas
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      const lists = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarPost({
+        medmaelalistarRequestDTO: {
+          frambodID: parseInt(candidateId),
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: parseInt(area.id),
+            listiNafn: `${name} - ${area.name}`,
+          })),
+        },
+      })
+
+      if (filteredAreas.length !== lists.length) {
+        throw new Error('Not all lists created')
+      }
+      return { success: true }
+    } catch {
+      return { success: false }
     }
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarPost({
-      medmaelalistarRequestDTO: {
-        frambodID: parseInt(candidateId),
-        medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: parseInt(area.id),
-          listiNafn: `${name} - ${area.name}`,
-        })),
-      },
-    })
-
-    if (filteredAreas.length !== lists.length) {
-      throw new Error('Not all lists created')
-    }
-    return { success: true }
   }
 
   async signList(
@@ -725,6 +734,23 @@ export class SignatureCollectionClientService {
       return { success: res.bladsidaNr === pageNumber }
     } catch {
       return { success: false }
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 }

@@ -1,13 +1,16 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import {
   Case,
+  CreateVerdictsInput,
   Defendant,
   UpdateVerdictInput,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useCreateVerdictsMutation } from './createVerdicts.generated'
+import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
 import { useVerdictQuery } from './verdict.generated'
 
@@ -41,7 +44,25 @@ const useVerdict = (currentVerdict?: Verdict) => {
   )
 
   const [updateVerdictMutation] = useUpdateVerdictMutation()
+  const [createVerdictsMutation] = useCreateVerdictsMutation()
 
+  const createVerdicts = useCallback(
+    async (verdictsToCreate: CreateVerdictsInput) => {
+      try {
+        const { data } = await createVerdictsMutation({
+          variables: {
+            input: verdictsToCreate,
+          },
+        })
+
+        return Boolean(data)
+      } catch (error) {
+        toast.error('Upp kom villa við að uppfæra mál')
+        return false
+      }
+    },
+    [createVerdictsMutation],
+  )
   const updateVerdict = useCallback(
     async (updateVerdict: UpdateVerdictInput) => {
       try {
@@ -72,6 +93,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
   )
 
   const skip =
+    !currentVerdict ||
     !currentVerdict?.externalPoliceDocumentId ||
     Boolean(currentVerdict?.serviceStatus)
   const {
@@ -90,10 +112,29 @@ const useVerdict = (currentVerdict?: Verdict) => {
     errorPolicy: 'all',
   })
 
+  const [deliverCaseVerdictMutation] = useDeliverCaseVerdictMutation()
+
+  const deliverCaseVerdict = useMemo(
+    () => async (caseId: string) => {
+      try {
+        const result = await deliverCaseVerdictMutation({
+          variables: { input: { caseId } },
+        })
+        return result.data?.deliverCaseVerdict?.queued ?? false
+      } catch (error) {
+        toast.error('Upp kom villa við senda dóm í birtingu')
+        return false
+      }
+    },
+    [deliverCaseVerdictMutation],
+  )
+
   return {
     verdict: skip || error ? currentVerdict : data?.verdict,
     verdictLoading: skip ? false : verdictLoading,
     setAndSendVerdictToServer,
+    createVerdicts,
+    deliverCaseVerdict,
   }
 }
 

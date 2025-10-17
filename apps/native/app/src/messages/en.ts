@@ -1,6 +1,11 @@
 import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
+  // General buttons
+  'button.change': 'Change',
+  'button.open': 'Open',
+  'button.moreInfoHere': 'More info here',
+
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
@@ -639,6 +644,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Loftbru closed',
+  'airDiscount.disabledDescription':
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',
@@ -706,6 +714,12 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.basicInformation': 'Basic information',
+  'health.overview.bloodType': 'Blood group',
+  'health.overview.bloodTypeDescription': 'Your blood group is {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'No blood type registered',
+  'health.overview.dentist': 'Dentist',
+  'health.overview.noDentistRegistered': 'No dentist registered',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',

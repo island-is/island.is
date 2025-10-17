@@ -10,11 +10,13 @@ import {
   Feature,
   isCompletedCase,
   isDefenceUser,
+  isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -174,7 +176,7 @@ const IndictmentOverview: FC = () => {
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.defendants?.map(
             (defendant) =>
-              features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+              features?.includes(Feature.VERDICT_DELIVERY) &&
               defendant.verdict && (
                 <Box
                   key={`${defendant.id}${defendant.verdict.id}`}
@@ -247,6 +249,19 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
+          {isCompletedCase(workingCase.state) &&
+            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            )}
           {(hasLawsBroken || hasMergeCases) && (
             <Box marginBottom={5}>
               {/* 

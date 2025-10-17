@@ -7,11 +7,15 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
+  Conclusion,
   CourtCaseInfo,
   FeatureContext,
   FormContentContainer,
@@ -157,24 +161,20 @@ export const Overview = () => {
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
 
-          if (!verdict) {
-            return null
-          }
-
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
           const isServiceRequired =
-            verdict.serviceRequirement === ServiceRequirement.REQUIRED
+            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
           const isServiceNotApplicable =
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) && (
+                {features?.includes(Feature.VERDICT_DELIVERY) && verdict && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
@@ -279,6 +279,21 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
+        {workingCase.courtSessions?.at(-1)?.ruling &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+            <Box marginBottom={5} component="section">
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in
         indictment cases
