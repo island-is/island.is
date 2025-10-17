@@ -1,5 +1,5 @@
 import { buildForm } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { FormModes } from '@island.is/application/types'
 import { basicInfoSection } from './basicInfoSection'
 import { disabilityCertificateSection } from './disabilityCertificate'
@@ -11,7 +11,7 @@ import { conclusionSection } from './conclusion'
 export const MainForm = buildForm({
   id: 'disabilityPensionMain',
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

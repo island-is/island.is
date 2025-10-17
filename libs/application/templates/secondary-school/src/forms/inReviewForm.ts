@@ -8,11 +8,11 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 
 export const InReview: Form = buildForm({
   id: 'InReviewForm',
-  logo: Logo,
+  logo: MmsLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

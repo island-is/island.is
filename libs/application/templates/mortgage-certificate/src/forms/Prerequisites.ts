@@ -14,11 +14,11 @@ import {
   MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { confirmation, externalData, payment, property } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,

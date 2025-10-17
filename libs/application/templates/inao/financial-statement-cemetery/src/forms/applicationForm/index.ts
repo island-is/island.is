@@ -4,7 +4,7 @@ import { m } from '../../lib/messages'
 import { cemeteryKeyNumbersSection } from './cemeteryKeyNumbersSection'
 import { cemeteryCaretekerSection } from './cemeteryCaretakerSection'
 import { cemeteryFinancialStatementSection } from './cemeteryFinancialStatementSection'
-import Logo from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 import { clientInfoSection } from './clientInfoSection'
 import { overviewSection } from './overviewSection'
 import { conclusionSection } from './conclusionSection/conclusionSection'
@@ -14,7 +14,7 @@ export const FinancialStatementCemeteryForm: Form = buildForm({
   title: m.applicationTitle,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  logo: Logo,
+  logo: InaoLogo,
   children: [
     clientInfoSection,
     cemeteryKeyNumbersSection,

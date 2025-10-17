@@ -11,11 +11,11 @@ import {
   review,
   conclusion,
 } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const ReviewSellerForm: Form = buildForm({
   id: 'ReviewSellerForm',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({

@@ -2,13 +2,13 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information } from './sections/information'
 import { overview } from './sections/overview'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Draft: Form = buildForm({
   id: 'PresidentialListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [information, overview],
 })

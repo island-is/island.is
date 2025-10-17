@@ -15,7 +15,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   BankAccountType,
   fileUploadSharedProps,
@@ -54,7 +54,7 @@ import {
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

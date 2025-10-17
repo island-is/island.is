@@ -6,14 +6,14 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
 
 export const ResidenceGrant: Form = buildForm({
   id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

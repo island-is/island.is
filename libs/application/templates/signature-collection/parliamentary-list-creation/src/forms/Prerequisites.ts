@@ -22,14 +22,14 @@ import {
   CandidateApi,
 } from '../dataProviders'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',

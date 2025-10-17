@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 import { externalData } from '../lib/messages'
 import {
   NationalRegistryCustodiansApi,
@@ -18,7 +18,7 @@ import {
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  logo: Logo,
+  logo: MmsLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

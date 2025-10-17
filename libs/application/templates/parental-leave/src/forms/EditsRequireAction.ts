@@ -5,7 +5,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { States as ApplicationStates } from '../constants'
 import {
   inReviewFormMessages,
@@ -15,7 +15,7 @@ import {
 export const EditsRequireAction: Form = buildForm({
   id: 'ParentalLeaveEditsRequireAction',
   title: inReviewFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
   children: [
     buildSection({

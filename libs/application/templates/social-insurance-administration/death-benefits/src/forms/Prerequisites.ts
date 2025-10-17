@@ -23,13 +23,13 @@ import {
   SocialInsuranceAdministrationSpousalInfo,
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { isEligible } from '../lib/deathBenefitsUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'DeathBenefitsPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,

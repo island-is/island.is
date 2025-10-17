@@ -10,12 +10,12 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { conclusion, overview } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 import { applicationDataHasBeenPruned, checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
-  logo: Logo,
+  logo: MmsLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
