@@ -41,7 +41,49 @@
         "security": [{ "basic": [] }]
       }
     },
-    "/Booking/GetPublishedBookings/{court}": {
+    "/Booking/DeleteBooking": {
+      "delete": {
+        "tags": ["Booking"],
+        "summary": "Delete a room booking entry from public registry.",
+        "operationId": "DeleteBooking",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "casePublicationID",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "bookingPublicationID",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Booking/GetPublishedBookings": {
       "get": {
         "tags": ["Booking"],
         "summary": "Get published bookings by court",
@@ -50,10 +92,19 @@
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
-            "name": "court",
-            "in": "path",
-            "description": "Published bookings per court",
-            "required": true,
+            "name": "courts",
+            "in": "query",
+            "description": "Published bookings per court/s. If no values provided bookings for all courts will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "lawyer",
+            "in": "query",
+            "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
+            "required": false,
             "type": "string"
           },
           {
@@ -2069,6 +2120,8 @@
         "caseNumber": { "$ref": "#/definitions/DetailedCaseNumber" },
         "caseNumberRaw": { "type": "string" },
         "caseTitle": { "$ref": "#/definitions/DetailedCaseTitle" },
+        "caseSubType": { "type": "string" },
+        "court": { "$ref": "#/definitions/CourtModel" },
         "scheduleDate": { "format": "date-time", "type": "string" },
         "scheduleToDate": { "format": "date-time", "type": "string" },
         "courtRoom": { "type": "string" },
@@ -2098,6 +2151,13 @@
       "properties": {
         "html": { "type": "string" },
         "raw": { "type": "string" }
+      }
+    },
+    "CourtModel": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" }
       }
     },
     "JudgeModel": {
@@ -2737,6 +2797,7 @@
         "court": { "type": "string" },
         "caseNumber": { "type": "string" },
         "caseType": { "type": "string" },
+        "caseSubType": { "type": "string" },
         "caseTitleHtml": { "type": "string" },
         "caseTitleRaw": { "type": "string" },
         "publishDate": { "type": "string" },
@@ -2804,6 +2865,7 @@
         "court": { "type": "string" },
         "caseNumber": { "type": "string" },
         "caseType": { "type": "string" },
+        "caseSubType": { "type": "string" },
         "caseTitleHtml": { "type": "string" },
         "caseTitleRaw": { "type": "string" },
         "publishDate": { "format": "date-time", "type": "string" },
@@ -3420,7 +3482,7 @@
       "type": "object",
       "properties": {
         "searchTerm": { "type": "string" },
-        "courtLevel": { "type": "string" },
+        "courts": { "type": "array", "items": { "type": "string" } },
         "caseCategories": { "type": "array", "items": { "type": "string" } },
         "caseTypes": { "type": "array", "items": { "type": "string" } },
         "caseNumber": { "type": "string" },
@@ -3468,7 +3530,7 @@
           "type": "string",
           "example": "00000000-0000-0000-0000-000000000000"
         },
-        "court": { "type": "string" },
+        "court": { "$ref": "#/definitions/CourtModel" },
         "caseId": {
           "format": "uuid",
           "type": "string",
