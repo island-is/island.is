@@ -760,6 +760,13 @@ export class Case extends Model {
   indictmentCounts?: IndictmentCount[]
 
   /**********
+   * Indicates whether the indictment case should have court sessions
+   ***********/
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @ApiPropertyOptional({ type: Boolean })
+  withCourtSessions!: boolean
+
+  /**********
    * The case's court sessions
    **********/
   @HasMany(() => CourtSession, 'caseId')

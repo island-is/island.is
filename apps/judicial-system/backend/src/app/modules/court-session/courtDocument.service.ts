@@ -13,7 +13,7 @@ export class CourtDocumentService {
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
   ) {}
 
-  async create(
+  create(
     caseId: string,
     createDto: CreateCourtDocument,
     transaction: Transaction,
@@ -23,7 +23,7 @@ export class CourtDocumentService {
     })
   }
 
-  async createInCourtSession(
+  createInCourtSession(
     caseId: string,
     courtSessionId: string,
     createDto: CreateCourtDocument,
@@ -37,7 +37,7 @@ export class CourtDocumentService {
     )
   }
 
-  async update(
+  update(
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
@@ -53,7 +53,7 @@ export class CourtDocumentService {
     )
   }
 
-  async fileInCourtSession(
+  fileInCourtSession(
     caseId: string,
     courtDocumentId: string,
     fileDto: FileCourtDocumentInCourtSessionDto,

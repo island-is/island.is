@@ -74,10 +74,7 @@ export class CourtDocumentController {
       this.courtDocumentService.createInCourtSession(
         caseId,
         courtSessionId,
-        {
-          ...createDto,
-          documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
-        },
+        { ...createDto, documentType: CourtDocumentType.EXTERNAL_DOCUMENT },
         transaction,
       ),
     )

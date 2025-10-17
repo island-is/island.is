@@ -221,6 +221,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
     }
+    withCourtSessions
     courtSessions {
       id
       startDate
@@ -245,6 +246,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      withCourtSessions
       courtSessions {
         id
         startDate

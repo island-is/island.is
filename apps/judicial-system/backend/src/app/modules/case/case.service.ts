@@ -46,7 +46,6 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
-  hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -1139,14 +1138,7 @@ export class CaseService {
       body: { type: CaseNotificationType.RULING },
     })
 
-    if (
-      hasGeneratedCourtRecordPdf(
-        theCase.state,
-        theCase.indictmentRulingDecision,
-        theCase.courtSessions,
-        user,
-      )
-    ) {
+    if (theCase.withCourtSessions) {
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
         user,
@@ -1949,7 +1941,7 @@ export class CaseService {
     }
   }
 
-  private async handleStateChangeEventLogUpdatesForIndictments(
+  private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1977,7 +1969,7 @@ export class CaseService {
     }
   }
 
-  private async handleStateChangeEventLogUpdatesForRequest(
+  private handleStateChangeEventLogUpdatesForRequest(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -2005,7 +1997,7 @@ export class CaseService {
     }
   }
 
-  private async handleStateChangeEventLogUpdates(
+  private handleStateChangeEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -2042,7 +2034,7 @@ export class CaseService {
     }
   }
 
-  private async handleCreateFirstCourtSession(
+  private handleCreateFirstCourtSession(
     theCase: Case,
     transaction: Transaction,
   ) {
@@ -2052,96 +2044,7 @@ export class CaseService {
     }
 
     // Create the first court session and then add court documents to it
-    const courtSession = await this.courtSessionService.create(
-      theCase.id,
-      transaction,
-    )
-
-    // Start with the generated indictment PDF
-    await this.courtDocumentService.createInCourtSession(
-      theCase.id,
-      courtSession.id,
-      {
-        documentType: CourtDocumentType.GENERATED_DOCUMENT,
-        name: 'Ákæra',
-        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
-      },
-      transaction,
-    )
-
-    const caseFiles = theCase.caseFiles ?? []
-
-    // Add all criminal records
-    for (const caseFile of caseFiles.filter(
-      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
-
-    // Add all cost breakdowns
-    for (const caseFile of caseFiles.filter(
-      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
-
-    // Add all case files records
-    for (const policeCaseNumber of theCase.policeCaseNumbers) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.GENERATED_DOCUMENT,
-          name: `Skjalaskrá ${policeCaseNumber}`,
-          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}`,
-        },
-        transaction,
-      )
-    }
-
-    // Add all remaining case files
-    for (const caseFile of caseFiles?.filter(
-      (file) =>
-        file.category &&
-        [
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIM,
-        ].includes(file.category),
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
+    return this.courtSessionService.create(theCase, transaction)
   }
 
   private async handleEventLogUpdatesForIndictments(
@@ -2174,7 +2077,7 @@ export class CaseService {
       updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
     if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-      await this.eventLogService.createWithUser(
+      return this.eventLogService.createWithUser(
         EventType.COURT_DATE_SCHEDULED,
         theCase.id,
         user,
@@ -2199,7 +2102,7 @@ export class CaseService {
     }
 
     if (isIndictmentCase(theCase.type)) {
-      await this.handleEventLogUpdatesForIndictments(
+      return this.handleEventLogUpdatesForIndictments(
         theCase,
         updatedCase,
         user,
@@ -2279,7 +2182,8 @@ export class CaseService {
         }
 
         // Handle first court session creation if receiving an indictment case
-        if (isReceivingIndictmentCase) {
+        // which should have court sessions
+        if (isReceivingIndictmentCase && theCase.withCourtSessions) {
           await this.handleCreateFirstCourtSession(theCase, transaction)
         }
 
@@ -2300,6 +2204,15 @@ export class CaseService {
                   updatedArraignmentDate?.location,
                   defendant.subpoenaType,
                 )
+
+                // Only add a court document if a court session exists
+                if (
+                  !theCase.withCourtSessions ||
+                  !theCase.courtSessions ||
+                  theCase.courtSessions.length === 0
+                ) {
+                  return
+                }
 
                 const name = `Fyrirkall ${defendant.name} ${formatDate(
                   subpoena.created,

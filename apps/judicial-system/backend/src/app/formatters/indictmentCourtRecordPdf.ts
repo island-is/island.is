@@ -57,7 +57,7 @@ export const createIndictmentCourtRecordPdf = (
   let nrOfFiledDocuments = 0
 
   for (const courtSession of theCase.courtSessions ?? []) {
-    if (!courtSession.endDate && !showOpenCourtSession) {
+    if (!courtSession.isConfirmed && !showOpenCourtSession) {
       break
     }
 

@@ -1,9 +1,13 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
-import { Accordion, Box, Button } from '@island.is/island-ui/core'
-import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
+import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import {
+  INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_CONCLUSION_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -13,56 +17,62 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 
 const CourtRecord: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { user } = useContext(UserContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
-  const { createCourtSession, updateCourtSession } = useCourtSessions()
+  const { createCourtSession } = useCourtSessions()
   const [expandedIndex, setExpandedIndex] = useState<number>()
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
+    workingCase.courtSessions,
+    user,
+  )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
 
-  const stepIsValid = isIndictmentCourtRecordStepValid(
-    workingCase.courtSessions,
-  )
-
-  const handleConfirmClick = (
-    courtSessionId: string,
-    isConfirmed: boolean | null = false,
-  ) => {
-    setWorkingCase((prev) => ({
-      ...prev,
-      courtSessions: prev.courtSessions?.map((session) =>
-        session.id === courtSessionId
-          ? { ...session, isConfirmed: !isConfirmed }
-          : session,
-      ),
-    }))
-
-    updateCourtSession({
-      courtSessionId,
+  const handleCreateCourtSession = async () => {
+    const courtSession = await createCourtSession({
       caseId: workingCase.id,
-      isConfirmed: !isConfirmed,
     })
+
+    if (!courtSession?.id) {
+      return
+    }
+
+    refreshCase()
   }
 
   useEffect(() => {
     if (
       workingCase.courtSessions?.length &&
-      workingCase.courtSessions?.length >= 0
+      workingCase.courtSessions.length > 0
     ) {
       setExpandedIndex(workingCase.courtSessions.length - 1)
     }
   }, [workingCase.courtSessions?.length])
+
+  const stepIsValid = isIndictmentCourtRecordStepValid(
+    workingCase.courtSessions,
+  )
+
+  const canCreateCourtSession =
+    !workingCase.courtSessions ||
+    workingCase.courtSessions.length === 0 ||
+    (stepIsValid && workingCase.courtSessions.every((c) => c.isConfirmed))
 
   return (
     <PageLayout
@@ -76,74 +86,65 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Accordion dividerOnTop={false} singleExpand>
-          {workingCase.courtSessions?.map((courtSession, index) => (
-            <CourtSessionAccordionItem
-              key={courtSession.id}
-              index={index}
-              courtSession={courtSession}
-              isExpanded={expandedIndex === index}
-              onToggle={() => {
-                setExpandedIndex(index === expandedIndex ? -1 : index)
-              }}
-              onConfirmClick={() =>
-                handleConfirmClick(courtSession.id, courtSession.isConfirmed)
-              }
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
+        {workingCase.withCourtSessions ? (
+          <Box>
+            <Accordion dividerOnTop={false} singleExpand>
+              {workingCase.courtSessions?.map((courtSession, index) => (
+                <CourtSessionAccordionItem
+                  key={courtSession.id}
+                  index={index}
+                  courtSession={courtSession}
+                  isExpanded={expandedIndex === index}
+                  onToggle={() =>
+                    setExpandedIndex(index === expandedIndex ? -1 : index)
+                  }
+                />
+              ))}
+            </Accordion>
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              marginTop={5}
+              marginBottom={2}
+            >
+              <Button
+                variant="ghost"
+                onClick={handleCreateCourtSession}
+                disabled={!canCreateCourtSession}
+                icon="add"
+              >
+                Bæta við þinghaldi
+              </Button>
+            </Box>
+            <Box marginBottom={10}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Þingbók - PDF"
+                pdfType="courtRecord"
+                disabled={!hasGeneratedCourtRecord}
+              />
+            </Box>
+          </Box>
+        ) : (
+          <Box width="half" marginBottom={10}>
+            <AlertMessage
+              title="Sjálfvirkni ekki í boði"
+              message="Þetta mál var móttekið af héraðsdómi áður en sjálfvirkni við gerð þingbókar var virkjuð."
+              type="info"
             />
-          ))}
-        </Accordion>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          marginTop={5}
-          marginBottom={2}
-        >
-          <Button
-            variant="ghost"
-            onClick={async () => {
-              const courtSession = await createCourtSession({
-                caseId: workingCase.id,
-              })
-
-              if (!courtSession?.id) {
-                return
-              }
-
-              setWorkingCase((prev) => ({
-                ...prev,
-                courtSessions: [
-                  ...(prev.courtSessions ?? []),
-                  {
-                    id: courtSession.id,
-                    created: courtSession.created,
-                  } as CourtSessionResponse,
-                ],
-              }))
-            }}
-            disabled={
-              !stepIsValid ||
-              workingCase.courtSessions?.some((c) => !c.isConfirmed)
-            }
-            icon="add"
-          >
-            Bæta við þinghaldi
-          </Button>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Þingbók - PDF"
-            pdfType="courtRecord"
-            disabled={!workingCase.courtSessions?.[0].startDate}
-          />
-        </Box>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
+          nextIsLoading={isLoadingWorkingCase}
+          nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
+          }
         />
       </FormContentContainer>
     </PageLayout>
