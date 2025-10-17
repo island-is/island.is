@@ -101,7 +101,7 @@ export enum OrganizationSubType {
   SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment',
   SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool',
   INTERNATIONAL_SCHOOL = 'internationalSchool',
-  GENERAL_SHOOL = 'generalSchool',
+  GENERAL_SCHOOL = 'generalSchool',
 }
 
 export enum OrganizationSector {

@@ -616,13 +616,12 @@ export const getDefaultYESNOValue = (
 
 export const getCurrentAndNextGrade = (grade: string): string[] => {
   const gradeNumber = parseInt(grade, 10)
-  const nextGradeNumber = gradeNumber + 1
+
+  if (Number.isNaN(gradeNumber)) return []
+
+  const current = grade.padStart(2, '0')
+  const next = gradeNumber + 1
 
   // Only include the next grade if it's within bounds
-  const result = [grade]
-  if (nextGradeNumber <= 10) {
-    result.push(nextGradeNumber.toString().padStart(2, '0'))
-  }
-
-  return result
+  return next <= 10 ? [current, next.toString().padStart(2, '0')] : [current]
 }

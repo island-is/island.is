@@ -56,7 +56,7 @@ export const newSchoolSubSection = buildSubSection({
               variables: {
                 input: {
                   type: OrganizationTypeEnum.Municipality,
-                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
+                  //   gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
                 },
               },
             })
@@ -103,7 +103,7 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggOrganizationsByType
                 ?.map(({ id, name, subType, sector }) => ({
-                  value: `${id}::${subType}::${sector}`, // TODO: Skoða hvað á að setja hér! type, subType eða sector??
+                  value: `${id}::${subType ?? ''}::${sector ?? ''}`, // TODO: Skoða hvað á að setja hér! type, subType eða sector??
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
