@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_ORGANIZATION_TEAM_MEMBERS = gql`
-  query getOrgTeamMembers($input: IcelandicGovernmentEmployeesInput!) {
-    icelandicGovernmentEmployees(input: $input) {
+  query getOrgTeamMembers($input: IcelandicGovernmentInstitutionsEmployeesInput!) {
+    icelandicGovernmentInstitutionsEmployees(input: $input) {
       data {
         name
         job

@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client'
 
 import { TeamList, TeamListProps } from '@island.is/island-ui/contentful'
+import { isDefined } from '@island.is/shared/utils'
 import {
   ConnectedComponent,
-  IcelandicGovernmentEmployee,
+  IcelandicGovernmentInstitutionsEmployee,
   Query,
 } from '@island.is/web/graphql/schema'
 
@@ -21,11 +22,20 @@ const parseOrganizationId = (
 }
 
 const mapTeamMember = (
-  member: IcelandicGovernmentEmployee,
+  member: IcelandicGovernmentInstitutionsEmployee,
 ): TeamListProps['teamMembers'][0] => {
+  const address = (member.location?.address && member.location.postalCode) ? `${member.location.address}, ${member.location.postalCode}` : undefined
   return {
     title: member.job ?? '',
     name: member.name,
+    email: member.email ?? '',
+    phone: member.phoneNumber ? member.phoneNumber.toString() : undefined,
+    extraIntroProperties: [
+      address ? {
+        label: 'Starfsstöð',
+        value: address
+      } : undefined,
+      ].filter(isDefined),
   }
 }
 
@@ -36,11 +46,11 @@ const ConnectedTeamList = ({ slice }: Props) => {
     variables: { input: { organizationId } },
   })
 
-  const employeeList = data?.icelandicGovernmentEmployees?.data ?? []
+  const employeeList = data?.icelandicGovernmentInstitutionsEmployees?.data ?? []
 
   const teamMembers = employeeList.map((e) => mapTeamMember(e))
 
-  return <TeamList variant="card" teamMembers={teamMembers}></TeamList>
+  return <TeamList variant="accordion" teamMembers={teamMembers}></TeamList>
 }
 
 export default ConnectedTeamList
