@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
+import { data } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-import { data } from '@island.is/clients/middlewares'
 import {
   DispensationHistoryDto,
   DispensationHistoryItemDto,
