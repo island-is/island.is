@@ -89,6 +89,7 @@ export enum ApplicationTypes {
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
@@ -461,6 +462,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: ['ss.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
+    slug: 'atvinnuleysisbaetur',
+    translation: ['vmst.ub.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',
