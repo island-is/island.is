@@ -150,14 +150,17 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     }
   }
 
-  const scaleToA4 = (page: PDFPage) => {
+  const scaleToA4 = (page: PDFPage, isLandscape: boolean) => {
     const { width, height } = page.getSize()
     const scaleX = A4Width / width
     const scaleY = A4Height / height
     const scale = Math.min(scaleX, scaleY)
 
     page.scaleContent(scale, scale)
-    page.setSize(A4Width, A4Height)
+    page.setSize(
+      isLandscape ? A4Height : A4Width,
+      isLandscape ? A4Width : A4Height,
+    )
 
     return page
   }
@@ -317,19 +320,15 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         const { width, height } = page.getSize()
         const isLandscape = width > height
 
-        // Currently not scaling landscape pages
-        if (isLandscape) {
-          rawDocument.addPage(page)
-          return
-        } else if (width > A4Width && height > A4Height) {
-          const scaledPage = scaleToA4(page)
+        if (width > A4Width && height > A4Height) {
+          const scaledPage = scaleToA4(page, isLandscape)
           scalePageIndexes.push(rawDocument.getPageCount())
           rawDocument.addPage(scaledPage)
 
           return
-        } else {
-          rawDocument.addPage(page)
         }
+
+        rawDocument.addPage(page)
       })
 
       return pdfDocument
