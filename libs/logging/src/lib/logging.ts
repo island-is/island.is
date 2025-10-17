@@ -7,7 +7,7 @@ import { maskNationalIdFormatter } from './formatters'
 // Default log settings for debug mode
 let logLevel = 'debug'
 let logFormat = format.combine(
-  format.errors({ stack: true }),
+  format.errors({ stack: true, cause: true }),
   format.timestamp(),
   // Disable locally to reduce noise. Can be reconsidered.
   // includeContextFormatter(),
@@ -19,7 +19,7 @@ let logFormat = format.combine(
 if (process.env.NODE_ENV === 'production') {
   logLevel = process.env.LOG_LEVEL || 'info'
   logFormat = format.combine(
-    format.errors({ stack: true }),
+    format.errors({ stack: true, cause: true }),
     format.timestamp(),
     includeContextFormatter(),
     format.json(),
