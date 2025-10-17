@@ -18,11 +18,15 @@ import { isDefined } from '@island.is/shared/utils'
 export class GrantsSyncService implements CmsSyncProvider<IGrant> {
   processSyncData(entries: processSyncDataInput<IGrant>) {
     // only process grants that we consider not to be empty
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (entry: Entry<any>): entry is IGrant =>
         entry.sys.contentType.sys.id === 'grant' && entry.fields.grantName,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IGrant[]) {

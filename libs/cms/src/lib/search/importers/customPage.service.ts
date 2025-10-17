@@ -10,11 +10,15 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
   processSyncData(entries: processSyncDataInput<ICustomPage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry) =>
         entry.sys.contentType.sys.id === 'customPage' &&
         (entry.fields.uniqueIdentifier || entry.fields.parentPage?.sys?.id),
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ICustomPage[]) {

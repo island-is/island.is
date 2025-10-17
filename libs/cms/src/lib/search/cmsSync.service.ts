@@ -27,7 +27,10 @@ interface UpdateLastHashOptions {
 
 export type processSyncDataInput<T> = (Entry<any> | T)[]
 export interface CmsSyncProvider<T, ProcessOutput = any> {
-  processSyncData: (entries: processSyncDataInput<T>) => ProcessOutput
+  processSyncData: (entries: processSyncDataInput<T>) => {
+    entriesToUpdate: ProcessOutput
+    entriesToDelete: ProcessOutput
+  }
   doMapping: (entries: ProcessOutput) => MappedData[]
 }
 

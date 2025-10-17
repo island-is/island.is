@@ -11,10 +11,14 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
   processSyncData(entries: processSyncDataInput<IGroupedMenu>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IGroupedMenu =>
         entry.sys.contentType.sys.id === 'groupedMenu',
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IGroupedMenu[]) {

@@ -12,11 +12,15 @@ export class EnhancedAssetSyncService
   implements CmsSyncProvider<IEnhancedAsset>
 {
   processSyncData(entries: processSyncDataInput<IEnhancedAsset>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IEnhancedAsset =>
         entry.sys.contentType.sys.id === 'enhancedAsset' &&
         !!entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IEnhancedAsset[]) {
