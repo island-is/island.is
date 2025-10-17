@@ -16,7 +16,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { Events } from '../types'
 import { Roles, States } from '../types'
 

@@ -18,7 +18,6 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { Events, Roles, States, TemplateApiActions } from '../types'

@@ -17,7 +17,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 
 const template: ApplicationTemplate<
   ApplicationContext,
