@@ -23,7 +23,9 @@ interface MultipleValueListProps {
   inputMask?: MaskType
   buttonText: string
   name: string
-  isDisabled: (value?: string) => boolean
+  isButtonDisabled: (value?: string) => boolean
+  isDisabled?: boolean
+  isLoading?: boolean
   hasError?: boolean
   errorMessage?: string
   onBlur?: (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
@@ -37,7 +39,9 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   inputMask,
   name,
   buttonText,
+  isButtonDisabled,
   isDisabled,
+  isLoading,
   hasError,
   errorMessage,
   onBlur,
@@ -64,14 +68,17 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   const handleEnter = (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (event.key === 'Enter' && !isDisabled(value)) {
+    if (event.key === 'Enter' && !isButtonDisabled(value)) {
       onAddValue(value)
       clearInput()
     }
   }
 
   return (
-    <BlueBox dataTestId="multipleValueListContainer">
+    <BlueBox
+      dataTestId="multipleValueListContainer"
+      className={styles.container}
+    >
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
@@ -90,6 +97,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onKeyDown={handleEnter}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled}
           />
         ) : (
           <Input
@@ -104,12 +112,14 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onBlur={onBlur}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={isDisabled(value)}
+          disabled={isButtonDisabled(value) || value === ''}
+          loading={isLoading}
           onClick={() => {
             onAddValue(value)
             clearInput()

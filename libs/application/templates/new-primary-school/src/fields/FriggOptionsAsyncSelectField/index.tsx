@@ -11,10 +11,7 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { friggOptionsQuery } from '../../graphql/queries'
 import { OptionsType } from '../../utils/constants'
-import {
-  FriggOptionsQuery,
-  FriggOptionsQueryVariables,
-} from '../../types/schema'
+import { Query, EducationFriggOptionsListInput } from '@island.is/api/schema'
 
 type FriggOptionsAsyncSelectFieldProps = {
   field: {
@@ -62,8 +59,8 @@ const FriggOptionsAsyncSelectField: FC<
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
           const { data } = await apolloClient.query<
-            FriggOptionsQuery,
-            FriggOptionsQueryVariables
+            Query,
+            { type: EducationFriggOptionsListInput }
           >({
             query: friggOptionsQuery,
             variables: {

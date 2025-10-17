@@ -82,10 +82,16 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('courtRecord')
+  @Get([
+    'courtRecord',
+    'courtRecord/:fileName',
+    'mergedCase/:mergedCaseId/courtRecord',
+    'mergedCase/:mergedCaseId/courtRecord/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -94,11 +100,15 @@ export class LimitedAccessFileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'limitedAccess/courtRecord',
+      `limitedAccess/${mergedCaseInjection}courtRecord`,
       req,
       res,
       'pdf',

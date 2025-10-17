@@ -10,7 +10,10 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getServiceRequirementText,
+} from '@island.is/judicial-system/formatters'
 import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
@@ -106,7 +109,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.serviceDate &&
-        getIndictmentAppealDeadlineDate(dates.serviceDate, false).toISOString())
+        getIndictmentAppealDeadlineDate({
+          baseDate: dates.serviceDate,
+          isFine: false,
+        }).toISOString())
 
     return getAppealExpirationInfo(
       deadline,
@@ -118,18 +124,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictAppealDeadline,
   ])
 
-  const serviceRequirementText = useMemo(() => {
-    switch (verdict?.serviceRequirement) {
-      case ServiceRequirement.REQUIRED:
-        return 'Birta skal dómfellda dóminn'
-      case ServiceRequirement.NOT_REQUIRED:
-        return 'Birting dóms ekki þörf'
-      case ServiceRequirement.NOT_APPLICABLE:
-        return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
-      default:
-        return null
-    }
-  }, [verdict?.serviceRequirement])
+  const serviceRequirementText = useMemo(
+    () =>
+      verdict?.serviceRequirement
+        ? getServiceRequirementText(verdict.serviceRequirement)
+        : null,
+    [verdict?.serviceRequirement],
+  )
 
   const textItems = useMemo(() => {
     const texts: string[] = []

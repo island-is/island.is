@@ -93,7 +93,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
             }
             onChange(e)
           }}
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application, locale)}
           backgroundColor={backgroundColor}
           required={buildFieldRequired(application, required)}
           clearOnChange={clearOnChange}

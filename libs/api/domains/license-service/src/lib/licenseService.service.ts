@@ -50,7 +50,7 @@ import {
 import { UserAgent } from '@island.is/nest/core'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -295,125 +295,6 @@ export class LicenseService {
     }
 
     return client
-  }
-
-  async generatePkPassUrl(
-    user: User,
-    licenseType: GenericLicenseType,
-  ): Promise<string> {
-    const mappedLicenseType = this.mapLicenseType(licenseType)
-    const client = await this.getClient(mappedLicenseType)
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassUrl) {
-      this.logger.error('License client has no getPkPassUrl implementation', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassUrl) {
-      this.logger.error('License client has no getPkPassUrl implementation', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
-      )
-    }
-
-    const useVersionV2 = await this.featureService.getValue(
-      Features.pkPassV2,
-      false,
-      user,
-    )
-
-    const pkPassRes = await client.getPkPassUrl(
-      user,
-      undefined,
-      useVersionV2 ? 'v2' : undefined,
-    )
-
-    if (pkPassRes.ok) {
-      return pkPassRes.data
-    }
-
-    throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
-    )
-  }
-
-  async generatePkPassQRCode(
-    user: User,
-    licenseType: GenericLicenseType,
-  ): Promise<string> {
-    const mappedLicenseType = this.mapLicenseType(licenseType)
-    const client = await this.getClient(mappedLicenseType)
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassQRCode) {
-      this.logger.error(
-        'License client has no getPkPassQRCode implementation',
-        {
-          category: LOG_CATEGORY,
-          type: licenseType,
-        },
-      )
-      throw new BadRequestException(
-        `License client has no getPkPassQRCode implementation, type: ${licenseType}`,
-      )
-    }
-
-    const useVersionV2 = await this.featureService.getValue(
-      Features.pkPassV2,
-      false,
-      user,
-    )
-
-    const pkPassRes = await client.getPkPassQRCode(
-      user,
-      undefined,
-      useVersionV2 ? 'v2' : undefined,
-    )
-
-    if (pkPassRes.ok) {
-      return pkPassRes.data
-    }
-
-    throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
-    )
   }
 
   async verifyPkPassDeprecated(data: string): Promise<PkPassVerification> {

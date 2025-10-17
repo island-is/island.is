@@ -1,3 +1,5 @@
+import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
+import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
 import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
 import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
@@ -168,8 +170,8 @@ import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exa
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
-import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
-import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.module'
+import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
@@ -251,6 +253,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
@@ -340,6 +343,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,

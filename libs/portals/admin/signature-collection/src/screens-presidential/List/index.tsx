@@ -47,10 +47,17 @@ export const List = () => {
               items={[
                 {
                   title: formatMessage(m.signatureListsTitlePresidential),
-                  href: `/stjornbord${SignatureCollectionPaths.PresidentialLists}`,
+                  href: `/stjornbord${SignatureCollectionPaths.PresidentialListOfCandidates}`,
                 },
                 {
-                  title: list.title,
+                  title: list?.candidate.name,
+                  href: `/stjornbord${SignatureCollectionPaths.PresidentialCandidateLists.replace(
+                    ':candidateId',
+                    list?.candidate.id || '',
+                  )}`,
+                },
+                {
+                  title: list.area.name,
                 },
               ]}
             />
@@ -73,7 +80,7 @@ export const List = () => {
                     withManagers
                   />
                 }
-                marginBottom={4}
+                marginBottom={3}
               />
               <Divider />
               <Box marginTop={9} />

@@ -30,14 +30,18 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveredOnPaper,
   deliveredOnIslandis,
   deliveredToLawyer,
+  legalPaperRequestDate,
+  deliveredToDefendant,
 }: {
   delivered?: boolean
   deliveredOnPaper?: boolean
   deliveredOnIslandis?: boolean
   deliveredToLawyer?: boolean
+  legalPaperRequestDate?: string
+  deliveredToDefendant?: boolean
 }) => {
   if (delivered) {
-    if (deliveredOnPaper) {
+    if (deliveredOnPaper || deliveredToDefendant) {
       return VerdictServiceStatus.IN_PERSON
     }
     if (deliveredOnIslandis) {
@@ -46,9 +50,12 @@ export const mapPoliceVerdictDeliveryStatus = ({
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
     }
+    return VerdictServiceStatus.FAILED
   }
-  // doesn't mean it has been served in legal paper, but probably requested on failure
-  return VerdictServiceStatus.LEGAL_PAPER
+  if (legalPaperRequestDate) {
+    return VerdictServiceStatus.LEGAL_PAPER
+  }
+  return undefined
 }
 
 // information html descriptions

@@ -27,6 +27,7 @@ import {
   CourtDocumentResponse,
   CourtSessionResponse,
   DeleteCourtDocumentResponse,
+  DeleteCourtSessionResponse,
 } from '../court-session'
 import {
   CivilClaimant,
@@ -61,7 +62,7 @@ import {
   SubpoenaStatisticsInput,
 } from '../statistics'
 import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict'
+import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 
@@ -375,6 +376,12 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  deliverCaseVerdict(caseId: string) {
+    return this.post<unknown, DeliverCaseVerdictResponse>(
+      `case/${caseId}/deliverVerdict`,
+    )
+  }
+
   createCasePresignedPost(
     caseId: string,
     createPresignedPost: unknown,
@@ -508,6 +515,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.patch(`case/${caseId}/verdicts`, createVerdicts)
+  }
+
   updateVerdict(
     caseId: string,
     defendantId: string,
@@ -608,6 +619,13 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
     )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
   }
 
   createCourtDocument(

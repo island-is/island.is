@@ -28,7 +28,7 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfIllHealthQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaConfirmationOfIllHealthQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ManagedBy } from '../components/ManagedBy'
 
@@ -45,7 +45,7 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfIllHealthError,
-  } = useQuery<SiaConfirmationOfIllHealthQuery>(siaConfirmationOfIllHealthQuery)
+  } = useQuery<Query>(siaConfirmationOfIllHealthQuery)
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfIllHealthConfirmation } = getApplicationAnswers(

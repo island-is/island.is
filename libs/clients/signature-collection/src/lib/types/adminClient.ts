@@ -4,7 +4,7 @@ import {
   CreateListInput,
   BulkUploadInput,
 } from '../signature-collection.types'
-import { AreaSummaryReport } from './areaSummaryReport.dto'
+import { SummaryReport } from './summaryReport.dto'
 import { BulkUpload } from './bulkUpload.dto'
 import { CollectionType, Collection } from './collection.dto'
 import { ListStatus, List } from './list.dto'
@@ -71,7 +71,7 @@ export interface SignatureCollectionAdminClient {
     auth: Auth,
     collectionId: string,
     areaId: string,
-  ): Promise<AreaSummaryReport>
+  ): Promise<SummaryReport>
 
   signatureLookup(
     auth: Auth,

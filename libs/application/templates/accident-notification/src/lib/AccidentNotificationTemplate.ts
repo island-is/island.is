@@ -49,9 +49,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   name: application.general.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.AccidentNotification.translation,
-  ],
   dataSchema: AccidentNotificationSchema,
   allowedDelegations: [
     {

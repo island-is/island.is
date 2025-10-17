@@ -98,7 +98,7 @@ export const overview = {
     },
     directions: {
       id: 'ta.eft.application:overview.longTermlocation.directions',
-      defaultMessage: 'Leiðarlýsing',
+      defaultMessage: 'Ósk um svæði',
       description: 'Overview long-term location directions label',
     },
   }),
@@ -270,9 +270,14 @@ export const overview = {
     },
   }),
   supportingDocuments: defineMessages({
-    subtitle: {
-      id: 'ta.eft.application:overview.supportingDocuments.subtitle',
+    subtitleShortTerm: {
+      id: 'ta.eft.application:overview.supportingDocuments.subtitleShortTerm',
       defaultMessage: 'Athugasemdir og fylgigögn',
+      description: 'Overview supporting documents subtitle',
+    },
+    subtitleLongTerm: {
+      id: 'ta.eft.application:overview.supportingDocuments.subtitleLongTerm',
+      defaultMessage: 'Athugasemdir',
       description: 'Overview supporting documents subtitle',
     },
     comments: {

@@ -556,7 +556,7 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'sys.id[in]': articles.map((a) => a.sys.id).join(','),
       select: ArticleFields,
-      include: 10,
+      include: 5,
     }
 
     const relatedResult = await this.contentfulRepository
@@ -1476,5 +1476,87 @@ export class CmsContentfulService {
     })
 
     return result
+  }
+
+  async getOrganizationNavigationPages(
+    entryIdsObject: {
+      parentSubpageEntryIds: string[]
+      organizationSubpageEntryIds: string[]
+      entryIds: string[]
+    },
+    lang: string,
+  ) {
+    if (
+      entryIdsObject.parentSubpageEntryIds.length === 0 &&
+      entryIdsObject.organizationSubpageEntryIds.length === 0 &&
+      entryIdsObject.entryIds.length === 0
+    )
+      return []
+
+    const fieldSelect =
+      'fields.title,fields.shortTitle,fields.shortDescription,fields.slug,sys'
+
+    const [parentSubpageResponse, organizationSubpageResponse, entryResponse] =
+      await Promise.allSettled([
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.parentSubpageEntryIds.join(','),
+            content_type: 'organizationParentSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.organizationSubpageEntryIds.join(','),
+            content_type: 'organizationSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.entryIds.join(','),
+            limit: 1000,
+          },
+          1,
+        ),
+      ])
+
+    const items = []
+
+    if (parentSubpageResponse.status === 'fulfilled')
+      items.push(...parentSubpageResponse.value.items)
+    else
+      errorHandler('getOrganizationNavigationPages.parentSubpageResponse')(
+        parentSubpageResponse.reason,
+      )
+
+    if (organizationSubpageResponse.status === 'fulfilled')
+      items.push(...organizationSubpageResponse.value.items)
+    else
+      errorHandler(
+        'getOrganizationNavigationPages.organizationSubpageResponse',
+      )(organizationSubpageResponse.reason)
+
+    if (entryResponse.status === 'fulfilled')
+      for (const item of entryResponse.value.items) {
+        const isValidPageType =
+          item.sys.contentType.sys.id === 'organizationParentSubpage' ||
+          item.sys.contentType.sys.id === 'organizationSubpage'
+        if (!isValidPageType) continue
+        items.push(item)
+      }
+    else
+      errorHandler('getOrganizationNavigationPages.entryResponse')(
+        entryResponse.reason,
+      )
+
+    return items
   }
 }

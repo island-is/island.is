@@ -2,6 +2,7 @@ export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from './courtRecordPdf'
+export { createIndictmentCourtRecordPdf } from './indictmentCourtRecordPdf'
 export {
   getCustodyNoticePdfAsBuffer,
   getCustodyNoticePdfAsString,

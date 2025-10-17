@@ -101,6 +101,7 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
   CaseAppealState,
@@ -131,6 +132,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   isIndictmentCaseState,
@@ -148,6 +150,7 @@ export {
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/dates'
 
 export type {
@@ -180,6 +183,7 @@ export {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
   CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
 } from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'

@@ -61,6 +61,7 @@ export enum FormFieldType {
   DROPDOWN = 'dropdown',
   RADIO = 'radio',
   DATE = 'date',
+  NUMERIC = 'numeric',
 }
 
 interface FormFieldProps {
@@ -97,6 +98,21 @@ export const FormField = ({
           errorMessage={error}
           value={value}
           onChange={(e) => onChange(slug, e.target.value)}
+        />
+      )
+    case FormFieldType.NUMERIC:
+      return (
+        <Input
+          key={slug}
+          placeholder={field.placeholder}
+          name={slug}
+          label={field.title}
+          required={field.required}
+          hasError={!!error}
+          errorMessage={error}
+          value={value}
+          inputMode="numeric"
+          onChange={(e) => onChange(slug, e.target.value.replace(/\D/g, ''))}
         />
       )
     case FormFieldType.TEXT:

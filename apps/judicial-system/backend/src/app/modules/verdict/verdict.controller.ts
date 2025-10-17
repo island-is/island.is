@@ -8,6 +8,7 @@ import {
   Inject,
   Param,
   Patch,
+  Post,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -41,7 +42,9 @@ import {
   PdfService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { Case, Defendant, Verdict } from '../repository'
+import { CreateVerdictDto } from './dto/createVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
@@ -54,17 +57,40 @@ import { VerdictService } from './verdict.service'
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseWriteGuard,
-  CaseCompletedGuard,
-  DefendantExistsGuard,
-  VerdictExistsGuard,
 )
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
+    private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('verdicts')
+  @ApiOkResponse({
+    type: Verdict,
+    description: 'Create verdicts for relevant defendants',
+  })
+  async createVerdicts(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() verdictsToCreate: CreateVerdictDto[],
+  ): Promise<Verdict[]> {
+    this.logger.debug(`Creating verdicts for defendants in ${caseId}`)
+
+    return this.verdictService.createVerdicts(
+      caseId,
+      verdictsToCreate,
+      theCase.defendants,
+    )
+  }
+
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -94,6 +120,7 @@ export class VerdictController {
     )
   }
 
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
   @RolesRules(publicProsecutorStaffRule, prisonSystemStaffRule)
   @Get('defendant/:defendantId/verdict/serviceCertificate')
   @Header('Content-Type', 'application/pdf')
@@ -114,15 +141,23 @@ export class VerdictController {
       `Getting verdict service certificate for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
+    const deliveredToDefender = verdict.deliveredToDefenderNationalId
+      ? await this.lawyerRegistryService.getByNationalId(
+          verdict.deliveredToDefenderNationalId,
+        )
+      : undefined
+
     const pdf = await this.pdfService.getVerdictServiceCertificatePdf(
       theCase,
       defendant,
       verdict,
+      deliveredToDefender?.name ?? defendant.defenderName,
     )
 
     res.end(pdf)
   }
 
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -141,9 +176,33 @@ export class VerdictController {
     @CurrentHttpUser() user: User,
   ): Promise<Verdict> {
     this.logger.debug(
-      `Gets verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
+      `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
     return this.verdictService.getAndSyncVerdict(verdict, user)
+  }
+
+  @UseGuards(CaseCompletedGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('deliverVerdict')
+  @ApiOkResponse({
+    description: 'Delivers verdict for all defendants in a case',
+  })
+  async deliverCaseVerdict(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<{ queued: boolean }> {
+    this.logger.debug(
+      `Deliver case ${caseId} verdict to all affected defendants`,
+    )
+    return await this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+      theCase,
+      user,
+    )
   }
 }

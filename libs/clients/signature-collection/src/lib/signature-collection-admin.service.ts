@@ -37,9 +37,10 @@ import {
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
-  AreaSummaryReport,
+  SummaryReport,
   mapAreaSummaryReport,
-} from './types/areaSummaryReport.dto'
+  mapCandidateSummaryReport,
+} from './types/summaryReport.dto'
 import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
@@ -487,7 +488,7 @@ export class SignatureCollectionAdminClientService
     auth: Auth,
     collectionId: string,
     areaId: string,
-  ): Promise<AreaSummaryReport> {
+  ): Promise<SummaryReport> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
@@ -498,7 +499,24 @@ export class SignatureCollectionAdminClientService
       })
       return mapAreaSummaryReport(res)
     } catch {
-      return {} as AreaSummaryReport
+      return {} as SummaryReport
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminFrambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 

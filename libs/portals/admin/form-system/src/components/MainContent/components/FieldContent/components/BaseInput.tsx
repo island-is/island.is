@@ -1,19 +1,19 @@
-import { useContext } from 'react'
-import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
-  Select,
-  Option,
-  Input,
-  Checkbox,
-} from '@island.is/island-ui/core'
-import { SingleValue } from 'react-select'
-import { useIntl } from 'react-intl'
-import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
 import { m } from '@island.is/form-system/ui'
+import {
+  Checkbox,
+  GridColumn as Column,
+  Input,
+  Option,
+  GridRow as Row,
+  Select,
+  Stack,
+} from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
+import { ControlContext } from '../../../../../context/ControlContext'
+import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
 
 export const BaseInput = () => {
   const {
@@ -31,7 +31,6 @@ export const BaseInput = () => {
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
-  // console.log(selectList)
   const defaultOption: Option<string> | undefined = defaultValue
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined

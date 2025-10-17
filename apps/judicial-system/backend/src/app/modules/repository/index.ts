@@ -21,6 +21,7 @@ export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
 export { CaseRepositoryService } from './services/caseRepository.service'
+export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 

@@ -84,10 +84,16 @@ export class FileController {
     )
   }
 
-  @Get('courtRecord')
+  @Get([
+    'courtRecord',
+    'courtRecord/:fileName',
+    'mergedCase/:mergedCaseId/courtRecord',
+    'mergedCase/:mergedCaseId/courtRecord/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getCourtRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -96,11 +102,15 @@ export class FileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'courtRecord',
+      `${mergedCaseInjection}courtRecord`,
       req,
       res,
       'pdf',
