@@ -813,6 +813,7 @@ export interface ICustomPageFields {
     | 'Verdicts'
     | 'OfficialJournalOfIcelandHelp'
     | 'BloodDonationRestrictions'
+    | 'OpenInvoices'
     | undefined
 
   /** Alert Banner */
