@@ -24,7 +24,10 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { CustomPageLayoutHeader, CustomPageLayoutWrapper } from '@island.is/web/components'
+import {
+  CustomPageLayoutHeader,
+  CustomPageLayoutWrapper,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPage,

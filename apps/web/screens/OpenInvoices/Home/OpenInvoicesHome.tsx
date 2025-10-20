@@ -4,13 +4,13 @@ import NextLink from 'next/link'
 import { Box, Breadcrumbs } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { CustomPageLayoutHeader } from '@island.is/web/components'
-import {  Query } from "@island.is/web/graphql/schema"
+import { Query } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { withMainLayout } from "@island.is/web/layouts/main"
+import { withMainLayout } from '@island.is/web/layouts/main'
 
-import { CustomScreen, withCustomPageWrapper } from "../../CustomPage"
+import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import { m } from '../messages'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
@@ -19,7 +19,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
 }) => {
   useLocalLinkTypeResolver()
   useContentfulId(customPageData?.id)
-  const { formatMessage} = useIntl()
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
   const baseUrl = linkResolver('openinvoices', [], locale).href
@@ -63,7 +63,6 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
       />
     </Box>
   )
-
 }
 
 interface OpenInvoicesHomeProps {
@@ -72,16 +71,20 @@ interface OpenInvoicesHomeProps {
 }
 
 const OpenInvoicesHome: CustomScreen<OpenInvoicesHomeProps> = ({
-  organization, locale, customPageData
+  organization,
+  locale,
+  customPageData,
 }) => {
-  return <OpenInvoicesHomePage
-    organization={organization}
-    locale={locale}
-    customPageData={customPageData}
-  />
+  return (
+    <OpenInvoicesHomePage
+      organization={organization}
+      locale={locale}
+      customPageData={customPageData}
+    />
+  )
 }
 
-OpenInvoicesHome.getProps = async ({locale}) => {
+OpenInvoicesHome.getProps = async ({ locale }) => {
   return {
     locale: locale as Locale,
     showSearchInHeader: false,
@@ -91,4 +94,9 @@ OpenInvoicesHome.getProps = async ({locale}) => {
   }
 }
 
-export default withMainLayout(withCustomPageWrapper(CustomPageUniqueIdentifier.OpenInvoices, OpenInvoicesHome))
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OpenInvoices,
+    OpenInvoicesHome,
+  ),
+)

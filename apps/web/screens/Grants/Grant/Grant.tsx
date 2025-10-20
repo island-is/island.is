@@ -14,7 +14,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { CustomPageLayoutWrapper, InstitutionPanel } from '@island.is/web/components'
+import {
+  CustomPageLayoutWrapper,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,

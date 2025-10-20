@@ -1,4 +1,4 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl'
 
 export const m = {
   home: defineMessages({
@@ -8,7 +8,8 @@ export const m = {
     },
     description: {
       id: 'web.openinvoices:home.description',
-      defaultMessage: 'Upplýsingar um alla greidda reikninga ráðuneyta og stofnana úr bókhaldi ríkisins. Gögn eru uppfærð 10. hvers mánaðar. Athugið að hér er ekki að finna kostnað á borð við launagreiðslur og vaxtagjöld.',
+      defaultMessage:
+        'Upplýsingar um alla greidda reikninga ráðuneyta og stofnana úr bókhaldi ríkisins. Gögn eru uppfærð 10. hvers mánaðar. Athugið að hér er ekki að finna kostnað á borð við launagreiðslur og vaxtagjöld.',
     },
     featuredImage: {
       id: 'web.openinvoices:home.featuredImage',
