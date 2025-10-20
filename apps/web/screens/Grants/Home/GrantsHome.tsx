@@ -15,7 +15,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { GrantsHeader } from '@island.is/web/components'
+import { CustomPageLayoutHeader } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -89,7 +89,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
 
   return (
     <Box>
-      <GrantsHeader
+      <CustomPageLayoutHeader
         title={customPageData?.ogTitle ?? formatMessage(m.home.title)}
         description={
           customPageData?.ogDescription ?? formatMessage(m.home.description)

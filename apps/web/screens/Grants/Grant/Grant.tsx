@@ -14,7 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantWrapper, InstitutionPanel } from '@island.is/web/components'
+import { CustomPageLayoutWrapper, InstitutionPanel } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -85,7 +85,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
     : undefined
 
   return (
-    <GrantWrapper
+    <CustomPageLayoutWrapper
       pageTitle={grant.name}
       pageDescription={grant?.description ?? ''}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
@@ -231,7 +231,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
           </Hidden>
         </Stack>
       </SidebarLayout>
-    </GrantWrapper>
+    </CustomPageLayoutWrapper>
   )
 }
 

@@ -24,7 +24,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { GrantsHeader, GrantWrapper } from '@island.is/web/components'
+import { CustomPageLayoutHeader, CustomPageLayoutWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPage,
@@ -262,12 +262,12 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   }
 
   return (
-    <GrantWrapper
+    <CustomPageLayoutWrapper
       pageTitle={formatMessage(m.home.title)}
       pageDescription={formatMessage(m.search.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
-      <GrantsHeader
+      <CustomPageLayoutHeader
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
         featuredImage={
@@ -415,7 +415,7 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
           </Box>
         )}
       </Box>
-    </GrantWrapper>
+    </CustomPageLayoutWrapper>
   )
 }
 
