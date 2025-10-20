@@ -2,7 +2,7 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildSection,
-  buildTitleField,
+  //buildTitleField,
   YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
