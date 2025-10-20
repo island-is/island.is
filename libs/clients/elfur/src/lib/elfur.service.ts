@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
   EmployeeBasicResponseDto,
-  OpenInvoiceDetailPaginatedResponseDto,
   OpenInvoicesApi,
   OrganizationEmployeeApi,
   V1OpeninvoicesInvoicesGetRequest,
