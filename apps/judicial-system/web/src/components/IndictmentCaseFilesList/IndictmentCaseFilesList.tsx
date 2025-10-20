@@ -243,6 +243,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )

@@ -5,9 +5,11 @@ import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  INDICTMENTS_COURT_RECORD_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -121,13 +123,12 @@ const Advocates = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
+          previousUrl={`${INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextButtonText={formatMessage(core.continue)}
-          nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CONCLUSION_ROUTE)
+            handleNavigationTo(INDICTMENTS_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>

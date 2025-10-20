@@ -321,6 +321,7 @@ export class LimitedAccessCaseController {
         !hasGeneratedCourtRecordPdf(
           theCase.state,
           theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
           theCase.courtSessions,
           user,
         )

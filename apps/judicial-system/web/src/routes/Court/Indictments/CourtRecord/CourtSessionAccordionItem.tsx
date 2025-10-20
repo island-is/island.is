@@ -1,7 +1,5 @@
 import {
-  Dispatch,
   FC,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -39,7 +37,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
-  Case,
   CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
@@ -64,9 +61,6 @@ interface Props {
   courtSession: CourtSessionResponse
   isExpanded: boolean
   onToggle: () => void
-  onConfirmClick: () => void
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
@@ -108,18 +102,12 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
 ]
 
 const CourtSessionAccordionItem: FC<Props> = (props) => {
-  const {
-    index,
-    courtSession,
-    isExpanded,
-    onToggle,
-    onConfirmClick,
-    workingCase,
-    setWorkingCase,
-  } = props
-  const { isCaseUpToDate } = useContext(FormContext)
+  const { index, courtSession, isExpanded, onToggle } = props
+  const { workingCase, setWorkingCase, isCaseUpToDate } =
+    useContext(FormContext)
   const { courtDocument } = useCourtDocuments()
   const { updateCourtSession, deleteCourtSession } = useCourtSessions()
+  const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
@@ -181,24 +169,26 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }, [workingCase.prosecutor, workingCase.defendants])
 
   const initialize = useCallback(() => {
-    const update = {
-      judgeId: courtSession.judgeId ?? workingCase.judge?.id,
-      startDate:
-        courtSession.startDate ??
-        workingCase.courtDate?.date ??
-        workingCase.arraignmentDate?.date,
-      location:
-        courtSession.location ??
-        (workingCase.court?.name
-          ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
-          : ''),
-      attendees: courtSession.attendees ?? getInitialAttendees(),
-      endDate: courtSession.endDate
-        ? courtSession.endDate
-        : courtSession.startDate
-        ? courtSession.startDate
-        : new Date().toString(),
+    if (courtSession.startDate) {
+      return
     }
+
+    const now = formatDateForServer(new Date())
+    const startDate =
+      courtSession.startDate ??
+      workingCase.courtDate?.date ??
+      workingCase.arraignmentDate?.date ??
+      now
+    const judgeId = courtSession.judgeId ?? workingCase.judge?.id
+    const location =
+      courtSession.location ??
+      (workingCase.court?.name
+        ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+        : '')
+    const attendees = courtSession.attendees ?? getInitialAttendees()
+    const endDate = courtSession.endDate ?? (now > startDate ? now : startDate)
+
+    const update = { startDate, judgeId, location, attendees, endDate }
 
     patchSession(courtSession.id, update, { persist: true })
   }, [
@@ -211,7 +201,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     patchSession,
   ])
 
-  useOnceOn(isCaseUpToDate, initialize)
+  // Initialize when the case is up to date and the accordion item is expanded
+  useOnceOn(isCaseUpToDate, () => setReadyForInitialization(true))
+  useOnceOn(readyForInitialization && isExpanded, initialize)
 
   const defaultJudge = judges?.find(
     (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
@@ -278,9 +270,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
     })
 
-    patchSession(courtSession.id, {
-      filedDocuments: newOrder,
-    })
+    patchSession(courtSession.id, { filedDocuments: newOrder })
   }
 
   const handleRename = (
@@ -369,9 +359,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     patchSession(
       courtSession.id,
-      {
-        endDate: formatDateForServer(merged),
-      },
+      { endDate: formatDateForServer(merged) },
       { persist: true },
     )
   }
@@ -414,16 +402,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const containerVariants = {
-    hidden: {
-      height: 0,
-    },
-    visible: {
-      height: 'auto',
-    },
-    exit: {
-      height: 0,
-      transition: { duration: 0.6 },
-    },
+    hidden: { height: 0 },
+    visible: { height: 'auto' },
+    exit: { height: 0, transition: { duration: 0.6 } },
   }
 
   const titleVariants = {
@@ -444,16 +425,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const itemVariants = {
-    hidden: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-      transition: { delay: 0.3 },
-    },
-    exit: {
-      opacity: 0,
-    },
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { delay: 0.3 } },
+    exit: { opacity: 0 },
   }
 
   const filedDocuments = useMemo(
@@ -679,9 +653,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
                                 patchSession(
                                   courtSession.id,
-                                  {
-                                    closedLegalProvisions,
-                                  },
+                                  { closedLegalProvisions },
                                   { persist: true },
                                 )
                               }}
@@ -704,16 +676,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               value={courtSession.attendees ?? getInitialAttendees()}
               placeholder="Skrifa hér..."
               onChange={(event) => {
-                patchSession(courtSession.id, {
-                  attendees: event.target.value,
-                })
+                patchSession(courtSession.id, { attendees: event.target.value })
               }}
               onBlur={(event) => {
                 patchSession(
                   courtSession.id,
-                  {
-                    attendees: event.target.value,
-                  },
+                  { attendees: event.target.value },
                   { persist: true },
                 )
               }}
@@ -912,9 +880,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 onChange={(event) => {
                   setEntriesErrorMessage('')
 
-                  patchSession(courtSession.id, {
-                    entries: event.target.value,
-                  })
+                  patchSession(courtSession.id, { entries: event.target.value })
                 }}
                 onBlur={(event) => {
                   validateAndSetErrorMessage(
@@ -925,9 +891,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
                   patchSession(
                     courtSession.id,
-                    {
-                      entries: event.target.value,
-                    },
+                    { entries: event.target.value },
                     { persist: true },
                   )
                 }}
@@ -977,9 +941,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   onChange={() =>
                     patchSession(
                       courtSession.id,
-                      {
-                        rulingType: CourtSessionRulingType.JUDGEMENT,
-                      },
+                      { rulingType: CourtSessionRulingType.JUDGEMENT },
                       { persist: true },
                     )
                   }
@@ -996,9 +958,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   onChange={() =>
                     patchSession(
                       courtSession.id,
-                      {
-                        rulingType: CourtSessionRulingType.ORDER,
-                      },
+                      { rulingType: CourtSessionRulingType.ORDER },
                       { persist: true },
                     )
                   }
@@ -1051,9 +1011,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
                       patchSession(
                         courtSession.id,
-                        {
-                          ruling: event.target.value,
-                        },
+                        { ruling: event.target.value },
                         { persist: true },
                       )
                     }}
@@ -1074,20 +1032,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
                     value={courtSession.closingEntries || ''}
                     placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
-                    onChange={(event) => {
+                    onChange={(event) =>
                       patchSession(courtSession.id, {
                         closingEntries: event.target.value,
                       })
-                    }}
-                    onBlur={(event) => {
+                    }
+                    onBlur={(event) =>
                       patchSession(
                         courtSession.id,
-                        {
-                          closingEntries: event.target.value,
-                        },
+                        { closingEntries: event.target.value },
                         { persist: true },
                       )
-                    }}
+                    }
                     rows={15}
                     autoExpand={{ on: true, maxHeight: 300 }}
                     disabled={courtSession.isConfirmed || false}
@@ -1172,16 +1128,36 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   />
                 </div>
                 <Box className={styles.button}>
-                  <Button
-                    icon={courtSession.isConfirmed ? 'pencil' : 'checkmark'}
-                    onClick={onConfirmClick}
-                    size="small"
-                    disabled={!isCourtSessionValid(courtSession)}
-                  >
-                    {`${
-                      courtSession.isConfirmed ? 'Leiðrétta' : 'Staðfesta'
-                    } þingbók`}
-                  </Button>
+                  {courtSession.isConfirmed ? (
+                    <Button
+                      icon="pencil"
+                      onClick={() =>
+                        patchSession(
+                          courtSession.id,
+                          { isConfirmed: false },
+                          { persist: true },
+                        )
+                      }
+                      size="small"
+                    >
+                      Leiðrétta þingbók
+                    </Button>
+                  ) : (
+                    <Button
+                      icon="checkmark"
+                      onClick={() =>
+                        patchSession(
+                          courtSession.id,
+                          { isConfirmed: true },
+                          { persist: true },
+                        )
+                      }
+                      size="small"
+                      disabled={!isCourtSessionValid(courtSession)}
+                    >
+                      Staðfesta þingbók
+                    </Button>
+                  )}
                 </Box>
               </BlueBox>
             </Box>

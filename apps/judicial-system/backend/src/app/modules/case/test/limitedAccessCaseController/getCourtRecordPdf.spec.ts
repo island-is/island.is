@@ -186,12 +186,13 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     })
   })
 
-  describe('generated pdf returned', () => {
+  describe('generated pdf returned for indictment case', () => {
     const user = { role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
+      withCourtSessions: true,
       courtSessions: [{ isConfirmed: true }],
     } as Case
     const res = { end: jest.fn() } as unknown as Response
