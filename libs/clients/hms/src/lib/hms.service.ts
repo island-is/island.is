@@ -206,7 +206,7 @@ export class HmsService {
 
     try {
       const api = this.propertiesApi.withMiddleware(
-        new AuthMiddleware(auth, { forwardUserInfo: true }),
+        new AuthMiddleware(auth),
       )
 
       properties = await Promise.all(
