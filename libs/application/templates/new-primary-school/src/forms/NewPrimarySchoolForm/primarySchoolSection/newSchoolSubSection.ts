@@ -1,7 +1,6 @@
 import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
@@ -47,16 +46,11 @@ export const newSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            // const { childGradeLevel } = getApplicationExternalData(
-            //   application.externalData,
-            // )
-
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
               variables: {
                 input: {
                   type: OrganizationTypeEnum.Municipality,
-                  //   gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
                 },
               },
             })
