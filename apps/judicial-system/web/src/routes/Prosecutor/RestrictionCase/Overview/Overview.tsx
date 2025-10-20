@@ -307,6 +307,7 @@ export const Overview = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
+            elementId={formatMessage(core.pdfButtonRequest)}
           />
         </Box>
       </FormContentContainer>
