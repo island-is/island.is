@@ -344,6 +344,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                               <button
                                 type="button"
                                 onClick={() => handleEditItem(index)}
+                                disabled={activeIndex !== -1}
                               >
                                 <Icon
                                   icon="pencil"
