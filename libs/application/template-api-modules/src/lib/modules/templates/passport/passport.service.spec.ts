@@ -36,7 +36,7 @@ describe('PassportService - ExpiresWithinNoticeTime Validation', () => {
   })
 
   const createMockApplication = (
-    forUser: boolean = true,
+    forUser = true,
     childNationalId = '0987654321',
   ) => {
     return createApplication({
