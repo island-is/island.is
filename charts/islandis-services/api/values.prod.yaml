@@ -43,6 +43,7 @@ env:
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+  ENVIRONMENT: 'prod'
   FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
   FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'

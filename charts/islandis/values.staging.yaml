@@ -302,6 +302,7 @@ api:
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENVIRONMENT: 'staging'
     FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'

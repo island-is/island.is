@@ -295,7 +295,8 @@ export const SitemapNode = ({
 
   if (
     status === 'published' &&
-    (nodeStatus !== 'published' || !nodeContent.label)
+    ((nodeStatus !== 'published' && nodeStatus !== 'changed') ||
+      !nodeContent.label)
   ) {
     return null
   }

@@ -12,7 +12,11 @@ import {
   NavigationLinksCategory,
   NavigationLinksCategoryLink,
 } from './models/organizationPage.model'
-import { SitemapTreeNode, SitemapTreeNodeType } from '@island.is/shared/types'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import {
   IOrganizationParentSubpage,
@@ -37,6 +41,20 @@ type Breadcrumb =
 @CacheControl(defaultCache)
 export class OrganizationPageResolver {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
+
+  private shouldIgnoreNode(node: SitemapTreeNode): boolean {
+    if (
+      node.type !== SitemapTreeNodeType.CATEGORY &&
+      node.type !== SitemapTreeNodeType.URL
+    )
+      return false
+
+    return (
+      node.status !== 'published' &&
+      (process.env.ENVIRONMENT === 'prod' ||
+        process.env.ENVIRONMENT === 'staging')
+    )
+  }
 
   private getNodeSlug(
     node: SitemapTreeNode,
@@ -379,11 +397,46 @@ export class OrganizationPageResolver {
     ).filter(Boolean) as TopLink[]
   }
 
+  private pruneNode(node: SitemapTreeNode): SitemapTreeNode {
+    return {
+      ...node,
+      childNodes: node.childNodes
+        .map((child) => {
+          if (this.shouldIgnoreNode(child)) return null
+          return this.pruneNode(child)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
+    }
+  }
+
+  private pruneTree(tree: SitemapTree): SitemapTree {
+    return {
+      ...tree,
+      childNodes: tree.childNodes
+        .map((node) => {
+          if (this.shouldIgnoreNode(node)) return null
+          return this.pruneNode(node)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
+    }
+  }
+
   @ResolveField(() => NavigationLinks, { nullable: true })
   async navigationLinks(
     @Parent() organizationPage: OrganizationPage,
   ): Promise<NavigationLinks> {
     const lang = organizationPage.lang ?? 'is'
+
+    const tree = organizationPage.navigationLinks
+
+    if (!tree)
+      return {
+        topLinks: [],
+        breadcrumbs: [],
+        activeCategory: null,
+      }
+
+    organizationPage.navigationLinks = this.pruneTree(tree)
 
     const entryIdsObject = this.extractNavigationLinkEntryIds(organizationPage)
     const entries =
