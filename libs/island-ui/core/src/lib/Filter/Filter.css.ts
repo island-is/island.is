@@ -127,7 +127,7 @@ export const content = style({
   WebkitOverflowScrolling: 'touch',
   overscrollBehavior: 'contain',
   padding: `0 ${theme.spacing['3']}`,
-  paddingBottom: theme.spacing['0'],
+  paddingBottom: theme.spacing['8'],
 })
 
 /* Sticky footer with safe-area padding */
@@ -159,7 +159,7 @@ globalStyle(`@supports (padding-bottom: env(safe-area-inset-bottom))`, {
     paddingBottom: `calc(${theme.spacing['3']} + env(safe-area-inset-bottom))`,
   },
   [content]: {
-    paddingBottom: `calc(${theme.spacing['0']} + env(safe-area-inset-bottom))`,
+    paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
   },
 })
 
