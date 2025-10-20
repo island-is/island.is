@@ -51,33 +51,44 @@ export const mobilePopoverContainer = style({
   width: '100%',
 })
 
-const drawerTop = '50px' // Gap on top of filter modal
-const sheetRadius = theme.border.radius.lg
+const drawerTop = '100px' // Gap on top of filter modal
 
+/* Backdrop blocks background scroll & dims page */
+export const backdrop = style({
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0,0,60,0.35)',
+  zIndex: theme.zIndex.modal - 1,
+})
+
+/* Sheet container */
 export const sheet = style({
+  position: 'fixed',
   left: 0,
   right: 0,
   bottom: 0,
-  maxHeight: `calc(100vh - ${drawerTop})`, // this is fallback, use 100dvh if supported
+  display: 'flex',
+  flexDirection: 'column',
   overflow: 'hidden',
-  borderTopLeftRadius: sheetRadius,
-  borderTopRightRadius: sheetRadius,
-  // Enter animation from the bottom
+  background: 'white',
+  borderTopLeftRadius: theme.border.radius.lg,
+  borderTopRightRadius: theme.border.radius.lg,
+  zIndex: theme.zIndex.modal,
+
+  // Fallback for browsers without dvh
+  maxHeight: `calc(100vh - ${drawerTop})`,
+
   transform: 'translateY(100%)',
-  transition: 'transform 300ms ease',
-  willChange: 'transform', // Optimize for animation
+  opacity: 0,
+  transition: 'transform 240ms ease, opacity 180ms ease',
   selectors: {
-    '&[data-enter]': {
-      transform: 'translateY(0)',
-    },
+    '&[data-enter]': { transform: 'translateY(0)', opacity: 1 },
+    '&[data-leave]': { transform: 'translateY(100%)', opacity: 0 },
   },
 })
 
-/** Small grabber area at the top to hint swiping */
-export const grabber = style({
-  padding: theme.spacing['2'],
-})
-
+/* Grabber */
+export const grabber = style({ padding: theme.spacing['2'] })
 export const grabberLine = style({
   display: 'block',
   width: 40,
@@ -87,58 +98,72 @@ export const grabberLine = style({
   backgroundColor: theme.color.dark200,
 })
 
+/* Sticky header with subtle fade */
 export const header = style({
+  position: 'sticky',
+  top: 0,
+  background: 'white',
   zIndex: 1,
-  // subtle fade to indicate content under it can scroll
-  '::after': {
-    content: '',
-    position: 'absolute',
-    top: 57,
-    left: 0,
-    height: 16,
-    width: '100%',
-
-    background:
-      'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+  selectors: {
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 12,
+      background:
+        'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+      pointerEvents: 'none',
+    },
   },
 })
 
-/** The only scrollable area */
+/* Only this area scrolls */
 export const content = style({
   flex: 1,
-  minHeight: 0, // important for flex children to allow overflow
+  minHeight: 0,
   overflowY: 'auto',
   WebkitOverflowScrolling: 'touch',
   overscrollBehavior: 'contain',
   padding: `0 ${theme.spacing['3']}`,
-  paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
+  paddingBottom: theme.spacing['0'],
 })
 
-/** Footer sticks to the bottom of the sheet and remains visible */
+/* Sticky footer with safe-area padding */
 export const footer = style({
   position: 'sticky',
   bottom: 0,
   background: 'white',
   zIndex: 1,
-  padding: `${theme.spacing['2']} ${theme.spacing['3']}`,
-  // safe area for iOS home indicator
-  // paddingBottom: `calc(${theme.spacing['3']} + env(safe-area-inset-bottom))`, // NOT WORKING ?? CHECK
-  '::before': {
-    content: '""',
-    position: 'absolute',
-    bottom: 77,
-    left: 0,
-    height: 16,
-    width: '100%',
-    background:
-      'linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+  boxShadow: '0 -8px 16px rgba(0,0,0,0.06)',
+  paddingBottom: theme.spacing['3'],
+  selectors: {
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: -12,
+      height: 12,
+      background:
+        'linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+      pointerEvents: 'none',
+    },
   },
 })
 
-/** dvh override (modern browsers only) */
-globalStyle(`@supports (height: 100dvh)`, {
-  // Vanilla Extract doesn't support nested @supports in style(), so use globalStyle
-  [`${sheet}`]: {
-    maxHeight: 'calc(100dvh - 50px)',
+/* Safe area support for footer */
+globalStyle(`@supports (padding-bottom: env(safe-area-inset-bottom))`, {
+  [footer]: {
+    paddingBottom: `calc(${theme.spacing['3']} + env(safe-area-inset-bottom))`,
   },
+  [content]: {
+    paddingBottom: `calc(${theme.spacing['0']} + env(safe-area-inset-bottom))`,
+  },
+})
+
+/* Small dvh upgrade when supported */
+globalStyle(`@supports (height: 100dvh)`, {
+  [sheet]: { maxHeight: `calc(100dvh - ${drawerTop})` },
 })

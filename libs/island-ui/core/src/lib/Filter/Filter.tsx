@@ -10,7 +10,7 @@ import { usePreventBodyScroll } from './usePreventBodyScroll'
 
 import * as styles from './Filter.css'
 import { useWindowSize } from 'react-use'
-import FilterMobileDrawer from './FilterMobileDrawer'
+import { FilterDrawerAriakit } from './FilterMobileDrawer'
 import { theme } from '@island.is/island-ui/theme'
 
 export interface FilterProps {
@@ -341,8 +341,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
       <Box display="flex" alignItems="flexEnd">
         {filterInputContent}
 
-        <FilterMobileDrawer
-          baseId="filter"
+        <FilterDrawerAriakit
           initialVisibility={false}
           ariaLabel={''}
           labelShowResult={labelResult}
@@ -398,7 +397,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               </Stack>
             </Box>
           </Box>
-        </FilterMobileDrawer>
+        </FilterDrawerAriakit>
       </Box>
     )
   }

@@ -1,134 +1,125 @@
-import { useLocale } from '@island.is/localization'
-import React, { PropsWithChildren, useState } from 'react'
-import { useSwipeable } from 'react-swipeable'
-import { Box } from '../Box/Box'
-import { Button } from '../Button/Button'
-import { ModalBase } from '../ModalBase/ModalBase'
-import { Text } from '../Text/Text'
+import * as React from 'react'
+import { Dialog, DialogDisclosure, useDialogStore } from '@ariakit/react'
 import * as styles from './Filter.css'
-interface FilterMobileDrawerProps {
-  /** Explain what this drawer is for */
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
+import { Button } from '../Button/Button'
+import { useLocale } from '@island.is/localization'
+import { useSwipeable } from 'react-swipeable'
+
+type Props = {
   ariaLabel: string
-  /** Unique ID for accessibility purposes */
-  baseId: string
-  /** Element that opens the drawer. Receives a11y + event props from ModalBase. */
   disclosure: React.ReactElement
-  /** Show immediately without clicking the disclosure button */
   initialVisibility?: boolean
   labelShowResult?: string
   labelClearAll?: string
   onFilterClear: () => void
+  topGap?: number
+  children: React.ReactNode
 }
 
-export const FilterMobileDrawer = ({
+export const FilterDrawerAriakit = ({
   ariaLabel,
-  baseId,
   disclosure,
   initialVisibility,
   labelShowResult,
   labelClearAll,
   onFilterClear,
+  topGap = 100,
   children,
-}: PropsWithChildren<FilterMobileDrawerProps>) => {
-  const [isClosed, setIsClosed] = useState(!(initialVisibility ?? false))
+}: Props) => {
   const { lang } = useLocale()
-
+  const store = useDialogStore({
+    defaultOpen: !!initialVisibility,
+    animated: true,
+  })
+  const open = store.getState().open
   // Only the “grabber” area listens for swipe-down to close.
   const handlers = useSwipeable({
-    onSwipedDown: () => setIsClosed(true),
+    onSwipedDown: () => store.setOpen(false),
     delta: 16, // a small threshold so tiny drags don't close
     trackMouse: true,
     preventScrollOnSwipe: false,
     touchEventOptions: { passive: true },
   })
+  const trigger = (
+    <DialogDisclosure
+      store={store}
+      render={(props) =>
+        React.cloneElement(disclosure, {
+          ...props,
+          'aria-haspopup': 'dialog',
+          'aria-expanded': open,
+          onClick: (e: React.MouseEvent) => {
+            disclosure.props?.onClick?.(e)
+            props.onClick?.(e)
+          },
+        })
+      }
+    />
+  )
 
-  const isVisible = !isClosed
+  const close = () => store.hide()
 
   return (
-    <ModalBase
-      preventBodyScroll
-      disclosure={disclosure}
-      baseId={baseId}
-      modalLabel={ariaLabel}
-      initialVisibility={initialVisibility}
-      onVisibilityChange={(visibility) => setIsClosed(!visibility)}
-      isVisible={isVisible}
-      hideOnClickOutside
-      removeOnClose={false}
-      backdropDark
-    >
-      {({ closeModal }: { closeModal: () => void }) => (
+    <>
+      {trigger}
+
+      <Dialog
+        store={store}
+        aria-label={ariaLabel}
+        backdrop={<div className={styles.backdrop} />}
+        className={styles.sheet}
+        // top gap (uses dvh when supported; your CSS can also include a 100vh fallback)
+        style={{ maxHeight: `calc(100dvh - ${topGap}px)` }}
+      >
+        {/* grabber */}
         <Box
-          position="fixed"
-          background="white"
-          display="flex"
-          flexDirection="column"
-          className={styles.sheet}
-          data-enter={isVisible ? '' : undefined}
+          width="full"
+          padding={2}
+          className={styles.grabber}
+          aria-hidden="true"
+          onClick={close}
+          {...handlers}
         >
-          {/* Grabber / drag handle */}
-          <Box
-            width="full"
-            padding={2}
-            onClick={closeModal}
-            {...handlers}
-            aria-hidden="true"
-          >
-            <span className={styles.grabberLine} />
-          </Box>
-
-          {/* Header (fixed within the sheet, no scroll) */}
-          <Box
-            className={styles.header}
-            display="flex"
-            alignItems="center"
-            flexShrink={0}
-            justifyContent="spaceBetween"
-            paddingX={3}
-            paddingY={2}
-            position="sticky"
-            top={0}
-            background="white"
-          >
-            <Text variant="h4" as="h3">
-              {lang === 'is' ? 'Sía eftir' : 'Filter by'}
-            </Text>
-            <Button
-              icon="reload"
-              size="small"
-              variant="text"
-              onClick={onFilterClear}
-            >
-              {labelClearAll ?? (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
-            </Button>
-          </Box>
-
-          {/* Scrollable content area */}
-          <div className={styles.content} role="region" aria-label={ariaLabel}>
-            {children}
-          </div>
-
-          {/* Sticky footer inside the sheet */}
-          <Box
-            className={styles.footer}
-            position="sticky"
-            bottom={0}
-            left={0}
-            right={0}
-            background="white"
-            paddingX={3}
-            paddingY={2}
-            flexShrink={0}
-          >
-            <Button fluid onClick={closeModal}>
-              {labelShowResult ??
-                (lang === 'is' ? 'Sýna niðurstöður' : 'Show results')}
-            </Button>
-          </Box>
+          <span className={styles.grabberLine} />
         </Box>
-      )}
-    </ModalBase>
+
+        {/* sticky header */}
+        <Box
+          className={styles.header}
+          display="flex"
+          alignItems="center"
+          justifyContent="spaceBetween"
+          paddingX={3}
+          paddingY={2}
+        >
+          <Text variant="h4" as="h3">
+            {lang === 'is' ? 'Sía eftir' : 'Filter by'}
+          </Text>
+          <Button
+            icon="reload"
+            size="small"
+            variant="text"
+            onClick={onFilterClear}
+          >
+            {labelClearAll ?? (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
+          </Button>
+        </Box>
+
+        {/* scrollable area */}
+        <div className={styles.content} role="region" aria-label={ariaLabel}>
+          {children}
+        </div>
+
+        {/* sticky footer */}
+        <Box className={styles.footer} paddingX={3} paddingY={2}>
+          <Button fluid onClick={close}>
+            {labelShowResult ??
+              (lang === 'is' ? 'Sýna niðurstöður' : 'Show results')}
+          </Button>
+        </Box>
+      </Dialog>
+    </>
   )
 }
-
-export default FilterMobileDrawer
