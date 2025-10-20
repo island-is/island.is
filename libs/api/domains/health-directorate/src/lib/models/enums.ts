@@ -20,6 +20,7 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   NotFullyDispensed = 'notFullyDispensed',
   IsRegiment = 'isRegiment',
   NoMedCard = 'noMedCard',
+  NoHealthClinic = 'noHealthClinic',
 }
 
 registerEnumType(PrescribedItemRenewalBlockedReasonEnum, {
@@ -39,7 +40,7 @@ registerEnumType(PrescribedItemRenewalStatusEnum, {
 export enum PrescribedItemCategoryEnum {
   Regular = 'regular',
   Pn = 'pn',
-  Regimen = 'regimen',
+  Regiment = 'regiment',
   Owner = 'owner',
 }
 

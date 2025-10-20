@@ -1,23 +1,23 @@
 export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.module'
 export * from './lib/healthDirectorateClient.types'
-export * from './lib/clients/occupational-license/gen/fetch/models'
+export * from './lib/clients/occupational-license/gen/fetch'
 export {
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
   HealthDirectorateClientConfig,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   HealthDirectorateClientService,
   HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
   OrganDonorDto,
   Locale,
   organLocale,
   VaccinationDto,
   DiseaseVaccinationDtoVaccinationStatusEnum,
-  PrescribedItemDtoRenewalBlockedReasonEnum,
-  PrescribedItemDtoRenewalStatusEnum,
-  PrescribedItemDtoCategoryEnum,
+  PrescribedItemCategory,
+  PrescriptionRenewalBlockedReason,
+  PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
 } from './lib/clients'
-export { DispensationHistoryItemDto } from './lib/clients/health/gen/fetch/models/DispensationHistoryItemDto'
+export { DispensationHistoryItemDto } from './lib/clients/health'

@@ -104,6 +104,8 @@
     "@formatjs/intl-datetimeformat": "4.1.6",
     "@formatjs/intl-locale": "2.4.33",
     "@formatjs/intl-numberformat": "7.1.5",
+    "@hey-api/client-fetch": "0.13.1",
+    "@hey-api/openapi-ts": "0.85.2",
     "@hookform/error-message": "2.0.1",
     "@hookform/resolvers": "5.0.1",
     "@ibm-cloud/cloudant": "0.11.0",
