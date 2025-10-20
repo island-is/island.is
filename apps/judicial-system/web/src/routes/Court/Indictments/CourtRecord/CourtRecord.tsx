@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -55,11 +56,12 @@ const CourtRecord: FC = () => {
   }
 
   useEffect(() => {
-    setExpandedIndex(
-      workingCase.courtSessions?.length
-        ? workingCase.courtSessions.length - 1
-        : 0,
-    )
+    if (
+      workingCase.courtSessions?.length &&
+      workingCase.courtSessions?.length >= 0
+    ) {
+      setExpandedIndex(workingCase.courtSessions.length - 1)
+    }
   }, [workingCase.courtSessions?.length])
 
   return (
@@ -81,9 +83,9 @@ const CourtRecord: FC = () => {
               index={index}
               courtSession={courtSession}
               isExpanded={expandedIndex === index}
-              onToggle={() =>
+              onToggle={() => {
                 setExpandedIndex(index === expandedIndex ? -1 : index)
-              }
+              }}
               onConfirmClick={() =>
                 handleConfirmClick(courtSession.id, courtSession.isConfirmed)
               }
@@ -96,7 +98,7 @@ const CourtRecord: FC = () => {
           display="flex"
           justifyContent="flexEnd"
           marginTop={5}
-          marginBottom={10}
+          marginBottom={2}
         >
           <Button
             variant="ghost"
@@ -129,12 +131,19 @@ const CourtRecord: FC = () => {
             Bæta við þinghaldi
           </Button>
         </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title="Þingbók - PDF"
+            pdfType="courtRecord"
+            disabled={!workingCase.courtSessions?.[0].startDate}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          // onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
         />
       </FormContentContainer>
     </PageLayout>

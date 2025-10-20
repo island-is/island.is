@@ -3,6 +3,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
   service('skilavottord-ws')
     .namespace('skilavottord')
+    .serviceAccount('skilavottord-ws')
     .db({ name: 'skilavottord' })
     .migrations()
     .secrets({

@@ -4,11 +4,11 @@ import {
   buildSubSection,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { Query, OrganizationModelTypeEnum } from '@island.is/api/schema'
+import { Query, OrganizationTypeEnum } from '@island.is/api/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
@@ -32,24 +32,20 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
             })
 
-            const options =
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type, managing, unitId }) =>
-                    type === OrganizationModelTypeEnum.Municipality &&
-                    Boolean(unitId) &&
-                    Array.isArray(managing) &&
-                    managing.length > 0,
-                )
-                ?.map(({ name, unitId }) => ({
-                  value: unitId as string,
-                  label: name,
-                })) ?? []
-
-            return options.sort((a, b) => a.label.localeCompare(b.label))
+            return (
+              data?.friggOrganizationsByType?.map(({ unitId, name }) => ({
+                value: unitId || '',
+                label: name,
+              })) ?? []
+            )
           },
         }),
         buildAsyncSelectField({
@@ -61,24 +57,24 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-nursery',
           updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
+            const municipalityCode = selectedValues?.[0]
+
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.ChildCare,
+                  municipalityCode: municipalityCode,
+                },
+              },
             })
 
-            const selectedMunicipalityUnitId = selectedValues?.[0]
-
-            const nurseries =
-              data?.friggSchoolsByMunicipality
-                ?.find(({ unitId }) => unitId === selectedMunicipalityUnitId)
-                ?.managing?.filter(
-                  ({ type }) => type === OrganizationModelTypeEnum.ChildCare,
-                )
-                ?.map(({ id, name }) => ({
-                  value: id,
-                  label: name,
-                })) ?? []
-
-            return nurseries.sort((a, b) => a.label.localeCompare(b.label))
+            return (
+              data?.friggOrganizationsByType?.map(({ id, name }) => ({
+                value: id,
+                label: name,
+              })) ?? []
+            )
           },
           condition: (answers) => {
             const { currentNurseryMunicipality } =

@@ -27,6 +27,7 @@ import {
   CourtDocumentResponse,
   CourtSessionResponse,
   DeleteCourtDocumentResponse,
+  DeleteCourtSessionResponse,
 } from '../court-session'
 import {
   CivilClaimant,
@@ -514,6 +515,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.patch(`case/${caseId}/verdicts`, createVerdicts)
+  }
+
   updateVerdict(
     caseId: string,
     defendantId: string,
@@ -614,6 +619,13 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
     )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
   }
 
   createCourtDocument(

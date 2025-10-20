@@ -59,7 +59,7 @@ image:
 namespace: 'services-sessions'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 pvcs: []
 replicaCount:
   default: 3

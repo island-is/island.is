@@ -2455,4 +2455,75 @@ describe('MeUserProfileController', () => {
       })
     })
   })
+
+  describe('DELETE /v2/me/device-tokens/:deviceToken', () => {
+    const deviceTokenToDelete = 'device-token-to-delete-123'
+    const testUser = createCurrentUser({
+      nationalId: testUserProfile.nationalId,
+      scope: [UserProfileScope.write],
+    })
+
+    let app: TestApp
+    let server: SuperTest<Test>
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: testUser,
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    beforeEach(async () => {
+      // Add a device token first so we can delete it
+      await server
+        .post('/v2/me/device-tokens')
+        .send({ deviceToken: deviceTokenToDelete })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should successfully delete a device token', async () => {
+      // Act
+      const res = await server.delete(
+        `/v2/me/device-tokens/${deviceTokenToDelete}`,
+      )
+
+      // Assert
+      expect(res.status).toBe(200)
+      expect(res.body).toEqual({})
+    })
+
+    it('should return 403 when user does not have write scope', async () => {
+      // Create a new app instance without write scope
+      await app.cleanUp()
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read], // Only read scope
+        }),
+      })
+      server = request(app.getHttpServer())
+
+      // Act
+      const res = await server.delete(
+        `/v2/me/device-tokens/${deviceTokenToDelete}`,
+      )
+
+      // Assert
+      expect(res.status).toBe(403)
+      expect(res.body).toMatchObject({
+        status: 403,
+        title: 'Forbidden',
+        detail: 'Forbidden resource',
+        type: 'https://httpstatuses.org/403',
+      })
+    })
+  })
 })

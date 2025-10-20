@@ -248,6 +248,12 @@ export const include: Includeable[] = [
     include: [
       {
         model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],
@@ -349,6 +355,22 @@ export const include: Includeable[] = [
           },
         ],
         separate: true,
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+        ],
       },
       {
         model: CaseFile,
@@ -2296,16 +2318,40 @@ export class CaseService {
           )
         }
 
-        // create new verdict for each defendant when indictment is completed with ruling
+        // Ensure that verdicts exist at this stage, if they don't exist we create them
         if (completingIndictmentCaseWithRuling && theCase.defendants) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.verdictService.createVerdict(
-                defendant.id,
-                theCase.id,
-                transaction,
-              ),
-            ),
+            theCase.defendants.map((defendant) => {
+              if (!defendant.verdict) {
+                return this.verdictService.createVerdict(
+                  theCase.id,
+                  { defendantId: defendant.id },
+                  transaction,
+                )
+              }
+            }),
+          )
+        }
+
+        // if ruling decision is changed to other decision
+        // we have to clean up idle verdicts
+        if (
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.RULING &&
+          update.indictmentRulingDecision !==
+            CaseIndictmentRulingDecision.RULING &&
+          theCase.defendants
+        ) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (defendant.verdict) {
+                return this.verdictService.deleteVerdict(
+                  theCase.id,
+                  defendant.id,
+                  transaction,
+                )
+              }
+            }),
           )
         }
 
