@@ -4,7 +4,10 @@ import NextLink from 'next/link'
 import { Box, Breadcrumbs } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { CustomPageLayoutHeader } from '@island.is/web/components'
-import { CustomPageUniqueIdentifier,Query } from '@island.is/web/graphql/schema'
+import {
+  CustomPageUniqueIdentifier,
+  Query,
+} from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
