@@ -182,6 +182,7 @@ export const VehiclePermnoWithInfoFormField: FC<
           type: FieldTypes.HIDDEN_INPUT,
           component: FieldComponents.HIDDEN_INPUT,
           children: undefined,
+          dontDefaultToEmptyString: true,
         }}
       />
       <HiddenInputFormField
@@ -191,6 +192,7 @@ export const VehiclePermnoWithInfoFormField: FC<
           type: FieldTypes.HIDDEN_INPUT,
           component: FieldComponents.HIDDEN_INPUT,
           children: undefined,
+          dontDefaultToEmptyString: true,
         }}
       />
 

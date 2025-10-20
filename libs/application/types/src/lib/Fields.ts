@@ -945,6 +945,7 @@ export interface HiddenInputField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: never
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface StaticTableField extends BaseField {
