@@ -36,7 +36,10 @@ export class AidOrNutritionResolver {
   }
 
   @Scopes(ApiScope.healthAssistiveAndNutrition, ApiScope.health)
-  @Mutation(() => Renew, { name: 'rightsPortalRenewAidOrNutrition', nullable: true, })
+  @Mutation(() => Renew, {
+    name: 'rightsPortalRenewAidOrNutrition',
+    nullable: true,
+  })
   @Audit()
   @FeatureFlag(Features.servicePortalHealthAidAndNutritionRenewalEnabled)
   async postRightsPortalRenewAidsOrNutrition(
