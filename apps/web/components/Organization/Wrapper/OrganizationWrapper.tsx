@@ -57,7 +57,6 @@ import {
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
-  linkResolver,
   useLinkResolver,
   useNamespace,
   usePlausiblePageview,
@@ -1006,7 +1005,7 @@ export const OrganizationWrapper: React.FC<
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
-
+  const { linkResolver } = useLinkResolver()
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
@@ -1117,6 +1116,7 @@ export const OrganizationWrapper: React.FC<
     }
     return activeTitle
   }, [
+    linkResolver,
     navigationData.items,
     organizationPage.slug,
     router.asPath,
