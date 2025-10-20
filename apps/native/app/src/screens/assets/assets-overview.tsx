@@ -206,9 +206,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
     }
 
     return (
-      <>
-        <AssetItem item={item} />
-      </>
+      <AssetItem item={item} />
     )
   }
 
