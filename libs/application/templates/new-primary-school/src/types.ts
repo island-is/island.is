@@ -113,8 +113,8 @@ export type AffiliationOrganization = {
   nationalId: string | null
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
 }
 
 export type AddressModel = {
@@ -199,8 +199,8 @@ export type Organization = {
   id: string
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
   gradeLevels: string[]
   unitId: string | null
   settings: ApplicationSettings | null

@@ -99,11 +99,10 @@ export const newSchoolSubSection = buildSubSection({
               },
             })
 
-            // Piggyback the type as part of the value
             return (
               data?.friggOrganizationsByType
-                ?.map(({ id, name, subType, sector }) => ({
-                  value: `${id}::${subType ?? ''}::${sector ?? ''}`, // TODO: Skoða hvað á að setja hér! type, subType eða sector??
+                ?.map(({ id, name }) => ({
+                  value: id,
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
@@ -114,13 +113,6 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
-        }),
-        buildHiddenInputWithWatchedValue({
-          // TODO: Þarf þetta ef við erum að sækja þetta gildi í getApplicationAnswers() útfrá 'newSchool.school'?
-          // TODO: Þarf að skoða betur - Þetta er ekki lengur sama týpa og var áður!
-          id: 'newSchool.type',
-          watchValue: 'newSchool.school',
-          valueModifier: (value) => value?.toString()?.split('::')[1],
         }),
       ],
     }),
