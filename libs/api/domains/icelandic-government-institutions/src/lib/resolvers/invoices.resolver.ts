@@ -19,7 +19,6 @@ export class InvoicesResolver {
   })
   @BypassAuth()
   async getInvoices(): Promise<InvoiceList | null> {
-    const k = 8 //dummy
     return this.invoiceService.getOpenInvoices()
   }
 }
