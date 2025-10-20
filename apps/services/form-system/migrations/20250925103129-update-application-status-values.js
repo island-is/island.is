@@ -14,7 +14,7 @@ module.exports = {
       )
 
       await queryInterface.sequelize.query(
-        `UPDATE "application" SET "status" = 'completed' WHERE "status" = 'PRUNED';`,
+        `UPDATE "application" SET "status" = 'completed', "pruned" = TRUE WHERE "status" = 'PRUNED';`,
         { transaction },
       )
     })
@@ -28,8 +28,14 @@ module.exports = {
         { transaction },
       )
 
+      // Completed applications that were previously PRUNED
       await queryInterface.sequelize.query(
-        `UPDATE "application" SET "status" = 'SUBMITTED' WHERE "status" = 'completed';`,
+        `UPDATE "application" SET "status" = 'PRUNED' WHERE "status" = 'completed' AND "pruned" = TRUE;`,
+        { transaction },
+      )
+      // Remaining completed back to SUBMITTED
+      await queryInterface.sequelize.query(
+        `UPDATE "application" SET "status" = 'SUBMITTED' WHERE "status" = 'completed' AND ("pruned" = FALSE OR "pruned" IS NULL);`,
         { transaction },
       )
     })

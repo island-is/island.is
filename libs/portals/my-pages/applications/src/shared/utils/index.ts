@@ -49,12 +49,11 @@ export const sortApplicationsOrganizations = (
   applications: Application[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
-  const apps: Application[] = applications
   let institutions: InstitutionOption[] = []
   if (!organizations) {
     return
   }
-  apps.forEach((elem) => {
+  applications.forEach((elem) => {
     const formSystemOrgSlug = elem.formSystemOrgSlug
       ? (elem.formSystemOrgSlug as InstitutionTypes)
       : undefined
@@ -105,27 +104,37 @@ export const getBaseUrlForm = () => {
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
   applications: Application[] = [],
-  filteredOutApplication: string | undefined = undefined,
+  filteredOutApplication?: string,
 ) => {
-  const { searchQuery } = filterValue
-  const activeInstitution = filterValue?.activeInstitution?.value
-  const filteredApps = (applications as Application[]).filter(
-    (application: Application) =>
-      // Search in name and description
-      (application.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        application.actionCard?.description
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase())) &&
-      filteredOutApplication !== application.id &&
-      // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
-      // otherwise it filters it.
-      (activeInstitution !== ''
-        ? application.formSystemOrgSlug
-          ? application.formSystemOrgSlug === activeInstitution
-          : institutionMapper[application.typeId].slug === activeInstitution
-        : true),
-  )
-  return sortApplicationsStatus(filteredApps)
+  if (!filterValue) {
+    return sortApplicationsStatus(applications)
+  }
+
+  const search = filterValue.searchQuery.trim().toLowerCase()
+  const activeInstitution = filterValue.activeInstitution?.value || ''
+
+  const filtered = applications.filter((app) => {
+    if (filteredOutApplication && app.id === filteredOutApplication)
+      return false
+
+    // Institution filter (only when activeInstitution not empty)
+    if (activeInstitution) {
+      const appSlug =
+        app.formSystemOrgSlug || institutionMapper[app.typeId]?.slug
+      if (appSlug !== activeInstitution) return false
+    }
+
+    // Search filter (matches name or description)
+    if (search) {
+      const name = app.name?.toLowerCase() || ''
+      const description = app.actionCard?.description?.toLowerCase() || ''
+      if (!name.includes(search) && !description.includes(search)) return false
+    }
+
+    return true
+  })
+
+  return sortApplicationsStatus(filtered)
 }
 
 export const getInstitutions = (
