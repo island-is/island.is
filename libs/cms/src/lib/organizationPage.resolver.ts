@@ -402,7 +402,7 @@ export class OrganizationPageResolver {
       ...node,
       childNodes: node.childNodes
         .map((child) => {
-          if (this.shouldIgnoreNode(node)) return null
+          if (this.shouldIgnoreNode(child)) return null
           return this.pruneNode(child)
         })
         .filter(Boolean) as SitemapTreeNode[],
