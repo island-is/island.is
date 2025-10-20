@@ -114,8 +114,8 @@ describe('PassportService - ExpiresWithinNoticeTime Validation', () => {
     jest.clearAllMocks()
   })
 
-  afterAll(() => {
-    module.close()
+  afterAll(async () => {
+    await module.close()
   })
 
   describe('User Passport Expiration Validation', () => {
