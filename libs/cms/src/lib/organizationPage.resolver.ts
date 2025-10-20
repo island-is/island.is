@@ -397,17 +397,27 @@ export class OrganizationPageResolver {
     ).filter(Boolean) as TopLink[]
   }
 
+  private pruneNode(node: SitemapTreeNode): SitemapTreeNode {
+    return {
+      ...node,
+      childNodes: node.childNodes
+        .map((child) => {
+          if (this.shouldIgnoreNode(node)) return null
+          return this.pruneNode(child)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
+    }
+  }
+
   private pruneTree(tree: SitemapTree): SitemapTree {
     return {
       ...tree,
-      childNodes: tree.childNodes.filter((node) => {
-        if (
-          this.shouldIgnoreNode(node) ||
-          node.type !== SitemapTreeNodeType.CATEGORY
-        )
-          return false
-        return this.pruneTree(node)
-      }),
+      childNodes: tree.childNodes
+        .map((node) => {
+          if (this.shouldIgnoreNode(node)) return null
+          return this.pruneNode(node)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
     }
   }
 
