@@ -17,7 +17,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateTypes, YES } from '../../lib/constants'
+import { EstateTypes, YES, SPOUSE } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
@@ -71,10 +71,30 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
+  const relation = useWatch({
+    name: relationField,
+    defaultValue: field.relation,
+  })
+
+  const allEstateMembers = useWatch({
+    name: 'estate.estateMembers',
+  })
+
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
   const currentEstateMember = values?.estate?.estateMembers?.[index]
+
+  // Check if there's already a spouse in the heirs list (excluding the current member)
+  const hasExistingSpouse = allEstateMembers?.some(
+    (member: EstateMember, memberIndex: number) =>
+      memberIndex !== index && member.enabled && member.relation === SPOUSE,
+  )
+
+  // Filter out SPOUSE from relation options if there's already a spouse
+  const filteredRelationOptions = hasExistingSpouse
+    ? relationOptions.filter((option) => option.value !== SPOUSE)
+    : relationOptions
 
   const hasForeignCitizenship =
     currentEstateMember?.foreignCitizenship?.[0] === YES
@@ -105,6 +125,20 @@ export const AdditionalEstateMember = ({
     relationField,
     dateOfBirthField,
     fieldIndex,
+  ])
+
+  // Clear relationWithApplicant when relation is changed to SPOUSE
+  useEffect(() => {
+    if (relation === SPOUSE && currentEstateMember?.relationWithApplicant) {
+      setValue(relationWithApplicantField, '')
+      clearErrors(relationWithApplicantField)
+    }
+  }, [
+    relation,
+    currentEstateMember?.relationWithApplicant,
+    setValue,
+    clearErrors,
+    relationWithApplicantField,
   ])
 
   return (
@@ -193,27 +227,28 @@ export const AdditionalEstateMember = ({
             name={relationField}
             label={formatMessage(m.inheritanceRelationLabel)}
             defaultValue={field.relation}
-            options={relationOptions}
+            options={filteredRelationOptions}
             error={error?.relation}
             backgroundColor="blue"
             required={!field.initial}
           />
         </GridColumn>
-        {selectedEstate === EstateTypes.permitForUndividedEstate && (
-          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-            <SelectController
-              key={relationWithApplicantField}
-              id={relationWithApplicantField}
-              name={relationWithApplicantField}
-              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-              defaultValue={field.relationWithApplicant}
-              options={relationWithApplicantOptions}
-              error={error?.relationWithApplicant}
-              backgroundColor="blue"
-              required={!field.initial}
-            />
-          </GridColumn>
-        )}
+        {selectedEstate === EstateTypes.permitForUndividedEstate &&
+          relation !== SPOUSE && (
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <SelectController
+                key={relationWithApplicantField}
+                id={relationWithApplicantField}
+                name={relationWithApplicantField}
+                label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+                defaultValue={field.relationWithApplicant}
+                options={relationWithApplicantOptions}
+                error={error?.relationWithApplicant}
+                backgroundColor="blue"
+                required={!field.initial}
+              />
+            </GridColumn>
+          )}
         {!hideContactInfo && (
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
