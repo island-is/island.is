@@ -1,59 +1,61 @@
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { handle404 } from '@island.is/clients/middlewares'
+import { Inject, Injectable } from '@nestjs/common'
+
+import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
+import { data } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import {
   DispensationHistoryDto,
   DispensationHistoryItemDto,
-  Locale,
   PrescribedItemDto,
   PrescriptionRenewalRequestDto,
-  PrescriptionsApi,
   ProductDocumentDto,
   ReferralDto,
-  ReferralsApi,
+  OrganDonorDto,
+  UpdateOrganDonorDto,
+  OrganDto,
   WaitingListEntryDto,
-  WaitingListsApi,
+  mePrescriptionControllerGetPrescriptionsV1,
+  mePrescriptionControllerGetPrescribedItemDocumentsV1,
+  mePrescriptionControllerRenewPrescriptionV1,
+  mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
+  mePrescriptionDispensationControllerGetGroupedDispensationsV1,
+  meReferralControllerGetReferralsV1,
+  meWaitingListControllerGetWaitingListEntriesV1,
+  meDonorStatusControllerGetOrganDonorStatusV1,
+  donationExceptionControllerGetOrgansV1,
+  meDonorStatusControllerUpdateOrganDonorStatusV1,
 } from './gen/fetch'
+import { Locale } from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly referralsApi: ReferralsApi,
-    private readonly waitingListsApi: WaitingListsApi,
-    private readonly prescriptionsApi: PrescriptionsApi,
-  ) {}
-
-  private referralsApiWithAuth(auth: Auth) {
-    return this.referralsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private waitingListsApiWithAuth(auth: Auth) {
-    return this.waitingListsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private prescriptionsApiWithAuth(auth: Auth) {
-    return this.prescriptionsApi.withMiddleware(new AuthMiddleware(auth))
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
+    this.logger = logger.child({ context: 'HealthDirectorateHealthService' })
   }
 
   private mapLocale(locale: string): Locale {
-    return locale === 'is' ? Locale.Is : Locale.En
+    return locale === 'is' ? Locale.IS : Locale.EN
   }
 
-  /* Afgreiðslur */
+  /* Dispensations */
   public async getDispensations(
     auth: Auth,
     atcCode: string,
     locale: string,
   ): Promise<Array<DispensationHistoryItemDto> | null> {
-    const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
-        atcCode,
-        locale: this.mapLocale(locale),
-      })
-      .catch(handle404)
+    const dispensations = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
+          path: {
+            atcCode,
+          },
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
 
     if (!dispensations) {
       return null
@@ -66,11 +68,15 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<DispensationHistoryDto> | null> {
-    const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .mePrescriptionDispensationControllerGetGroupedDispensationsV1({
-        locale: this.mapLocale(locale),
-      })
-      .catch(handle404)
+    const dispensations = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionDispensationControllerGetGroupedDispensationsV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
 
     if (!dispensations) {
       return null
@@ -84,11 +90,15 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<PrescribedItemDto> | null> {
-    const prescriptions = await this.prescriptionsApiWithAuth(
-      auth,
-    ).mePrescriptionControllerGetPrescriptionsV1({
-      locale: this.mapLocale(locale),
-    })
+    const prescriptions = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerGetPrescriptionsV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
 
     if (!prescriptions) {
       return null
@@ -103,12 +113,16 @@ export class HealthDirectorateHealthService {
     id: string,
     input: PrescriptionRenewalRequestDto,
   ) {
-    return await this.prescriptionsApiWithAuth(
-      auth,
-    ).mePrescriptionControllerRenewPrescriptionV1({
-      id,
-      prescriptionRenewalRequestDto: input,
-    })
+    return await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerRenewPrescriptionV1({
+          path: {
+            id,
+          },
+          body: input,
+        }),
+      ),
+    )
   }
 
   /* Fylgiseðill */
@@ -116,11 +130,15 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     productId: string,
   ): Promise<ProductDocumentDto[] | null> {
-    const pdf = await this.prescriptionsApiWithAuth(auth)
-      .mePrescriptionControllerGetPrescribedItemDocumentsV1({
-        productId: productId,
-      })
-      .catch(handle404)
+    const pdf = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerGetPrescribedItemDocumentsV1({
+          path: {
+            productId,
+          },
+        }),
+      ),
+    )
 
     if (!pdf) {
       return null
@@ -134,9 +152,15 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<ReferralDto> | null> {
-    const referrals = await this.referralsApiWithAuth(auth)
-      .meReferralControllerGetReferralsV1({ locale: this.mapLocale(locale) })
-      .catch(handle404)
+    const referrals = await withAuthContext(auth, () =>
+      data(
+        meReferralControllerGetReferralsV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
 
     if (!referrals) {
       return null
@@ -150,16 +174,81 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<WaitingListEntryDto> | null> {
-    const waitlists = await this.waitingListsApiWithAuth(auth)
-      .meWaitingListControllerGetWaitingListEntriesV1({
-        locale: this.mapLocale(locale),
-      })
-      .catch(handle404)
+    const waitlists = await withAuthContext(auth, () =>
+      data(
+        meWaitingListControllerGetWaitingListEntriesV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
 
     if (!waitlists) {
       return null
     }
 
     return waitlists
+  }
+
+  public async getOrganDonation(
+    auth: Auth,
+    input: Locale,
+  ): Promise<OrganDonorDto | null> {
+    const organDonation = await withAuthContext(auth, () =>
+      data(
+        meDonorStatusControllerGetOrganDonorStatusV1({
+          query: {
+            locale: this.mapLocale(input),
+          },
+        }),
+      ),
+    )
+
+    if (!organDonation) {
+      this.logger.warn('No organ donations data returned')
+      return null
+    }
+
+    return organDonation
+  }
+
+  public async updateOrganDonation(
+    auth: Auth,
+    input: UpdateOrganDonorDto,
+    locale: Locale,
+  ): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(
+        meDonorStatusControllerUpdateOrganDonorStatusV1({
+          body: input,
+          query: {
+            locale: locale,
+          },
+        }),
+      ),
+    )
+  }
+
+  public async getDonationExceptions(
+    auth: Auth,
+    input: Locale,
+  ): Promise<Array<OrganDto> | null> {
+    const donationExceptions = await withAuthContext(auth, () =>
+      data(
+        donationExceptionControllerGetOrgansV1({
+          query: {
+            locale: this.mapLocale(input),
+          },
+        }),
+      ),
+    )
+
+    if (!donationExceptions) {
+      this.logger.warn('No organ donations exceptions returned')
+      return null
+    }
+
+    return donationExceptions
   }
 }

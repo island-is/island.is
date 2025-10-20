@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   FormSubmitSuccessModel,
   FriggApi,
+  GetOrganizationsByTypeRequest,
   KeyOption,
   OrganizationModel,
   RegistrationInput,
@@ -25,8 +26,15 @@ export class FriggClientService {
     })
   }
 
-  async getOrganizationsByType(user: User): Promise<OrganizationModel[]> {
-    return await this.friggApiWithAuth(user).getOrganizationsByType({})
+  async getOrganizationsByType(
+    user: User,
+    input?: GetOrganizationsByTypeRequest,
+  ): Promise<OrganizationModel[]> {
+    return await this.friggApiWithAuth(user).getOrganizationsByType({
+      type: input?.type,
+      municipalityCode: input?.municipalityCode,
+      gradeLevels: input?.gradeLevels,
+    })
   }
 
   async getUserById(
