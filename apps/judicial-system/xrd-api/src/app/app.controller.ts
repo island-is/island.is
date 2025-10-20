@@ -99,6 +99,10 @@ export class AppController {
     @Body() updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ): Promise<PoliceDocumentDelivery> {
     this.logger.info(`Updating police document ${policeDocumentId}`)
+    // TODO: Remove after testing on dev
+    this.logger.info(
+      `Update request ${JSON.stringify(updatePoliceDocumentDelivery)}`,
+    )
 
     return this.appService.updatePoliceDocumentDelivery(
       policeDocumentId,

@@ -51,6 +51,7 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        modified
         caseId
         defendantId
         created
@@ -66,6 +67,7 @@ query Case($input: CaseQueryInput!) {
         comment
         deliveredToDefenderNationalId
         servedBy
+        isDefaultJudgement
       }
     }
     defenderName
