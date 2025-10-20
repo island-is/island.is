@@ -22,7 +22,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
-import { ExternalLink } from '../../components/external-links/external-links'
 import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 
