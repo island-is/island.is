@@ -1,6 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import React from 'react'
 import { useWindowSize } from 'react-use'
 import * as styles from './InfoCard.css'
 
@@ -11,12 +10,12 @@ interface EmptyCardProps {
   size?: 'small' | 'large'
 }
 
-export const EmptyCard: React.FC<EmptyCardProps> = ({
+export const EmptyCard = ({
   title,
   description,
   img,
   size = 'small',
-}) => {
+}: EmptyCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 

@@ -3,7 +3,7 @@ import {
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
 import { Box, Button, Inline, Text, toast } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import {
   DownloadFileButtons,
   LinkButton,
@@ -29,7 +29,6 @@ interface Props {
 }
 
 const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
-  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [activeItem, setActiveItem] =
     useState<RightsPortalAidOrNutrition | null>(null)
@@ -182,7 +181,7 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
               : formatMessage(messages.maxAmountPerMonth),
             insuranceRatio: isAid
               ? formatMessage(messages.insuranceRatio)
-              : formatMessage(messages.maxAmountPerMonth),
+              : formatMessage(messages.insuranceRatioOrInitialApplicantPayment),
             insuranceRatioOrInitialApplicantPayment: formatMessage(
               messages.insuranceRatioOrInitialApplicantPayment,
             ),
@@ -200,14 +199,15 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
               : rowItem.maxMonthlyAmount
               ? amountFormat(rowItem.maxMonthlyAmount)
               : '',
-            insuranceRatio:
-              rowItem.refund.type === 'amount'
+            insuranceRatio: rowItem.refund
+              ? rowItem.refund.type === 'amount'
                 ? rowItem.refund.value
                   ? amountFormat(rowItem.refund.value)
                   : ''
                 : rowItem.refund.value
                 ? `${rowItem.refund.value}%`
-                : '',
+                : ''
+              : '',
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
             renewal: undefined,

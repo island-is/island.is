@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -14,11 +12,7 @@ interface LocationModalProps {
   isVisible: boolean
 }
 
-const LocationModal: React.FC<LocationModalProps> = ({
-  item,
-  onClose,
-  isVisible,
-}) => {
+const LocationModal = ({ item, onClose, isVisible }: LocationModalProps) => {
   const { formatMessage } = useLocale()
   const modulusCalculations = (index: number) => {
     return index % 2 !== 0
