@@ -11,7 +11,6 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, GeneralCardSkeleton, TopLine, Typography } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
@@ -20,10 +19,12 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
-import { useMyPagesLinks } from '../../lib/my-pages-links'
+
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
