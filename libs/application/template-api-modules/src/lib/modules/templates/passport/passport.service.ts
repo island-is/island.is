@@ -12,7 +12,10 @@ import {
 import { DiscountCheck, DistrictCommissionerAgencies } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
-import { PassportSchema } from '@island.is/application/templates/passport'
+import {
+  PassportSchema,
+  m as messages,
+} from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -180,10 +183,16 @@ export class PassportService extends BaseTemplateApiService {
 
       if (forUser) {
         if (
-          fetchedPassport.userPassport &&
-          !fetchedPassport.userPassport.expiresWithinNoticeTime
+          fetchedPassport?.userPassport &&
+          !fetchedPassport?.userPassport?.expiresWithinNoticeTime
         ) {
-          throw new Error('Passport is not expiring in the next 6 months')
+          throw new TemplateApiError(
+            {
+              title: messages.errorExpirationValidationTitle,
+              summary: messages.errorExpirationValidationSummary,
+            },
+            400,
+          )
         }
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
@@ -200,7 +209,7 @@ export class PassportService extends BaseTemplateApiService {
           subType: PASSPORT_SUBTYPE,
         })
       } else {
-        const childPassport = fetchedPassport.childPassports?.find(
+        const childPassport = fetchedPassport?.childPassports?.find(
           (child) => child.childNationalId === childsPersonalInfo.nationalId,
         )
         const expiresWithinNoticeTime = childPassport?.passports?.some(
@@ -208,8 +217,12 @@ export class PassportService extends BaseTemplateApiService {
         )
 
         if (childPassport?.passports?.length && !expiresWithinNoticeTime) {
-          throw new Error(
-            'No child passport expiring within the next 6 months found',
+          throw new TemplateApiError(
+            {
+              title: messages.errorExpirationValidationTitle,
+              summary: messages.errorExpirationValidationSummary,
+            },
+            400,
           )
         }
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
