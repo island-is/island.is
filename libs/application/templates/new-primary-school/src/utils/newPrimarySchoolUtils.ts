@@ -629,14 +629,14 @@ export const getSelectedSchoolSector = (
     return ''
   }
 
-  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector ?? ''
 }
 
 export const getSelectedSchoolSubType = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const { selectedSchoolId } = getApplicationAnswers(answers) ?? ''
+  const { selectedSchoolId } = getApplicationAnswers(answers)
 
   if (!selectedSchoolId) {
     return ''
