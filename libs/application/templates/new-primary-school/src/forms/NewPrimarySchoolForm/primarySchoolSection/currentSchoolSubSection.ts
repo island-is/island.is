@@ -106,11 +106,11 @@ export const currentSchoolSubSection = buildSubSection({
             return (
               data?.friggOrganizationsByType
                 ?.map(({ name, unitId }) => ({
-                  value: unitId as string,
+                  value: unitId || '',
                   label: name,
-                })) ?? []
-
-            return options.sort((a, b) => a.label.localeCompare(b.label))
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+            )
           },
           condition: (_, externalData) => {
             const { primaryOrgId } = getApplicationExternalData(externalData)
