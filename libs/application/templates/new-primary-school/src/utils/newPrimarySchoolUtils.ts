@@ -636,11 +636,11 @@ export const getSelectedSchoolSubType = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const { selectedSchoolId } = getApplicationAnswers(answers)
+  const { selectedSchoolId } = getApplicationAnswers(answers) ?? ''
 
   if (!selectedSchoolId) {
     return ''
   }
 
-  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
 }
