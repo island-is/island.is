@@ -171,11 +171,20 @@ export class PassportService extends BaseTemplateApiService {
         service,
       }: PassportSchema = application.answers as PassportSchema
 
+      const fetchedPassport = await this.passportApi.getCurrentPassport(auth)
+
       const forUser = !!passport.userPassport
       let result
       const PASSPORT_TYPE = 'P'
       const PASSPORT_SUBTYPE = 'A'
+
       if (forUser) {
+        if (
+          fetchedPassport.userPassport &&
+          !fetchedPassport.userPassport.expiresWithinNoticeTime
+        ) {
+          throw new Error('Passport is not expiring in the next 6 months')
+        }
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -191,6 +200,18 @@ export class PassportService extends BaseTemplateApiService {
           subType: PASSPORT_SUBTYPE,
         })
       } else {
+        const childPassport = fetchedPassport.childPassports?.find(
+          (child) => child.childNationalId === childsPersonalInfo.nationalId,
+        )
+        const expiresWithinNoticeTime = childPassport?.passports?.some(
+          (passport) => passport.expiresWithinNoticeTime,
+        )
+
+        if (childPassport?.passports?.length && !expiresWithinNoticeTime) {
+          throw new Error(
+            'No child passport expiring within the next 6 months found',
+          )
+        }
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
