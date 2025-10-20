@@ -146,14 +146,28 @@ export class PassportsService {
       })
 
       const childrenArray = passportResponse.map((child) => {
+        const resolvedPassports = child.identityDocumentResponses
+          ? this.resolvePassports(child.identityDocumentResponses)
+          : undefined
+
+        // Sort passports by expiration date ascending (soonest-to-expire first)
+        // This ensures expired or soon-to-expire passports are checked first
+        const sortedPassports = resolvedPassports?.sort((a, b) => {
+          if (!a.expirationDate && !b.expirationDate) return 0
+          if (!a.expirationDate) return 1
+          if (!b.expirationDate) return -1
+          return (
+            Number(new Date(a.expirationDate)) -
+            Number(new Date(b.expirationDate))
+          )
+        })
+
         return {
           childNationalId: child.childrenSSN,
           childName: child.childrenName,
           secondParent: child.secondParent,
           secondParentName: child.secondParentName,
-          passports: child.identityDocumentResponses
-            ? this.resolvePassports(child.identityDocumentResponses)
-            : undefined,
+          passports: sortedPassports,
           citizenship: child.rikisfang,
         }
       })
