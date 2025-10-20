@@ -57,6 +57,7 @@ import {
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
+  linkResolver,
   useLinkResolver,
   useNamespace,
   usePlausiblePageview,
@@ -1101,10 +1102,26 @@ export const OrganizationWrapper: React.FC<
     breadcrumbItemsProp,
   ])
 
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
-  )
+  const activeNavigationItemTitle = useMemo(() => {
+    const activeTitle = getActiveNavigationItemTitle(
+      navigationData.items,
+      router.asPath,
+    )
+    const pathname = new URL(router.asPath, 'https://island.is').pathname
+    if (
+      sitemapContentTypeDeterminesNavigationAndBreadcrumbs &&
+      linkResolver('organizationpage', [organizationPage.slug]).href ===
+        pathname
+    ) {
+      return undefined
+    }
+    return activeTitle
+  }, [
+    navigationData.items,
+    organizationPage.slug,
+    router.asPath,
+    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
+  ])
 
   return (
     <>
