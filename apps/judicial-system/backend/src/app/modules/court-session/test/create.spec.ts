@@ -66,7 +66,6 @@ describe('CourtSessionController - Create', () => {
       mockCreate.mockResolvedValueOnce(createdCourtSession)
 
       then = await givenWhenThen(caseId)
-      console.log(then)
     })
 
     it('should create a court session', () => {
