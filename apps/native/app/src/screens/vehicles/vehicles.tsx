@@ -22,8 +22,9 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
-import { ExternalLinks } from '../../components/external-links/external-links'
-import { getMyPagesLinks } from '../../lib/my-pages-links'
+import { ExternalLink } from '../../components/external-links/external-links'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -91,7 +92,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     refetching,
   })
 
-  const myPagesLinks = getMyPagesLinks()
+  const myPagesLinks = useMyPagesLinks()
 
   const externalLinks = [
     {
@@ -254,21 +255,12 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 12,
-                borderTopColor: theme.color.blue200,
               }}
             >
-              <Typography variant="heading5">
-                {intl.formatMessage({ id: 'profile.moreInfo' })}
-              </Typography>
-              <View style={{ marginHorizontal: -16 }}>
-                {externalLinks.map((link) => (
-                  <ExternalLinks
-                    links={link}
-                    key={link.title}
-                    componentId={componentId}
-                  />
-                ))}
-              </View>
+              <MoreInfoContiner
+                externalLinks={externalLinks}
+                componentId={componentId}
+              />
             </View>
           </>
         }

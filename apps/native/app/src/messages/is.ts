@@ -297,11 +297,11 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
-  'profile.moreInfo': 'Meira a mínum síðum',
+  'profile.moreInfo': 'Meira á mínum síðum',
   'profile.accessControl': 'Aðgangsstýring',
   'profile.supportPayments': 'Framfærsla',
   'profile.education': 'Menntun',
-  'profile.lawAndOrder': 'Lög og rglur',
+  'profile.lawAndOrder': 'Lög og reglur',
   'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles

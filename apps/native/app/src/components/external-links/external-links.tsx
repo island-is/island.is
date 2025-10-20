@@ -1,27 +1,55 @@
-import { Pressable, View } from 'react-native'
+import { Pressable, TextStyle, View } from 'react-native'
 import { Icon, theme, Typography } from '../../ui'
 import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import { useBrowser } from '../../lib/use-browser'
 import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
+import styled from 'styled-components/native'
 
-export interface ExternalLink {
+export interface ExternalLinkItem {
   link: string
   title: string
   icon?: ImageSourcePropType
 }
 
 export interface ExternalLinksProps {
-  links: ExternalLink
-  fontWeight?: '300' | '400' | '500' | '600' | '700'
+  links: ExternalLinkItem
+  fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
   componentId: string
 }
 
-export const ExternalLinks = ({
+const Container = styled(Pressable)<{ $hasBorder: boolean }>(
+  ({ $hasBorder, theme }) => ({
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: theme.spacing[2],
+    borderBottomColor: theme.color.blue200,
+    borderBottomWidth: $hasBorder ? 1 : 0,
+    padding: theme.spacing[2],
+  }),
+)
+
+const Content = styled(View)(({ theme }) => ({
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: theme.spacing[2],
+}))
+
+const IconWrapper = styled(View)(({ theme }) => ({
+  height: 42,
+  width: 42,
+  borderRadius: 21,
+  backgroundColor: theme.color.blue100,
+  alignItems: 'center',
+  justifyContent: 'center',
+}))
+
+export const ExternalLink = ({
   links,
-  fontWeight = '300',
+  fontWeight = 'light',
   borderBottom = true,
   fontSize = 16,
   componentId,
@@ -37,38 +65,12 @@ export const ExternalLinks = ({
   }
 
   return (
-    <Pressable
-      onPress={handlePress}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: theme.spacing[2],
-        borderBottomWidth: borderBottom ? 1 : 0,
-        borderBottomColor: theme.color.blue200,
-        padding: theme.spacing[2],
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: theme.spacing[2],
-        }}
-      >
+    <Container onPress={handlePress} $hasBorder={borderBottom}>
+      <Content>
         {links.icon && (
-          <View
-            style={{
-              height: 42,
-              width: 42,
-              borderRadius: 21,
-              backgroundColor: theme.color.blue100,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <IconWrapper>
             <Icon source={links.icon} width={24} height={24} />
-          </View>
+          </IconWrapper>
         )}
         <Typography
           lineHeight={24}
@@ -78,13 +80,13 @@ export const ExternalLinks = ({
         >
           {links.title}
         </Typography>
-      </View>
+      </Content>
       <Icon
         source={externalLinkIcon}
         tintColor="dark300"
         width={20}
         height={20}
       />
-    </Pressable>
+    </Container>
   )
 }

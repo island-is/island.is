@@ -1,4 +1,4 @@
-import { getMyPagesLinks } from '../../lib/my-pages-links'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
@@ -19,8 +19,9 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { ExternalLinks } from '../../components/external-links/external-links'
+import { ExternalLink } from '../../components/external-links/external-links'
 import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
+import { useBrowser } from '../../lib/use-browser'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((theme) => ({
@@ -39,6 +40,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   id: string
 }> = ({ componentId, title, id }) => {
   useNavigationOptions(componentId)
+  const myPagesLinks = useMyPagesLinks()
+  const { openBrowser } = useBrowser()
 
   const intl = useIntl()
   const { data, loading, error } = useGetVehicleQuery({
@@ -59,8 +62,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.HomeScreenDropdownButton) {
-      const myPagesLinks = getMyPagesLinks()
-
       const items = [
         {
           title: intl.formatMessage({
@@ -99,12 +100,12 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         contentId,
         <View>
           {items.map((item, index) => (
-            <ExternalLinks
+            <ExternalLink
               componentId={componentId}
               key={item.title}
               links={{ link: item.link, title: item.title }}
               borderBottom={index !== items.length - 1}
-              fontWeight="600"
+              fontWeight={'bold'}
               fontSize={14}
             />
           ))}
@@ -200,9 +201,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                 id: 'vehicle.links.reportOwnerChange',
               })}
               onPress={() => {
-                navigateTo('/webview', {
-                  source: { uri: getMyPagesLinks().reportOwnerChange },
-                })
+                openBrowser(myPagesLinks.reportOwnerChange, componentId)
               }}
             />
           </View>

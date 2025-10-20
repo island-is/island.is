@@ -82,7 +82,7 @@ export const environmentStore = create<EnvironmentStore>(
                 ...local,
                 ...n,
                 // Preserve baseUrl from local if remote does not provide it
-                baseUrl: remote.baseUrl ?? local.baseUrl,
+                baseUrl: remote.baseUrl ?? remote.apiUrl.replace('/api', ''),
               }
             })
             const dev = ids.find((n) => n.id === 'dev')

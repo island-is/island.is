@@ -16,14 +16,14 @@ import financeIcon from '../../assets/icons/finance.png'
 import healthIcon from '../../assets/icons/health.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { ExternalLinks } from '../../components/external-links/external-links'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
-import { getMyPagesLinks } from '../../lib/my-pages-links'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useAuthStore } from '../../stores/auth-store'
-import { FamilyMemberCard, MoreCard, Typography } from '../../ui'
+import { FamilyMemberCard, MoreCard } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -71,7 +71,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const theme = useTheme()
   const authStore = useAuthStore()
-  const myPagesLinks = getMyPagesLinks()
+  const myPagesLinks = useMyPagesLinks()
 
   useConnectivityIndicator({
     componentId,
@@ -171,18 +171,10 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             marginTop: theme.spacing[3],
           }}
         >
-          <Typography variant="heading5">
-            {intl.formatMessage({ id: 'profile.moreInfo' })}
-          </Typography>
-          <View style={{ marginHorizontal: -16 }}>
-            {externalLinks.map((link) => (
-              <ExternalLinks
-                links={link}
-                key={link.title}
-                componentId={componentId}
-              />
-            ))}
-          </View>
+          <MoreInfoContiner
+            externalLinks={externalLinks}
+            componentId={componentId}
+          />
         </View>
       </ScrollView>
 

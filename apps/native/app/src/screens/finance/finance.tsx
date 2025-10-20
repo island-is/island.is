@@ -3,14 +3,14 @@ import { SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import externalLink from '../../assets/icons/external-link.png'
-import { ExternalLinks } from '../../components/external-links/external-links'
+import externalLinkIcon from '../../assets/icons/external-link.png'
+import { ExternalLink } from '../../components/external-links/external-links'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { getMyPagesLinks } from '../../lib/my-pages-links'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useBrowser } from '../../lib/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
@@ -93,7 +93,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
     />
   ))
 
-  const myPagesLinks = getMyPagesLinks()
+  const myPagesLinks = useMyPagesLinks()
 
   const externalLinks = [
     {
@@ -169,7 +169,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           })}
           isOutlined
           isUtilityButton
-          icon={externalLink}
+          icon={externalLinkIcon}
           disabled={!scheduleButtonVisible}
           iconStyle={{ tintColor: theme.color.dark300 }}
           style={{ flex: 1 }}
@@ -203,7 +203,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <View style={{ marginHorizontal: -16 }}>
           {externalLinks.map((link) => (
-            <ExternalLinks
+            <ExternalLink
               links={link}
               key={link.title}
               componentId={componentId}

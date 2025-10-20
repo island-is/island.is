@@ -12,16 +12,16 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { AssetCard, EmptyList, Skeleton, TopLine, Typography } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { ExternalLinks } from '../../components/external-links/external-links'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
+import { AssetCard, EmptyList, Skeleton, TopLine } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
-import { getMyPagesLinks } from '../../lib/my-pages-links'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -93,7 +93,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   const isSkeleton = assetsRes.loading && !assetsRes.data
   const assetsList = assetsRes?.data?.assetsOverview?.properties || []
 
-  const myPagesLinks = getMyPagesLinks()
+  const myPagesLinks = useMyPagesLinks()
   const externalLinks = [
     {
       link: myPagesLinks.mortgageCertificate,
@@ -208,26 +208,6 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
     return (
       <>
         <AssetItem item={item} />
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            borderTopColor: theme.color.blue200,
-          }}
-        >
-          <Typography variant="heading5">
-            {intl.formatMessage({ id: 'profile.moreInfo' })}
-          </Typography>
-          <View style={{ marginHorizontal: -16 }}>
-            {externalLinks.map((link) => (
-              <ExternalLinks
-                links={link}
-                key={link.title}
-                componentId={componentId}
-              />
-            ))}
-          </View>
-        </View>
       </>
     )
   }
@@ -275,6 +255,21 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
         data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : assetsList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        ListFooterComponent={
+          isEmpty ? null : (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
+            >
+              <MoreInfoContiner
+                externalLinks={externalLinks}
+                componentId={componentId}
+              />
+            </View>
+          )
+        }
       />
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />
