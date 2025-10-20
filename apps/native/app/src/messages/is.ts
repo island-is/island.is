@@ -297,6 +297,12 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
+  'profile.moreInfo': 'Meira á mínum síðum',
+  'profile.accessControl': 'Aðgangsstýring',
+  'profile.supportPayments': 'Framfærsla',
+  'profile.education': 'Menntun',
+  'profile.lawAndOrder': 'Lög og reglur',
+  'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -305,6 +311,7 @@ export const is = {
     'Ökutæki sem eru skráð á þig munu birtast hér.',
   'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
   'vehicles.mileageRequired': 'Kílómetragjald',
+  'vehicles.registerMileage': 'Skrá kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -354,11 +361,29 @@ export const is = {
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
+  'vehicle.links.vehicleHistory': 'Ökutækjaferill',
+  'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
+  'vehicle.links.returnCertificate': 'Skilavottorð',
+  'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Panta númeraplötu',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Panta skráningarskírteini',
+  'vehicle.links.dropdown.changeCoOwner': 'Breyta meðeiganda',
+  'vehicle.links.dropdown.changeOperator': 'Breyta umráðamanni',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Ferilskýrsla',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
   'assetsOverview.emptyListDescription':
     'Fasteignir sem skráðar eru á þig munu birtast hér.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Veðbókarvottorð',
 
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
@@ -386,6 +411,9 @@ export const is = {
   'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
   'finance.heading.subtitle':
     'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+  'finance.links.payments': 'Greiðslur',
+  'finance.links.loans': 'Lán',
+  'finance.links.transactions': 'Hreyfingar',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',

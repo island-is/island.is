@@ -417,6 +417,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -425,6 +431,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -474,11 +481,30 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Order number plate',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Order registration certificate',
+  'vehicle.links.dropdown.changeCoOwner': 'Change co-owner',
+  'vehicle.links.dropdown.changeOperator': 'Change operator',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Vehicle history report',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -506,6 +532,9 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
 
   // finance detail
   'financeDetail.title': 'Detailed information',

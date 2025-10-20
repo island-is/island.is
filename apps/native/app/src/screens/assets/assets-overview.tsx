@@ -12,13 +12,15 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { AssetCard, EmptyList, Skeleton, TopLine } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
+import { AssetCard, EmptyList, Skeleton, TopLine } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -90,6 +92,14 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
   const assetsList = assetsRes?.data?.assetsOverview?.properties || []
+
+  const myPagesLinks = useMyPagesLinks()
+  const externalLinks = [
+    {
+      link: myPagesLinks.mortgageCertificate,
+      title: intl.formatMessage({ id: 'assets.links.mortgageCertificate' }),
+    },
+  ]
 
   const onRefresh = useCallback(() => {
     try {
@@ -241,6 +251,21 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
         data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : assetsList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        ListFooterComponent={
+          isEmpty ? null : (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
+            >
+              <MoreInfoContiner
+                externalLinks={externalLinks}
+                componentId={componentId}
+              />
+            </View>
+          )
+        }
       />
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />
