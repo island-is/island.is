@@ -49,7 +49,7 @@ const IconWrapper = styled(View)(({ theme }) => ({
 
 export const ExternalLink = ({
   links,
-  fontWeight = 'light',
+  fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
   componentId,
