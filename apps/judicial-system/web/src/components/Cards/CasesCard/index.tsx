@@ -28,7 +28,7 @@ const TitleWithCounter: FC<Pick<CasesCardProps, 'title' | 'type'>> = (
   return (
     <Text variant="h4" color="blue400" marginBottom={1}>
       {props.title} (
-      {loading || !error ? (
+      {loading || error ? (
         <span className={styles.loadingDots}>
           <LoadingDots size="small" />
         </span>
