@@ -6,12 +6,11 @@ import {
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InfoCardGrid } from '@island.is/portals/my-pages/core'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import React, { useEffect, useState } from 'react'
+import { isDefined } from '@island.is/shared/utils'
+import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import { DataState } from '../../../utils/types'
-import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   healthCenter: DataState<RightsPortalHealthCenterRegistrationHistory | null>
@@ -29,10 +28,8 @@ const BasicInformation: React.FC<Props> = ({
   blood,
 }) => {
   const { formatMessage } = useLocale()
-  const [showBloodtype, setShowBloodtype] = useState<boolean>(false)
 
   const doctor = healthCenter.data?.current?.doctor
-  const featureFlagClient = useFeatureFlagClient()
 
   const allEmpty =
     !isDefined(healthCenter.data) &&
@@ -42,20 +39,6 @@ const BasicInformation: React.FC<Props> = ({
 
   const anyLoading =
     healthCenter.loading || dentists.loading || donor.loading || blood.loading
-
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.servicePortalHealthBloodPageEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setShowBloodtype(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <Box>
@@ -99,20 +82,18 @@ const BasicInformation: React.FC<Props> = ({
             loading: donor.loading,
             error: donor.error,
           },
-          showBloodtype
-            ? {
-                title: formatMessage(messages.bloodtype),
-                description: blood.data?.registered
-                  ? formatMessage(messages.youAreInBloodGroup, {
-                      arg: blood.data.type,
-                    })
-                  : formatMessage(messages.notRegistered),
+          {
+            title: formatMessage(messages.bloodtype),
+            description: blood.data?.registered
+              ? formatMessage(messages.youAreInBloodGroup, {
+                  arg: blood.data.type,
+                })
+              : formatMessage(messages.notRegistered),
 
-                to: HealthPaths.HealthBloodtype,
-                loading: blood.loading,
-                error: blood.error,
-              }
-            : null,
+            to: HealthPaths.HealthBloodtype,
+            loading: blood.loading,
+            error: blood.error,
+          },
         ]}
         empty={
           !anyLoading && allEmpty
