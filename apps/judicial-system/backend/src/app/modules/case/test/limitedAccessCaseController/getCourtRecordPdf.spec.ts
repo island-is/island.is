@@ -186,12 +186,13 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     })
   })
 
-  describe('generated pdf returned', () => {
+  describe.only('generated pdf returned for indictment case', () => {
     const user = { role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
+      withCourtSessions: true,
       courtSessions: [{ isConfirmed: true }],
     } as Case
     const res = { end: jest.fn() } as unknown as Response
@@ -202,7 +203,8 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
         createIndictmentCourtRecordPdf as jest.Mock
       createIndictmentCourtRecordPdfMock.mockResolvedValueOnce(pdf)
 
-      await givenWhenThen(caseId, user, theCase, res)
+      const then = await givenWhenThen(caseId, user, theCase, res)
+      console.log(then)
     })
 
     it('should return pdf', () => {
