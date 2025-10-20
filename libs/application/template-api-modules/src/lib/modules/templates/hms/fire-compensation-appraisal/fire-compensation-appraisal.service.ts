@@ -111,12 +111,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       if (!selectedRealEstateId) {
         throw new TemplateApiError('Selected real estate id is not set', 500)
       }
-      
+
       const selectedUsageUnits = getValueViaPath<Array<string>>(
         application.answers,
         'usageUnits',
       )
-      
+
       const properties = otherPropertiesThanIOwn
         ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
         : await this.getProperties(props)
