@@ -8,6 +8,7 @@ import { overview } from '../lib/messages'
 import { isContactDifferentFromApplicant } from './isContactDifferentFromApplicant'
 import { RealEstateAnswers } from '../lib/dataSchema'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { Fasteign } from '@island.is/clients/assets'
 
 export const getApplicantOverviewItems = (
   answers: FormValue,
@@ -81,11 +82,18 @@ export const getContactOverviewItems = (
 
 export const getRealEstateOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const realEstateData = getValueViaPath<RealEstateAnswers>(
     answers,
     'realEstate',
+  )
+  const properties = getValueViaPath<Array<Fasteign>>(
+    externalData,
+    'getProperties.data',
+  )
+  const chosenProperty = properties?.find(
+    (property) => property.fasteignanumer === realEstateData?.realEstateName,
   )
 
   const currencyAmount = formatCurrency(realEstateData?.realEstateCost ?? '0')
@@ -98,7 +106,7 @@ export const getRealEstateOverviewItems = (
         {
           ...overview.theRealEstate,
           values: {
-            value: realEstateData?.realEstateName ?? '',
+            value: `${chosenProperty?.sjalfgefidStadfang?.birting} (${chosenProperty?.fasteignanumer})`,
           },
         },
         {

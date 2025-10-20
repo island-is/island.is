@@ -12,6 +12,7 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { getRequestDto } from './utils'
 
 @Injectable()
 export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiService {
@@ -35,8 +36,7 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       properties = mockGetProperties()
     }
-    // If on prod we fetch a list of all the fasteignanúmer for kennitala and then
-    // fetch each property individually with the full data.
+    // Fetching a list of all property numbers for a users ssn and then fetching each property individually
     else {
       try {
         const api = this.getRealEstatesWithAuth(auth)
@@ -48,14 +48,17 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           simpleProperties?.fasteignir?.map((property) => {
             return api.fasteignirGetFasteign({
               fasteignanumer:
-                // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
-                // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+                // Property and land numbers are prefixed with F or L respectively in the fasteignir API
+                // we need to remove that prefix when fetching individual properties
                 property.fasteignanumer?.replace(/\D/g, '') ?? '',
             })
           }) ?? [],
         )
       } catch (e) {
-        this.logger.error('Failed to fetch properties:', e.message)
+        this.logger.error(
+          '[RegistrationOfNewPropertyNumbersService] Failed to fetch properties:',
+          e.message,
+        )
         throw new TemplateApiError(e, 500)
       }
     }
@@ -71,5 +74,38 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
     }
 
     return properties
+  }
+
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
+    const requestDto = getRequestDto(application)
+
+    try {
+      const response =
+        await this.hmsApplicationSystemService.apiApplicationPost({
+          applicationDto: requestDto,
+        })
+
+      if (response.status !== 200) {
+        this.logger.error(
+          '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS: ' +
+            `status code ${response.status}`,
+        )
+        throw new TemplateApiError(
+          {
+            title: 'Failed to submit application',
+            summary: `HMS API responded with status code ${response.status}`,
+          },
+          500,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
+        e.message,
+      )
+      throw new TemplateApiError(e, 500)
+    }
+
+    return Promise.resolve([])
   }
 }

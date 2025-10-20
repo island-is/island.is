@@ -38,7 +38,7 @@ export const realEstateSection = buildSection({
                     ),
                   )
                   .map((property) => ({
-                    label: `(${property.fasteignanumer}) ${property?.sjalfgefidStadfang?.birting} `,
+                    label: `(${property.fasteignanumer}) ${property?.sjalfgefidStadfang?.birting}`,
                     value: property.fasteignanumer ?? '',
                   }))
               : []

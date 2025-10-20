@@ -19,7 +19,7 @@ export const overview = defineMessages({
   },
   theRealEstate: {
     id: 'ronp.application:overview.theRealEstate',
-    defaultMessage: 'Fasteignin',
+    defaultMessage: 'Fasteignin: {value}',
     description: 'Overview real estate label',
   },
   applicant: {
