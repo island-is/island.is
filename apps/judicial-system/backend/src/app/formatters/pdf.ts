@@ -70,9 +70,9 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   let currentPage = -1
   let currentYPosition = -1
-  const scalePageIndexes: number[] = []
   const A4Width = 595.28 // A4 width in points
   const A4Height = 841.89 // A4 height in points
+  const scalePageInfo: Map<number, number> = new Map()
 
   const drawTextAbsolute = (
     page: PDFPage,
@@ -164,7 +164,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       isLandscape ? A4Width : A4Height,
     )
 
-    return page
+    return { page, scale }
   }
 
   const pdfDocument = {
@@ -183,25 +183,24 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       const pageNumberFontSize = 20
 
       let pageNumber = 0
-
       rawDocument.getPages().forEach((page, index) => {
         const pageNumberText = `${++pageNumber}`
         const pageNumberTextWidth = boldFont.widthOfTextAtSize(
           pageNumberText,
           pageNumberFontSize,
         )
-        const pageIsScaled = scalePageIndexes.includes(
-          index - (tableOfContentsPageCount + 1),
-        )
+
+        const scaleFactor =
+          scalePageInfo.get(index - (tableOfContentsPageCount + 1)) ?? 1
 
         drawTextAbsolute(
           page,
           pageNumberText,
           (page.getWidth() - pageNumberRightMargin - pageNumberTextWidth) *
-            (pageIsScaled ? 5 : 1),
-          pageNumberBottomMargin * (pageIsScaled ? 4.5 : 1),
+            scaleFactor,
+          pageNumberBottomMargin * scaleFactor,
           boldFont,
-          pageNumberFontSize * (pageIsScaled ? 4.5 : 1),
+          pageNumberFontSize * scaleFactor,
         )
       })
 
@@ -324,9 +323,11 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         const { width, height } = page.getSize()
         const isLandscape = width > height
 
-        if (width > A4Width && height > A4Height) {
-          const scaledPage = scaleToA4(page, isLandscape)
-          scalePageIndexes.push(rawDocument.getPageCount())
+        if (width > A4Width || height > A4Height) {
+          const { page: scaledPage, scale } = scaleToA4(page, isLandscape)
+          const pageNumber = rawDocument.getPageCount()
+
+          scalePageInfo.set(pageNumber, 1 / scale)
           rawDocument.addPage(scaledPage)
 
           return
