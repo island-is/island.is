@@ -1,6 +1,6 @@
 import { ElfurClientService } from '@island.is/clients/elfur'
 import { Injectable } from '@nestjs/common'
-import { IInvoicesService } from './invoices.service.interface'
+import { type IInvoicesService } from './invoices.service.interface'
 import { InvoiceList } from '../../models/invoiceList.model'
 
 @Injectable()
