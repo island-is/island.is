@@ -1,12 +1,11 @@
-import React, { PropsWithChildren, useState } from 'react'
-import { ModalBase } from '../ModalBase/ModalBase'
-import * as styles from './Filter.css'
-import { Text } from '../Text/Text'
-import { Button } from '../Button/Button'
-import { useSwipeable } from 'react-swipeable'
 import { useLocale } from '@island.is/localization'
+import React, { PropsWithChildren, useState } from 'react'
+import { useSwipeable } from 'react-swipeable'
 import { Box } from '../Box/Box'
-
+import { Button } from '../Button/Button'
+import { ModalBase } from '../ModalBase/ModalBase'
+import { Text } from '../Text/Text'
+import * as styles from './Filter.css'
 interface FilterMobileDrawerProps {
   /** Explain what this drawer is for */
   ariaLabel: string
@@ -39,6 +38,8 @@ export const FilterMobileDrawer = ({
     onSwipedDown: () => setIsClosed(true),
     delta: 16, // a small threshold so tiny drags don't close
     trackMouse: true,
+    preventScrollOnSwipe: false,
+    touchEventOptions: { passive: true },
   })
 
   const isVisible = !isClosed

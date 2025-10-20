@@ -59,6 +59,7 @@ export const sheet = style({
   right: 0,
   bottom: 0,
   maxHeight: `calc(100vh - ${drawerTop})`, // this is fallback, use 100dvh if supported
+  overflow: 'hidden',
   borderTopLeftRadius: sheetRadius,
   borderTopRightRadius: sheetRadius,
   // Enter animation from the bottom
@@ -108,6 +109,7 @@ export const content = style({
   minHeight: 0, // important for flex children to allow overflow
   overflowY: 'auto',
   WebkitOverflowScrolling: 'touch',
+  overscrollBehavior: 'contain',
   padding: `0 ${theme.spacing['3']}`,
   paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
 })
