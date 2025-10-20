@@ -205,9 +205,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       )
     }
 
-    return (
-      <AssetItem item={item} />
-    )
+    return <AssetItem item={item} />
   }
 
   const keyExtractor = useCallback(
