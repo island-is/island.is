@@ -12,7 +12,7 @@ import {
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import GenericRenewModal, {
   ModalField,
 } from '../../components/GenericRenewModal/GenericRenewModal'
@@ -21,6 +21,8 @@ import { messages } from '../../lib/messages'
 import { exportAidTable, exportNutritionFile } from '../../utils/FileBreakdown'
 import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
 import LocationModal from './LocationModal'
+import { Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 interface Props {
   type: 'AID' | 'NUTRITION'
@@ -30,6 +32,8 @@ interface Props {
 
 const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
   const { formatMessage } = useLocale()
+  const [showRenewal, setShowRenewal] = useState<boolean>(false)
+
   const [activeItem, setActiveItem] =
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -37,6 +41,21 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
   const [locationModalItem, setLocationModalItem] =
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false)
+  const featureFlagClient = useFeatureFlagClient()
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.servicePortalHealthAidAndNutritionRenewalEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowRenewal(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const [renewAidsAndNutrition, { loading }] =
     useRenewAidsAndNutritionMutation()
@@ -169,83 +188,107 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
     setIsLocationModalVisible(true)
   }
 
+  const labels = {
+    aidsName: formatMessage(messages.name),
+    maxUnitRefund: isAid
+      ? formatMessage(messages.maxUnitRefund)
+      : formatMessage(messages.maxAmountPerMonth),
+    insuranceRatio: isAid
+      ? formatMessage(messages.insuranceRatio)
+      : formatMessage(messages.insuranceRatioOrInitialApplicantPayment),
+    insuranceRatioOrInitialApplicantPayment: formatMessage(
+      messages.insuranceRatioOrInitialApplicantPayment,
+    ),
+    availableRefund: formatMessage(messages.availableRefund),
+    nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
+  }
   return (
     <Box>
       <Box marginTop={2}>
         <SortableTable
           expandable
           labels={{
-            aidsName: formatMessage(messages.name),
-            maxUnitRefund: isAid
-              ? formatMessage(messages.maxUnitRefund)
-              : formatMessage(messages.maxAmountPerMonth),
-            insuranceRatio: isAid
-              ? formatMessage(messages.insuranceRatio)
-              : formatMessage(messages.insuranceRatioOrInitialApplicantPayment),
-            insuranceRatioOrInitialApplicantPayment: formatMessage(
-              messages.insuranceRatioOrInitialApplicantPayment,
-            ),
-            availableRefund: formatMessage(messages.availableRefund),
-            nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
-            renewal: formatMessage(messages.renew),
+            ...labels,
+            ...(showRenewal && { renewal: formatMessage(messages.renew) }),
           }}
           defaultSortByKey="aidsName"
           mobileTitleKey="aidsName"
-          items={data.map((rowItem, idx) => ({
-            id: rowItem.id ?? idx,
-            aidsName: rowItem.name ? rowItem.name.split('/').join(' / ') : '',
-            maxUnitRefund: isAid
-              ? rowItem.maxUnitRefund ?? ''
-              : rowItem.maxMonthlyAmount
-              ? amountFormat(rowItem.maxMonthlyAmount)
-              : '',
-            insuranceRatio: rowItem.refund
-              ? rowItem.refund.type === 'amount'
-                ? rowItem.refund.value
-                  ? amountFormat(rowItem.refund.value)
+          items={data.map((rowItem, idx) => {
+            const baseItem = {
+              id: rowItem.id ?? idx,
+              aidsName: rowItem.name ? rowItem.name.split('/').join(' / ') : '',
+              maxUnitRefund: isAid
+                ? rowItem.maxUnitRefund ?? ''
+                : rowItem.maxMonthlyAmount
+                ? amountFormat(rowItem.maxMonthlyAmount)
+                : '',
+              insuranceRatio: rowItem.refund
+                ? rowItem.refund.type === 'amount'
+                  ? rowItem.refund.value
+                    ? amountFormat(rowItem.refund.value)
+                    : ''
+                  : rowItem.refund.value
+                  ? `${rowItem.refund.value}%`
                   : ''
-                : rowItem.refund.value
-                ? `${rowItem.refund.value}%`
-                : ''
-              : '',
-            availableRefund: rowItem.available ?? '',
-            nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
-            renewal: undefined,
-            lastNode:
-              rowItem.renewalStatus ===
-              RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
-                ? {
-                    type: 'info',
-                    label: formatMessage(messages.renewalInProgress),
-                    text: formatMessage(messages.renewalInProgress),
-                  }
-                : rowItem.renewalStatus ===
-                  RightsPortalAidOrNutritionRenewalStatus.VALID
-                ? {
-                    type: 'text',
-                    label: formatMessage(messages.valid),
-                  }
-                : rowItem.renewalStatus ===
-                  RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
-                ? {
-                    type: 'action',
-                    label: formatMessage(messages.renew),
-                    action: () => openModal(rowItem),
-                    icon: { icon: 'arrowForward', type: 'outline' },
-                  }
-                : {
-                    type: 'info',
-                    label: formatMessage(messages.notValidForRenewal),
-                    text: formatMessage(messages.notValidForRenewalDetail),
-                  },
-            children: (
-              <NestedInfoLines
-                data={generateFoldedValues(rowItem)}
-                width="full"
-                backgroundColor="blue"
-              />
-            ),
-          }))}
+                : '',
+              availableRefund: rowItem.available ?? '',
+              nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
+            }
+
+            // Only add renewal property if showRenewal is true
+            if (showRenewal) {
+              return {
+                ...baseItem,
+                renewal: undefined,
+                lastNode:
+                  rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
+                    ? {
+                        type: 'info',
+                        label: formatMessage(messages.renewalInProgress),
+                        text: formatMessage(messages.renewalInProgress),
+                      }
+                    : rowItem.renewalStatus ===
+                      RightsPortalAidOrNutritionRenewalStatus.VALID
+                    ? {
+                        type: 'text',
+                        label: formatMessage(messages.valid),
+                      }
+                    : rowItem.renewalStatus ===
+                      RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                    ? {
+                        type: 'action',
+                        label: formatMessage(messages.renew),
+                        action: () => openModal(rowItem),
+                        icon: { icon: 'arrowForward', type: 'outline' },
+                      }
+                    : {
+                        type: 'info',
+                        label: formatMessage(messages.notValidForRenewal),
+                        text: formatMessage(messages.notValidForRenewalDetail),
+                      },
+                children: (
+                  <NestedInfoLines
+                    data={generateFoldedValues(rowItem)}
+                    width="full"
+                    backgroundColor="blue"
+                  />
+                ),
+              }
+            }
+
+            // Return item without renewal property when showRenewal is false
+            return {
+              ...baseItem,
+              children: (
+                <NestedInfoLines
+                  data={generateFoldedValues(rowItem)}
+                  width="full"
+                  backgroundColor="blue"
+                />
+              ),
+            }
+          })}
         />
 
         <DownloadFileButtons

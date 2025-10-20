@@ -13,9 +13,14 @@ import { PaginatedAidOrNutritionResponse } from './models/aidOrNutrition.model'
 import { AidOrNutritionService } from './aidOrNutrition.service'
 import { RenewAidsOrNutritionInput } from './dto/renewInput.dto'
 import { Renew } from './models/renewAidOrNutrition.model'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/aid-and-nutrition' })
 export class AidOrNutritionResolver {
   constructor(private readonly service: AidOrNutritionService) {}
@@ -33,6 +38,7 @@ export class AidOrNutritionResolver {
   @Scopes(ApiScope.healthAssistiveAndNutrition, ApiScope.health)
   @Mutation(() => Renew, { name: 'rightsPortalRenewAidOrNutrition' })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthAidAndNutritionRenewalEnabled)
   async postRightsPortalRenewAidsOrNutrition(
     @CurrentUser() user: User,
     @Args('input') input: RenewAidsOrNutritionInput,
