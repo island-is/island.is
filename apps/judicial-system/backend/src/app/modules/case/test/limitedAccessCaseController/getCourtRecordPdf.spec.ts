@@ -203,8 +203,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
         createIndictmentCourtRecordPdf as jest.Mock
       createIndictmentCourtRecordPdfMock.mockResolvedValueOnce(pdf)
 
-      const then = await givenWhenThen(caseId, user, theCase, res)
-      console.log(then)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should return pdf', () => {
