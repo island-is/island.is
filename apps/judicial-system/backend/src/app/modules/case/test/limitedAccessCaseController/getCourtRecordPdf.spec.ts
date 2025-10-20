@@ -186,7 +186,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     })
   })
 
-  describe.only('generated pdf returned for indictment case', () => {
+  describe('generated pdf returned for indictment case', () => {
     const user = { role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = {
