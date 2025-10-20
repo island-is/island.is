@@ -37,10 +37,10 @@ export const ConvoyLongTermMultiField = buildMultiField({
           convoy.labels.trailerTableHeader,
         ],
         format: {
-          index: (_, index) => {
+          index: (_value, displayIndex) => {
             return {
               ...convoy.labels.convoyNumber,
-              values: { number: index + 1 },
+              values: { number: displayIndex + 1 },
             }
           },
         },

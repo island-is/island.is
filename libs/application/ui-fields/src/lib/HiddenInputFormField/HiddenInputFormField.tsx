@@ -16,14 +16,14 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   application,
   field,
 }) => {
-  const { register, setValue, watch } = useFormContext()
-  const { watchValue, defaultValue, id, valueModifier } = field
-  const defaultVal =
-    typeof defaultValue === 'function'
-      ? defaultValue(application, field)
-      : defaultValue
+  const { register, setValue, getValues, watch } = useFormContext()
+  const { watchValue, defaultValue: getDefaultValue, id, valueModifier } = field
+  const defaultValue =
+    typeof getDefaultValue === 'function'
+      ? getDefaultValue(application, field)
+      : getDefaultValue
   const watchedValue = watchValue
-    ? watch(watchValue, defaultVal ?? undefined)
+    ? watch(watchValue, defaultValue ?? undefined)
     : undefined
 
   useEffect(() => {
@@ -32,10 +32,30 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
         ? valueModifier(watchedValue, application)
         : watchedValue
       setValue(id, finalValue)
-    } else {
-      setValue(id, defaultVal)
+    } else if (getDefaultValue !== undefined) {
+      setValue(id, defaultValue)
     }
-  }, [application, defaultVal, id, setValue, watchedValue, valueModifier])
+  }, [
+    application,
+    defaultValue,
+    id,
+    setValue,
+    watchedValue,
+    valueModifier,
+    getDefaultValue,
+  ])
+
+  // Initalize field with undefined if getDefaultValue is undefined
+  // and current value is empty string, otherwise if field has a type other
+  // than string (e.g. boolean or number) then it will be defaulted to
+  // empty string and fail in zod validation
+  useEffect(() => {
+    const oldValue = getValues(id)
+    if (getDefaultValue === undefined && oldValue === '') {
+      setValue(id, undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return <input type="hidden" {...register(field.id)} />
 }
