@@ -9,6 +9,7 @@ export enum NotificationType {
   ChildrenResidenceChangeAssignParent = 'ChildrenResidenceChangeV2AssignParentNotification',
   TrainingLicenseOnWorkMachineRejected = 'TrainingLicenseOnWorkMachineRejected',
   TrainingLicenseOnWorkMachineApproved = 'TrainingLicenseOnWorkMachineApproved',
+  FireCompensationAppraisal = 'FireCompensationAppraisalNotification',
 }
 
 export const NotificationConfig = {
@@ -51,6 +52,15 @@ export const NotificationConfig = {
   [NotificationType.TrainingLicenseOnWorkMachineApproved]: {
     templateId: 'HNIPP.AS.VER.TLWM.APPROVED',
     keys: {},
+  },
+  [NotificationType.FireCompensationAppraisal]: {
+    templateId: 'HNIPP.AS.HMS.FCA.NOTIFICATION',
+    keys: {} as {
+      applicantName: string
+      applicationId: string
+      appliedForAddress: string
+      realEstateId: string
+    },
   },
 }
 

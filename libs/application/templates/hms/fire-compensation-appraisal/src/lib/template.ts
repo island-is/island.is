@@ -193,6 +193,9 @@ const template: ApplicationTemplate<
             defineTemplateApi({
               action: TemplateApiActions.submitApplication,
             }),
+            defineTemplateApi({
+              action: TemplateApiActions.sendNotificationToAllInvolved,
+            }),
           ],
           actionCard: {
             tag: {
