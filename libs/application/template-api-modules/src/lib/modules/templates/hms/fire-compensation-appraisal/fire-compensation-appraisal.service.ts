@@ -98,16 +98,32 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     const { application } = props
 
     try {
-      const properties = await this.getProperties(props)
-
-      const selectedRealEstateId = getValueViaPath<string>(
+      const otherPropertiesThanIOwn = getValueViaPath<string[]>(
         application.answers,
-        'realEstate',
-      )
+        'otherPropertiesThanIOwnCheckbox',
+      )?.includes(YES)
+
+      const selectedRealEstateId = otherPropertiesThanIOwn
+        ? 'F' +
+          getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
+        : getValueViaPath<string>(application.answers, 'realEstate')
+
+      if (!selectedRealEstateId) {
+        throw new TemplateApiError('Selected real estate id is not set', 500)
+      }
+
       const selectedUsageUnits = getValueViaPath<Array<string>>(
         application.answers,
         'usageUnits',
       )
+
+      const properties = otherPropertiesThanIOwn
+        ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
+        : await this.getProperties(props)
+
+      if (!properties) {
+        throw new TemplateApiError('Properties is undefined', 500)
+      }
 
       const property = properties.find(
         (property) => property.fasteignanumer === selectedRealEstateId,
