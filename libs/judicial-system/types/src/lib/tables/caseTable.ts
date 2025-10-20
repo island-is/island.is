@@ -105,4 +105,11 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
     prosecutionIndictmentsWaitingForConfirmation,
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,
   PROSECUTION_INDICTMENTS_COMPLETED: prosecutionIndictmentsCompleted,
+  // Exception: Not implemented as a static table but we currently need to preserve the case table type
+  STATISTICS: {
+    title: '',
+    hasMyCasesFilter: false,
+    columnKeys: [],
+    columns: [],
+  },
 }
