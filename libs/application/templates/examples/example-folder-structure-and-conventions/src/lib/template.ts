@@ -16,7 +16,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { Events } from '../types'
 import { Roles, States } from '../types'
 
@@ -112,17 +111,6 @@ const template: ApplicationTemplate<
           ],
         },
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole(

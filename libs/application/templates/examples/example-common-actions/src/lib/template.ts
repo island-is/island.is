@@ -20,7 +20,6 @@ import {
   ReferenceDataApi,
   SendNotification,
 } from '../dataProviders'
-import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
@@ -169,17 +168,6 @@ const template: ApplicationTemplate<
           ],
         },
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole(
