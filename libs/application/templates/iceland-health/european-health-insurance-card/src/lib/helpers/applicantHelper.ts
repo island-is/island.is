@@ -8,7 +8,6 @@ import {
   NationalRegistry,
   NridName,
   NationalRegistrySpouse,
-  Answer,
 } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
