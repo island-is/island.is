@@ -305,6 +305,7 @@ api:
     ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net'
     ELFUR_CLIENT_ID: '@fjs.is/hugsmidjan'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENVIRONMENT: 'dev'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'

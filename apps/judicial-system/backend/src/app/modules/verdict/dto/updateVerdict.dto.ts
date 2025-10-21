@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer'
 import {
   IsArray,
+  IsBoolean,
   IsDate,
   IsEnum,
   IsOptional,
@@ -50,4 +51,9 @@ export class UpdateVerdictDto {
   @IsEnum(InformationForDefendant, { each: true })
   @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
   serviceInformationForDefendant?: InformationForDefendant[]
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDefaultJudgement?: boolean
 }
