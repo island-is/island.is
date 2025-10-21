@@ -246,6 +246,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/complaints-to-althingi-ombudsman/                                                               @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                                      @island-is/norda
 /libs/application/templates/document-provider-onboarding/                                                                   @island-is/norda
+/libs/application/templates/european-health-insurance-card/                                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                                     @island-is/norda
 /libs/application/templates/financial-aid/                                                                                  @island-is/norda
 /libs/application/templates/funding-government-projects/                                                                    @island-is/norda
@@ -259,7 +260,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/inao/financial-statement-cemetery/                                                              @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                                   @island-is/norda
 /libs/application/templates/inao/financial-statement-political-party/                                                       @island-is/norda
-/libs/application/templates/institution-collaboration/                                                                      @island-is/norda @island-is/fuglar
+/libs/application/templates/institution-collaboration/                                                                      @island-is/norda
 /libs/application/templates/login-service/                                                                                  @island-is/norda
 /libs/application/templates/public-debt-payment-plan/                                                                       @island-is/norda
 
@@ -268,6 +269,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/                          @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/                                 @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/document-provider-onboarding/                              @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                                             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/                              @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/                   @island-is/norda
@@ -288,6 +290,7 @@ codemagic.yaml                                                                  
 
 /libs/clients/althingi-ombudsman/                                                                                           @island-is/norda
 /libs/clients/data-protection-complaint/                                                                                    @island-is/norda
+/libs/clients/ehic-client-v1                                                                                                @island-is/norda
 /libs/clients/financial-statements-inao                                                                                     @island-is/norda
 /libs/clients/fishing-license/                                                                                              @island-is/norda
 /libs/clients/hms-application-system/                                                                                       @island-is/norda
@@ -390,9 +393,6 @@ codemagic.yaml                                                                  
 /libs/auth-api-lib/                                                                                                         @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/seeders/                                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                                      @island-is/fuglar @island-is/aranja
-/libs/application/templates/european-health-insurance-card/                                                                 @island-is/fuglar
-/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/                            @island-is/fuglar
-/libs/clients/ehic-client-v1                                                                                                @island-is/fuglar
 
 /libs/application/templates/criminal-record/                                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/                                @island-is/origo
