@@ -24,8 +24,4 @@ export enum InstitutionContentfulIds {
   DOMSMALARADUNEYTID = '26M5901Ntp7GhY14TRYSvw',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = '48Sa01Rahbo7FAdWPQbRub',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '53jrbgxPKpbNtordSfEZUK',
-
-  // fake institutions for testing (these are not published in contentful)
-  ARTIC_65 = '3OUrzUk2refzuTOZ1DOU35',
-  BLAMI_FJARFESTINGAFELAG = '3mkbm4mCVm4hfrzf9jdLh8',
 }

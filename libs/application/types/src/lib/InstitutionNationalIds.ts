@@ -26,8 +26,4 @@ export enum InstitutionNationalIds {
   DOMSMALA_RADUNEYTID = '5804170510',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = '6601241280',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '5812191480',
-
-  // fake institutions for testing (these are not published in contentful)
-  ARTIC_65 = '5005101370',
-  BLAMI_FJARFESTINGAFELAG = '4703013920',
 }
