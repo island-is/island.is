@@ -100,3 +100,7 @@ export enum OrganizationSector {
   PUBLIC = 'public',
   PRIVATE = 'private',
 }
+
+export enum ApplicationFeatureConfigType {
+  REGISTRATION = 'registration',
+}

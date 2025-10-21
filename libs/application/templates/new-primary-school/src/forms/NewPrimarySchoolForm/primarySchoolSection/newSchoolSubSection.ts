@@ -88,7 +88,7 @@ export const newSchoolSubSection = buildSubSection({
                 input: {
                   type: OrganizationTypeEnum.School,
                   municipalityCode: municipalityCode,
-                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
+                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''),
                 },
               },
             })
