@@ -1,16 +1,33 @@
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { OrganizationSector } from '../../utils/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getSelectedSchoolSector } from '../../utils/newPrimarySchoolUtils'
+import { OrganizationSector, OrganizationSubType } from '../../utils/constants'
+import {
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
+} from '../../utils/newPrimarySchoolUtils'
 
 export const conclusionSection = buildFormConclusionSection({
   expandableIntro: '',
   expandableDescription: (application) => {
-    return getSelectedSchoolSector(
+    const selectedSchoolSubType = getSelectedSchoolSubType(
       application.answers,
       application.externalData,
-    ) === OrganizationSector.PUBLIC
-      ? newPrimarySchoolMessages.conclusion.expandableDescription
-      : newPrimarySchoolMessages.conclusion.privateSchoolExpandableDescription
+    )
+
+    const selectedSchoolSector = getSelectedSchoolSector(
+      application.answers,
+      application.externalData,
+    )
+
+    if (
+      selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+      (selectedSchoolSubType === OrganizationSubType.GENERAL_SCHOOL &&
+        selectedSchoolSector === OrganizationSector.PRIVATE)
+    ) {
+      return newPrimarySchoolMessages.conclusion
+        .privateSchoolExpandableDescription
+    }
+
+    return newPrimarySchoolMessages.conclusion.expandableDescription
   },
 })

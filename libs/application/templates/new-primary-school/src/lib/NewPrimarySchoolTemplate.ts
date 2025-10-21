@@ -370,20 +370,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
         const { temporaryStay } = getApplicationAnswers(application.answers)
 
+        const selectedSchoolSubType = getSelectedSchoolSubType(
+          application.answers,
+          application.externalData,
+        )
+
         if (
-          getSelectedSchoolSubType(
-            application.answers,
-            application.externalData,
-          ) !== OrganizationSubType.INTERNATIONAL_SCHOOL
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          getSelectedSchoolSubType(
-            application.answers,
-            application.externalData,
-          ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')

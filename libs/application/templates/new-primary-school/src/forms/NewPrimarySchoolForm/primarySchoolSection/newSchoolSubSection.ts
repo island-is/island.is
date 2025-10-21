@@ -1,6 +1,7 @@
 import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
@@ -107,6 +108,10 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
+        }),
+        buildHiddenInput({
+          id: 'newSchool.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

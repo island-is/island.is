@@ -48,14 +48,18 @@ export const reasonForApplicationSubSection = buildSubSection({
           getSelectedSchoolSector(
             application.answers,
             application.externalData,
-          ) === OrganizationSector.PUBLIC
+          ) === OrganizationSector.PUBLIC &&
+          getSelectedSchoolSubType(
+            application.answers,
+            application.externalData,
+          ) === OrganizationSubType.GENERAL_SCHOOL
         ) {
           return newPrimarySchoolMessages.primarySchool
             .reasonForApplicationEnrollmentDescription
-        } else {
-          return newPrimarySchoolMessages.primarySchool
-            .reasonForApplicationDescription
         }
+
+        return newPrimarySchoolMessages.primarySchool
+          .reasonForApplicationDescription
       },
       children: [
         buildCustomField(
