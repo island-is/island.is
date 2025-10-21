@@ -186,8 +186,6 @@ const Conclusion: FC = () => {
           break
       }
 
-      console.log({ selectedAction })
-
       const updateSuccess = await setAndSendCaseToServer(
         [update],
         workingCase,
@@ -291,7 +289,6 @@ const Conclusion: FC = () => {
   }, [workingCase.mergeCaseNumber])
 
   useEffect(() => {
-    console.log({ test: workingCase.defendants })
     setDefendantsWithDefaultJudgments(
       (workingCase.defendants ?? []).map((d) => ({
         id: d.id,
