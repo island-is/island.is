@@ -420,6 +420,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                       format="######-####"
                       rules={{
                         validate: (value) => {
+                          if (!value) return true
                           if (!isValidKennitala(value)) {
                             return formatMessage(
                               m.validation.invalidNationalIdFormat,
