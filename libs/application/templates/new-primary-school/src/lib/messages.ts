@@ -7,18 +7,18 @@ export const newPrimarySchoolMessages: MessageDir = {
   shared: defineMessages({
     applicationName: {
       id: 'nps.application:application.name',
-      defaultMessage: 'Umsókn í nýjan grunnskóla',
-      description: 'Application for a new primary school',
+      defaultMessage: 'Umsókn í grunnskóla',
+      description: 'Application for primary school',
     },
     enrollmentApplicationName: {
       id: 'nps.application:enrollment.application.name',
-      defaultMessage: 'Innritun í grunnskóla',
-      description: 'Enrollment in primary school',
+      defaultMessage: 'Innritun í 1. bekk',
+      description: 'Enrollment in 1st grade',
     },
     newPrimarySchoolApplicationName: {
       id: 'nps.application:new.primary.school.application.name',
-      defaultMessage: 'Umsókn í nýjan skóla',
-      description: 'Application for a new school',
+      defaultMessage: 'Umsókn um skólaskipti',
+      description: 'Application for school transfer',
     },
     institution: {
       id: 'nps.application:institution.name',
