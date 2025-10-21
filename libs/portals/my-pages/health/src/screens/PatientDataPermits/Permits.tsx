@@ -1,11 +1,11 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
+  ActionCard,
   Box,
   Button,
   Stack,
-  ToggleSwitchButton,
   Text,
-  ActionCard,
+  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -46,21 +46,27 @@ const PatientDataPermits: React.FC = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirVaccinationsTooltip,
       )} // TODO: Update this tooltip message if needed
-      buttonGroup={[
-        <Button variant="utility" icon="open" iconType="outline">
-          {formatMessage(messages.readAboutPermit)}
-        </Button>,
-        <Button
-          variant="utility"
-          colorScheme="primary"
-          icon="arrowForward"
-          iconType="outline"
-          size="small"
-          onClick={() => navigate(HealthPaths.HealthPatientDataPermitsAdd)}
-        >
-          {formatMessage(messages.addPermit)}
-        </Button>,
-      ]}
+      buttonGroup={
+        !loading && !error
+          ? [
+              <Button variant="utility" icon="open" iconType="outline">
+                {formatMessage(messages.readAboutPermit)}
+              </Button>,
+              <Button
+                variant="utility"
+                colorScheme="primary"
+                icon="arrowForward"
+                iconType="outline"
+                size="small"
+                onClick={() =>
+                  navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                }
+              >
+                {formatMessage(messages.addPermit)}
+              </Button>,
+            ]
+          : undefined
+      }
     >
       {!loading && dataLength === 0 && !error && (
         <Problem
@@ -72,9 +78,7 @@ const PatientDataPermits: React.FC = () => {
         />
       )}
       {loading && <ActionCardLoader repeat={3} />}
-      {error && !loading && (
-        <Problem title={formatMessage(messages.errorTryAgain)} />
-      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && dataLength > 0 && (
         <Box>
           <Box justifyContent="spaceBetween" alignItems="center" display="flex">

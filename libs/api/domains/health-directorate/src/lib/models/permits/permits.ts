@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { PermitCodesEnum, PermitStatusEnum } from '../enums'
+import { PermitStatusEnum } from '../enums'
 import { Country } from './country.model'
 
 @ObjectType('HealthDirectoratePatientDataPermit')
@@ -19,8 +19,8 @@ export class Permit {
   @Field()
   validTo!: Date
 
-  @Field(() => [PermitCodesEnum])
-  codes!: PermitCodesEnum[]
+  @Field(() => [String])
+  codes!: string[]
 
   @Field(() => [Country])
   countries!: Country[]
@@ -34,6 +34,6 @@ export class Permits {
 
 @ObjectType('HealthDirectoratePatientDataPermitReturn')
 export class PermitReturn {
-  @Field(() => ID)
-  id!: string
+  @Field(() => Boolean)
+  status!: boolean
 }

@@ -1,6 +1,5 @@
-import { InputType, Field } from '@nestjs/graphql'
-import { IsISO8601, IsArray, IsString, ArrayNotEmpty } from 'class-validator'
-import { PermitCodesEnum } from '../models/enums'
+import { Field, InputType } from '@nestjs/graphql'
+import { ArrayNotEmpty, IsArray, IsISO8601, IsString } from 'class-validator'
 
 @InputType('HealthDirectoratePatientDataPermitInput')
 export class PermitInput {
@@ -12,11 +11,11 @@ export class PermitInput {
   @IsISO8601()
   validTo!: string
 
-  @Field(() => [PermitCodesEnum])
+  @Field(() => [String])
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  codes!: PermitCodesEnum[]
+  codes!: string[]
 
   @Field(() => [String])
   @IsArray()

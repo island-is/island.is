@@ -7,26 +7,36 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DispensationHistoryDto,
   DispensationHistoryItemDto,
+  OrganDonorDto,
+  OrganDto,
   PrescribedItemDto,
   PrescriptionRenewalRequestDto,
   ProductDocumentDto,
   ReferralDto,
-  OrganDonorDto,
   UpdateOrganDonorDto,
-  OrganDto,
   WaitingListEntryDto,
-  mePrescriptionControllerGetPrescriptionsV1,
+  donationExceptionControllerGetOrgansV1,
+  meDonorStatusControllerGetOrganDonorStatusV1,
+  meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerGetCountriesV1,
+  mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerGetEuPatientConsentV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
+  mePrescriptionControllerGetPrescriptionsV1,
   mePrescriptionControllerRenewPrescriptionV1,
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
-  meDonorStatusControllerGetOrganDonorStatusV1,
-  donationExceptionControllerGetOrgansV1,
-  meDonorStatusControllerUpdateOrganDonorStatusV1,
 } from './gen/fetch'
-import { Locale } from './gen/fetch/types.gen'
+import {
+  ConsentCountryDto,
+  CreateEuPatientConsentDto,
+  EuPatientConsentDto,
+  Locale,
+} from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -206,7 +216,7 @@ export class HealthDirectorateHealthService {
     )
 
     if (!organDonation) {
-      this.logger.warn('No organ donations data returned')
+      this.logger.debug('No organ donations data returned')
       return null
     }
 
@@ -245,10 +255,95 @@ export class HealthDirectorateHealthService {
     )
 
     if (!donationExceptions) {
-      this.logger.warn('No organ donations exceptions returned')
+      this.logger.debug('No organ donations exceptions returned')
       return null
     }
 
     return donationExceptions
+  }
+
+  public async getPermits(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<EuPatientConsentDto[] | null> {
+    const permits = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetEuPatientConsentForPatientV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
+
+    return permits ?? null
+  }
+
+  public async getPermit(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<EuPatientConsentDto | null> {
+    const permit = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetEuPatientConsentV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    return permit ?? null
+  }
+
+  public async getPermitCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<ConsentCountryDto | null> {
+    const countries = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetCountriesV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
+
+    return countries ?? null
+  }
+
+  public async createPermit(
+    auth: Auth,
+    input: CreateEuPatientConsentDto,
+  ): Promise<unknown> {
+    return await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
+          body: {
+            codes: input.codes,
+            countryCodes: input.countryCodes,
+            validFrom: input.validFrom,
+            validTo: input.validTo,
+          },
+        }),
+      ),
+    )
+  }
+
+  public async deactivatePermit(auth: Auth, id: string): Promise<unknown> {
+    return await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
   }
 }

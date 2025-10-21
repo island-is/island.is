@@ -1,7 +1,4 @@
-import {
-  HealthDirectoratePatientDataPermitInput,
-  HealthDirectoratePermitCodes,
-} from '@island.is/api/schema'
+import { HealthDirectoratePatientDataPermitInput } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
@@ -9,12 +6,12 @@ import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import FirstStep from '../../components/PatientDataPermit/FirstStep'
+import SecondStep from '../../components/PatientDataPermit/SecondStep'
+import ThirdStep from '../../components/PatientDataPermit/ThirdStep'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
-import ThirdStep from '../../components/PatientDataPermit/ThirdStep'
-import SecondStep from '../../components/PatientDataPermit/SecondStep'
-import FirstStep from '../../components/PatientDataPermit/FirstStep'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
@@ -34,20 +31,20 @@ const NewPermit: React.FC = () => {
         variables: {
           input: {
             ...formState,
-            codes: [HealthDirectoratePermitCodes.PatientSummary],
+            codes: [''],
           },
         },
       })
         .then((response) => {
           console.log('createPermitResponse', response)
-          if (response.data) {
+          if (response.data?.healthDirectoratePatientDataCreatePermit?.status) {
             // Handle successful response
             setFormState(undefined)
             toast.success(formatMessage(messages.permitCreated))
             navigate(HealthPaths.HealthPatientDataPermits)
-          }
+          } else toast.error(formatMessage(messages.permitCreatedError))
         })
-        .catch((error) => {
+        .catch(() => {
           toast.error(formatMessage(messages.permitCreatedError))
         })
     }

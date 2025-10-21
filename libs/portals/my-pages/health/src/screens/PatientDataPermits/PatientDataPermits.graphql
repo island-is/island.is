@@ -4,7 +4,6 @@ fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
   createdAt
   validFrom
   validTo
-  codes
   countries {
     code
     name
@@ -29,7 +28,7 @@ mutation CreatePatientDataPermit(
   $input: HealthDirectoratePatientDataPermitInput!
 ) {
   healthDirectoratePatientDataCreatePermit(input: $input) {
-    id
+    status
   }
 }
 
@@ -37,6 +36,6 @@ mutation InvalidatePatientDataPermit(
   $input: HealthDirectoratePatientDataInvalidatePermitInput!
 ) {
   healthDirectoratePatientDataInvalidatePermit(input: $input) {
-    id
+    status
   }
 }

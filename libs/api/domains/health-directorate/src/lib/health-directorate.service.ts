@@ -1,6 +1,5 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  DispensationHistoryItemDto,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
@@ -16,14 +15,8 @@ import {
   HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Country, isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
 import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
-import {
-  Permit,
-  PermitReturn,
-  Permits,
-} from './models/approvals/approvals.model'
 import {
   MedicineHistory,
   MedicineHistoryDispensation,
@@ -31,6 +24,8 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { Countries, Country } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -41,13 +36,13 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapDispensationItem,
+  mapPermitStatus,
   mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import { permitData, europeanCountriesIs } from './utils/mockData'
-import { Countries } from './models/approvals/country.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -376,7 +371,7 @@ export class HealthDirectorateService {
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map(this.mapDispensationItem),
+          dispensations: item.dispensations.map(mapDispensationItem),
         }
       }) ?? []
 
@@ -398,22 +393,39 @@ export class HealthDirectorateService {
       return null
     }
 
-    const dispensations: Array<MedicineHistoryDispensation> = data.map(
-      this.mapDispensationItem,
-    )
+    const dispensations: Array<MedicineHistoryDispensation> =
+      data.map(mapDispensationItem)
 
     return { dispensations }
   }
 
   /* Patient data - Permits */
   async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
-    //const data = await this.healthApi.getPermits(auth, locale)
-    // TODO connect to service when ready
+    const permits = await this.healthApi.getPermits(auth, locale)
 
-    const data: Permit[] = permitData
-    if (!data) {
+    if (!permits) {
       return null
     }
+
+    const data: Permit[] =
+      permits.map((item) => {
+        return {
+          id: item.id ?? '',
+          status: mapPermitStatus(item.status),
+          createdAt: item.createdAt ?? new Date(),
+          validFrom: item.validFrom ?? new Date(),
+          validTo: item.validTo ?? new Date(),
+          codes: item.codes ?? [],
+          countries:
+            item.countries?.map((country) => {
+              const countryObj: Country = {
+                code: country.code,
+                name: country.name,
+              }
+              return countryObj
+            }) ?? [],
+        }
+      }) ?? []
 
     return { data }
   }
@@ -424,15 +436,28 @@ export class HealthDirectorateService {
     locale: Locale,
     id: string,
   ): Promise<Permit | null> {
-    //const data = await this.healthApi.getPermits(auth, locale)
-    // TODO connect to service when ready
+    const permit = await this.healthApi.getPermit(auth, locale, id)
 
-    const data = permitData.find((permit) => permit.id === id)
-    if (!data) {
+    if (!permit) {
       return null
     }
 
-    return data
+    return {
+      id: permit.id ?? '',
+      status: mapPermitStatus(permit.status),
+      createdAt: permit.createdAt ?? new Date(),
+      validFrom: permit.validFrom ?? new Date(),
+      validTo: permit.validTo ?? new Date(),
+      codes: permit.codes ?? [],
+      countries:
+        permit.countries?.map((country) => {
+          const countryObj: Country = {
+            code: country.code,
+            name: country.name,
+          }
+          return countryObj
+        }) ?? [],
+    }
   }
 
   /* Patient data - Permit countries */
@@ -440,16 +465,16 @@ export class HealthDirectorateService {
     auth: Auth,
     locale: Locale,
   ): Promise<Countries | null> {
-    //const data = await this.healthApi.getPermitCountries(auth, locale)
-    // TODO connect to service when ready
+    const countries = await this.healthApi.getPermitCountries(auth, locale)
 
-    const data: Countries = { data: europeanCountriesIs }
-
-    if (!data) {
+    if (!countries) {
       return null
     }
 
-    return data
+    //TODO: THIS SHOULD BE AN ARRAY OR DELETE FROM CODEBASE
+    return {
+      data: [{ code: countries.code, name: countries.name }],
+    }
   }
 
   /* Patient data - Create approval */
@@ -457,10 +482,13 @@ export class HealthDirectorateService {
     auth: Auth,
     input: PermitInput,
   ): Promise<PermitReturn | null> {
-    //const data = await this.healthApi.createPermit(auth, locale, input)
-
-    // TODO connect to service when ready
-    return { id: 'mock-approval-id' } // Mock response for now
+    const response = await this.healthApi.createPermit(auth, {
+      codes: input.codes,
+      countryCodes: input.countryCodes,
+      validFrom: new Date(input.validFrom),
+      validTo: new Date(input.validTo),
+    })
+    return response ? { status: true } : null
   }
 
   /* Patient data - invalidate permit */
@@ -468,10 +496,8 @@ export class HealthDirectorateService {
     auth: Auth,
     input: InvalidatePermitInput,
   ): Promise<PermitReturn | null> {
-    //const data = await this.healthApi.invalidatePermit(auth, locale, input)
-
-    // TODO connect to service when ready
-    return { id: 'mock-approval-id' } // Mock response for now
+    const data = await this.healthApi.deactivatePermit(auth, input.id)
+    return data ? { status: true } : null
   }
 
   private castRenewalInputToNumber = (
@@ -492,29 +518,5 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
-  }
-
-  private mapDispensationItem = (
-    item: DispensationHistoryItemDto,
-  ): MedicineHistoryDispensation => {
-    const quantity = item.productQuantity ?? 0
-
-    return {
-      id: item.productId,
-      name: item.productName,
-      quantity: [quantity.toString(), item.productUnit]
-        .filter((x) => isDefined(x))
-        .join(' '),
-      agentName: item.dispensingAgentName,
-      unit: item.productUnit,
-      type: item.productType,
-      indication: item.indication,
-      dosageInstructions: item.dosageInstructions,
-      issueDate: item.issueDate,
-      prescriberName: item.prescriberName,
-      expirationDate: item.expirationDate,
-      isExpired: item.isExpired,
-      date: item.dispensationDate,
-    }
   }
 }

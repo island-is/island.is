@@ -1,10 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectoratePatientDataApprovalCountry')
 export class Country {
-  @Field(() => ID)
-  id!: string
-
   @Field()
   name!: string
 
