@@ -92,7 +92,7 @@ export class LandspitaliService {
   ): string {
     return `${this.getProtocol()}://${this.config.webDomain}${
       LANDSPITALI_RETURN_PATH[input.locale === 'en' ? 'en' : 'is']
-    }`
+    }${input.payerNationalId ? `?nationalIdProvided=true` : ''}`
   }
 
   async createMemorialCardPaymentUrl(
