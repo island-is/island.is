@@ -25,6 +25,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
@@ -121,7 +122,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
     icon = 'document'
   } else if (item.externalUrl) {
     href = item.externalUrl
-    icon = 'open'
+    const isInternalLink = !shouldLinkOpenInNewWindow(href)
+    if (!isInternalLink) icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
