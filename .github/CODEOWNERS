@@ -25,6 +25,7 @@
 /libs/application/templates/examples/                                                                                       @island-is/norda
 /libs/application/templates/family-matters/                                                                                 @island-is/norda
 /libs/application/templates/hms/                                                                                            @island-is/norda
+/libs/application/templates/iceland-health/                                                                                 @island-is/norda
 /libs/application/templates/inao/                                                                                           @island-is/norda
 /libs/application/templates/signature-collection                                                                            @island-is/norda
 /libs/application/templates/social-insurance-administration/                                                                @island-is/norda
@@ -241,22 +242,22 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                                             @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                           @island-is/hugsmidjan
 
-/libs/application/templates/accident-notification/                                                                          @island-is/norda
 /libs/application/templates/alcohol-tax-redemption/                                                                         @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                                               @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                                      @island-is/norda
 /libs/application/templates/document-provider-onboarding/                                                                   @island-is/norda
-/libs/application/templates/european-health-insurance-card/                                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                                     @island-is/norda
 /libs/application/templates/financial-aid/                                                                                  @island-is/norda
 /libs/application/templates/funding-government-projects/                                                                    @island-is/norda
 /libs/application/templates/general-fishing-license/                                                                        @island-is/norda
 /libs/application/templates/grindavik-housing-buyout/                                                                       @island-is/norda
-/libs/application/templates/health-insurance/                                                                               @island-is/norda
-/libs/application/templates/health-insurance-declaration/                                                                   @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                 @island-is/norda
 /libs/application/templates/home-support/                                                                                   @island-is/norda
+/libs/application/templates/iceland-health/accident-notification/                                                           @island-is/norda
+/libs/application/templates/iceland-health/european-health-insurance-card/                                                  @island-is/norda
+/libs/application/templates/iceland-health/health-insurance/                                                                @island-is/norda
+/libs/application/templates/iceland-health/health-insurance-declaration/                                                    @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                                              @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                                   @island-is/norda
 /libs/application/templates/inao/financial-statement-political-party/                                                       @island-is/norda
