@@ -23,12 +23,12 @@ import {
 } from './types'
 import { ApplicantsRole, NextStepInReviewOptions } from '../utils/enums'
 
-const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
+const mapParticipantInfo = (participant: ApplicantsInfo): ApplicantsInfo => {
   return {
-    nationalIdWithName: landlord.nationalIdWithName,
-    phone: landlord.phone,
-    email: landlord.email,
-    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+    nationalIdWithName: participant.nationalIdWithName,
+    phone: participant.phone,
+    email: participant.email,
+    address: participant.address,
   }
 }
 
@@ -44,14 +44,14 @@ const extractParticipants = (
     getValueViaPath<AnswerApplicant>(answers, 'parties.applicant') ||
     ({} as AnswerApplicant)
 
-  const mappedApplicant = mapLandLordInfo({
+  const mappedApplicant = mapParticipantInfo({
     nationalIdWithName: {
       name: applicant.name,
       nationalId: applicant.nationalId,
     },
     phone: applicant.phoneNumber,
     email: applicant.email,
-    address: '',
+    address: applicant.address,
   })
 
   let representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
@@ -71,15 +71,15 @@ const extractParticipants = (
 
   const landlordRepresentatives = (
     representatives as Array<ApplicantsInfo>
-  ).map(mapLandLordInfo)
+  ).map(mapParticipantInfo)
   const landlords = (
     getValueViaPath<ApplicantsInfo[]>(answers, 'parties.landlordInfo.table') ??
     []
-  ).map(mapLandLordInfo)
+  ).map(mapParticipantInfo)
 
   const tenants = (
     getValueViaPath<ApplicantsInfo[]>(answers, 'parties.tenantInfo.table') ?? []
-  ).map(mapLandLordInfo)
+  ).map(mapParticipantInfo)
 
   switch (applicantRole) {
     case ApplicantsRole.LANDLORD:
