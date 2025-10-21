@@ -6,7 +6,10 @@ import {
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
-import { FriggClientService } from '@island.is/clients/mms/frigg'
+import {
+  FriggClientService,
+  GetOrganizationsByTypeTypeEnum,
+} from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -89,6 +92,20 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
+  async getPreferredSchool({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getPreferredSchool(
+      auth,
+      childNationalId,
+    )
+  }
+
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
@@ -97,5 +114,11 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       auth,
       newPrimarySchoolDTO,
     )
+  }
+
+  async getSchools({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getOrganizationsByType(auth, {
+      type: GetOrganizationsByTypeTypeEnum.School,
+    })
   }
 }

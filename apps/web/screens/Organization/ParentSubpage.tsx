@@ -53,11 +53,17 @@ const OrganizationParentSubpage: Screen<
   useLocalLinkTypeResolver()
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
+  const showTableOfContents = parentSubpage.childLinks.length > 1
+
+  const pageTitle = `${parentSubpage?.title ?? ''}${
+    Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
+  }${subpage?.title ?? ''}`
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage?.title ?? ''}
+      pageTitle={pageTitle}
       organizationPage={organizationPage}
       fullWidthContent={true}
       pageFeaturedImage={
@@ -90,11 +96,11 @@ const OrganizationParentSubpage: Screen<
                 offset={['0', '0', '1/9']}
               >
                 <Stack space={3}>
-                  {parentSubpage.childLinks.length > 1 && (
-                    <Stack space={4}>
-                      <Text variant="h1" as="h1">
-                        {parentSubpage.title}
-                      </Text>
+                  <Stack space={4}>
+                    <Text variant="h1" as="h1">
+                      {parentSubpage.title}
+                    </Text>
+                    {showTableOfContents && (
                       <Box
                         paddingX={4}
                         paddingY={2}
@@ -139,8 +145,8 @@ const OrganizationParentSubpage: Screen<
                           </Stack>
                         </Stack>
                       </Box>
-                    </Stack>
-                  )}
+                    )}
+                  </Stack>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -149,9 +155,7 @@ const OrganizationParentSubpage: Screen<
             namespace={namespace}
             organizationPage={organizationPage}
             subpage={subpage}
-            subpageTitleVariant={
-              parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
-            }
+            subpageTitleVariant="h2"
           />
         </Box>
       }

@@ -39,10 +39,10 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               freight.labels.freightName,
             ],
             format: {
-              index: (_, index) => {
+              index: (_value, displayIndex) => {
                 return {
                   ...freight.labels.freightNumber,
-                  values: { number: index + 1 },
+                  values: { number: displayIndex + 1 },
                 }
               },
             },

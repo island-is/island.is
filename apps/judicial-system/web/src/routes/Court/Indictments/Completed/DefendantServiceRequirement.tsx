@@ -9,7 +9,10 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  InformationForDefendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
@@ -82,6 +85,14 @@ export const DefendantServiceRequirement = ({
                   caseId: workingCase.id,
                   serviceRequirement: ServiceRequirement.REQUIRED,
                   appealDecision: null,
+                  ...(verdict.isDefaultJudgement
+                    ? {
+                        serviceInformationForDefendant: [
+                          ...(verdict.serviceInformationForDefendant || []),
+                          InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
+                        ],
+                      }
+                    : {}),
                 },
                 setWorkingCase,
               )

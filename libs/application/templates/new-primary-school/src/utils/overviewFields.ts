@@ -66,7 +66,7 @@ export const overviewFields = (editable?: boolean) => {
         // and applicant should be able to edit if editable
         return primaryOrgId ? undefined : editable ? 'currentSchool' : undefined
       },
-      loadItems: currentSchoolItems,
+      items: currentSchoolItems,
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
@@ -89,28 +89,28 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.school',
       title: newPrimarySchoolMessages.overview.schoolTitle,
       backId: (answers) => {
-        const { applyForNeighbourhoodSchool } = getApplicationAnswers(answers)
+        const { applyForPreferredSchool } = getApplicationAnswers(answers)
 
         return editable
-          ? applyForNeighbourhoodSchool === YES
+          ? applyForPreferredSchool === YES
             ? 'school'
             : 'newSchool'
           : undefined
       },
-      loadItems: schoolItems,
+      items: schoolItems,
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers) => {
-        const { applicationType, applyForNeighbourhoodSchool } =
+        const { applicationType, applyForPreferredSchool } =
           getApplicationAnswers(answers)
 
         return (
           applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
           (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-            applyForNeighbourhoodSchool === NO)
+            applyForPreferredSchool === NO)
         )
       },
     }),

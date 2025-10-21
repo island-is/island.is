@@ -151,28 +151,38 @@ export class DocumentServiceV2 {
     user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
-    //If a delegated user is viewing the mailbox, do not return any health related data
+    //If a delegated user is viewing the mailbox, do not return any health or law and order related data
     //Category is now "1,2,3,...,n"
     const { categoryIds, ...restOfInput } = input
-    // If no categoryIds are provided, get all categories
     let mutableCategoryIds = categoryIds ?? []
 
-    if (!mutableCategoryIds.length) {
-      const filteredCategories = await this.getCategories(user)
-      if (isDefined(filteredCategories)) {
-        mutableCategoryIds = filteredCategories.map((c) => c.id)
+    const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
+    const displayAllCategories =
+      !mutableCategoryIds.length && !hiddenCategoryIds.length
+    // if categories input ids is empty and hidden cat ids is empty we dont need to filter categories
+    if (!displayAllCategories) {
+      const filteredCategories = await this.getCategories(
+        user,
+        hiddenCategoryIds,
+      )
+
+      if (!mutableCategoryIds.length) {
+        if (isDefined(filteredCategories)) {
+          mutableCategoryIds = filteredCategories.map((c) => c.id)
+        }
       }
-    }
-    // If categoryIds are provided, filter out correct data
-    else {
-      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
-      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
+      // If categoryIds are provided, filter out correct data
+      else {
+        mutableCategoryIds = mutableCategoryIds.filter(
+          (c) => !hiddenCategoryIds.includes(c),
+        )
+      }
     }
 
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
-      categoryId: mutableCategoryIds.join(),
-      hiddenCategoryIds: this.getHiddenCategoriesIDs(user).join(),
+      categoryId: displayAllCategories ? undefined : mutableCategoryIds.join(),
+      hiddenCategoryIds: hiddenCategoryIds.join(),
       nationalId: user.nationalId,
     })
 
@@ -219,7 +229,10 @@ export class DocumentServiceV2 {
     }
   }
 
-  async getCategories(user: User): Promise<Array<Category> | null> {
+  async getCategories(
+    user: User,
+    hiddenCategoryIds?: string[],
+  ): Promise<Array<Category> | null> {
     let categories
 
     try {
@@ -233,8 +246,8 @@ export class DocumentServiceV2 {
       })
     }
 
-    const filterOutIds = this.getHiddenCategoriesIDs(user) ?? []
-
+    const filterOutIds =
+      hiddenCategoryIds ?? this.getHiddenCategoriesIDs(user) ?? []
     const filteredCategories =
       categories?.categories
         ?.map((c) => {

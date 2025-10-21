@@ -152,8 +152,7 @@ export const Navbar = () => {
           s.sectionType !== SectionTypes.INPUT &&
           s.sectionType !== SectionTypes.PARTIES &&
           s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT &&
-          s.sectionType !== SectionTypes.COMPLETED,
+          s.sectionType !== SectionTypes.PAYMENT,
       )
       .map((s) => (
         <Box key={s.id}>
