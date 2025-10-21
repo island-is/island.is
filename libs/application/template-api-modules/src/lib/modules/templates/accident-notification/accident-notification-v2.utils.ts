@@ -20,7 +20,7 @@ import {
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
   WorkMachineV2,
-} from '@island.is/application/templates/accident-notification'
+} from '@island.is/application/templates/iceland-health/accident-notification'
 import {
   MinarsidurAPIModelsAccidentReportsAccidentReportDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTO,

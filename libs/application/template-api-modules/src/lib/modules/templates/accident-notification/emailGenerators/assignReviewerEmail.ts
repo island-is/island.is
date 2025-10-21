@@ -1,4 +1,4 @@
-import { utils } from '@island.is/application/templates/accident-notification'
+import { utils } from '@island.is/application/templates/iceland-health/accident-notification'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'

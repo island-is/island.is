@@ -2,7 +2,7 @@ import {
   AccidentNotificationAnswers,
   ReviewApprovalEnum,
   utils,
-} from '@island.is/application/templates/accident-notification'
+} from '@island.is/application/templates/iceland-health/accident-notification'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'

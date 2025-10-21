@@ -34,7 +34,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
-    import('@island.is/application/templates/health-insurance'),
+    import('@island.is/application/templates/iceland-health/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: () =>
     import('@island.is/application/templates/children-residence-change-v2'),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
@@ -52,7 +52,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: () =>
     import('@island.is/application/templates/complaints-to-althingi-ombudsman'),
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: () =>
-    import('@island.is/application/templates/accident-notification'),
+    import(
+      '@island.is/application/templates/iceland-health/accident-notification'
+    ),
   [ApplicationTypes.GENERAL_PETITION]: () =>
     import('@island.is/application/templates/general-petition'),
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: () =>
@@ -128,7 +130,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
     import('@island.is/application/templates/alcohol-tax-redemption'),
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
-    import('@island.is/application/templates/european-health-insurance-card'),
+    import(
+      '@island.is/application/templates/iceland-health/european-health-insurance-card'
+    ),
   [ApplicationTypes.OLD_AGE_PENSION]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
@@ -214,7 +218,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.ID_CARD]: () =>
     import('@island.is/application/templates/id-card'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
-    import('@island.is/application/templates/health-insurance-declaration'),
+    import(
+      '@island.is/application/templates/iceland-health/health-insurance-declaration'
+    ),
   [ApplicationTypes.INCOME_PLAN]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/income-plan'

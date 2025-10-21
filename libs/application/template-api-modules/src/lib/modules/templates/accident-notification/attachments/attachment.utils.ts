@@ -7,7 +7,8 @@ import {
   ReviewAddAttachmentData,
   ReviewApprovalEnum,
   SubmittedApplicationData,
-} from '@island.is/application/templates/accident-notification'
+  utils,
+} from '@island.is/application/templates/iceland-health/accident-notification'
 import { AccidentNotificationAttachmentStatus } from '../types/applicationStatus'
 import {
   AccidentNotificationAttachment,
@@ -23,7 +24,6 @@ import {
 } from '../config'
 import { AccidentNotificationAttachmentProvider } from './applicationAttachmentProvider'
 import { getApplicationDocumentId } from '../accident-notification.utils'
-import { utils } from '@island.is/application/templates/accident-notification'
 
 export const attachmentStatusToAttachmentRequests = (
   receivedAttachments?: AccidentNotificationAttachmentStatus,

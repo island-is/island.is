@@ -8,7 +8,7 @@ import {
   HealthInsuranceDeclarationApplication,
   InsuranceStatementData,
   SubmitApplicationData,
-} from '@island.is/application/templates/health-insurance-declaration'
+} from '@island.is/application/templates/iceland-health/health-insurance-declaration'
 import { DocumentInfo } from './attachments/provider'
 import {
   InsuranceStatementsStudentApplicationDTO,

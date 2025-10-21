@@ -12,7 +12,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
 import { ApplicationAttachmentProvider } from './attachments/provider'
-import { prerequisites } from '@island.is/application/templates/health-insurance-declaration'
+import { prerequisites } from '@island.is/application/templates/iceland-health/health-insurance-declaration'
 import {
   applicationToStudentApplication,
   applicationToTouristApplication,

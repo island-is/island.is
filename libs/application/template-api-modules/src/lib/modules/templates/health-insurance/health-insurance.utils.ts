@@ -7,7 +7,7 @@ import { objectToXML } from '../../shared/shared.utils'
 import is from 'date-fns/locale/is'
 import format from 'date-fns/format'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { errorMessages } from '@island.is/application/templates/health-insurance'
+import { errorMessages } from '@island.is/application/templates/iceland-health/health-insurance'
 import {
   ApplyHealthInsuranceInputs,
   ErrorCodes,

@@ -5,7 +5,7 @@ import { EmailTemplateGenerator } from '../../../../types'
 import { m } from './messages'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalDataNationalRegistry } from '@island.is/application/templates/health-insurance'
+import { ExternalDataNationalRegistry } from '@island.is/application/templates/iceland-health/health-insurance'
 
 type YesOrNoAnswer = Record<string, string> | string | string[]
 

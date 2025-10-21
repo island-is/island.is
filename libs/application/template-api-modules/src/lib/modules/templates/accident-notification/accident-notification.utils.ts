@@ -1,5 +1,5 @@
 import { Application } from '@island.is/application/types'
-import { SubmittedApplicationData } from '@island.is/application/templates/accident-notification'
+import { SubmittedApplicationData } from '@island.is/application/templates/iceland-health/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 
