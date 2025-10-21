@@ -21,6 +21,7 @@ import { ApplicationStatusProps } from './StatusStep/types'
 import { getStatusAndApproval, getSteps } from './applicationStatusUtils'
 import { getErrorMessageForMissingDocuments } from '../../utils/documentUtils'
 import { ReviewApprovalEnum } from '../../utils/enums'
+import React from 'react'
 
 export const ApplicationStatus = ({
   goToScreen,
