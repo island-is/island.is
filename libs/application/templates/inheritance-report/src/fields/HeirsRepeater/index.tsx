@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
@@ -78,11 +78,6 @@ export const HeirsRepeater: FC<
   ] = useState(false)
 
   const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
-
-  // Memoize heirsRelations to prevent unnecessary re-renders
-  const heirsRelations = useMemo(() => {
-    return (heirsData ?? []).map((x: EstateMember) => x.relation)
-  }, [heirsData])
 
   const hasEstateMemberUnder18 = (estateMembers ?? []).some(
     (member: EstateMember) => {
@@ -325,6 +320,7 @@ export const HeirsRepeater: FC<
 
       calculateTotal()
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [answers, calculateTotal, getValues, inheritanceTaxFreeLimit, setValue],
   )
 
@@ -388,6 +384,7 @@ export const HeirsRepeater: FC<
       replace(heirsData)
       setValue('heirs.hasModified', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
