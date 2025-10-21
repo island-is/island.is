@@ -14,12 +14,12 @@ import {
 } from '@island.is/application/core'
 
 import { EhicCardResponseApi } from '../dataProviders'
-import { Sjukra } from '../assets'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 export const EuropeanHealthInsuranceCardPre: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardPre',
-  logo: Sjukra,
+  logo: IcelandHealthLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,

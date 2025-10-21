@@ -23,7 +23,7 @@ import {
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
-import CoatOfArms from '../../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import kennitala from 'kennitala'
 import format from 'date-fns/format'

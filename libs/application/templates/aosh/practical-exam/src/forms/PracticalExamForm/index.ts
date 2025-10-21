@@ -1,6 +1,6 @@
 import { buildForm, getValueViaPath } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { informationSection } from './InformationSection'
 import { examineeSection } from './ExamineeSection'
 import { instructorSection } from './InstructorSection'
@@ -21,7 +21,7 @@ import { examLocationSection } from './ExamLocation'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

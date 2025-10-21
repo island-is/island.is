@@ -25,7 +25,7 @@ import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
-import { Logo } from '../assets'
+import { DebtCollectorLogo } from '@island.is/application/assets/institution-logos'
 import {
   application,
   conclusion,
@@ -78,7 +78,7 @@ export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: DebtCollectorLogo,
   children: [
     buildSection({
       id: 'externalData',

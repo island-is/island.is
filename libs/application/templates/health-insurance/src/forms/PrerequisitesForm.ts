@@ -19,13 +19,13 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { m } from '../lib/messages/messages'
-import { Logo } from '../assets/Logo'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.prerequisitesFormTitle,
-  logo: Logo,
+  logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

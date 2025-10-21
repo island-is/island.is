@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../../assets/Logo'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { applicantInfoSection } from './applicantInfoSection'
 import { noHealthInsuranceSection } from './noHealthInsuranceSection'
 import { studentOrTouristSection } from './studentOrTouristSection'
@@ -17,7 +17,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
   title: m.application.general.name,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
   children: [
     applicantInfoSection,

@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../../assets/Logo'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { application } from '../../lib/messages'
 import { conclusionSection } from './conclusionSection'
 import { overviewSection } from './overviewSection'
@@ -11,7 +11,7 @@ import { aboutTheAccidentSection } from './aboutTheAccidentSection'
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
   title: application.general.name,
-  logo: Logo,
+  logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
   children: [
     applicantInformationSection,

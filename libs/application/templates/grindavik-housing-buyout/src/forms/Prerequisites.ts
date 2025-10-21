@@ -15,13 +15,13 @@ import {
   grindaVikHousing,
 } from '../dataProviders'
 import { prerequisites, application } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'HomeSupportPrerequisites',
   title: application.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
