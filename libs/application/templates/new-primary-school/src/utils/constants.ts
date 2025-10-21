@@ -82,14 +82,6 @@ export enum ApplicationType {
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
 }
 
-// TODO: Taka út? Er þetta nokkuð notað eftir að nýja subType kemur frá Júní?
-export enum SchoolType {
-  PUBLIC_SCHOOL = 'publicSchool',
-  PRIVATE_SCHOOL = 'privateSchool',
-  INTERNATIONAL_SCHOOL = 'internationalSchool',
-  NURSERY_SCHOOL = 'nurserySchool',
-}
-
 export enum CaseWorkerInputTypeEnum {
   CaseManager = 'caseManager',
   SupportManager = 'supportManager',
@@ -107,4 +99,8 @@ export enum OrganizationSubType {
 export enum OrganizationSector {
   PUBLIC = 'public',
   PRIVATE = 'private',
+}
+
+export enum ApplicationFeatureConfigType {
+  REGISTRATION = 'registration',
 }
