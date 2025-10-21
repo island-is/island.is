@@ -208,6 +208,7 @@ export type RepeaterItem = {
       suffix?: FormText
       max?: number
       min?: number
+      allowNegative?: boolean
     }
   | {
       component: 'phone'
@@ -242,6 +243,8 @@ export type RepeaterItem = {
       component: 'nationalIdWithName'
       nationalIdDefaultValue?: string
       nameDefaultValue?: string
+      searchPersons?: boolean
+      searchCompanies?: boolean
     }
   | {
       component: 'phone'

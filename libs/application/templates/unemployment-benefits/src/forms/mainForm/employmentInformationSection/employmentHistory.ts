@@ -260,6 +260,8 @@ export const employmentHistorySubSection = buildSubSection({
                   name: name,
                 }
 
+                console.log('defaultValue', defaultValue)
+
                 return defaultValue
               },
             },
@@ -435,6 +437,7 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
+              maxDate: new Date(),
               condition: (application, _activeField, index) => {
                 return !hasDataFromCurrentStatus(application.answers, index)
               },

@@ -54,8 +54,16 @@ export const getPersonalInformation = (answers: FormValue) => {
     currentAddressDifferent:
       applicant?.otherAddressCheckbox &&
       applicant?.otherAddressCheckbox[0] === 'YES',
-    currentAddress: applicant?.otherAddress,
-    currentPostCodeId: applicant?.otherPostcode,
+    currentAddress:
+      applicant?.otherAddressCheckbox &&
+      applicant?.otherAddressCheckbox[0] === 'YES'
+        ? applicant?.otherAddress
+        : '',
+    currentPostCodeId:
+      applicant?.otherAddressCheckbox &&
+      applicant?.otherAddressCheckbox[0] === 'YES'
+        ? applicant?.otherPostcode
+        : '',
     postalCode: applicant?.postalCode,
   }
 }
