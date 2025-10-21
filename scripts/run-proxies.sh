@@ -11,7 +11,7 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
 : "${AWS_PROFILE:=islandis-dev}"
-: "${CLUSTER:=${AWS_PROFILE##*-}-cluster01}"
+: "${CLUSTER:=${AWS_PROFILE##*-}-cluster02}"
 
 echo "AWS_PROFILE=${AWS_PROFILE}" >&2
 echo "CLUSTER=${CLUSTER}" >&2
