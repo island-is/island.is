@@ -762,7 +762,7 @@ export class Case extends Model {
   /**********
    * Indicates whether the indictment case should have court sessions
    ***********/
-  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   @ApiPropertyOptional({ type: Boolean })
   withCourtSessions!: boolean
 
