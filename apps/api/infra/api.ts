@@ -324,6 +324,7 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',

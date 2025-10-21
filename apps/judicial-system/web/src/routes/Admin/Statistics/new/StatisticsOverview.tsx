@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { useRouter } from 'next/router'
 
+import { CaseTableType } from '@island.is/judicial-system/types'
 import {
   CasesLayout,
   PageHeader,
@@ -18,11 +19,13 @@ const StatisticsOverview: FC = () => {
         route: 'rannsoknarmal',
         title: 'Rannsóknarmál',
         description: 'Einföld tölfræðigreining úr rannsóknarmálum.',
+        type: CaseTableType.STATISTICS,
       },
       {
         route: 'sakamal',
         title: 'Sakamál',
         description: 'Einföld tölfræðigreining úr sakamálum.',
+        type: CaseTableType.STATISTICS,
       },
     ],
   }
@@ -34,11 +37,13 @@ const StatisticsOverview: FC = () => {
         route: 'gogn/rannsoknarmal',
         title: 'Rannsóknarmál',
         description: 'Gögn úr rannsóknarmálum fyrir tölfræðigreiningu.',
+        type: CaseTableType.STATISTICS,
       },
       {
         route: 'gogn/sakamal',
         title: 'Sakamál',
         description: 'Gögn úr sakamálum fyrir tölfræðigreiningu.',
+        type: CaseTableType.STATISTICS,
       },
     ],
   }
@@ -53,6 +58,7 @@ const StatisticsOverview: FC = () => {
             description={t.description}
             href={`${router.asPath}/${t.route}`}
             key={idx}
+            type={t.type}
           />
         ))}
       </CasesDashboardLayout>
@@ -63,6 +69,7 @@ const StatisticsOverview: FC = () => {
             description={t.description}
             href={`${router.asPath}/${t.route}`}
             key={idx}
+            type={t.type}
           />
         ))}
       </CasesDashboardLayout>
