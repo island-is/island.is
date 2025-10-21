@@ -223,13 +223,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   const handleOnOpen = (id: string) => {
-    console.log('handleOnOpen', id)
     const filedDocument =
       courtSession.filedDocuments?.find((doc) => doc.id === id) ??
       workingCase.unfiledCourtDocuments?.find((doc) => doc.id === id)
 
     if (!filedDocument) {
-      console.log('File not found:', id)
       return
     }
 
