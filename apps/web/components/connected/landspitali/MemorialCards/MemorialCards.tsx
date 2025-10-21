@@ -604,6 +604,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       format="######-####"
                       rules={{
                         validate: (value) => {
+                          if (!value) return true
                           if (!isValidKennitala(value)) {
                             return formatMessage(
                               m.validation.invalidNationalIdFormat,
