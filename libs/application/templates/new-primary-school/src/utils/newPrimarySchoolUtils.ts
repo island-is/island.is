@@ -5,7 +5,6 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -525,13 +524,10 @@ export const getApplicationType = (
   }
 
   // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    if (!childInformation?.primaryOrgId) {
-      return yearOfBirth === firstGradeYear
-        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-        : ApplicationType.NEW_PRIMARY_SCHOOL
-    }
+  if (!childInformation?.primaryOrgId) {
+    return yearOfBirth === firstGradeYear
+      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   return ApplicationType.NEW_PRIMARY_SCHOOL
