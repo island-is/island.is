@@ -806,7 +806,8 @@ export type TableRepeaterField = BaseField & {
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
-    dictionaryOfItems: Array<{ path: string; value: string }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dictionaryOfItems: Array<{ path: string; value: any }>
   }>
   loadErrorMessage?: StaticText
   /**
@@ -829,7 +830,7 @@ export type TableRepeaterField = BaseField & {
       string,
       (
         value: string,
-        index: number,
+        displayIndex: number,
         application?: Application,
       ) => string | StaticText
     >
@@ -947,6 +948,7 @@ export interface HiddenInputField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: never
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface StaticTableField extends BaseField {
