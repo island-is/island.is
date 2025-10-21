@@ -1,9 +1,7 @@
 /* eslint-disable */
 export default {
-  preset: './jest.preset.js',
-  rootDir: '../../../..',
-  roots: [__dirname],
-  globals: {},
+  displayName: 'application-templates-health-insurance',
+  preset: '../../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -12,6 +10,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/health-insurance',
-  displayName: 'application-templates-health-insurance',
+    '../../../../../coverage/libs/application/templates/iceland-health/health-insurance',
 }

@@ -2,8 +2,6 @@
 
 Application for the European Health Insurance card when traveling abroad
 
-This library was generated with [Nx](https://nx.dev).
-
 ## Application flow:
 
 - Application has 5 states, PREREQUISITES, DRAFT, COMPLETED, DECLINED & NOAPPLICANTS

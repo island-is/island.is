@@ -1,6 +1,6 @@
-# Application Templates Accident Notification
+# Accident Notification application template
 
-This library was generated with [Nx](https://nx.dev).
+This application sends accident notifications to Iceland health (Sjúkratryggingar)
 
 ## Running unit tests
 

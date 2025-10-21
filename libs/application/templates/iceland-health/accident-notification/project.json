@@ -1,7 +1,7 @@
 {
   "name": "application-templates-accident-notification",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/accident-notification/src",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/iceland-health/accident-notification/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
@@ -11,17 +11,15 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/application/templates/accident-notification/jest.config.ts"
-      },
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/application/templates/accident-notification"
-      ]
+        "jestConfig": "libs/application/templates/iceland-health/accident-notification/jest.config.ts"
+      }
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/accident-notification/src/lib/messages/*.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/iceland-health/accident-notification/src/lib/messages/*.ts'"
       }
     }
   }

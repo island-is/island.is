@@ -1,9 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'application-templates-accident-notification',
-  preset: './jest.preset.js',
-  rootDir: '../../../..',
-  roots: [__dirname],
+  preset: '../../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -12,5 +10,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/accident-notification',
+    '../../../../../coverage/libs/application/templates/iceland-health/accident-notification',
 }
