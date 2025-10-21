@@ -129,44 +129,30 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
-    console.log('Getting name field error message', invalidNationalId)
+    if (nationalIdInput.length !== 10) return
 
-    // Show error early if national ID is invalid in regards to search mode e.g. if only searchPersons is true and national ID is a company ID
-    if (invalidNationalId) {
-      console.log('1')
-      return formatMessage(
-        coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-      )
+    const notFoundMessage = formatMessage(
+      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+    )
+
+    // Invalid national ID or mismatch with allowed search modes
+    if (invalidNationalId) return notFoundMessage
+
+    const isPerson = kennitala.isPerson(nationalIdInput)
+    const isCompany = kennitala.isCompany(nationalIdInput)
+    const personFailed = queryError || data?.identity === null
+    const companyFailed =
+      companyQueryError || companyData?.companyRegistryCompany === null
+    const nameError = getFieldErrorString(error, 'name')
+
+    if (isPerson && searchPersons) {
+      if (personFailed) return notFoundMessage
+      if (nameError && !data?.identity) return nameError
     }
 
-    // Person search errors
-    if (searchPersons) {
-      if (queryError || data?.identity === null) {
-        console.log('2')
-        return formatMessage(
-          coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-        )
-      }
-      const nameError = getFieldErrorString(error, 'name')
-      if (nameError && !data) {
-        console.log('3')
-        return nameError
-      }
-    }
-
-    // Company search errors
-    if (searchCompanies) {
-      if (companyQueryError || companyData?.companyRegistryCompany === null) {
-        console.log('4')
-        return formatMessage(
-          coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-        )
-      }
-      const nameError = getFieldErrorString(error, 'name')
-      if (nameError && !companyData) {
-        console.log('5')
-        return nameError
-      }
+    if (isCompany && searchCompanies) {
+      if (companyFailed) return notFoundMessage
+      if (nameError && !companyData) return nameError
     }
 
     return undefined
@@ -252,6 +238,9 @@ export const NationalIdWithName: FC<
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length !== 10) {
+      // Clear name field whenever national id is not complete
+      // avoids name lingering from previous valid national ids
+      setValue(nameField, '')
       return
     }
 
