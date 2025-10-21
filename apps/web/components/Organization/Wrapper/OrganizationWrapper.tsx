@@ -1005,7 +1005,7 @@ export const OrganizationWrapper: React.FC<
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
-
+  const { linkResolver } = useLinkResolver()
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
@@ -1101,10 +1101,27 @@ export const OrganizationWrapper: React.FC<
     breadcrumbItemsProp,
   ])
 
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
-  )
+  const activeNavigationItemTitle = useMemo(() => {
+    const activeTitle = getActiveNavigationItemTitle(
+      navigationData.items,
+      router.asPath,
+    )
+    const pathname = new URL(router.asPath, 'https://island.is').pathname
+    if (
+      sitemapContentTypeDeterminesNavigationAndBreadcrumbs &&
+      linkResolver('organizationpage', [organizationPage.slug]).href ===
+        pathname
+    ) {
+      return undefined
+    }
+    return activeTitle
+  }, [
+    linkResolver,
+    navigationData.items,
+    organizationPage.slug,
+    router.asPath,
+    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
+  ])
 
   return (
     <>

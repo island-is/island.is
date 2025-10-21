@@ -79,6 +79,7 @@ const Summary: FC = () => {
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )
@@ -250,20 +251,25 @@ const Summary: FC = () => {
         <SectionHeading title={formatMessage(strings.caseFiles)} />
         {(rulingFiles.length > 0 ||
           courtRecordFiles.length > 0 ||
-          hasGeneratedCourtRecord) && (
+          workingCase.withCourtSessions) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            {hasGeneratedCourtRecord && (
-              <PdfButton
-                caseId={workingCase.id}
-                title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                pdfType="courtRecord"
-                renderAs="row"
-                elementId="Þingbók"
-              />
-            )}
+            {
+              // We show a court record pdf button if the case should have court sessions
+              // but we disable the button if the court record pdf does not exist (should not happen)
+              workingCase.withCourtSessions && (
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                  pdfType="courtRecord"
+                  renderAs="row"
+                  elementId="Þingbók"
+                  disabled={!hasGeneratedCourtRecord}
+                />
+              )
+            }
             {courtRecordFiles.length > 0 && (
               <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
             )}
