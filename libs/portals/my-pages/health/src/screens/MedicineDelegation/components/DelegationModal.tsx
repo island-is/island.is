@@ -17,12 +17,14 @@ import * as styles from './DelegationModal.css'
 interface Props {
   id: string
   activeDelegation?: Delegation
+  disclosure?: ReactElement
   visible?: boolean
 }
 
 const DelegationModal: React.FC<Props> = ({
   id,
   activeDelegation,
+  disclosure,
   visible,
 }) => {
   const { formatMessage } = useLocale()
