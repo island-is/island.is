@@ -70,8 +70,6 @@ export const FilterDrawerAriakit = ({
         aria-label={ariaLabel}
         backdrop={<div className={styles.backdrop} />}
         className={styles.sheet}
-        // top gap (uses dvh when supported; your CSS can also include a 100vh fallback)
-        style={{ maxHeight: `calc(100dvh - ${topGap}px)` }}
       >
         {/* grabber */}
         <Box
