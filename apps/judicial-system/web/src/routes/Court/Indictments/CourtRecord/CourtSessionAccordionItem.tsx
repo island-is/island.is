@@ -26,6 +26,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   applyDativeCaseToCourtName,
+  formatDOB,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -168,7 +169,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
           )
         }
-        attendees.push(`\n${defendant.name} ákærði`)
+        const dob = formatDOB(defendant.nationalId, defendant.noNationalId, '')
+        attendees.push(
+          `\n${defendant.name} ákærði${dob ? ', ' : ''}${dob}, ${
+            defendant.address
+          }`,
+        )
       })
     }
 
