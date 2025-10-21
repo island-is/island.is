@@ -46,23 +46,21 @@ const useVerdict = (currentVerdict?: Verdict) => {
   const [updateVerdictMutation] = useUpdateVerdictMutation()
   const [createVerdictsMutation] = useCreateVerdictsMutation()
 
-  const createVerdicts = useCallback(
-    async (verdictsToCreate: CreateVerdictsInput) => {
-      try {
-        const { data } = await createVerdictsMutation({
-          variables: {
-            input: verdictsToCreate,
-          },
-        })
+  const createVerdicts = async (verdictsToCreate: CreateVerdictsInput) => {
+    try {
+      const { data } = await createVerdictsMutation({
+        variables: {
+          input: verdictsToCreate,
+        },
+      })
 
-        return Boolean(data)
-      } catch (error) {
-        toast.error('Upp kom villa við að uppfæra mál')
-        return false
-      }
-    },
-    [createVerdictsMutation],
-  )
+      return Boolean(data)
+    } catch (error) {
+      toast.error('Upp kom villa við að uppfæra mál')
+      return false
+    }
+  }
+
   const updateVerdict = useCallback(
     async (updateVerdict: UpdateVerdictInput) => {
       try {
