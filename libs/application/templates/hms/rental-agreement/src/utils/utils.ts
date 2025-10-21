@@ -119,6 +119,12 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
+  address: {
+    component: 'input',
+    required: true,
+    label: m.misc.address,
+    width: 'full',
+  },
 }
 
 export const landLordInfoTableFields: Record<string, RepeaterItem> = {
@@ -141,6 +147,12 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
+  address: {
+    component: 'input',
+    required: true,
+    label: m.misc.address,
+    width: 'full',
+  },
 }
 
 export const applicantTableConfig = {
@@ -153,8 +165,9 @@ export const applicantTableConfig = {
     m.misc.phoneNumber,
     m.misc.nationalId,
     m.misc.email,
+    m.misc.address,
   ],
-  rows: ['name', 'phone', 'nationalId', 'email'],
+  rows: ['name', 'phone', 'nationalId', 'email', 'address'],
 }
 
 export const landlordTableConfig = {
@@ -167,9 +180,10 @@ export const landlordTableConfig = {
     m.misc.phoneNumber,
     m.misc.nationalId,
     m.misc.email,
+    m.misc.address,
     m.landlordAndTenantDetails.representativeLabel,
   ],
-  rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
+  rows: ['name', 'phone', 'nationalId', 'email', 'address', 'isRepresentative'],
 }
 
 export const toISK = (v: unknown): number => {
@@ -280,6 +294,7 @@ export const staticPartyTableData = (
   const nationalId = getValueViaPath<string>(answers, 'applicant.nationalId')
   const email = getValueViaPath<string>(answers, 'applicant.email')
   const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
+  const address = getValueViaPath<string>(answers, 'applicant.address')
 
   if (aplicantRole !== role) {
     return []
@@ -291,6 +306,7 @@ export const staticPartyTableData = (
       phone: formatPhoneNumber(phone ?? ''),
       nationalId: formatNationalId(nationalId ?? ''),
       email: email ?? '',
+      address: address ?? '',
     },
   ]
 }
