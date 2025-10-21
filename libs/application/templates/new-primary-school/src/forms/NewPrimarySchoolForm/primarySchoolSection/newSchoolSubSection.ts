@@ -1,7 +1,7 @@
 import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
-  buildHiddenInputWithWatchedValue,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
@@ -47,16 +47,11 @@ export const newSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            // const { childGradeLevel } = getApplicationExternalData(
-            //   application.externalData,
-            // )
-
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
               variables: {
                 input: {
                   type: OrganizationTypeEnum.Municipality,
-                  //   gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
                 },
               },
             })
@@ -94,16 +89,15 @@ export const newSchoolSubSection = buildSubSection({
                 input: {
                   type: OrganizationTypeEnum.School,
                   municipalityCode: municipalityCode,
-                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''), // TODO: Senda líka bekk fyrir ofan núverandi bekk!
+                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''),
                 },
               },
             })
 
-            // Piggyback the type as part of the value
             return (
               data?.friggOrganizationsByType
-                ?.map(({ id, name, subType, sector }) => ({
-                  value: `${id}::${subType ?? ''}::${sector ?? ''}`, // TODO: Skoða hvað á að setja hér! type, subType eða sector??
+                ?.map(({ id, name }) => ({
+                  value: id,
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
@@ -115,12 +109,9 @@ export const newSchoolSubSection = buildSubSection({
             return !!schoolMunicipality
           },
         }),
-        buildHiddenInputWithWatchedValue({
-          // TODO: Þarf þetta ef við erum að sækja þetta gildi í getApplicationAnswers() útfrá 'newSchool.school'?
-          // TODO: Þarf að skoða betur - Þetta er ekki lengur sama týpa og var áður!
-          id: 'newSchool.type',
-          watchValue: 'newSchool.school',
-          valueModifier: (value) => value?.toString()?.split('::')[1],
+        buildHiddenInput({
+          id: 'newSchool.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
