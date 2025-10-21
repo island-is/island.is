@@ -130,7 +130,7 @@ const Conclusion: FC = () => {
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
   const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
-    useState<SelectableItem[]>()
+    useState<SelectableItem[]>([])
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
