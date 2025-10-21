@@ -282,7 +282,7 @@ export class AppService {
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
     const deliveredAppealDecision =
-      updatePoliceDocumentDelivery.deliverySupplements?.find(
+      updatePoliceDocumentDelivery.supplements?.find(
         (supplement) => supplement.code === 'APPEAL_DECISION',
       )
     if (deliveredAppealDecision && deliveredAppealDecision.value) {
@@ -318,6 +318,10 @@ export class AppService {
         updatePoliceDocumentDelivery.defenderNationalId,
       appealDecision: deliveredAppealDecision?.value,
     }
+    this.logger.info(
+      `Parsed update request ${JSON.stringify(parsedPoliceUpdate)}`,
+    )
+
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,

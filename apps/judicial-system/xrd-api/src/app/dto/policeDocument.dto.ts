@@ -87,5 +87,5 @@ export class UpdatePoliceDocumentDeliveryDto {
   @IsOptional()
   @IsArray()
   @ApiPropertyOptional({ type: () => Supplement, isArray: true })
-  deliverySupplements?: Supplement[]
+  supplements?: Supplement[]
 }
