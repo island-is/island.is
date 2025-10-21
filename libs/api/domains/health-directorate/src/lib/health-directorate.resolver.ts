@@ -251,7 +251,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   getPermits(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -265,7 +265,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   getPermit(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -280,7 +280,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   getPermitCountries(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -295,7 +295,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   async createPermit(
     @Args('input') input: PermitInput,
     @CurrentUser() user: User,
@@ -309,7 +309,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   async invalidatePermit(
     @Args('input') input: InvalidatePermitInput,
     @CurrentUser() user: User,

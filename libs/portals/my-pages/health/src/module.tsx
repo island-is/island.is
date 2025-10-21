@@ -369,7 +369,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.patientData,
       path: HealthPaths.HealthPatientDataOverview,
-      //key: 'HealthPatientData', // TODO: Add feature flag
+      key: 'HealthPatientPermits',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -378,7 +378,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.patientDataPermit,
       path: HealthPaths.HealthPatientDataPermits,
-      //key: 'HealthPatientDataPermits', // TODO: Add feature flag
+      key: 'HealthPatientPermits',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -387,7 +387,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.permit,
       path: HealthPaths.HealthPatientDataPermitsDetail,
-      //key: 'HealthPatientDataPermitsDetail', // TODO: Add feature flag
+      key: 'HealthPatientPermits',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -396,7 +396,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.addPermit,
       path: HealthPaths.HealthPatientDataPermitsAdd,
-      //key: 'HealthPatientDataPermitsAdd', // TODO: Add feature flag
+      key: 'HealthPatientPermits',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
