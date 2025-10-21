@@ -1164,6 +1164,12 @@ export const m = defineMessages({
       'Ekki er hægt að halda áfram með umsókn þar sem skrá þarf maka í listann af erfingjum',
     description: '',
   },
+  multipleSpousesValidation: {
+    id: 'es.application:multipleSpousesValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðeins einn maki getur verið skráður í listann af erfingjum',
+    description: '',
+  },
 
   // Properties
   gunTitle: {

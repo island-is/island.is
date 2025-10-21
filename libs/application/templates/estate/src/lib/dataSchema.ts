@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes, YES, NO, SPOUSE } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -198,6 +198,18 @@ export const estateSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (members) => {
+          // Check for multiple spouses - only allowed one spouse in heirs list
+          const spouseCount = members?.filter(
+            (member) => member.enabled && member.relation === SPOUSE,
+          ).length
+          return spouseCount <= 1
+        },
+        {
+          message: 'Only one spouse is allowed in the heirs list',
+        },
+      )
       .optional(),
     assets: asset,
     flyers: asset,
