@@ -72,8 +72,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    // reasonForApplicationStreetAddress,
-    // reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,

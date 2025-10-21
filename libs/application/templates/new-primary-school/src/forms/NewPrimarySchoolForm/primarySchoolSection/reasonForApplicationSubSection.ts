@@ -1,19 +1,16 @@
 import {
-  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
   buildSubSection,
-  buildTextField,
   NO,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   ApplicationType,
   OptionsType,
-  ReasonForApplicationOptions,
   SchoolType,
 } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
@@ -78,52 +75,6 @@ export const reasonForApplicationSubSection = buildSubSection({
             useIdAndKey: true,
           },
         ),
-        buildTextField({
-          id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
-          title: newPrimarySchoolMessages.shared.address,
-          width: 'half',
-          required: true,
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-              ReasonForApplicationOptions.MOVING_MUNICIPALITY
-            )
-          },
-        }),
-        buildTextField({
-          id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
-          title: newPrimarySchoolMessages.shared.postalCode,
-          width: 'half',
-          required: true,
-          format: '###',
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-              ReasonForApplicationOptions.MOVING_MUNICIPALITY
-            )
-          },
-        }),
-        buildAlertMessageField({
-          id: 'reasonForApplication.info',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message:
-            newPrimarySchoolMessages.primarySchool
-              .registerNewDomicileAlertMessage,
-          doesNotRequireAnswer: true,
-          alertType: 'info',
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-              ReasonForApplicationOptions.MOVING_MUNICIPALITY
-            )
-          },
-        }),
       ],
     }),
   ],

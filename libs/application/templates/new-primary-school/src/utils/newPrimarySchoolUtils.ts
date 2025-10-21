@@ -55,16 +55,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
 
-  const reasonForApplicationStreetAddress = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.streetAddress',
-  )
-
-  const reasonForApplicationPostalCode = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.postalCode',
-  )
-
   const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
 
   const languageEnvironmentIdAndKey = getValueViaPath<string>(
@@ -241,8 +231,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
