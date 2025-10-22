@@ -7,6 +7,8 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 
+// trigger deploy
+
 @Injectable()
 export class ExampleInputsService extends BaseTemplateApiService {
   constructor(
