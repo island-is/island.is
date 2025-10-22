@@ -8,6 +8,7 @@ const courtOfAppealsRequestCasesTableGroup = {
       route: 'rannsoknarmal-i-vinnslu',
       title: 'Rannsóknarmál í vinnslu',
       description: 'Kærð sakamál sem eru til meðferðar.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED,

@@ -64,7 +64,7 @@ const Summary: FC = () => {
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
   const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'TODO:REMOVE'
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
   >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
@@ -79,6 +79,7 @@ const Summary: FC = () => {
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )
@@ -119,8 +120,6 @@ const Summary: FC = () => {
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
-  // TODO: REMOVE
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRuling = async () => {
     const showError = () => toast.error('Dómur fannst ekki')
 
@@ -145,16 +144,14 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    // TODO: Uncomment when CORS bug is fixed
-    // if (
-    //   workingCase.indictmentRulingDecision ===
-    //   CaseIndictmentRulingDecision.RULING
-    // ) {
-    //   await handleRuling()
-    // } else {
-    //   setModalVisible('CONFIRM_INDICTMENT')
-    // }
-    setModalVisible('CONFIRM_INDICTMENT')
+    if (
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+    ) {
+      await handleRuling()
+    } else {
+      setModalVisible('CONFIRM_INDICTMENT')
+    }
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -254,20 +251,25 @@ const Summary: FC = () => {
         <SectionHeading title={formatMessage(strings.caseFiles)} />
         {(rulingFiles.length > 0 ||
           courtRecordFiles.length > 0 ||
-          hasGeneratedCourtRecord) && (
+          workingCase.withCourtSessions) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            {hasGeneratedCourtRecord && (
-              <PdfButton
-                caseId={workingCase.id}
-                title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                pdfType="courtRecord"
-                renderAs="row"
-                elementId="Þingbók"
-              />
-            )}
+            {
+              // We show a court record pdf button if the case should have court sessions
+              // but we disable the button if the court record pdf does not exist (should not happen)
+              workingCase.withCourtSessions && (
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                  pdfType="courtRecord"
+                  renderAs="row"
+                  elementId="Þingbók"
+                  disabled={!hasGeneratedCourtRecord}
+                />
+              )
+            }
             {courtRecordFiles.length > 0 && (
               <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
             )}
@@ -306,7 +308,7 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'TODO:REMOVE' && (
+      {modalVisible === 'CONFIRM_RULING' && (
         <Modal
           title="Viltu staðfesta dómsúrlausn og ljúka máli?"
           text={
@@ -348,7 +350,7 @@ const Summary: FC = () => {
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
-            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
+            isDisabled: !hasReviewed || pdfError,
           }}
           secondaryButton={{
             text: 'Hætta við',
@@ -381,8 +383,7 @@ const Summary: FC = () => {
           )}
         </Modal>
       )}
-      {(modalVisible === 'CONFIRM_INDICTMENT' ||
-        modalVisible === 'CONFIRM_RULING') && (
+      {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
           text={

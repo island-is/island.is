@@ -27,6 +27,7 @@ import {
   heirAgeValidation,
   missingHeirUndividedEstateValidation,
   missingSpouseUndividedEstateValidation,
+  multipleSpousesValidation,
   relationWithApplicant,
   SPOUSE,
 } from '../../lib/constants'
@@ -87,6 +88,12 @@ export const EstateMembersRepeater: FC<
       (member: EstateMember) => member.enabled && member.relation === SPOUSE,
     )
 
+  const hasMultipleSpouses =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    values.estate?.estateMembers?.filter(
+      (member: EstateMember) => member.enabled && member.relation === SPOUSE,
+    ).length > 1
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
@@ -121,6 +128,13 @@ export const EstateMembersRepeater: FC<
           type: 'custom',
         })
         return [false, 'missing spouse for undivided estate']
+      }
+
+      if (hasMultipleSpouses) {
+        setError(multipleSpousesValidation, {
+          type: 'custom',
+        })
+        return [false, 'multiple spouses in heirs list']
       }
 
       return [true, null]
@@ -166,6 +180,12 @@ export const EstateMembersRepeater: FC<
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    if (!missingSpouseForUndividedEstate) {
+      clearErrors(missingSpouseUndividedEstateValidation)
+    }
+    if (!hasMultipleSpouses) {
+      clearErrors(multipleSpousesValidation)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
@@ -173,6 +193,8 @@ export const EstateMembersRepeater: FC<
     hasEstateMemberUnder18,
     clearErrors,
     missingHeirsForUndividedEstate,
+    missingSpouseForUndividedEstate,
+    hasMultipleSpouses,
   ])
 
   useEffect(() => {
@@ -476,6 +498,13 @@ export const EstateMembersRepeater: FC<
             errorMessage={formatMessage(
               m.missingSpouseUndividedEstateValidation,
             )}
+          />
+        </Box>
+      )}
+      {!!errors?.[multipleSpousesValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.multipleSpousesValidation)}
           />
         </Box>
       )}
