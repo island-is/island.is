@@ -471,9 +471,8 @@ export class HealthDirectorateService {
       return null
     }
 
-    //TODO: THIS SHOULD BE AN ARRAY OR DELETE FROM CODEBASE
     return {
-      data: [{ code: countries.code, name: countries.name }],
+      data: countries,
     }
   }
 
