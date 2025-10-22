@@ -17,7 +17,7 @@ env:
 
 jobs:
   check-rename:
-    runs-on: shared-arc
+    runs-on: arc-shared
     steps:
       - uses: actions/checkout@v4
         with:
