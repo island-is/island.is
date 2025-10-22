@@ -18,8 +18,6 @@ import {
 } from './types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
-// eslint-disable-next-line local-rules/disallow-kennitalas
-const LANDSPITALI_NATIONAL_ID = '5003002130'
 const FEE_CHARGE_ITEM_CODE = 'MR101'
 
 const LANDSPITALI_BASE_PATH = {
@@ -44,7 +42,7 @@ export class LandspitaliService {
 
   async getCatalog(): Promise<Catalog> {
     return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      LANDSPITALI_NATIONAL_ID,
+      this.config.landspitaliOrganisationId,
     )
   }
 
@@ -139,7 +137,7 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
-          organisationId: LANDSPITALI_NATIONAL_ID,
+          organisationId: this.config.landspitaliOrganisationId,
           payerNationalId:
             input.payerNationalId || this.config.paymentNationalIdFallback,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
@@ -254,7 +252,7 @@ export class LandspitaliService {
           cancelUrl: this.extractValidCancelUrl(input),
           payerNationalId:
             input.payerNationalId || this.config.paymentNationalIdFallback,
-          organisationId: LANDSPITALI_NATIONAL_ID,
+          organisationId: this.config.landspitaliOrganisationId,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           extraData: [
             {
