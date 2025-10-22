@@ -11,7 +11,7 @@ export const completedForm = buildForm({
       sectionTitle: conclusion.tabTitle,
       multiFieldTitle: conclusion.tabTitle,
       alertTitle: conclusion.alertTitle,
-      alertMessage: '',
+      alertMessage: conclusion.alertInfo,
       expandableIntro: conclusion.expandableIntro,
       expandableDescription: '',
     }),
