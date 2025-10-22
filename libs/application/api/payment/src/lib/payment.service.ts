@@ -1,7 +1,7 @@
 import {
   Inject,
   Injectable,
-  InternalServerErrorException,
+  // InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -10,12 +10,15 @@ import { Op } from 'sequelize'
 import {
   CatalogItem,
   ChargeFjsV2ClientService,
-  ChargeResponse,
-  ChargeStatusResultStatusEnum,
+  // ChargeResponse,
+  // ChargeStatusResultStatusEnum,
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
-import { coreErrorMessages, getSlugFromType } from '@island.is/application/core'
+import {
+  // coreErrorMessages,
+  getSlugFromType,
+} from '@island.is/application/core'
 import { CreateChargeResult } from './types/CreateChargeResult'
 
 import {
@@ -24,7 +27,7 @@ import {
 } from '@island.is/application/api/core'
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
-import { formatCharge } from './types/Charge'
+// import { formatCharge } from './types/Charge'
 import {
   PaymentType as BasePayment,
   BasicChargeItem,
