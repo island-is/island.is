@@ -37,4 +37,7 @@ export class CourtDocumentResponse {
 
   @Field(() => String, { nullable: true })
   readonly generatedPdfUri?: string
+
+  @Field(() => String, { nullable: true })
+  readonly submittedBy?: string
 }

@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, ReactNode, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
@@ -28,6 +28,11 @@ import * as styles from './EditableCaseFile.css'
 export const editableFields = ['fileName', 'displayDate'] as const
 export type EditableFields = typeof editableFields[number]
 
+export interface Supplement {
+  enabled: ReactNode
+  disabled: ReactNode
+}
+
 export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
@@ -41,6 +46,7 @@ export interface TEditableCaseFile {
   status?: FileUploadStatus
   size?: number | null
   submissionDate?: string | null
+  suplement?: Supplement
 }
 
 interface Props {
@@ -257,36 +263,55 @@ const EditableCaseFile: FC<Props> = (props) => {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
+                alignItems: 'center',
               }}
               aria-live="polite"
             >
-              <Box
-                display="flex"
-                alignItems="center"
-                component={caseFile.canOpen ? 'button' : undefined}
-                onClick={() => {
-                  if (caseFile.canOpen && caseFile.id) {
-                    onOpen?.(caseFile.id)
-                  }
-                }}
-              >
-                <Text variant="h5">
-                  <span
+              <Box>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  component={caseFile.canOpen ? 'button' : undefined}
+                  onClick={() => {
+                    if (caseFile.canOpen && caseFile.id) {
+                      onOpen?.(caseFile.id)
+                    }
+                  }}
+                >
+                  <Text variant="h5">
+                    <span
+                      style={{
+                        display: 'block',
+                        maxWidth: `${width - 180}px`,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        ...(disabled ? { color: theme.color.dark300 } : {}),
+                      }}
+                    >
+                      {displayName}
+                    </span>
+                  </Text>
+                  {caseFile.canOpen && (
+                    <Box
+                      marginLeft={1}
+                      style={{
+                        ...(disabled ? { color: theme.color.dark300 } : {}),
+                      }}
+                    >
+                      <Icon icon="open" type="outline" size="small" />
+                    </Box>
+                  )}
+                </Box>
+                {caseFile.suplement && (
+                  <Box
                     style={{
-                      display: 'block',
-                      maxWidth: `${width - 180}px`,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
                       ...(disabled ? { color: theme.color.dark300 } : {}),
                     }}
                   >
-                    {displayName}
-                  </span>
-                </Text>
-                {caseFile.canOpen && (
-                  <Box marginLeft={1}>
-                    <Icon icon="open" type="outline" size="small" />
+                    {disabled
+                      ? caseFile.suplement.disabled
+                      : caseFile.suplement.enabled}
                   </Box>
                 )}
               </Box>
