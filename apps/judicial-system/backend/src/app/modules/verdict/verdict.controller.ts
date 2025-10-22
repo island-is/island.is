@@ -71,7 +71,7 @@ export class VerdictController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Patch('verdicts')
+  @Post('verdicts')
   @ApiOkResponse({
     type: Verdict,
     description: 'Create verdicts for relevant defendants',

@@ -329,16 +329,18 @@ const Summary: FC = () => {
               </Box>
               <Box as="ul" marginLeft={2}>
                 <li>
-                  <Text>Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
+                  <Text as="span">
+                    Vinsamlegast rýnið skjal fyrir staðfestingu.
+                  </Text>
                 </li>
                 <li>
-                  <Text>
+                  <Text as="span">
                     Staðfestur dómur verður aðgengilegur málflytjendum í
                     Réttarvörslugátt.
                   </Text>
                 </li>
                 <li>
-                  <Text>
+                  <Text as="span">
                     Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
                     stafrænt pósthólf dómfellda á island.is á næsta skrefi.
                   </Text>

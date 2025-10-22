@@ -26,12 +26,12 @@ export interface Item {
 }
 
 export interface SelectableItem extends Item {
-  checked: boolean
+  checked?: boolean
 }
 
 interface Props {
   selectAllText?: string
-  items?: Item[]
+  items?: SelectableItem[]
   CTAButton?: CTAButtonAttributes
   isLoading: boolean
   errorMessage?: string
@@ -94,6 +94,7 @@ const SelectableList: FC<Props> = (props) => {
       items.map((item) => ({
         ...item,
         checked:
+          item.checked ??
           (selectableItems.find((i) => i.id === item.id)?.checked &&
             !item.invalid) ??
           false,
