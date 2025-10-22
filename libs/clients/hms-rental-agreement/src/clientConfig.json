@@ -251,6 +251,18 @@
           "amount": {
             "type": "string"
           },
+          "isIndexConnected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "indexDate": {
+            "type": "string"
+          },
+          "indexRate": {
+            "type": "string"
+          },
           "paymentMethodOther": {
             "type": "string"
           },
@@ -277,10 +289,43 @@
               }
             }
           },
+          "securityDepositRequired": {
+            "type": "string"
+          },
+          "securityType": {
+            "type": "string"
+          },
+          "bankGuaranteeInfo": {
+            "type": "string"
+          },
+          "thirdPartyGuaranteeInfo": {
+            "type": "string"
+          },
+          "insuranceCompanyInfo": {
+            "type": "string"
+          },
+          "mutualFundInfo": {
+            "type": "string"
+          },
+          "otherInfo": {
+            "type": "string"
+          },
+          "securityDepositAmount": {
+            "type": "string"
+          },
+          "securityAmountOther": {
+            "type": "string"
+          },
+          "securityAmountCalculated": {
+            "type": "string"
+          },
           "categoryType": {
             "type": "string"
           },
           "categoryClass": {
+            "type": "string"
+          },
+          "categoryClassGroup": {
             "type": "string"
           },
           "description": {
