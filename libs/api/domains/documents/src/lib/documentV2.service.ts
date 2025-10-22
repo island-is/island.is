@@ -519,23 +519,28 @@ export class DocumentServiceV2 {
       const isDelegated = isDefined(user.delegationType)
       if (!isDelegated) return []
 
+      const isCompany = user.delegationType?.includes(
+        AuthDelegationType.ProcurationHolder,
+      )
+      const isMinor = user.delegationType?.includes(
+        AuthDelegationType.LegalGuardianMinor, // Delegation is a child under 16
+      )
       const isLegalGuardian = user.delegationType?.includes(
         AuthDelegationType.LegalGuardian,
       )
-      const birthdate = getBirthday(user.nationalId)
-      const childAgeIs16OrOlder = birthdate
-        ? differenceInYears(new Date(), birthdate) > 15
-        : false
 
       // Hide health data if user is a legal guardian and child is 16 or older
-      const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
-      // Hide law and order data if user is delegated
-      const hideLawAndOrderData = isDelegated
+      const hideHealthData = isLegalGuardian && !isMinor
+
+      // Hide law and order data if user is delegated and not a company
+      const hideLawAndOrderData = isDelegated && !isCompany
+
       this.logger.debug('Should hide document categories', {
         hideHealthData,
         hideLawAndOrderData,
         isLegalGuardian,
-        childAgeIs16OrOlder,
+        isMinor,
+        isCompany,
       })
       return [
         ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
