@@ -1,11 +1,12 @@
 import { NO, YES } from '@island.is/application/core'
 import {
   AffiliationRole,
-  CaseWorkerInputTypeEnum,
-  OrganizationType,
-  OrganizationSubType,
-  OrganizationSector,
   AgentType,
+  ApplicationFeatureConfigType,
+  CaseWorkerInputTypeEnum,
+  OrganizationSector,
+  OrganizationSubType,
+  OrganizationType,
 } from './utils/constants'
 
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
@@ -95,7 +96,7 @@ export type ApplicationFeatureModel = {
 }
 
 export type ApplicationFeatureConfig = {
-  applicationType: string // "enum": ["registration"] // TODO: Á að búa til enum í constants fyrir þetta? (eins og OrganizationType)
+  applicationType: ApplicationFeatureConfigType
   applicationFeatures: ApplicationFeatureModel[]
 }
 
@@ -108,8 +109,8 @@ export type AffiliationOrganization = {
   nationalId: string | null
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
 }
 
 export type AddressModel = {
@@ -163,7 +164,6 @@ export type LanguageProfile = {
 export type FriggChildInformation = {
   id: string
   nationalId: string
-  // nationalIdType // TODO: Bæta við nýrri enum týpu? ["unknown", "individual", "system"]
   name: string
   nationality: string | null
   preferredName: string | null
@@ -194,8 +194,8 @@ export type Organization = {
   id: string
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
   gradeLevels: string[]
   unitId: string | null
   settings: ApplicationSettings | null

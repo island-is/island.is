@@ -30,15 +30,16 @@ import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
+  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
-  SchoolType,
   States,
 } from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
+  getSelectedSchoolSubType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
@@ -346,16 +347,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearExpectedEndDate: assign((context) => {
         const { application } = context
-        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+        const { temporaryStay } = getApplicationAnswers(application.answers)
+
+        const selectedSchoolSubType = getSelectedSchoolSubType(
           application.answers,
+          application.externalData,
         )
 
-        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+        if (
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+        ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')

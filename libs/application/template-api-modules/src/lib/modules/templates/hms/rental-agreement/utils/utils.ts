@@ -28,7 +28,7 @@ export const mapPersonToArray = (person: ApplicantsInfo) => {
     nationalId: person.nationalIdWithName.nationalId,
     name: person.nationalIdWithName.name,
     email: person.email,
-    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+    address: person.address,
     phone: formatPhoneNumber(person.phone),
     isRepresentative: person.isRepresentative,
   }
