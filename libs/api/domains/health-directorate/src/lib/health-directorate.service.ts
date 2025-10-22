@@ -37,6 +37,7 @@ import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
   mapDispensationItem,
+  mapPermit,
   mapPermitStatus,
   mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
@@ -407,25 +408,7 @@ export class HealthDirectorateService {
       return null
     }
 
-    const data: Permit[] =
-      permits.map((item) => {
-        return {
-          id: item.id ?? '',
-          status: mapPermitStatus(item.status),
-          createdAt: item.createdAt ?? new Date(),
-          validFrom: item.validFrom ?? new Date(),
-          validTo: item.validTo ?? new Date(),
-          codes: item.codes ?? [],
-          countries:
-            item.countries?.map((country) => {
-              const countryObj: Country = {
-                code: country.code,
-                name: country.name,
-              }
-              return countryObj
-            }) ?? [],
-        }
-      }) ?? []
+    const data: Permit[] = permits.map((item) => mapPermit(item)) ?? []
 
     return { data }
   }
@@ -442,22 +425,7 @@ export class HealthDirectorateService {
       return null
     }
 
-    return {
-      id: permit.id ?? '',
-      status: mapPermitStatus(permit.status),
-      createdAt: permit.createdAt ?? new Date(),
-      validFrom: permit.validFrom ?? new Date(),
-      validTo: permit.validTo ?? new Date(),
-      codes: permit.codes ?? [],
-      countries:
-        permit.countries?.map((country) => {
-          const countryObj: Country = {
-            code: country.code,
-            name: country.name,
-          }
-          return countryObj
-        }) ?? [],
-    }
+    return mapPermit(permit)
   }
 
   /* Patient data - Permit countries */
