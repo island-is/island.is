@@ -2,10 +2,8 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildMultiField,
-  buildRadioField,
   buildSubSection,
   buildTextField,
-  NO,
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
@@ -144,64 +142,6 @@ export const childInfoSubSection = buildSubSection({
             isMulti: true,
           },
         ),
-        buildRadioField({
-          id: 'childInfo.differentPlaceOfResidence',
-          title:
-            newPrimarySchoolMessages.childrenNGuardians
-              .differentPlaceOfResidence,
-          description:
-            newPrimarySchoolMessages.childrenNGuardians
-              .differentPlaceOfResidenceDescription,
-          width: 'half',
-          required: true,
-          space: 4,
-          options: [
-            {
-              label: newPrimarySchoolMessages.shared.yes,
-              value: YES,
-            },
-            {
-              label: newPrimarySchoolMessages.shared.no,
-              value: NO,
-            },
-          ],
-          defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation?.residence?.address
-              ? YES
-              : '',
-        }),
-        buildTextField({
-          id: 'childInfo.placeOfResidence.streetAddress',
-          title:
-            newPrimarySchoolMessages.childrenNGuardians
-              .childInfoPlaceOfResidence,
-          width: 'half',
-          required: true,
-          condition: (answers) => {
-            const { childInfo } = getApplicationAnswers(answers)
-
-            return childInfo?.differentPlaceOfResidence === YES
-          },
-          defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation?.residence?.address ?? undefined,
-        }),
-        buildTextField({
-          id: 'childInfo.placeOfResidence.postalCode',
-          title: newPrimarySchoolMessages.shared.postalCode,
-          width: 'half',
-          format: '###',
-          required: true,
-          condition: (answers) => {
-            const { childInfo } = getApplicationAnswers(answers)
-
-            return childInfo?.differentPlaceOfResidence === YES
-          },
-          defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation?.residence?.postCode ?? undefined,
-        }),
       ],
     }),
   ],

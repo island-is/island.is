@@ -97,31 +97,6 @@ applicationTest.describe('New primary school', () => {
           await page.keyboard.press('Enter')
           await page.keyboard.press('Enter')
           await page.getByTestId('select-childInfo.pronouns').click()
-          await page
-            .getByRole('region', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .differentPlaceOfResidence,
-              ),
-            })
-            .getByRole('radio', {
-              name: label(newPrimarySchoolMessages.shared.yes),
-            })
-            .click()
-          await page
-            .getByRole('textbox', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .childInfoPlaceOfResidence,
-              ),
-            })
-            .fill('Lækjargata 12')
-          await page
-            .getByRole('textbox', {
-              name: label(newPrimarySchoolMessages.shared.postalCode),
-            })
-            .last()
-            .fill('210')
           await proceed()
         },
       )

@@ -1,12 +1,8 @@
+import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ApplicationType,
-  LanguageEnvironmentOptions,
-  ReasonForApplicationOptions,
-} from '../utils/constants'
-import { NO, YES } from '@island.is/application/core'
+import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -32,13 +28,6 @@ export const dataSchema = z.object({
       usePronounAndPreferredName: z.array(z.string()),
       preferredName: z.string().optional(),
       pronouns: z.array(z.string()).optional().nullable(),
-      differentPlaceOfResidence: z.enum([YES, NO]),
-      placeOfResidence: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
     })
     .refine(
       ({ usePronounAndPreferredName, preferredName, pronouns }) =>
@@ -53,20 +42,6 @@ export const dataSchema = z.object({
           ? (!!pronouns && pronouns.length > 0) || !!preferredName
           : true,
       { path: ['pronouns'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.streetAddress.length > 0
-          : true,
-      { path: ['placeOfResidence', 'streetAddress'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.postalCode.length > 0
-          : true,
-      { path: ['placeOfResidence', 'postalCode'] },
     ),
   guardians: z.array(
     z
@@ -103,36 +78,9 @@ export const dataSchema = z.object({
     municipality: z.string(),
     nursery: z.string(),
   }),
-  reasonForApplication: z
-    .object({
-      reason: z.string(),
-      transferOfLegalDomicile: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
-    })
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.streetAddress.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'streetAddress'],
-      },
-    )
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.postalCode.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'postalCode'],
-      },
-    ),
+  reasonForApplication: z.object({
+    reason: z.string(),
+  }),
   currentSchool: z
     .object({
       municipality: z.string().optional().nullable(),
