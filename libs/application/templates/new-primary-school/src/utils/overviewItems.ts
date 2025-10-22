@@ -33,7 +33,6 @@ import {
   OptionsType,
   OrganizationSector,
   OrganizationSubType,
-  ReasonForApplicationOptions,
 } from './constants'
 import {
   formatGrade,
@@ -156,25 +155,7 @@ export const childItems = async (
         ]
       : []
 
-  const differentPlaceOfResidenceItems: Array<KeyValueItem> =
-    childInfo?.differentPlaceOfResidence === YES
-      ? [
-          {
-            width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians
-                .childInfoPlaceOfResidence,
-            valueText: `${childInfo?.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
-          },
-        ]
-      : []
-
-  return [
-    ...baseItems,
-    ...preferredNameItems,
-    ...pronounsItems,
-    ...differentPlaceOfResidenceItems,
-  ]
+  return [...baseItems, ...preferredNameItems, ...pronounsItems]
 }
 
 export const guardiansItems = (
@@ -404,12 +385,7 @@ export const reasonForApplicationItems = async (
   apolloClient: ApolloClient<object>,
   locale: Locale,
 ): Promise<KeyValueItem[]> => {
-  const {
-    reasonForApplication,
-    reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
-  } = getApplicationAnswers(answers)
+  const { reasonForApplicationId } = getApplicationAnswers(answers)
 
   const friggOptionsType =
     getSelectedSchoolSector(answers, externalData) ===
@@ -438,23 +414,7 @@ export const reasonForApplicationItems = async (
     },
   ]
 
-  const movingMunicipalityItems: Array<KeyValueItem> =
-    reasonForApplication === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-      ? [
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.address,
-            valueText: reasonForApplicationStreetAddress,
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.postalCode,
-            valueText: reasonForApplicationPostalCode,
-          },
-        ]
-      : []
-
-  return [...baseItems, ...movingMunicipalityItems]
+  return [...baseItems]
 }
 
 export const siblingsTable = (answers: FormValue): TableData => {

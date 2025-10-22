@@ -65,9 +65,7 @@ const CourtRecord: FC = () => {
     }
   }, [workingCase.courtSessions?.length])
 
-  const stepIsValid = isIndictmentCourtRecordStepValid(
-    workingCase.courtSessions,
-  )
+  const stepIsValid = isIndictmentCourtRecordStepValid(workingCase)
 
   const canCreateCourtSession =
     !workingCase.courtSessions ||
