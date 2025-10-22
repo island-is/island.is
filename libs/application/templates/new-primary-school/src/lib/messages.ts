@@ -800,14 +800,14 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Has the child had a welfare contact person?',
     },
     hasWelfarePrimarySchoolContactDescription: {
-      id: 'nps.application:different.needs.has.welfare.contact.description',
+      id: 'nps.application:different.needs.has.welfare.primary.school.contact.description',
       defaultMessage:
         'Tengiliður farsældar er sá aðili innan grunnskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
       description:
         'The welfare contact person is the individual within the primary school who provides information and guidance, and has assisted parents in applying for services for their child.',
     },
     hasWelfareNurserySchoolContactDescription: {
-      id: 'nps.application:different.needs.has.welfare.contact.description',
+      id: 'nps.application:different.needs.has.welfare.nursery.school.contact.description',
       defaultMessage:
         'Tengiliður farsældar er sá aðili innan leikskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
       description:
