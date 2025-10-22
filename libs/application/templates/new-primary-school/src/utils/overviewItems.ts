@@ -31,8 +31,9 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
+  OrganizationSector,
+  OrganizationSubType,
   ReasonForApplicationOptions,
-  SchoolType,
 } from './constants'
 import {
   formatGrade,
@@ -43,6 +44,8 @@ import {
   getPreferredSchoolName,
   getSchoolName,
   getSelectedOptionLabel,
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 const getFriggOptions = async (
@@ -342,9 +345,8 @@ export const schoolItems = (
   const {
     applicationType,
     expectedStartDate,
-    selectedSchool,
+    selectedSchoolId,
     applyForPreferredSchool,
-    selectedSchoolType,
     temporaryStay,
     expectedEndDate,
   } = getApplicationAnswers(answers)
@@ -359,7 +361,7 @@ export const schoolItems = (
       valueText:
         applyForPreferredSchool === YES
           ? getPreferredSchoolName(externalData)
-          : getSchoolName(externalData, selectedSchool),
+          : getSchoolName(externalData, selectedSchoolId ?? ''),
     },
   ]
 
@@ -378,7 +380,8 @@ export const schoolItems = (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+    getSelectedSchoolSubType(answers, externalData) ===
+      OrganizationSubType.INTERNATIONAL_SCHOOL &&
     temporaryStay === YES
       ? [
           {
@@ -396,7 +399,7 @@ export const schoolItems = (
 
 export const reasonForApplicationItems = async (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
   locale: Locale,
@@ -406,13 +409,14 @@ export const reasonForApplicationItems = async (
     reasonForApplicationId,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
-    selectedSchoolType,
   } = getApplicationAnswers(answers)
 
   const friggOptionsType =
-    selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+    getSelectedSchoolSector(answers, externalData) ===
+    OrganizationSector.PRIVATE
       ? OptionsType.REASON_PRIVATE_SCHOOL
-      : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+      : getSelectedSchoolSubType(answers, externalData) ===
+        OrganizationSubType.INTERNATIONAL_SCHOOL
       ? OptionsType.REASON_INTERNATIONAL_SCHOOL
       : OptionsType.REASON
 
