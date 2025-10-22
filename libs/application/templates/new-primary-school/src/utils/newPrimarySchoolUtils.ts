@@ -29,7 +29,6 @@ import {
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
-  SchoolType,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -199,19 +198,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   )
 
-  const selectedSchoolIdAndType = getValueViaPath<string>(
-    answers,
-    'newSchool.school',
-  )
-
-  // School type is piggybacked on the value like 'id::subType::sector'
-  const [selectedSchool, selectedSchoolSubType, selectedSchoolSector] =
-    selectedSchoolIdAndType?.split('::') ?? []
-
-  const selectedSchoolType = getValueViaPath<SchoolType>(
-    answers,
-    'newSchool.type',
-  )
+  const selectedSchoolId = getValueViaPath<string>(answers, 'newSchool.school')
 
   const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
@@ -271,10 +258,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     temporaryStay,
     expectedEndDate,
     schoolMunicipality,
-    selectedSchool,
-    selectedSchoolSubType,
-    selectedSchoolSector,
-    selectedSchoolType,
+    selectedSchoolId,
     currentNurseryMunicipality,
     currentNursery,
     applyForPreferredSchool,
@@ -624,4 +608,39 @@ export const getCurrentAndNextGrade = (grade: string): string[] => {
 
   // Only include the next grade if it's within bounds
   return next <= 10 ? [current, next.toString().padStart(2, '0')] : [current]
+}
+
+export const getSelectedSchoolData = (
+  externalData: ExternalData,
+  schoolId: string,
+) => {
+  const { schools } = getApplicationExternalData(externalData)
+
+  return schools.find((school) => school?.id === schoolId)
+}
+
+export const getSelectedSchoolSector = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector ?? ''
+}
+
+export const getSelectedSchoolSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
 }
