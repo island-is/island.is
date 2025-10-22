@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'release/*' # Triggers when pushing to this branch
+      - 'feat/test-release-name/*'
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
@@ -30,6 +31,9 @@ jobs:
           VERSION=$(echo "$CURRENT_BRANCH" | sed 's/release\///')
           PRE_RELEASE_BRANCH="pre-release/$VERSION"
 
+          PRE_VERSION=$(echo "$CURRENT_BRANCH" | sed 's/feat\//test-release-name\///')
+          PRE_TEST_RELEASE="feat/pre-test-release-name/$PRE_VERSION"
+
           # Check if corresponding pre-release branch existed
           if git show-ref --verify --quiet "refs/remotes/origin/$PRE_RELEASE_BRANCH"; then
             echo "Branch renamed from $PRE_RELEASE_BRANCH to $CURRENT_BRANCH"
@@ -37,6 +41,12 @@ jobs:
             # Your workflow logic here
             echo "renamed=true" >> "$GITHUB_OUTPUT"
             echo "version=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+          else if git show-ref --verify --quiet "refs/remotes/origin/$PRE_TEST_RELEASE"; then
+            echo "Branch renamed from $PRE_TEST_RELEASE to $CURRENT_BRANCH"
+            echo "Version: $PRE_VERSION"
+            # Your workflow logic here
+            echo "renamed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$PRE_TEST_RELEASE" >> "$GITHUB_OUTPUT"
           else
             echo "No corresponding pre-release branch found"
           fi
