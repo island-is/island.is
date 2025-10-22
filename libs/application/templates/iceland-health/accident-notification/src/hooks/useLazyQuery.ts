@@ -6,7 +6,7 @@ import {
 import { useCallback } from 'react'
 
 export const useLazyQuery = <
-  TData = any,
+  TData = { healthInsuranceIsHealthInsured: boolean },
   TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
