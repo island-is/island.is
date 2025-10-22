@@ -39,6 +39,7 @@ interface UpdateCourtDocumentOptions {
 interface UpdateCourtDocument {
   documentOrder?: number
   name?: string
+  submittedBy?: string
 }
 
 interface FileCourtDocumentInCourtSessionOptions {
