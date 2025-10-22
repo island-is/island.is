@@ -145,7 +145,10 @@ export const UserDropdown = ({
               />
 
               {hasAccessToUserProfileInfo && (
-                <UserProfileInfo onClick={() => onClose()} />
+                <UserProfileInfo
+                  onClick={() => onClose()}
+                  isCompany={isDelegationCompany}
+                />
               )}
               <UserDropdownItem
                 text={formatMessage(sharedMessages.logout)}

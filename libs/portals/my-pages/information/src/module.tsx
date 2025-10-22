@@ -31,106 +31,116 @@ const Notifications = lazy(() =>
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
+
+const CompanySettings = lazy(() =>
+  import('./screens/CompanySettings/CompanySettings'),
+)
+
+// const CompanyNotificationsSettings = lazy(() =>
+//   import('./screens/CompanyNotifications/CompanyNotifications'),
+// )
 const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = async (
-  routesProps: PortalModuleRoutesProps,
-  isCompany = false,
-): Promise<PortalRoute[]> => {
-  const { scopes, profile } = routesProps.userInfo
-
-  const allowedDelegationTypes = await routesProps.featureFlagClient.getValue(
-    Features.delegationTypesWithNotificationsEnabled,
-    '',
-    { id: profile?.nationalId, attributes: {} },
-  )
-
-  const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
-    featureFlagValue: allowedDelegationTypes,
-    delegationTypes: profile?.delegationType,
-    actorNationalId: profile?.nationalId,
-  })
-
-  const isSettingsEnabled = isDelegationTypeFFEnabled
-    ? scopes.includes(DocumentsScope.main)
-    : scopes.includes(UserProfileScope.write)
-
-  return [
-    {
-      name: isCompany ? m.settings : m.mySettings,
-      path: InformationPaths.SettingsOld,
-      enabled: isSettingsEnabled,
-      element: <Navigate to={InformationPaths.Settings} replace />,
-    },
-    {
-      name: isCompany ? m.settings : m.mySettings,
-      path: InformationPaths.Settings,
-      enabled: isSettingsEnabled,
-      element: <UserProfileSettings />,
-    },
-    {
-      name: m.userInfo,
-      path: InformationPaths.SettingsNotifications,
-      enabled: isSettingsEnabled,
-      element: <UserNotificationsSettings />,
-    },
-    {
-      name: 'Notifications',
-      path: InformationPaths.Notifications,
-      enabled: scopes.includes(DocumentsScope.main),
-      element: <Notifications />,
-    },
-  ]
-}
-
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
   routes: async (routesProps) => {
-    const { scopes } = routesProps.userInfo
+    const { scopes, profile } = routesProps.userInfo
+
+    const allowedDelegationTypes = await routesProps.featureFlagClient.getValue(
+      Features.delegationTypesWithNotificationsEnabled,
+      '',
+      { id: profile?.nationalId, attributes: {} },
+    )
+
+    const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
+      featureFlagValue: allowedDelegationTypes,
+      delegationTypes: profile?.delegationType,
+      actorNationalId: profile?.nationalId,
+    })
+
+    const isSettingsEnabled = isDelegationTypeFFEnabled
+      ? scopes.includes(DocumentsScope.main)
+      : scopes.includes(UserProfileScope.write)
+
+    const isCompany =
+      routesProps.userInfo.profile?.subjectType === 'legalEntity'
+
     return [
       {
         name: m.userInfo,
         path: InformationPaths.MyInfoRoot,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
       },
       {
         name: m.myInfo,
         path: InformationPaths.MyInfoRootOverview,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <UserInfoOverview />,
       },
       {
         name: m.userInfo,
         path: InformationPaths.UserInfo,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <UserInfo />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.BioChild,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <FamilyMemberBioChild />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.ChildCustody,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <FamilyMemberChildCustody />,
       },
       {
         name: m.familySpouse,
         path: InformationPaths.Spouse,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: scopes.includes(ApiScope.meDetails) && !isCompany,
         element: <Spouse />,
       },
-      ...(await sharedRoutes(routesProps)),
+      {
+        name: m.mySettings,
+        path: InformationPaths.Settings,
+        enabled: isSettingsEnabled,
+        element: <UserProfileSettings />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.SettingsNotifications,
+        enabled: isSettingsEnabled,
+        element: <UserNotificationsSettings />,
+      },
+      {
+        name: m.notifications,
+        path: InformationPaths.Notifications,
+        enabled: scopes.includes(DocumentsScope.main),
+        element: <Notifications />,
+      },
     ]
   },
   companyRoutes: async (routesProps) => {
-    const { scopes } = routesProps.userInfo
+    const { scopes, profile } = routesProps.userInfo
+
+    const allowedDelegationTypes = await routesProps.featureFlagClient.getValue(
+      Features.delegationTypesWithNotificationsEnabled,
+      '',
+      { id: profile?.nationalId, attributes: {} },
+    )
+    const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
+      featureFlagValue: allowedDelegationTypes,
+      delegationTypes: profile?.delegationType,
+      actorNationalId: profile?.nationalId,
+    })
+
+    const isSettingsEnabled = isDelegationTypeFFEnabled
+      ? scopes.includes(DocumentsScope.main)
+      : scopes.includes(UserProfileScope.write)
     return [
       {
         name: m.companyTitle,
@@ -138,7 +148,18 @@ export const informationModule: PortalModule = {
         enabled: scopes.includes(ApiScope.company),
         element: <CompanyInfo />,
       },
-      ...(await sharedRoutes(routesProps, true)),
+      {
+        name: m.companySettings,
+        path: InformationPaths.CompanySettings,
+        enabled: scopes.includes(ApiScope.company) && isSettingsEnabled,
+        element: <CompanySettings />,
+      },
+      {
+        name: m.notifications,
+        path: InformationPaths.CompanyNotifications,
+        enabled: scopes.includes(ApiScope.company) && isSettingsEnabled,
+        element: <Notifications />,
+      },
     ]
   },
 }

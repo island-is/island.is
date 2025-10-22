@@ -560,6 +560,14 @@ export const m = defineMessages({
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
   },
+  companyInfo: {
+    id: 'service.portal:company-info',
+    defaultMessage: 'Um fyrirtækið',
+  },
+  companyData: {
+    id: 'service.portal:company-data',
+    defaultMessage: 'Gögn úr fyrirtækjaskrá',
+  },
   userInfoDescription: {
     id: 'service.portal:user-info-description',
     defaultMessage: 'Gögn um þig og fjölskylduna þína',
@@ -905,6 +913,14 @@ export const m = defineMessages({
   mySettings: {
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
+  },
+  companySettings: {
+    id: 'service.portal:company-settings',
+    defaultMessage: 'Stillingar',
+  },
+  companySettingsNavigation: {
+    id: 'service.portal:company-settings-navigation',
+    defaultMessage: 'Stillingar fyrirtækis',
   },
   mySettingsInformation: {
     id: 'service.portal:my-settings-information',

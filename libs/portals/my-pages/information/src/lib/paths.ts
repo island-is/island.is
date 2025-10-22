@@ -9,6 +9,8 @@ export enum InformationPaths {
   Spouse = '/min-gogn/yfirlit/maki/',
   UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
   Company = '/fyrirtaeki',
+  CompanySettings = '/fyrirtaeki/stillingar/',
+  CompanyNotifications = '/fyrirtaeki/tilkynningar',
   Notifications = '/min-gogn/tilkynningar',
   NotificationDetail = '/min-gogn/tilkynningar/:id',
   Lists = '/min-gogn/listar',

@@ -141,12 +141,34 @@ export const informationNavigation: PortalNavigationItem = {
   ],
 }
 
-export const companyNavigation: PortalNavigationItem = {
-  name: m.companyTitle,
-  searchHide: true,
+export const companyInformationNavigation: PortalNavigationItem = {
+  name: m.companyInfo,
+  description: m.userInfoDescription,
+  searchTags: [
+    searchTagsMessages.informationMe,
+    searchTagsMessages.informationWife,
+    searchTagsMessages.informationHusband,
+    searchTagsMessages.informationSpouse,
+    searchTagsMessages.informationChild,
+    searchTagsMessages.informationFamily,
+  ],
   path: InformationPaths.Company,
   icon: {
-    icon: 'business',
+    icon: 'person',
   },
-  description: m.companyDescription,
+  children: [
+    {
+      name: m.companyData,
+      description: m.userInfoIntro,
+      path: InformationPaths.Company,
+    },
+    {
+      name: m.companySettings,
+      path: InformationPaths.CompanySettings,
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.CompanyNotifications,
+    },
+  ],
 }
