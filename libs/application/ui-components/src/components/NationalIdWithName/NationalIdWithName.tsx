@@ -128,6 +128,36 @@ export const NationalIdWithName: FC<
     nationalIdFieldErrors = getFieldErrorString(error, 'nationalId')
   }
 
+  const getNameFieldErrorMessage = () => {
+    if (nationalIdInput.length !== 10) return
+
+    const notFoundMessage = formatMessage(
+      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+    )
+
+    // Invalid national ID or mismatch with allowed search modes
+    if (invalidNationalId) return notFoundMessage
+
+    const isPerson = kennitala.isPerson(nationalIdInput)
+    const isCompany = kennitala.isCompany(nationalIdInput)
+    const personFailed = queryError || data?.identity === null
+    const companyFailed =
+      companyQueryError || companyData?.companyRegistryCompany === null
+    const nameError = getFieldErrorString(error, 'name')
+
+    if (isPerson && searchPersons) {
+      if (personFailed) return notFoundMessage
+      if (nameError && !data?.identity) return nameError
+    }
+
+    if (isCompany && searchCompanies) {
+      if (companyFailed) return notFoundMessage
+      if (nameError && !companyData) return nameError
+    }
+
+    return undefined
+  }
+
   // get default values
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue
@@ -208,31 +238,43 @@ export const NationalIdWithName: FC<
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length !== 10) {
+      // Clear name field whenever national id is not complete
+      // avoids name lingering from previous valid national ids
+      setValue(nameField, '')
       return
     }
 
-    if (kennitala.isValid(nationalIdInput)) {
-      setInvalidNationalId(false)
-      searchPersons &&
-        getIdentity({
-          variables: {
-            input: {
-              nationalId: nationalIdInput,
-            },
-          },
-        })
-
-      searchCompanies &&
-        getCompanyIdentity({
-          variables: {
-            input: {
-              nationalId: nationalIdInput,
-            },
-          },
-        })
-    } else {
+    if (!kennitala.isValid(nationalIdInput)) {
       setValue(nameField, '')
       setInvalidNationalId(true)
+      return
+    }
+
+    const isPerson = kennitala.isPerson(nationalIdInput)
+
+    // Prevent searching the wrong registry (person vs company) unless both are allowed
+    const searchModeMismatch =
+      ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
+      !(searchPersons && searchCompanies)
+
+    if (searchModeMismatch) {
+      setValue(nameField, '')
+      setInvalidNationalId(true)
+      return
+    }
+
+    setInvalidNationalId(false)
+
+    if (searchPersons && isPerson) {
+      getIdentity({
+        variables: { input: { nationalId: nationalIdInput } },
+      })
+    }
+
+    if (searchCompanies && !isPerson) {
+      getCompanyIdentity({
+        variables: { input: { nationalId: nationalIdInput } },
+      })
     }
   }, [
     nationalIdInput,
@@ -295,26 +337,7 @@ export const NationalIdWithName: FC<
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
             required={disabled ? required : false}
-            error={
-              searchPersons
-                ? queryError || data?.identity === null || invalidNationalId
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !data
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : searchCompanies
-                ? companyQueryError ||
-                  companyData?.companyRegistryCompany === null
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !companyData
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : undefined
-            }
+            error={getNameFieldErrorMessage()}
             disabled={disabled}
             readOnly={!disabled || readOnly}
           />
