@@ -295,7 +295,8 @@ export const SitemapNode = ({
 
   if (
     status === 'published' &&
-    (nodeStatus !== 'published' || !nodeContent.label)
+    ((nodeStatus !== 'published' && nodeStatus !== 'changed') ||
+      !nodeContent.label)
   ) {
     return null
   }
@@ -548,7 +549,7 @@ export const SitemapNode = ({
                       addNode(node, type, entries, createNew, entryType)
                     }}
                     options={
-                      indent > 1 || node.type === TreeNodeType.ENTRY
+                      indent > 0 || node.type === TreeNodeType.ENTRY
                         ? [TreeNodeType.ENTRY, TreeNodeType.URL]
                         : [
                             TreeNodeType.CATEGORY,

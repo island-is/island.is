@@ -15,10 +15,7 @@ import {
   PayerOption,
   SchoolType,
 } from './constants'
-import {
-  getApplicationType,
-  getMunicipalityCodeBySchoolUnitId,
-} from './newPrimarySchoolUtils'
+import { getApplicationType } from './newPrimarySchoolUtils'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -133,17 +130,6 @@ describe('showPreferredLanguageFields', () => {
       },
     }
     expect(showPreferredLanguageFields(answers)).toBe(true)
-  })
-})
-describe('getMunicipalityCodeBySchoolUnitId', () => {
-  it('should return the correct municipality code for a given school unitId', () => {
-    const schoolId = 'G-2297-A'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
-  })
-
-  it('should return undefined for an unknown school unit id', () => {
-    const schoolId = 'unknown-school-id'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
   })
 })
 

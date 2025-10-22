@@ -68,7 +68,7 @@ export const overviewFields = (editable?: boolean) => {
         // and applicant should be able to edit if editable
         return primaryOrgId ? undefined : editable ? 'currentSchool' : undefined
       },
-      loadItems: currentSchoolItems,
+      items: currentSchoolItems,
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
@@ -99,7 +99,7 @@ export const overviewFields = (editable?: boolean) => {
             : 'newSchool'
           : undefined
       },
-      loadItems: schoolItems,
+      items: schoolItems,
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',
