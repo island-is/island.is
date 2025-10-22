@@ -52,9 +52,8 @@ export class PaymentService {
     private readonly auditService: AuditService,
     private readonly applicationService: ApplicationService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly paymentsApi: PaymentsApi,
-  ) // private readonly featureFlagService: FeatureFlagService,
-  {}
+    private readonly paymentsApi: PaymentsApi, // private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   async findPaymentByApplicationId(
     applicationId: string,
