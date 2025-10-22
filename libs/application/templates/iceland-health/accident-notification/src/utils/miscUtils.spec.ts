@@ -20,6 +20,8 @@ import {
   WorkAccidentTypeEnum,
 } from './enums'
 
+const emptyObject = {}
+
 describe('formatPhonenumber', () => {
   it.each([
     { input: '1234567', expected: '123-4567' },
@@ -147,8 +149,6 @@ describe('isPowerOfAttorney', () => {
     whoIsTheNotificationFor: { answer: WhoIsTheNotificationForEnum.ME },
   }
 
-  const emptyObject = {}
-
   it('should return true for power of attorney reporter', () => {
     expect(isPowerOfAttorney(powerOfAttorneyReporter)).toEqual(true)
   })
@@ -200,8 +200,6 @@ describe('isRepresentativeOfCompanyOrInstitute', () => {
     )
   })
 })
-
-const emptyObject = {}
 
 describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {

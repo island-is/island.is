@@ -19,6 +19,6 @@ export const useLazyQuery = <
         query,
         variables,
       }),
-    [client],
+    [client, query],
   )
 }

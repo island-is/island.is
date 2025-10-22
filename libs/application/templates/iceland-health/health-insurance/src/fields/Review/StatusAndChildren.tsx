@@ -28,9 +28,9 @@ export const StatusAndChildren = ({
     getValueViaPath<Status>(application.answers, 'status'),
   )
 
-  const [children, setChildren] = useState(
-    getValueViaPath<string>(application.answers, 'children') ?? '',
-  )
+  // const [children, setChildren] = useState(
+  //   getValueViaPath<string>(application.answers, 'children') ?? '',
+  // )
 
   return (
     <Box>
@@ -152,7 +152,7 @@ export const StatusAndChildren = ({
                 application.answers,
                 'children',
               )}
-              onSelect={(value) => setChildren(value)}
+              // onSelect={(value) => setChildren(value)}
               largeButtons={true}
               split={'1/2'}
               options={[
