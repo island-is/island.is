@@ -303,7 +303,7 @@ export class HealthDirectorateHealthService {
   public async getPermitCountries(
     auth: Auth,
     locale: Locale,
-  ): Promise<ConsentCountryDto | null> {
+  ): Promise<ConsentCountryDto[] | null> {
     const countries = await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerGetCountriesV1({
@@ -314,7 +314,23 @@ export class HealthDirectorateHealthService {
       ),
     )
 
-    return countries ?? null
+    if (!countries) {
+      return null
+    }
+
+    // Convert object with numeric keys to array
+    if (typeof countries === 'object' && !Array.isArray(countries)) {
+      return Object.values(
+        countries as unknown as Record<string, ConsentCountryDto>,
+      )
+    }
+
+    // If it's already an array, return as is
+    if (Array.isArray(countries)) {
+      return countries
+    }
+
+    return null
   }
 
   public async createPermit(
@@ -325,7 +341,7 @@ export class HealthDirectorateHealthService {
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
           body: {
-            codes: input.codes,
+            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
             countryCodes: input.countryCodes,
             validFrom: input.validFrom,
             validTo: input.validTo,
