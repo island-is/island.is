@@ -8,18 +8,15 @@ import {
 import { HealthDirectorateClientService } from './clients/occupational-license/healthDirectorateClient.service'
 import { HealthDirectorateVaccinationsService } from './clients/vaccinations/vaccinations.service'
 import { HealthDirectorateOrganDonationService } from './clients/organ-donation/organDonation.service'
-import { HealthDirectorateHealthService } from './clients/health'
+import { exportedLshDevApis } from './clients/lsh-dev/lsh-dev.provider'
 import {
-  exportedHealthApis,
-  sharedApiConfig,
-} from './clients/health/health.provider'
-import {
-  LshDevApiConfiguration,
-  exportedLshDevApis,
-} from './clients/lsh-dev/lsh-dev.provider'
-import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
+  HealthDirectorateHealthModule,
+  HealthDirectorateHealthService,
+} from './clients/health'
 
+import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
 @Module({
+  imports: [HealthDirectorateHealthModule],
   providers: [
     HealthDirectorateClientService,
     HealthDirectorateVaccinationsService,
@@ -29,11 +26,9 @@ import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
-    ...exportedHealthApis,
+
     ...exportedApis,
     ...exportedLshDevApis,
-    LshDevApiConfiguration,
-    sharedApiConfig,
   ],
   exports: [
     HealthDirectorateClientService,
