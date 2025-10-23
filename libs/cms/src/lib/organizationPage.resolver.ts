@@ -119,6 +119,7 @@ export class OrganizationPageResolver {
         label,
         href,
         isCategory: false,
+        description: lang === 'en' ? node.descriptionEN : node.description,
       }
     }
     if (node.type === SitemapTreeNodeType.ENTRY) {
