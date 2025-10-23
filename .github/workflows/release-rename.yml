@@ -47,7 +47,7 @@ jobs:
             echo "Version: $PRE_VERSION"
             # Your workflow logic here
             echo "renamed=true" >> "$GITHUB_OUTPUT"
-            echo "pre_release_branch=$PRE_PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "pre_release_branch=$PRE_PRE_RELEASE_BRANCH-invalidate" >> "$GITHUB_OUTPUT"
             echo "version=$PRE_VERSION" >> "$GITHUB_OUTPUT"
           else
             echo "No corresponding pre-release branch found"
@@ -83,7 +83,7 @@ jobs:
         run: |
           repo_owner="island-is"
           repository="helm-values"
-          VERSION=$(echo VERSION | tr -d '.')
+          VERSION=$(echo $VERSION | tr -d '.')
           echo "Dispatch cleanup workflow for pre-relase: $VERSION"
           curl -X POST \
           -H "Accept: application/vnd.github+json" \
