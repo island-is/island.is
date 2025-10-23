@@ -116,7 +116,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,
@@ -128,7 +128,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     } = application.answers as MarriageConditionsAnswers
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

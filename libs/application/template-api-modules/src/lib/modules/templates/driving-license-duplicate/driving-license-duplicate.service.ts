@@ -59,7 +59,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
   }> {
     const { answers } = application
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

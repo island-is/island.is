@@ -56,10 +56,8 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
 
   async submitApplication({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 
