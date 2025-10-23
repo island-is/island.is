@@ -584,9 +584,11 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const jsonRes = await res.json()
-          const response: z.infer<typeof this.speedingViolationInfoSchema> =
-            jsonRes
+          const jsonRes: z.infer<typeof this.speedingViolationInfoSchema> =
+            await res.json()
+          const response = this.speedingViolationInfoSchema.parse(jsonRes)
+
+          this.speedingViolationInfoSchema.parse(response)
 
           return response.map((r) => ({
             nationalId: r.Kennitala,
