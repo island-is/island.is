@@ -22,10 +22,10 @@ const CREATE_ADMINISTRATIVE_CONTACT_MUTATION = gql`
   }
 `
 
-export function useCreateAdministrativeContact(
+export const useCreateAdministrativeContact = (
   organisationId: string,
   organisationNationalId: string,
-) {
+) => {
   const [createAdministrativeContactMutation, { called, loading, error }] =
     useMutation(CREATE_ADMINISTRATIVE_CONTACT_MUTATION)
 
