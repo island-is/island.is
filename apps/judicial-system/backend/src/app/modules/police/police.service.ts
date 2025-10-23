@@ -588,8 +588,6 @@ export class PoliceService {
             await res.json()
           const response = this.speedingViolationInfoSchema.parse(jsonRes)
 
-          this.speedingViolationInfoSchema.parse(response)
-
           return response.map((r) => ({
             nationalId: r.Kennitala,
             licencePlate: r.SkraningarNumer,
