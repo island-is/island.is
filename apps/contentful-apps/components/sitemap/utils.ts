@@ -23,7 +23,7 @@ export const optionMap = {
   [TreeNodeType.URL]: 'Link',
 }
 
-export const URL_DIALOG_MIN_HEIGHT = 520
+export const URL_DIALOG_MIN_HEIGHT = 730
 export const CATEGORY_DIALOG_MIN_HEIGHT = 700
 
 const getHighestId = (tree: Tree) => {
@@ -263,6 +263,8 @@ export const addNode = async (
     url = data.url
     urlEN = data.urlEN
     urlType = data.urlType
+    description = data.description
+    descriptionEN = data.descriptionEN
   }
 
   const node: TreeNode = {
@@ -299,6 +301,8 @@ export const addNode = async (
           url,
           urlEN,
           urlType,
+          description,
+          descriptionEN,
           status: 'draft',
         }),
   }

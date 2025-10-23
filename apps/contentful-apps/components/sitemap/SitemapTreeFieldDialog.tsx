@@ -162,6 +162,8 @@ interface UrlState {
   url: string
   urlEN?: string
   urlType?: SitemapUrlType
+  description?: string
+  descriptionEN?: string
 }
 
 const UrlForm = ({
@@ -260,6 +262,35 @@ const UrlForm = ({
           </div>
         </div>
       )}
+
+      <div>
+        <FormControl.Label>Description (Icelandic)</FormControl.Label>
+        <Textarea
+          value={state.description}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              description: ev.target.value,
+            }))
+          }}
+          resize="none"
+        />
+      </div>
+      <div>
+        <FormControl.Label>Description (English)</FormControl.Label>
+        <div>
+          <Textarea
+            value={state.descriptionEN}
+            onChange={(ev) => {
+              setState((prevState) => ({
+                ...prevState,
+                descriptionEN: ev.target.value,
+              }))
+            }}
+            resize="none"
+          />
+        </div>
+      </div>
 
       <Button
         variant="primary"
