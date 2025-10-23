@@ -64,8 +64,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/prerequisitesForm').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
