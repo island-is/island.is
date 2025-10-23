@@ -182,40 +182,35 @@ export const OverviewFormField = ({
       return `${formattedKey}: `
     }
 
-    const isMarkdownDescriptor = (text: unknown): boolean => {
-      const resolve = (t: unknown) => {
-        if (typeof t === 'function') {
-          try {
-            // Try (application, locale)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            return t(application, locale)
-          } catch {
-            try {
-              // Try (application)
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              return t(application)
-            } catch {
-              return t
-            }
-          }
-        }
-        return t
-      }
-      const hasMd = (m: unknown) =>
-        !!(
-          m &&
-          typeof m === 'object' &&
-          'id' in m &&
-          typeof (m as { id?: unknown }).id === 'string' &&
-          (m as { id: string }).id.endsWith('#markdown')
-        )
+    type MdDescriptor = { id: string }
 
-      if (Array.isArray(text)) {
-        return text.some((x) => hasMd(resolve(x)))
+    const isMdDescriptor = (m: unknown): m is MdDescriptor =>
+      typeof m === 'object' &&
+      m !== null &&
+      'id' in m &&
+      typeof (m as { id?: unknown }).id === 'string' &&
+      (m as MdDescriptor).id.endsWith('#markdown')
+
+    const resolveDescriptor = (t: unknown) => {
+      if (typeof t === 'function') {
+        const fn = t as { length: number } & ((
+          a: typeof application,
+          b?: typeof locale,
+        ) => unknown)
+        try {
+          return fn.length >= 2 ? fn(application, locale) : fn(application)
+        } catch {
+          return t
+        }
       }
-      return hasMd(resolve(text))
+      return t
+    }
+
+    const isMarkdownDescriptor = (text: unknown): boolean => {
+      if (Array.isArray(text)) {
+        return text.some((x) => isMdDescriptor(resolveDescriptor(x)))
+      }
+      return isMdDescriptor(resolveDescriptor(text))
     }
 
     const keyTextValue = formatTextWithLocale(
