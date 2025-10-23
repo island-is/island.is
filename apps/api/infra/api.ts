@@ -324,6 +324,7 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -356,6 +357,16 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENTID',
+      DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL',
+      DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH',
+      DOCUMENT_PROVIDER_DASHBOARD_SCOPE:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_SCOPE',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
@@ -442,6 +453,8 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      LANDSPITALI_PAYMENT_ORGANISATION_ID:
+        '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
     })
     .xroad(
       AdrAndMachine,
