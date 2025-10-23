@@ -57,7 +57,7 @@ const getApplicants = (
 
   // Applicant
   answers.selectedApplicants?.registerPersonsApplicantCheckboxField?.forEach(
-    (a) => {
+    () => {
       applicants.push({
         nationalId: answers.applicant.nationalId,
         name: answers.applicant.name,

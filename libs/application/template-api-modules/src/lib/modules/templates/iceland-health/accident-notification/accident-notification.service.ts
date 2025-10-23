@@ -108,13 +108,13 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       if (e.body && e.body.errorList && e.body.errorList.length > 0) {
         throw new Error(
           `Villa kom upp við vistun á umsókn. ${e.body.errorList
-            .map((e: any) => {
+            .map((error: { errorType?: string; errorDesc?: string }) => {
               if (
-                e.errorType &&
-                e.errorDesc &&
-                whiteListedErrorCodes.includes(e.errorType)
+                error.errorType &&
+                error.errorDesc &&
+                whiteListedErrorCodes.includes(error.errorType)
               ) {
-                return e.errorDesc
+                return error.errorDesc
               }
             })
             .join('\n')}`,
