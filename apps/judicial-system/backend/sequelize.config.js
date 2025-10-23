@@ -2,9 +2,9 @@
 
 module.exports = {
   development: {
-    username: 'dev_db',
-    password: 'dev_db',
-    database: 'dev_db',
+    username: 'judicial_system',
+    password: 'I47H91GsTsuTvqFwRxd580LCQwF1BSpv',
+    database: 'judicial_system',
     host: 'localhost',
     dialect: 'postgres',
   },

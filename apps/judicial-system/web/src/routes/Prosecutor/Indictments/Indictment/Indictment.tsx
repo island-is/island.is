@@ -479,11 +479,9 @@ const Indictment = () => {
     const indictmentCounts = workingCase.indictmentCounts ?? []
 
     // We don't want to mutate the original array, so we create a copy
-    const sortedIndictmentCounts = [...indictmentCounts].sort(
+    return [...indictmentCounts].sort(
       getIndictmentCountCompare(workingCase.policeCaseNumbers),
     )
-
-    return sortedIndictmentCounts
   }, [workingCase.indictmentCounts, workingCase.policeCaseNumbers])
 
   return (
