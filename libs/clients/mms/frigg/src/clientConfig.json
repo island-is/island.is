@@ -8,7 +8,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RegistrationApplicationInput"
               }
@@ -485,10 +485,6 @@
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
-          "files": {
-            "type": "array",
-            "items": { "type": "string", "format": "binary" }
-          },
           "registration": { "$ref": "#/components/schemas/RegistrationInput" }
         },
         "required": ["registration"]
@@ -603,9 +599,14 @@
               "specialEducationDisabilitySchool",
               "internationalSchool",
               "generalSchool"
-            ]
+            ],
+            "nullable": true
           },
-          "sector": { "type": "string", "enum": ["public", "private"] },
+          "sector": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "nullable": true
+          },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
           "unitId": { "type": "string", "nullable": true },
           "settings": {
