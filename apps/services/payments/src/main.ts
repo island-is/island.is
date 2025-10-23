@@ -4,8 +4,6 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 import { environment } from './environments'
 
-// trigger deploy
-
 bootstrap({
   appModule: AppModule,
   name: 'payments',
