@@ -128,7 +128,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     } = application.answers as MarriageConditionsAnswers
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 
