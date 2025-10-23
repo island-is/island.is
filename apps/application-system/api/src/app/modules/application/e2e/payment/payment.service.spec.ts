@@ -174,7 +174,7 @@ describe('Payment Service', () => {
       undefined,
     )
 
-    const result = await service.getStatus(user, applicationId)
+    const result = await service.getStatus(applicationId)
     expect(result.fulfilled).toBe(false)
   })
 
@@ -195,7 +195,7 @@ describe('Payment Service', () => {
       faker.datatype.uuid(),
       applicationId,
     )
-    const result = await service.getStatus(user, applicationId)
+    const result = await service.getStatus(applicationId)
     expect(result.fulfilled).toBe(true)
   })
 
