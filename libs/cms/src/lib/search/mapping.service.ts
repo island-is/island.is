@@ -95,7 +95,7 @@ export class MappingService {
     const mappedData = this.contentSyncProviders.map((contentSyncProvider) => {
       const data = contentSyncProvider.processSyncData(entries)
       for (const entry of data.entriesToDelete) entriesToDelete.add(entry)
-      return contentSyncProvider.doMapping(data)
+      return contentSyncProvider.doMapping(data.entriesToUpdate)
     })
     return {
       mappedData,
