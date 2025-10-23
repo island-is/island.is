@@ -114,7 +114,7 @@ export const realEstateSection = buildSection({
           id: 'realEstate.realEstateOtherComments',
           variant: 'textarea',
           rows: 7,
-          maxLength: 500,
+          maxLength: 200,
           showMaxLength: true,
           title: realEstateMessages.otherCommentsTitle,
         }),

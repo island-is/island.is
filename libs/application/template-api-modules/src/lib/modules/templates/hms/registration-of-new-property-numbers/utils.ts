@@ -7,7 +7,7 @@ import { getValueViaPath, YES } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
 import {
   APPLICATION_TYPE,
-  GUID,
+  ContactAnswer,
   Hlutverk,
   NotandagognFlokkur,
   NotandagognHeiti,
@@ -15,6 +15,14 @@ import {
   Tegund,
 } from './shared'
 import * as kennitala from 'kennitala'
+import { join } from 'path'
+
+export const pathToAsset = (file: string) => {
+  return join(
+    __dirname,
+    `./hms/registration-of-new-property-numbers-assets/${file}`,
+  )
+}
 
 const getApplicant = (answers: FormValue) => {
   return {
@@ -28,28 +36,41 @@ const getApplicant = (answers: FormValue) => {
 export const getRequestDto = (application: Application): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
-  const selectedRealEstateId = getValueViaPath<string>(answers, 'realEstate')
+  const selectedRealEstateId = getValueViaPath<string>(
+    answers,
+    'realEstate.realEstateName',
+  )
+  const selectedRealEstateAmount = getValueViaPath<string>(
+    answers,
+    'realEstate.realEstateAmount',
+  )
+  const selectedRealEstateOtherComments = getValueViaPath<string>(
+    answers,
+    'realEstate.realEstateOtherComments',
+  )
   const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
     externalData,
     'getProperties.data',
   )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
 
+  const contact = getValueViaPath<ContactAnswer>(answers, 'contact')
+  const contactIsSameAsApplicant = contact?.isSameAsApplicant?.[0] === YES
+
   return {
-    applicationName: '?',
+    applicationName: 'Stofnun nýrra fasteignanúmera',
     status: CurrentApplicationStatus.NUMBER_40,
-    language: 'IS', // TODO Should we set this based on users starting language ?
+    language: 'IS',
     portalApplicationID: application.id,
-    applicationType: APPLICATION_TYPE, // TODO We need this id from HMS
+    applicationType: APPLICATION_TYPE,
     applicationJson: null,
     dagssetning: new Date(),
     adilar: [
       {
         kennitala: applicant.nationalId,
         heiti: applicant.name,
-        // TODO We do not show these in the application do they need to be returned to HMS ?
-        //heimili: applicant.address,
-        //postnumer: applicant.postalCode,
-        //stadur: applicant.city,
+        heimili: '',
+        postnumer: '',
+        stadur: '',
         tegund: kennitala.isPerson(applicant.nationalId ?? '')
           ? Tegund.Person
           : Tegund.Company,
@@ -57,9 +78,17 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         netfang: applicant.email,
         simi: applicant.phoneNumber,
       },
-      // How do we handle contacts ? are they also adilar with a distinct hlutverk ?
-      // Additionally we do not have all the data fields for contacts are we sure they are optional etc. ?
-      // If contact is the same as applicant do we add them again or some form of boolean flag ?
+      {
+        kennitala: '',
+        heiti: contactIsSameAsApplicant ? applicant.name : contact?.name,
+        heimili: '',
+        postnumer: '',
+        stadur: '',
+        tegund: Tegund.Person,
+        hlutverk: Hlutverk.Contact,
+        netfang: contactIsSameAsApplicant ? applicant.email : contact?.email,
+        simi: contactIsSameAsApplicant ? applicant.phoneNumber : contact?.phone,
+      },
     ],
     notandagogn: [
       {
@@ -75,39 +104,38 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         heiti: NotandagognHeiti.PrivacyPolicyAcknowledgement,
         tegund: NotandagognTegund.Boolean,
         gildi: 'true',
-        guid: GUID,
+        guid: crypto.randomUUID(),
+      },
+      {
+        flokkur: NotandagognFlokkur.ApplicationSubmission,
+        heiti: NotandagognHeiti.OtherComments,
+        tegund: NotandagognTegund.String,
+        gildi: selectedRealEstateOtherComments,
+        guid: crypto.randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.Property,
         heiti: 'Fasteignanumer',
-        tegund: 'fastanúmer',
+        tegund: NotandagognTegund.String,
         gildi: selectedRealEstate?.fasteignanumer?.replace(/\D/g, ''),
         guid: crypto.randomUUID(),
       },
-      // Do we need to return landeigna numer ? In the case of fasteignanumer the prefix is removed so do we/you know if it is a land property or not ?
       {
-        flokkur: NotandagognFlokkur.DerivedPropertyNumber,
-        heiti: NotandagognHeiti.Address,
+        flokkur: NotandagognFlokkur.Property,
+        heiti: 'Fjöldi nýrra fasteignanúmera',
         tegund: NotandagognTegund.String,
-        gildi: selectedRealEstate?.sjalfgefidStadfang?.birtingStutt,
+        gildi: selectedRealEstateAmount?.toString(),
         guid: crypto.randomUUID(),
       },
       {
-        flokkur: NotandagognFlokkur.DerivedPropertyNumber,
-        heiti: NotandagognHeiti.PostalCode,
+        flokkur: NotandagognFlokkur.Property,
+        heiti: 'Landnúmer',
         tegund: NotandagognTegund.String,
-        gildi: selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString(),
+        gildi: selectedRealEstate?.landeign?.landeignarnumer,
         guid: crypto.randomUUID(),
       },
-      {
-        flokkur: NotandagognFlokkur.DerivedPropertyNumber,
-        heiti: NotandagognHeiti.Municipality,
-        tegund: NotandagognTegund.String,
-        gildi: selectedRealEstate?.sjalfgefidStadfang?.sveitarfelagBirting,
-        guid: crypto.randomUUID(),
-      },
-      // Do we need to return landeigna numer ?
     ],
+    files: [],
     greidsla: {
       upphaed: null,
       dags: null,

@@ -8,7 +8,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -77,13 +77,26 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    } // TODO change to getValueViaPath
+
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      ) // TODO How does this display to user
+    }
+    console.log('Payment', application.externalData)
+
     const requestDto = getRequestDto(application)
+    console.log('Requestdto', requestDto)
 
     try {
       const response =
         await this.hmsApplicationSystemService.apiApplicationPost({
           applicationDto: requestDto,
         })
+      console.log('RESPONSE', response)
 
       if (response.status !== 200) {
         this.logger.error(
@@ -99,13 +112,12 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         )
       }
     } catch (e) {
+      console.log('ERROR', e)
       this.logger.error(
         '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
         e.message,
       )
       throw new TemplateApiError(e, 500)
     }
-
-    return Promise.resolve([])
   }
 }
