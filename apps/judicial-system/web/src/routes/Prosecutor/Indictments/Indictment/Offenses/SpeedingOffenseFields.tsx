@@ -55,7 +55,7 @@ export const SpeedingOffenseFields = ({
           replacement={{ _: /\d/ }}
           value={indictmentCount.recordedSpeed ?? 0}
           onChange={(event) => {
-            const recordedSpeed = Boolean(event.target.value)
+            const recordedSpeed = event.target.value
               ? parseInt(event.target.value)
               : 0
 
@@ -99,7 +99,7 @@ export const SpeedingOffenseFields = ({
         replacement={{ _: /\d/ }}
         value={indictmentCount.speedLimit ?? 0}
         onChange={(event) => {
-          const speedLimit = Boolean(event.target.value)
+          const speedLimit = event.target.value
             ? parseInt(event.target.value)
             : 0
 
