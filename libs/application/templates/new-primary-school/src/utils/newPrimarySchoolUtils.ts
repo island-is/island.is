@@ -39,7 +39,7 @@ import {
   FIRST_GRADE_AGE,
   PayerOption,
   ReasonForApplicationOptions,
-  Roles
+  Roles,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
