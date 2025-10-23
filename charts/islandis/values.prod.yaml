@@ -492,7 +492,7 @@ api:
       cpu: '1200m'
       memory: '3200Mi'
     requests:
-      cpu: '400m'
+      cpu: '800m'
       memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
@@ -4240,7 +4240,7 @@ web:
       cpu: '1000m'
       memory: '768Mi'
     requests:
-      cpu: '300m'
+      cpu: '800m'
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
