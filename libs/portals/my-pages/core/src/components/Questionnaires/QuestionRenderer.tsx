@@ -56,7 +56,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             disabled={disabled}
             error={error}
             multiline
-            required={question.display === 'required'}
             maxLength={question.answerOptions.maxLength || undefined}
           />
         )
@@ -67,11 +66,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <TextInput
             id={question.id}
             label={question.label}
-            placeholder={
-              question.answerOptions.placeholder ||
-              question.answerOptions.sublabel ||
-              ''
-            }
+            placeholder={question.answerOptions.placeholder || ''}
             value={
               typeof answer?.value === 'string'
                 ? answer.value
@@ -82,7 +77,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
             type="number"
             min={question.answerOptions.min || undefined}
             max={question.answerOptions.max || undefined}
@@ -107,7 +101,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             }}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
             direction="vertical"
           />
         )
@@ -128,7 +121,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(values: string[]) => handleValueChange(values)}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
             direction="vertical"
           />
         )
@@ -147,7 +139,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
             minLabel={answerOptions.minLabel || undefined}
             maxLabel={answerOptions.maxLabel || undefined}
             showLabels={!!(answerOptions.minLabel || answerOptions.maxLabel)}
@@ -167,7 +158,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
             minLabel={answerOptions.minLabel || 'Min'}
             maxLabel={answerOptions.maxLabel || 'Max'}
           />
@@ -222,7 +212,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             }
             disabled={disabled}
             hasError={!!error}
-            required={question.display === 'required'}
           />
         )
       }
@@ -240,7 +229,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            required={question.display === 'required'}
           />
         )
       }

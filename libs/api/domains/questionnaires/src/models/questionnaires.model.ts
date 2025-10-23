@@ -1,5 +1,4 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { Question } from './question.model'
 
 export enum QuestionnairesStatusEnum {
   answered = 'answered',
@@ -10,17 +9,8 @@ registerEnumType(QuestionnairesStatusEnum, {
   name: 'QuestionnaireQuestionnairesStatusEnum',
 })
 
-@ObjectType('QuestionnaireSection')
-export class QuestionnaireSection {
-  @Field({ nullable: true })
-  sectionTitle?: string
-
-  @Field(() => [Question], { nullable: true })
-  questions?: Question[]
-}
-
-@ObjectType('Questionnaire')
-export class Questionnaire {
+@ObjectType('QuestionnairesBaseItem')
+export class QuestionnairesBaseItem {
   @Field()
   id!: string
 
@@ -39,15 +29,15 @@ export class Questionnaire {
   @Field({ nullable: true })
   description?: string
 
+  @Field(() => Date, { nullable: true })
+  lastSubmitted?: Date
+
   @Field({ nullable: true })
   organization?: string
-
-  @Field(() => [QuestionnaireSection], { nullable: true })
-  sections?: QuestionnaireSection[]
 }
 
 @ObjectType('QuestionnairesList')
 export class QuestionnairesList {
-  @Field(() => [Questionnaire], { nullable: true })
-  questionnaires?: Array<Questionnaire>
+  @Field(() => [QuestionnairesBaseItem], { nullable: true })
+  questionnaires?: Array<QuestionnairesBaseItem>
 }

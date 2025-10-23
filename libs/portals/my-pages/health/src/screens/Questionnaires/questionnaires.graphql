@@ -3,9 +3,10 @@ query GetQuestionnaires($locale: String!) {
     questionnaires {
       id
       title
+      description
       sentDate
       status
-      description
+      lastSubmitted
       organization
     }
   }
@@ -13,46 +14,59 @@ query GetQuestionnaires($locale: String!) {
 
 query GetQuestionnaire($id: String!, $locale: String!) {
   questionnairesDetail(id: $id, locale: $locale) {
-    id
-    formId
-    title
-    sentDate
-    status
-    description
-    organization
+    baseInformation {
+      __typename
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+    }
+    expirationDate
+    canSubmit
+    submissions {
+      __typename
+      id
+      isDraft
+      submittedAt
+    }
+  }
+}
+
+query GetQuestionnaireWithQuestions($id: String!, $locale: String!) {
+  questionnairesDetail(id: $id, locale: $locale) {
+    baseInformation {
+      __typename
+      id
+      title
+      organization
+    }
+    canSubmit
     sections {
       __typename
-      sectionTitle
+      title
       questions {
         __typename
         id
         label
         sublabel
-        display
         dependsOn
         answerOptions {
+          __typename
           type
-          id
-          label
-          sublabel
-          display
           placeholder
           maxLength
           min
           max
           maxLabel
           minLabel
-          options {
-            label
-            value
-          }
           formula
-        }
-        visibilityConditions {
-          questionId
-          operator
-          expectedValues
-          showWhenMatched
+          options {
+            __typename
+            label
+          }
         }
       }
     }
@@ -63,27 +77,28 @@ query GetAnsweredQuestionnaire(
   $input: QuestionnaireAnsweredInput!
   $locale: String!
 ) {
-  getAnsweredQuestionnaires(input: $input, locale: $locale) {
-    id
-    formId
-    title
-    sentDate
-    status
-    organization
-    sections {
-      __typename
-      sectionTitle
-      questions {
+  getAnsweredQuestionnaire(input: $input, locale: $locale) {
+    __typename
+    questionId
+    label
+    answer {
+      ... on QuestionnaireSubmissionValues {
         __typename
-        id
+        valueId
         label
-        answerOptions {
-          type
-          id
-          options {
-            label
-          }
-        }
+        answer
+      }
+      ... on QuestionnaireSubmissionBooleanAnswer {
+        __typename
+        valueId
+        label
+        answer
+      }
+      ... on QuestionnaireSubmissionDateAnswer {
+        __typename
+        valueId
+        label
+        answer
       }
     }
   }

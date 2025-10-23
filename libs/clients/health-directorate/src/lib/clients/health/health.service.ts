@@ -25,8 +25,17 @@ import {
   meDonorStatusControllerGetOrganDonorStatusV1,
   donationExceptionControllerGetOrgansV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  questionnaireControllerGetAllQuestionnairesV1,
+  questionnaireControllerGetQuestionnaireDetailV1,
+  questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
-import { Locale } from './gen/fetch/types.gen'
+import {
+  Locale,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+  QuestionnaireSubmissionDetailDto,
+  SubmitQuestionnaireDto,
+} from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -250,5 +259,68 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  public async getQuestionnaires(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(questionnaireControllerGetAllQuestionnairesV1()),
+    )
+
+    if (!questionnaires) {
+      this.logger.debug('No questionnaires data returned')
+      return null
+    }
+
+    return questionnaires
+  }
+
+  public async getQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<QuestionnaireDetailDto | null> {
+    const questionnaire = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerGetQuestionnaireDetailV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    if (!questionnaire) {
+      this.logger.debug('No questionnaire detail data returned')
+      return null
+    }
+
+    return questionnaire
+  }
+
+  public async postQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    input: SubmitQuestionnaireDto,
+  ): Promise<QuestionnaireSubmissionDetailDto[] | null> {
+    const response = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerSubmitQuestionnaireV1({
+          path: {
+            id: id,
+          },
+          body: input,
+        }),
+      ),
+    )
+    if (!response) {
+      this.logger.debug('Posting questionnaire data failed')
+      return null
+    }
+
+    return response
   }
 }

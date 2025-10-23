@@ -10,15 +10,14 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import {
-  Questionnaire,
-  QuestionnairesList,
-} from '../models/questionnaires.model'
+import { QuestionnairesList } from '../models/questionnaires.model'
+import { Questionnaire } from '../models/questionnaire.model'
 import {
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
 } from './dto/questionnaire.input'
 import { QuestionnairesService } from './questionnaires.service'
+import { QuestionnaireSubmission } from '../models/submission.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -51,16 +50,16 @@ export class QuestionnairesResolver {
     return this.questionnairesService.getQuestionnaire(user, id)
   }
 
-  @Query(() => [Questionnaire], {
-    name: 'getAnsweredQuestionnaires',
+  @Query(() => QuestionnaireSubmission, {
+    name: 'getAnsweredQuestionnaire',
     nullable: true,
   })
-  async getAnsweredQuestionnaires(
+  async getAnsweredQuestionnaire(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
     @Args('input') input: QuestionnaireAnsweredInput,
-  ): Promise<Questionnaire[] | null> {
-    return this.questionnairesService.getAnsweredQuestionnaires(
+  ): Promise<QuestionnaireSubmission | null> {
+    return this.questionnairesService.getAnsweredQuestionnaire(
       user,
       locale,
       input,

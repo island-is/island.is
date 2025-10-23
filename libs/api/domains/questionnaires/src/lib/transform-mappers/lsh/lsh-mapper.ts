@@ -6,13 +6,11 @@ import {
   AnswerOption,
   AnswerOptionType,
   Question,
-  QuestionDisplayType,
   VisibilityCondition,
   VisibilityOperator,
 } from '../../../models/question.model'
+import { QuestionnaireSection } from '../../../models/questionnaire.model'
 import {
-  Questionnaire,
-  QuestionnaireSection,
   QuestionnairesList,
   QuestionnairesStatusEnum,
 } from '../../../models/questionnaires.model'
@@ -249,17 +247,6 @@ function mapAnswerOptionType(
   }
 }
 
-// Map display type
-function mapDisplayType(
-  required: boolean | string,
-  visible: string,
-): QuestionDisplayType {
-  if (visible?.toLowerCase() === 'false') return QuestionDisplayType.hidden
-  if (required === true || required === 'True')
-    return QuestionDisplayType.required
-  return QuestionDisplayType.optional
-}
-
 /* -------------------- Core Mapping -------------------- */
 
 function mapQuestion(q: Record<string, unknown>): Question {
@@ -281,9 +268,9 @@ function mapQuestion(q: Record<string, unknown>): Question {
     placeholder: (q['Instructions'] as string)?.trim() || undefined,
     maxLength: (q['MaxLength'] as number) || undefined,
     options: Array.isArray(q['Options'])
-      ? (q['Options'] as Array<{ Label: string; Value: string }>).map(
-          (opt) => ({ label: opt.Label, value: opt.Value }),
-        )
+      ? (
+          q['Options'] as Array<{ Label: string; Value: string; Id: string }>
+        ).map((opt) => ({ label: opt.Label, value: opt.Value, id: opt.Id }))
       : undefined,
     min:
       q['MinValue'] !== null && q['MinValue'] !== undefined
@@ -311,7 +298,6 @@ function mapQuestion(q: Record<string, unknown>): Question {
     id: (q['EntryID'] as string) || 'undefined-id',
     label: (q['Question'] as string) || 'Untitled Question',
     sublabel: (q['Description'] as string)?.trim() || undefined,
-    display,
     answerOptions: answerOption,
     visibilityConditions,
     dependsOn: allDeps.length > 0 ? allDeps : undefined,
@@ -320,7 +306,7 @@ function mapQuestion(q: Record<string, unknown>): Question {
 
 function mapSection(section: Record<string, unknown>): QuestionnaireSection {
   return {
-    sectionTitle: section['Caption'] as string,
+    title: section['Caption'] as string,
     questions: Array.isArray(section['Questions'])
       ? (section['Questions'] as Record<string, unknown>[]).map(mapQuestion)
       : [],

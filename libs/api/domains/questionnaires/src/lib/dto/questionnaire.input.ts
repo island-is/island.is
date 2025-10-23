@@ -33,8 +33,11 @@ export class QuestionnaireAnsweredInput {
   @Field(() => ID)
   id!: string
 
+  @Field({ nullable: true })
+  formId?: string
+
   @Field()
-  formId!: string
+  submissionId!: string
 
   @Field()
   organization!: string

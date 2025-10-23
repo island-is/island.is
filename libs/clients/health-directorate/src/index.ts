@@ -19,5 +19,19 @@ export {
   PrescriptionRenewalBlockedReason,
   PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+  QuestionType,
+  QuestionGroupDto,
+  BooleanQuestionDto,
+  StringQuestionDto,
+  DateQuestionDto,
+  NumberQuestionDto,
+  ListQuestionDto,
+  AttachmentQuestionDto,
+  TableQuestionDto,
+  NumberTriggerDto,
+  ListTriggerDto,
+  BooleanTriggerDto,
 } from './lib/clients'
-export { DispensationHistoryItemDto } from './lib/clients/health/gen/fetch/models/DispensationHistoryItemDto'
+export { Form, LshDevService, LshDevConfig } from './lib/clients/lsh-dev'

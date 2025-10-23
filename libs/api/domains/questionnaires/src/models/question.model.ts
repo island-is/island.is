@@ -1,16 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-export enum QuestionDisplayType {
-  required = 'required',
-  optional = 'optional',
-  hidden = 'hidden',
-}
-
-registerEnumType(QuestionDisplayType, {
-  name: 'QuestionnaireQuestionDisplayType',
-  description: 'Display type for questionnaire questions',
-})
-
 export enum AnswerOptionType {
   text = 'HealthQuestionnaireAnswerText',
   textarea = 'HealthQuestionnaireAnswerTextarea',
@@ -65,6 +54,9 @@ export class VisibilityCondition {
 
 @ObjectType('QuestionnaireOptionsLabelValue')
 export class LabelValue {
+  @Field()
+  id!: string
+
   @Field({ nullable: true })
   label?: string
 
@@ -74,23 +66,11 @@ export class LabelValue {
 
 @ObjectType('QuestionnaireAnswerOption')
 export class AnswerOption {
-  @Field()
-  id!: string
-
   @Field({ nullable: true })
   value?: string
 
-  @Field({ nullable: true })
-  label?: string
-
-  @Field({ nullable: true })
-  sublabel?: string
-
   @Field(() => AnswerOptionType)
   type!: AnswerOptionType
-
-  @Field(() => QuestionDisplayType)
-  display!: QuestionDisplayType
 
   @Field({ nullable: true })
   placeholder?: string
@@ -128,9 +108,6 @@ export class Question {
 
   @Field({ nullable: true })
   sublabel?: string
-
-  @Field(() => QuestionDisplayType)
-  display!: QuestionDisplayType
 
   @Field(() => AnswerOption)
   answerOptions!: AnswerOption

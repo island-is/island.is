@@ -24,11 +24,6 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
 
-// Extended type to include formula field until schema is updated
-interface ExtendedAnswerOption extends QuestionnaireAnswerOption {
-  formula?: string
-}
-
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire
   onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
@@ -75,8 +70,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
     // Find questions with formulas and calculate their initial values (with empty answers)
     for (const question of allQuestions) {
-      const extendedAnswerOptions =
-        question.answerOptions as ExtendedAnswerOption
+      const extendedAnswerOptions = question.answerOptions
       if (extendedAnswerOptions?.formula) {
         const calculatedValue = calculateFormulaCallback(
           extendedAnswerOptions.formula,
@@ -147,7 +141,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
     return questionSteps.map((_, index) => ({
       id: `step-${index}`,
-      title: processedSections[index]?.sectionTitle || `Step ${index + 1}`,
+      title: processedSections[index]?.title || `Step ${index + 1}`,
       completed: index < currentStep,
       disabled: false,
     }))
@@ -174,8 +168,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
           questionnaire.sections?.flatMap((s) => s.questions || []) || []
 
         for (const question of allQuestions) {
-          const extendedAnswerOptions =
-            question.answerOptions as ExtendedAnswerOption
+          const extendedAnswerOptions = question.answerOptions
           if (extendedAnswerOptions?.formula) {
             const calculatedValue = calculateFormulaCallback(
               extendedAnswerOptions.formula,
@@ -208,18 +201,16 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     let isValid = true
 
     currentQuestions.forEach((question: QuestionnaireQuestion) => {
-      if (question.display === 'required') {
-        const answer = answers[question.id]
+      const answer = answers[question.id]
 
-        if (
-          answer == null ||
-          answer.value == null ||
-          (typeof answer.value === 'string' && !answer.value.trim()) ||
-          (Array.isArray(answer.value) && answer.value.length === 0)
-        ) {
-          newErrors[question.id] = formatMessage(m.requiredQuestion)
-          isValid = false
-        }
+      if (
+        answer == null ||
+        answer.value == null ||
+        (typeof answer.value === 'string' && !answer.value.trim()) ||
+        (Array.isArray(answer.value) && answer.value.length === 0)
+      ) {
+        newErrors[question.id] = formatMessage(m.requiredQuestion)
+        isValid = false
       }
     })
 
@@ -252,18 +243,16 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     const allErrors: { [key: string]: string } = {}
 
     visibleQuestions?.forEach((question: QuestionnaireQuestion) => {
-      if (question.display === 'required') {
-        const answer = answers[question.id]
-        if (
-          !answer ||
-          (typeof answer.value === 'string' && !answer.value.trim()) ||
-          (Array.isArray(answer.value) && answer.value.length === 0) ||
-          answer.value === undefined
-        ) {
-          allErrors[question.id] =
-            formatMessage(m.requiredQuestion) ?? 'This field is required'
-          allValid = false
-        }
+      const answer = answers[question.id]
+      if (
+        !answer ||
+        (typeof answer.value === 'string' && !answer.value.trim()) ||
+        (Array.isArray(answer.value) && answer.value.length === 0) ||
+        answer.value === undefined
+      ) {
+        allErrors[question.id] =
+          formatMessage(m.requiredQuestion) ?? 'This field is required'
+        allValid = false
       }
     })
 
@@ -331,7 +320,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                 <Box display={'flex'} flexDirection={'column'}>
                   <Text variant="small">{formatMessage(m.questionnaires)}</Text>
                   <Text variant="h5" as="h1" marginBottom={2}>
-                    {questionnaire.title}
+                    {questionnaire.baseInformation.title}
                   </Text>
                 </Box>
               </Box>
