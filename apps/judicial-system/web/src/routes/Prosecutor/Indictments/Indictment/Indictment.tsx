@@ -312,14 +312,14 @@ const Indictment = () => {
           (count) => count.id === indictmentCountId,
         )
 
-        if (!indictmentCount) {
+        if (!indictmentCount || !policeCase) {
           return
         }
 
         const speedingInfo =
           speedingViolationInfoData?.speedingViolationInfo?.find(
             (info) =>
-              info.licencePlate === policeCase?.licencePlate &&
+              info.licencePlate === policeCase.licencePlate &&
               isSameDay(
                 new Date(policeCase?.date || ''),
                 new Date(info.date || ''),
@@ -332,7 +332,7 @@ const Indictment = () => {
 
         if (
           !indictmentCount.vehicleRegistrationNumber &&
-          policeCase?.licencePlate
+          policeCase.licencePlate
         ) {
           updatedIndictmentCount.vehicleRegistrationNumber =
             policeCase.licencePlate
