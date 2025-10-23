@@ -7,12 +7,12 @@ export class SpeedingViolationInfo {
   @ApiPropertyOptional({ type: String })
   licencePlate?: string
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: Number })
   recordedSpeed?: number
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: Number })
   speedLimit?: number
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: Date })
   date?: Date
 }
