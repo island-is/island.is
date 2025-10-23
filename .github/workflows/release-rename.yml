@@ -36,7 +36,8 @@ jobs:
             echo "Version: $VERSION"
             # Your workflow logic here
             echo "renamed=true" >> "$GITHUB_OUTPUT"
-            echo "version=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "pre_release_branch=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "version=$VERSION" >> "$GITHUB_TOKEN"
           else
             echo "No corresponding pre-release branch found"
           fi
@@ -47,31 +48,11 @@ jobs:
         id: cache
         with:
           path: .rename-marker
-          key: rename-${{ steps.check.outputs.version }}
+          key: rename-${{ steps.check.outputs.pre_release_branch }}
 
       - name: Setup yarn
         if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/setup-yarn
-
-      - name: Generate feature name
-        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
-        id: git-feature-name
-        run: |
-          set -euo pipefail
-
-          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
-          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-              # If event is pull request but branch is not prefixed with feature/
-              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
-            fi
-            # Avoid too long resource names
-            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
-          fi
-
-          FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
-          echo "FEATURE_NAME=$FEATURE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Get token
         if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
@@ -95,7 +76,7 @@ jobs:
         if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
-          FEATURE_NAME: ${{ steps.git-feature-name.outputs.FEATURE_NAME }}
+          VERSION: ${{ steps.check.outputs.version }}
         run: |
           repo_owner="island-is"
           repository="helm-values"
@@ -104,8 +85,9 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
-          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\", \"delete_value_files\": false }}"
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$VERSION\", \"delete_value_files\": false }}"
 
+          mkdir .rename-marker/
           echo "processed" > .rename-marker/done
 
       - name: Save cache
@@ -113,4 +95,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .rename-marker
-          key: rename-${{ steps.check.outputs.version }}
+          key: rename-${{ steps.check.outputs.pre_release_branch }}
