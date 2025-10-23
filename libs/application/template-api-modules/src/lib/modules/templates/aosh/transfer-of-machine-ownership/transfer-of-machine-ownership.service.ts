@@ -234,7 +234,6 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
   private async handlePayment({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<string | null> {
     const answers = application.answers as TransferOfMachineOwnershipAnswers
 

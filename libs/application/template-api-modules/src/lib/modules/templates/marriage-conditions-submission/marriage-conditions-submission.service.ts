@@ -116,7 +116,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,

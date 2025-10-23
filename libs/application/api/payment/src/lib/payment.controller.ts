@@ -13,13 +13,7 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'

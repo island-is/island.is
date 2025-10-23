@@ -25,7 +25,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     super(ApplicationTypes.MORTGAGE_CERTIFICATE)
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }

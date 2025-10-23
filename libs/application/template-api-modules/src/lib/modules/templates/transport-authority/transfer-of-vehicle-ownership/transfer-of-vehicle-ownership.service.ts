@@ -206,7 +206,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   // Notify everyone that has been added to the application that they need to review
   async initReview({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     // 1. Validate payment
 

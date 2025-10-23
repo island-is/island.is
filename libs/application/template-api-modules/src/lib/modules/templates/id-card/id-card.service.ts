@@ -154,7 +154,7 @@ export class IdCardService extends BaseTemplateApiService {
     return deliveryAddresses
   }
 
-  async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
+  async assignParentB({ application }: TemplateApiModuleActionProps) {
     // 1. Validate payment
 
     // 1a. Make sure a paymentUrl was created
