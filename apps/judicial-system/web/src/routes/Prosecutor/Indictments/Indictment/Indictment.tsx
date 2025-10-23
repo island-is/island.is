@@ -335,13 +335,11 @@ const Indictment = () => {
         }
 
         if (!indictmentCount.recordedSpeed && speedingInfo?.recordedSpeed) {
-          updatedIndictmentCount.recordedSpeed = Number(
-            speedingInfo.recordedSpeed,
-          )
+          updatedIndictmentCount.recordedSpeed = speedingInfo.recordedSpeed
         }
 
         if (!indictmentCount.speedLimit && speedingInfo?.speedLimit) {
-          updatedIndictmentCount.speedLimit = Number(speedingInfo.speedLimit)
+          updatedIndictmentCount.speedLimit = speedingInfo.speedLimit
         }
       }
 
