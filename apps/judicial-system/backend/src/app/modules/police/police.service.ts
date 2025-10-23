@@ -43,6 +43,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { SpeedingViolationInfo } from './models/speedingViolationInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
@@ -174,6 +175,18 @@ export class PoliceService {
     legalPaperRequestDate: z.string().nullish(),
   })
 
+  private speedingViolationSchema = z.object({
+    Kennitala: z.string(),
+    SkraningarNumer: z.string(),
+    HamarksHradi: z.number(),
+    HradiMaeldur: z.number(),
+    HradiSagdur: z.union([z.number(), z.string()]), // sometimes numeric, sometimes string
+    DagsetningFra: z.coerce.date(), // parses ISO date strings like "2025-08-21T10:05:00"
+    DagsetningTil: z.coerce.date(),
+  })
+
+  private speedingViolationInfoSchema = z.array(this.speedingViolationSchema)
+
   constructor(
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
@@ -287,6 +300,22 @@ export class PoliceService {
     await this.awsS3Service.putObject(caseType, key, pdf)
 
     return { key, size: pdf.length }
+  }
+
+  private calculateOffset(recordedSpeed: number): number {
+    let offsetSpeed = recordedSpeed
+
+    if (recordedSpeed <= 100) {
+      offsetSpeed -= 3
+    } else if (recordedSpeed <= 133) {
+      offsetSpeed -= 4
+    } else if (recordedSpeed <= 167) {
+      offsetSpeed -= 5
+    } else {
+      offsetSpeed -= 6
+    }
+
+    return offsetSpeed
   }
 
   async getAllPoliceCaseFiles(
@@ -541,6 +570,69 @@ export class PoliceService {
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case info for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getSpeedingViolationInfo(
+    caseId: string,
+    user: User,
+  ): Promise<SpeedingViolationInfo[]> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetSpeedViolation/${caseId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const jsonRes = await res.json()
+          const response: z.infer<typeof this.speedingViolationInfoSchema> =
+            jsonRes
+
+          return response.map((r) => ({
+            nationalId: r.Kennitala,
+            licencePlate: r.SkraningarNumer,
+            speedLimit: r.HamarksHradi,
+            recordedSpeed: this.calculateOffset(r.HradiMaeldur),
+            date: r.DagsetningFra,
+          }))
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a police case does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Speeding violation for case ${caseId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Speeding violation for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get speeding info',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get speeding info for case ${caseId}`,
           detail: reason.message,
         })
       })
