@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alert } from 'react-native'
 import {
   authorize,
@@ -31,6 +32,9 @@ import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
+const INSTALL_MARKER_KEY = `@islandis_install_${bundleId}`
+const keychainLogoutInProgress = new Set<string>()
+let firstLaunchCompleted = false
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
@@ -189,7 +193,10 @@ export const authStore = create<AuthStore>((set, get) => ({
     await Keychain.setGenericPassword(
       KEYCHAIN_AUTH_KEY,
       JSON.stringify(authorizeResult),
-      { service: KEYCHAIN_AUTH_KEY },
+      {
+        service: KEYCHAIN_AUTH_KEY,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      },
     )
     set({ authorizeResult })
   }),
@@ -209,7 +216,10 @@ export const authStore = create<AuthStore>((set, get) => ({
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,
         JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
+        {
+          service: KEYCHAIN_AUTH_KEY,
+          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        },
       )
       set({ authorizeResult })
       return true
@@ -272,22 +282,86 @@ export const useAuthStore = createUse(authStore)
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
+  // We already have an authorization result in memory, nothing else to do.
   if (authorizeResult) {
     return
   }
 
+  // Try to read the install marker that tells us whether the app has run once on this device.
+  let installMarker: string | null = null
   try {
-    const res = await Keychain.getGenericPassword({
-      service: KEYCHAIN_AUTH_KEY,
-    })
+    installMarker = await AsyncStorage.getItem(INSTALL_MARKER_KEY)
+  } catch (err) {
+    console.log('Unable to read install marker: ', err)
+  }
 
-    if (res) {
-      const authRes = JSON.parse(res.password)
-      authStore.setState({ authorizeResult: authRes })
-    }
+  let hasPersistedData = false
+  try {
+    // Look for any other AsyncStorage entries; if none exist, this looks like a fresh install.
+    const asyncStorageKeys = await AsyncStorage.getAllKeys()
+    hasPersistedData = asyncStorageKeys.some(
+      (key) => key !== INSTALL_MARKER_KEY,
+    )
+  } catch (err) {
+    console.log('Unable to list AsyncStorage keys: ', err)
+  }
+
+  // Attempt to restore the last known authorization data from the secure keychain.
+  let keychainResult: Awaited<ReturnType<typeof Keychain.getGenericPassword>>
+  try {
+    keychainResult = await Keychain.getGenericPassword({
+      service: KEYCHAIN_AUTH_KEY,
+      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
+    keychainResult = false
   }
+
+  if (!installMarker) {
+    // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+    const shouldForceLogout = !hasPersistedData && !firstLaunchCompleted
+    try {
+      await AsyncStorage.setItem(INSTALL_MARKER_KEY, 'true')
+    } catch (err) {
+      console.log('Unable to set install marker: ', err)
+    }
+
+    if (shouldForceLogout && keychainResult) {
+      const key = `${keychainResult.service}:${keychainResult.storage}`
+      // Prevent multiple logout attempts from the same keychain entry.
+      if (!keychainLogoutInProgress.has(key)) {
+        // Add the keychain entry to the set of currently in-progress logout attempts.
+        keychainLogoutInProgress.add(key)
+        try {
+          if (keychainResult.password) {
+            // Hydrate state before logging out so downstream flows can access the auth metadata if needed.
+            const authRes = JSON.parse(keychainResult.password)
+            authStore.setState({ authorizeResult: authRes })
+          }
+          await authStore.getState().logout(true)
+        } catch (err) {
+          console.log('Unable to force logout after fresh install: ', err)
+        } finally {
+          keychainLogoutInProgress.delete(key)
+        }
+      }
+      return
+    }
+  }
+
+  if (keychainResult) {
+    try {
+      // Persist the restored authorization result in memory for the rest of the session.
+      const authRes = JSON.parse(keychainResult.password)
+      authStore.setState({ authorizeResult: authRes })
+    } catch (err) {
+      console.log('Unable to parse authorize result: ', err)
+    }
+  }
+
+  // Once we've gone through the bootstrap path we don't need to repeat the fresh-install logout.
+  firstLaunchCompleted = true
 }
 
 // Function used in getAppRoot to check if user is authenticated and show login screen if not
