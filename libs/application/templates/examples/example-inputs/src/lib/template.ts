@@ -17,8 +17,6 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 
-// trigger deploy
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
