@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'release/*' # Triggers when pushing to this branch
+      - 'test-release/*'
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
@@ -16,7 +17,7 @@ env:
 
 jobs:
   check-rename:
-    runs-on: shared-arc
+    runs-on: arc-shared
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,7 +29,10 @@ jobs:
           # Extract version from current branch (release/X.X.X)
           CURRENT_BRANCH="${{ github.ref_name }}"
           VERSION=$(echo "$CURRENT_BRANCH" | sed 's/release\///')
+          PRE_VERSION=$(echo "$CURRENT_BRANCH" | sed 's/test-release\///')
+          PRE_PRE_RELEASE_BRANCH="test-pre-release/$PRE_VERSION"
           PRE_RELEASE_BRANCH="pre-release/$VERSION"
+          echo "renamed=false" >> "$GITHUB_OUTPUT"
 
           # Check if corresponding pre-release branch existed
           if git show-ref --verify --quiet "refs/remotes/origin/$PRE_RELEASE_BRANCH"; then
@@ -37,7 +41,14 @@ jobs:
             # Your workflow logic here
             echo "renamed=true" >> "$GITHUB_OUTPUT"
             echo "pre_release_branch=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
-            echo "version=$VERSION" >> "$GITHUB_TOKEN"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          elif git show-ref --verify --quiet "refs/remotes/origin/$PRE_PRE_RELEASE_BRANCH"; then
+            echo "Branch renamed from $PRE_PRE_RELEASE_BRANCH to $CURRENT_BRANCH"
+            echo "Version: $PRE_VERSION"
+            # Your workflow logic here
+            echo "renamed=true" >> "$GITHUB_OUTPUT"
+            echo "pre_release_branch=$PRE_PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "version=$PRE_VERSION" >> "$GITHUB_OUTPUT"
           else
             echo "No corresponding pre-release branch found"
           fi
@@ -64,14 +75,6 @@ jobs:
         run: |
           node scripts/ci/docker/get-github-token.mjs
 
-      - name: Prepare feature deployment tag
-        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/feature-checkout
-        id: prepare-docker-tag
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-
       - name: Dispatch workflow to helm-values repository
         if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
         env:
@@ -80,7 +83,8 @@ jobs:
         run: |
           repo_owner="island-is"
           repository="helm-values"
-          echo "Dispatch workflow for feature name: $FEATURE_NAME"
+          VERSION=$(echo VERSION | tr -d '.')
+          echo "Dispatch cleanup workflow for pre-relase: $VERSION"
           curl -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
