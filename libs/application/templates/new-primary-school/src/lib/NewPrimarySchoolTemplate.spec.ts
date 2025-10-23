@@ -8,7 +8,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
-import { PayerOption, SchoolType, States } from '../utils/constants'
+import { ApplicationFeatureKey, PayerOption, States } from '../utils/constants'
 import NewPrimarySchoolTemplate from './NewPrimarySchoolTemplate'
 
 const buildApplication = (data: {
@@ -79,14 +79,14 @@ describe('New Primary School Template', () => {
   })
 
   it('should transition from draft to payerApproval on submit', () => {
+    const schoolId = uuid()
     const helper = new ApplicationTemplateHelper(
       buildApplication({
         state: States.DRAFT,
         answers: {
           newSchool: {
             municipality: '3000',
-            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
-            type: SchoolType.PRIVATE_SCHOOL,
+            school: schoolId,
           },
           payer: {
             option: PayerOption.OTHER,
@@ -94,6 +94,26 @@ describe('New Primary School Template', () => {
               name: 'John Doe',
               nationalId: '1234567890',
             },
+          },
+        },
+        externalData: {
+          schools: {
+            data: [
+              {
+                id: schoolId,
+                settings: {
+                  applicationConfigs: [
+                    {
+                      applicationFeatures: [
+                        { key: ApplicationFeatureKey.PAYMENT_INFO },
+                      ],
+                    },
+                  ],
+                },
+              },
+            ],
+            date: new Date(),
+            status: 'success',
           },
         },
       }),
@@ -114,8 +134,7 @@ describe('New Primary School Template', () => {
         answers: {
           newSchool: {
             municipality: '3000',
-            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
-            type: SchoolType.PRIVATE_SCHOOL,
+            school: uuid(),
           },
           payer: {
             option: PayerOption.OTHER,
@@ -143,8 +162,7 @@ describe('New Primary School Template', () => {
         answers: {
           newSchool: {
             municipality: '3000',
-            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
-            type: SchoolType.PRIVATE_SCHOOL,
+            school: uuid(),
           },
           payer: {
             option: PayerOption.OTHER,
@@ -172,8 +190,7 @@ describe('New Primary School Template', () => {
         answers: {
           newSchool: {
             municipality: '3000',
-            school: `${uuid()}::${SchoolType.PRIVATE_SCHOOL}`,
-            type: SchoolType.PRIVATE_SCHOOL,
+            school: uuid(),
           },
           payer: {
             option: PayerOption.OTHER,

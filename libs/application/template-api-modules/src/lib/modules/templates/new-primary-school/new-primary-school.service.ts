@@ -124,7 +124,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       newPrimarySchoolDTO,
     )
 
-    if (needsPayerApproval(application.answers)) {
+    if (needsPayerApproval(application)) {
       await this.sharedTemplateAPIService
         .sendEmail(generatePayerApprovedApplicationEmail, application)
         .catch((e) => {

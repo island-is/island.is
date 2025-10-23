@@ -1,14 +1,19 @@
 import { YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
 import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
+import {
+  ApplicationFeatureKey,
   LanguageEnvironmentOptions,
   PayerOption,
-  SchoolType,
 } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  getSelectedSchoolData,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -77,11 +82,25 @@ export const showCaseManagerFields = (answers: FormValue) => {
   return isWelfareContactSelected(answers) && hasCaseManager === YES
 }
 
-export const hasPayer = (answers: FormValue) => {
-  const { selectedSchoolType } = getApplicationAnswers(answers)
+export const shouldShowPage = (
+  answers: FormValue,
+  externalData: ExternalData,
+  key: ApplicationFeatureKey,
+): boolean => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
 
-  // TODO: Need to update when we get config/school type from Júní - Need to check if "Arnarskóli" (Sérskóli)
-  return selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+  if (!selectedSchoolId) return false
+
+  const selectedSchoolSettings = getSelectedSchoolData(
+    externalData,
+    selectedSchoolId,
+  )?.settings
+
+  if (!selectedSchoolSettings) return false
+
+  return selectedSchoolSettings.applicationConfigs[0].applicationFeatures.some(
+    (feature) => feature.key === key,
+  )
 }
 
 export const hasOtherPayer = (answers: FormValue) => {
@@ -90,6 +109,12 @@ export const hasOtherPayer = (answers: FormValue) => {
   return payer === PayerOption.OTHER
 }
 
-export const needsPayerApproval = (answers: FormValue) => {
-  return hasPayer(answers) && hasOtherPayer(answers)
+export const needsPayerApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.PAYMENT_INFO,
+    ) && hasOtherPayer(application.answers)
+  )
 }

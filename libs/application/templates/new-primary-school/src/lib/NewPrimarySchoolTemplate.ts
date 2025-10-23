@@ -27,7 +27,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
@@ -180,8 +180,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.PAYER_APPROVAL,
-              cond: (context) =>
-                needsPayerApproval(context?.application?.answers),
+              cond: (context) => needsPayerApproval(context?.application),
             },
             {
               target: States.SUBMITTED,
@@ -242,6 +241,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               read: {
                 answers: ['childInfo', 'newSchool'],
+                externalData: ['schools'],
               },
             },
           ],
@@ -575,7 +575,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    const { applicant, assignees } = application
+
+    if (nationalId === applicant) {
       return Roles.APPLICANT
     }
 
@@ -585,7 +587,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       return Roles.ORGANIZATION_REVIEWER
     }
 
-    if (application.assignees.includes(nationalId)) {
+    if (assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
 

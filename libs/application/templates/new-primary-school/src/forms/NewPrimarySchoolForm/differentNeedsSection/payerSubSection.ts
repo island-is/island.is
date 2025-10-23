@@ -6,13 +6,14 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { hasOtherPayer, hasPayer } from '../../../utils/conditionUtils'
-import { PayerOption } from '../../../utils/constants'
+import { hasOtherPayer, shouldShowPage } from '../../../utils/conditionUtils'
+import { ApplicationFeatureKey, PayerOption } from '../../../utils/constants'
 
 export const payerSubSection = buildSubSection({
   id: 'payerSubSection',
   title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
-  condition: (answers) => hasPayer(answers),
+  condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
   children: [
     buildMultiField({
       id: 'payer',
@@ -52,7 +53,6 @@ export const payerSubSection = buildSubSection({
           required: true,
           searchPersons: true,
           searchCompanies: true,
-          clearOnChange: ['payer.other.name'],
           showEmailField: true,
           emailRequired: true,
           condition: (answers) => hasOtherPayer(answers),

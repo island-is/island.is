@@ -12,7 +12,10 @@ import {
   newPrimarySchoolMessages,
   payerApprovalMessages,
 } from '../lib/messages'
-import { getApplicationAnswers } from '../utils/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getSchoolName,
+} from '../utils/newPrimarySchoolUtils'
 
 export const PayerApproval: Form = buildForm({
   id: 'newPrimarySchoolPayerApproval',
@@ -47,16 +50,19 @@ export const PayerApproval: Form = buildForm({
               },
             }),
             buildTextField({
-              // TODO: Need to update when we get config/school type from Júní - Need to display school name (we only have the school id in answers)
               id: 'payerApproval.selectedSchool',
               title: newPrimarySchoolMessages.overview.selectedSchool,
               width: 'full',
               disabled: true,
               defaultValue: (application: Application) => {
-                const { selectedSchool } = getApplicationAnswers(
+                const { selectedSchoolId } = getApplicationAnswers(
                   application.answers,
                 )
-                return selectedSchool
+
+                return getSchoolName(
+                  application.externalData,
+                  selectedSchoolId ?? '',
+                )
               },
             }),
             buildSubmitField({

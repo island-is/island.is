@@ -1026,9 +1026,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     privateSchoolExpandableDescription: {
       id: 'nps.application:conclusion.private.school.expandable.description#markdown',
       defaultMessage:
-        'Takk fyrir að senda inn umsókn.\n\nUmsóknin fer fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
+        'Takk fyrir að senda inn umsókn.\n\nEf annar greiðandi hefur verið valinn fyrir skólavist barns en umsækjandi sjálfur, verður nýr greiðandi beðinn um að staðfesta með rafrænum skilríkjum áður en umsóknin er send.\n\nÍ kjölfarið fer umsóknin fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
       description:
-        "Thank you for submitting your application.\n\nFirst the application is reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nWhen a decision on payment participation has been made, the school itself will review the application. The decision will be sent to the parents as soon as possible.",
+        "Thank you for submitting your application.\n\nIf a different payer has been selected for your child's school fees than the applicant, the new payer will be asked to confirm with electronic ID before the application is sent.\n\nThe application will then be reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nOnce a decision on payment participation has been made, the school itself will review the application. The principal's decision will be sent to parents as soon as possible.",
     },
   }),
 }
@@ -1188,33 +1188,34 @@ export const pendingActionMessages = defineMessages({
   },
   payerApprovalApplicantDescription: {
     id: 'nps.application:pending.action.payer.approval.applicant.description',
-    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá greiðanda.',
-    description: 'Your application is pending approval from the payer.',
+    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá skráðum greiðanda.',
+    description:
+      'Your application is pending approval from the registered payer.',
   },
   payerRejectedTitle: {
     id: 'nps.application:pending.action.payer.rejected.title',
-    defaultMessage: 'Greiðandi hefur hafnað umsókn',
-    description: 'The payer has rejected the application',
+    defaultMessage: 'Skráður greiðandi hefur hafnað umsókn',
+    description: 'The registered payer has rejected the application',
   },
   payerRejectedDescription: {
     id: 'nps.application:pending.action.payer.rejected.description',
     defaultMessage:
-      'Greiðandi hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
+      'Skráður greiðandi hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
     description:
-      'The payer has rejected the application, please make changes to the application.',
+      'The registered payer has rejected the application, please make changes to the application.',
   },
 })
 
 export const historyMessages = defineMessages({
   payerApprovalApproved: {
     id: 'nps.application:history.payer.approval.approved',
-    defaultMessage: 'Greiðandi samþykkti umsókn',
-    description: 'The payer approved the application',
+    defaultMessage: 'Skráður greiðandi samþykkti umsókn',
+    description: 'The registered payer approved the application',
   },
   payerApprovalRejected: {
     id: 'nps.application:history.payer.approval.rejected',
-    defaultMessage: 'Greiðandi hafnaði umsókn',
-    description: 'The payer rejected the application',
+    defaultMessage: 'Skráður greiðandi hafnaði umsókn',
+    description: 'The registered payer rejected the application',
   },
   payerRejectedEdit: {
     id: 'nps.application:history.payer.rejected.edit',
