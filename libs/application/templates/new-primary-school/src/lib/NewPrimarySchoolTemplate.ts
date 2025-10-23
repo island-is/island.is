@@ -1,7 +1,6 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  NO,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
@@ -137,7 +136,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
-          'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
@@ -420,31 +418,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
-        if (
-          reasonForApplication !==
-          ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ) {
-          unset(
-            application.answers,
-            'reasonForApplication.transferOfLegalDomicile',
-          )
-        }
-
         // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
           ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
-        }
-        return context
-      }),
-      clearPlaceOfResidence: assign((context) => {
-        const { application } = context
-        const { childInfo } = getApplicationAnswers(application.answers)
-        if (childInfo?.differentPlaceOfResidence === NO) {
-          unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),

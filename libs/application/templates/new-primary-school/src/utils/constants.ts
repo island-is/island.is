@@ -37,7 +37,6 @@ export enum Roles {
 }
 
 export enum ReasonForApplicationOptions {
-  MOVING_MUNICIPALITY = 'movingMuniciplaity',
   SIBLINGS_IN_SAME_SCHOOL = 'siblingsInSameSchool',
 }
 
