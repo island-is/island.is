@@ -319,15 +319,11 @@ const Indictment = () => {
         const speedingInfo =
           speedingViolationInfoData?.speedingViolationInfo?.find(
             (info) =>
+              info.date &&
+              policeCase?.date &&
               info.licencePlate === policeCase.licencePlate &&
-              isSameDay(
-                new Date(policeCase?.date || ''),
-                new Date(info.date || ''),
-              ) &&
-              isSameMinute(
-                new Date(policeCase?.date || ''),
-                new Date(info.date || ''),
-              ),
+              isSameDay(new Date(policeCase.date), new Date(info.date)) &&
+              isSameMinute(new Date(policeCase.date), new Date(info.date)),
           )
 
         if (
