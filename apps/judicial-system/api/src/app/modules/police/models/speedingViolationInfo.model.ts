@@ -1,15 +1,15 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class SpeedingViolationInfo {
   @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
-  @Field(() => String, { nullable: true })
-  readonly recordedSpeed?: string
+  @Field(() => Int, { nullable: true })
+  readonly recordedSpeed?: number
 
-  @Field(() => String, { nullable: true })
-  readonly speedLimit?: string
+  @Field(() => Int, { nullable: true })
+  readonly speedLimit?: number
 
   @Field(() => String, { nullable: true })
   readonly licencePlate?: string
