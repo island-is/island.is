@@ -154,10 +154,7 @@ const Indictment = () => {
     },
   })
 
-  const {
-    data: speedingViolationInfoData,
-    loading: speedingViolationInfoLoading,
-  } = useSpeedingViolationInfoQuery({
+  const { data: speedingViolationInfoData } = useSpeedingViolationInfoQuery({
     variables: {
       input: {
         caseId: workingCase.id,
