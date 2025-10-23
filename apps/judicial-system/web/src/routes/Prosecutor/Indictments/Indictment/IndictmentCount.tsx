@@ -52,7 +52,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
-import { useSpeedingViolationInfoQuery } from './lib/speedingViolationInfo.generated'
 import { Offenses } from './Offenses/Offenses'
 import { strings } from './IndictmentCount.strings'
 import * as styles from './IndictmentCount.css'
