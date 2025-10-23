@@ -8,7 +8,7 @@ concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
   # We want feature modifications to happen sequentially to completion,
   # to avoid race conditions and orphaned deployments
-  group: push-${{ github.head_ref || github.run_id }}
+  group: push-${{ github.ref }}
   cancel-in-progress: false
 
 env:
@@ -34,7 +34,6 @@ jobs:
           if git show-ref --verify --quiet "refs/remotes/origin/$PRE_RELEASE_BRANCH"; then
             echo "Branch renamed from $PRE_RELEASE_BRANCH to $CURRENT_BRANCH"
             echo "Version: $VERSION"
-            # Your workflow logic here
             echo "renamed=true" >> "$GITHUB_OUTPUT"
             echo "pre_release_branch=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -73,6 +72,7 @@ jobs:
           repo_owner="island-is"
           repository="helm-values"
           echo "Dispatch cleanup workflow for pre-release: $VERSION"
+          # The `feature_name` that is deployed for each pre-release is the version string without dots e.g. instead of 0.0.1 it is 001.
           VERSION=$(echo $VERSION | tr -d '.')
           curl -X POST \
           -H "Accept: application/vnd.github+json" \
