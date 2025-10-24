@@ -3,13 +3,13 @@ import { Form, FormModes } from '@island.is/application/types'
 import { confirmation, payment } from '../../lib/messages'
 import { informationSection } from './InformationSection'
 import { prerequisitesSection } from './prerequisitesSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItems } from '../../utils'
 
 export const OrderVehicleRegistrationCertificateForm: Form = buildForm({
   id: 'OrderVehicleRegistrationCertificateFormDraft',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

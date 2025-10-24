@@ -38,6 +38,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseAppealDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,10 +54,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isCourtRecordStepValidIC,
+  isNullOrUndefined,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -123,6 +126,7 @@ const CourtRecord: FC = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
+    const endOfSessionBookings: string[] = []
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -168,6 +172,7 @@ const CourtRecord: FC = () => {
         }
       }
     }
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
 
     setAndSendCaseToServer(
       [
@@ -206,6 +211,10 @@ const CourtRecord: FC = () => {
                 SessionArrangements.NONE_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
         },
       ],
       workingCase,
@@ -224,6 +233,53 @@ const CourtRecord: FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+
+  const handleEndOfSessionBookingsUpdate = ({
+    accusedAppealDecision,
+    accusedAppealAnnouncement,
+    prosecutorAppealDecision,
+    prosecutorAppealAnnouncement,
+  }: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => {
+    const endOfSessionBookings: string[] = []
+    const updatedCase = {
+      ...workingCase,
+      ...(!isNullOrUndefined(accusedAppealDecision)
+        ? { accusedAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(accusedAppealAnnouncement)
+        ? { accusedAppealAnnouncement }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealDecision)
+        ? { prosecutorAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+        ? { prosecutorAppealAnnouncement }
+        : {}),
+    }
+    populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
+
+    // override existing end of session booking if there
+    // is a update for a given working case (e.g. appeal decision)
+    // that should trigger an end of session bookings default text update
+    setAndSendCaseToServer(
+      [
+        {
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -413,6 +469,7 @@ const CourtRecord: FC = () => {
           <AppealSections
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            onChange={handleEndOfSessionBookingsUpdate}
           />
         </Box>
         <Box component="section" marginBottom={5}>

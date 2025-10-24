@@ -1,9 +1,9 @@
 import { buildForm } from '@island.is/application/core'
 import { notAllowedSection } from './notAllowedSection'
-import Logo from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 
 export const notAllowedForm = buildForm({
   id: 'notAllowedForm',
-  logo: Logo,
+  logo: InaoLogo,
   children: [notAllowedSection],
 })

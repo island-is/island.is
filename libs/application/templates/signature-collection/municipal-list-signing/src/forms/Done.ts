@@ -7,13 +7,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'doneScreen',
