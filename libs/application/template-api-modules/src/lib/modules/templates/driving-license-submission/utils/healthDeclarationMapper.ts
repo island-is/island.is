@@ -2,7 +2,7 @@ import {
   PostTemporaryLicenseWithHealthDeclaration,
   HealthDeclarationModel,
 } from '@island.is/clients/driving-license'
-import { dataSchema } from '@island.is/application/templates/transport-authority/driving-license'
+import { dataSchema } from '@island.is/application/templates/driving-license'
 import { infer as zinfer } from 'zod'
 
 import { formatPhoneNumber } from './'
