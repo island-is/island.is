@@ -87,7 +87,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 
