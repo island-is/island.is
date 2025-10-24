@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { TemplateApiModuleActionProps } from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import type { Logger } from '@island.is/logging'
 
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { ApplicationTypes } from '@island.is/application/types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'

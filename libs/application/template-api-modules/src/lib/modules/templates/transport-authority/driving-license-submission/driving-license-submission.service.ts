@@ -6,8 +6,8 @@ import {
   Pickup,
 } from '@island.is/api/domains/driving-license'
 
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../../shared'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   coreErrorMessages,
   getValueViaPath,
@@ -24,7 +24,7 @@ import {
 } from './emailGenerators'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'

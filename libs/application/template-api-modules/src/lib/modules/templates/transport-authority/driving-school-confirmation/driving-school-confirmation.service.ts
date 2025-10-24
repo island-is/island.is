@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
 import { DrivingSchool } from './types'
 import { getValueViaPath } from '@island.is/application/core'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../../shared'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import { ApplicationTypes } from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 

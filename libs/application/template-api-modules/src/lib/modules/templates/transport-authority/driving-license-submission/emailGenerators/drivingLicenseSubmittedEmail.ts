@@ -1,7 +1,7 @@
 import includes from 'lodash/includes'
 import { Message } from '@island.is/email-service'
 import { DrivingLicenseApplicationType } from '@island.is/api/domains/driving-license'
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGenerator } from '../../../../../types'
 import { m } from './messages'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
 import { getValueViaPath } from '@island.is/application/core'
