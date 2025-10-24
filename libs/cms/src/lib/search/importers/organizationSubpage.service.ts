@@ -1,4 +1,3 @@
-import { Entry } from 'contentful'
 import { Injectable } from '@nestjs/common'
 import isCircular from 'is-circular'
 import { MappedData } from '@island.is/content-search-indexer/types'
@@ -17,9 +16,15 @@ export class OrganizationSubpageSyncService
   implements CmsSyncProvider<IOrganizationSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationSubpage>) {
-    return entries.filter(
-      (entry: Entry<any>): entry is IOrganizationSubpage =>
-        entry.sys.contentType.sys.id === 'organizationSubpage' &&
+    const entriesToUpdate: IOrganizationSubpage[] = []
+    const entriesToDelete: string[] = []
+
+    for (const entry of entries) {
+      if (entry.sys.contentType.sys.id !== 'organizationSubpage') {
+        continue
+      }
+
+      if (
         !!entry.fields.title &&
         !!entry.fields.slug &&
         !!entry.fields.organizationPage?.fields?.slug &&
@@ -31,8 +36,16 @@ export class OrganizationSubpageSyncService
           entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
           true) &&
         // Subpages should not be searchable if they belong to a parent subpage
-        !entry.fields.organizationParentSubpage,
-    )
+        !entry.fields.organizationParentSubpage
+      )
+        entriesToUpdate.push(entry as IOrganizationSubpage)
+      else entriesToDelete.push(entry.sys.id)
+    }
+
+    return {
+      entriesToUpdate,
+      entriesToDelete,
+    }
   }
 
   doMapping(entries: IOrganizationSubpage[]) {

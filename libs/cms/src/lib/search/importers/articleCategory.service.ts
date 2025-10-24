@@ -14,12 +14,17 @@ export class ArticleCategorySyncService
 {
   processSyncData(entries: processSyncDataInput<IArticleCategory>) {
     // only process articles that we consider not to be empty and dont have circular structures
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IArticleCategory =>
         entry.sys.contentType.sys.id === 'articleCategory' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
+
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IArticleCategory[]) {

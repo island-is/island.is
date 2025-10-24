@@ -49,102 +49,111 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
   processSyncData(entries: processSyncDataInput<IArticle>) {
     // only process articles that we consider not to be empty and don't have circular structures
-    return entries.reduce((processedEntries: IArticle[], entry: Entry<any>) => {
-      if (this.validateArticle(entry)) {
-        // remove nested related articles from related articles
-        const relatedArticles = (entry.fields.relatedArticles || [])
-          .map(({ sys, fields }) => {
-            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
-            if (!fields?.relatedArticles) {
-              return undefined
-            }
-            const {
-              relatedArticles,
-              subArticles,
-              ...prunedRelatedArticlesFields
-            } = fields
-            return {
-              sys,
-              fields: prunedRelatedArticlesFields,
-            }
-          })
-          .filter((relatedArticle) => Boolean(relatedArticle))
+    const entriesToUpdate = entries.reduce(
+      (processedEntries: IArticle[], entry: Entry<any>) => {
+        if (this.validateArticle(entry)) {
+          // remove nested related articles from related articles
+          const relatedArticles = (entry.fields.relatedArticles || [])
+            .map(({ sys, fields }) => {
+              // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+              if (!fields?.relatedArticles) {
+                return undefined
+              }
+              const {
+                relatedArticles,
+                subArticles,
+                ...prunedRelatedArticlesFields
+              } = fields
+              return {
+                sys,
+                fields: prunedRelatedArticlesFields,
+              }
+            })
+            .filter((relatedArticle) => Boolean(relatedArticle))
 
-        const subArticles = (entry.fields.subArticles || [])
-          .map(({ sys, fields }) => {
-            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
-            if (!fields?.parent || !fields?.title) {
-              return undefined
-            }
+          const subArticles = (entry.fields.subArticles || [])
+            .map(({ sys, fields }) => {
+              // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+              if (!fields?.parent || !fields?.title) {
+                return undefined
+              }
 
-            const parent = {
-              ...fields.parent,
-              fields: { ...fields.parent.fields },
-            }
+              const parent = {
+                ...fields.parent,
+                fields: { ...fields.parent.fields },
+              }
 
-            delete parent['fields']['subArticles']
+              delete parent['fields']['subArticles']
 
-            return {
-              sys,
-              fields: {
-                ...fields,
-                parent,
-              },
-            }
-          })
-          .filter((subArticle) => Boolean(subArticle))
+              return {
+                sys,
+                fields: {
+                  ...fields,
+                  parent,
+                },
+              }
+            })
+            .filter((subArticle) => Boolean(subArticle))
 
-        // relatedArticles can include nested articles that point back to this entry
-        const processedEntry = {
-          ...entry,
-          fields: {
-            ...entry.fields,
-            relatedArticles: (relatedArticles.length
-              ? relatedArticles
-              : undefined) as IArticleFields['relatedArticles'],
-            subArticles: (subArticles.length
-              ? subArticles
-              : undefined) as IArticleFields['subArticles'],
-          },
-        }
-
-        // An entry hyperlink does not need the extra content present in
-        // the entry hyperlink associated fields
-        // We remove them from the reference itself on nodeType `entry-hyperlink`
-        if (processedEntry.fields?.content) {
-          removeEntryHyperlinkFields(processedEntry.fields.content)
-        }
-        // Remove all unnecessary entry hyperlink fields for the subArticles
-        if (processedEntry.fields?.subArticles?.length) {
-          for (const subArticle of processedEntry.fields.subArticles) {
-            removeEntryHyperlinkFields(subArticle.fields.content)
+          // relatedArticles can include nested articles that point back to this entry
+          const processedEntry = {
+            ...entry,
+            fields: {
+              ...entry.fields,
+              relatedArticles: (relatedArticles.length
+                ? relatedArticles
+                : undefined) as IArticleFields['relatedArticles'],
+              subArticles: (subArticles.length
+                ? subArticles
+                : undefined) as IArticleFields['subArticles'],
+            },
           }
-        }
-        // Also remove all unnecessary entry hyperlink fields for the relatedArticles
-        if (processedEntry.fields?.relatedArticles?.length) {
-          for (const relatedArticle of processedEntry.fields.relatedArticles) {
-            removeEntryHyperlinkFields(relatedArticle.fields.content)
-          }
-        }
 
-        try {
-          const mappedEntry = mapArticle(processedEntry)
-          if (!isCircular(mappedEntry)) {
-            processedEntries.push(processedEntry)
-          } else {
-            logger.warn('Circular reference found in article', {
+          // An entry hyperlink does not need the extra content present in
+          // the entry hyperlink associated fields
+          // We remove them from the reference itself on nodeType `entry-hyperlink`
+          if (processedEntry.fields?.content) {
+            removeEntryHyperlinkFields(processedEntry.fields.content)
+          }
+          // Remove all unnecessary entry hyperlink fields for the subArticles
+          if (processedEntry.fields?.subArticles?.length) {
+            for (const subArticle of processedEntry.fields.subArticles) {
+              removeEntryHyperlinkFields(subArticle.fields.content)
+            }
+          }
+          // Also remove all unnecessary entry hyperlink fields for the relatedArticles
+          if (processedEntry.fields?.relatedArticles?.length) {
+            for (const relatedArticle of processedEntry.fields
+              .relatedArticles) {
+              removeEntryHyperlinkFields(relatedArticle.fields.content)
+            }
+          }
+
+          try {
+            const mappedEntry = mapArticle(processedEntry)
+            if (!isCircular(mappedEntry)) {
+              processedEntries.push(processedEntry)
+            } else {
+              logger.warn('Circular reference found in article', {
+                id: entry?.sys?.id,
+              })
+            }
+          } catch (error) {
+            logger.warn('Failed to map article', {
+              error: error.message,
               id: entry?.sys?.id,
             })
           }
-        } catch (error) {
-          logger.warn('Failed to map article', {
-            error: error.message,
-            id: entry?.sys?.id,
-          })
         }
-      }
-      return processedEntries
-    }, [])
+        return processedEntries
+      },
+      [],
+    )
+
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: (IArticle & MetaData)[]) {
