@@ -98,7 +98,7 @@
 /libs/application/templates/passport/                                                                                        @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/passport-annulment                                          @island-is/juni
 /libs/application/templates/passport-annulment/                                                                              @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/                                @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-school-confirmation/            @island-is/juni
 /libs/application/templates/operating-license/                                                                               @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/operating-license/                                          @island-is/juni
 /libs/application/templates/transport-authority/driving-license-duplicate/                                                   @island-is/juni
