@@ -17,7 +17,7 @@ import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
-import { preferencesStore } from './preferences-store'
+import { PREFERENCES_KEY, preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
 import { featureFlagClient } from '../contexts/feature-flag-provider'
@@ -300,7 +300,7 @@ export async function readAuthorizeResult(): Promise<void> {
     // Look for any other AsyncStorage entries; if none exist, this looks like a fresh install.
     const asyncStorageKeys = await AsyncStorage.getAllKeys()
     hasPersistedData = asyncStorageKeys.some(
-      (key) => key !== INSTALL_MARKER_KEY,
+      (key) => key !== INSTALL_MARKER_KEY && key !== PREFERENCES_KEY,
     )
   } catch (err) {
     console.log('Unable to list AsyncStorage keys: ', err)
