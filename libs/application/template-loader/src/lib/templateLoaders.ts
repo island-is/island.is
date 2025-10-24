@@ -22,11 +22,15 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: () =>
-    import('@island.is/application/templates/driving-learners-permit'),
+    import(
+      '@island.is/application/templates/transport-authority/driving-learners-permit'
+    ),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
-    import('@island.is/application/templates/driving-assessment-approval'),
+    import(
+      '@island.is/application/templates/transport-authority/driving-assessment-approval'
+    ),
   [ApplicationTypes.PASSPORT]: () =>
     import('@island.is/application/templates/passport'),
   [ApplicationTypes.PASSPORT_ANNULMENT]: () =>
@@ -68,9 +72,13 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.FINANCIAL_AID]: () =>
     import('@island.is/application/templates/financial-aid'),
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
-    import('@island.is/application/templates/driving-instructor-registrations'),
+    import(
+      '@island.is/application/templates/transport-authority/driving-instructor-registrations'
+    ),
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: () =>
-    import('@island.is/application/templates/driving-school-confirmation'),
+    import(
+      '@island.is/application/templates/transport-authority/driving-school-confirmation'
+    ),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
     import('@island.is/application/templates/mortgage-certificate'),
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
@@ -90,7 +98,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
     import('@island.is/application/templates/marriage-conditions'),
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: () =>
-    import('@island.is/application/templates/driving-license-duplicate'),
+    import(
+      '@island.is/application/templates/transport-authority/driving-license-duplicate'
+    ),
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
     import(
       '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
@@ -125,7 +135,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: () =>
     import(
-      '@island.is/application/templates/driving-license-book-update-instructor'
+      '@island.is/application/templates/transport-authority/driving-license-book-update-instructor'
     ),
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
     import('@island.is/application/templates/alcohol-tax-redemption'),

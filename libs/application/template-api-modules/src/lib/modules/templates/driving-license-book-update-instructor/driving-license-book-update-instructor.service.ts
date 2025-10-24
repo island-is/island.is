@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { DrivingLicenseBookUpdateInstructorAnswers } from '@island.is/application/templates/driving-license-book-update-instructor'
+import { DrivingLicenseBookUpdateInstructorAnswers } from '@island.is/application/templates/transport-authority/driving-license-book-update-instructor'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
