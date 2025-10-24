@@ -1065,6 +1065,7 @@ export const slices = gql`
     __typename
     id
     baseUrl
+    filterUrl
     seeMoreLinkTextString
     items {
       id
