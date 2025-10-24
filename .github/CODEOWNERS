@@ -53,7 +53,7 @@
 /libs/clients/cms/                                                                                                           @island-is/juni @island-is/aranja
 /libs/residence-history                                                                                                      @island-is/juni
 /libs/api/domains/endorsement-system                                                                                         @island-is/juni
-/libs/api/domains/icelandic-names-registry /                                                                                 @island-is/juni
+/libs/api/domains/icelandic-names-registry/                                                                                  @island-is/juni
 /libs/clients/rsk/                                                                                                           @island-is/juni
 /libs/clients/zendesk/                                                                                                       @island-is/juni
 /libs/icelandic-names-registry/                                                                                              @island-is/juni
