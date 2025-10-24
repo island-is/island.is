@@ -1,10 +1,11 @@
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
-import { EmailRecipient } from '../shared'
+import { EmailRecipient, RealEstateAnswers } from '../shared'
 import { pathToAsset } from '../utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import kennitala from 'kennitala'
+import { Fasteign } from '@island.is/clients/assets'
+import { formatCurrency } from '@island.is/application/ui-components'
 
 export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -19,27 +20,36 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
     } = props
     if (!recipient.email) throw new Error('Recipient email was undefined')
 
-    const applicantNationalId = getValueViaPath<string>(
-      application.answers,
-      'applicant.nationalId',
-    )
+    // Applicant name
     const applicantName = getValueViaPath<string>(
       application.answers,
       'applicant.name',
     )
+    const realEstate = getValueViaPath<RealEstateAnswers>(
+      application.answers,
+      'realEstate.data',
+    )
+    const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
+      application.answers,
+      'getProperties.data',
+    )?.find(
+      (property) => property.fasteignanumer === realEstate?.realEstateName,
+    )
+    const registrantNationalId = application.applicantActors?.[0] // TODO If more than one delegant open the application, what is the order and who submits ?
 
-    if (!applicantNationalId) throw new Error('Application national id empty')
-    if (!applicantName) throw new Error('Application name empty')
-
-    const subject = 'Umsókn um framhaldsskóla móttekin!'
-
+    const subject = 'Umsókn móttekin!'
     const message =
-      `<span>Umsókn nemandans:</span><br/>` +
-      `<span>${applicantName}, kt. ${kennitala.format(
-        applicantNationalId,
-      )},</span><br/>` +
-      `<span>í framhaldsskóla hefur verið móttekin.</span><br/>` +
-      `<span>Þú getur farið inn á mínar síður og fylgst með framgangi umsóknarinnar.</span>`
+      `<span>Aðili með kennitölu ${registrantNationalId} hefur sótt um stofnun nýs fasteignanúmers í umboði fyrir Bónus ehf. Upplýsingar úr umsókn:</span><br/>` +
+      `<span>Upplýsingar úr umsókn:</span><br/>` +
+      `<span>Umsækjandi: ${applicantName}</span><br/>` +
+      `<span>Fasteignin: ${selectedRealEstate?.sjalfgefidStadfang?.birting}</span><br/>` +
+      `<span>Fjöldi fasteignanúmera: ${realEstate?.realEstateAmount}</span><br/>` +
+      `<span>Upphæð greiðslu: ${formatCurrency(
+        realEstate?.realEstateCost || '',
+      )}</span><br/>`
+
+    const goodbyeMessage =
+      `<span>Með kveðju,<span><br/>` + `<span>HMS<span><br/>`
 
     return {
       from: {
@@ -61,8 +71,8 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
           {
             component: 'Image',
             context: {
-              src: pathToAsset('computerIllustration.jpg'),
-              alt: 'Kaffi við skjá myndskreyting',
+              src: pathToAsset('Illustration.jpg'),
+              alt: 'manneskja fær tilkynningu',
             },
           },
           {
@@ -79,7 +89,13 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
             component: 'Button',
             context: {
               copy: 'Skoða umsókn',
-              href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}/${application.id}`,
+              href: `${clientLocationOrigin}/minarsidur/umsoknir/klaradar-umsoknir`,
+            },
+          },
+          {
+            component: 'Copy',
+            context: {
+              copy: goodbyeMessage,
             },
           },
         ],

@@ -1,11 +1,14 @@
 import { ApplicantType } from '@island.is/clients/hms-application-system'
 
 export const APPLICATION_TYPE = 'Yp3tK7qWb9Rmx2DJFc4Lza'
+export const APPLICATION_NAME = 'Stofnun nýrra fasteignanúmera'
 
 export enum NotandagognFlokkur {
-  ApplicationSubmission = 'Skil á umsókn',
-  Property = 'Eign',
-  DerivedPropertyNumber = 'FastanúmerAfleiða',
+  Product = 'Vara',
+  OtherInformation = 'Aðrar upplýsingar',
+  CoreInformation = 'Stofnupplýsingar',
+  Payment = 'Greiðsla',
+  Contact = 'Tengiliður',
 }
 
 export enum NotandagognTegund {
@@ -15,10 +18,17 @@ export enum NotandagognTegund {
 }
 
 export enum NotandagognHeiti {
-  DeclarationOfPropertyNumberRegistrationAwareness = 'Ég hef kynnt mér efnið á island.is um stofnun fasteignanúmera',
-  PrivacyPolicyAcknowledgement = 'Ég hef kynnt mér persónuverndarstefnu HMS',
-  PropertyNumber = 'Fasteignanúmer',
-  OtherComments = 'Aðrar athugasemdir',
+  PropertyNumber = 'Fasteignanúmer upprunaeignar',
+  OtherComments = 'Annað sem á að koma fram',
+  LandId = 'Landnúmer',
+  DocumentNumber = 'Skjalategund',
+  AmountOfNewNumbers = 'Fjöldi nýrra númera',
+  AmountPaid = 'Upphæð til greiðslu',
+  Applicant = 'Málsaðili',
+  Registrant = 'Skráningaraðili',
+  Name = 'Nafn',
+  Phone = 'Sími',
+  Email = 'Netfang',
 }
 
 export const Tegund = {
@@ -27,7 +37,7 @@ export const Tegund = {
 } as const
 
 export enum Hlutverk {
-  Applicant = 'Umsækjandi',
+  Customer = 'Viðskiptavinur',
   Contact = 'Tengiliður',
 }
 

@@ -88,7 +88,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}/${application.id}`,
+            href: `${clientLocationOrigin}/minarsidur/umsoknir/klaradar-umsoknir`,
           },
         },
         {

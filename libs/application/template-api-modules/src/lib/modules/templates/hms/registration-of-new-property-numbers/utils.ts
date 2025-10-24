@@ -6,6 +6,7 @@ import {
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
 import {
+  APPLICATION_NAME,
   APPLICATION_TYPE,
   ContactAnswer,
   Hlutverk,
@@ -16,6 +17,7 @@ import {
 } from './shared'
 import * as kennitala from 'kennitala'
 import { join } from 'path'
+import { formatCurrency } from '@island.is/application/ui-components'
 
 export const pathToAsset = (file: string) => {
   return join(
@@ -44,6 +46,10 @@ export const getRequestDto = (application: Application): ApplicationDto => {
     answers,
     'realEstate.realEstateAmount',
   )
+  const selectedRealEstateCost = getValueViaPath<string>(
+    answers,
+    'realEstate.realEstateCost',
+  )
   const selectedRealEstateOtherComments = getValueViaPath<string>(
     answers,
     'realEstate.realEstateOtherComments',
@@ -57,7 +63,7 @@ export const getRequestDto = (application: Application): ApplicationDto => {
   const contactIsSameAsApplicant = contact?.isSameAsApplicant?.[0] === YES
 
   return {
-    applicationName: 'Stofnun nýrra fasteignanúmera',
+    applicationName: APPLICATION_NAME,
     status: CurrentApplicationStatus.NUMBER_40,
     language: 'IS',
     portalApplicationID: application.id,
@@ -74,64 +80,86 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         tegund: kennitala.isPerson(applicant.nationalId ?? '')
           ? Tegund.Person
           : Tegund.Company,
-        hlutverk: Hlutverk.Applicant,
+        hlutverk: Hlutverk.Customer,
         netfang: applicant.email,
         simi: applicant.phoneNumber,
       },
-      {
-        kennitala: '',
-        heiti: contactIsSameAsApplicant ? applicant.name : contact?.name,
-        heimili: '',
-        postnumer: '',
-        stadur: '',
-        tegund: Tegund.Person,
-        hlutverk: Hlutverk.Contact,
-        netfang: contactIsSameAsApplicant ? applicant.email : contact?.email,
-        simi: contactIsSameAsApplicant ? applicant.phoneNumber : contact?.phone,
-      },
     ],
     notandagogn: [
+      // Stofnupplýsingar
       {
-        flokkur: NotandagognFlokkur.ApplicationSubmission,
-        heiti:
-          NotandagognHeiti.DeclarationOfPropertyNumberRegistrationAwareness,
-        tegund: NotandagognTegund.Boolean,
-        gildi: 'true',
+        flokkur: NotandagognFlokkur.CoreInformation,
+        heiti: NotandagognHeiti.Applicant,
+        tegund: NotandagognTegund.String,
+        gildi: selectedRealEstate?.sjalfgefidStadfang?.birting,
         guid: crypto.randomUUID(),
       },
       {
-        flokkur: NotandagognFlokkur.ApplicationSubmission,
-        heiti: NotandagognHeiti.PrivacyPolicyAcknowledgement,
-        tegund: NotandagognTegund.Boolean,
-        gildi: 'true',
+        flokkur: NotandagognFlokkur.CoreInformation,
+        heiti: NotandagognHeiti.LandId,
+        tegund: NotandagognTegund.String,
+        gildi: selectedRealEstate?.landeign?.landeignarnumer,
         guid: crypto.randomUUID(),
       },
       {
-        flokkur: NotandagognFlokkur.ApplicationSubmission,
+        flokkur: NotandagognFlokkur.CoreInformation,
+        heiti: NotandagognHeiti.PropertyNumber,
+        tegund: NotandagognTegund.PropertyNumber,
+        gildi: selectedRealEstate?.fasteignanumer?.replace(/\D/g, ''),
+        guid: crypto.randomUUID(),
+      },
+      {
+        flokkur: NotandagognFlokkur.CoreInformation,
+        heiti: NotandagognHeiti.DocumentNumber,
+        tegund: NotandagognTegund.String,
+        gildi: 'F-551',
+        guid: crypto.randomUUID(),
+      },
+      // Tengiliður
+      {
+        flokkur: NotandagognFlokkur.Contact,
+        heiti: NotandagognHeiti.Name,
+        tegund: NotandagognTegund.String,
+        gildi: contactIsSameAsApplicant ? applicant.name : contact?.name,
+        guid: crypto.randomUUID(),
+      },
+      {
+        flokkur: NotandagognFlokkur.Contact,
+        heiti: NotandagognHeiti.Phone,
+        tegund: NotandagognTegund.String,
+        gildi: contactIsSameAsApplicant
+          ? applicant.phoneNumber
+          : contact?.phone,
+        guid: crypto.randomUUID(),
+      },
+      {
+        flokkur: NotandagognFlokkur.Contact,
+        heiti: NotandagognHeiti.Email,
+        tegund: NotandagognTegund.String,
+        gildi: contactIsSameAsApplicant ? applicant.email : contact?.email,
+        guid: crypto.randomUUID(),
+      },
+      // Aðrar upplýsingar
+      {
+        flokkur: NotandagognFlokkur.OtherInformation,
         heiti: NotandagognHeiti.OtherComments,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstateOtherComments,
         guid: crypto.randomUUID(),
       },
+      // Vara
       {
-        flokkur: NotandagognFlokkur.Property,
-        heiti: 'Fasteignanumer',
-        tegund: NotandagognTegund.String,
-        gildi: selectedRealEstate?.fasteignanumer?.replace(/\D/g, ''),
-        guid: crypto.randomUUID(),
-      },
-      {
-        flokkur: NotandagognFlokkur.Property,
-        heiti: 'Fjöldi nýrra fasteignanúmera',
+        flokkur: NotandagognFlokkur.Product,
+        heiti: NotandagognHeiti.AmountOfNewNumbers,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstateAmount?.toString(),
         guid: crypto.randomUUID(),
       },
       {
-        flokkur: NotandagognFlokkur.Property,
-        heiti: 'Landnúmer',
+        flokkur: NotandagognFlokkur.Product,
+        heiti: NotandagognHeiti.AmountOfNewNumbers,
         tegund: NotandagognTegund.String,
-        gildi: selectedRealEstate?.landeign?.landeignarnumer,
+        gildi: formatCurrency(selectedRealEstateCost || '0'),
         guid: crypto.randomUUID(),
       },
     ],

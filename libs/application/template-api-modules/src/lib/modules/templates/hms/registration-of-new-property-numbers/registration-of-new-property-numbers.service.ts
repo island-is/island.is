@@ -86,17 +86,14 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       ) // TODO How does this display to user
     }
-    console.log('Payment', application.externalData)
 
     const requestDto = getRequestDto(application)
-    console.log('Requestdto', requestDto)
 
     try {
       const response =
         await this.hmsApplicationSystemService.apiApplicationPost({
           applicationDto: requestDto,
         })
-      console.log('RESPONSE', response)
 
       if (response.status !== 200) {
         this.logger.error(
@@ -111,8 +108,9 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           500,
         )
       }
+
+      // TODO Send emails
     } catch (e) {
-      console.log('ERROR', e)
       this.logger.error(
         '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
         e.message,
