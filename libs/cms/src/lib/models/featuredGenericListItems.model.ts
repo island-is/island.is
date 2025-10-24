@@ -68,10 +68,12 @@ export const mapFeaturedGenericListItems = ({
     baseUrl = `/${getOrganizationPageUrlPrefix(sys.locale)}/${
       fields.organizationPage.fields.slug
     }/${fields.organizationSubpage.fields.slug}`
-    if (fields.genericList?.sys.id && Object.keys(tagGroupsMap).length > 0) {
-      filterUrl = `${baseUrl}?${fields.genericList?.sys.id}tag=${JSON.stringify(
-        Object.fromEntries(tagGroupsMap),
-      )}`
+    if (fields.genericList?.sys.id) {
+      const tagGroupObject = Object.fromEntries(tagGroupsMap)
+      if (Object.keys(tagGroupObject).length > 0)
+        filterUrl = `${baseUrl}?${
+          fields.genericList.sys.id
+        }tag=${encodeURIComponent(JSON.stringify(tagGroupObject))}`
     }
   }
 
