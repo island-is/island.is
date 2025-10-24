@@ -46,7 +46,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
   name: e.form.applicationName,
-  codeOwner: CodeOwners.Fuglar,
+  codeOwner: CodeOwners.NordaApplications,
   institution: e.form.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,
