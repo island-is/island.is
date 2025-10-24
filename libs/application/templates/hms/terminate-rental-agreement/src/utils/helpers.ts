@@ -79,14 +79,16 @@ export const getNMonthsFromToday = (n: number) => {
 
 export const nearestDateInFuture = (date1: Date, date2: Date) => {
   const today = new Date()
+  const futureDate1 = date1 > today ? date1 : null
+  const futureDate2 = date2 > today ? date2 : null
 
-  if (date1 < date2 && date1 > today) {
-    return date1
+  if (futureDate1 && futureDate2) {
+    return futureDate1 < futureDate2 ? futureDate1 : futureDate2
   }
 
-  if (date2 < date1 && date2 > today) {
-    return date2
-  }
+  if (futureDate1) return futureDate1
+  if (futureDate2) return futureDate2
 
+  // If both are in the past, return today
   return today
 }
