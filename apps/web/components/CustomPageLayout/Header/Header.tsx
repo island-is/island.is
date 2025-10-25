@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -45,7 +44,7 @@ export type NoImageProps = HeaderProps & {
 
 export type HeaderWithImageProps = ImageProps | NoImageProps
 
-export const GrantsHeader = (props: HeaderWithImageProps) => {
+export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
   const renderSearchSection = () => {
     if (!props.searchUrl) {
       return
