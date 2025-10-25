@@ -138,6 +138,15 @@ export class Application {
 
   @Field(() => Boolean, { nullable: true })
   pruned?: boolean
+
+  @Field(() => String, { nullable: true })
+  formSystemFormSlug?: string
+
+  @Field(() => String, { nullable: true })
+  formSystemOrgSlug?: string
+
+  @Field(() => String, { nullable: true })
+  formSystemOrgContentfulId?: string
 }
 
 @ObjectType()

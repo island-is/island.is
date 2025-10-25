@@ -74,7 +74,7 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
