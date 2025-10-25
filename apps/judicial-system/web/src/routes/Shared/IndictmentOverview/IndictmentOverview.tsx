@@ -10,6 +10,7 @@ import {
   Feature,
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -31,11 +32,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
@@ -107,7 +110,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { features } = useContext(FeatureContext)
 
@@ -332,6 +335,18 @@ const IndictmentOverview: FC = () => {
               <ZipButton
                 caseId={workingCase.id}
                 courtCaseNumber={workingCase.courtCaseNumber}
+              />
+            </Box>
+          )}
+          {isProsecutionUser(user) && (
+            <Box component="section">
+              <SectionHeading
+                title="Viðurlög - athugasemdir sækjanda"
+                tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
+              />
+              <InputPenalties
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
               />
             </Box>
           )}
