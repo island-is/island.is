@@ -49,6 +49,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  SpeedingViolationInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseStatistics } from '../statistics'
@@ -460,6 +461,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
     return this.get(`case/${caseId}/policeCaseInfo`)
+  }
+
+  getSpeedingViolationInfo(caseId: string): Promise<SpeedingViolationInfo[]> {
+    return this.get(`case/${caseId}/speedingViolationInfo`)
   }
 
   uploadPoliceFile(

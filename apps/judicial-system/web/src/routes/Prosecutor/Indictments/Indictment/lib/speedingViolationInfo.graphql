@@ -1,0 +1,9 @@
+query SpeedingViolationInfo($input: SpeedingViolationInfoQueryInput!) {
+  speedingViolationInfo(input: $input) {
+    licencePlate
+    recordedSpeed
+    speedLimit
+    nationalId
+    date
+  }
+}
