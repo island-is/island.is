@@ -23,7 +23,7 @@ import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
@@ -35,8 +35,13 @@ export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
   includeSearchInHeader?: boolean
+  onHeaderVisibilityChange?: (visible: boolean) => void
 }
-export const Header = ({ position, includeSearchInHeader = false }: Props) => {
+export const Header = ({
+  position,
+  includeSearchInHeader = false,
+  onHeaderVisibilityChange,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
@@ -48,34 +53,37 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
   )
-  const [show, setShow] = useState<boolean>(true)
-
-  const [hide, setHide] = useState<boolean>(true)
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+  const [lastScrollY, setLastScrollY] = useState<number>(0)
 
   useScrollPosition(
-    ({ prevPos, currPos }) => {
-      let px = -600
+    ({ currPos }) => {
+      if (!isMobile) return // Only apply scroll behavior on mobile
 
-      if (typeof window !== `undefined`) {
-        px = window.innerHeight * -1
+      const currentScrollY = -currPos.y
+      const scrollingDown = currentScrollY > lastScrollY
+      const scrollingUp = currentScrollY < lastScrollY
+      const scrollThreshold = SERVICE_PORTAL_HEADER_HEIGHT_SM
+
+      // Show header when scrolling up or at top of page
+      if (scrollingUp || currentScrollY < scrollThreshold) {
+        setHeaderVisible(true)
+        onHeaderVisibilityChange?.(true)
+      }
+      // Hide header when scrolling down and past threshold
+      else if (scrollingDown && currentScrollY > scrollThreshold) {
+        setHeaderVisible(false)
+        onHeaderVisibilityChange?.(false)
       }
 
-      const goingDown = currPos.y < prevPos.y
-      // Using both canShow and canHide because of animation triggers.
-      // If trying to use only one, the header will flicker and transform down when it shouldnt.
-
-      const canShow = px > currPos.y
-      const canHide = currPos.y < -SERVICE_PORTAL_HEADER_HEIGHT_SM
-
-      setShow(canShow && !goingDown)
-      setHide(goingDown && canHide)
+      setLastScrollY(currentScrollY)
     },
-    [setShow],
+    [lastScrollY, isMobile],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     null,
     false,
-    150,
+    100, // Reduced throttle for smoother response
   )
 
   return (
@@ -84,8 +92,7 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
         className={cn(styles.header, {
-          [styles.showHeader]: show,
-          [styles.hideHeader]: hide,
+          [styles.headerHidden]: !headerVisible && isMobile,
         })}
         style={{
           top: position,
