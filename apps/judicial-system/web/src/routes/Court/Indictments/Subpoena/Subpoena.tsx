@@ -291,9 +291,13 @@ const Subpoena: FC = () => {
         primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     } else if (isIssuingSubpoenas) {
+      const hasCivilClaimants =
+        workingCase.civilClaimants && workingCase.civilClaimants.length > 0
       setModalContent({
         title: formatMessage(strings.modalTitle),
-        text: formatMessage(strings.modalText),
+        text: hasCivilClaimants
+          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is'
+          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is',
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
     }
@@ -303,6 +307,7 @@ const Subpoena: FC = () => {
     isIssuingSubpoenas,
     formatMessage,
     modalContent,
+    workingCase.civilClaimants,
   ])
 
   const stepIsValid = isSubpoenaStepValid(
