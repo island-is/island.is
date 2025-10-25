@@ -47,3 +47,13 @@ export enum PrescribedItemCategoryEnum {
 registerEnumType(PrescribedItemCategoryEnum, {
   name: 'HealthDirectoratePrescribedItemCategory',
 })
+
+export enum PermitStatusEnum {
+  active = 'active',
+  inactive = 'inactive',
+  expired = 'expired',
+}
+
+registerEnumType(PermitStatusEnum, {
+  name: 'HealthDirectoratePermitStatus',
+})

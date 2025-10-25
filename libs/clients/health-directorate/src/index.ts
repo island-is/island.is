@@ -19,5 +19,7 @@ export {
   PrescriptionRenewalBlockedReason,
   PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
+  EuPatientConsentDto,
+  EuPatientConsentStatus,
 } from './lib/clients'
 export { DispensationHistoryItemDto } from './lib/clients/health'
