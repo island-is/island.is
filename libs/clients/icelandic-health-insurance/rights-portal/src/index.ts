@@ -33,4 +33,5 @@ export {
   MinarsidurAPIModelsAccidentReportsAccidentDTOAccidentAtSailorWorkDTOAccidentAtSailorWorkShipLocationEnum,
   MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum,
+  MinarsidurAPIModelsAidsAndNutritionResponseRenewAidOrNutritionResponseDTO,
 } from '../gen/fetch'
