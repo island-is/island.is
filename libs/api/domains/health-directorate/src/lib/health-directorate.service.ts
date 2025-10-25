@@ -1,6 +1,5 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  DispensationHistoryItemDto,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
@@ -14,6 +13,7 @@ import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import {
   HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
+  DispensationHistoryItemDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
