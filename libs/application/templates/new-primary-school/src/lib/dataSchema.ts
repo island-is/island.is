@@ -339,6 +339,7 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+  acceptTerms: z.array(z.enum([YES])).nonempty(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
