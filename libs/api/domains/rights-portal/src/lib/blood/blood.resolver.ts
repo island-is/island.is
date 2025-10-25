@@ -1,27 +1,21 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
-import { Audit } from '@island.is/nest/audit'
-import { ApiScope } from '@island.is/auth/scopes'
-import { BloodType } from './models/bloodType.model'
-import { BloodService } from './blood.service'
 import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
 import type { Locale } from '@island.is/shared/types'
+import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { BloodService } from './blood.service'
+import { BloodType } from './models/bloodType.model'
 
 @Resolver(() => BloodType)
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
-@FeatureFlag(Features.servicePortalHealthBloodPageEnabled)
 export class BloodResolver {
   constructor(private readonly service: BloodService) {}
 
