@@ -5,6 +5,7 @@ import {
   Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
+  VerdictResponse,
 } from '@island.is/clients/judicial-system-sp'
 import { IntlService } from '@island.is/cms-translations'
 import type { Locale } from '@island.is/shared/types'
@@ -14,17 +15,23 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { ActionTypeEnum } from '../models/actions.model'
 import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
-import { Item } from '../models/item.model'
+import { Item, ItemType } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
 import {
   DefenseChoices,
+  mapAppealDecision,
+  mapAppealDecisionReverse,
   mapDefenseChoice,
   mapDefenseChoiceForSummon,
   mapDefenseChoiceForSummonDefaultChoice,
+  mapItemTypes,
+  mapLinkTypes,
   mapTagTypes,
 } from './helpers/mappers'
 import { m } from './messages'
+import { Verdict } from '../models/verdict.model'
+import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
 
 const namespaces = ['api.law-and-order']
 
@@ -60,7 +67,9 @@ export class LawAndOrderService {
   async getCourtCase(user: User, id: string, locale: Locale) {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const singleCase = await this.api.getCase(id, user, locale)
-    const hasBeenServed = singleCase?.data.hasBeenServed
+    const hasSubpoenaBeenServed = singleCase?.data.hasBeenServed
+    const hasVerdict = singleCase?.data.hasRuling
+    const hasVerdictBeenServed = singleCase?.data.hasRulingBeenServed
 
     const summonString = formatMessage(m.summon)
     const seeSummonString = formatMessage(m.seeSummon)
@@ -72,18 +81,22 @@ export class LawAndOrderService {
     // add an action to the line including "fyrirkall" to redirect to the digital mailbox or detail page
     const summonSentItem: Item | undefined = {
       action: {
-        data: hasBeenServed
+        data: hasSubpoenaBeenServed
           ? formatMessage(summonLink, { caseId: singleCase?.caseId })
           : mailboxLink,
-        title: hasBeenServed ? seeSummonString : seeSummonInMailboxString,
-        type: hasBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
+        title: hasSubpoenaBeenServed
+          ? seeSummonString
+          : seeSummonInMailboxString,
+        type: hasSubpoenaBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
       },
     }
 
     const data: CourtCase = {
       data: {
         id: singleCase?.caseId ?? id,
-        hasBeenServed: hasBeenServed,
+        hasSubpoenaBeenServed: hasSubpoenaBeenServed,
+        hasVerdict: hasVerdict,
+        hasVerdictBeenServed: hasVerdictBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
           return {
@@ -93,9 +106,18 @@ export class LawAndOrderService {
                 groupIndex === 0 &&
                 item.label.toLowerCase().includes(summonString.toLowerCase())
               ) {
-                return { ...item, action: summonSentItem.action }
+                return {
+                  ...item,
+                  action: summonSentItem.action,
+                  type: mapItemTypes(item.type),
+                  linkType: mapLinkTypes(item.linkType),
+                }
               }
-              return item
+              return {
+                ...item,
+                type: mapItemTypes(item.type),
+                linkType: mapLinkTypes(item.linkType),
+              }
             }),
             label: group.label,
           }
@@ -139,7 +161,14 @@ export class LawAndOrderService {
         ),
         hasChosen: summonData.hasChosenDefender,
         canEditDefenderChoice: defenderInfo?.canEdit,
-        groups: summonData.groups,
+        groups: summonData.groups.map((group) => ({
+          ...group,
+          items: group.items.map((item) => ({
+            ...item,
+            type: mapItemTypes(item.type),
+            linkType: mapLinkTypes(item.linkType),
+          })),
+        })),
         courtContactInfo: defenderInfo?.courtContactInfo,
       },
       actions: undefined,
@@ -174,6 +203,66 @@ export class LawAndOrderService {
     }))
 
     return list
+  }
+
+  async getVerdict(user: User, id: string, locale: Locale) {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+
+    const verdictsResponse: VerdictResponse | null = await this.api.getVerdict(
+      id,
+      user,
+      locale,
+    )
+
+    if (!isDefined(verdictsResponse)) return null
+
+    const verdicts: VerdictResponse = verdictsResponse
+
+    const data: Verdict = {
+      caseId: verdictsResponse.caseId,
+      title: formatMessage(verdicts.title),
+      subtitle: formatMessage(verdicts.subtitle),
+      appealDecision: mapAppealDecision(verdicts.appealDecision),
+      groups: verdicts.groups.map((group, index) => ({
+        ...group,
+        items: group.items.map((item) => ({
+          ...item,
+          linkType: mapLinkTypes(item.linkType),
+          //TODO: REMOVE TYPE TESTING
+          type:
+            verdicts.groups.length - 1 === index
+              ? ItemType.Accordion
+              : mapItemTypes(item.type),
+        })),
+      })),
+    }
+
+    return data
+  }
+
+  async postVerdictAppealDecision(
+    user: User,
+    input: PostAppealDecisionInput,
+    locale: Locale,
+  ): Promise<Omit<Verdict, 'groups' | 'subtitle'> | null> {
+    if (!input || !input.choice) return null
+    let data: VerdictResponse
+    try {
+      data = await this.api.patchVerdict(
+        input.caseId,
+        user,
+        locale,
+        mapAppealDecisionReverse(input.choice),
+      )
+    } catch (error) {
+      return null
+    }
+
+    return {
+      caseId: data.caseId,
+      title: data.title,
+      appealDecision: mapAppealDecision(data.appealDecision),
+    }
   }
 
   async postDefenseChoice(
