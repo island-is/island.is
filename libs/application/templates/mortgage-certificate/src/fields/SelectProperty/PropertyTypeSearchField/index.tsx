@@ -99,7 +99,7 @@ export const PropertyTypeSearchField: FC<
       />
       {loading && (
         <Box display="flex" justifyContent="center" paddingTop={4}>
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       {!loading && foundProperties && (

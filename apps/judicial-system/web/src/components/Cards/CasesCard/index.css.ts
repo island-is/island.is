@@ -11,3 +11,11 @@ export const container = style({
     },
   },
 })
+
+export const loadingDots = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  verticalAlign: 'middle',
+  lineHeight: 1,
+})

@@ -198,7 +198,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             <Box textAlign="center">
               <Stack space={4}>
                 <Text variant="h1">{t.titles.loading}</Text>
-                <LoadingDots large />
+                <LoadingDots size="large" />
               </Stack>
             </Box>
           ) : (
@@ -251,7 +251,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             <Box>
               {loading || loadingTraffic ? (
                 <Box textAlign="center">
-                  <LoadingDots large />
+                  <LoadingDots size="large" />
                 </Box>
               ) : (
                 <Stack space={4}>

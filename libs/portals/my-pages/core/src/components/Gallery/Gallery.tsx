@@ -49,7 +49,7 @@ export const Gallery: FC<GalleryProps> = ({
         >
           {loading ? (
             <Box>
-              <LoadingDots large />
+              <LoadingDots size="large" />
             </Box>
           ) : (
             <Box className={styles.galleryImageWrap}>

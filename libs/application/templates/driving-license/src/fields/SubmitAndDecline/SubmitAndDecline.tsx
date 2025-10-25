@@ -69,7 +69,7 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
     <>
       {error && { error }}
       <Box height="full">
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     </>
   )
