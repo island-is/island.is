@@ -173,6 +173,7 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            elementId={formatMessage(core.pdfButtonRuling)}
             disabled={isCompletedWithoutRuling}
           />
         </Box>
@@ -181,6 +182,7 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           />
         </Box>
       </FormContentContainer>

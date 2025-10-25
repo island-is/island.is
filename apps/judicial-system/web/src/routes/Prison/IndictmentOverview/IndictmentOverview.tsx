@@ -254,19 +254,24 @@ const IndictmentOverview = () => {
             }
           />
           {features?.includes(Feature.VERDICT_DELIVERY) &&
-            workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict?.serviceDate && (
-                  <PdfButton
-                    key={defendant.id}
-                    caseId={workingCase.id}
-                    title={`Birtingarvottorð ${defendant.name}.pdf`}
-                    pdfType="verdictServiceCertificate"
-                    elementId={[defendant.id]}
-                    renderAs="row"
-                  />
-                ),
-            )}
+            workingCase.defendants?.map((defendant) => {
+              if (!defendant.verdict?.serviceDate) {
+                return null
+              }
+
+              const serviceCertificateFileName = `Birtingarvottorð ${defendant.name}.pdf`
+
+              return (
+                <PdfButton
+                  key={defendant.id}
+                  caseId={workingCase.id}
+                  title={serviceCertificateFileName}
+                  pdfType="verdictServiceCertificate"
+                  elementId={[defendant.id, serviceCertificateFileName]}
+                  renderAs="row"
+                />
+              )
+            })}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
@@ -285,7 +290,7 @@ const IndictmentOverview = () => {
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={pdfElementId}
+                elementId={[pdfElementId, pdfTitle]}
                 renderAs="row"
               />
             )}
