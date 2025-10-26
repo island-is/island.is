@@ -1,14 +1,19 @@
 import { ProblemType, ValidationFailedFields } from '@island.is/shared/problem'
-import { ProblemError } from './ProblemError'
+import { ProblemError, ProblemOptions } from './ProblemError'
 
 export class ValidationFailed extends ProblemError {
-  constructor(fields: ValidationFailedFields) {
-    super({
-      type: ProblemType.VALIDATION_FAILED,
-      title: 'Validation Failed',
-      status: 400,
-      detail: `Found issues in these fields: ${Object.keys(fields).join(', ')}`,
-      fields,
-    })
+  constructor(fields: ValidationFailedFields, options?: ProblemOptions) {
+    super(
+      {
+        type: ProblemType.VALIDATION_FAILED,
+        title: 'Validation Failed',
+        status: 400,
+        detail: `Found issues in these fields: ${Object.keys(fields).join(
+          ', ',
+        )}`,
+        fields,
+      },
+      options,
+    )
   }
 }
