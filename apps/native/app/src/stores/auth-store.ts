@@ -1,4 +1,4 @@
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
@@ -300,7 +300,7 @@ export async function readAuthorizeResult(): Promise<void> {
   }
 
   // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
-  if (!hasOnboardedPinCode) {
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
     try {
       await authStore.getState().logout(true)
     } catch (err) {
