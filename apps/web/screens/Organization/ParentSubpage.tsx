@@ -55,12 +55,9 @@ const OrganizationParentSubpage: Screen<
 
   const showTableOfContents = parentSubpage.childLinks.length > 1
 
-  let pageTitle = subpage?.title ?? ''
-  if (showTableOfContents) {
-    pageTitle = `${parentSubpage?.title ?? ''}${
-      Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
-    }${subpage?.title ?? ''}`
-  }
+  const pageTitle = `${parentSubpage?.title ?? ''}${
+    Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
+  }${subpage?.title ?? ''}`
 
   return (
     <OrganizationWrapper
@@ -99,11 +96,11 @@ const OrganizationParentSubpage: Screen<
                 offset={['0', '0', '1/9']}
               >
                 <Stack space={3}>
-                  {showTableOfContents && (
-                    <Stack space={4}>
-                      <Text variant="h1" as="h1">
-                        {parentSubpage.title}
-                      </Text>
+                  <Stack space={4}>
+                    <Text variant="h1" as="h1">
+                      {parentSubpage.title}
+                    </Text>
+                    {showTableOfContents && (
                       <Box
                         paddingX={4}
                         paddingY={2}
@@ -148,8 +145,8 @@ const OrganizationParentSubpage: Screen<
                           </Stack>
                         </Stack>
                       </Box>
-                    </Stack>
-                  )}
+                    )}
+                  </Stack>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -158,10 +155,7 @@ const OrganizationParentSubpage: Screen<
             namespace={namespace}
             organizationPage={organizationPage}
             subpage={subpage}
-            subpageTitleVariant={
-              parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
-            }
-            paddingTop={showTableOfContents ? 4 : 0}
+            subpageTitleVariant="h2"
           />
         </Box>
       }

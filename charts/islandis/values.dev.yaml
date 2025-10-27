@@ -305,6 +305,7 @@ api:
     ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net'
     ELFUR_CLIENT_ID: '@fjs.is/hugsmidjan'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENVIRONMENT: 'dev'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -506,7 +507,7 @@ api:
       cpu: '1200m'
       memory: '3200Mi'
     requests:
-      cpu: '400m'
+      cpu: '800m'
       memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
@@ -569,6 +570,7 @@ api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
     LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
+    LANDSPITALI_PAYMENT_ORGANISATION_ID: '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID'
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -4300,7 +4302,7 @@ web:
       cpu: '1000m'
       memory: '768Mi'
     requests:
-      cpu: '300m'
+      cpu: '800m'
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
