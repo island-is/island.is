@@ -82,7 +82,6 @@ export const NationalIdWithName: FC<
   clearOnChange,
   setOnChange,
 }) => {
-  console.log('searchCompanies', searchCompanies)
   const [invalidNationalId, setInvalidNationalId] = useState(false)
 
   const fieldId = customId.length > 0 ? customId : id

@@ -260,8 +260,6 @@ export const employmentHistorySubSection = buildSubSection({
                   name: name,
                 }
 
-                console.log('defaultValue', defaultValue)
-
                 return defaultValue
               },
             },
