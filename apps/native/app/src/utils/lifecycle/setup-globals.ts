@@ -68,8 +68,18 @@ export function applyDynamicColorSupport() {
 
 applyDynamicColorSupport()
 
+const hasFirebaseApiKey = Boolean((app as any)?.options?.apiKey)
+
 if (__DEV__) {
-  initializePerformance(app)
+  if (hasFirebaseApiKey) {
+    try {
+      initializePerformance(app)
+    } catch (e) {
+      console.log('Firebase Performance init skipped (error):', e)
+    }
+  } else {
+    console.log('Firebase Performance disabled in dev (missing API key)')
+  }
 } else {
   // datadog rum config
   const ddconfig = new DdSdkReactNativeConfiguration(
