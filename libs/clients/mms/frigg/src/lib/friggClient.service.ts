@@ -34,6 +34,7 @@ export class FriggClientService {
       type: input?.type,
       municipalityCode: input?.municipalityCode,
       gradeLevels: input?.gradeLevels,
+      limit: 1000, //Frigg is restricting to 100 by default
     })
   }
 
@@ -70,6 +71,8 @@ export class FriggClientService {
     user: User,
     form: RegistrationInput,
   ): Promise<FormSubmitSuccessModel> {
-    return this.friggApiWithAuth(user).submitForm({ registration: form })
+    return this.friggApiWithAuth(user).submitForm({
+      registrationApplicationInput: { registration: form },
+    })
   }
 }

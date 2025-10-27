@@ -207,7 +207,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

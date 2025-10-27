@@ -297,13 +297,27 @@ export interface DraftAnswers {
   startDate: string
   endDate: string
   amount: string
+  isIndexConnected: YesOrNoEnum[]
+  indexDate: string
+  indexRate: string
   paymentMethodOther?: string
   paymentDateOptions: string
   paymentDayOther?: string
   paymentMethodOptions: string
   paymentMethodBankAccountNumber: BankAccount
+  securityDepositRequired: YesOrNoEnum
+  securityType: string
+  bankGuaranteeInfo: string
+  thirdPartyGuaranteeInfo: string
+  insuranceCompanyInfo: string
+  mutualFundInfo: string
+  otherInfo: string
+  securityDepositAmount: string
+  securityAmountOther: string
+  securityAmountCalculated: string
   categoryType: string
   categoryClass: string
+  categoryClassGroup: string
   description: string
   rules: string
   conditionDescription: string
