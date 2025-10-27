@@ -25,6 +25,13 @@ class PaymentUrls {
 // Main DTO for the CreatePaymentFlow response
 export class CreatePaymentFlowDTO {
   @ApiProperty({
+    description: 'Unique identifier for the payment flow',
+    type: String,
+    format: 'uuid',
+  })
+  id!: string
+
+  @ApiProperty({
     description: 'Localized URLs for payment flow initiation',
     type: PaymentUrls,
     example: {
