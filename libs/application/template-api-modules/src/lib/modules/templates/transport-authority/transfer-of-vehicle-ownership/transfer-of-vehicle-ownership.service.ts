@@ -206,7 +206,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   // Notify everyone that has been added to the application that they need to review
   async initReview({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     // 1. Validate payment
 
@@ -222,7 +221,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -503,7 +502,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
