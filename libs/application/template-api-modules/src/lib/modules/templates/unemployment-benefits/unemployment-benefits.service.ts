@@ -3,11 +3,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
-  GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   GaldurDomainModelsAttachmentsAttachmentViewModel,
   GaldurDomainModelsAttachmentsCreateAttachmentRequest,
@@ -110,52 +107,11 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       ) ?? []
 
     /* 
-      The following fields remain unchanged after application is done, so we sent them as they came from the api:
-    */
-
-    // applicationInformation
-    const applicationInformation =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation>(
-        application.externalData,
-        'unemploymentApplication.data.applicationInformation',
-        {},
-      )
-    // applicationAccess
-    const applicationAccess =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess>(
-        application.externalData,
-        'unemploymentApplication.data.applicationAccess',
-        {},
-      )
-
-    //electronicCommunication
-    const electronicCommunication =
-      getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication>(
-        application.externalData,
-        'unemploymentApplication.data.electronicCommunication',
-        {},
-      )
-
-    /* End of unchanged fields */
-
-    /* 
       The following fields are updated with answers from the application, and we need to merge them with the data from the api:
     */
 
     //personalInformation
-    const personalInformationFromService =
-      getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
-        application.externalData,
-        'unemploymentApplication.data.personalInformation',
-        {},
-      )
-
     const personalInformationFromAnswers = getPersonalInformation(answers)
-
-    const personalInformation = {
-      ...personalInformationFromService,
-      ...personalInformationFromAnswers,
-    }
 
     //Other information
     const otherInformationFromService =
@@ -409,10 +365,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
           {
             unemploymentApplication: {
-              applicationInformation: applicationInformation,
-              applicationAccess: applicationAccess,
-              personalInformation: personalInformation,
-              electronicCommunication: electronicCommunication,
+              personalInformation: personalInformationFromAnswers,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
               educationHistory: educationInformation,
@@ -440,6 +393,20 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             finalize: true,
           },
       }
-    this.vmstUnemploymentClientService.submitApplication(auth, submitResponse)
+    const response = await this.vmstUnemploymentClientService.submitApplication(
+      auth,
+      submitResponse,
+    )
+    console.log('response', response)
+    if (!response.success)
+      throw new Error(
+        response?.errorMessage || 'Response unsuccessfull and missing errorMsg',
+      )
+    throw new Error('error')
+    // try {
+
+    // } catch (e) {
+    //   throw new Error(e)
+    // }
   }
 }

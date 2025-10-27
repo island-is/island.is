@@ -172,7 +172,7 @@ export const employment = {
       },
       partTimeJobWorkHours: {
         id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobWorkHours',
-        defaultMessage: 'Vinnutími',
+        defaultMessage: 'Vinnutími (t.d 08:00 - 16:00)',
         description: 'part time job work hours label',
       },
       partTimeJobSalary: {
