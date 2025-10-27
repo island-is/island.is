@@ -46,6 +46,7 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
+  IndictmentDecision,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -2248,13 +2249,30 @@ export class CaseService {
 
         // if ruling decision is changed to other decision
         // we have to clean up idle verdicts
-        if (
+
+        const hasNewDecision =
+          theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
+          !!update.indictmentDecision &&
+          [
+            IndictmentDecision.POSTPONING,
+            IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+            IndictmentDecision.REDISTRIBUTING,
+            IndictmentDecision.SCHEDULING,
+          ].includes(update.indictmentDecision)
+
+        const hasNewRulingDecision =
           theCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.RULING &&
-          update.indictmentRulingDecision !==
-            CaseIndictmentRulingDecision.RULING &&
-          theCase.defendants
-        ) {
+          !!update.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.CANCELLATION,
+            CaseIndictmentRulingDecision.FINE,
+            CaseIndictmentRulingDecision.DISMISSAL,
+            CaseIndictmentRulingDecision.MERGE,
+            CaseIndictmentRulingDecision.WITHDRAWAL,
+          ].includes(update.indictmentRulingDecision)
+
+        if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
           await Promise.all(
             theCase.defendants.map((defendant) => {
               if (defendant.verdict) {

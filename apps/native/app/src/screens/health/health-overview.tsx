@@ -571,11 +571,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={healthCenterRes.error ? true : false}
@@ -611,11 +610,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla/skraning`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla/skraning`,
+                    componentId,
+                  )
                 }
                 text="button.change"
                 topAlign={healthCenterRes.error ? true : false}
@@ -650,11 +648,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/tannlaeknar`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/tannlaeknar`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={dentistRes.error ? true : false}
@@ -690,11 +687,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               rightElement={
                 <ExternalLink
                   onPress={() =>
-                    navigateTo('/webview', {
-                      source: {
-                        uri: `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
-                      },
-                    })
+                    openBrowser(
+                      `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
+                      componentId,
+                    )
                   }
                   text="button.open"
                   topAlign={organDonationRes.error ? true : false}
@@ -738,11 +734,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/blodflokkur`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/blodflokkur`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={bloodTypeRes.error ? true : false}

@@ -949,6 +949,7 @@ export const slices = gql`
     searchInputPlaceholder
     itemType
     defaultOrder
+    textSearchOrder
     showSearchInput
     filterTags {
       id
@@ -1065,6 +1066,7 @@ export const slices = gql`
     __typename
     id
     baseUrl
+    filterUrl
     seeMoreLinkTextString
     items {
       id
