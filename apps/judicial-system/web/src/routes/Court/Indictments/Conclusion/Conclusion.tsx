@@ -130,15 +130,7 @@ const Conclusion: FC = () => {
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
   const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
-    useState<SelectableItem[]>(
-      workingCase.defendants
-        ? workingCase.defendants?.map((defendant) => ({
-            id: defendant.id,
-            name: defendant.name ?? 'Nafn ekki skráð',
-            checked: defendant.verdict?.isDefaultJudgement ?? false,
-          }))
-        : [],
-    )
+    useState<SelectableItem[]>([])
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -147,20 +139,6 @@ const Conclusion: FC = () => {
     workingCase.courtSessions,
     user,
   )
-
-  const handleVerdicts = useCallback(async () => {
-    const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
-      (item) => ({
-        defendantId: item.id,
-        isDefaultJudgement: item.checked,
-      }),
-    )
-
-    return createVerdicts({
-      caseId: workingCase.id,
-      verdicts: defendantVerdictsToCreate,
-    })
-  }, [createVerdicts, defendantsWithDefaultJudgments, workingCase])
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -222,8 +200,19 @@ const Conclusion: FC = () => {
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
         update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ) {
-        const success = await handleVerdicts()
-        if (!success) {
+        const defendantVerdictsToCreate = defendantsWithDefaultJudgments?.map(
+          (item) => ({
+            defendantId: item.id,
+            isDefaultJudgement: item.checked,
+          }),
+        )
+
+        const createSuccess = await createVerdicts({
+          caseId: workingCase.id,
+          verdicts: defendantVerdictsToCreate,
+        })
+
+        if (!createSuccess) {
           return
         }
       }
@@ -237,7 +226,8 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
-      handleVerdicts,
+      createVerdicts,
+      defendantsWithDefaultJudgments,
       mergeCaseNumber,
       postponementReason,
       selectedAction,

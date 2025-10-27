@@ -29,7 +29,7 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<ISubArticle>) {
-    return entries.reduce(
+    const entriesToUpdate = entries.reduce(
       (processedEntries: ISubArticle[], entry: Entry<any>) => {
         if (this.validateSubArticle(entry)) {
           // remove nested subArticles from parent article
@@ -73,6 +73,10 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
       },
       [],
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ISubArticle[]) {

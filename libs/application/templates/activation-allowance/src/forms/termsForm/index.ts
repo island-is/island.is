@@ -7,12 +7,12 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
 import { externalData, terms } from '../../lib/messages'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Terms = buildForm({
   id: 'TermsDraft',
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

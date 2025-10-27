@@ -6,7 +6,7 @@ interface Props {
   label?: string
   data: {
     title: string
-    value?: string | number | React.ReactElement
+    value?: string | number | React.ReactElement | string[]
     type?: 'text' | 'link' | 'action'
     href?: string
     action?: () => void
