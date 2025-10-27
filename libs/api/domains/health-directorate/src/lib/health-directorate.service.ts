@@ -1,7 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   DispensationHistoryItemDto,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
@@ -12,7 +11,10 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
+} from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Country, isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
@@ -51,8 +53,8 @@ import { Countries } from './models/approvals/country.model'
 export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     private readonly healthApi: HealthDirectorateHealthService,
+    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -79,6 +81,7 @@ export class HealthDirectorateService {
       isMinor: data.isMinor ?? false,
       isTemporaryResident: data.isTemporaryResident ?? false,
     }
+
     return donorStatus
   }
 
@@ -88,6 +91,7 @@ export class HealthDirectorateService {
   ): Promise<Array<Organ>> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+
     const limitations: Array<Organ> =
       data?.map((item) => {
         return {
@@ -175,10 +179,10 @@ export class HealthDirectorateService {
         return {
           id: item.id,
           lastUpdated: item.lastUpdated,
-          name: item.name,
+          name: item.name ?? '',
           waitBegan: item.waitBeganDate,
-          organization: item.organizationName.toString(),
-          status: item.statusDisplay?.toString(),
+          organization: item.organizationName?.toString() ?? '',
+          status: item.statusDisplay?.toString() ?? '',
         }
       }) ?? []
 
@@ -219,7 +223,7 @@ export class HealthDirectorateService {
           serviceName: item.serviceName,
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
-          stateDisplay: item.stateDisplay,
+          stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
@@ -273,7 +277,7 @@ export class HealthDirectorateService {
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
-          totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          totalPrescribedAmount: item.prescribedAmountDisplay,
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
@@ -290,14 +294,13 @@ export class HealthDirectorateService {
               id: item.id,
               agentName: item.dispensingAgentName,
               date: item.dispensationDate,
-              count: item.dispensedItemsCount,
+              count: item.dispensedItems.length,
               items: item.dispensedItems.map((item) => {
                 return {
                   id: item.productId,
                   name: item.productName,
                   strength: item.productStrength,
                   amount: item.dispensedAmountDisplay,
-                  numberOfPackages: item.numberOfPackages?.toString(),
                 }
               }),
             }

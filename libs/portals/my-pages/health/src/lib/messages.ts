@@ -1305,9 +1305,9 @@ export const messages = defineMessages({
     defaultMessage: 'Ástæða',
     id: 'sp.health:reason',
   },
-  regimenMedicine: {
+  regimentMedicine: {
     defaultMessage: 'Lyfjakúrar',
-    id: 'sp.health:regimen-medicine',
+    id: 'sp.health:regiment-medicine',
   },
   registrationComplete: {
     defaultMessage: 'Skráning tókst',
