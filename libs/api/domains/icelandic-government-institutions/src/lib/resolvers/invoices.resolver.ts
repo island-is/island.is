@@ -1,7 +1,7 @@
 import { Audit } from '@island.is/nest/audit'
 import { Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
-import { IInvoicesService } from '../services/invoices/invoices.service.interface'
+import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
 import { InvoiceList } from '../models/invoiceList.model'
 import { Inject } from '@nestjs/common'
 

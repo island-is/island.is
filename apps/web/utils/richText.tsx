@@ -100,7 +100,6 @@ import { ReligiousOrganizationList } from '../components/connected/syslumenn/Car
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
-import ConnectedTeamList from '../components/connected/TeamList/TeamList'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
