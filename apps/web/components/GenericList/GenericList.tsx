@@ -570,6 +570,7 @@ interface GenericListWrapperProps {
   itemType?: string | null
   filterTags?: GenericTag[] | null
   defaultOrder?: GetGenericListItemsInputOrderBy | null
+  textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
 }
 
@@ -579,6 +580,7 @@ export const GenericListWrapper = ({
   itemType,
   searchInputPlaceholder,
   defaultOrder,
+  textSearchOrder,
   showSearchInput,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
@@ -632,6 +634,10 @@ export const GenericListWrapper = ({
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        let orderBy = defaultOrder
+        if (searchValue.trim().length > 0 && textSearchOrder === 'Score') {
+          orderBy = GetGenericListItemsInputOrderBy.Score
+        }
         fetchListItems({
           variables: {
             input: {
@@ -642,7 +648,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
-              orderBy: defaultOrder,
+              orderBy,
             },
           },
         })

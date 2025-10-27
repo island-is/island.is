@@ -588,10 +588,36 @@ export class CmsElasticsearchService {
       ]
     }
 
+    if (input.orderBy === GetGenericListItemsInputOrderBy.SCORE) {
+      sort = [
+        { _score: { order: SortDirection.DESC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
       must = must.concat(
         generateGenericTagGroupQueries(input.tags, input.tagGroups),
       )
+    }
+
+    const should = []
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.SCORE) {
+      should.push({
+        match_phrase_prefix: {
+          title: {
+            query: queryString,
+            boost: 200,
+          },
+        },
+      })
     }
 
     const response: ApiResponse<SearchResponse<MappedData>> =
@@ -599,6 +625,7 @@ export class CmsElasticsearchService {
         query: {
           bool: {
             must,
+            should,
           },
         },
         sort,

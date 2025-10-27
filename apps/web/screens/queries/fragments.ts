@@ -949,6 +949,7 @@ export const slices = gql`
     searchInputPlaceholder
     itemType
     defaultOrder
+    textSearchOrder
     showSearchInput
     filterTags {
       id

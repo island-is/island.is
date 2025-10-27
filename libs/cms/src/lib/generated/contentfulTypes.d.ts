@@ -1725,6 +1725,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
