@@ -29,6 +29,9 @@ export class CourtDocumentResponse {
   @Field(() => Int)
   readonly documentOrder!: number
 
+  @Field(() => Int, { nullable: true })
+  readonly mergedDocumentOrder?: number
+
   @Field(() => String)
   readonly name!: string
 

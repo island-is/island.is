@@ -60,6 +60,10 @@ export class CourtDocument extends Model {
   @ApiProperty({ type: Number })
   documentOrder!: number
 
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  @ApiPropertyOptional({ type: Number })
+  mergedDocumentOrder?: number
+
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })
   name!: string
