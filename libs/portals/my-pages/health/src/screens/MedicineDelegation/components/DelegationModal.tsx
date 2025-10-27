@@ -10,12 +10,12 @@ import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { messages } from '../../../lib/messages'
-import { Delegation } from '../utils/mockdata'
 import * as styles from './DelegationModal.css'
+import { HealthDirectorateMedicineDelegationItem } from '@island.is/api/schema'
 
 interface Props {
   id: string
-  activeDelegation?: Delegation
+  activeDelegation?: HealthDirectorateMedicineDelegationItem
   onClose?: () => void
   visible?: boolean
 }
@@ -33,10 +33,10 @@ const DelegationModal: React.FC<Props> = ({
     dateTo?: Date
     lookup?: boolean
   } | null>({
-    nationalId: activeDelegation?.nationalId,
-    dateFrom: activeDelegation?.dateFrom,
-    dateTo: activeDelegation?.dateTo,
-    lookup: activeDelegation?.delegationType.includes('/'),
+    nationalId: activeDelegation?.nationalId ?? '',
+    dateFrom: activeDelegation?.dates?.from,
+    dateTo: activeDelegation?.dates?.to,
+    lookup: activeDelegation?.lookup ?? false,
   })
 
   const closeModal = () => {
@@ -86,15 +86,17 @@ const DelegationModal: React.FC<Props> = ({
         </Text>
 
         <ActionCard
-          heading={activeDelegation?.name}
+          heading={activeDelegation?.name ?? ''}
           headingVariant="h4"
           text={formatMessage(messages.permitTo, {
-            arg: activeDelegation?.delegationType,
+            arg: activeDelegation?.lookup
+              ? formatMessage(messages.pickupMedicineAndLookup)
+              : formatMessage(messages.pickupMedicine),
           })}
           subText={
             formatMessage(messages.medicineValidTo) +
             ' ' +
-            formatDate(activeDelegation?.dateTo)
+            formatDate(activeDelegation?.dates?.to)
           }
         />
         <Box display={'flex'} justifyContent="spaceBetween" marginTop={6}>

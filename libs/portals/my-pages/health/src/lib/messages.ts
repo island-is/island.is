@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
   addDelegation: {
-    defaultMessage: 'Bæta við umboði',
+    defaultMessage: 'Bæta við heimild',
     id: 'sp.health:add-delegation',
   },
   aids: {
@@ -829,6 +829,14 @@ export const messages = defineMessages({
   permitTo: {
     defaultMessage: 'Heimild til að: {arg}',
     id: 'sp.health:permit-to',
+  },
+  pickupMedicine: {
+    defaultMessage: 'Sækja lyf í apóteki.',
+    id: 'sp.health:pickup-medicine',
+  },
+  pickupMedicineAndLookup: {
+    defaultMessage: 'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+    id: 'sp.health:pickup-medicine-and-lookup',
   },
   choosePersonToGivePermit: {
     defaultMessage: 'Veldu aðila sem má sækja lyfin þín í apóteki',

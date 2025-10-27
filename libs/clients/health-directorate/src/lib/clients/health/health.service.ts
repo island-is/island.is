@@ -25,8 +25,9 @@ import {
   meDonorStatusControllerGetOrganDonorStatusV1,
   donationExceptionControllerGetOrgansV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
 } from './gen/fetch'
-import { Locale } from './gen/fetch/types.gen'
+import { Locale, PrescriptionCommissionDto } from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -250,5 +251,29 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  /** Medicine Delegation */
+
+  public async getMedicineDelegations(
+    auth: Auth,
+    locale: Locale,
+    active: boolean,
+  ): Promise<Array<PrescriptionCommissionDto> | null> {
+    const medicineDelegations = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
+          query: {
+            active: active,
+          },
+        }),
+      ),
+    )
+
+    if (!medicineDelegations) {
+      return null
+    }
+
+    return medicineDelegations
   }
 }

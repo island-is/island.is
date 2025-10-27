@@ -12,16 +12,27 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import DelegationModal from './components/DelegationModal'
-import { delegationData } from './utils/mockdata'
+import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
 
 const MedicineDelegationDetail = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams<{ id: string }>()
-  const delegation = delegationData.find((d) => d.id === id)
   const [modalVisible, setModalVisible] = useState(false)
 
-  if (!delegation) {
-    return <Problem type="not_found" />
+  const { data, loading, error } = useGetMedicineDelegationsQuery({
+    variables: {
+      locale: lang,
+      input: {
+        active: false,
+      },
+    },
+  })
+  const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
+    (item) => item.nationalId === id,
+  )
+
+  if (!filteredData) {
+    return <Problem type="no_data" />
   }
 
   return (
@@ -32,27 +43,29 @@ const MedicineDelegationDetail = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
       )}
+      loading={loading}
     >
+      {!loading && !error && !filteredData && <Problem type="no_data" />}
       <InfoLineStack label={formatMessage(m.info)} space={1}>
         <InfoLine
           label={formatMessage(messages.nameHuman)}
-          content={delegation.name}
+          content={filteredData.name ?? ''}
         />
         <InfoLine
           label={formatMessage(m.natreg)}
-          content={`${delegation.nationalId.slice(
-            0,
-            -4,
-          )}-${delegation.nationalId.slice(-4)}`}
+          content={
+            filteredData.nationalId
+              ? `${filteredData.nationalId.slice(
+                  0,
+                  -4,
+                )}-${filteredData.nationalId.slice(-4)}`
+              : ''
+          }
         />
-        {/* <InfoLine
-          label={formatMessage(messages.publicationDate)}
-          content={formatDateWithTime(delegation.dateFrom.toISOString())}
-        /> */}
         <InfoLine
           label={formatMessage(messages.status)}
           content={
-            delegation.isValid
+            filteredData.isActive
               ? formatMessage(messages.valid)
               : formatMessage(messages.invalid)
           }
@@ -60,12 +73,12 @@ const MedicineDelegationDetail = () => {
         <InfoLine
           label={formatMessage(messages.validityPeriod)}
           content={
-            formatDate(delegation.dateFrom) +
+            formatDate(filteredData.dates?.from) +
             ' - ' +
-            formatDate(delegation.dateTo)
+            formatDate(filteredData.dates?.to)
           }
           button={
-            delegation.isValid
+            filteredData.isActive
               ? {
                   type: 'action',
                   label: formatMessage(messages.deleteDelegation),
@@ -78,15 +91,19 @@ const MedicineDelegationDetail = () => {
         />
         <InfoLine
           label={formatMessage(messages.permitValidForShort)}
-          content={delegation.delegationType}
+          content={
+            filteredData.lookup
+              ? formatMessage(messages.pickupMedicineAndLookup)
+              : formatMessage(messages.pickupMedicine)
+          }
         />
       </InfoLineStack>
 
       <DelegationModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        id={delegation.id}
-        activeDelegation={delegation}
+        id={filteredData.nationalId ?? 'medicine-delegation'}
+        activeDelegation={filteredData}
       />
     </IntroWrapper>
   )

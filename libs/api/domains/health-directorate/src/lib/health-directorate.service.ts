@@ -16,7 +16,7 @@ import {
   HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Country, isDefined } from '@island.is/shared/utils'
+import { isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
 import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import {
@@ -24,6 +24,8 @@ import {
   PermitReturn,
   Permits,
 } from './models/approvals/approvals.model'
+import { Countries } from './models/approvals/country.model'
+import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
   MedicineHistoryDispensation,
@@ -46,8 +48,7 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import { permitData, europeanCountriesIs } from './utils/mockData'
-import { Countries } from './models/approvals/country.model'
+import { europeanCountriesIs, permitData } from './utils/mockData'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -472,6 +473,37 @@ export class HealthDirectorateService {
 
     // TODO connect to service when ready
     return { id: 'mock-approval-id' } // Mock response for now
+  }
+
+  async getMedicineDelegations(
+    auth: Auth,
+    locale: Locale,
+    active: boolean,
+  ): Promise<MedicineDelegations | null> {
+    const medicineDelegations = await this.healthApi.getMedicineDelegations(
+      auth,
+      locale,
+      active,
+    )
+
+    if (!medicineDelegations) {
+      return null
+    }
+
+    const data: MedicineDelegations = {
+      items: medicineDelegations.map((item) => ({
+        name: item.toName,
+        nationalId: item.toNationalId,
+        dates: {
+          from: item.validFrom,
+          to: item.validTo,
+        },
+        isActive: item.isActive,
+        lookup: item.commissionType === 1,
+      })),
+    }
+
+    return data
   }
 
   private castRenewalInputToNumber = (

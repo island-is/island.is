@@ -4,3 +4,22 @@ query IdentityQuery($input: IdentityInput!) {
     nationalId
   }
 }
+
+query GetMedicineDelegations(
+  $locale: String!
+  $input: HealthDirectorateMedicineDelegationInput!
+) {
+  healthDirectorateMedicineDelegations(locale: $locale, input: $input) {
+    items {
+      __typename
+      name
+      nationalId
+      isActive
+      lookup
+      dates {
+        from
+        to
+      }
+    }
+  }
+}

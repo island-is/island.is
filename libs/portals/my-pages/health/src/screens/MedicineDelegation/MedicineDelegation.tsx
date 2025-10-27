@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  ActionCardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkButton,
@@ -19,21 +20,27 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { delegationData } from './utils/mockdata'
 import * as styles from './MedicineDelegation.css'
+import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
 
 const MedicineDelegation = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [showExipredPermits, setShowExpiredPermits] = useState(false)
 
-  const filteredData = delegationData.filter((permit) =>
-    showExipredPermits ? true : permit.isValid,
-  )
+  const { data, loading, error } = useGetMedicineDelegationsQuery({
+    variables: {
+      locale: lang,
+      input: {
+        active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
+      },
+    },
+  })
+  const filteredData =
+    data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
+      showExipredPermits ? item : item.isActive,
+    )
 
-  if (delegationData.length === 0) {
-    return <Problem type="no_data" />
-  }
   return (
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
@@ -42,6 +49,7 @@ const MedicineDelegation = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
       )}
+      loading={loading}
       buttonGroup={[
         <>
           <LinkButton
@@ -64,58 +72,77 @@ const MedicineDelegation = () => {
         </>,
       ]}
     >
-      <Box justifyContent="spaceBetween" alignItems="center" display="flex">
-        <Text variant="medium">
-          {filteredData?.length === 1
-            ? formatMessage(messages.singlePermit)
-            : formatMessage(messages.numberOfPermits, {
-                number: filteredData?.length,
-              })}
-        </Text>
-        <ToggleSwitchButton
-          className={styles.toggleButton}
-          label={formatMessage(messages.showExipredPermits)}
-          onChange={() => setShowExpiredPermits(!showExipredPermits)}
-          checked={showExipredPermits}
-        />
-      </Box>
-      <Stack space={2}>
-        {filteredData.map((item, i) => {
-          return (
-            <ActionCard
-              key={item.id}
-              heading={item.name}
-              headingVariant="h4"
-              text={formatMessage(messages.permitTo, {
-                arg: item.delegationType,
-              })}
-              subText={
-                formatMessage(messages.medicineValidTo) +
-                ' ' +
-                formatDate(item.dateTo)
-              }
-              tag={{
-                outlined: false,
-                label: item.isValid
-                  ? formatMessage(messages.valid)
-                  : formatMessage(messages.expired),
-                variant: item.isValid ? 'blue' : 'red',
-              }}
-              cta={{
-                variant: 'text',
-                label: formatMessage(m.seeDetails),
-                onClick: () =>
-                  navigate(
-                    `${HealthPaths.HealthMedicineDelegationDetail.replace(
-                      ':id',
-                      item.id,
-                    )}`,
-                  ),
-              }}
+      {!loading && error && (
+        <Problem type="internal_service_error" noBorder={false} />
+      )}
+      {!loading && !error && (!filteredData || filteredData.length === 0) && (
+        <Problem type="no_data" noBorder={false} />
+      )}
+      {loading && !error && (
+        <Box marginY={3}>
+          <ActionCardLoader />
+        </Box>
+      )}
+      {!loading && !error && filteredData && (
+        <>
+          <Box justifyContent="spaceBetween" alignItems="center" display="flex">
+            <Text variant="medium">
+              {filteredData?.length === 1
+                ? formatMessage(messages.singlePermit)
+                : formatMessage(messages.numberOfPermits, {
+                    number: filteredData?.length,
+                  })}
+            </Text>
+            <ToggleSwitchButton
+              className={styles.toggleButton}
+              label={formatMessage(messages.showExipredPermits)}
+              onChange={() => setShowExpiredPermits(!showExipredPermits)}
+              checked={showExipredPermits}
             />
-          )
-        })}
-      </Stack>
+          </Box>
+
+          <Stack space={2}>
+            {filteredData?.map((item, i) => {
+              return (
+                <ActionCard
+                  key={item.nationalId}
+                  heading={item.name ?? ''}
+                  headingVariant="h4"
+                  text={formatMessage(messages.permitTo, {
+                    arg: item.lookup
+                      ? formatMessage(messages.pickupMedicineAndLookup)
+                      : formatMessage(messages.pickupMedicine),
+                  })}
+                  subText={
+                    formatMessage(messages.medicineValidTo) +
+                    ' ' +
+                    formatDate(item.dates?.from)
+                  }
+                  tag={{
+                    outlined: false,
+                    label: item.isActive
+                      ? formatMessage(messages.valid)
+                      : formatMessage(messages.expired),
+                    variant: item.isActive ? 'blue' : 'red',
+                  }}
+                  cta={{
+                    variant: 'text',
+                    label: formatMessage(m.seeDetails),
+                    onClick: () =>
+                      item.nationalId &&
+                      navigate(
+                        `${HealthPaths.HealthMedicineDelegationDetail.replace(
+                          ':id',
+                          item.nationalId,
+                        )}`,
+                      ),
+                  }}
+                />
+              )
+            })}
+          </Stack>
+        </>
+      )}
     </IntroWrapper>
   )
 }

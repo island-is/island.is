@@ -47,6 +47,8 @@ import {
 } from './models/approvals/approvals.model'
 import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import { Countries } from './models/approvals/country.model'
+import { MedicineDelegations } from './models/medicineDelegation.model'
+import { MedicineDelegationInput } from './dto/medicineDelegation.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -319,5 +321,22 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<PermitReturn | null> {
     return this.api.invalidatePermit(user, input)
+  }
+
+  /* Prescription Delegations */
+  @Query(() => MedicineDelegations, {
+    nullable: true,
+    name: 'healthDirectorateMedicineDelegations',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  getMedicineDelegations(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: MedicineDelegationInput,
+    @CurrentUser() user: User,
+  ): Promise<MedicineDelegations | null> {
+    return this.api.getMedicineDelegations(user, locale, input.active)
   }
 }

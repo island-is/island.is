@@ -1,7 +1,7 @@
-import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
+import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
@@ -114,6 +114,8 @@ const PatientDataNewPermit = lazy(() =>
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
+
+const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -242,22 +244,22 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicineDelegation,
       path: HealthPaths.HealthMedicineDelegation,
-      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineDelegation />,
     },
     {
       name: hm.medicineDelegation,
       path: HealthPaths.HealthMedicineDelegationDetail,
-      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineDelegationDetail />,
     },
     {
       name: hm.medicineDelegation,
       path: HealthPaths.HealthMedicineDelegationAdd,
-      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <NewMedicineDelegation />,
     },
     {
