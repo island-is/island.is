@@ -9,6 +9,7 @@ import {
   APPLICATION_NAME,
   APPLICATION_TYPE,
   ContactAnswer,
+  formatCurrency,
   Hlutverk,
   NotandagognFlokkur,
   NotandagognHeiti,
@@ -17,7 +18,6 @@ import {
 } from './shared'
 import * as kennitala from 'kennitala'
 import { join } from 'path'
-import { formatCurrency } from '@island.is/application/ui-components'
 
 export const pathToAsset = (file: string) => {
   return join(
@@ -33,6 +33,11 @@ const getApplicant = (answers: FormValue) => {
     nationalId: getValueViaPath<string>(answers, 'applicant.nationalId'),
     phoneNumber: getValueViaPath<string>(answers, 'applicant.phoneNumber'),
   }
+}
+
+export const getRecipients = (application: Application): Array<any> => {
+  // Get recipients
+  return []
 }
 
 export const getRequestDto = (application: Application): ApplicationDto => {

@@ -24,7 +24,7 @@ export const conclusion = defineMessages({
   },
   actionCardDone: {
     id: 'ronp.application:conclusion.actionCardDone',
-    defaultMessage: 'Umsókn sent',
+    defaultMessage: 'Send til HMS',
     description: 'Action card done',
   },
 })

@@ -2,6 +2,8 @@ import { ApplicantType } from '@island.is/clients/hms-application-system'
 
 export const APPLICATION_TYPE = 'Yp3tK7qWb9Rmx2DJFc4Lza'
 export const APPLICATION_NAME = 'Stofnun nýrra fasteignanúmera'
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export enum NotandagognFlokkur {
   Product = 'Vara',

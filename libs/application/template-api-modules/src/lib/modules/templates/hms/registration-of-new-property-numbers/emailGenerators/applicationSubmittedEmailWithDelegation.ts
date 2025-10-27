@@ -1,16 +1,9 @@
 import { Message } from '@island.is/email-service'
-import { EmailTemplateGeneratorProps } from '../../../../../types'
-import { EmailRecipient, RealEstateAnswers } from '../shared'
+import { formatCurrency, RealEstateAnswers } from '../shared'
 import { pathToAsset } from '../utils'
-import { ApplicationConfigurations } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
-import { formatCurrency } from '@island.is/application/ui-components'
-
-export type ApplicationSubmittedEmail = (
-  props: EmailTemplateGeneratorProps,
-  recipient: EmailRecipient,
-) => Message
+import { ApplicationSubmittedEmail } from './shared'
 
 export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmittedEmail =
   (props, recipient): Message => {

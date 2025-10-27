@@ -32,6 +32,7 @@ import {
   propertiesApi,
 } from '../dataProviders'
 import { getChargeItems } from '../utils/getChargeItems'
+import { conclusion } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -170,6 +171,11 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: conclusion.actionCardDone,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
