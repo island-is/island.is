@@ -393,20 +393,20 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             finalize: true,
           },
       }
-    const response = await this.vmstUnemploymentClientService.submitApplication(
-      auth,
-      submitResponse,
-    )
-    console.log('response', response)
-    if (!response.success)
-      throw new Error(
-        response?.errorMessage || 'Response unsuccessfull and missing errorMsg',
-      )
-    throw new Error('error')
-    // try {
 
-    // } catch (e) {
-    //   throw new Error(e)
-    // }
+    try {
+      const response =
+        await this.vmstUnemploymentClientService.submitApplication(
+          auth,
+          submitResponse,
+        )
+      if (!response.success)
+        throw new Error(
+          response?.errorMessage ||
+            'Response unsuccessfull and missing errorMsg',
+        )
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 }
