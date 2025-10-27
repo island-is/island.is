@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import { FormSystemField } from '@island.is/api/schema'
-import { CREATE_UPLOAD_URL } from '@island.is/form-system/graphql'
+import { CREATE_UPLOAD_URL, STORE_FILE } from '@island.is/form-system/graphql'
 import {
   FileUploadStatus,
   InputFileUpload,
@@ -12,35 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Action } from '../../../lib'
 import { m } from '../../../lib/messages'
-
-const uploadViaPresignedPost = (
-  presigned: { url: string; fields: Record<string, string> },
-  file: File,
-  onProgress?: (progress: number) => void,
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const form = new FormData()
-    Object.entries(presigned.fields).forEach(([key, value]) =>
-      form.append(key, value),
-    )
-    form.append('file', file)
-
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', presigned.url)
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const progress = Math.round((event.loaded / event.total) * 100)
-        onProgress?.(progress)
-      }
-    }
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) resolve()
-      else reject(new Error(`Upload failed with status ${xhr.status}`))
-    }
-    xhr.onerror = () => reject(new Error('Network error during file upload'))
-    xhr.send(form)
-  })
-}
 
 interface Props {
   item: FormSystemField
@@ -57,6 +28,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
     hasError ? 'error' : undefined,
   )
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+  const [uploadFile] = useMutation(STORE_FILE)
 
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
 
@@ -73,14 +45,23 @@ export const FileUpload = ({ item, hasError }: Props) => {
           variables: { filename: file.name },
         })
         const presigned = data?.createUploadUrl
-
+        console.log(presigned)
         if (!presigned?.url || !presigned?.fields) {
           throw new Error('Invalid presigned upload response')
         }
 
-        await uploadViaPresignedPost(presigned, file, (progress) => {
-          updateFile(id, { percent: progress })
+        const res = await uploadFile({
+          variables: {
+            input: {
+              storeFileDto: {
+                fieldId: item.id,
+                sourceKey: presigned.fields.key,
+              },
+            },
+          },
         })
+
+        console.log(res)
 
         updateFile(id, {
           status: FileUploadStatus.done,
@@ -146,6 +127,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
   )
 
   const onRemove = useCallback((file: UploadFile) => {
+    console.log('removing', file)
     setFiles((prev) => prev.filter((f) => f.id !== file.id))
   }, [])
 
