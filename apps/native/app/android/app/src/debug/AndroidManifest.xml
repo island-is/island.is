@@ -6,10 +6,5 @@
   <application
     android:usesCleartextTraffic="true"
     tools:targetApi="28"
-    tools:ignore="GoogleAppIndexingWarning">
-    <meta-data
-      android:name="firebase_performance_collection_deactivated"
-      android:value="true"
-      tools:replace="android:value" />
-  </application>
+    tools:ignore="GoogleAppIndexingWarning"/>
 </manifest>
