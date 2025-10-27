@@ -12,5 +12,4 @@ export class MockEmployeesService implements IEmployeesService {
   async getEmployees(): Promise<EmployeeList> {
     return MOCK_EMPLOYEES
   }
-
 }

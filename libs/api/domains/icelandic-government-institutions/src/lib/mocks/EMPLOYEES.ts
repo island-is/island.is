@@ -1,4 +1,4 @@
-import { EmployeeList } from "../models/employeeList.model";
+import { EmployeeList } from '../models/employeeList.model'
 
 export const MOCK_EMPLOYEES: EmployeeList = {
   totalCount: 2,
@@ -8,28 +8,28 @@ export const MOCK_EMPLOYEES: EmployeeList = {
   },
   data: [
     {
-      "name": "Finyan Már ÞÍ Marteinsson",
-      "email": "fakefinyan@fsre.is",
-      "job": "Fjármál",
-      "phoneNumber": undefined,
-      "location": {
-        "address": "Borgartún 7A",
-        "postalCode": "105 Reykjavík"
+      name: 'Finyan Már ÞÍ Marteinsson',
+      email: 'fakefinyan@fsre.is',
+      job: 'Fjármál',
+      phoneNumber: undefined,
+      location: {
+        address: 'Borgartún 7A',
+        postalCode: '105 Reykjavík',
       },
-      department:"FSR Framkvæmdasvið",
+      department: 'FSR Framkvæmdasvið',
       currentlyActive: undefined,
     },
     {
-      "name": "Ragnheiður ÞÍ Nakitende",
-      "email": "fakeragnheidur@fsre.is",
-      "job": "Sérfræðingur",
-      "phoneNumber": undefined,
-      "location": {
-        "address": "Borgartún 7A",
-        "postalCode": "105 Reykjavík"
+      name: 'Ragnheiður ÞÍ Nakitende',
+      email: 'fakeragnheidur@fsre.is',
+      job: 'Sérfræðingur',
+      phoneNumber: undefined,
+      location: {
+        address: 'Borgartún 7A',
+        postalCode: '105 Reykjavík',
       },
-      department:"FSR Fjármál og stafrænir innviðir",
+      department: 'FSR Fjármál og stafrænir innviðir',
       currentlyActive: undefined,
     },
-  ]
+  ],
 }

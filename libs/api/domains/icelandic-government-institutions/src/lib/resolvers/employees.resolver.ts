@@ -10,7 +10,8 @@ import { Inject } from '@nestjs/common'
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class EmployeesResolver {
   constructor(
-    @Inject('IEmployeesService') private readonly employeeService: EmployeesService,
+    @Inject('IEmployeesService')
+    private readonly employeeService: EmployeesService,
   ) {}
 
   @Query(() => EmployeeList, {
