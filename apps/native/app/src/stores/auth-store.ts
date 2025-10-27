@@ -32,9 +32,6 @@ import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
-const INSTALL_MARKER_KEY = `@islandis_install_${bundleId}`
-const keychainLogoutInProgress = new Set<string>()
-let firstLaunchCompleted = false
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
@@ -287,24 +284,9 @@ export async function readAuthorizeResult(): Promise<void> {
     return
   }
 
-  // Try to read the install marker that tells us whether the app has run once on this device.
-  let installMarker: string | null = null
-  try {
-    installMarker = await AsyncStorage.getItem(INSTALL_MARKER_KEY)
-  } catch (err) {
-    console.log('Unable to read install marker: ', err)
-  }
-
-  let hasPersistedData = false
-  try {
-    // Look for any other AsyncStorage entries; if none exist, this looks like a fresh install.
-    const asyncStorageKeys = await AsyncStorage.getAllKeys()
-    hasPersistedData = asyncStorageKeys.some(
-      (key) => key !== INSTALL_MARKER_KEY && key !== PREFERENCES_KEY,
-    )
-  } catch (err) {
-    console.log('Unable to list AsyncStorage keys: ', err)
-  }
+  let hasOnboardedPinCode = false
+  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
+  hasOnboardedPinCode = preferencesStore.getState().hasOnboardedPinCode
 
   // Attempt to restore the last known authorization data from the secure keychain.
   let keychainResult: Awaited<ReturnType<typeof Keychain.getGenericPassword>>
@@ -318,36 +300,14 @@ export async function readAuthorizeResult(): Promise<void> {
     keychainResult = false
   }
 
-  if (!installMarker) {
-    // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
-    const shouldForceLogout = !hasPersistedData && !firstLaunchCompleted
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode) {
     try {
-      await AsyncStorage.setItem(INSTALL_MARKER_KEY, 'true')
+      await authStore.getState().logout(true)
     } catch (err) {
-      console.log('Unable to set install marker: ', err)
+      console.log('Unable to force logout after fresh install: ', err)
     }
-
-    if (shouldForceLogout && keychainResult) {
-      const key = `${keychainResult.service}:${keychainResult.storage}`
-      // Prevent multiple logout attempts from the same keychain entry.
-      if (!keychainLogoutInProgress.has(key)) {
-        // Add the keychain entry to the set of currently in-progress logout attempts.
-        keychainLogoutInProgress.add(key)
-        try {
-          if (keychainResult.password) {
-            // Hydrate state before logging out so downstream flows can access the auth metadata if needed.
-            const authRes = JSON.parse(keychainResult.password)
-            authStore.setState({ authorizeResult: authRes })
-          }
-          await authStore.getState().logout(true)
-        } catch (err) {
-          console.log('Unable to force logout after fresh install: ', err)
-        } finally {
-          keychainLogoutInProgress.delete(key)
-        }
-      }
-      return
-    }
+    return
   }
 
   if (keychainResult) {
@@ -359,9 +319,6 @@ export async function readAuthorizeResult(): Promise<void> {
       console.log('Unable to parse authorize result: ', err)
     }
   }
-
-  // Once we've gone through the bootstrap path we don't need to repeat the fresh-install logout.
-  firstLaunchCompleted = true
 }
 
 // Function used in getAppRoot to check if user is authenticated and show login screen if not
