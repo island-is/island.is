@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((transaction) =>
       Promise.all([
         // Ruling date null but court end date exists
-        // TODO: confirm case_ids, after we have shipped 38.3
+        // TODO: confirm case ids, after we have shipped 38.3
         queryInterface.sequelize.query(
           `UPDATE "case"
             SET "ruling_date" = "court_end_time"
