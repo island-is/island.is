@@ -82,7 +82,7 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="is.island.app" />
+        <data android:scheme="is.island.app.dev" />
       </intent-filter>
     </activity>
     <activity

@@ -39,6 +39,9 @@ GEM
       addressable (~> 2.8)
       algoliasearch (~> 1.0)
       concurrent-ruby (~> 1.1)
+      fuzzy_match (~> 2.0.4)
+      nap (~> 1.0)
+      netrc (~> 0.11)
       public_suffix (~> 4.0)
       typhoeus (~> 1.0)
     cocoapods-deintegrate (1.0.5)
@@ -46,6 +49,8 @@ GEM
     cocoapods-plugins (1.0.0)
       nap
     cocoapods-search (1.0.1)
+    cocoapods-trunk (1.6.0)
+      nap (>= 0.8, < 2.0)
       netrc (~> 0.11)
     cocoapods-try (1.2.0)
     colored2 (3.1.2)
@@ -90,3 +95,6 @@ DEPENDENCIES
 
 RUBY VERSION
    ruby 2.7.6p219
+
+BUNDLED WITH
+   2.1.4
