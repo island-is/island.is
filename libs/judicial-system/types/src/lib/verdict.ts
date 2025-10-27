@@ -43,6 +43,9 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveryMethod?: string
 }) => {
   if (delivered) {
+    if (deliveryMethod === 'LOGBIRTING_BIRT') {
+      return VerdictServiceStatus.LEGAL_PAPER
+    }
     if (deliveredOnPaper || deliveredToDefendant) {
       return VerdictServiceStatus.IN_PERSON
     }
@@ -51,9 +54,6 @@ export const mapPoliceVerdictDeliveryStatus = ({
     }
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
-    }
-    if (deliveryMethod === 'LOGBIRTING_BIRT') {
-      return VerdictServiceStatus.LEGAL_PAPER
     }
     return VerdictServiceStatus.FAILED
   }
