@@ -32,6 +32,7 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveredToLawyer,
   legalPaperRequestDate,
   deliveredToDefendant,
+  deliveryMethod,
 }: {
   delivered?: boolean
   deliveredOnPaper?: boolean
@@ -39,6 +40,7 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveredToLawyer?: boolean
   legalPaperRequestDate?: string
   deliveredToDefendant?: boolean
+  deliveryMethod?: string
 }) => {
   if (delivered) {
     if (deliveredOnPaper || deliveredToDefendant) {
@@ -49,6 +51,9 @@ export const mapPoliceVerdictDeliveryStatus = ({
     }
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
+    }
+    if (deliveryMethod === 'LOGBIRTING_BIRT') {
+      return VerdictServiceStatus.LEGAL_PAPER
     }
     return VerdictServiceStatus.FAILED
   }
