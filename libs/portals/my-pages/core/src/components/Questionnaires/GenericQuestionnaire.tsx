@@ -16,9 +16,9 @@ import {
 } from './utils/visibilityUtils'
 
 import {
-  QuestionnaireQuestion,
   Questionnaire,
-  QuestionnaireAnswerOption,
+  QuestionnaireAnswerOptionType,
+  QuestionnaireQuestion,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -202,9 +202,13 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
     currentQuestions.forEach((question: QuestionnaireQuestion) => {
       const answer = answers[question.id]
-
       if (
-        answer == null ||
+        question.answerOptions.type === QuestionnaireAnswerOptionType.label ||
+        !question.required
+      )
+        return
+      if (
+        (question.required && answer == null) ||
         answer.value == null ||
         (typeof answer.value === 'string' && !answer.value.trim()) ||
         (Array.isArray(answer.value) && answer.value.length === 0)
@@ -245,13 +249,17 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     visibleQuestions?.forEach((question: QuestionnaireQuestion) => {
       const answer = answers[question.id]
       if (
-        !answer ||
+        question.answerOptions.type === QuestionnaireAnswerOptionType.label ||
+        !question.required
+      )
+        return
+      if (
+        (question.required && !answer) ||
         (typeof answer.value === 'string' && !answer.value.trim()) ||
         (Array.isArray(answer.value) && answer.value.length === 0) ||
         answer.value === undefined
       ) {
-        allErrors[question.id] =
-          formatMessage(m.requiredQuestion) ?? 'This field is required'
+        allErrors[question.id] = formatMessage(m.requiredQuestion)
         allValid = false
       }
     })

@@ -1,5 +1,4 @@
 import type { User } from '@island.is/auth-nest-tools'
-import { LshClientService } from '@island.is/clients/lsh'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import {
@@ -8,17 +7,19 @@ import {
 } from './dto/questionnaire.input'
 
 import {
-  Form,
-  HealthDirectorateClientService,
   HealthDirectorateHealthService,
   LshDevService,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
 } from '@island.is/clients/health-directorate'
 
-import { QuestionnairesList } from '../models/questionnaires.model'
 import { Questionnaire } from '../models/questionnaire.model'
-import { mapToLshAnswer } from './transform-mappers/lsh/lsh-input-mapper'
-import { mapFormsToQuestionnairesList } from './transform-mappers/lsh/lsh-mapper'
+import {
+  QuestionnairesList,
+  QuestionnairesStatusEnum,
+} from '../models/questionnaires.model'
 import { QuestionnaireSubmission } from '../models/submission.model'
+import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
 
 @Injectable()
 export class QuestionnairesService {
@@ -29,7 +30,9 @@ export class QuestionnairesService {
 
   async getQuestionnaire(
     _user: User,
+    _locale: Locale,
     id: string,
+    includeQuestions = false,
   ): Promise<Questionnaire | null> {
     // // Handle error for each client so the other can still succeed
     // const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
@@ -50,7 +53,34 @@ export class QuestionnairesService {
 
     // If neither found, return null
 
-    return null
+    const data = await this.api.getQuestionnaire(_user, 'is', id)
+
+    if (!data) {
+      return null
+    }
+    return includeQuestions
+      ? this.getQuestionnaireWithQuestions(data, _locale)
+      : {
+          baseInformation: {
+            id: data?.questionnaireId ?? id,
+            title: data?.title || 'Untitled Questionnaire',
+            status:
+              (data?.numSubmissions ?? 0) > 0
+                ? QuestionnairesStatusEnum.answered
+                : QuestionnairesStatusEnum.notAnswered,
+            sentDate:
+              data?.createdDate?.toISOString() || new Date().toISOString(),
+            description: data?.message,
+            organization: 'Landlæknir',
+          },
+        }
+  }
+
+  private getQuestionnaireWithQuestions(
+    data: QuestionnaireDetailDto,
+    _locale: Locale,
+  ): Questionnaire {
+    return mapExternalQuestionnaireToGraphQL(data, _locale)
   }
 
   async getAnsweredQuestionnaire(
@@ -94,7 +124,9 @@ export class QuestionnairesService {
     _user: User,
     _locale: Locale,
   ): Promise<QuestionnairesList | null> {
-    const data = this.api.getQuestionnaires(_user, _locale)
+    const data: QuestionnaireBaseDto[] | null =
+      await this.api.getQuestionnaires(_user, _locale)
+
     // const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
     // // Transform each LSH Dev questionnaire
     // const lshTransformed = mapFormsToQuestionnairesList(lshDev)
@@ -113,6 +145,24 @@ export class QuestionnairesService {
     //   // ...(lshAnsweredTransformed.questionnaires || []),
     // ]
 
-    return null
+    let allQuestionnaires: QuestionnairesList = {
+      questionnaires:
+        data?.map((q) => {
+          return {
+            id: q.questionnaireId,
+            title: q.title ?? 'Untitled Questionnaire',
+            description: q.message,
+            sentDate: new Date().toISOString(),
+            organization: 'Landlæknir',
+            status:
+              q.numSubmissions > 0
+                ? QuestionnairesStatusEnum.answered
+                : QuestionnairesStatusEnum.notAnswered,
+            lastSubmitted: q.lastSubmitted,
+          }
+        }) || [],
+    }
+
+    return { questionnaires: allQuestionnaires.questionnaires }
   }
 }

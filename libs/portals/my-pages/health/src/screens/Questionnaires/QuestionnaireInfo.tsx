@@ -1,17 +1,6 @@
-import {
-  Box,
-  Button,
-  LoadingDots,
-  Tag,
-  TagVariant,
-} from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { QuestionnaireQuestionnairesStatusEnum } from '@island.is/api/schema'
+import { Box, LoadingDots, Tag, TagVariant } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Problem } from '@island.is/react-spa/shared'
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import { messages } from '../..'
-import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import {
   formatDate,
   InfoLine,
@@ -19,9 +8,12 @@ import {
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
-import { QuestionnaireQuestionnairesStatusEnum } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
-import { format } from 'path'
+import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireInfo: React.FC = () => {
   const { id } = useParams<{ id?: string }>()
@@ -44,7 +36,7 @@ const QuestionnaireInfo: React.FC = () => {
   }
 
   const questionnaire = data?.questionnairesDetail
-  const status = questionnaire?.status
+  const status = questionnaire?.baseInformation.status
   const isAnswered = status === QuestionnaireQuestionnairesStatusEnum.answered
   const notAnswered =
     status === QuestionnaireQuestionnairesStatusEnum.notAnswered
@@ -86,7 +78,8 @@ const QuestionnaireInfo: React.FC = () => {
       title={
         loading
           ? formatMessage(messages.questionnaire)
-          : questionnaire?.title ?? formatMessage(messages.questionnaire)
+          : questionnaire?.baseInformation.title ??
+            formatMessage(messages.questionnaire)
       }
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
@@ -140,7 +133,8 @@ const QuestionnaireInfo: React.FC = () => {
               key="questionnaire-organization"
               label={formatMessage(messages.organization)}
               content={
-                questionnaire?.organization ?? formatMessage(messages.unknown)
+                questionnaire?.baseInformation.organization ??
+                formatMessage(messages.unknown)
               }
             />,
 
@@ -149,8 +143,8 @@ const QuestionnaireInfo: React.FC = () => {
               key="questionnaire-sent"
               label={formatMessage(messages.date)}
               content={
-                questionnaire?.sentDate
-                  ? formatDate(questionnaire?.sentDate)
+                questionnaire?.baseInformation.sentDate
+                  ? formatDate(questionnaire?.baseInformation.sentDate)
                   : formatMessage(messages.unknown)
               }
             />,

@@ -8,6 +8,7 @@ import { QuestionAnswer } from '../../types/questionnaire'
 import {
   QuestionnaireQuestion,
   QuestionnaireAnswerOptionType,
+  QuestionnaireOptionsLabelValue,
 } from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
 import { Scale } from './QuestionsTypes/Scale'
@@ -55,8 +56,24 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
+            maxLength={question.answerOptions.maxLength ?? undefined}
+          />
+        )
+      }
+
+      case QuestionnaireAnswerOptionType.textarea: {
+        return (
+          <TextInput
+            id={question.id}
+            label={question.label}
+            placeholder={question.answerOptions.placeholder ?? undefined}
+            value={typeof answer?.value === 'string' ? answer.value : undefined}
+            onChange={(value: string) => handleValueChange(value)}
+            disabled={disabled}
+            error={error}
             multiline
-            maxLength={question.answerOptions.maxLength || undefined}
+            rows={4}
+            maxLength={question.answerOptions.maxLength ?? undefined}
           />
         )
       }
@@ -77,7 +94,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            type="number"
+            type={question.answerOptions.decimal ? 'decimal' : 'number'}
             min={question.answerOptions.min || undefined}
             max={question.answerOptions.max || undefined}
           />
@@ -166,8 +183,11 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
       case QuestionnaireAnswerOptionType.slider: {
         const options = question.answerOptions.options || []
-        const selectedValue =
-          typeof answer?.value === 'string' ? answer.value : ''
+        const selectedValue: QuestionnaireOptionsLabelValue | undefined = {
+          id: question.id,
+          label: question.label,
+          value: answer?.value ? String(answer.value) : '',
+        }
         const selectedIndex = options.findIndex(
           (option) => option === selectedValue,
         )
@@ -194,7 +214,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         )
       }
 
-      case QuestionnaireAnswerOptionType.date: {
+      case QuestionnaireAnswerOptionType.date:
+      case QuestionnaireAnswerOptionType.datetime: {
         return (
           <DatePicker
             id={question.id}
@@ -210,25 +231,14 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             handleChange={(date: Date) =>
               handleValueChange(date ? date.toISOString().split('T')[0] : '')
             }
+            backgroundColor="blue"
             disabled={disabled}
             hasError={!!error}
-          />
-        )
-      }
-
-      case QuestionnaireAnswerOptionType.datetime: {
-        // For datetime, we'll use a text input for now
-        return (
-          <TextInput
-            id={question.id}
-            label={question.label}
-            placeholder={
-              question.answerOptions.placeholder || 'dd.mm.áááá hh:mm'
+            showTimeInput={
+              question.answerOptions.type ===
+              QuestionnaireAnswerOptionType.datetime
             }
-            value={typeof answer?.value === 'string' ? answer.value : undefined}
-            onChange={(value: string) => handleValueChange(value)}
-            disabled={disabled}
-            error={error}
+            size="xs"
           />
         )
       }

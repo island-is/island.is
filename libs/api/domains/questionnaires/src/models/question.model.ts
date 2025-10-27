@@ -76,7 +76,7 @@ export class AnswerOption {
   placeholder?: string
 
   @Field({ nullable: true })
-  maxLength?: number
+  maxLength?: string
 
   @Field({ nullable: true })
   min?: string
@@ -95,6 +95,9 @@ export class AnswerOption {
 
   @Field({ nullable: true })
   formula?: string
+
+  @Field(() => Boolean, { nullable: true })
+  decimal?: boolean
 }
 
 // Main question type
@@ -107,6 +110,9 @@ export class Question {
   label!: string
 
   @Field({ nullable: true })
+  htmlLabel?: string
+
+  @Field({ nullable: true })
   sublabel?: string
 
   @Field(() => AnswerOption)
@@ -117,4 +123,7 @@ export class Question {
 
   @Field(() => [String], { nullable: true })
   dependsOn?: string[]
+
+  @Field(() => Boolean, { nullable: true })
+  required?: boolean
 }

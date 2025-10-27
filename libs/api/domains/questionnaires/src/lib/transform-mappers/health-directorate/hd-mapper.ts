@@ -4,19 +4,19 @@
  */
 
 import {
+  AttachmentQuestionDto,
+  BooleanQuestionDto,
+  BooleanTriggerDto,
+  DateQuestionDto,
+  ListQuestionDto,
+  ListTriggerDto,
+  NumberQuestionDto,
+  NumberTriggerDto,
   QuestionGroupDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
-  BooleanQuestionDto,
   StringQuestionDto,
-  DateQuestionDto,
-  NumberQuestionDto,
-  ListQuestionDto,
-  AttachmentQuestionDto,
   TableQuestionDto,
-  BooleanTriggerDto,
-  ListTriggerDto,
-  NumberTriggerDto,
 } from '@island.is/clients/health-directorate'
 import {
   AnswerOptionType,
@@ -25,13 +25,10 @@ import {
   VisibilityOperator,
 } from '../../../models/question.model'
 import {
-  QuestionnairesList,
-  QuestionnairesStatusEnum,
-} from '../../../models/questionnaires.model'
-import {
   Questionnaire,
   QuestionnaireSection,
 } from '../../../models/questionnaire.model'
+import { QuestionnairesStatusEnum } from '../../../models/questionnaires.model'
 
 type HealthDirectorateQuestionDto =
   | BooleanQuestionDto
@@ -57,6 +54,9 @@ function mapAnswerType(
     case 'text':
       return AnswerOptionType.label
     case 'string':
+      if ('multiline' in item && item.multiline) {
+        return AnswerOptionType.textarea
+      }
       return AnswerOptionType.text
     case 'number':
       if ('displayClass' in item && item.displayClass === 'thermometer')
@@ -68,9 +68,17 @@ function mapAnswerType(
     case 'list':
       return 'multiselect' in item && item.multiselect
         ? AnswerOptionType.checkbox
+        : 'displayClass' in item && item.displayClass === 'slider'
+        ? AnswerOptionType.slider
         : AnswerOptionType.radio
     case 'thermometer':
       return AnswerOptionType.thermometer
+    case 'date':
+      return AnswerOptionType.date
+    case 'datetime':
+      return AnswerOptionType.datetime
+    case 'table':
+      return AnswerOptionType.scale
     default:
       return AnswerOptionType.text
   }
@@ -214,7 +222,8 @@ function mapItemToQuestion(
     type: answerType,
     label: undefined,
     options,
-    placeholder: item.htmlLabel,
+    placeholder: item.hint,
+    maxLength: 'maxLength' in item ? item.maxLength?.toString() : '',
     min: 'min' in item && item.min !== undefined ? item.min.toString() : '',
     max: 'max' in item && item.max !== undefined ? item.max.toString() : '',
     minLabel:
@@ -230,12 +239,15 @@ function mapItemToQuestion(
         ? item.maxDescription
         : '',
     multiline: 'multiline' in item && item.multiline,
+    decimal: 'decimals' in item && item.decimals ? true : false,
   }
 
   return {
     id: item.id,
     label: item.label,
-    sublabel: item.htmlLabel,
+    htmlLabel: item.htmlLabel,
+    sublabel: item.hint,
+    required: 'required' in item ? item.required : false,
     answerOptions,
     ...triggerDeps,
   }
@@ -258,27 +270,35 @@ function mapGroupToSection(
 /* -------------------- Core Mapper -------------------- */
 
 export function mapExternalQuestionnaireToGraphQL(
-  q: QuestionnaireDetailDto,
+  q: QuestionnaireDetailDto | QuestionnaireBaseDto,
   locale: 'is' | 'en',
 ): Questionnaire {
-  const allQuestions: HealthDirectorateQuestionDto[] = q.groups.flatMap(
-    (g) => g.items,
-  )
+  const isDetailed = 'groups' in q && 'triggers' in q
+  let allQuestions: HealthDirectorateQuestionDto[] = []
+  if (isDetailed) {
+    allQuestions = q.groups.flatMap((g) => g.items)
+  }
 
   return {
     baseInformation: {
       id: q.questionnaireId,
       title: q.title ?? q.questionnaireId,
       sentDate: new Date().toISOString(),
-      status:
-        q.submissions.length > 0
+      status: isDetailed
+        ? q.submissions.length > 0
           ? QuestionnairesStatusEnum.answered
-          : QuestionnairesStatusEnum.notAnswered,
+          : QuestionnairesStatusEnum.notAnswered
+        : q.numSubmissions > 0
+        ? QuestionnairesStatusEnum.answered
+        : QuestionnairesStatusEnum.notAnswered,
+      description: isDetailed ? q.message : q.message || undefined,
       formId: q.questionnaireId,
       organization: 'Landlæknir', // TODO: ask if this is correct
     },
-    sections: q.groups.map((g) =>
-      mapGroupToSection(g, allQuestions, locale, q.triggers),
-    ),
+    sections: isDetailed
+      ? q.groups.map((g) =>
+          mapGroupToSection(g, allQuestions, locale, q.triggers),
+        )
+      : undefined,
   }
 }

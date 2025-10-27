@@ -1,8 +1,9 @@
+import { QuestionnaireOptionsLabelValue } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
-import React, { useRef, FC } from 'react'
 import cn from 'classnames'
-import * as styles from './ProgressBar.css'
+import React, { FC, useRef } from 'react'
 import HtmlParser from 'react-html-parser'
+import * as styles from './ProgressBar.css'
 
 interface Props {
   progress: number
@@ -12,7 +13,7 @@ interface Props {
   onClick?: (percentage?: number) => void
   renderProgressBar?: boolean
   vertical?: boolean
-  selectedValue?: string
+  selectedValue?: QuestionnaireOptionsLabelValue | undefined
   onOptionClick?: (value: string) => void
   options?: {
     label: string
@@ -65,87 +66,88 @@ export const ProgressBar: FC<Props> = ({
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
       )}
-      <Box
-        className={cn(styles.progress, styles.progressContainer, className, {
-          [styles.vertical]: vertical,
-        })}
-        position="relative"
-        overflow="hidden"
-        borderRadius="large"
-        background={variant ? 'white' : options ? 'blue200' : 'blue100'}
-        width="full"
-        onClick={handleClick}
-        ref={ref}
-      >
-        {renderProgressBar && (
-          <Box
-            className={styles.inner}
-            background={'blue400'}
-            borderRadius="large"
-            position="absolute"
-            style={{
-              transform: `translate${vertical ? 'Y' : 'X'}(${
-                (1 - progress) * -100
-              }%)`,
-            }}
-          />
-        )}
-
-        {/* Dots for each option */}
-        {options &&
-          options.length > 0 &&
-          options.map((option, index) => {
-            const isSelected = selectedValue === option.value
-            const isLast = index === options.length - 1
-            const isFirst = index === 0
-            const position =
-              (index / (options.length - 1)) * 100 +
-              (isLast ? -1 : isFirst ? 1 : 0)
-
-            return (
-              <Box
-                key={`dot-${option.value}`}
-                className={cn(styles.dot, styles.dotPosition, {
-                  [styles.dotSelected]: isSelected,
-                })}
-                style={{
-                  left: `${position}%`,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOptionClick?.(option.value)
-                }}
-              />
-            )
+      <Box className={styles.progressContainer}>
+        <Box
+          className={cn(styles.progress, className, {
+            [styles.vertical]: vertical,
           })}
-      </Box>
+          position="relative"
+          overflow="hidden"
+          borderRadius="large"
+          background={variant ? 'white' : options ? 'blue200' : 'blue100'}
+          width="full"
+          onClick={handleClick}
+          ref={ref}
+        >
+          {renderProgressBar && (
+            <Box
+              className={styles.inner}
+              background={'blue400'}
+              borderRadius="large"
+              position="absolute"
+              style={{
+                transform: `translate${vertical ? 'Y' : 'X'}(${
+                  (1 - progress) * -100
+                }%)`,
+              }}
+            />
+          )}
 
-      {/* Selected indicator - positioned outside overflow hidden container */}
-      {options && options.length > 0 && selectedValue && (
-        <Box className={styles.selectedIndicatorContainer}>
-          {options.map((option, index) => {
-            if (selectedValue !== option.value) return null
+          {/* Dots for each option */}
+          {options &&
+            options.length > 0 &&
+            options.map((option, index) => {
+              const isSelected = selectedValue?.value === option.value
+              const isLast = index === options.length - 1
+              const isFirst = index === 0
+              const position =
+                (index / (options.length - 1)) * 100 +
+                (isLast ? -1 : isFirst ? 1 : 0)
 
-            const isLast = index === options.length - 1
-            const isFirst = index === 0
-            const position =
-              (index / (options.length - 1)) * 100 +
-              (isLast ? -1 : isFirst ? 1 : 0)
-
-            return (
-              <Box
-                key={`indicator-${option.value}`}
-                className={styles.selectedIndicator}
-                style={{
-                  left: `${position}%`,
-                }}
-              >
-                <Box className={styles.selectedIndicatorInner} />
-              </Box>
-            )
-          })}
+              return (
+                <Box
+                  key={`dot-${option.value}`}
+                  className={cn(styles.dot, styles.dotPosition, {
+                    [styles.dotSelected]: isSelected,
+                  })}
+                  style={{
+                    left: `${position}%`,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onOptionClick?.(option.value)
+                  }}
+                />
+              )
+            })}
         </Box>
-      )}
+        {/* Selected indicator - positioned outside overflow hidden container */}
+        {options && options.length > 0 && selectedValue && (
+          <Box className={styles.selectedIndicatorContainer}>
+            {options.map((option, index) => {
+              if (selectedValue.value !== option.value) return null
+
+              const isLast = index === options.length - 1
+              const isFirst = index === 0
+              const position =
+                (index / (options.length - 1)) * 100 +
+                (isLast ? -1 : isFirst ? 1 : 0)
+
+              return (
+                <Box
+                  key={`indicator-${option.value}`}
+                  className={styles.selectedIndicator}
+                  style={{
+                    left: `${position}%`,
+                  }}
+                >
+                  <Box className={styles.selectedIndicatorInner} />
+                </Box>
+              )
+            })}
+          </Box>
+        )}
+      </Box>
 
       {options && options.length > 0 && (
         <Box className={styles.textContainer} marginTop={1}>

@@ -22,8 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
-
-const ITEMS_ON_PAGE = 10
+import { Problem } from '@island.is/react-spa/shared'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -147,6 +146,11 @@ const Questionnaires: React.FC = () => {
           </Stack>
         </Box>
       </Filter>
+      {!loading && data?.questionnairesList === null && (
+        <Box marginTop={3}>
+          <Problem type="no_data" noBorder={false} />
+        </Box>
+      )}
       <Box marginTop={5}>
         <Stack space={3}>
           {loading && <CardLoader />}

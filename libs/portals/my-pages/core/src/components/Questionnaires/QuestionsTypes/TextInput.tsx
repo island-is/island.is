@@ -12,8 +12,8 @@ export interface TextInputProps {
   required?: boolean
   multiline?: boolean
   rows?: number
-  maxLength?: number
-  type?: 'text' | 'number'
+  maxLength?: string
+  type?: 'text' | 'number' | 'decimal'
   min?: string
   max?: string
   step?: number
@@ -83,10 +83,16 @@ export const TextInput: React.FC<TextInputProps> = ({
           errorMessage={error}
           disabled={disabled}
           required={required}
-          maxLength={maxLength}
+          maxLength={maxLength ? +maxLength : undefined}
           textarea={multiline}
           rows={multiline ? rows : undefined}
-          type={multiline ? 'text' : type}
+          inputMode={
+            type === 'decimal'
+              ? 'decimal'
+              : type === 'number'
+              ? 'numeric'
+              : 'text'
+          }
         />
       </Box>
     </>

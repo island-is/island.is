@@ -13,7 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import {
-  useGetQuestionnaireQuery,
+  useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
 
@@ -24,10 +24,11 @@ const QuestionnaireAnswer: React.FC = () => {
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire] = useSubmitQuestionnaireMutation()
 
-  const { data, loading, error } = useGetQuestionnaireQuery({
+  const { data, loading, error } = useGetQuestionnaireWithQuestionsQuery({
     variables: {
       id: id || '',
       locale: lang,
+      includeQuestions: true,
     },
     skip: !id,
   })
@@ -54,7 +55,8 @@ const QuestionnaireAnswer: React.FC = () => {
       variables: {
         input: {
           id,
-          organization: data?.questionnairesDetail?.organization || '',
+          organization:
+            data?.questionnairesDetail?.baseInformation.organization || '',
           entries: formattedAnswers.map((answer) => ({
             entryID: answer.EntryID,
             type: answer.Type,
@@ -62,7 +64,7 @@ const QuestionnaireAnswer: React.FC = () => {
               ? answer.Value
               : [String(answer.Value)],
           })),
-          formId: data?.questionnairesDetail?.formId || '',
+          formId: data?.questionnairesDetail?.baseInformation.id || '',
         },
       },
     })
@@ -70,14 +72,14 @@ const QuestionnaireAnswer: React.FC = () => {
         console.error('Error submitting questionnaire:', e)
         toast.error(
           formatMessage(messages.errorSendingAnswers, {
-            title: data?.questionnairesDetail?.title || '',
+            title: data?.questionnairesDetail?.baseInformation.title || '',
           }),
         )
       })
       .then(() => {
         toast.success(
           formatMessage(messages.yourAnswersForHasBeenSent, {
-            title: data?.questionnairesDetail?.title || '',
+            title: data?.questionnairesDetail?.baseInformation.title || '',
           }),
         )
         navigate(-1)
@@ -119,7 +121,7 @@ const QuestionnaireAnswer: React.FC = () => {
             enableStepper={true}
             backLink={HealthPaths.HealthQuestionnaires}
             img={getOrganizationLogoUrl(
-              data.questionnairesDetail.organization ?? '',
+              data.questionnairesDetail?.baseInformation?.organization ?? '',
               organizations,
               60,
               'none',

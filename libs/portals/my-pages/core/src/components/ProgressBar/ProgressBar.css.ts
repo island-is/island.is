@@ -9,10 +9,6 @@ export const inner = style({
   willChange: 'transform',
 })
 
-export const progress = style({
-  height: '12px',
-})
-
 export const vertical = style({
   width: '12px',
   height: 'auto',
@@ -55,11 +51,16 @@ export const selectedIndicatorInner = style({
 })
 
 export const container = style({
-  position: 'relative',
   width: '100%',
 })
 
 export const progressContainer = style({
+  position: 'relative',
+})
+
+export const progress = style({
+  height: '12px',
+  position: 'relative',
   top: 0,
 })
 

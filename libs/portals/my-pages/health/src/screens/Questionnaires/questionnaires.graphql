@@ -35,13 +35,22 @@ query GetQuestionnaire($id: String!, $locale: String!) {
   }
 }
 
-query GetQuestionnaireWithQuestions($id: String!, $locale: String!) {
-  questionnairesDetail(id: $id, locale: $locale) {
+query GetQuestionnaireWithQuestions(
+  $id: String!
+  $locale: String!
+  $includeQuestions: Boolean!
+) {
+  questionnairesDetail(
+    id: $id
+    locale: $locale
+    includeQuestions: $includeQuestions
+  ) {
     baseInformation {
       __typename
       id
       title
       organization
+      sentDate
     }
     canSubmit
     sections {
@@ -52,7 +61,15 @@ query GetQuestionnaireWithQuestions($id: String!, $locale: String!) {
         id
         label
         sublabel
+        htmlLabel
+        required
         dependsOn
+        visibilityConditions {
+          questionId
+          operator
+          expectedValues
+          showWhenMatched
+        }
         answerOptions {
           __typename
           type
@@ -62,10 +79,13 @@ query GetQuestionnaireWithQuestions($id: String!, $locale: String!) {
           max
           maxLabel
           minLabel
+          decimal
           formula
           options {
             __typename
+            id
             label
+            value
           }
         }
       }
