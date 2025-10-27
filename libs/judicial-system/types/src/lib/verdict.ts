@@ -25,6 +25,8 @@ export enum InformationForDefendant {
   ITEM_CONFISCATION = 'ITEM_CONFISCATION',
 }
 
+export const DELIVERY_METHOD_LEGAL_PAPER = 'LOGBIRTING_BIRT' as const
+
 export const mapPoliceVerdictDeliveryStatus = ({
   delivered,
   deliveredOnPaper,
@@ -43,7 +45,9 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveryMethod?: string
 }) => {
   if (delivered) {
-    if (deliveryMethod === 'LOGBIRTING_BIRT') {
+    // TODO: More sophisticated mapping later when we have moved all delivery types
+    // to delivery methods instead of boolean flags
+    if (deliveryMethod === DELIVERY_METHOD_LEGAL_PAPER) {
       return VerdictServiceStatus.LEGAL_PAPER
     }
     if (deliveredOnPaper || deliveredToDefendant) {
