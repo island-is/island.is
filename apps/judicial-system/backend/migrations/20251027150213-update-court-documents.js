@@ -13,6 +13,15 @@ module.exports = {
           },
           { transaction: t },
         ),
+        queryInterface.addColumn(
+          'court_document',
+          'merged_court_session_id',
+          {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+          },
+          { transaction: t },
+        ),
       ]),
     )
   },
@@ -23,6 +32,13 @@ module.exports = {
         queryInterface.removeColumn('court_document', 'merged_document_order', {
           transaction: t,
         }),
+        queryInterface.removeColumn(
+          'court_document',
+          'merged_court_session_id',
+          {
+            transaction: t,
+          },
+        ),
       ]),
     )
   },

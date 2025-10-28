@@ -2304,6 +2304,7 @@ export class CaseService {
           theCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.MERGE
         ) {
+          // TODO: Get latest court session or create a new one
           await this.courtDocumentService.updateMergedCourtDocuments({
             parentCaseId: update.mergeCaseId,
             caseId: theCase.id,

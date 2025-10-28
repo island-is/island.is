@@ -48,6 +48,11 @@ export class CourtDocument extends Model {
   @ApiPropertyOptional({ type: String })
   courtSessionId?: string
 
+  @ForeignKey(() => CourtSession)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergedCourtSessionId?: string
+
   @Column({
     type: DataType.ENUM,
     allowNull: false,
