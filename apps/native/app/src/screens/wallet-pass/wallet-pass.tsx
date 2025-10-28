@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -44,6 +44,7 @@ import {
   INFORMATION_BASE_TOP_SPACING,
   SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
+import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
@@ -138,6 +139,12 @@ const getInfoAlertMessageIds = (
     licenseType === GenericLicenseType.IdentityDocument &&
     licenseNumber?.startsWith('ID')
   switch (licenseType) {
+    case GenericLicenseType.DriversLicense:
+      return {
+        title: 'licenseDetail.driversLicense.alert.title',
+        description: 'licenseDetail.driversLicense.alert.description',
+        dismissible: true,
+      }
     case GenericLicenseType.PCard:
       return {
         title: 'licenseDetail.pcard.alert.title',
@@ -165,6 +172,8 @@ const getInfoAlertMessageIds = (
   }
 }
 
+const INFO_ALERT_DISMISSED_STORAGE_KEY = 'walletPassDismissedInfoAlerts'
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   type: string
@@ -176,6 +185,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
+  const [dismissedAlerts, setDismissedAlerts] = useState<
+    Record<string, boolean>
+  >({})
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
@@ -215,11 +227,38 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
+  const { getItem: getDismissedAlertsItem, setItem: setDismissedAlertsItem } =
+    useAsyncStorage(INFO_ALERT_DISMISSED_STORAGE_KEY)
+
+  const markInfoAlertAsDismissed = useCallback(async () => {
+    setDismissedAlertsItem(JSON.stringify({ ...dismissedAlerts, [type]: true }))
+    setDismissedAlerts((prev) => ({ ...prev, [type]: true }))
+  }, [type, setDismissedAlertsItem])
+
+  useEffect(() => {
+    getDismissedAlertsItem().then((item) => {
+      if (item) {
+        setDismissedAlerts(JSON.parse(item))
+      }
+    })
+  }, [])
+
+  const isInfoAlertDismissed = useCallback(
+    (type: string) => {
+      if (!alertMessageIds?.dismissible) {
+        return false
+      }
+      return dismissedAlerts[type] ? false : true
+    },
+    [dismissedAlerts],
+  )
+
   const shouldShowExpireDate = !!(
     (licenseType === GenericLicenseType.IdentityDocument ||
       licenseType === GenericLicenseType.Passport) &&
     expireDate
   )
+
   const showInfoAlert =
     licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
 
@@ -504,7 +543,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }}
         >
           {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
-          {showInfoAlert && (
+          {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
             <View
               style={{
                 paddingTop: theme.spacing[3],
@@ -516,6 +555,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                 })}
                 message={intl.formatMessage({
                   id: alertMessageIds?.description,
+                })}
+                {...(alertMessageIds?.dismissible && {
+                  onClose: () => {
+                    markInfoAlertAsDismissed()
+                  },
                 })}
                 type="info"
                 hasBorder
