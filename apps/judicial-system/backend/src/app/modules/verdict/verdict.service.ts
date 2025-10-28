@@ -296,7 +296,7 @@ export class VerdictService {
         ? [
             {
               code: 'RULING',
-              value: theCase.ruling,
+              value: theCase.courtSessions?.[0].ruling ?? '',
             },
           ]
         : []),
