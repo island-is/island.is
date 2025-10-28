@@ -7,7 +7,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect } from 'react'
+import { isDefined } from '@island.is/shared/utils'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SubmitHandler } from '../../utils/types'
@@ -34,6 +35,7 @@ export const RadioFormGroup = ({
   loading,
 }: Props) => {
   const { formatMessage } = useLocale()
+  const [response, setResponse] = useState(false)
   // Use group.label or group.id as the field name
   const radioFieldName = group.label ?? 'radio-button-group'
 
@@ -53,12 +55,9 @@ export const RadioFormGroup = ({
     }
   }, [appealDecision, radioFieldName, setValue, isDirty])
 
-  useEffect(() => {
-    console.log('hasSubmitted', formState.isSubmitSuccessful)
-  }, [formState])
-
-  const onSubmit = (data: RadioFormValues) => {
-    onFormSubmit?.(data)
+  const onSubmit = async (data: RadioFormValues) => {
+    const result = await onFormSubmit?.(data)
+    isDefined(result) && setResponse(result)
   }
 
   return (
@@ -66,7 +65,7 @@ export const RadioFormGroup = ({
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {group.label}
       </Text>
-      {submitMessage && formState.isSubmitSuccessful && (
+      {submitMessage && response && !loading && (
         <Box marginBottom={3}>
           <AlertMessage
             type="info"
@@ -95,10 +94,7 @@ export const RadioFormGroup = ({
                     name={`${radioFieldName}.${i}`}
                     label={item.label ?? ''}
                     value={item.value}
-                    checked={
-                      field.value === item.value ||
-                      item.value === appealDecision
-                    }
+                    checked={field.value === item.value}
                     onChange={field.onChange}
                   />
                 </Box>

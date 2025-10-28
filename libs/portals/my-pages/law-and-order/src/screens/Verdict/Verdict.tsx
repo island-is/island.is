@@ -1,21 +1,26 @@
+import {
+  LawAndOrderAppealDecision,
+  LawAndOrderItemType,
+} from '@island.is/api/schema'
+import { Divider, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
   InfoLine,
   IntroWrapper,
   m,
+  Modal,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
+import { RadioFormGroup } from '../../components/InfoLines/RadioButtonType'
 import { messages } from '../../lib/messages'
 import {
   useGetCourtCaseVerdictQuery,
   useSubmitVerdictAppealDecisionMutation,
 } from './Verdict.generated'
-import { LawAndOrderAppealDecision } from '@island.is/api/schema'
-import { Box, Divider, toast } from '@island.is/island-ui/core'
 
 type UseParams = {
   id: string
@@ -39,16 +44,20 @@ const CourtCaseDetail = () => {
     skip: !id,
   })
   const verdict = data?.lawAndOrderVerdict
-
+  const radioButtonGroup = verdict?.groups?.find((g) =>
+    g.items?.some((item) => item.type === LawAndOrderItemType.RadioButton),
+  )
   const [
     submitVerdictAppealDecision,
     { loading: postLoading, data: postData, error: postError },
   ] = useSubmitVerdictAppealDecisionMutation()
 
-  const handleSubmit = async (data: Record<string, unknown>) => {
+  const handleSubmit = async (
+    data: Record<string, unknown>,
+  ): Promise<boolean> => {
     const choice = Object.values(data)[0] as LawAndOrderAppealDecision
 
-    await submitVerdictAppealDecision({
+    return await submitVerdictAppealDecision({
       variables: {
         locale: lang,
         input: { caseId: id, choice },
@@ -60,16 +69,20 @@ const CourtCaseDetail = () => {
             response.data?.lawAndOrderVerdictPost?.appealDecision,
           )
           toast.success(formatMessage(messages.registrationCompleted))
+          return true
         } else {
           // catch null response or missing appealDecision
           toast.error(formatMessage(messages.registrationError))
+          return false
         }
       })
       .catch(() => {
         toast.error(formatMessage(messages.registrationError))
+        return false
       })
   }
 
+  console.log(verdict)
   return (
     <IntroWrapper
       loading={loading}
@@ -93,15 +106,15 @@ const CourtCaseDetail = () => {
           formLoading={postLoading}
           extraInfoLine={
             verdict.canAppeal &&
-            (verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ||
-              postData?.lawAndOrderVerdictPost?.appealDecision !==
-                LawAndOrderAppealDecision.NO_ANSWER) ? (
+            verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ? (
               <>
                 <InfoLine
                   loading={loading}
                   label={messages.verdictAppealDecision}
                   content={
-                    verdict?.appealDecision ===
+                    (appealDecision
+                      ? appealDecision
+                      : verdict.appealDecision) ===
                     LawAndOrderAppealDecision.POSTPONE
                       ? formatMessage(messages.postpone)
                       : formatMessage(messages.appeal)
@@ -123,6 +136,19 @@ const CourtCaseDetail = () => {
             ) : null
           }
         />
+      )}
+      {verdictPopUp && radioButtonGroup && (
+        <Modal id="verdict-pop-up" onCloseModal={() => setVerdictPopUp(false)}>
+          <RadioFormGroup
+            group={radioButtonGroup}
+            appealDecision={
+              appealDecision ? appealDecision : verdict?.appealDecision
+            }
+            loading={postLoading}
+            onFormSubmit={handleSubmit}
+            submitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
+          />
+        </Modal>
       )}
       {!loading && !error && verdict && verdict?.groups?.length === 0 && (
         <Problem
