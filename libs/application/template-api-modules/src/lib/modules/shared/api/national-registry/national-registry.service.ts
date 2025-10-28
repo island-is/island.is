@@ -203,11 +203,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     cohabitationInfo: CohabitationDto | null,
     citizenship: CitizenshipDto | null,
   ): NationalRegistryIndividual {
-    const givenName = (person as IndividualDto).givenName ?? null
-    const familyName = (person as IndividualDto).familyName ?? null
-    const birthdate = (person as IndividualDto).birthdate ?? null
-    const genderCode = (person as IndividualDto).genderCode ?? ''
-    const genderDescription = (person as IndividualDto).genderDescription ?? ''
+    const givenName = person.givenName ?? null
+    const familyName = person.familyName ?? null
+    const birthdate = person.birthdate ?? null
+    const genderCode = person.genderCode ?? ''
+    const genderDescription = person.genderDescription ?? ''
     const maritalTitle = cohabitationInfo
       ? {
           code: cohabitationInfo.cohabitationCode,
@@ -342,13 +342,13 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     const parentOneDetails =
       parents.length > 0 &&
-      (await this.nationalRegistryV3Api.getIndividual(
+      (await this.nationalRegistryV3Api.getOtherIndividual(
         parents[0].nationalId,
         auth,
       ))
     const parentTwoDetails =
       parents.length > 1 &&
-      (await this.nationalRegistryV3Api.getIndividual(
+      (await this.nationalRegistryV3Api.getOtherIndividual(
         parents[1].nationalId,
         auth,
       ))
@@ -356,16 +356,14 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const parentOne: NationalRegistryParent | null = parentOneDetails
       ? {
           nationalId: parentOneDetails.nationalId,
-          givenName: parentOneDetails.givenName,
-          familyName: parentOneDetails.familyName,
+          fullName: parentOneDetails.name,
           legalDomicile: parentOneDetails.legalDomicile,
         }
       : null
     const parentTwo: NationalRegistryParent | null = parentTwoDetails
       ? {
           nationalId: parentTwoDetails.nationalId,
-          givenName: parentTwoDetails.givenName,
-          familyName: parentTwoDetails.familyName,
+          fullName: parentTwoDetails.name,
           legalDomicile: parentTwoDetails.legalDomicile,
         }
       : null
