@@ -25,6 +25,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseOrigin,
   Defendant,
@@ -53,7 +54,6 @@ import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseIn
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'
-import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 
 export const getIndictmentIntroductionAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -586,41 +586,39 @@ const Indictment = () => {
               <SectionHeading
                 title={formatMessage(strings.civilDemandsTitle)}
               />
-              <BlueBox>
-                <Input
-                  name="civilDemands"
-                  label={formatMessage(strings.civilDemandsLabel)}
-                  placeholder={formatMessage(strings.civilDemandsPlaceholder)}
-                  value={workingCase.civilDemands ?? ''}
-                  errorMessage={civilDemandsErrorMessage}
-                  hasError={civilDemandsErrorMessage !== ''}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'civilDemands',
-                      event.target.value,
-                      ['empty'],
-                      setWorkingCase,
-                      civilDemandsErrorMessage,
-                      setCivilDemandsErrorMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'civilDemands',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCivilDemandsErrorMessage,
-                    )
-                  }
-                  textarea
-                  autoComplete="off"
-                  required
-                  rows={7}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                />
-              </BlueBox>
+              <Input
+                name="demands"
+                label={formatMessage(strings.demandsLabel)}
+                placeholder={formatMessage(strings.demandsPlaceholder)}
+                value={workingCase.demands ?? ''}
+                errorMessage={demandsErrorMessage}
+                hasError={demandsErrorMessage !== ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'demands',
+                    event.target.value,
+                    ['empty'],
+                    setWorkingCase,
+                    demandsErrorMessage,
+                    setDemandsErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'demands',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setDemandsErrorMessage,
+                  )
+                }
+                textarea
+                autoComplete="off"
+                required
+                rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
+              />
             </Box>
           )}
           <Box component="section">

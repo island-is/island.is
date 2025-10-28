@@ -43,6 +43,9 @@ jobs:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
   prepare:
+    permissions:
+      contents: 'read'
+      actions: 'read'
     uses: ./.github/workflows/install.yml
     secrets: inherit
     with:

@@ -9,7 +9,13 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiHeader, ApiBearerAuth } from '@nestjs/swagger'
 
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -134,7 +140,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/institution/:nationalId/applications/:page/:count')
+  @Get('admin/institution/applications/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
     resources: (apps) => apps.rows.map((app) => app.id),
@@ -147,11 +153,6 @@ export class AdminController {
     },
     request: {
       params: {
-        nationalId: {
-          type: 'string',
-          required: true,
-          description: `To get the applications for a specific institution's national id.`,
-        },
         page: {
           type: 'number',
           required: true,
@@ -199,7 +200,7 @@ export class AdminController {
     },
   })
   async findAllInstitutionAdmin(
-    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('status') status?: string,
@@ -210,7 +211,7 @@ export class AdminController {
     @Query('searchStrValue') searchStrValue?: string,
   ) {
     return this.applicationService.findAllByInstitutionAndFilters(
-      nationalId,
+      user.nationalId,
       page ?? 1,
       count ?? 12,
       status,

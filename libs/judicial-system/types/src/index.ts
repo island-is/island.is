@@ -101,6 +101,7 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
   CaseAppealState,
@@ -149,6 +150,7 @@ export {
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/dates'
 
 export type {

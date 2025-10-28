@@ -23,6 +23,7 @@ import { PropertySearchInput } from './components/PropertySearchInput'
 import { PropertyTableBody } from './components/PropertyTableBody'
 import * as m from '../../lib/messages'
 import { HmsPropertyInfo } from '@island.is/api/schema'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 const ERROR_ID = 'registerProperty'
 
@@ -36,7 +37,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
   const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
   const storedValue: AddressProps = getValues(id)
-
+  const onlyAddressSearch: boolean =
+    field?.props && typeof field.props['onlyAddressSearch'] === 'boolean'
+      ? (field.props['onlyAddressSearch'] as boolean)
+      : false
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
     null,
   )
@@ -302,6 +306,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
           }
         : undefined,
     )
+    // Apply clearOnChange for this custom field (if configured in field config)
+    if (Array.isArray(field.clearOnChange) && field.clearOnChange.length > 0) {
+      clearInputsOnChange(field.clearOnChange, setValue)
+    }
     clearErrors(ERROR_ID)
     if (selectedOption?.addressCode) {
       hmsPropertyInfo({
@@ -350,14 +358,17 @@ export const PropertySearch = ({ field, errors }: Props) => {
       </Box>
 
       {selectedAddress && (
-        <Box marginTop={propertySectionHasContent ? 6 : 0}>
+        <Box
+          marginTop={propertySectionHasContent && !onlyAddressSearch ? 6 : 0}
+        >
           {propertySearchLoading ? (
             <div style={{ textAlign: 'center' }}>
               <LoadingDots large />
             </div>
           ) : (
             propertiesByAddressCode &&
-            propertiesByAddressCode.length > 0 && (
+            propertiesByAddressCode.length > 0 &&
+            !onlyAddressSearch && (
               <Table.Table id="searchresults.table">
                 <PropertyTableHeader />
                 <PropertyTableBody
