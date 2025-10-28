@@ -41,10 +41,12 @@ export const currentNurserySubSection = buildSubSection({
             })
 
             return (
-              data?.friggOrganizationsByType?.map(({ unitId, name }) => ({
-                value: unitId || '',
-                label: name,
-              })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ unitId, name }) => ({
+                  value: unitId || '',
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
         }),
@@ -70,10 +72,12 @@ export const currentNurserySubSection = buildSubSection({
             })
 
             return (
-              data?.friggOrganizationsByType?.map(({ id, name }) => ({
-                value: id,
-                label: name,
-              })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ id, name }) => ({
+                  value: id,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {

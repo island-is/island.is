@@ -177,7 +177,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     orderId?: string
   }> {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

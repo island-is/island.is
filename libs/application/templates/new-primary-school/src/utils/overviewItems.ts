@@ -31,8 +31,8 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
-  ReasonForApplicationOptions,
-  SchoolType,
+  OrganizationSector,
+  OrganizationSubType,
 } from './constants'
 import {
   formatGrade,
@@ -43,6 +43,8 @@ import {
   getPreferredSchoolName,
   getSchoolName,
   getSelectedOptionLabel,
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 const getFriggOptions = async (
@@ -153,25 +155,7 @@ export const childItems = async (
         ]
       : []
 
-  const differentPlaceOfResidenceItems: Array<KeyValueItem> =
-    childInfo?.differentPlaceOfResidence === YES
-      ? [
-          {
-            width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians
-                .childInfoPlaceOfResidence,
-            valueText: `${childInfo?.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
-          },
-        ]
-      : []
-
-  return [
-    ...baseItems,
-    ...preferredNameItems,
-    ...pronounsItems,
-    ...differentPlaceOfResidenceItems,
-  ]
+  return [...baseItems, ...preferredNameItems, ...pronounsItems]
 }
 
 export const guardiansItems = (
@@ -342,9 +326,8 @@ export const schoolItems = (
   const {
     applicationType,
     expectedStartDate,
-    selectedSchool,
+    selectedSchoolId,
     applyForPreferredSchool,
-    selectedSchoolType,
     temporaryStay,
     expectedEndDate,
   } = getApplicationAnswers(answers)
@@ -359,7 +342,7 @@ export const schoolItems = (
       valueText:
         applyForPreferredSchool === YES
           ? getPreferredSchoolName(externalData)
-          : getSchoolName(externalData, selectedSchool),
+          : getSchoolName(externalData, selectedSchoolId ?? ''),
     },
   ]
 
@@ -378,7 +361,8 @@ export const schoolItems = (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+    getSelectedSchoolSubType(answers, externalData) ===
+      OrganizationSubType.INTERNATIONAL_SCHOOL &&
     temporaryStay === YES
       ? [
           {
@@ -396,23 +380,19 @@ export const schoolItems = (
 
 export const reasonForApplicationItems = async (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
   locale: Locale,
 ): Promise<KeyValueItem[]> => {
-  const {
-    reasonForApplication,
-    reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
-    selectedSchoolType,
-  } = getApplicationAnswers(answers)
+  const { reasonForApplicationId } = getApplicationAnswers(answers)
 
   const friggOptionsType =
-    selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+    getSelectedSchoolSector(answers, externalData) ===
+    OrganizationSector.PRIVATE
       ? OptionsType.REASON_PRIVATE_SCHOOL
-      : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+      : getSelectedSchoolSubType(answers, externalData) ===
+        OrganizationSubType.INTERNATIONAL_SCHOOL
       ? OptionsType.REASON_INTERNATIONAL_SCHOOL
       : OptionsType.REASON
 
@@ -434,23 +414,7 @@ export const reasonForApplicationItems = async (
     },
   ]
 
-  const movingMunicipalityItems: Array<KeyValueItem> =
-    reasonForApplication === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-      ? [
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.address,
-            valueText: reasonForApplicationStreetAddress,
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.postalCode,
-            valueText: reasonForApplicationPostalCode,
-          },
-        ]
-      : []
-
-  return [...baseItems, ...movingMunicipalityItems]
+  return [...baseItems]
 }
 
 export const siblingsTable = (answers: FormValue): TableData => {

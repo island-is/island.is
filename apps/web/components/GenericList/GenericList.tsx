@@ -25,6 +25,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
@@ -121,7 +122,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
     icon = 'document'
   } else if (item.externalUrl) {
     href = item.externalUrl
-    icon = 'open'
+    const isInternalLink = !shouldLinkOpenInNewWindow(href)
+    if (!isInternalLink) icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
@@ -568,6 +570,7 @@ interface GenericListWrapperProps {
   itemType?: string | null
   filterTags?: GenericTag[] | null
   defaultOrder?: GetGenericListItemsInputOrderBy | null
+  textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
 }
 
@@ -577,6 +580,7 @@ export const GenericListWrapper = ({
   itemType,
   searchInputPlaceholder,
   defaultOrder,
+  textSearchOrder,
   showSearchInput,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
@@ -630,6 +634,10 @@ export const GenericListWrapper = ({
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        let orderBy = defaultOrder
+        if (searchValue.trim().length > 0 && textSearchOrder === 'Score') {
+          orderBy = GetGenericListItemsInputOrderBy.Score
+        }
         fetchListItems({
           variables: {
             input: {
@@ -640,7 +648,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
-              orderBy: defaultOrder,
+              orderBy,
             },
           },
         })
