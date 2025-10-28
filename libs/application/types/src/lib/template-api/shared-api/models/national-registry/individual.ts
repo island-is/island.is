@@ -19,3 +19,9 @@ export interface NationalRegistryIndividual {
   } | null
   birthDate: Date
 }
+
+export interface NationalRegistryOtherIndividual {
+  nationalId: string
+  fullName: string
+  address: Address | null
+}

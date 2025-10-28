@@ -3,6 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
+  NationalRegistryOtherIndividual,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
   NationalRegistryResidenceHistory,
@@ -198,7 +199,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   private formatNationalRegistryIndividual(
-    person: IndividualDto | IndividualLiteDto,
+    person: IndividualDto,
     cohabitationInfo: CohabitationDto | null,
     citizenship: CitizenshipDto | null,
   ): NationalRegistryIndividual {
@@ -250,6 +251,24 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  private formatNationalRegistryOtherIndividual(
+    person: IndividualLiteDto,
+  ): NationalRegistryOtherIndividual {
+    return {
+      nationalId: person.nationalId,
+      fullName: person.name,
+      address: person.legalDomicile
+        ? {
+            streetAddress: person.legalDomicile.streetAddress,
+            postalCode: person.legalDomicile.postalCode,
+            locality: person.legalDomicile.locality,
+            city: person.legalDomicile.locality,
+            municipalityCode: person.legalDomicile.municipalityNumber,
+          }
+        : null,
+    }
+  }
+
   async getIndividual(
     nationalId: string,
     auth: User,
@@ -292,16 +311,23 @@ export class NationalRegistryService extends BaseTemplateApiService {
       : null
   }
 
+  /**
+   * Get get information about an individual that is not the logged in user.
+   * There is much less data available for other individuals than for the logged in user.
+   * @param nationalId - The national ID of the other individual
+   * @param auth - The authentication object
+   * @returns The other individual
+   */
   async getOtherIndividual(
     nationalId: string,
     auth: User,
-  ): Promise<NationalRegistryIndividual | null> {
+  ): Promise<NationalRegistryOtherIndividual | null> {
     const otherIndividual = await this.nationalRegistryV3Api.getOtherIndividual(
       nationalId,
       auth,
     )
     return otherIndividual
-      ? this.formatNationalRegistryIndividual(otherIndividual, null, null)
+      ? this.formatNationalRegistryOtherIndividual(otherIndividual)
       : null
   }
 
