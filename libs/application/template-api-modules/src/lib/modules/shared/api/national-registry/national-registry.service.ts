@@ -314,9 +314,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   /**
    * Get get information about an individual that is not the logged in user.
    * There is much less data available for other individuals than for the logged in user.
-   * @param nationalId - The national ID of the other individual
-   * @param auth - The authentication object
-   * @returns The other individual
    */
   async getOtherIndividual(
     nationalId: string,
@@ -421,12 +418,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const children: Array<ApplicantChildCustodyInformation | null> =
       await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          const childResidenceParent =
-            await this.nationalRegistryV3Api.getChildResidenceParent(
-              auth,
-              childNationalId,
-            )
-
           const childPerson = parentAFamilyMembers.find(
             (person) => person.nationalId === childNationalId,
           )
