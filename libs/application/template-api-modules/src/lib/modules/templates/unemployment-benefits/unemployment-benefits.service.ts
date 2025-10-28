@@ -393,20 +393,23 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             finalize: true,
           },
       }
+    const response = await this.vmstUnemploymentClientService.submitApplication(
+      auth,
+      submitResponse,
+    )
 
-    try {
-      const response =
-        await this.vmstUnemploymentClientService.submitApplication(
-          auth,
-          submitResponse,
-        )
-      if (!response.success)
-        throw new Error(
-          response?.errorMessage ||
-            'Response unsuccessfull and missing errorMsg',
-        )
-    } catch (e) {
-      throw new Error(e)
+    if (!response.success) {
+      this.logger.error(
+        '[VMST-Unemployment]: Failed to submit application',
+        response.errorMessage,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.submitError,
+          summary: response.errorMessage || errorMsgs.submitError,
+        },
+        400,
+      )
     }
   }
 }

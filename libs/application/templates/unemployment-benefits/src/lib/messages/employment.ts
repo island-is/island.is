@@ -73,7 +73,7 @@ export const employment = {
         description: 'Agreement label checkbox label',
       },
       healthReasonFileLabel: {
-        id: 'vmst.ub.application:employment.lreasonForJobSearch.abels.healthReasonFileLabel',
+        id: 'vmst.ub.application:employment.reasonForJobSearch.abels.healthReasonFileLabel',
         defaultMessage: 'Læknisvottorð',
         description: 'Health reason file upload label',
       },

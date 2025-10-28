@@ -134,7 +134,7 @@ export const InputController = forwardRef(
             allowNegative={allowNegative}
             isAllowed={(values) => {
               const { floatValue } = values
-              return floatValue && max ? floatValue < max : true
+              return floatValue && max ? floatValue <= max : true
             }}
             autoComplete={autoComplete}
             loading={loading}
@@ -191,6 +191,11 @@ export const InputController = forwardRef(
             inputMode={inputMode}
             max={max}
             min={min}
+            allowNegative={allowNegative}
+            isAllowed={(values) => {
+              const { floatValue } = values
+              return floatValue && max ? floatValue <= max : true
+            }}
             onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
