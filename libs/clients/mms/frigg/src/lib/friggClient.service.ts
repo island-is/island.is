@@ -72,7 +72,7 @@ export class FriggClientService {
     form: RegistrationInput,
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
-      registrationApplicationInput: { registration: form },
+      registration: form,
     })
   }
 }
