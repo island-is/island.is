@@ -5,7 +5,7 @@ import {
 import { dataSchema } from '@island.is/application/templates/driving-license'
 import { infer as zinfer } from 'zod'
 
-import { formatPhoneNumber } from '.'
+import { formatPhoneNumber } from './index'
 import { getValueViaPath } from '@island.is/application/core'
 import { Pickup } from '@island.is/api/domains/driving-license'
 
