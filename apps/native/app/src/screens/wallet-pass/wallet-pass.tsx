@@ -188,6 +188,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const [dismissedAlerts, setDismissedAlerts] = useState<
     Record<string, boolean>
   >({})
+  const [hasCalculatedDismissedAlerts, setHasCalculatedDismissedAlerts] =
+    useState<boolean>(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
@@ -233,25 +235,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const markInfoAlertAsDismissed = useCallback(async () => {
     setDismissedAlertsItem(JSON.stringify({ ...dismissedAlerts, [type]: true }))
     setDismissedAlerts((prev) => ({ ...prev, [type]: true }))
-  }, [type, setDismissedAlertsItem])
+  }, [type, setDismissedAlertsItem, dismissedAlerts])
 
   useEffect(() => {
     getDismissedAlertsItem().then((item) => {
       if (item) {
         setDismissedAlerts(JSON.parse(item))
       }
+
+      setHasCalculatedDismissedAlerts(true)
     })
   }, [])
-
-  const isInfoAlertDismissed = useCallback(
-    (type: string) => {
-      if (!alertMessageIds?.dismissible) {
-        return false
-      }
-      return dismissedAlerts[type] ? false : true
-    },
-    [dismissedAlerts],
-  )
 
   const shouldShowExpireDate = !!(
     (licenseType === GenericLicenseType.IdentityDocument ||
@@ -268,6 +262,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         data?.payload?.metadata?.licenseNumber ?? undefined,
       )
     : undefined
+
+  const isInfoAlertDismissed = useCallback(
+    (type: string) => {
+      if (!alertMessageIds?.dismissible) {
+        return false
+      }
+
+      return dismissedAlerts[type] ? true : false
+    },
+    [dismissedAlerts, alertMessageIds?.dismissible],
+  )
 
   const { loading } = res
 
@@ -543,29 +548,31 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }}
         >
           {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
-          {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
-            <View
-              style={{
-                paddingTop: theme.spacing[3],
-              }}
-            >
-              <InfoAlert
-                title={intl.formatMessage({
-                  id: alertMessageIds?.title,
-                })}
-                message={intl.formatMessage({
-                  id: alertMessageIds?.description,
-                })}
-                {...(alertMessageIds?.dismissible && {
-                  onClose: () => {
-                    markInfoAlertAsDismissed()
-                  },
-                })}
-                type="info"
-                hasBorder
-              />
-            </View>
-          )}
+          {showInfoAlert &&
+            hasCalculatedDismissedAlerts &&
+            !isInfoAlertDismissed(licenseType) && (
+              <View
+                style={{
+                  paddingTop: theme.spacing[3],
+                }}
+              >
+                <InfoAlert
+                  title={intl.formatMessage({
+                    id: alertMessageIds?.title,
+                  })}
+                  message={intl.formatMessage({
+                    id: alertMessageIds?.description,
+                  })}
+                  {...(alertMessageIds?.dismissible && {
+                    onClose: () => {
+                      markInfoAlertAsDismissed()
+                    },
+                  })}
+                  type="info"
+                  hasBorder
+                />
+              </View>
+            )}
           {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
           {expireWarning &&
           (licenseType === GenericLicenseType.Passport ||
