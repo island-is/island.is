@@ -23,23 +23,24 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
 
   const realEstate = getValueViaPath<RealEstateAnswers>(
     application.answers,
-    'realEstate.data',
+    'realEstate',
   )
   const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
-    application.answers,
+    application.externalData,
     'getProperties.data',
   )?.find((property) => property.fasteignanumer === realEstate?.realEstateName)
 
   const subject = 'Umsókn móttekin!'
-  const message =
-    `<span>Umsókn um stofnun fasteignanúmers hefur verið móttekin.</span><br/>` +
-    `<span>Upplýsingar úr umsókn:</span><br/>` +
-    `<span>Umsækjandi: ${applicantName}</span><br/>` +
-    `<span>Fasteignin: ${selectedRealEstate?.sjalfgefidStadfang?.birting}</span><br/>` +
-    `<span>Fjöldi fasteignanúmera: ${realEstate?.realEstateAmount}</span><br/>` +
-    `<span>Upphæð greiðslu: ${formatCurrency(
+  const messageMain =
+    `<div style="line-height: 1 !important;">Umsókn um stofnun fasteignanúmers hefur verið móttekin.<br/>` +
+    `Upplýsingar úr umsókn:<br/></div>`
+  const messageContent =
+    `<div style="line-height: 1 !important;">Umsækjandi: ${applicantName}</br>` +
+    `Fasteignin: ${selectedRealEstate?.sjalfgefidStadfang?.birting}</br>` +
+    `Fjöldi fasteignanúmera: ${realEstate?.realEstateAmount}</br>` +
+    `Upphæð greiðslu: ${formatCurrency(
       realEstate?.realEstateCost || '',
-    )}</span><br/>`
+    )}<br/></div>`
 
   const goodbyeMessage = `<span>Með kveðju,<span><br/>` + `<span>HMS<span><br/>`
 
@@ -61,11 +62,18 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
           },
         },
         {
+          component: 'Spacer',
+        },
+        {
           component: 'Image',
           context: {
             src: pathToAsset('Illustration.jpg'),
             alt: 'manneskja fær tilkynningu',
+            removeFixedHeight: true,
           },
+        },
+        {
+          component: 'Spacer',
         },
         {
           component: 'Heading',
@@ -74,7 +82,14 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
         {
           component: 'Copy',
           context: {
-            copy: message,
+            copy: messageMain,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: messageContent,
+            small: true,
           },
         },
         {

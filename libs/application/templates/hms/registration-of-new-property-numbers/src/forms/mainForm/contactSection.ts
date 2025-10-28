@@ -66,7 +66,7 @@ export const contactSection = buildSection({
             isCompany(externalData),
         }),
 
-        // Readonly fields for company contact person
+        // Readonly fields
         buildTextField({
           id: 'contactReadonly.name ',
           title: contactMessages.name,

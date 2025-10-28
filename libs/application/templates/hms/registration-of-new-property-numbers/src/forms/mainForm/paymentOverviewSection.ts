@@ -4,6 +4,7 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { paymentOverview } from '../../lib/messages'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -20,11 +21,16 @@ export const paymentOverviewSection = buildSection({
           id: 'uiForms.paymentChargeOverviewMultifield',
           forPaymentLabel: paymentOverview.toPay,
           totalLabel: paymentOverview.total,
-          getSelectedChargeItems: (_) => [
+          getSelectedChargeItems: (application) => [
             {
               chargeItemCode:
                 ChargeItemCode.REGISTRATION_OF_NEW_PROPERTY_NUMBERS.toString(),
-              chargeItemQuantity: 5,
+              chargeItemQuantity: Number(
+                getValueViaPath<string>(
+                  application.answers,
+                  'realEstate.realEstateAmount',
+                ) || '0',
+              ),
               extraLabel: 'fasteignarnúmer',
             },
           ],

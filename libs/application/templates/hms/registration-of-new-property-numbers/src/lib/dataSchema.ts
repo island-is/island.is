@@ -80,3 +80,4 @@ export const dataSchema = z.object({
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
 export type RealEstateAnswers = z.TypeOf<typeof realEstateSchema>
 export type ContactAnswer = z.TypeOf<typeof contactSchema>
+export type ApplicantAnswer = z.TypeOf<typeof applicantSchema>

@@ -44,9 +44,8 @@ export enum Hlutverk {
 }
 
 export interface EmailRecipient {
-  nationalId: string
   name: string
-  email?: string
+  email: string
 }
 
 export type RealEstateAnswers = {

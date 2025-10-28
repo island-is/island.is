@@ -83,18 +83,20 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    } // TODO change to getValueViaPath
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      application.id,
+    )
 
-    if (!paymentUrl) {
+    if (!isPayment?.fulfilled) {
+      this.logger.error(
+        'Attempting to submit registration for new property number that has not been paid.',
+      )
       throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      ) // TODO How does this display to user
+        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      )
     }
 
     const requestDto = getRequestDto(application)
-
     try {
       const response =
         await this.hmsApplicationSystemService.apiApplicationPost({
@@ -103,15 +105,11 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
 
       if (response.status !== 200) {
         this.logger.error(
-          '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS: ' +
+          '[RegistrationOfNewPropertyNumbersService]: Failed to submit application to HMS: ' +
             `status code ${response.status}`,
         )
-        throw new TemplateApiError(
-          {
-            title: 'Failed to submit application',
-            summary: `HMS API responded with status code ${response.status}`,
-          },
-          500,
+        throw new Error(
+          `[RegistrationOfNewPropertyNumbersService]: HMS API responded with status code ${response.status}`,
         )
       }
 
@@ -121,12 +119,11 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
         e.message,
       )
-      throw new TemplateApiError(e, 500)
+      throw new Error(e)
     }
   }
 
   private async sendEmailAboutSubmitApplication(application: Application) {
-    // Send email to applicant and all contacts
     const recipientList = getRecipients(application)
 
     await Promise.all(
@@ -134,7 +131,10 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         this.sharedTemplateAPIService
           .sendEmail((props) => {
             // Check if delegation or not
-            if (application.applicantActors && application.applicant.length > 0)
+            if (
+              props.application.applicantActors &&
+              props.application.applicantActors.length > 0
+            )
               return generateApplicationSubmittedEmailWithDelegation(
                 props,
                 recipient,

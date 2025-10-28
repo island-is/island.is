@@ -28,18 +28,19 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
     )?.find(
       (property) => property.fasteignanumer === realEstate?.realEstateName,
     )
-    const registrantNationalId = application.applicantActors?.[0] // TODO If more than one delegant open the application, what is the order and who submits ?
+    const registrantNationalId = application.applicantActors?.[0]
 
     const subject = 'Umsókn móttekin!'
-    const message =
-      `<span>Aðili með kennitölu ${registrantNationalId} hefur sótt um stofnun nýs fasteignanúmers í umboði fyrir Bónus ehf. Upplýsingar úr umsókn:</span><br/>` +
-      `<span>Upplýsingar úr umsókn:</span><br/>` +
-      `<span>Umsækjandi: ${applicantName}</span><br/>` +
-      `<span>Fasteignin: ${selectedRealEstate?.sjalfgefidStadfang?.birting}</span><br/>` +
-      `<span>Fjöldi fasteignanúmera: ${realEstate?.realEstateAmount}</span><br/>` +
-      `<span>Upphæð greiðslu: ${formatCurrency(
+    const messageMain =
+      `<div style="line-height: 1 !important;">Aðili með kennitölu ${registrantNationalId} hefur sótt um stofnun nýs fasteignanúmers í umboði fyrir Bónus ehf. Upplýsingar úr umsókn:<br/>` +
+      `Upplýsingar úr umsókn:<br/></div>`
+    const messageContent =
+      `<div style="line-height: 1 !important;">Umsækjandi: ${applicantName}<br/>` +
+      `Fasteignin: ${selectedRealEstate?.sjalfgefidStadfang?.birting}<br/>` +
+      `Fjöldi fasteignanúmera: ${realEstate?.realEstateAmount}<br/>` +
+      `Upphæð greiðslu: ${formatCurrency(
         realEstate?.realEstateCost || '',
-      )}</span><br/>`
+      )}<br/></div>`
 
     const goodbyeMessage =
       `<span>Með kveðju,<span><br/>` + `<span>HMS<span><br/>`
@@ -62,11 +63,18 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
             },
           },
           {
+            component: 'Spacer',
+          },
+          {
             component: 'Image',
             context: {
               src: pathToAsset('Illustration.jpg'),
               alt: 'manneskja fær tilkynningu',
+              removeFixedHeight: true,
             },
+          },
+          {
+            component: 'Spacer',
           },
           {
             component: 'Heading',
@@ -75,7 +83,13 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
           {
             component: 'Copy',
             context: {
-              copy: message,
+              copy: messageMain,
+            },
+          },
+          {
+            component: 'Copy',
+            context: {
+              copy: messageContent,
             },
           },
           {

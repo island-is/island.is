@@ -9,6 +9,7 @@ import {
   APPLICATION_NAME,
   APPLICATION_TYPE,
   ContactAnswer,
+  EmailRecipient,
   formatCurrency,
   Hlutverk,
   NotandagognFlokkur,
@@ -18,6 +19,7 @@ import {
 } from './shared'
 import * as kennitala from 'kennitala'
 import { join } from 'path'
+import { ApplicantAnswer } from '@island.is/application/templates/hms/registration-of-new-property-numbers'
 
 export const pathToAsset = (file: string) => {
   return join(
@@ -35,9 +37,34 @@ const getApplicant = (answers: FormValue) => {
   }
 }
 
-export const getRecipients = (application: Application): Array<any> => {
-  // Get recipients
-  return []
+export const getRecipients = (
+  application: Application,
+): Array<EmailRecipient> => {
+  const applicant = getValueViaPath<ApplicantAnswer>(
+    application.answers,
+    'applicant',
+  )
+  const contact = getValueViaPath<ApplicantAnswer>(
+    application.answers,
+    'contact',
+  )
+
+  const applicantRecipient = {
+    email: applicant?.email || '',
+    name: applicant?.name || '',
+  }
+  const contactRecipient = {
+    email: contact?.email || '',
+    name: contact?.name || '',
+  }
+
+  if (
+    contactRecipient.email &&
+    applicantRecipient.email === contactRecipient.email
+  )
+    return [applicantRecipient, contactRecipient]
+
+  return [applicantRecipient]
 }
 
 export const getRequestDto = (application: Application): ApplicationDto => {

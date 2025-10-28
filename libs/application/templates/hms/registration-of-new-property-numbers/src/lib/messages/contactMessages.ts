@@ -8,7 +8,7 @@ export const contactMessages = defineMessages({
   },
   description: {
     id: 'ronp.application:contact.description',
-    defaultMessage: 'Vinsamlegast gefið upplýsingar um tengilið ef við á. ',
+    defaultMessage: 'Vinsamlegast gefið upplýsingar um tengilið ef við á.',
     description: 'Contact information description',
   },
   checkboxLabel: {
