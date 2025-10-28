@@ -100,11 +100,12 @@ export class VerdictResponse {
             value: item[1],
           })),
         },
-        // Ruling text
         {
           label: t.ruling,
           items: [
             {
+              // there should only be one ruling judgement over all court sessions
+              // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
               value: internalCase.courtSessions?.[0]?.ruling ?? '',
               type: 'text',
             },
