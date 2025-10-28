@@ -3,10 +3,10 @@ import {
   Args,
   Context,
   Mutation,
-  Query,
-  Resolver,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -21,9 +21,9 @@ import {
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import {
-  UserRole,
-  type User,
   isProsecutionUser,
+  type User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
