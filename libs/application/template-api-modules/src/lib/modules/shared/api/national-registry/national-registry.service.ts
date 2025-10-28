@@ -203,11 +203,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     cohabitationInfo: CohabitationDto | null,
     citizenship: CitizenshipDto | null,
   ): NationalRegistryIndividual {
-    const givenName = person.givenName ?? null
-    const familyName = person.familyName ?? null
-    const birthdate = person.birthdate ?? null
-    const genderCode = person.genderCode ?? ''
-    const genderDescription = person.genderDescription ?? ''
+    const givenName = person.givenName
+    const familyName = person.familyName
+    const birthdate = person.birthdate
+    const genderCode = person.genderCode
+    const genderDescription = person.genderDescription
     const maritalTitle = cohabitationInfo
       ? {
           code: cohabitationInfo.cohabitationCode,
