@@ -21,7 +21,7 @@ module.exports = {
           `UPDATE "case"
             SET "ruling_date" = '2025-10-16 13:37:00',
                 "court_end_time" = '2025-10-16 13:37:00'
-            WHERE id = 'b8e156b8-700f-4d6d-9399-c1b74b052c01'`,
+            WHERE id = 'd8fec376-3f46-415b-8768-ef1997e2c344'`,
           { transaction },
         ),
       ]),
