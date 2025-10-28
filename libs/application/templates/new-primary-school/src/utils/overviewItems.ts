@@ -244,9 +244,9 @@ export const relativesTable = async (
       newPrimarySchoolMessages.shared.relation,
     ],
     rows: relatives.map((r) => [
-      r.fullName,
+      r.NationalIdWithName.name,
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
+      formatKennitala(r.NationalIdWithName.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
     ]),
   }
@@ -425,7 +425,10 @@ export const siblingsTable = (answers: FormValue): TableData => {
       newPrimarySchoolMessages.shared.fullName,
       newPrimarySchoolMessages.shared.nationalId,
     ],
-    rows: siblings.map((s) => [s.fullName, formatKennitala(s.nationalId)]),
+    rows: siblings.map((s) => [
+      s.NationalIdWithName.name,
+      formatKennitala(s.NationalIdWithName.nationalId),
+    ]),
   }
 }
 

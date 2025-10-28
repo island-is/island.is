@@ -63,11 +63,15 @@ export const dataSchema = z.object({
   relatives: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        phoneNumber: phoneNumberSchema,
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
+        NationalIdWithName: z.object({
+          name: z.string().min(1),
+          nationalId: z
+            .string()
+            .refine((nationalId) => kennitala.isValid(nationalId), {
+              params: errorMessages.nationalId,
+            }),
         }),
+        phoneNumber: phoneNumberSchema,
         relation: z.string(),
       }),
     )
@@ -104,9 +108,13 @@ export const dataSchema = z.object({
   siblings: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
+        NationalIdWithName: z.object({
+          name: z.string().min(1),
+          nationalId: z
+            .string()
+            .refine((nationalId) => kennitala.isValid(nationalId), {
+              params: errorMessages.nationalId,
+            }),
         }),
       }),
     )
