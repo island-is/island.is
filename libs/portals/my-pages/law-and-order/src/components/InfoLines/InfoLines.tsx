@@ -70,7 +70,7 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 />
               </>
             ))}
-            {index === 0 && props.extraInfoLine && props.extraInfoLine}
+            {index === 0 && props.extraInfoLine}
           </>
         )
       })}

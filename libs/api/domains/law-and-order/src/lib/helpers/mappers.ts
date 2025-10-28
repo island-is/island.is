@@ -6,7 +6,6 @@ import {
   SubpoenaDataDefaultDefenderChoiceEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
   UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
-  VerdictResponseAppealDecisionEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
 import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
@@ -74,13 +73,11 @@ export const mapDefenseChoiceForSummonDefaultChoice = (
   }
 }
 
-export const mapAppealDecision = (
-  decision?: VerdictResponseAppealDecisionEnum,
-): AppealDecision => {
+export const mapAppealDecision = (decision?: string): AppealDecision => {
   switch (decision) {
-    case VerdictResponseAppealDecisionEnum.ACCEPT:
+    case 'ACCEPT':
       return AppealDecision.ACCEPT
-    case VerdictResponseAppealDecisionEnum.POSTPONE:
+    case 'POSTPONE':
       return AppealDecision.POSTPONE
     default:
       return AppealDecision.NO_ANSWER // No answer means the UI should render the form, otherwise infoLine with 'change' button

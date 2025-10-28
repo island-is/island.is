@@ -629,16 +629,13 @@
           "caseId": { "type": "string" },
           "title": { "type": "string" },
           "subtitle": { "type": "string" },
-          "appealDecision": {
-            "type": "string",
-            "enum": ["ACCEPT", "POSTPONE"]
-          },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
-          }
+          },
+          "appealDecision": { "type": "string" }
         },
-        "required": ["caseId", "title", "subtitle", "appealDecision", "groups"]
+        "required": ["caseId", "title", "subtitle", "groups", "appealDecision"]
       },
       "UpdateVerdictAppealDecisionDto": {
         "type": "object",

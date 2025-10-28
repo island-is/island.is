@@ -82,62 +82,30 @@ const CourtCaseDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && verdict && verdict?.groups && (
-        <>
-          <InfoLines
-            groups={verdict?.groups}
-            appealDecision={
-              verdict.canAppeal ? verdict.appealDecision : undefined
-            }
-            loading={loading}
-            onFormSubmit={handleSubmit}
-            formSubmitMessage={formatMessage(
-              messages.verdictAppealDecisionInfo,
-            )}
-            formLoading={postLoading}
-            extraInfoLine={
-              verdict.canAppeal &&
-              (verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ||
-                postData?.lawAndOrderVerdictPost?.appealDecision !==
-                  LawAndOrderAppealDecision.NO_ANSWER) ? (
-                <>
-                  <InfoLine
-                    loading={loading}
-                    label={messages.verdictAppealDecision}
-                    content={
-                      verdict?.appealDecision ===
-                      LawAndOrderAppealDecision.POSTPONE
-                        ? formatMessage(messages.postpone)
-                        : formatMessage(messages.appeal)
-                    }
-                    button={{
-                      type: 'action',
-                      variant: 'text',
-                      label: messages.change,
-                      icon: 'pencil',
-                      action: () => {
-                        setVerdictPopUp(true)
-                      },
-                      disabled: postLoading,
-                      tooltip: formatMessage(
-                        messages.verdictAppealDecisionInfo,
-                      ),
-                    }}
-                  />
-                  <Divider />
-                </>
-              ) : null
-            }
-          />
-          {verdict.canAppeal &&
+        <InfoLines
+          groups={verdict?.groups}
+          appealDecision={
+            verdict.canAppeal ? verdict.appealDecision : undefined
+          }
+          loading={loading}
+          onFormSubmit={handleSubmit}
+          formSubmitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
+          formLoading={postLoading}
+          extraInfoLine={
+            verdict.canAppeal &&
             (verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ||
               postData?.lawAndOrderVerdictPost?.appealDecision !==
-                LawAndOrderAppealDecision.NO_ANSWER) && (
+                LawAndOrderAppealDecision.NO_ANSWER) ? (
               <>
-                <Box paddingTop={1} />
                 <InfoLine
                   loading={loading}
                   label={messages.verdictAppealDecision}
-                  content={postData?.lawAndOrderVerdictPost?.appealDecision}
+                  content={
+                    verdict?.appealDecision ===
+                    LawAndOrderAppealDecision.POSTPONE
+                      ? formatMessage(messages.postpone)
+                      : formatMessage(messages.appeal)
+                  }
                   button={{
                     type: 'action',
                     variant: 'text',
@@ -150,11 +118,11 @@ const CourtCaseDetail = () => {
                     tooltip: formatMessage(messages.verdictAppealDecisionInfo),
                   }}
                 />
-                <Box paddingBottom={1} />
                 <Divider />
               </>
-            )}
-        </>
+            ) : null
+          }
+        />
       )}
       {!loading && !error && verdict && verdict?.groups?.length === 0 && (
         <Problem
