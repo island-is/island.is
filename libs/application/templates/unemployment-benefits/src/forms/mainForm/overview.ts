@@ -117,7 +117,7 @@ export const overviewSection = buildSection({
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: overviewMessages.general.submitButtonText,
               type: 'primary',
             },
           ],
