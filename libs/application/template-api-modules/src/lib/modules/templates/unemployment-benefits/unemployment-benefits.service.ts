@@ -3,7 +3,6 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
-  GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   GaldurDomainModelsAttachmentsAttachmentViewModel,

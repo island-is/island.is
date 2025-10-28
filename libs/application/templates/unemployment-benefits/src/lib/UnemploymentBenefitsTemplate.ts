@@ -20,7 +20,6 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
 import { LocaleApi, UnemploymentApi, UserProfileApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
