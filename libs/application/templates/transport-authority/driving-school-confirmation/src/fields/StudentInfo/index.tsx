@@ -37,6 +37,7 @@ const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     setValue('studentBookTypes', student?.book?.drivingSchoolExams)
     setValue('studentBookId', student?.book?.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   const student = data?.drivingLicenseBookStudent
