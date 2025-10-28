@@ -94,6 +94,8 @@ export const getRequestDto = (application: Application): ApplicationDto => {
   const contact = getValueViaPath<ContactAnswer>(answers, 'contact')
   const contactIsSameAsApplicant = contact?.isSameAsApplicant?.[0] === YES
 
+  // NOTE
+  // HMS is using an API thats maps against "umsóknasmiður", thats why the request is so generic and riddled with string values
   return {
     applicationName: APPLICATION_NAME,
     status: CurrentApplicationStatus.NUMBER_40,
