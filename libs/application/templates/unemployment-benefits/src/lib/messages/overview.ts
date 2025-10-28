@@ -28,6 +28,11 @@ export const overview = {
       defaultMessage: 'Seinni hluti: Atvinnuleitin',
       description: 'overview section second section title',
     },
+    submitButtonText: {
+      id: 'vmst.ub.application:overview.general.submitButtonText',
+      defaultMessage: 'Sækja um',
+      description: 'overview section submit button title',
+    },
   }),
   labels: {
     applicantOverview: defineMessages({

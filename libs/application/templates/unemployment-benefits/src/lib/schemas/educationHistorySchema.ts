@@ -1,3 +1,4 @@
+import { YES } from '@island.is/application/core'
 import { z } from 'zod'
 
 const currentStudiesSchema = z
@@ -14,7 +15,8 @@ export const previousEducationSchema = z.object({
   levelOfStudy: z.string(),
   degree: z.string(),
   courseOfStudy: z.string().optional(),
-  endOfStudy: z.string().optional(),
+  endOfStudy: z.string().nullish(),
+  unfinishedStudy: z.array(z.enum([YES])).optional(),
 })
 
 export const educationHistorySchema = z.object({

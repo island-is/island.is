@@ -53,4 +53,10 @@ export const serviceErrors = defineMessages({
       'Þú verður að haka í hér fyrir ofan til þess að halda áfram',
     description: 'Error message when user has not checked the agree checkbox',
   },
+  submitError: {
+    id: 'vmst.ub.application:submitError',
+    defaultMessage:
+      'Villa við að skila inn umsókn. Reyndu aftur eða hafðuð samband við Ísland.is',
+    description: 'Error message when submit fails',
+  },
 })

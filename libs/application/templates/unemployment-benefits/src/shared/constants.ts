@@ -33,6 +33,11 @@ export enum PaymentTypeIds {
   SPOUSE_PENSION = '4bf573f4-51ed-4c1f-882e-08d680850aba', // Makalífeyrir
 }
 
+export enum LanguageIds {
+  ICELANDIC = 'a18e3090-6afb-4afb-a055-1f83bbe498e3',
+  ENGLISH = '6d3edede-8951-4621-a835-e04323300fa0',
+}
+
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
   EMPLOYED = 'employed',
@@ -47,10 +52,10 @@ export const EmploymentStatusIds: Record<EmploymentStatus, number> = {
   [EmploymentStatus.OCCASIONAL]: 3,
 }
 
-export enum WorkingAbility {
-  ABLE = 'able',
-  PARTLY_ABLE = 'partlyAble',
-  DISABILITY = 'disability',
+export enum WorkingAbilityIds {
+  ABLE = '6f0ffdff-0329-468e-363e-08d6805d9266',
+  PARTLY_ABLE = 'e8dbad24-f687-412d-363f-08d6805d9266',
+  DISABILITY = '1e1ce6c2-2385-409e-3640-08d6805d9266',
 }
 
 export enum EducationType {

@@ -84,7 +84,7 @@ export const education = {
     currentSchoolDegreeInformation: {
       id: 'vmst.ub.application:education.labels.currentSchoolDegreeInformation',
       defaultMessage:
-        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Engar áhyggjur þó þú s ért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
+        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Engar áhyggjur þó þú sért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
       description: 'School degree file label',
     },
     currentSchoolDegreeFileNameLabel: {

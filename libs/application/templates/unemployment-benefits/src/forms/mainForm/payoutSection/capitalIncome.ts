@@ -48,6 +48,7 @@ export const capitalIncomeSubSection = buildSubSection({
               label: payoutMessages.capitalIncome.amountLabel,
               currency: true,
               required: true,
+              allowNegative: false,
             },
           },
         }),

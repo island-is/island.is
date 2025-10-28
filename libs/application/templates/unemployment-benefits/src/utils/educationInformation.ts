@@ -79,6 +79,7 @@ export const showCurrentEducationFields = (answers: FormValue) => {
     (isCurrentlyStudying(answers) ||
       wasStudyingInTheLastYear(answers) ||
       (wasStudyingLastSemester(answers) &&
-        appliedForNextSemester(answers) !== NO))
+        didYouFinishLastSemester(answers) === YES) ||
+      appliedForNextSemester(answers) === YES)
   )
 }

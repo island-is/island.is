@@ -5,6 +5,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { education as educationMessages } from '../../../lib/messages'
@@ -241,6 +242,7 @@ export const educationHistorySubSection = buildSubSection({
             levelOfStudy: {
               label: educationMessages.labels.levelOfStudyLabel,
               component: 'select',
+              required: true,
               options: (application, _, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -261,6 +263,7 @@ export const educationHistorySubSection = buildSubSection({
             degree: {
               label: educationMessages.labels.schoolDegreeLabel,
               component: 'select',
+              required: true,
               options: (application, activeField, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -285,6 +288,7 @@ export const educationHistorySubSection = buildSubSection({
             courseOfStudy: {
               label: educationMessages.labels.courseOfStudyLabel,
               component: 'select',
+              required: true,
               options: (application, activeField) => {
                 const education = getValueViaPath<
                   GaldurDomainModelsEducationProgramDTO[]
@@ -321,6 +325,20 @@ export const educationHistorySubSection = buildSubSection({
                 })
                 return years
               },
+            },
+            unfinishedStudy: {
+              component: 'checkbox',
+              large: false,
+              backgroundColor: 'white',
+              options: [
+                {
+                  value: YES,
+                  label: educationMessages.labels.endOfStudiesPlaceholder,
+                },
+              ],
+              clearOnChange: (index: number) => [
+                `educationHistory.educationHistory[${index}].endOfStudy`,
+              ],
             },
           },
         }),

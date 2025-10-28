@@ -548,6 +548,8 @@ export const Item = ({
                     ? defaultVal.nationalId
                     : '',
                   nameDefaultValue: defaultVal ? defaultVal.name : '',
+                  searchCompanies: item.searchCompanies,
+                  searchPersons: item.searchPersons,
                 }
               : {})}
             {...(component === 'input' ? { suffix: suffixVal } : {})}
