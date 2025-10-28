@@ -307,6 +307,7 @@ export class AppService {
       deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
       deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
       deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
     })
 
     const parsedPoliceUpdate = {
