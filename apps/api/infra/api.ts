@@ -535,7 +535,7 @@ export const serviceSetup = (services: {
     .liveness({
       path: '/liveness',
       initialDelaySeconds: 10,
-      timeoutSeconds: 5
+      timeoutSeconds: 5,
     })
     .resources({
       limits: { cpu: '1200m', memory: '2500Mi' },
@@ -545,7 +545,7 @@ export const serviceSetup = (services: {
       default: 3,
       max: 50,
       min: 3,
-      cpuAverageUtilization: 75
+      cpuAverageUtilization: 75,
     })
     .grantNamespaces(
       'nginx-ingress-external',

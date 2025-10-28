@@ -59,7 +59,7 @@ export const serviceSetup = (services: {
     .liveness({
       path: '/liveness',
       initialDelaySeconds: 10,
-      timeoutSeconds: 5
+      timeoutSeconds: 5,
     })
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
@@ -70,7 +70,7 @@ export const serviceSetup = (services: {
       default: 3,
       max: 50,
       min: 3,
-      cpuAverageUtilization: 75
+      cpuAverageUtilization: 75,
     })
     .extraAttributes({
       dev: {},
