@@ -118,4 +118,21 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:mailbox-link',
     defaultMessage: '/postholf',
   },
+  verdictAppealDecision: {
+    id: 'sp.law-and-order:verdict-appeal-decision',
+    defaultMessage: 'Afstaða til dóms',
+  },
+  verdictAppealDecisionInfo: {
+    id: 'sp.law-and-order:verdict-appeal-decision-info',
+    defaultMessage:
+      'Athugið að hægt er að breyta afstöðu þangað til að áfrýjunarfrestur rennur út',
+  },
+  postpone: {
+    id: 'sp.law-and-order:postpone',
+    defaultMessage: 'Ég tek áfrýjunarfrest',
+  },
+  appeal: {
+    id: 'sp.law-and-order:appeal',
+    defaultMessage: 'Ég uni dómi',
+  },
 })

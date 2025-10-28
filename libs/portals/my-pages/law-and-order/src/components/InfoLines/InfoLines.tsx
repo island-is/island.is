@@ -15,7 +15,10 @@ interface Props {
   groups: Array<LawAndOrderGroup>
   onFormSubmit?: SubmitHandler
   loading?: boolean
+  formLoading?: boolean
+  formSubmitMessage?: string
   appealDecision?: LawAndOrderAppealDecision
+  extraInfoLine?: React.ReactNode
 }
 
 const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -23,42 +26,51 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   return (
     <Stack space={1}>
-      {props.groups.map((x) => {
-        const hasRadioButtons = x.items?.some(
+      {props.groups.map((group, index) => {
+        const hasRadioButtons = group.items?.some(
           (y) => y.type === LawAndOrderItemType.RadioButton,
         )
-        if (hasRadioButtons)
+        if (hasRadioButtons && !props.extraInfoLine) {
           return (
             <RadioFormGroup
-              group={x}
+              group={group}
               onFormSubmit={props.onFormSubmit}
               appealDecision={props.appealDecision}
+              loading={props.formLoading}
+              submitMessage={props.formSubmitMessage}
             />
           )
+        } else if (hasRadioButtons) {
+          // Don't render radio button groups when extraInfoLine is present
+          return null
+        }
         return (
           <>
             <Box marginTop={4} />
-            {x.items?.map((y, i) => {
-              return (
-                <>
-                  {x.label && i === 0 && (
-                    <Text
-                      variant="eyebrow"
-                      color="purple400"
-                      marginBottom={[0, 2]}
-                    >
-                      {x.label}
-                    </Text>
-                  )}
-                  <RenderItem
-                    key={i}
-                    item={y}
-                    loading={props.loading}
-                    dividerOnBottom={(x.items?.length ?? 0) - 1 === i}
-                  />
-                </>
-              )
-            })}
+            {group.items?.map((item, i) => (
+              <>
+                {group.label && i === 0 && (
+                  <Text
+                    variant="eyebrow"
+                    color="purple400"
+                    marginBottom={[0, 2]}
+                  >
+                    {group.label}
+                  </Text>
+                )}
+                <RenderItem
+                  key={i}
+                  item={item}
+                  loading={props.loading}
+                  dividerOnBottom={
+                    index === 0 && props.extraInfoLine
+                      ? false // Don't add divider if extraInfoLine will be added after
+                      : (group.items?.length ?? 0) - 1 === i
+                  }
+                />
+              </>
+            ))}
+            {index === 0 && props.extraInfoLine && props.extraInfoLine}
           </>
         )
       })}

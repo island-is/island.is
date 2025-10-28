@@ -83,7 +83,7 @@ export const mapAppealDecision = (
     case VerdictResponseAppealDecisionEnum.POSTPONE:
       return AppealDecision.POSTPONE
     default:
-      return AppealDecision.POSTPONE
+      return AppealDecision.NO_ANSWER // No answer means the UI should render the form, otherwise infoLine with 'change' button
   }
 }
 

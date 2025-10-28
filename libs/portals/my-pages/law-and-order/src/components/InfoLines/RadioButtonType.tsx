@@ -1,11 +1,17 @@
 import { LawAndOrderGroup, LawAndOrderItemType } from '@island.is/api/schema'
-import { Button, RadioButton, Text, Box } from '@island.is/island-ui/core'
-import { Controller, useForm } from 'react-hook-form'
-import { RenderItem } from './RenderItem'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  RadioButton,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SubmitHandler } from '../../utils/types'
-import { useEffect } from 'react'
+import { RenderItem } from './RenderItem'
 
 type RadioFormValues = {
   [key: string]: string
@@ -15,16 +21,19 @@ type RadioFormValues = {
 interface Props {
   group: LawAndOrderGroup
   onFormSubmit?: SubmitHandler
+  submitMessage?: string
   appealDecision?: string
+  loading?: boolean
 }
 
 export const RadioFormGroup = ({
   group,
   onFormSubmit,
+  submitMessage,
   appealDecision,
+  loading,
 }: Props) => {
   const { formatMessage } = useLocale()
-
   // Use group.label or group.id as the field name
   const radioFieldName = group.label ?? 'radio-button-group'
 
@@ -44,6 +53,10 @@ export const RadioFormGroup = ({
     }
   }, [appealDecision, radioFieldName, setValue, isDirty])
 
+  useEffect(() => {
+    console.log('hasSubmitted', formState.isSubmitSuccessful)
+  }, [formState])
+
   const onSubmit = (data: RadioFormValues) => {
     onFormSubmit?.(data)
   }
@@ -53,6 +66,15 @@ export const RadioFormGroup = ({
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {group.label}
       </Text>
+      {submitMessage && formState.isSubmitSuccessful && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(messages.registrationCompleted)}
+            message={submitMessage}
+          />
+        </Box>
+      )}
       <Controller
         name={radioFieldName}
         control={control}
@@ -73,7 +95,10 @@ export const RadioFormGroup = ({
                     name={`${radioFieldName}.${i}`}
                     label={item.label ?? ''}
                     value={item.value}
-                    checked={field.value === item.value}
+                    checked={
+                      field.value === item.value ||
+                      item.value === appealDecision
+                    }
                     onChange={field.onChange}
                   />
                 </Box>
@@ -83,7 +108,14 @@ export const RadioFormGroup = ({
         )}
       />
       <Box marginY={3}>
-        <Button size="small" type="submit" disabled={formState.isSubmitting}>
+        <Button
+          size="small"
+          type="submit"
+          disabled={
+            formState.isSubmitting || !!formState.errors[radioFieldName]
+          }
+          loading={loading}
+        >
           {formatMessage(messages.confirm)}
         </Button>
       </Box>

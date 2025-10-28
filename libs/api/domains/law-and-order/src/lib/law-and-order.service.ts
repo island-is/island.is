@@ -3,6 +3,7 @@ import {
   AlertMessageTypeEnum,
   CasesResponse,
   Defender,
+  ItemsTypeEnum,
   JudicialSystemSPClientService,
   SubpoenaResponse,
   VerdictResponse,
@@ -15,7 +16,7 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { ActionTypeEnum } from '../models/actions.model'
 import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
-import { Item, ItemType } from '../models/item.model'
+import { Item } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
 import {
@@ -217,22 +218,25 @@ export class LawAndOrderService {
     if (!isDefined(verdictsResponse)) return null
 
     const verdicts: VerdictResponse = verdictsResponse
+    const hasForm = isDefined(
+      verdicts.groups.find((g) =>
+        g.items.some((item) => item.type === ItemsTypeEnum.RadioButton),
+      ),
+    )
 
+    console.log(verdicts)
     const data: Verdict = {
       caseId: verdictsResponse.caseId,
       title: formatMessage(verdicts.title),
       subtitle: formatMessage(verdicts.subtitle),
       appealDecision: mapAppealDecision(verdicts.appealDecision),
-      groups: verdicts.groups.map((group, index) => ({
+      canAppeal: hasForm,
+      groups: verdicts.groups.map((group) => ({
         ...group,
         items: group.items.map((item) => ({
           ...item,
           linkType: mapLinkTypes(item.linkType),
-          //TODO: REMOVE TYPE TESTING
-          type:
-            verdicts.groups.length - 1 === index
-              ? ItemType.Accordion
-              : mapItemTypes(item.type),
+          type: mapItemTypes(item.type),
         })),
       })),
     }
@@ -258,9 +262,15 @@ export class LawAndOrderService {
       return null
     }
 
+    const hasForm = isDefined(
+      data.groups.find((g) =>
+        g.items.some((item) => item.type === ItemsTypeEnum.RadioButton),
+      ),
+    )
     return {
       caseId: data.caseId,
       title: data.title,
+      canAppeal: hasForm,
       appealDecision: mapAppealDecision(data.appealDecision),
     }
   }

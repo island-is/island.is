@@ -1,6 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
+  InfoLine,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -14,7 +15,7 @@ import {
   useSubmitVerdictAppealDecisionMutation,
 } from './Verdict.generated'
 import { LawAndOrderAppealDecision } from '@island.is/api/schema'
-import { toast } from '@island.is/island-ui/core'
+import { Box, Divider, toast } from '@island.is/island-ui/core'
 
 type UseParams = {
   id: string
@@ -26,6 +27,7 @@ const CourtCaseDetail = () => {
   const [appealDecision, setAppealDecision] =
     useState<LawAndOrderAppealDecision>()
   const { id } = useParams() as UseParams
+  const [verdictPopUp, setVerdictPopUp] = useState(false)
 
   const { data, loading, error } = useGetCourtCaseVerdictQuery({
     variables: {
@@ -38,7 +40,10 @@ const CourtCaseDetail = () => {
   })
   const verdict = data?.lawAndOrderVerdict
 
-  const [submitVerdictAppealDecision] = useSubmitVerdictAppealDecisionMutation()
+  const [
+    submitVerdictAppealDecision,
+    { loading: postLoading, data: postData, error: postError },
+  ] = useSubmitVerdictAppealDecisionMutation()
 
   const handleSubmit = async (data: Record<string, unknown>) => {
     const choice = Object.values(data)[0] as LawAndOrderAppealDecision
@@ -77,14 +82,80 @@ const CourtCaseDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && verdict && verdict?.groups && (
-        <InfoLines
-          groups={verdict?.groups}
-          appealDecision={appealDecision ?? verdict.appealDecision}
-          loading={loading}
-          onFormSubmit={handleSubmit}
-        />
+        <>
+          <InfoLines
+            groups={verdict?.groups}
+            appealDecision={
+              verdict.canAppeal ? verdict.appealDecision : undefined
+            }
+            loading={loading}
+            onFormSubmit={handleSubmit}
+            formSubmitMessage={formatMessage(
+              messages.verdictAppealDecisionInfo,
+            )}
+            formLoading={postLoading}
+            extraInfoLine={
+              verdict.canAppeal &&
+              (verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ||
+                postData?.lawAndOrderVerdictPost?.appealDecision !==
+                  LawAndOrderAppealDecision.NO_ANSWER) ? (
+                <>
+                  <InfoLine
+                    loading={loading}
+                    label={messages.verdictAppealDecision}
+                    content={
+                      verdict?.appealDecision ===
+                      LawAndOrderAppealDecision.POSTPONE
+                        ? formatMessage(messages.postpone)
+                        : formatMessage(messages.appeal)
+                    }
+                    button={{
+                      type: 'action',
+                      variant: 'text',
+                      label: messages.change,
+                      icon: 'pencil',
+                      action: () => {
+                        setVerdictPopUp(true)
+                      },
+                      disabled: postLoading,
+                      tooltip: formatMessage(
+                        messages.verdictAppealDecisionInfo,
+                      ),
+                    }}
+                  />
+                  <Divider />
+                </>
+              ) : null
+            }
+          />
+          {verdict.canAppeal &&
+            (verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ||
+              postData?.lawAndOrderVerdictPost?.appealDecision !==
+                LawAndOrderAppealDecision.NO_ANSWER) && (
+              <>
+                <Box paddingTop={1} />
+                <InfoLine
+                  loading={loading}
+                  label={messages.verdictAppealDecision}
+                  content={postData?.lawAndOrderVerdictPost?.appealDecision}
+                  button={{
+                    type: 'action',
+                    variant: 'text',
+                    label: messages.change,
+                    icon: 'pencil',
+                    action: () => {
+                      setVerdictPopUp(true)
+                    },
+                    disabled: postLoading,
+                    tooltip: formatMessage(messages.verdictAppealDecisionInfo),
+                  }}
+                />
+                <Box paddingBottom={1} />
+                <Divider />
+              </>
+            )}
+        </>
       )}
-
       {!loading && !error && verdict && verdict?.groups?.length === 0 && (
         <Problem
           type="no_data"

@@ -4,6 +4,7 @@ import { Group } from './group.model'
 export enum AppealDecision {
   ACCEPT = 'ACCEPT',
   POSTPONE = 'POSTPONE',
+  NO_ANSWER = 'NO_ANSWER',
 }
 
 registerEnumType(AppealDecision, {
@@ -23,6 +24,9 @@ export class Verdict {
 
   @Field(() => AppealDecision)
   appealDecision!: AppealDecision
+
+  @Field({ nullable: true })
+  canAppeal?: boolean
 
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>
