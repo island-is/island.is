@@ -5,6 +5,7 @@ import {
   Transaction,
   UpdateOptions,
 } from 'sequelize'
+import { string } from 'yargs'
 
 import {
   BadRequestException,
@@ -277,6 +278,29 @@ export class CourtDocumentRepositoryService {
 
       throw error
     }
+  }
+
+  async updateMergedCourtDocuments({
+    parentCaseId,
+    caseId,
+    options,
+  }: {
+    parentCaseId?: string
+    caseId: string
+    options?: FileCourtDocumentInCourtSessionOptions
+  }) {
+    // we need to link merged court documents to the latest court session that is open
+    // but what if there is no court session that is open??
+
+    //TODO: get the latest open court session - I don't think that matters..
+    // get all court document, get the latest order number then create new ones given the
+
+    // I think we also need a merged court session so we know when the merged files were put forward
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { parentCaseId },
+      order: [['documentOrder', 'ASC']],
+      transaction: options?.transaction,
+    })
   }
 
   async fileInCourtSession(

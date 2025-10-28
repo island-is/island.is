@@ -2299,6 +2299,18 @@ export class CaseService {
           )
         }
 
+        if (
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.MERGE
+        ) {
+          await this.courtDocumentService.updateMergedCourtDocuments({
+            parentCaseId: update.mergeCaseId,
+            caseId: theCase.id,
+            transaction,
+          })
+        }
+
         const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(

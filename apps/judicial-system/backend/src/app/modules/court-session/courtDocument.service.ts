@@ -53,6 +53,22 @@ export class CourtDocumentService {
     )
   }
 
+  updateMergedCourtDocuments({
+    parentCaseId,
+    caseId,
+    transaction,
+  }: {
+    parentCaseId?: string
+    caseId: string
+    transaction: Transaction
+  }): Promise<void> {
+    return this.courtDocumentRepositoryService.updateMergedCourtDocuments({
+      parentCaseId,
+      caseId,
+      options: { transaction },
+    })
+  }
+
   fileInCourtSession(
     caseId: string,
     courtDocumentId: string,
