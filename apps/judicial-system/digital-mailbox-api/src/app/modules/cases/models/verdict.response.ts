@@ -11,6 +11,7 @@ import {
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
   ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -29,6 +30,9 @@ export class VerdictResponse {
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
+
+  @ApiProperty({ type: String })
+  appealDecision?: VerdictAppealDecision
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
@@ -69,6 +73,7 @@ export class VerdictResponse {
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
+      appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -100,11 +105,12 @@ export class VerdictResponse {
             value: item[1],
           })),
         },
-        // Ruling text
         {
           label: t.ruling,
           items: [
             {
+              // there should only be one ruling judgement over all court sessions
+              // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
               value: internalCase.courtSessions?.[0]?.ruling ?? '',
               type: 'text',
             },
