@@ -61,6 +61,7 @@ const FindStudentModal = ({
 
       setIsSearching(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSearching, findStudent])
 
   return (

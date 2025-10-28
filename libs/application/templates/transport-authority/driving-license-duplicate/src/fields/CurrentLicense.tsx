@@ -19,6 +19,7 @@ export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   let currentLicense =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getValueViaPath<any>(application.externalData, 'currentLicense.data') ??
     null
 

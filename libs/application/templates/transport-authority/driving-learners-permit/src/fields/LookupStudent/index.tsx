@@ -116,6 +116,7 @@ export const LookupStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Clear inital errors on mount
   useEffect(() => {
     clearErrors()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const studentNationalId: string = watch(fieldNames.studentNationalId)
@@ -171,6 +172,7 @@ export const LookupStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       // clear student name if nationalId is not valid
       setValue(fieldNames.studentName, '')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentName, studentNationalId, getIdentity, setValue])
 
   return (

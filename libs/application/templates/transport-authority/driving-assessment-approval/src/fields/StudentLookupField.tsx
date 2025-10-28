@@ -23,7 +23,7 @@ type LookupProps = {
   field: {
     id: string
   }
-  error: Record<string, string> | any
+  error?: Record<string, string>
 }
 
 export const StudentLookupField: FC<React.PropsWithChildren<LookupProps>> = ({
@@ -77,7 +77,7 @@ export const StudentLookupField: FC<React.PropsWithChildren<LookupProps>> = ({
           format="######-####"
           backgroundColor="blue"
           loading={queryLoading}
-          error={error?.name}
+          error={error ? error?.name : undefined}
         />
       </GridColumn>
       <GridColumn span="6/12">
