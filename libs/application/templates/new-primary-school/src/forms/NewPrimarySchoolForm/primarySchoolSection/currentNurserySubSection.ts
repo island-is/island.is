@@ -4,11 +4,11 @@ import {
   buildSubSection,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { Query } from '@island.is/api/schema'
+import { Query, OrganizationTypeEnum } from '@island.is/api/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
@@ -32,14 +32,21 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
             })
 
             return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ unitId, name }) => ({
+                  value: unitId || '',
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
         }),
@@ -52,17 +59,25 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-nursery',
           updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
+            const municipalityCode = selectedValues?.[0]
+
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.ChildCare,
+                  municipalityCode: municipalityCode,
+                },
+              },
             })
 
             return (
-              data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.managing?.map((nursery) => ({
-                  value: nursery.id,
-                  label: nursery.name,
-                })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ id, name }) => ({
+                  value: id,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {

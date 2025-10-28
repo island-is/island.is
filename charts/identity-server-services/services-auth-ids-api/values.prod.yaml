@@ -125,7 +125,7 @@ initContainer:
 namespace: 'identity-server'
 podDisruptionBudget:
   maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

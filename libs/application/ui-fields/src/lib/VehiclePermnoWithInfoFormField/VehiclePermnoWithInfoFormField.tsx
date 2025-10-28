@@ -10,6 +10,8 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   VehiclePermnoWithInfoField,
   FieldBaseProps,
+  FieldTypes,
+  FieldComponents,
 } from '@island.is/application/types'
 import {
   buildFieldRequired,
@@ -26,6 +28,7 @@ import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
 import { BasicVehicleInformation } from '@island.is/api/schema'
 import { GET_VEHICLE_BASIC_INFO_BY_PERMNO } from './graphql/queries'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 
 interface Props extends FieldBaseProps {
   field: VehiclePermnoWithInfoField
@@ -165,12 +168,33 @@ export const VehiclePermnoWithInfoFormField: FC<
               permnoInput.length === INPUT_MAX_LENGTH &&
               data?.vehicleBasicInfoByPermno === null
                 ? formatMessage(coreErrorMessages.vehicleNotFoundForPermno)
-                : undefined
+                : errors && getErrorViaPath(errors, makeAndColorField)
             }
             readOnly={true}
           />
         </GridColumn>
       </GridRow>
+
+      <HiddenInputFormField
+        application={application}
+        field={{
+          id: numberOfAxlesField,
+          type: FieldTypes.HIDDEN_INPUT,
+          component: FieldComponents.HIDDEN_INPUT,
+          children: undefined,
+          dontDefaultToEmptyString: true,
+        }}
+      />
+      <HiddenInputFormField
+        application={application}
+        field={{
+          id: hasErrorField,
+          type: FieldTypes.HIDDEN_INPUT,
+          component: FieldComponents.HIDDEN_INPUT,
+          children: undefined,
+          dontDefaultToEmptyString: true,
+        }}
+      />
 
       {!!vehicleValidation?.errorMessages?.length && (
         <Box paddingTop={3}>

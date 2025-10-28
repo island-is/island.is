@@ -29,17 +29,15 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   rentalAgreement = 'isRentalAgreementEnabled',
-  SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
-  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
   disabilityPension = 'isDisabilityPensionEnabled',
   disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
-  PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
   ActivationAllowanceApplicationEnabled = 'isActivationAllowanceApplicationEnabled',
+  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -117,6 +115,7 @@ export enum Features {
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
+  isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -125,6 +124,8 @@ export enum Features {
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
+
+  isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 }
 
 export enum ServerSideFeature {

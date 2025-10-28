@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
 
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
@@ -20,7 +20,7 @@ import {
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
   title: otherParentApprovalFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({

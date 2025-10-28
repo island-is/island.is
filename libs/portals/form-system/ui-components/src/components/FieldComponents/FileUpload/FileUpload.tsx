@@ -1,42 +1,88 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import { CREATE_UPLOAD_URL } from '@island.is/form-system/graphql'
 import {
-  fileToObjectDeprecated,
   FileUploadStatus,
   InputFileUpload,
-  InputFileUploadDeprecated,
   UploadFile,
-  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import { Dispatch, useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import { Action } from '../../../lib'
-import { fileTypes } from '../../../lib/fileTypes'
 import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   applicationId?: string
 }
 
-// This component is still very much a WIP
+// export interface UploadFile {
+//   name: string
+//   id?: string
+//   type?: string
+//   key?: string
+//   status?: FileUploadStatus
+//   percent?: number
+//   originalFileObj?: File | Blob
+//   error?: string
+//   size?: number
+// }
+
 export const FileUpload = ({ item, hasError }: Props) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
 
+  const updateFile = useCallback((id: string, patch: Partial<UploadFile>) => {
+    setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)))
+  }, [])
+
+  const setProgress = useCallback(
+    (id: string | undefined, pct: number) => {
+      if (!id) return
+      updateFile(id, {
+        percent: Math.max(0, Math.min(100, pct)),
+        status: FileUploadStatus.uploading,
+      })
+    },
+    [updateFile],
+  )
+
+  const markDone = useCallback(
+    (id: string | undefined, s3Key: string) => {
+      if (!id) return
+      updateFile(id, {
+        status: FileUploadStatus.done,
+        percent: 100,
+        key: s3Key,
+      })
+    },
+    [updateFile],
+  )
+
+  const markError = useCallback(
+    (id: string | undefined, msg: string) => {
+      if (!id) return
+      updateFile(id, {
+        status: FileUploadStatus.error,
+        error: msg,
+        percent: 0,
+      })
+    },
+    [updateFile],
+  )
+
   const onChange = useCallback(
-    (selectedFiles: File[]) => {
-      if (
-        files.length + selectedFiles.length >
-        (item?.fieldSettings?.maxFiles ?? 1)
-      ) {
+    async (selectedFiles: File[]) => {
+      const max = item?.fieldSettings?.maxFiles ?? 1
+      if (files.length + selectedFiles.length > max) {
         setError(
           `${formatMessage(m.maxFileError)} ${
             item.fieldSettings?.maxFiles ?? 1
@@ -47,7 +93,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
 
       setError(undefined)
 
-      const uploadFiles = selectedFiles.map((file) => ({
+      const staged: UploadFile[] = selectedFiles.map((file) => ({
         id: `${file.name}-${uuid()}`,
         name: file.name,
         size: file.size,
@@ -57,36 +103,106 @@ export const FileUpload = ({ item, hasError }: Props) => {
         originalFileObj: file,
       }))
 
-      setFiles((prev) => [...prev, ...uploadFiles])
+      setFiles((prev) => [...prev, ...staged])
 
-      //Upload files to S3 missing here
+      for (const row of staged) {
+        const fileObj = row.originalFileObj
+        if (!(fileObj instanceof File)) {
+          markError(row.id, 'Missing file object')
+          continue
+        }
+
+        try {
+          const { data } = await createUploadUrl({
+            variables: {
+              filename: row.name,
+            },
+          })
+
+          const res = data?.createUploadUrl
+          if (!res?.url || !res?.fields) {
+            throw new Error('Could not get upload URL')
+          }
+
+          await uploadViaPresignedPost(
+            { url: res.url, fields: res.fields },
+            fileObj,
+            (pct) => setProgress(row.id, pct),
+          )
+
+          const key = res.key ?? res.fields?.key
+          if (!key) console.warn('No S3 key returned!')
+          markDone(row.id, key ?? row.id)
+        } catch (e) {
+          const msg = e?.message ?? 'Upload failed'
+          markError(row.id, msg)
+          setError(msg)
+        }
+      }
     },
-    [files, item, formatMessage],
+    [
+      item.fieldSettings?.maxFiles,
+      files.length,
+      formatMessage,
+      createUploadUrl,
+      setProgress,
+      markDone,
+      markError,
+    ],
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const updateFile = useCallback((file: UploadFile, newId?: string) => {
-    setFiles((prev) =>
-      prev.map((f) =>
-        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
-      ),
-    )
-  }, [])
+  const onRetry = useCallback(
+    async (row: UploadFile) => {
+      if (!row?.id) return
+      const fileObj = row.originalFileObj
+      if (!(fileObj instanceof File)) {
+        markError(row.id, 'Missing file')
+        return
+      }
 
-  // TODO: add handleRetry
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRetry = useCallback((file: UploadFile) => {
-    // handleRetry(file, updateFile)
-    // },[handleRetry, updateFile])
-  }, [])
+      updateFile(row.id, {
+        status: FileUploadStatus.uploading,
+        percent: 0,
+        error: undefined,
+      })
 
-  // Handle file removal
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRemove = useCallback((file: UploadFile) => {
-    // handleRemove(file, removedFile => {
-    //   setFiles(prev => prev.filter(f => f.id !== removedFile.id))
-    // })
-    // }, [handleRemove])
+      try {
+        const { data } = await createUploadUrl({
+          variables: {
+            filename: row.name,
+          },
+        })
+
+        const res = data?.createUploadUrl
+        if (!res?.url || !res?.fields) {
+          throw new Error('No presigned POST returned')
+        }
+
+        await uploadViaPresignedPost(
+          { url: res.url, fields: res.fields },
+          fileObj,
+          (pct) => setProgress(row.id, pct),
+        )
+
+        const key = res.key ?? res.fields?.key
+        if (!key) console.warn('No S3 key returned!')
+        markDone(row.id, key ?? row.id)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        const msg = e?.message ?? 'Upload failed'
+        markError(row.id, msg)
+        setError(msg)
+      }
+    },
+    [createUploadUrl, updateFile, setProgress, markDone, markError],
+  )
+
+  // Remove a single row from UI (optionally also delete from storage/backend)
+  const onRemove = useCallback((row: UploadFile) => {
+    if (!row?.id) return
+    setFiles((prev) => prev.filter((f) => f.id !== row.id))
+    // Optional: if already uploaded and you want to delete from S3/backend:
+    // if (row.key) await deleteUploadedObject({ variables: { key: row.key } })
   }, [])
 
   return (
@@ -107,56 +223,31 @@ export const FileUpload = ({ item, hasError }: Props) => {
   )
 }
 
-export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
-  const [error, setError] = useState<string | undefined>(
-    hasError ? 'error' : undefined,
-  )
-  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
-  const { formatMessage } = useIntl()
-  const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
-  const onChange = (files: File[]) => {
-    const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
-    const uploadFilesWithKey = uploadFiles.map((f) => ({
-      ...f,
-      key: uuid(),
-    }))
+const uploadViaPresignedPost = (
+  presigned: { url: string; fields: Record<string, string> },
+  file: File,
+  onProgress?: (progress: number) => void,
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const form = new FormData()
+    Object.entries(presigned.fields).forEach(([key, value]) =>
+      form.append(key, value),
+    )
+    form.append('file', file)
 
-    // Check whether upload will exceed limit and if so, prevent it
-    const currentAmount = item?.fieldSettings?.maxFiles ?? 1
-    if (fileList.length + uploadFilesWithKey.length > currentAmount) {
-      setError(
-        `${formatMessage(m.maxFileError)} ${item.fieldSettings?.maxFiles}`,
-      )
-      return
-    }
-    setError('')
-    const newFileList = [...fileList, ...uploadFilesWithKey]
-    setFileList(newFileList)
-  }
-
-  const onRemove = (fileToRemove: UploadFileDeprecated) => {
-    const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
-    setFileList(newFileList)
-  }
-
-  return (
-    <InputFileUploadDeprecated
-      name="fileUpload"
-      fileList={fileList}
-      header={item?.name?.[lang] ?? ''}
-      description={`${formatMessage(m.previewAllowedFileTypes)}: ${types?.map(
-        (f: string) => `${f} `,
-      )}`}
-      buttonLabel={formatMessage(m.fileUploadButton)}
-      onChange={onChange}
-      onRemove={onRemove}
-      errorMessage={error}
-      accept={
-        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', presigned.url)
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const progress = Math.round((event.loaded / event.total) * 100)
+        onProgress?.(progress)
       }
-      showFileSize
-      maxSize={item?.fieldSettings?.fileMaxSize ?? 1}
-      multiple={(item?.fieldSettings?.maxFiles ?? 0) > 1}
-    />
-  )
+    }
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve()
+      else reject(new Error(`Upload failed with status ${xhr.status}`))
+    }
+    xhr.onerror = () => reject(new Error('Network error during file upload'))
+    xhr.send(form)
+  })
 }
