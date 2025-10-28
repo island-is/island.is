@@ -7,27 +7,32 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DispensationHistoryDto,
   DispensationHistoryItemDto,
+  OrganDonorDto,
+  OrganDto,
   PrescribedItemDto,
   PrescriptionRenewalRequestDto,
   ProductDocumentDto,
   ReferralDto,
-  OrganDonorDto,
   UpdateOrganDonorDto,
-  OrganDto,
   WaitingListEntryDto,
-  mePrescriptionControllerGetPrescriptionsV1,
+  donationExceptionControllerGetOrgansV1,
+  meDonorStatusControllerGetOrganDonorStatusV1,
+  meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
+  mePrescriptionControllerGetPrescriptionsV1,
   mePrescriptionControllerRenewPrescriptionV1,
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
-  meDonorStatusControllerGetOrganDonorStatusV1,
-  donationExceptionControllerGetOrgansV1,
-  meDonorStatusControllerUpdateOrganDonorStatusV1,
-  mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
 } from './gen/fetch'
-import { Locale, PrescriptionCommissionDto } from './gen/fetch/types.gen'
+import {
+  CreatePrescriptionCommissionDto,
+  Locale,
+  PrescriptionCommissionDto,
+} from './gen/fetch/types.gen'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -275,5 +280,20 @@ export class HealthDirectorateHealthService {
     }
 
     return medicineDelegations
+  }
+
+  public async postMedicineDelegation(
+    auth: Auth,
+    locale: Locale,
+    input: CreatePrescriptionCommissionDto,
+  ): Promise<boolean | null> {
+    const response = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerCreatePrescriptionCommissionV1({
+          body: input,
+        }),
+      ),
+    )
+    return response ? true : null
   }
 }

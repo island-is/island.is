@@ -35,3 +35,10 @@ export interface DataState<T> {
   loading?: boolean
   error?: boolean
 }
+
+export interface DelegationState {
+  dateFrom?: Date
+  dateTo?: Date
+  nationalId?: string
+  lookup?: boolean
+}

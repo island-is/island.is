@@ -18,7 +18,9 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
+import { MedicineDelegationCreateInput } from './dto/medicineDelegation.input'
 import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
+import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   Permit,
   PermitReturn,
@@ -504,6 +506,29 @@ export class HealthDirectorateService {
     }
 
     return data
+  }
+
+  async postMedicineDelegation(
+    auth: Auth,
+    locale: Locale,
+    input: MedicineDelegationCreateInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .postMedicineDelegation(auth, locale, {
+        commissionType: input.lookup ? 1 : 0,
+        toNationalId: input.nationalId,
+        validFrom: input.from?.toISOString(),
+        validTo: input.to?.toISOString(),
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to create medicine delegation',
+        }
+      })
   }
 
   private castRenewalInputToNumber = (

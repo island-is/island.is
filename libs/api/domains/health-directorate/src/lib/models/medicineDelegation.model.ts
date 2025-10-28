@@ -12,19 +12,19 @@ export class MedicineDelegationDates {
 @ObjectType('HealthDirectorateMedicineDelegationItem')
 export class MedicineDelegationItem {
   @Field({ nullable: true })
-  name?: string
+  name!: string
 
   @Field({ nullable: true })
-  nationalId?: string
+  nationalId!: string
+
+  @Field(() => MedicineDelegationDates, { nullable: true })
+  dates!: MedicineDelegationDates
 
   @Field(() => Boolean, { nullable: true })
   isActive?: boolean
 
   @Field(() => Boolean, { nullable: true })
   lookup?: boolean
-
-  @Field(() => MedicineDelegationDates, { nullable: true })
-  dates?: MedicineDelegationDates
 }
 
 @ObjectType('HealthDirectorateMedicineDelegations')

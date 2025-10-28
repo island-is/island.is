@@ -23,3 +23,14 @@ query GetMedicineDelegations(
     }
   }
 }
+
+mutation PostMedicineDelegation(
+  $locale: String!
+  $input: HealthDirectorateMedicineDelegationCreateInput!
+) {
+  healthDirectorateMedicineDelegationCreate(locale: $locale, input: $input) {
+    __typename
+    success
+    message
+  }
+}

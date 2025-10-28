@@ -1978,6 +1978,10 @@ export const m = defineMessages({
     id: 'service.portal:copied',
     defaultMessage: 'Afritað!',
   },
+  forward: {
+    id: 'service.portal:forward',
+    defaultMessage: 'Áfram',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

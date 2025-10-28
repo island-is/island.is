@@ -24,31 +24,35 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
+import {
+  MedicineDelegationCreateInput,
+  MedicineDelegationInput,
+} from './dto/medicineDelegation.input'
+import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
+import { HealthDirectorateResponse } from './dto/response.dto'
 import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
-import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
-import { Prescriptions } from './models/prescriptions.model'
-import { ReferralDetail } from './models/referral.model'
-import { Referrals } from './models/referrals.model'
-import { Vaccinations } from './models/vaccinations.model'
-import { WaitlistDetail } from './models/waitlist.model'
-import { Waitlists } from './models/waitlists.model'
-import { MedicineHistory } from './models/medicineHistory.model'
-import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
-import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
-import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
-import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import {
   Permit,
   PermitReturn,
   Permits,
 } from './models/approvals/approvals.model'
-import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import { Countries } from './models/approvals/country.model'
 import { MedicineDelegations } from './models/medicineDelegation.model'
-import { MedicineDelegationInput } from './dto/medicineDelegation.input'
+import { MedicineHistory } from './models/medicineHistory.model'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
+import { Referrals } from './models/referrals.model'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { Vaccinations } from './models/vaccinations.model'
+import { WaitlistDetail } from './models/waitlist.model'
+import { Waitlists } from './models/waitlists.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -338,5 +342,21 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<MedicineDelegations | null> {
     return this.api.getMedicineDelegations(user, locale, input.active)
+  }
+
+  /* Add new Prescription Delegation */
+  @Mutation(() => HealthDirectorateResponse, {
+    name: 'healthDirectorateMedicineDelegationCreate',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  postMedicineDelegation(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: MedicineDelegationCreateInput,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectorateResponse> {
+    return this.api.postMedicineDelegation(user, locale, input)
   }
 }
