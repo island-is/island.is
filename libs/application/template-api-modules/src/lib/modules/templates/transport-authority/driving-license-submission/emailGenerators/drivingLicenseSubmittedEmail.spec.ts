@@ -9,7 +9,7 @@ import { faker } from '@island.is/shared/mocking'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
-import { EmailTemplateGeneratorProps } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../../types'
 
 describe('driving license submission', () => {
   let user: User
