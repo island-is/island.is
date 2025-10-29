@@ -235,7 +235,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.errorDataProvider,
-              summary: `Ekki tókst að senda umsókn til sýslumanns: ${e}`,
+              summary:
+                'Ekki tókst að senda umsókn til sýslumanns. Vinsamlegast reyndu aftur síðar.',
             },
             500,
           )
@@ -263,7 +264,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.errorDataProvider,
-          summary: `Villa kom upp við að senda umsókn: ${e}`,
+          summary: 'Villa kom upp við að senda umsókn',
         },
         500,
       )
@@ -314,14 +315,25 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         'base64',
       )
       if (!fileContent) {
-        throw new Error(`File ${fileName} is empty or not found`)
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: 'Viðhengi fannst ekki í geymslu',
+          },
+          500,
+        )
       }
       return fileContent
     } catch (e) {
+      // If it's already a TemplateApiError, re-throw it
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      // Otherwise wrap in TemplateApiError
       throw new TemplateApiError(
         {
           title: coreErrorMessages.errorDataProvider,
-          summary: `Ekki tókst að sækja viðhengi úr geymslu: ${fileName}`,
+          summary: 'Ekki tókst að sækja viðhengi úr geymslu',
         },
         500,
       )
