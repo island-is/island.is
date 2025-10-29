@@ -587,30 +587,30 @@ const Indictment = () => {
                 title={formatMessage(strings.civilDemandsTitle)}
               />
               <Input
-                name="demands"
-                label={formatMessage(strings.demandsLabel)}
-                placeholder={formatMessage(strings.demandsPlaceholder)}
-                value={workingCase.demands ?? ''}
-                errorMessage={demandsErrorMessage}
-                hasError={demandsErrorMessage !== ''}
+                name="civilDemands"
+                label={formatMessage(strings.civilDemandsLabel)}
+                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                value={workingCase.civilDemands ?? ''}
+                errorMessage={civilDemandsErrorMessage}
+                hasError={civilDemandsErrorMessage !== ''}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'demands',
+                    'civilDemands',
                     event.target.value,
                     ['empty'],
                     setWorkingCase,
-                    demandsErrorMessage,
-                    setDemandsErrorMessage,
+                    civilDemandsErrorMessage,
+                    setCivilDemandsErrorMessage,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'demands',
+                    'civilDemands',
                     event.target.value,
                     ['empty'],
                     workingCase,
                     updateCase,
-                    setDemandsErrorMessage,
+                    setCivilDemandsErrorMessage,
                   )
                 }
                 textarea
