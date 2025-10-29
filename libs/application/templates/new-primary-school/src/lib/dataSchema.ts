@@ -339,6 +339,29 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+  childCircumstances: z
+    .object({
+      onSiteObservation: z.array(z.enum([YES])).length(1),
+      onSiteObservationAdditionalInfo: z.array(z.enum([YES])).length(1),
+      callInExpert: z
+        .array(z.enum([YES]))
+        .length(1)
+        .optional(),
+      childViews: z.array(z.enum([YES])).length(1),
+    })
+    .refine(
+      (data) => {
+        return (
+          data.callInExpert === undefined ||
+          (Array.isArray(data.callInExpert) &&
+            data.callInExpert.length === 1 &&
+            data.callInExpert[0] === 'yes')
+        )
+      },
+      {
+        path: ['callInExpert'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
