@@ -120,6 +120,7 @@ const CourtCaseDetail = () => {
           onFormSubmit={handleSubmit}
           formSubmitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
           formLoading={postLoading}
+          modalOpen={verdictPopUp}
           extraInfoLine={
             currentCanAppeal &&
             currentAppealDecision !== LawAndOrderAppealDecision.NO_ANSWER ? (

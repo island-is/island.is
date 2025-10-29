@@ -17,6 +17,7 @@ interface Props {
   loading?: boolean
   formLoading?: boolean
   formSubmitMessage?: string
+  modalOpen?: boolean
   appealDecision?: LawAndOrderAppealDecision
   extraInfoLine?: React.ReactNode
 }
@@ -30,7 +31,7 @@ const VerdictInfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
         const hasRadioButtons = group.items?.some(
           (y) => y.type === LawAndOrderItemType.RadioButton,
         )
-        if (hasRadioButtons && !props.extraInfoLine && !props.formLoading) {
+        if (hasRadioButtons && !props.extraInfoLine && !props.modalOpen) {
           return (
             <AppealForm
               group={group}
