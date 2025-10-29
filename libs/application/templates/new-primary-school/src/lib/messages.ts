@@ -1010,12 +1010,17 @@ export const newPrimarySchoolMessages: MessageDir = {
 }
 
 export const payerApprovalMessages = defineMessages({
-  formTitle: {
-    id: 'nps.application:payer.approval.form.title',
-    defaultMessage:
-      'Þú hefur verið skráð/ur sem greiðandi fyrir skólavist hjá eftirfarandi barni',
-    description:
-      'You have been registered as the payer for the school fees of the below child',
+  title: {
+    // TODO: MMS needs to update the text
+    id: 'nps.application:payer.approval.title',
+    defaultMessage: 'Greiðandi skólagjalda',
+    description: 'english description',
+  },
+  description: {
+    // TODO: MMS needs to update the text
+    id: 'nps.application:payer.approval.description',
+    defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
+    description: 'english description',
   },
   tabTitle: {
     id: 'nps.application:payer.approval.tab.title',
@@ -1038,18 +1043,38 @@ export const payerApprovalMessages = defineMessages({
     description: 'Reject',
   },
   thanksDescription: {
+    // TODO: MMS needs to update the text
     id: 'nps.application:payer.approval.thanks.description',
-    defaultMessage: 'Staðfesting vegna greiðslu skólavistar er skráð.',
-    description: 'Confirmation for the payment of school fees is registered.',
+    defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
+    description: 'english description',
   },
 })
 
 export const payerRejectedMessages = defineMessages({
-  formTitle: {
+  title: {
     // TODO: MMS needs to update the text
-    id: 'nps.application:payer.rejected.form.title',
-    defaultMessage: 'Greiðandi hafnaði umsókn...',
-    description: '',
+    id: 'nps.application:payer.rejected.title',
+    defaultMessage: 'Greiðandi skólagjalda',
+    description: 'english description',
+  },
+  description: {
+    // TODO: MMS needs to update the text
+    id: 'nps.application:payer.rejected.description',
+    defaultMessage:
+      'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
+    description: 'english description',
+  },
+  payerName: {
+    id: 'nps.application:payer.rejected.payer.name',
+    defaultMessage: 'Nafn greiðanda',
+    description: 'Payer name',
+  },
+  alertMessage: {
+    // TODO: MMS needs to update the text
+    id: 'nps.application:payer.rejected.alert.message',
+    defaultMessage:
+      'Vinsamlegast farðu inn í umsóknina og veldu annan greiðanda',
+    description: 'english description',
   },
   tabTitle: {
     id: 'nps.application:payer.rejected.tab.title',

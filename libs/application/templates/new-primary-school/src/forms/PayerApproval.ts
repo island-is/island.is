@@ -5,7 +5,6 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
-  coreMessages,
 } from '@island.is/application/core'
 import { Application, DefaultEvents, Form } from '@island.is/application/types'
 import {
@@ -26,7 +25,8 @@ export const PayerApproval: Form = buildForm({
       children: [
         buildMultiField({
           id: 'payerApproval',
-          title: payerApprovalMessages.formTitle,
+          title: payerApprovalMessages.title,
+          description: payerApprovalMessages.description,
           children: [
             buildTextField({
               id: 'payerApproval.name',
@@ -85,7 +85,7 @@ export const PayerApproval: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'payerApproval.thanks',
-          title: coreMessages.thanks,
+          title: payerApprovalMessages.title,
           description: payerApprovalMessages.thanksDescription,
         }),
       ],

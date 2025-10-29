@@ -6,7 +6,7 @@ import {
   GetOrganizationsByTypeRequest,
   KeyOption,
   OrganizationModel,
-  RegistrationInput,
+  RegistrationApplicationInput,
   UserModel,
 } from '../../gen/fetch'
 
@@ -69,10 +69,10 @@ export class FriggClientService {
 
   sendApplication(
     user: User,
-    form: RegistrationInput,
+    form: RegistrationApplicationInput,
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
-      registrationApplicationInput: { registration: form },
+      registrationApplicationInput: form,
     })
   }
 }
