@@ -11,6 +11,6 @@ export const ApplicationLoading = () => (
     width="full"
     className={styles.root}
   >
-    <LoadingDots large />
+    <LoadingDots size="large" />
   </Box>
 )

@@ -50,7 +50,7 @@ export const ConfirmationPendingField: FC<
         transform: 'translate(-50%, -50%)',
       }}
     >
-      <LoadingDots large />
+      <LoadingDots size="large" />
     </Box>
   )
 }
