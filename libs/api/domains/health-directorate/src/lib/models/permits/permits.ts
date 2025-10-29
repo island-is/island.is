@@ -10,14 +10,14 @@ export class Permit {
   @Field(() => PermitStatusEnum)
   status!: PermitStatusEnum
 
-  @Field()
-  createdAt!: Date
+  @Field({ nullable: true })
+  createdAt?: Date
 
-  @Field()
-  validFrom!: Date
+  @Field({ nullable: true })
+  validFrom?: Date
 
-  @Field()
-  validTo!: Date
+  @Field({ nullable: true })
+  validTo?: Date
 
   @Field(() => [String])
   codes!: string[]
