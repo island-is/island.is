@@ -36,8 +36,8 @@ export const mapUglaPrograms = (
           Season,
           'Season',
         ),
-        applicationStartDate: program.applicationStartDate || new Date(),
-        applicationEndDate: program.applicationEndDate || new Date(),
+        applicationStartDate: program.applicationStartDate,
+        applicationEndDate: program.applicationEndDate,
         schoolAnswerDate: undefined, //TODO missing in api
         studentAnswerDate: undefined, //TODO missing in api
         degreeType: mapStringToEnum(
