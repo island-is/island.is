@@ -12,7 +12,7 @@ import {
   Modal,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { RadioFormGroup } from '../../components/InfoLines/RadioButtonType'
@@ -29,8 +29,6 @@ type UseParams = {
 const CourtCaseDetail = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
-  const [appealDecision, setAppealDecision] =
-    useState<LawAndOrderAppealDecision>()
   const { id } = useParams() as UseParams
   const [verdictPopUp, setVerdictPopUp] = useState(false)
 
@@ -49,8 +47,25 @@ const CourtCaseDetail = () => {
   )
   const [
     submitVerdictAppealDecision,
-    { loading: postLoading, data: postData, error: postError },
+    { loading: postLoading, data: postData },
   ] = useSubmitVerdictAppealDecisionMutation()
+
+  // Use postData if available (after submission), otherwise fall back to verdict data
+  const currentAppealDecision = useMemo(() => {
+    return (
+      postData?.lawAndOrderVerdictPost?.appealDecision ??
+      verdict?.appealDecision
+    )
+  }, [
+    postData?.lawAndOrderVerdictPost?.appealDecision,
+    verdict?.appealDecision,
+  ])
+
+  const currentCanAppeal = useMemo(() => {
+    return (
+      postData?.lawAndOrderVerdictPost?.canAppeal ?? verdict?.canAppeal ?? false
+    )
+  }, [postData?.lawAndOrderVerdictPost?.canAppeal, verdict?.canAppeal])
 
   const handleSubmit = async (
     data: Record<string, unknown>,
@@ -65,9 +80,6 @@ const CourtCaseDetail = () => {
     })
       .then((response) => {
         if (response.data?.lawAndOrderVerdictPost?.appealDecision) {
-          setAppealDecision(
-            response.data?.lawAndOrderVerdictPost?.appealDecision,
-          )
           toast.success(formatMessage(messages.registrationCompleted))
           return true
         } else {
@@ -83,6 +95,7 @@ const CourtCaseDetail = () => {
   }
 
   console.log(verdict)
+
   return (
     <IntroWrapper
       loading={loading}
@@ -97,25 +110,20 @@ const CourtCaseDetail = () => {
       {!error && verdict && verdict?.groups && (
         <InfoLines
           groups={verdict?.groups}
-          appealDecision={
-            verdict.canAppeal ? verdict.appealDecision : undefined
-          }
+          appealDecision={currentCanAppeal ? currentAppealDecision : undefined}
           loading={loading}
           onFormSubmit={handleSubmit}
           formSubmitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
           formLoading={postLoading}
           extraInfoLine={
-            verdict.canAppeal &&
-            verdict.appealDecision !== LawAndOrderAppealDecision.NO_ANSWER ? (
+            currentCanAppeal &&
+            currentAppealDecision !== LawAndOrderAppealDecision.NO_ANSWER ? (
               <>
                 <InfoLine
                   loading={loading}
                   label={messages.verdictAppealDecision}
                   content={
-                    (appealDecision
-                      ? appealDecision
-                      : verdict.appealDecision) ===
-                    LawAndOrderAppealDecision.POSTPONE
+                    currentAppealDecision === LawAndOrderAppealDecision.POSTPONE
                       ? formatMessage(messages.postpone)
                       : formatMessage(messages.appeal)
                   }
@@ -141,9 +149,7 @@ const CourtCaseDetail = () => {
         <Modal id="verdict-pop-up" onCloseModal={() => setVerdictPopUp(false)}>
           <RadioFormGroup
             group={radioButtonGroup}
-            appealDecision={
-              appealDecision ? appealDecision : verdict?.appealDecision
-            }
+            appealDecision={currentAppealDecision}
             loading={postLoading}
             onFormSubmit={handleSubmit}
             submitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
