@@ -143,7 +143,8 @@ const serializeService: SerializeMethod<HelmService> = async (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: 90,
+        cpuAverageUtilization:
+          serviceDef.replicaCount?.cpuAverageUtilization || 90,
       },
     },
   }

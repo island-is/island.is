@@ -71,7 +71,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
@@ -200,9 +200,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 3
     path: '/health'
@@ -210,11 +210,11 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 75
       nginxRequestsIrate: 5
     replicas:
       max: 50
-      min: 2
+      min: 3
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
 ingress:
@@ -237,16 +237,16 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
+  default: 3
   max: 50
-  min: 2
+  min: 3
 resources:
   limits:
     cpu: '1200m'
-    memory: '3200Mi'
+    memory: '2500Mi'
   requests:
     cpu: '800m'
-    memory: '896Mi'
+    memory: '1500Mi'
 secrets:
   ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
   ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
