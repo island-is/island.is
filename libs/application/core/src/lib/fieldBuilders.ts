@@ -842,6 +842,7 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
   }
 }
 

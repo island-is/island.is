@@ -117,4 +117,5 @@ export interface UpdateCase
   civilDemands?: string
   penalties?: string
   rulingSignatureDate?: Date | null
+  withCourtSessions?: boolean
 }

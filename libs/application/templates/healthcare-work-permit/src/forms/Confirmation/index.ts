@@ -10,11 +10,11 @@ import {
   payment,
   personal,
 } from '../../lib/messages'
-import { Logo } from '../../assets/Logo'
+import { DirectorateOfHealthLogo } from '@island.is/application/assets/institution-logos'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  logo: Logo,
+  logo: DirectorateOfHealthLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

@@ -307,6 +307,7 @@ export class AppService {
       deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
       deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
       deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
     })
 
     const parsedPoliceUpdate = {
@@ -318,6 +319,10 @@ export class AppService {
         updatePoliceDocumentDelivery.defenderNationalId,
       appealDecision: deliveredAppealDecision?.value,
     }
+    this.logger.info(
+      `Parsed update request ${JSON.stringify(parsedPoliceUpdate)}`,
+    )
+
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,

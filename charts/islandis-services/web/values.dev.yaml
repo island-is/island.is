@@ -82,7 +82,7 @@ resources:
     cpu: '1000m'
     memory: '768Mi'
   requests:
-    cpu: '300m'
+    cpu: '800m'
     memory: '384Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

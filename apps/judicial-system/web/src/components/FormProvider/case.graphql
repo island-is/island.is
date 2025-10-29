@@ -51,6 +51,7 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        modified
         caseId
         defendantId
         created
@@ -250,6 +251,7 @@ query Case($input: CaseQueryInput!) {
       recordedSpeed
       speedLimit
     }
+    withCourtSessions
     courtSessions {
       id
       created
@@ -376,6 +378,7 @@ query Case($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      withCourtSessions
       courtSessions {
         id
         startDate
