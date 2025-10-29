@@ -216,7 +216,6 @@ const Comparison: Screen<UniversityComparisonProps> = ({
             <T.Row>
               <T.Data borderColor="transparent"></T.Data>
               {selectedComparison.map((i) => {
-                const now = new Date()
                 return (
                   <T.Data borderColor="transparent">
                     <Box
