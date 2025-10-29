@@ -120,10 +120,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       })),
       ...(reasonForApplication ===
         ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
-        siblings: siblings.map((sibling) => sibling.nationalId),
+        siblings: siblings.map(
+          (sibling) => sibling.nationalIdWithName.nationalId,
+        ),
       }),
       emergencyContacts: relatives.map((relative) => ({
-        nationalId: relative.nationalId,
+        nationalId: relative.nationalIdWithName.nationalId,
         phone: relative.phoneNumber,
         relationTypeId: relative.relation,
       })),
@@ -186,5 +188,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
   }
 
+  console.log('New Primary School DTO:', newPrimarySchoolDTO)
+  throw new Error('Debugging stop')
   return newPrimarySchoolDTO
 }
