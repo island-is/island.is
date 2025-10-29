@@ -18,6 +18,7 @@ import {
   Tegund,
 } from './shared'
 import * as kennitala from 'kennitala'
+import { randomUUID } from 'node:crypto'
 import { join } from 'path'
 import { ApplicantAnswer } from '@island.is/application/templates/hms/registration-of-new-property-numbers'
 
@@ -44,10 +45,7 @@ export const getRecipients = (
     application.answers,
     'applicant',
   )
-  const contact = getValueViaPath<ApplicantAnswer>(
-    application.answers,
-    'contact',
-  )
+  const contact = getValueViaPath<ContactAnswer>(application.answers, 'contact')
 
   const applicantRecipient = {
     email: applicant?.email || '',
@@ -60,7 +58,7 @@ export const getRecipients = (
 
   if (
     contactRecipient.email &&
-    applicantRecipient.email === contactRecipient.email
+    applicantRecipient.email !== contactRecipient.email
   )
     return [applicantRecipient, contactRecipient]
 
@@ -126,28 +124,28 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         heiti: NotandagognHeiti.Applicant,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstate?.sjalfgefidStadfang?.birting,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.CoreInformation,
         heiti: NotandagognHeiti.LandId,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstate?.landeign?.landeignarnumer,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.CoreInformation,
         heiti: NotandagognHeiti.PropertyNumber,
         tegund: NotandagognTegund.PropertyNumber,
         gildi: selectedRealEstate?.fasteignanumer?.replace(/\D/g, ''),
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.CoreInformation,
         heiti: NotandagognHeiti.DocumentNumber,
         tegund: NotandagognTegund.String,
         gildi: 'F-551',
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       // Tengiliður
       {
@@ -155,7 +153,7 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         heiti: NotandagognHeiti.Name,
         tegund: NotandagognTegund.String,
         gildi: contactIsSameAsApplicant ? applicant.name : contact?.name,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.Contact,
@@ -164,14 +162,14 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         gildi: contactIsSameAsApplicant
           ? applicant.phoneNumber
           : contact?.phone,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.Contact,
         heiti: NotandagognHeiti.Email,
         tegund: NotandagognTegund.String,
         gildi: contactIsSameAsApplicant ? applicant.email : contact?.email,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       // Aðrar upplýsingar
       {
@@ -179,7 +177,7 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         heiti: NotandagognHeiti.OtherComments,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstateOtherComments,
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       // Vara
       {
@@ -187,14 +185,14 @@ export const getRequestDto = (application: Application): ApplicationDto => {
         heiti: NotandagognHeiti.AmountOfNewNumbers,
         tegund: NotandagognTegund.String,
         gildi: selectedRealEstateAmount?.toString(),
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
       {
         flokkur: NotandagognFlokkur.Product,
-        heiti: NotandagognHeiti.AmountOfNewNumbers,
+        heiti: NotandagognHeiti.AmountPaid,
         tegund: NotandagognTegund.String,
         gildi: formatCurrency(selectedRealEstateCost || '0'),
-        guid: crypto.randomUUID(),
+        guid: randomUUID(),
       },
     ],
     files: [],

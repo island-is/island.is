@@ -10,7 +10,7 @@ import * as m from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const confirmReadSection = buildSection({
-  id: 'confirmReadSectionSection',
+  id: 'confirmReadSection',
   tabTitle: m.confirmReadMessages.title,
   children: [
     buildMultiField({
@@ -20,6 +20,7 @@ export const confirmReadSection = buildSection({
       children: [
         buildCheckboxField({
           id: 'confirmReadPrivacyPolicy',
+          required: true,
           options: [
             {
               label: m.confirmReadMessages.confirmReadPrivacyPolicy,
@@ -29,6 +30,7 @@ export const confirmReadSection = buildSection({
         }),
         buildCheckboxField({
           id: 'confirmReadInfoCompliance',
+          required: true,
           options: [
             {
               label: m.confirmReadMessages.confirmReadFireCompensationInfo,

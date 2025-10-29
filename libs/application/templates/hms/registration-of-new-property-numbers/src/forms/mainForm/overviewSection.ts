@@ -15,7 +15,7 @@ export const overviewSection = buildSection({
   title: overview.sectionTitle,
   children: [
     buildMultiField({
-      id: 'overviewSection',
+      id: 'overviewMultifield',
       title: overview.title,
       children: [
         buildOverviewField({

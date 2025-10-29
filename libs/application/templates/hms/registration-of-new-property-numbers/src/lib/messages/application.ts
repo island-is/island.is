@@ -18,23 +18,23 @@ export const application = defineMessages({
   },
   institutionName: {
     id: 'ronp.application:institution',
-    defaultMessage: 'Húsnæðis og mannvirkjastofnun',
+    defaultMessage: 'Húsnæðis- og mannvirkjastofnun',
     description: 'Institution name',
   },
   actionCardDone: {
-    id: 'ronp.application.actionCardDone',
+    id: 'ronp.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is done',
   },
   actionCardDraft: {
-    id: 'ronp.application.actionCardDraft',
+    id: 'ronp.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
       'Description of application state/status when the application is in progress',
   },
   actionCardPrerequisites: {
-    id: 'ronp.application.actionCardPrerequisites',
+    id: 'ronp.application:actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',
     description:
       'Description of application state/status when the application is in prerequisites',

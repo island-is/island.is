@@ -65,7 +65,7 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           '[RegistrationOfNewPropertyNumbersService] Failed to fetch properties:',
           e.message,
         )
-        throw new TemplateApiError(e, 500)
+        throw e
       }
     }
 
@@ -119,7 +119,7 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
         e.message,
       )
-      throw new Error(e)
+      throw e
     }
   }
 
@@ -143,7 +143,7 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           }, application)
           .catch((e) => {
             this.logger.error(
-              `[Registration of new propery numbers]: Error sending email in submitApplication for applicationID: ${application.id}`,
+              `[Registration of new property numbers]: Error sending email in submitApplication for applicationID: ${application.id}`,
               e,
             )
           }),

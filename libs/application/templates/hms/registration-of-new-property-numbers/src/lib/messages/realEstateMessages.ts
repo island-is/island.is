@@ -40,7 +40,7 @@ export const realEstateMessages = defineMessages({
   alert: {
     id: 'ronp.application:realEstate.alert#markdown',
     defaultMessage:
-      'Innheimt er {unitPrice} kr. gjald fyrir hverja eign samkvæmt [gjaldskrá Húsnæðis- og mannvirkjastofnunar](https://island.is/s/hms/hms-personuverndarstefna)',
+      'Innheimt er {unitPrice} kr. gjald fyrir hverja eign samkvæmt [gjaldskrá Húsnæðis- og mannvirkjastofnunar](https://hms.is/gjaldskra-hms)',
     description: 'Real estate alert message',
   },
   otherCommentsTitle: {

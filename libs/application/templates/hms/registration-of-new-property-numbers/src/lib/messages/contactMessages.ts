@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const contactMessages = defineMessages({
   title: {
-    id: 'ronp.application:contact.name',
+    id: 'ronp.application:contact.title',
     defaultMessage: 'Tengiliður',
     description: 'Contact information title',
   },
@@ -13,7 +13,7 @@ export const contactMessages = defineMessages({
   },
   checkboxLabel: {
     id: 'ronp.application:contact.checkboxLabel',
-    defaultMessage: 'Tengiliður er sami en umsækjandi',
+    defaultMessage: 'Tengiliður er sami og umsækjandi',
     description: 'Contact information checkbox label',
   },
   name: {
@@ -29,6 +29,6 @@ export const contactMessages = defineMessages({
   phone: {
     id: 'ronp.application:contact.phone',
     defaultMessage: 'Símanúmer tengiliðs',
-    description: 'Contant phone',
+    description: 'Contact phone',
   },
 })

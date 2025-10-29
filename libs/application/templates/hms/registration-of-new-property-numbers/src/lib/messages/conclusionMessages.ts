@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const conclusion = defineMessages({
   tabTitle: {
-    id: 'ronp.application:conclusion.title',
+    id: 'ronp.application:conclusion.tabTitle',
     defaultMessage: 'Staðfesting',
     description: 'conclusion tab title',
   },

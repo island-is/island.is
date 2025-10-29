@@ -131,10 +131,3 @@ export const getRealEstateOverviewItems = (
     },
   ]
 }
-
-export const getPaymentOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
-  return []
-}

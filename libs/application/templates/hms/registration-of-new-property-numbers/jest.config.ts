@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/application/templates/examples/example-inputs',
+    '../../../../../coverage/libs/application/templates/hms/registration-of-new-property-numbers',
 }

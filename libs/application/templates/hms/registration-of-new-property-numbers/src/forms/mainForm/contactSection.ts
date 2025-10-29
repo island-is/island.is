@@ -68,7 +68,7 @@ export const contactSection = buildSection({
 
         // Readonly fields
         buildTextField({
-          id: 'contactReadonly.name ',
+          id: 'contactReadonly.name',
           title: contactMessages.name,
           readOnly: true,
           variant: 'text',

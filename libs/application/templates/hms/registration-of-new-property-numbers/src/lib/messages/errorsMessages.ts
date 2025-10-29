@@ -8,7 +8,7 @@ export const errorMessages = defineMessages({
   },
   nameRequired: {
     id: 'ronp.application:errorMessages.nameRequired',
-    defaultMessage: 'nafn er nauðsynlegt',
+    defaultMessage: 'Nafn er nauðsynlegt',
     description: 'Name is required error message',
   },
   phoneNumberRequired: {

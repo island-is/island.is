@@ -1,52 +1,57 @@
-# Registration of new property numbers
+# Registration of New Property Numbers
 
-### Description
+## Overview
 
-Application for registering new property numbers. We fetch properties for logged in user in prereq section, user select for which property that want to register more property numbers and how many. User pays per new property numbers. This application goes into the hands of HMS and then to a district commisioner, Island.is handles only the selection process and payment.
+This application enables users to register new property numbers. Properties associated with the logged-in user are fetched during the prerequisite step. Users select the property for which they wish to register additional property numbers and specify the quantity. Payment is required for each new property number. After submission, the application is processed by HMS and then forwarded to a district commissioner. Island.is manages only the selection and payment processes.
 
-### URLs
+## URLs
 
 - [Local](http://localhost:4242/umsoknir/skraning-fasteignanumera/)
-- [Dev](https://beta.dev01.devland.is/umsoknir/skraning-fasteignanumera)
+- [Development](https://beta.dev01.devland.is/umsoknir/skraning-fasteignanumera)
 - [Production](https://island.is/umsoknir/skraning-fasteignanumera/)
 
-### Clients and template-api-modules
+## Related Code
 
-- [Client](https://github.com/island-is/island.is/tree/main/libs/application/template-api-modules/src/libs/clients/hms-application-system/src/index.ts)
-- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service.ts)
+- [Client Implementation](https://github.com/island-is/island.is/tree/main/libs/application/template-api-modules/src/libs/clients/hms-application-system/src/index.ts)
+- [Template API Module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service.ts)
 
-### States
+## Application States
 
-#### Prerequisite
+### Prerequisite
 
-Data fetching the user information and the logged in users properties from HMS. Prereq also has a second screen for the user to accept HMS's conditions
+- Fetches user information and properties from HMS.
+- Includes a screen for accepting HMS's terms and conditions.
 
-#### Draft
+### Draft
 
-User confirms applicants information and assigns a contact for the application, this is followed by choosing a property in which to register more property numbers and how many, optionally user can give a text explanation for additional comments. Followed is a overview screen before going into payment
+- User confirms applicant information and assigns a contact.
+- Selects the property and specifies the number of new property numbers.
+- Optionally adds comments.
+- Reviews all information before proceeding to payment.
 
-#### Payment
+### Payment
 
-ARK payment step
+- ARK payment step.
 
-#### Completed
+### Completed
 
-User has paid for and submitter the application to HMS. The process is now in HMS's hands but incomplete as HMS sends the application to the district commissioner
+- User submits the application.
+- HMS processes the application and forwards it to the district commissioner.
 
-### Localisation
+## Localization
 
-All localisation can be found on Contentful.
+All localization is managed via Contentful:
 
-- [Registration of new property number translation]('https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ronp.application')
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Registration of New Property Number Translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ronp.application)
+- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-### Test users
+## Test Users
 
-- **Gervimaður Færeyjar 010130-2399**
+- **Gervimaður Færeyjar** `010130-2399`
 
-Gervimaður Færeyja can be used for the individual testing and for delegation of a company use "Hugbúnaðarhús Daníels ehf."
+Use Gervimaður Færeyjar for individual testing. For company delegation, use "Hugbúnaðarhús Daníels ehf."
 
-### Codeowners
+## Codeowners
 
-- [Origo]('https://github.com/orgs/island-is/teams/origo')
-  - [Baldur Óli]('https://github.com/Ballioli')
+- [Origo Team](https://github.com/orgs/island-is/teams/origo)
+  - [Baldur Óli](https://github.com/Ballioli)

@@ -18,21 +18,23 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
       application.answers,
       'applicant.name',
     )
+
     const realEstate = getValueViaPath<RealEstateAnswers>(
       application.answers,
-      'realEstate.data',
+      'realEstate',
     )
     const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
-      application.answers,
+      application.externalData,
       'getProperties.data',
     )?.find(
       (property) => property.fasteignanumer === realEstate?.realEstateName,
     )
+
     const registrantNationalId = application.applicantActors?.[0]
 
     const subject = 'Umsókn móttekin!'
     const messageMain =
-      `<div style="line-height: 1 !important;">Aðili með kennitölu ${registrantNationalId} hefur sótt um stofnun nýs fasteignanúmers í umboði fyrir Bónus ehf. Upplýsingar úr umsókn:<br/>` +
+      `<div style="line-height: 1 !important;">Aðili með kennitölu ${registrantNationalId} hefur sótt um stofnun nýs fasteignanúmers í umboði fyrir ${applicantName}<br/>` +
       `Upplýsingar úr umsókn:<br/></div>`
     const messageContent =
       `<div style="line-height: 1 !important;">Umsækjandi: ${applicantName}<br/>` +
@@ -43,7 +45,7 @@ export const generateApplicationSubmittedEmailWithDelegation: ApplicationSubmitt
       )}<br/></div>`
 
     const goodbyeMessage =
-      `<span>Með kveðju,<span><br/>` + `<span>HMS<span><br/>`
+      `<span>Með kveðju,<span><br/>` + `<span>HMS</span><br/>`
 
     return {
       from: {
