@@ -240,7 +240,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             500,
           )
         })
-      
+
       if (!result.success) {
         throw new TemplateApiError(
           {
@@ -250,7 +250,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           500,
         )
       }
-      
+
       return {
         success: result.success,
       }
