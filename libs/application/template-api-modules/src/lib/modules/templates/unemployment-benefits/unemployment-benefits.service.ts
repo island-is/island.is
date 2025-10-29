@@ -127,6 +127,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     */
 
     //personalInformation
+
     const personalInformationFromAnswers = getPersonalInformation(answers)
     const personalInformation = {
       ...personalInformationFromAnswers,
