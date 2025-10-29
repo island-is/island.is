@@ -110,7 +110,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
 
-    console.log('New Primary School DTO:', newPrimarySchoolDTO)
     return await this.friggClientService.sendApplication(
       auth,
       newPrimarySchoolDTO,
