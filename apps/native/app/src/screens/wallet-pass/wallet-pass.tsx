@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -17,12 +17,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '../../ui'
+import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -34,17 +29,22 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
+import { useOfflineStore } from '../../stores/offline-store'
+import {
+  dynamicColor,
+  Alert as InfoAlert,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
-import { useOfflineStore } from '../../stores/offline-store'
-import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
   SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
-import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
@@ -245,6 +245,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
       setHasCalculatedDismissedAlerts(true)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const shouldShowExpireDate = !!(
