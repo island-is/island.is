@@ -69,14 +69,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    const applicantSsn =
-      application.applicantActors.length > 0
-        ? application.applicantActors[0]
-        : application.applicant
-
     // The criminalRecord endpoint is a void endpoint that only fails
     // if there is no criminal record available.
-    await this.syslumennService.checkCriminalRecord(auth).catch((e) => {
+    await this.syslumennService.checkCriminalRecord(auth).catch((_e) => {
       throw new TemplateApiError(
         {
           title: error.dataCollectionCriminalRecordTitle,
@@ -181,8 +176,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     )
 
     if (!isPayment?.fulfilled) {
-      throw new Error(
-        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary:
+            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+        },
+        400,
       )
     }
 
@@ -226,14 +226,43 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataName,
           uploadDataId,
         )
-        .catch((e) => {
-          throw new Error(`Application submission failed ${e}`)
+        .catch((_e) => {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.errorDataProvider,
+              summary:
+                'Ekki tókst að senda umsókn til sýslumanns. Vinsamlegast reyndu aftur síðar.',
+            },
+            500,
+          )
         })
+
+      if (!result.success) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: `Sýslumaður tók ekki við umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuver.`,
+          },
+          500,
+        )
+      }
+
       return {
         success: result.success,
       }
     } catch (e) {
-      throw new Error(`Application submission failed ${e}`)
+      // If it's already a TemplateApiError, re-throw it
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      // Otherwise wrap in TemplateApiError
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: 'Villa kom upp við að senda umsókn',
+        },
+        500,
+      )
     }
   }
 
@@ -280,9 +309,29 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         fileName,
         'base64',
       )
-      return fileContent || ''
+      if (!fileContent) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: 'Viðhengi fannst ekki í geymslu',
+          },
+          500,
+        )
+      }
+      return fileContent
     } catch (e) {
-      return 'err'
+      // If it's already a TemplateApiError, re-throw it
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      // Otherwise wrap in TemplateApiError
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: 'Ekki tókst að sækja viðhengi úr geymslu',
+        },
+        500,
+      )
     }
   }
 }
