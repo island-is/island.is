@@ -184,6 +184,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }),
     },
   }
-  console.log('newPrimarySchoolDTO', newPrimarySchoolDTO)
+
   return newPrimarySchoolDTO
 }
