@@ -32,7 +32,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  SectionHeading,
   serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
