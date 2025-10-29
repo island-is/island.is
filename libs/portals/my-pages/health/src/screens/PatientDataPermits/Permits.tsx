@@ -120,8 +120,14 @@ const PatientDataPermits: React.FC = () => {
                         variant: 'red',
                         outlined: true,
                       }
-                    : {
+                    : permit.status === HealthDirectoratePermitStatus.inactive
+                    ? {
                         label: formatMessage(messages.invalid),
+                        variant: 'purple',
+                        outlined: true,
+                      }
+                    : {
+                        label: formatMessage(messages.unknown),
                         variant: 'purple',
                         outlined: true,
                       }

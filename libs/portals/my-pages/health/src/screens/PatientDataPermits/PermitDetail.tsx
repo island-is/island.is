@@ -89,7 +89,7 @@ const PermitDetail: React.FC = () => {
             />
             <InfoLine
               label={formatMessage(messages.publicationDate) ?? ''}
-              content={formatDateWithTime(permit?.createdAt.toString() ?? '')}
+              content={formatDateWithTime(permit?.createdAt?.toString() ?? '')}
               loading={loading}
             />
             <InfoLine
@@ -99,10 +99,9 @@ const PermitDetail: React.FC = () => {
                   variant={
                     permit?.status === HealthDirectoratePermitStatus.active
                       ? 'blue'
-                      : permit?.status ===
-                        HealthDirectoratePermitStatus.inactive
-                      ? 'purple'
-                      : 'red'
+                      : permit?.status === HealthDirectoratePermitStatus.expired
+                      ? 'red'
+                      : 'purple'
                   }
                   disabled
                   outlined
@@ -111,7 +110,9 @@ const PermitDetail: React.FC = () => {
                     ? formatMessage(messages.active)
                     : permit?.status === HealthDirectoratePermitStatus.expired
                     ? formatMessage(messages.expired)
-                    : formatMessage(messages.invalid)}
+                    : permit?.status === HealthDirectoratePermitStatus.inactive
+                    ? formatMessage(messages.invalid)
+                    : formatMessage(messages.unknown)}
                 </Tag>
               }
               button={
@@ -129,11 +130,11 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.validTime)}
               content={
-                permit?.validFrom &&
-                permit?.validTo &&
-                formatDate(permit?.validFrom.toString()) +
-                  ' - ' +
-                  formatDate(permit?.validTo.toString())
+                permit?.validFrom && permit?.validTo
+                  ? formatDate(permit?.validFrom?.toString()) +
+                    ' - ' +
+                    formatDate(permit?.validTo?.toString())
+                  : undefined
               }
               loading={loading}
             />
