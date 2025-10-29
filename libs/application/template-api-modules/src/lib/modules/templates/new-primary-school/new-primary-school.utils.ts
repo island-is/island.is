@@ -137,7 +137,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
-            expectedStartDate: new Date(expectedStartDate || ''),
+            expectedStartDate: expectedStartDate
+              ? new Date(expectedStartDate)
+              : new Date(),
             ...(getSelectedSchoolSubType(
               application.answers,
               application.externalData,
