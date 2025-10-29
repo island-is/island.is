@@ -282,18 +282,22 @@ export class CourtDocumentRepositoryService {
 
   async updateMergedCourtDocuments({
     parentCaseId,
+    parentCaseCourtSessionId,
     caseId,
     options,
   }: {
-    parentCaseId?: string
+    parentCaseId: string
+    parentCaseCourtSessionId: string
     caseId: string
     options?: FileCourtDocumentInCourtSessionOptions
   }) {
+    // TODO: find the latest order number
     const filedDocuments = await this.courtDocumentModel.findAll({
       where: { parentCaseId },
       order: [['documentOrder', 'ASC']],
       transaction: options?.transaction,
     })
+    // TODO: find the case documents
   }
 
   async fileInCourtSession(
