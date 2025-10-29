@@ -69,14 +69,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    const applicantSsn =
-      application.applicantActors.length > 0
-        ? application.applicantActors[0]
-        : application.applicant
-
     // The criminalRecord endpoint is a void endpoint that only fails
     // if there is no criminal record available.
-    await this.syslumennService.checkCriminalRecord(auth).catch((e) => {
+    await this.syslumennService.checkCriminalRecord(auth).catch((_e) => {
       throw new TemplateApiError(
         {
           title: error.dataCollectionCriminalRecordTitle,
@@ -231,7 +226,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataName,
           uploadDataId,
         )
-        .catch((e) => {
+        .catch((_e) => {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.errorDataProvider,
