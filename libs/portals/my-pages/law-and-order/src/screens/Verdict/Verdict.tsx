@@ -14,8 +14,8 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import VerdictInfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
 import { AppealForm } from '../../components/VerdictInfoLines/AppealForm'
+import VerdictInfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
 import { messages } from '../../lib/messages'
 import {
   useGetCourtCaseVerdictQuery,
@@ -84,7 +84,6 @@ const CourtCaseDetail = () => {
           setVerdictPopUp(false)
           return true
         } else {
-          // catch null response or missing appealDecision
           toast.error(formatMessage(messages.registrationError))
           return false
         }
@@ -94,8 +93,6 @@ const CourtCaseDetail = () => {
         return false
       })
   }
-
-  console.log(verdict)
 
   return (
     <IntroWrapper
@@ -113,7 +110,7 @@ const CourtCaseDetail = () => {
           groups={verdict?.groups}
           appealDecision={
             currentCanAppeal
-              ? currentAppealDecision ?? LawAndOrderAppealDecision.POSTPONE
+              ? currentAppealDecision ?? LawAndOrderAppealDecision.POSTPONE // Default should be postpone
               : undefined
           }
           loading={loading}
@@ -151,9 +148,11 @@ const CourtCaseDetail = () => {
           }
         />
       )}
+
       {verdictPopUp && radioButtonGroup && (
         <Modal id="verdict-pop-up" onCloseModal={() => setVerdictPopUp(false)}>
           <AppealForm
+            popUp
             group={radioButtonGroup}
             appealDecision={currentAppealDecision}
             loading={postLoading}

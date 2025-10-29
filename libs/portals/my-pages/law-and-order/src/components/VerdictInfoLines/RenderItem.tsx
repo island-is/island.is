@@ -8,6 +8,7 @@ import React from 'react'
 import {
   Accordion,
   AccordionItem,
+  Box,
   Divider,
   Link,
   Text,
@@ -28,12 +29,13 @@ export const RenderItem: React.FC<RenderItemProps> = ({
 }) => {
   switch (item.type) {
     case LawAndOrderItemType.Text:
-    case LawAndOrderItemType.RichText:
       return (
         <Text variant="default" marginBottom={2}>
           {item.value}
         </Text>
       )
+    case LawAndOrderItemType.RichText:
+      return <Box> {HtmlParser(String(item.value))}</Box>
     case LawAndOrderItemType.Accordion:
       return (
         <div className={styles.htmlContainer}>

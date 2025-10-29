@@ -224,7 +224,6 @@ export class LawAndOrderService {
       ),
     )
 
-    console.log(verdicts)
     const data: Verdict = {
       caseId: verdictsResponse.caseId,
       title: formatMessage(verdicts.title),

@@ -3,16 +3,8 @@ import {
   LawAndOrderGroup,
   LawAndOrderItemType,
 } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, RadioButton, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { isDefined } from '@island.is/shared/utils'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SubmitHandler } from '../../utils/types'
@@ -28,6 +20,7 @@ interface Props {
   onFormSubmit?: SubmitHandler
   appealDecision?: LawAndOrderAppealDecision
   loading?: boolean
+  popUp?: boolean
 }
 
 export const AppealForm = ({
@@ -35,6 +28,7 @@ export const AppealForm = ({
   onFormSubmit,
   appealDecision,
   loading,
+  popUp = false,
 }: Props) => {
   const { formatMessage } = useLocale()
   // Use group.label or group.id as the field name
@@ -60,9 +54,15 @@ export const AppealForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Text variant="eyebrow" color="purple400" marginBottom={2}>
-        {group.label}
-      </Text>
+      {popUp ? (
+        <Text variant="h3" marginBottom={1}>
+          {group.label}
+        </Text>
+      ) : (
+        <Text variant="eyebrow" color="purple400" marginBottom={2}>
+          {group.label}
+        </Text>
+      )}
 
       <Controller
         name={radioFieldName}

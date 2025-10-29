@@ -7,6 +7,7 @@ globalStyle(`${htmlContainer} * a`, {
   color: theme.color.blue400,
   textDecoration: 'underline',
   textUnderlineOffset: '0.2em',
+  lineHeight: 1.5,
 })
 
 globalStyle(`${htmlContainer} a:hover`, {
@@ -19,8 +20,14 @@ globalStyle(`${htmlContainer} a:hover`, {
 
 globalStyle(`${htmlContainer} p`, {
   fontWeight: theme.typography.light,
+  lineHeight: 1.5,
 })
 
 globalStyle(`${htmlContainer} p > b`, {
   fontWeight: theme.typography.medium,
+  lineHeight: 1.5,
+})
+
+globalStyle(`${htmlContainer} p + p`, {
+  marginTop: theme.spacing[2],
 })
