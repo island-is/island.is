@@ -7,7 +7,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { RadioFormGroup } from './RadioButtonType'
+import { AppealDecisionRadioFormGroup } from './RadioButtonType'
 import { RenderItem } from './RenderItem'
 import { SubmitHandler } from '../../utils/types'
 
@@ -32,7 +32,7 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
         )
         if (hasRadioButtons && !props.extraInfoLine) {
           return (
-            <RadioFormGroup
+            <AppealDecisionRadioFormGroup
               group={group}
               onFormSubmit={props.onFormSubmit}
               appealDecision={props.appealDecision}

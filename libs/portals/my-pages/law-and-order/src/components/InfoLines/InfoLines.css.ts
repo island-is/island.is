@@ -14,4 +14,13 @@ globalStyle(`${htmlContainer} a:hover`, {
   boxShadow: `inset 0 -2px 0 0 ${theme.color.blueberry400}`,
   color: `${theme.color.blueberry400}`,
   transition: `box-shadow .25s, color .25s, background-color .25s`,
+  fontWeight: theme.typography.regular,
+})
+
+globalStyle(`${htmlContainer} p`, {
+  fontWeight: theme.typography.light,
+})
+
+globalStyle(`${htmlContainer} p > b`, {
+  fontWeight: theme.typography.medium,
 })
