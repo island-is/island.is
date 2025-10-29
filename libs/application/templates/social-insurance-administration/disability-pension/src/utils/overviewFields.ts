@@ -71,6 +71,7 @@ export const overviewFields = (editable?: boolean) => {
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.selfEvaluation`,
       backId: editable ? SectionRouteEnum.SELF_EVALUATION : undefined,
+      title: m.selfEvaluation.questionFormTitle,
       loadItems: selfEvaluationItems,
     }),
     buildOverviewField({

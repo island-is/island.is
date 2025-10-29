@@ -245,35 +245,6 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
     </AccordionItem>
   )
 
-  const functionalAssessments = () => (
-    <AccordionItem
-      label={formatMessage(m.certificate.functionalAssessment)}
-      id="functional-assessments-accordion-item"
-      key="functional-assessments-accordion-item"
-    >
-      <Stack space={3}>
-        <GridRow rowGap={3}>
-          <GridColumn span="1/1">
-            <Text>
-              {formatMessage(m.certificate.functionalAssessmentDescription)}
-            </Text>
-          </GridColumn>
-          {data?.socialInsuranceDisabilityPensionCertificate?.functionalAssessment?.map(
-            (rating, idx) => (
-              <GridColumn
-                key={`${rating.type ?? 'physical'}-${idx}`}
-                span={['1/1', '1/1', '1/1', '1/2']}
-              >
-                <Label>{rating.type?.toString()}</Label>
-                <Text>{rating.score?.toString()}</Text>
-              </GridColumn>
-            ),
-          )}
-        </GridRow>
-      </Stack>
-    </AccordionItem>
-  )
-
   return (
     <Stack space={4}>
       {managedBy()}
@@ -282,7 +253,6 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       <Accordion>
         {physicalImpairments()}
         {cognitiveImpairments()}
-        {functionalAssessments()}
       </Accordion>
     </Stack>
   )
