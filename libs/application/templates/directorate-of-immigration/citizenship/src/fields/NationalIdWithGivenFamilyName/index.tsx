@@ -87,7 +87,6 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
     }
 
     if (nationalIdInput === '' && !isRequired) {
-      console.log('clearing up')
       setValue(wasRemovedField, 'true')
       setFullName('')
       setValue(fullNameField, '')
