@@ -41,6 +41,7 @@ import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageForm
 import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
 import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 import { FileUploadFormField } from '../FileUploadFormField/FileUploadFormField'
+import { Locale } from '@island.is/shared/types'
 
 interface ItemFieldProps {
   application: Application
@@ -48,7 +49,9 @@ interface ItemFieldProps {
   item: RepeaterItem & { id: string }
   dataId: string
   index: number
+  displayIndex: number
   values: Array<Record<string, string>>
+  locale: Locale
 }
 
 const componentMapper = {
@@ -67,7 +70,9 @@ export const Item = ({
   item,
   dataId,
   index,
+  displayIndex,
   values,
+  locale,
 }: ItemFieldProps) => {
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
@@ -516,7 +521,7 @@ export const Item = ({
             id={id}
             name={id}
             label={formatMessage(label, {
-              index: index + 1,
+              index: displayIndex + 1,
             })}
             options={translatedOptions}
             split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
@@ -540,7 +545,7 @@ export const Item = ({
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'
-              ? { maxDate: maxDateVal, minDate: minDateVal }
+              ? { maxDate: maxDateVal, minDate: minDateVal, locale: locale }
               : {})}
             {...(component === 'nationalIdWithName'
               ? {

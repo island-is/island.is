@@ -442,6 +442,9 @@ export const Item = ({
     }
   }
 
+  console.log('activeValues', activeValues)
+  console.log('application', application)
+  console.log('activeIndex', activeIndex)
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)

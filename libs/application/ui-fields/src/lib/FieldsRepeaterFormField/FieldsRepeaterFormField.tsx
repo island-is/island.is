@@ -23,16 +23,24 @@ import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { Item } from './FieldsRepeaterItem'
+import { uuid } from 'uuidv4'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FieldRepeaterItem = Record<string, any> & {
+  isRemoved?: boolean
+}
+type FieldRepeaterForm = Record<string, FieldRepeaterItem[]>
+
 export const FieldsRepeaterFormField = ({
   application,
+  setBeforeSubmitCallback,
   field: data,
   showFieldName,
   error,
@@ -58,13 +66,35 @@ export const FieldsRepeaterFormField = ({
     maxRows,
   } = data
 
-  const { control, getValues, setValue } = useFormContext()
-  const answers = getValues()
+  console.log('id', id)
+
+  const items = Object.keys(rawItems).map((key) => {
+    return {
+      id: key,
+      ...rawItems[key],
+    }
+  })
+
+  const methods = useFormContext<FieldRepeaterForm>()
+  const { fields, remove, update, append } = useFieldArray({
+    control: methods.control,
+    name: id,
+  })
+
+  const [activeIndex, setActiveIndex] = useState(
+    fields?.findIndex((x) => x?.isRemoved) ?? 0,
+  )
+
+  const answers = methods.getValues()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
     answers,
     id,
   )?.length
+
+  const a = getValueViaPath<Array<any>>(answers, id)
+  console.log('a', a)
 
   const [updatedApplication, setUpdatedApplication] = useState({
     ...application,
@@ -82,8 +112,9 @@ export const FieldsRepeaterFormField = ({
       ? maxRows(answers, application.externalData)
       : maxRows
 
-  const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
+  const [showRemoveButton, setShowRemoveButton] = useState(
+    !hideRemoveButton &&
+      fields.filter((x) => !x.isRemoved).length > Math.max(minRowsValue, 0),
   )
 
   useEffect(() => {
@@ -101,47 +132,58 @@ export const FieldsRepeaterFormField = ({
     })
   }, [stableApplication, stableAnswers])
 
-  const items = Object.keys(rawItems).map((key) => {
-    return {
-      id: key,
-      ...rawItems[key],
-    }
-  })
-
   const { formatMessage, lang: locale } = useLocale()
 
-  const { remove } = useFieldArray({
-    control: control,
-    name: id,
-  })
+  const safeUpdate = (index: number, changes: Partial<FieldRepeaterItem>) => {
+    const current = methods.getValues(`${data.id}.${index}`) || {}
+    update(index, { ...current, ...changes })
+  }
 
-  const values = useWatch({ name: data.id, control: control })
+  const values = useWatch({ name: data.id, control: methods.control })
 
   const handleNewItem = () => {
-    setNumberOfItems(numberOfItems + 1)
+    console.log('handling new item')
+    const fieldLengthBeforeAppend = fields.filter((x) => !x.isRemoved).length
+    append({ isRemoved: false })
+    setActiveIndex(fieldLengthBeforeAppend + 1)
+    methods.clearErrors()
+    setShowRemoveButton(
+      !hideRemoveButton &&
+        fieldLengthBeforeAppend + 1 > Math.max(minRowsValue, 0),
+    )
   }
+
+  // useEffect(() => {
+  //   console.log('fields', fields)
+  // }, [fields])
+
+  useEffect(() => {
+    console.log('numberOfItemsInAnswers', numberOfItemsInAnswers)
+    console.log('minRowsValue', minRowsValue)
+    console.log('fields', fields)
+    console.log('values', values)
+    if (
+      minRowsValue > 0 &&
+      (numberOfItemsInAnswers === undefined || numberOfItemsInAnswers === 0) &&
+      fields.length < minRowsValue
+    ) {
+      Array.from({ length: minRowsValue }).forEach(() => {
+        handleNewItem()
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleRemoveItem = () => {
-    const items = getValueViaPath<Array<unknown>>(answers, id)
-
-    if (numberOfItems > (numberOfItemsInAnswers || 0)) {
-      setNumberOfItems(numberOfItems - 1)
-    } else if (numberOfItems === numberOfItemsInAnswers) {
-      setValue(id, items?.slice(0, -1))
-      setNumberOfItems(numberOfItems - 1)
-    } else if (
-      numberOfItemsInAnswers &&
-      numberOfItems < numberOfItemsInAnswers
-    ) {
-      const difference = numberOfItems - numberOfItemsInAnswers
-      setValue(id, items?.slice(0, difference))
-      setNumberOfItems(numberOfItems)
-    }
-
-    remove(numberOfItems - 1)
+    const fieldLengthBeforeUpdate = fields.filter((x) => !x.isRemoved).length
+    safeUpdate(fieldLengthBeforeUpdate - 1, { isRemoved: true })
+    setShowRemoveButton(
+      !hideRemoveButton &&
+        fieldLengthBeforeUpdate - 1 > Math.max(minRowsValue, 0),
+    )
   }
 
-  const repeaterFields = (index: number) => (
+  const repeaterFields = (index: number, displayIndex: number) => (
     <GridRow rowGap={[2, 2, 2, 3]}>
       {items.map((item) => (
         <Item
@@ -151,7 +193,9 @@ export const FieldsRepeaterFormField = ({
           item={item}
           dataId={id}
           index={index}
+          displayIndex={displayIndex}
           values={values}
+          locale={locale}
         />
       ))}
     </GridRow>
@@ -168,7 +212,33 @@ export const FieldsRepeaterFormField = ({
   }
 
   const showAddButton = !hideAddButton
-  const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
+
+  // Keep activeIndex in a ref so setBeforeSubmit callback always has latest value
+  const activeIndexRef = useRef(activeIndex)
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+  }, [activeIndex])
+
+  // Register a beforeSubmit callback that blocks form submission until the active registration is completed
+  // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
+  const callbackIdRef = useRef(`FieldRepeaterFormField-${uuid()}`)
+  useEffect(() => {
+    setBeforeSubmitCallback?.(
+      async () => {
+        // Remove deleted rows
+        // Iterate in reverse so removing doesn't break indices
+        for (let i = fields.length - 1; i >= 0; i--) {
+          const row = fields[i]
+          if (row.isRemoved) {
+            remove(i)
+          }
+        }
+
+        return [true, null]
+      },
+      { allowMultiple: true, customCallbackId: callbackIdRef.current },
+    )
+  }, [fields, remove, setBeforeSubmitCallback])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -193,11 +263,27 @@ export const FieldsRepeaterFormField = ({
         />
       )}
       <Box marginTop={description ? 3 : 0}>
-        <Stack space={numberOfItems === 0 ? 0 : 4}>
+        <Stack
+          space={
+            fields.length === 0 ||
+            fields.filter((x) => !x.isRemoved).length === 0
+              ? 0
+              : 4
+          }
+        >
           {showFormTitle && displayTitleAsAccordion && (
             <Accordion singleExpand={false}>
-              {Array.from({ length: numberOfItems }).map((_i, i) => {
+              {fields.map((field, i) => {
                 if (!shouldShowItem(i)) return null
+
+                if (field?.isRemoved) {
+                  return null
+                }
+
+                // Compute display index (based only on visible rows)
+                const displayIndex = fields
+                  .filter((f) => !f.isRemoved)
+                  .findIndex((f) => f.id === field.id)
 
                 return (
                   <AccordionItem
@@ -206,21 +292,25 @@ export const FieldsRepeaterFormField = ({
                     startExpanded={true}
                     label={
                       <Text variant={formTitleVariant}>
-                        {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
+                        {formTitleNumbering === 'prefix'
+                          ? `${displayIndex + 1}. `
+                          : ''}
                         {formTitle &&
                           formatTextWithLocale(
                             typeof formTitle === 'function'
-                              ? formTitle(i, updatedApplication)
+                              ? formTitle(displayIndex, updatedApplication)
                               : formTitle,
                             application,
                             locale as Locale,
                             formatMessage,
                           )}
-                        {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
+                        {formTitleNumbering === 'suffix'
+                          ? ` ${displayIndex + 1}`
+                          : ''}
                       </Text>
                     }
                   >
-                    {repeaterFields(i)}
+                    {repeaterFields(i, displayIndex)}
                   </AccordionItem>
                 )
               })}
@@ -229,8 +319,16 @@ export const FieldsRepeaterFormField = ({
 
           {showFormTitle && !displayTitleAsAccordion && (
             <GridRow rowGap={[2, 2, 2, 3]}>
-              {Array.from({ length: numberOfItems }).map((_i, i) => {
+              {fields.map((field, i) => {
                 if (!shouldShowItem(i)) return null
+                if (field?.isRemoved) {
+                  return null
+                }
+
+                // Compute display index (based only on visible rows)
+                const displayIndex = fields
+                  .filter((f) => !f.isRemoved)
+                  .findIndex((f) => f.id === field.id)
 
                 return (
                   <Fragment key={i}>
@@ -240,20 +338,24 @@ export const FieldsRepeaterFormField = ({
                       width="full"
                     >
                       <Text variant={formTitleVariant}>
-                        {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
+                        {formTitleNumbering === 'prefix'
+                          ? `${displayIndex + 1}. `
+                          : ''}
                         {formTitle &&
                           formatTextWithLocale(
                             typeof formTitle === 'function'
-                              ? formTitle(i, updatedApplication)
+                              ? formTitle(displayIndex, updatedApplication)
                               : formTitle,
                             application,
                             locale as Locale,
                             formatMessage,
                           )}
-                        {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
+                        {formTitleNumbering === 'suffix'
+                          ? ` ${displayIndex + 1}`
+                          : ''}
                       </Text>
                     </Box>
-                    <GridColumn>{repeaterFields(i)}</GridColumn>
+                    <GridColumn>{repeaterFields(i, displayIndex)}</GridColumn>
                   </Fragment>
                 )
               })}
@@ -261,10 +363,19 @@ export const FieldsRepeaterFormField = ({
           )}
 
           {!showFormTitle &&
-            Array.from({ length: numberOfItems }).map((_i, i) => {
+            fields.map((field, i) => {
               if (!shouldShowItem(i)) return null
+              if (field?.isRemoved) {
+                return null
+              }
+              // Compute display index (based only on visible rows)
+              const displayIndex = fields
+                .filter((f) => !f.isRemoved)
+                .findIndex((f) => f.id === field.id)
 
-              return <Fragment key={i}>{repeaterFields(i)}</Fragment>
+              return (
+                <Fragment key={i}>{repeaterFields(i, displayIndex)}</Fragment>
+              )
             })}
 
           {(showRemoveButton || showAddButton) && (
@@ -291,7 +402,10 @@ export const FieldsRepeaterFormField = ({
                   type="button"
                   onClick={handleNewItem}
                   icon="add"
-                  disabled={!!maxRowsValue && numberOfItems >= maxRowsValue}
+                  disabled={
+                    !!maxRowsValue &&
+                    fields.filter((x) => !x.isRemoved).length >= maxRowsValue
+                  }
                 >
                   {formatText(
                     addItemButtonText,
