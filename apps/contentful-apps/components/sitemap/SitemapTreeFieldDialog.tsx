@@ -164,15 +164,10 @@ const CategoryForm = ({
           if (!stateToSubmit.slugEN) {
             stateToSubmit.slugEN = slugify(stateToSubmit.labelEN ?? '')
           }
-
           if (!stateToSubmit.status) {
             stateToSubmit.status = 'draft'
-          } else if (
-            stateToSubmit.status === 'published' &&
-            initialState.status === 'published'
-          ) {
-            stateToSubmit.status = 'changed'
           }
+
           onSubmit(stateToSubmit)
         }}
       >
