@@ -298,10 +298,6 @@ const Overview: FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={10}>
-          <SectionHeading
-            title="Viðurlög - athugasemdir sækjanda"
-            tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
-          />
           <InputPenalties
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}

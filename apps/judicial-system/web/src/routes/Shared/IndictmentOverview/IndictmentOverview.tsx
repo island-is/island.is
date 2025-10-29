@@ -340,10 +340,6 @@ const IndictmentOverview: FC = () => {
           )}
           {isProsecutionUser(user) && (
             <Box component="section">
-              <SectionHeading
-                title="Viðurlög - athugasemdir sækjanda"
-                tooltip="Athugasemdir sækjanda eru einungis sýnilegar notendum hjá þínu embætti."
-              />
               <InputPenalties
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
