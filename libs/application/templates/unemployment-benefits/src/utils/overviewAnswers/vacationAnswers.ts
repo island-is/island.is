@@ -13,7 +13,7 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
   const hasVacationString =
     hasVacation === NO
       ? formatMessage(overviewMessages.labels.payout.hadNoVacation)
-      : ''
+      : undefined
 
   const numberOfDays = getValueViaPath<string>(answers, 'vacation.amount') ?? ''
 
@@ -30,7 +30,7 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
         )}`
       }) || []
 
-  const valueItems = [hasVacationString]
+  const valueItems = hasVacationString ? [hasVacationString] : []
   if (hasVacation === YES) {
     valueItems.push(
       `${formatMessage(
