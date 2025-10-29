@@ -20,11 +20,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import {
-  isProsecutionUser,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { isProsecutionUser, type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
