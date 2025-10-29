@@ -13,11 +13,15 @@ export class GenericListItemSyncService
   implements CmsSyncProvider<IGenericListItem>
 {
   processSyncData(entries: processSyncDataInput<ILink>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IGenericListItem =>
         entry.sys.contentType.sys.id === 'genericListItem' &&
         entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IGenericListItem[]) {

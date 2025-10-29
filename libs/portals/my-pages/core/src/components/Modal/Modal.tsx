@@ -120,9 +120,9 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 }}
                 size="large"
               />
-            </Box>{' '}
-            <Box>
-              <Box marginBottom={6} marginRight={4}>
+            </Box>
+            <Box width="full">
+              <Box marginBottom={6}>
                 {title && (
                   <Text variant="h3" marginBottom={1}>
                     <Hyphen>{title}</Hyphen>
