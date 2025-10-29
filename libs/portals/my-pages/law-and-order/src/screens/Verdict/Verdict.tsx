@@ -14,8 +14,8 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import InfoLines from '../../components/InfoLines/InfoLines'
-import { AppealDecisionRadioFormGroup } from '../../components/InfoLines/RadioButtonType'
+import VerdictInfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
+import { AppealForm } from '../../components/VerdictInfoLines/AppealForm'
 import { messages } from '../../lib/messages'
 import {
   useGetCourtCaseVerdictQuery,
@@ -81,6 +81,7 @@ const CourtCaseDetail = () => {
       .then((response) => {
         if (response.data?.lawAndOrderVerdictPost?.appealDecision) {
           toast.success(formatMessage(messages.registrationCompleted))
+          setVerdictPopUp(false)
           return true
         } else {
           // catch null response or missing appealDecision
@@ -108,7 +109,7 @@ const CourtCaseDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && verdict && verdict?.groups && (
-        <InfoLines
+        <VerdictInfoLines
           groups={verdict?.groups}
           appealDecision={
             currentCanAppeal
@@ -151,12 +152,11 @@ const CourtCaseDetail = () => {
       )}
       {verdictPopUp && radioButtonGroup && (
         <Modal id="verdict-pop-up" onCloseModal={() => setVerdictPopUp(false)}>
-          <AppealDecisionRadioFormGroup
+          <AppealForm
             group={radioButtonGroup}
             appealDecision={currentAppealDecision}
             loading={postLoading}
             onFormSubmit={handleSubmit}
-            submitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
           />
         </Modal>
       )}

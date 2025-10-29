@@ -14,7 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { InfoLine } from '@island.is/portals/my-pages/core'
 import HtmlParser from 'react-html-parser'
-import * as styles from './InfoLines.css'
+import * as styles from './VerdictInfoLines.css'
 export interface RenderItemProps {
   item: LawAndOrderSubpoenaItem
   loading?: boolean

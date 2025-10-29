@@ -7,7 +7,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { AppealDecisionRadioFormGroup } from './RadioButtonType'
+import { AppealForm } from './AppealForm'
 import { RenderItem } from './RenderItem'
 import { SubmitHandler } from '../../utils/types'
 
@@ -21,7 +21,7 @@ interface Props {
   extraInfoLine?: React.ReactNode
 }
 
-const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const VerdictInfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
   useNamespaces('sp.law-and-order')
 
   return (
@@ -32,12 +32,11 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
         )
         if (hasRadioButtons && !props.extraInfoLine) {
           return (
-            <AppealDecisionRadioFormGroup
+            <AppealForm
               group={group}
               onFormSubmit={props.onFormSubmit}
               appealDecision={props.appealDecision}
               loading={props.formLoading}
-              submitMessage={props.formSubmitMessage}
             />
           )
         } else if (hasRadioButtons) {
@@ -78,4 +77,4 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
   )
 }
 
-export default InfoLines
+export default VerdictInfoLines

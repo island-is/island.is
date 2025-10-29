@@ -26,20 +26,17 @@ type RadioFormValues = {
 interface Props {
   group: LawAndOrderGroup
   onFormSubmit?: SubmitHandler
-  submitMessage?: string
   appealDecision?: LawAndOrderAppealDecision
   loading?: boolean
 }
 
-export const AppealDecisionRadioFormGroup = ({
+export const AppealForm = ({
   group,
   onFormSubmit,
-  submitMessage,
   appealDecision,
   loading,
 }: Props) => {
   const { formatMessage } = useLocale()
-  const [response, setResponse] = useState(false)
   // Use group.label or group.id as the field name
   const radioFieldName = group.label ?? 'radio-button-group'
 
@@ -58,25 +55,15 @@ export const AppealDecisionRadioFormGroup = ({
   })
 
   const onSubmit = async (data: RadioFormValues) => {
-    const result = await onFormSubmit?.(data)
-    isDefined(result) && setResponse(result)
+    await onFormSubmit?.(data)
   }
 
-  console.log('readio AppealDecision', appealDecision)
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {group.label}
       </Text>
-      {submitMessage && response && !loading && (
-        <Box marginBottom={3}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(messages.registrationCompleted)}
-            message={submitMessage}
-          />
-        </Box>
-      )}
+
       <Controller
         name={radioFieldName}
         control={control}

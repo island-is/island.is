@@ -125,7 +125,7 @@ export const messages = defineMessages({
   verdictAppealDecisionInfo: {
     id: 'sp.law-and-order:verdict-appeal-decision-info',
     defaultMessage:
-      'Athugið að hægt er að breyta afstöðu þangað til að áfrýjunarfrestur rennur út',
+      'Athugið að hægt er að breyta afstöðu þangað til að áfrýjunarfrestur rennur út.',
   },
   postpone: {
     id: 'sp.law-and-order:postpone',
@@ -134,5 +134,9 @@ export const messages = defineMessages({
   appeal: {
     id: 'sp.law-and-order:appeal',
     defaultMessage: 'Ég uni dómi',
+  },
+  close: {
+    id: 'sp.law-and-order:close',
+    defaultMessage: 'Loka',
   },
 })
