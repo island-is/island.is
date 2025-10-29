@@ -181,8 +181,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     )
 
     if (!isPayment?.fulfilled) {
-      throw new Error(
-        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary:
+            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+        },
+        400,
       )
     }
 
@@ -227,13 +232,41 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          throw new Error(`Application submission failed ${e}`)
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.errorDataProvider,
+              summary: `Ekki tókst að senda umsókn til sýslumanns: ${e}`,
+            },
+            500,
+          )
         })
+      
+      if (!result.success) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: `Sýslumaður tók ekki við umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuver.`,
+          },
+          500,
+        )
+      }
+      
       return {
         success: result.success,
       }
     } catch (e) {
-      throw new Error(`Application submission failed ${e}`)
+      // If it's already a TemplateApiError, re-throw it
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      // Otherwise wrap in TemplateApiError
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: `Villa kom upp við að senda umsókn: ${e}`,
+        },
+        500,
+      )
     }
   }
 
@@ -280,9 +313,18 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         fileName,
         'base64',
       )
-      return fileContent || ''
+      if (!fileContent) {
+        throw new Error(`File ${fileName} is empty or not found`)
+      }
+      return fileContent
     } catch (e) {
-      return 'err'
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: `Ekki tókst að sækja viðhengi úr geymslu: ${fileName}`,
+        },
+        500,
+      )
     }
   }
 }
