@@ -430,7 +430,7 @@ export class CourtDocumentRepositoryService {
     transaction?: Transaction,
   ) {
     const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId },
+      where: { caseId, courtSessionId }, // TODO: mergedCaseSessionId?
       order: [['documentOrder', 'DESC']], // Delete from highest to lowest order is cheaper
       transaction,
     })
@@ -442,7 +442,7 @@ export class CourtDocumentRepositoryService {
 
   private async makeNextCourtSessionDocumentOrderAvailable(
     caseId: string,
-    courtSessionId: string,
+    courtSessionId: string, // current court session id
     courtDocumentId: string | undefined,
     transaction: Transaction | undefined,
   ) {
@@ -482,7 +482,7 @@ export class CourtDocumentRepositoryService {
       }
     }
 
-    // Iincrease order of documents after the current position
+    // Increase order of documents after the current position
     await this.courtDocumentModel.update(
       { documentOrder: literal('document_order + 1') },
       {
