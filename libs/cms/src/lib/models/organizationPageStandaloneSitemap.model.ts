@@ -26,6 +26,9 @@ export class OrganizationPageStandaloneSitemapLevel2Link {
 
   @Field()
   href!: string
+
+  @Field(() => String, { nullable: true })
+  description?: string | null
 }
 
 @ObjectType()

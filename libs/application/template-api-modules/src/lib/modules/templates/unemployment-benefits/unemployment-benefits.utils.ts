@@ -16,6 +16,7 @@ import {
   FileSchemaInAnswers,
   IntroductoryMeetingInAnswers,
   JobWishesInAnswers,
+  LanguageIds,
   LanguagesInAnswers,
   LicensesInAnswers,
   OtherBenefitsInAnswers,
@@ -34,7 +35,6 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { LanguageIds } from './constants'
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
@@ -54,8 +54,16 @@ export const getPersonalInformation = (answers: FormValue) => {
     currentAddressDifferent:
       applicant?.otherAddressCheckbox &&
       applicant?.otherAddressCheckbox[0] === 'YES',
-    currentAddress: applicant?.otherAddress,
-    currentPostCodeId: applicant?.otherPostcode,
+    currentAddress:
+      applicant?.otherAddressCheckbox &&
+      applicant?.otherAddressCheckbox[0] === 'YES'
+        ? applicant?.otherAddress
+        : '',
+    currentPostCodeId:
+      applicant?.otherAddressCheckbox &&
+      applicant?.otherAddressCheckbox[0] === 'YES'
+        ? applicant?.otherPostcode
+        : '',
     postalCode: applicant?.postalCode,
   }
 }
@@ -223,6 +231,21 @@ export const getBankinPensionUnion = (
       'unemploymentApplication.data.supportData.unions',
       [],
     ) || []
+
+  const bankOptions =
+    getValueViaPath<Array<GaldurDomainModelsSettingsUnionsUnionDTO>>(
+      externalData,
+      'unemploymentApplication.data.supportData.banks',
+      [],
+    ) || []
+
+  const ledgerOptions =
+    getValueViaPath<Array<GaldurDomainModelsSettingsUnionsUnionDTO>>(
+      externalData,
+      'unemploymentApplication.data.supportData.ledgers',
+      [],
+    ) || []
+
   const unionInformation = unionOptions.find(
     (x) => x.id === payoutInformation?.union,
   )
@@ -241,8 +264,12 @@ export const getBankinPensionUnion = (
   )
 
   return {
-    bankId: payoutInformation?.bankAccount.bankNumber,
-    ledgerId: payoutInformation?.bankAccount.ledger,
+    bankId: bankOptions.find(
+      (x) => x.bankNo === payoutInformation?.bankAccount.bankNumber,
+    )?.id,
+    ledgerId: ledgerOptions.find(
+      (x) => x.number === payoutInformation?.bankAccount.ledger,
+    )?.id,
     accountNumber: payoutInformation?.bankAccount.accountNumber,
     pensionFund: {
       id: pensionFundInformation?.id || '',

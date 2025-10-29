@@ -2,10 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import {
-  INDICTMENTS_CASE_FILE_ROUTE,
-  INDICTMENTS_CONCLUSION_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { INDICTMENTS_CONCLUSION_ROUTE } from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import {
@@ -65,9 +62,7 @@ const CourtRecord: FC = () => {
     }
   }, [workingCase.courtSessions?.length])
 
-  const stepIsValid = isIndictmentCourtRecordStepValid(
-    workingCase.courtSessions,
-  )
+  const stepIsValid = isIndictmentCourtRecordStepValid(workingCase)
 
   const canCreateCourtSession =
     !workingCase.courtSessions ||
@@ -80,7 +75,7 @@ const CourtRecord: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={() => handleNavigationTo(INDICTMENTS_CASE_FILE_ROUTE)}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title="Þingbók - Réttarvörslugátt" />
       <FormContentContainer>
