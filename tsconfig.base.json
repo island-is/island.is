@@ -277,6 +277,12 @@
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
       ],
+      "@island.is/application/assets/graphics": [
+        "libs/application/assets/graphics/index.ts"
+      ],
+      "@island.is/application/assets/institution-logos": [
+        "libs/application/assets/institution-logos/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/messages": [
         "libs/application/core/src/lib/messages.ts"
@@ -620,6 +626,9 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
+      "@island.is/application/templates/unemployment-benefits": [
+        "libs/application/templates/unemployment-benefits/src/index.ts"
+      ],
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
@@ -707,6 +716,9 @@
       "@island.is/clients/dmr": ["libs/clients/dmr/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
+      ],
+      "@island.is/clients/document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/documents-v2": [
@@ -991,6 +1003,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
@@ -1071,6 +1084,9 @@
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/admin/document-provider": [
         "libs/portals/admin/document-provider/src/index.ts"
+      ],
+      "@island.is/portals/admin/document-provider-dashboard": [
+        "libs/portals/admin/document-provider-dashboard/src/index.ts"
       ],
       "@island.is/portals/admin/form-system": [
         "libs/portals/admin/form-system/src/index.ts"
@@ -1258,7 +1274,11 @@
         "libs/application/templates/name-of-application/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
-      "@island.is/clients/police-cases": ["libs/clients/police-cases/src/index.ts"]
-    }
+      "@island.is/clients/police-cases": ["libs/clients/police-cases/src/index.ts"],
+      "document-provider-dashboard": [
+        "libs/clients/document-provider-dashboard/src/index.ts"
+      ]
+    },
+    "resolveJsonModule": true
   }
 }

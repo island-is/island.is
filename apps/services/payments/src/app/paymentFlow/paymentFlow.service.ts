@@ -148,6 +148,7 @@ export class PaymentFlowService {
       )
 
       return {
+        id: paymentFlow.id,
         urls: {
           is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
           en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,

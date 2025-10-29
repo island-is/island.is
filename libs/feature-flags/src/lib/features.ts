@@ -29,17 +29,15 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   rentalAgreement = 'isRentalAgreementEnabled',
-  SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
-  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
   disabilityPension = 'isDisabilityPensionEnabled',
   disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
-  PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
   ActivationAllowanceApplicationEnabled = 'isActivationAllowanceApplicationEnabled',
+  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -57,6 +55,8 @@ export enum Features {
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
+  // Health Aid and Nutrition Renewal feature enabled
+  servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
@@ -126,6 +126,8 @@ export enum Features {
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
+
+  isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 }
 
 export enum ServerSideFeature {

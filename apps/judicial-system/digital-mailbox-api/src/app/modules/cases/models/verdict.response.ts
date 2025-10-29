@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   formatDate,
   getRulingInstructionItems,
+  getVerdictAppealDecision,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -27,11 +28,11 @@ export class VerdictResponse {
   @ApiProperty({ type: String })
   subtitle?: string
 
-  @ApiProperty({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
-
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
+
+  @ApiProperty({ type: String })
+  appealDecision?: VerdictAppealDecision
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
@@ -46,7 +47,7 @@ export class VerdictResponse {
 
     const isServiceRequired =
       defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFineCase =
+    const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
@@ -55,7 +56,10 @@ export class VerdictResponse {
       : internalCase.rulingDate
 
     const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFineCase)
+      ? getIndictmentAppealDeadlineDate({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
       : null
 
     const isAppealDeadlineExpired = appealDeadline
@@ -69,7 +73,6 @@ export class VerdictResponse {
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      // subtitle: 'TODO subtitle (if needed)',
       appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
@@ -87,19 +90,28 @@ export class VerdictResponse {
               t.appealDeadline,
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
+            ...(isAppealDeadlineExpired
+              ? [
+                  [
+                    t.appealDecision,
+                    getVerdictAppealDecision(
+                      defendant?.verdict?.appealDecision,
+                    ),
+                  ],
+                ]
+              : []),
           ].map((item) => ({
             label: item[0],
             value: item[1],
           })),
         },
-        // Ruling text
         {
           label: t.ruling,
           items: [
             {
-              // This should be replaced with the actual ruling text
-              // but we don't have that stored right now.
-              value: 'TODO Ruling text goes here',
+              // there should only be one ruling judgement over all court sessions
+              // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
+              value: internalCase.courtSessions?.[0]?.ruling ?? '',
               type: 'text',
             },
           ],

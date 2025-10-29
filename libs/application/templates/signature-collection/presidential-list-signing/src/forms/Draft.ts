@@ -14,14 +14,14 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'selectCandidateSection',

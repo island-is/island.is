@@ -1,0 +1,5 @@
+mutation CreateVerdicts($input: CreateVerdictsInput!) {
+  createVerdicts(input: $input) {
+    caseId
+  }
+}

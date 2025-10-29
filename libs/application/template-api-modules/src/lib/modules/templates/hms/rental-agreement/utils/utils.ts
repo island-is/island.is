@@ -28,7 +28,7 @@ export const mapPersonToArray = (person: ApplicantsInfo) => {
     nationalId: person.nationalIdWithName.nationalId,
     name: person.nationalIdWithName.name,
     email: person.email,
-    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+    address: person.address,
     phone: formatPhoneNumber(person.phone),
     isRepresentative: person.isRepresentative,
   }
@@ -66,7 +66,7 @@ export const getSecurityDepositTypeDescription = (
   bankGuaranteeInfo: string | undefined,
   thirdPartyGuaranteeInfo: string | undefined,
   insuranceCompanyInfo: string | undefined,
-  landlordsMutualFundInfo: string | undefined,
+  mutualFundInfo: string | undefined,
 ) => {
   if (
     type === SecurityDepositType.Capital ||
@@ -84,7 +84,7 @@ export const getSecurityDepositTypeDescription = (
     case SecurityDepositType.InsuranceCompany:
       return insuranceCompanyInfo
     case SecurityDepositType.LandlordMutualFund:
-      return landlordsMutualFundInfo
+      return mutualFundInfo
     default:
       return null
   }

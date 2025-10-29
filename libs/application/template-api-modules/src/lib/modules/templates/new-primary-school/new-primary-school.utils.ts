@@ -3,9 +3,10 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
+  OrganizationSubType,
   ReasonForApplicationOptions,
-  SchoolType,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -72,8 +73,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    // reasonForApplicationStreetAddress,
-    // reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -91,12 +90,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     expectedStartDate,
     temporaryStay,
     expectedEndDate,
-    selectedSchool,
-    selectedSchoolType,
+    selectedSchoolId,
     currentSchoolId,
+    applyForPreferredSchool,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId } = getApplicationExternalData(application.externalData)
+  const { primaryOrgId, preferredSchool } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const newPrimarySchoolDTO: RegistrationInput = {
     applicant: {
@@ -127,12 +128,18 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...((primaryOrgId || currentSchoolId) && {
       defaultOrganizationId: primaryOrgId || currentSchoolId,
     }),
-    selectedOrganizationId: selectedSchool,
+    selectedOrganizationId:
+      (applyForPreferredSchool === YES
+        ? preferredSchool?.id
+        : selectedSchoolId) || '',
     requestingMeeting: requestingMeeting === YES,
     ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
       ? {
           expectedStartDate: new Date(expectedStartDate || ''),
-          ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          ...(getSelectedSchoolSubType(
+            application.answers,
+            application.externalData,
+          ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
             temporaryStay === YES && {
               expectedEndDate: new Date(expectedEndDate || ''),
             }),
