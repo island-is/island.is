@@ -23,6 +23,9 @@ export class CourtDocumentResponse {
   @Field(() => ID, { nullable: true })
   readonly courtSessionId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly mergedCourtSessionId?: string
+
   @Field(() => CourtDocumentType)
   readonly documentType!: CourtDocumentType
 

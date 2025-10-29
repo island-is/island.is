@@ -78,6 +78,9 @@ export class CourtSessionResponse {
   @Field(() => [CourtDocumentResponse], { nullable: true })
   readonly filedDocuments?: CourtDocumentResponse[]
 
+  @Field(() => [CourtDocumentResponse], { nullable: true })
+  readonly mergedFiledDocuments?: CourtDocumentResponse[]
+
   @Field(() => Boolean, { nullable: true })
   readonly isConfirmed?: boolean
 }
