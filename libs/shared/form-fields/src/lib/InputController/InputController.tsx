@@ -41,6 +41,7 @@ interface Props {
   readOnly?: boolean
   rightAlign?: boolean
   thousandSeparator?: boolean
+  allowNegative?: boolean
   maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
@@ -104,6 +105,7 @@ export const InputController = forwardRef(
       clearOnChange,
       setOnChange,
       tooltip,
+      allowNegative,
     } = props
     const formContext = useFormContext()
 
@@ -129,6 +131,11 @@ export const InputController = forwardRef(
             value={value}
             format={format}
             maxLength={maxLength}
+            allowNegative={allowNegative}
+            isAllowed={(values) => {
+              const { floatValue } = values
+              return floatValue && max ? floatValue <= max : true
+            }}
             autoComplete={autoComplete}
             loading={loading}
             rightAlign={rightAlign}
@@ -184,6 +191,11 @@ export const InputController = forwardRef(
             inputMode={inputMode}
             max={max}
             min={min}
+            allowNegative={allowNegative}
+            isAllowed={(values) => {
+              const { floatValue } = values
+              return floatValue && max ? floatValue <= max : true
+            }}
             onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {

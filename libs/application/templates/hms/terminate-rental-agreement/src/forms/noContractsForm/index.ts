@@ -5,7 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import MovingSearching from '../../assets/MovingSearching'
 import * as m from '../../lib/messages'
 

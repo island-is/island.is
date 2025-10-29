@@ -181,10 +181,8 @@ export class PaymentService extends BaseTemplateApiService {
 
   async verifyPayment({
     application,
-    auth,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const paymentStatus = await this.paymentModelService.getStatus(
-      auth,
       application.id,
     )
 
