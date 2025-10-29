@@ -173,6 +173,7 @@ export class PoliceService {
     deliveredToDefendant: z.boolean().nullish(),
     // TODO: this is not supported atm
     legalPaperRequestDate: z.string().nullish(),
+    deliveryMethod: z.string().nullish(),
   })
 
   private speedingViolationSchema = z.object({
@@ -825,6 +826,7 @@ export class PoliceService {
               legalPaperRequestDate:
                 response.legalPaperRequestDate ?? undefined,
               deliveredToDefendant: response.deliveredToDefendant ?? false,
+              deliveryMethod: response.deliveryMethod ?? undefined,
             }),
             deliveredToDefenderNationalId:
               response.defenderNationalId ?? undefined,

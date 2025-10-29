@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import {
@@ -33,7 +34,11 @@ type OrganizationParentSubpageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
 }
 
-export type OrganizationParentSubpageProps = StandaloneParentSubpageProps
+export type OrganizationParentSubpageProps = StandaloneParentSubpageProps & {
+  organizationPageSlug: string
+  parentSubpageSlug: string
+  baseUrl: string
+}
 
 const OrganizationParentSubpage: Screen<
   OrganizationParentSubpageProps,
@@ -45,6 +50,10 @@ const OrganizationParentSubpage: Screen<
   subpage,
   tableOfContentHeadings,
   namespace,
+  organizationPageSlug,
+  parentSubpageSlug,
+  baseUrl,
+  selectedIndex,
 }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -89,6 +98,19 @@ const OrganizationParentSubpage: Screen<
       }}
       mainContent={
         <Box paddingTop={4}>
+          {selectedIndex === 0 && (
+            <Head>
+              <link
+                rel="canonical"
+                href={`${baseUrl}${
+                  linkResolver('organizationsubpage', [
+                    organizationPageSlug,
+                    parentSubpageSlug,
+                  ]).href
+                }`}
+              />
+            </Head>
+          )}
           <GridContainer>
             <GridRow>
               <GridColumn
@@ -171,8 +193,17 @@ const OrganizationParentSubpage: Screen<
 
 OrganizationParentSubpage.getProps = async (context) => {
   const props = await getProps(context)
+  const querySlugs = (context.query.slugs ?? []) as string[]
+  const [organizationPageSlug, parentSubpageSlug] = querySlugs
+  const host = context.req.headers.host ?? ''
+  const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
+  const baseUrl = `${protocol}${host}`
+
   return {
     ...props,
+    baseUrl,
+    organizationPageSlug,
+    parentSubpageSlug,
     ...getThemeConfig(
       props.organizationPage.theme,
       props.organizationPage.organization,
