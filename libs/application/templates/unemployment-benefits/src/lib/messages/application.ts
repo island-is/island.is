@@ -48,7 +48,7 @@ export const application = defineMessages({
   secondSectionDescription: {
     id: 'vmst.ub.application:secondSectionDescription',
     defaultMessage:
-      'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan ert beðið um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
+      'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan eru beiðnir um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
     description: 'Description of second section page',
   },
   agreeCheckbox: {
@@ -59,7 +59,7 @@ export const application = defineMessages({
   fileUploadAcceptFiles: {
     id: 'vmst.ub.application:fileUploadAcceptFiles',
     defaultMessage:
-      'Tekið er við skjölum með endingu: pdf, .doc, .docx, .png, .jpg, .jpeg',
+      'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
     description: 'description for file uploads',
   },
   successSubmissionTitle: {

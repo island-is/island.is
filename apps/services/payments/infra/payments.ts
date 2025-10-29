@@ -49,9 +49,9 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
       },
       PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
       XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: {
-        dev: 'XROAD:/IS-DEV/GOV/10000/island-is/payments-v1',
-        staging: 'XROAD:/IS-TEST/GOV/10000/island-is/payments-v1',
-        prod: 'XROAD:/IS/GOV/5501692829/island-is/payments-v1',
+        dev: 'XROAD:/IS-DEV/GOV/10000/island-is-protected/payments-v1',
+        staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
+        prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
       },
     })
     .secrets({
