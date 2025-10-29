@@ -52,6 +52,7 @@ export enum PermitStatusEnum {
   active = 'active',
   inactive = 'inactive',
   expired = 'expired',
+  unknown = 'unknown',
 }
 
 registerEnumType(PermitStatusEnum, {

@@ -108,7 +108,7 @@ export const mapPermitStatus = (
       return PermitStatusEnum.inactive
 
     default:
-      return PermitStatusEnum.inactive
+      return PermitStatusEnum.unknown
   }
 }
 
@@ -116,9 +116,9 @@ export const mapPermit = (permit: EuPatientConsentDto): Permit => {
   return {
     id: permit.id ?? '',
     status: mapPermitStatus(permit.status),
-    createdAt: permit.createdAt ?? new Date(),
-    validFrom: permit.validFrom ?? new Date(),
-    validTo: permit.validTo ?? new Date(),
+    createdAt: permit.createdAt,
+    validFrom: permit.validFrom,
+    validTo: permit.validTo,
     codes: permit.codes ?? [],
     countries:
       permit.countries?.map((country) => {
