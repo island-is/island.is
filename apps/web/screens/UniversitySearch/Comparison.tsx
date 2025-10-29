@@ -225,8 +225,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       flexDirection="column"
                       rowGap={1}
                     >
-                      {new Date(i.applicationStartDate) <= now &&
-                        new Date(i.applicationEndDate) >= now && (
+                      {i.applicationPeriodOpen && (
                           <Button size="small" fluid>
                             {n('apply', 'Sækja um')}
                           </Button>
