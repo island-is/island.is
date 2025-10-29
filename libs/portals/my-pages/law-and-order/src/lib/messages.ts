@@ -110,6 +110,11 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:verdict',
     defaultMessage: 'Niðurstaða dóms',
   },
+  verdictDescription: {
+    id: 'sp.law-and-order:verdict-desc',
+    defaultMessage:
+      'Hér getur þú fundið upplýsingar og lesið um niðurstöðu dómsmáls.',
+  },
   openVerdictInMailbox: {
     id: 'sp.law-and-order:open-verdict-in-mailbox',
     defaultMessage: 'Sjá dóm í pósthólfi',

@@ -103,7 +103,7 @@ const CourtCaseDetail = () => {
       title={
         verdict?.title ?? formatMessage(messages.courtCaseNumberNotRegistered)
       }
-      intro={messages.courtCasesDescription}
+      intro={messages.verdictDescription}
       serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
       serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
     >
