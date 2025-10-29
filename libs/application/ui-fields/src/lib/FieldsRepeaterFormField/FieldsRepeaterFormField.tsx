@@ -66,8 +66,6 @@ export const FieldsRepeaterFormField = ({
     maxRows,
   } = data
 
-  console.log('id', id)
-
   const items = Object.keys(rawItems).map((key) => {
     return {
       id: key,
@@ -92,9 +90,6 @@ export const FieldsRepeaterFormField = ({
     answers,
     id,
   )?.length
-
-  const a = getValueViaPath<Array<any>>(answers, id)
-  console.log('a', a)
 
   const [updatedApplication, setUpdatedApplication] = useState({
     ...application,
@@ -167,7 +162,7 @@ export const FieldsRepeaterFormField = ({
       (numberOfItemsInAnswers === undefined || numberOfItemsInAnswers === 0) &&
       fields.length < minRowsValue
     ) {
-      Array.from({ length: minRowsValue }).forEach(() => {
+      Array.from({ length: minRowsValue - 1 }).forEach(() => {
         handleNewItem()
       })
     }
@@ -223,12 +218,15 @@ export const FieldsRepeaterFormField = ({
   // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
   const callbackIdRef = useRef(`FieldRepeaterFormField-${uuid()}`)
   useEffect(() => {
+    console.log('running this??')
     setBeforeSubmitCallback?.(
       async () => {
+        console.log('not this??')
         // Remove deleted rows
         // Iterate in reverse so removing doesn't break indices
         for (let i = fields.length - 1; i >= 0; i--) {
           const row = fields[i]
+          console.log('row', row)
           if (row.isRemoved) {
             remove(i)
           }

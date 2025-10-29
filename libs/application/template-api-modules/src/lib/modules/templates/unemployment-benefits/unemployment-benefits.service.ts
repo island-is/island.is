@@ -119,12 +119,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const personalInformationFromData =
       getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
         application.externalData,
-        'unemploymentApplication.data.supportData.personalInformation',
+        'unemploymentApplication.data.personalInformation',
       )
 
     /* 
       The following fields are updated with answers from the application, sometimes we need to merge with data from externalData
     */
+    console.log('personalInformationFromData', personalInformationFromData)
 
     //personalInformation
     const personalInformationFromAnswers = getPersonalInformation(answers)
@@ -325,6 +326,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //educationalQuestions
     const educationalQuestions = getEducationalQuestions(answers)
+
+    console.log('personalInformation', personalInformation)
 
     const submitAttachment = async (
       file: GaldurDomainModelsAttachmentsCreateAttachmentRequest,
