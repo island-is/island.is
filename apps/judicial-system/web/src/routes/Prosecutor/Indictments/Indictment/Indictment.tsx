@@ -481,20 +481,20 @@ const Indictment = () => {
               autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
-          {indictmentCounts.map((indictmentCount, index) => (
-            <motion.div
-              key={indictmentCount.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
-              <Box component="section">
-                <SectionHeading
-                  title={formatMessage(strings.indictmentCountHeading, {
-                    count: index + 1,
-                  })}
-                />
-                <AnimatePresence>
+          <AnimatePresence>
+            {indictmentCounts.map((indictmentCount, index) => (
+              <motion.div
+                key={indictmentCount.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box component="section">
+                  <SectionHeading
+                    title={formatMessage(strings.indictmentCountHeading, {
+                      count: index + 1,
+                    })}
+                  />
                   <IndictmentCount
                     indictmentCount={indictmentCount}
                     workingCase={workingCase}
@@ -505,10 +505,10 @@ const Indictment = () => {
                     setWorkingCase={setWorkingCase}
                     updateIndictmentCountState={updateIndictmentCountState}
                   />
-                </AnimatePresence>
-              </Box>
-            </motion.div>
-          ))}
+                </Box>
+              </motion.div>
+            ))}
+          </AnimatePresence>
           <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="ghost"
