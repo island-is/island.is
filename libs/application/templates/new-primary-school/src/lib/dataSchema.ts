@@ -20,6 +20,13 @@ const phoneNumberSchema = z
     params: errorMessages.phoneNumber,
   })
 
+const nationalIdWithNameSchema = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((nationalId) => kennitala.isValid(nationalId), {
+    params: errorMessages.nationalId,
+  }),
+})
+
 export const dataSchema = z.object({
   applicationType: z.enum([
     ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -67,11 +74,8 @@ export const dataSchema = z.object({
   relatives: z
     .array(
       z.object({
-        fullName: z.string().min(1),
+        nationalIdWithName: nationalIdWithNameSchema,
         phoneNumber: phoneNumberSchema,
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
         relation: z.string(),
       }),
     )
@@ -108,10 +112,7 @@ export const dataSchema = z.object({
   siblings: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
+        nationalIdWithName: nationalIdWithNameSchema,
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
