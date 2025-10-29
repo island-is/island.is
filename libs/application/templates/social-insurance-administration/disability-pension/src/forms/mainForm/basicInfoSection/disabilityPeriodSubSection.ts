@@ -9,7 +9,10 @@ import { MONTHS } from '@island.is/application/templates/social-insurance-admini
 import { SectionRouteEnum } from '../../../types/routes'
 import { getYears } from '../../../utils/dates'
 import { generatePast24Months } from '../../../utils/generateYearsAndMonths'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../utils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../utils'
 
 export const disabilityPeriodSubsection = buildSubSection({
   id: SectionRouteEnum.DISABILITY_PERIOD,
@@ -46,9 +49,14 @@ export const disabilityPeriodSubsection = buildSubSection({
 
           options: ({ answers }) => {
             const pastYearsWithMonths = generatePast24Months()
-            const { disabilityRenumerationDateYear } = getApplicationAnswers(answers)
+            const { disabilityRenumerationDateYear } =
+              getApplicationAnswers(answers)
 
-            const validMonths = disabilityRenumerationDateYear ? pastYearsWithMonths[Number.parseInt(disabilityRenumerationDateYear)] :[0,1,2,3,4,5,6,7,8,9,10,11]
+            const validMonths = disabilityRenumerationDateYear
+              ? pastYearsWithMonths[
+                  Number.parseInt(disabilityRenumerationDateYear)
+                ]
+              : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
             return validMonths.map((validMonth) => {
               const month = MONTHS[validMonth]
               return {

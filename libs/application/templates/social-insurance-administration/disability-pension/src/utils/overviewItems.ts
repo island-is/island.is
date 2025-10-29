@@ -389,14 +389,14 @@ export const selfEvaluationItems = async (
       valueText: () => {
         return Array.isArray(employmentStatus)
           ? employmentStatus.map((e) => {
-            if (e === OTHER_STATUS_VALUE) {
-              return employmentStatusOther
-            }
-            const label = employmentTypes.find((et) => et.value === e)?.label
-            return `${label}\n\n`
-          })
+              if (e === OTHER_STATUS_VALUE) {
+                return employmentStatusOther
+              }
+              const label = employmentTypes.find((et) => et.value === e)?.label
+              return `${label}\n\n`
+            })
           : undefined
-      }
+      },
     },
     {
       width: 'full' as const,
@@ -474,7 +474,7 @@ export const selfEvaluationItems = async (
       keyText: m.questions.biggestIssueTitle,
       valueText: biggestIssue,
       hideIfEmpty: true,
-    }
+    },
   ]
 }
 
