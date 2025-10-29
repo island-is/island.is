@@ -35,7 +35,7 @@ export interface LineLink {
 
 export interface PdfDocument {
   addPage: (position?: number) => PdfDocument
-  addPageNumbers: () => PdfDocument
+  addPageNumbers: (tableOfContentsPageCount: number) => PdfDocument
   addParagraph: (text: string, fontSize: number, x?: number) => PdfDocument
   addText: (
     text: string,
@@ -70,6 +70,9 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   let currentPage = -1
   let currentYPosition = -1
+  const A4Width = 595.28 // A4 width in points
+  const A4Height = 841.89 // A4 height in points
+  const scalePageInfo: Map<number, number> = new Map()
 
   const drawTextAbsolute = (
     page: PDFPage,
@@ -147,45 +150,21 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     }
   }
 
-  const scaleToA4 = (page: PDFPage) => {
+  const scaleToA4 = (page: PDFPage, isLandscape: boolean) => {
     const { width, height } = page.getSize()
-    const targetWidth = 595.28 // A4 width in points
-    const targetHeight = 841.89 // A4 height in points
+    const targetWidth = isLandscape ? A4Height : A4Width
+    const targetHeight = isLandscape ? A4Width : A4Height
     const scaleX = targetWidth / width
     const scaleY = targetHeight / height
     const scale = Math.min(scaleX, scaleY)
 
     page.scaleContent(scale, scale)
-    page.setSize(targetWidth, targetHeight)
+    page.setSize(
+      isLandscape ? A4Height : A4Width,
+      isLandscape ? A4Width : A4Height,
+    )
 
-    return page
-  }
-
-  const a = () => {
-    const pageNumberRightMargin = 10
-    const pageNumberBottomMargin = 15
-    const pageNumberFontSize = 20
-
-    let pageNumber = 0
-
-    rawDocument.getPages().forEach((page) => {
-      const pageNumberText = `${++pageNumber}`
-      const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-        pageNumberText,
-        pageNumberFontSize,
-      )
-
-      drawTextAbsolute(
-        page,
-        pageNumberText,
-        page.getWidth() - pageNumberRightMargin - pageNumberTextWidth,
-        pageNumberBottomMargin,
-        boldFont,
-        pageNumberFontSize,
-      )
-    })
-
-    return pdfDocument
+    return { page, scale }
   }
 
   const pdfDocument = {
@@ -198,27 +177,30 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
-    addPageNumbers: () => {
+    addPageNumbers: (tableOfContentsPageCount: number) => {
       const pageNumberRightMargin = 10
       const pageNumberBottomMargin = 15
       const pageNumberFontSize = 20
 
       let pageNumber = 0
-
-      rawDocument.getPages().forEach((page) => {
+      rawDocument.getPages().forEach((page, index) => {
         const pageNumberText = `${++pageNumber}`
         const pageNumberTextWidth = boldFont.widthOfTextAtSize(
           pageNumberText,
           pageNumberFontSize,
         )
 
+        const scaleFactor =
+          scalePageInfo.get(index - (tableOfContentsPageCount + 1)) ?? 1
+
         drawTextAbsolute(
           page,
           pageNumberText,
-          page.getWidth() - pageNumberRightMargin - pageNumberTextWidth,
-          pageNumberBottomMargin,
+          (page.getWidth() - pageNumberRightMargin - pageNumberTextWidth) *
+            scaleFactor,
+          pageNumberBottomMargin * scaleFactor,
           boldFont,
-          pageNumberFontSize,
+          pageNumberFontSize * scaleFactor,
         )
       })
 
@@ -330,11 +312,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
 
     mergeDocument: async (buffer: Buffer) => {
-      const pageNumberRightMargin = 10
-      const pageNumberBottomMargin = 15
-      const pageNumberFontSize = 20
-
-      let pageNumber = 0
       const filePdfDoc = await PDFDocument.load(new Uint8Array(buffer))
 
       const pages = await rawDocument.copyPages(
@@ -343,31 +320,20 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       )
 
       pages.forEach((page) => {
-        // TODO: Put into function
         const { width, height } = page.getSize()
-        const pageNumberText = `${++pageNumber}`
-        const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-          pageNumberText,
-          pageNumberFontSize,
-        )
+        const isLandscape = width > height
 
-        console.log(page.getSize(), pageNumberFontSize)
+        if (width > A4Width || height > A4Height) {
+          const { page: scaledPage, scale } = scaleToA4(page, isLandscape)
+          const pageNumber = rawDocument.getPageCount()
 
-        drawTextAbsolute(
-          page,
-          pageNumberText,
-          page.getWidth() -
-            pageNumberRightMargin -
-            pageNumberTextWidth -
-            (width > 1000 && height > 1000 ? 70 : 0),
-          pageNumberBottomMargin + (width > 1000 && height > 1000 ? 60 : 0),
-          boldFont,
-          width > 1000 && height > 1000
-            ? pageNumberFontSize * 5
-            : pageNumberFontSize,
-        )
+          scalePageInfo.set(pageNumber, 1 / scale)
+          rawDocument.addPage(scaledPage)
 
-        rawDocument.addPage(scaleToA4(page))
+          return
+        }
+
+        rawDocument.addPage(page)
       })
 
       return pdfDocument
