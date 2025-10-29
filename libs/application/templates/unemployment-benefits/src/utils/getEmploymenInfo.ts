@@ -1,7 +1,7 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../shared'
-import { GaldurDomainModelsApplicantsApplicantProfileDTOsJob } from '@island.is/clients/vmst-unemployment'
+import { GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer } from '@island.is/clients/vmst-unemployment'
 import { employment as employmentMessages } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 
@@ -46,9 +46,11 @@ export const doesOwnResume = (answers: FormValue) => {
 
 export const getEmploymentFromRsk = (externalData: ExternalData) => {
   const employmentList =
-    getValueViaPath<Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>>(
+    getValueViaPath<
+      Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+    >(
       externalData,
-      'unemploymentApplication.data.jobCareer.jobs',
+      'unemploymentApplication.data.rskEmploymentInformation',
       [],
     ) ?? []
 
@@ -56,7 +58,12 @@ export const getEmploymentFromRsk = (externalData: ExternalData) => {
   const { formatMessage } = useLocale()
 
   const extendedList = [
-    ...employmentList,
+    ...employmentList.map((x) => {
+      return {
+        employerSSN: x.ssn,
+        employer: x.name,
+      }
+    }),
     {
       employerSSN: '-',
       employer: formatMessage(

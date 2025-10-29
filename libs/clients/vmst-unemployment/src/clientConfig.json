@@ -6259,6 +6259,13 @@
                   }
                 ]
               },
+              "rskEmploymentHistory": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer"
+                }
+              },
               "reopenApplication": {
                 "type": "boolean"
               },
@@ -6273,6 +6280,10 @@
                 "nullable": true
               },
               "userMessageEN": {
+                "type": "string",
+                "nullable": true
+              },
+              "errorCode": {
                 "type": "string",
                 "nullable": true
               }
@@ -7198,6 +7209,10 @@
             "type": "string",
             "nullable": true
           },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
           "shortName": {
             "type": "string",
             "nullable": true
@@ -7915,6 +7930,56 @@
           "serviceAreas": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string",
+                "nullable": true
+              },
+              "periods": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_RskPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
