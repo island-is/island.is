@@ -30,7 +30,7 @@ const VerdictInfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
         const hasRadioButtons = group.items?.some(
           (y) => y.type === LawAndOrderItemType.RadioButton,
         )
-        if (hasRadioButtons && !props.extraInfoLine) {
+        if (hasRadioButtons && !props.extraInfoLine && !props.formLoading) {
           return (
             <AppealForm
               group={group}
