@@ -355,14 +355,22 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         )
 
         if (
-          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType !==
+            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL &&
+          selectedSchoolSubType !==
+            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
-          temporaryStay !== YES
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+          selectedSchoolSubType ===
+            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
+          (selectedSchoolSubType ===
+            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT &&
+            temporaryStay !== YES)
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }

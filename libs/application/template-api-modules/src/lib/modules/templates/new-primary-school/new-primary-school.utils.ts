@@ -99,6 +99,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const selectedSubType = getSelectedSchoolSubType(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationInput = {
     applicant: {
       nationalId: childInfo?.nationalId || '',
@@ -136,10 +141,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
       ? {
           expectedStartDate: new Date(expectedStartDate || ''),
-          ...(getSelectedSchoolSubType(
-            application.answers,
-            application.externalData,
-          ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+          ...((selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+            selectedSubType ===
+              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+            selectedSubType ===
+              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
             temporaryStay === YES && {
               expectedEndDate: new Date(expectedEndDate || ''),
             }),
@@ -178,6 +184,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }),
     },
   }
-
+  console.log('newPrimarySchoolDTO', newPrimarySchoolDTO)
   return newPrimarySchoolDTO
 }
