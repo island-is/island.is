@@ -33,6 +33,7 @@ import {
 } from '../dataProviders'
 import { getChargeItems } from '../utils/getChargeItems'
 import { conclusion } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -42,6 +43,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS,
   name: m.application.applicationName,
   codeOwner: CodeOwners.Origo,
+  featureFlag: Features.RegistrationOfNewPropertyNumbersEnabled,
   institution: m.application.institutionName,
   translationNamespaces:
     ApplicationConfigurations.RegistrationOfNewPropertyNumbers.translation,
