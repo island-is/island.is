@@ -1,4 +1,8 @@
-import { LawAndOrderGroup, LawAndOrderItemType } from '@island.is/api/schema'
+import {
+  LawAndOrderAppealDecision,
+  LawAndOrderGroup,
+  LawAndOrderItemType,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -8,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SubmitHandler } from '../../utils/types'
@@ -23,11 +27,11 @@ interface Props {
   group: LawAndOrderGroup
   onFormSubmit?: SubmitHandler
   submitMessage?: string
-  appealDecision?: string
+  appealDecision?: LawAndOrderAppealDecision
   loading?: boolean
 }
 
-export const RadioFormGroup = ({
+export const AppealDecisionRadioFormGroup = ({
   group,
   onFormSubmit,
   submitMessage,
@@ -39,27 +43,26 @@ export const RadioFormGroup = ({
   // Use group.label or group.id as the field name
   const radioFieldName = group.label ?? 'radio-button-group'
 
-  const { control, handleSubmit, formState, setValue } =
-    useForm<RadioFormValues>({
-      defaultValues: {
-        [radioFieldName]: appealDecision || '',
-      },
-    })
-
-  const { isDirty } = formState
-
-  useEffect(() => {
-    // Only set the value if appealDecision exists and form hasn't been interacted with yet
-    if (appealDecision && !isDirty) {
-      setValue(radioFieldName, appealDecision, { shouldDirty: false })
+  // Set default value: use POSTPONE if appealDecision is NO_ANSWER, otherwise use existing appealDecision
+  const getDefaultValue = () => {
+    if (appealDecision === LawAndOrderAppealDecision.NO_ANSWER) {
+      return LawAndOrderAppealDecision.POSTPONE
     }
-  }, [appealDecision, radioFieldName, setValue, isDirty])
+    return appealDecision || ''
+  }
+
+  const { control, handleSubmit, formState } = useForm<RadioFormValues>({
+    defaultValues: {
+      [radioFieldName]: getDefaultValue(),
+    },
+  })
 
   const onSubmit = async (data: RadioFormValues) => {
     const result = await onFormSubmit?.(data)
     isDefined(result) && setResponse(result)
   }
 
+  console.log('readio AppealDecision', appealDecision)
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
@@ -91,10 +94,11 @@ export const RadioFormGroup = ({
               return (
                 <Box marginBottom={1} key={i}>
                   <RadioButton
-                    name={`${radioFieldName}.${i}`}
+                    name={`${radioFieldName}.${item.value}`}
                     label={item.label ?? ''}
                     value={item.value}
                     checked={field.value === item.value}
+                    disabled={loading}
                     onChange={field.onChange}
                   />
                 </Box>

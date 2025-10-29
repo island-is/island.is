@@ -15,7 +15,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
-import { RadioFormGroup } from '../../components/InfoLines/RadioButtonType'
+import { AppealDecisionRadioFormGroup } from '../../components/InfoLines/RadioButtonType'
 import { messages } from '../../lib/messages'
 import {
   useGetCourtCaseVerdictQuery,
@@ -110,7 +110,11 @@ const CourtCaseDetail = () => {
       {!error && verdict && verdict?.groups && (
         <InfoLines
           groups={verdict?.groups}
-          appealDecision={currentCanAppeal ? currentAppealDecision : undefined}
+          appealDecision={
+            currentCanAppeal
+              ? currentAppealDecision ?? LawAndOrderAppealDecision.POSTPONE
+              : undefined
+          }
           loading={loading}
           onFormSubmit={handleSubmit}
           formSubmitMessage={formatMessage(messages.verdictAppealDecisionInfo)}
@@ -147,7 +151,7 @@ const CourtCaseDetail = () => {
       )}
       {verdictPopUp && radioButtonGroup && (
         <Modal id="verdict-pop-up" onCloseModal={() => setVerdictPopUp(false)}>
-          <RadioFormGroup
+          <AppealDecisionRadioFormGroup
             group={radioButtonGroup}
             appealDecision={currentAppealDecision}
             loading={postLoading}
