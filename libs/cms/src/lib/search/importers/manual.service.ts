@@ -22,7 +22,11 @@ export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
 export class ManualSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
     // only process manuals that we consider not to be empty
-    return entries.filter(isManual)
+    const entriesToUpdate = entries.filter(isManual)
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IManual[]) {

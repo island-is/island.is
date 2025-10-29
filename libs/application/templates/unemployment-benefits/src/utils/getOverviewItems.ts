@@ -17,7 +17,6 @@ import {
   EmploymentStatus,
   FileSchemaInAnswers,
   LanguagesInAnswers,
-  WorkingAbility,
   EducationType,
   CurrentEducationInAnswers,
   PreviousEducationInAnswers,
@@ -133,10 +132,10 @@ export const useEmploymentInformationOverviewItems = (
     : ''
 
   const abilityAnswer =
-    getValueViaPath<WorkingAbility>(answers, 'workingAbility.status') ?? ''
+    getValueViaPath<string>(answers, 'workingAbility.status') ?? ''
 
   const abilityString = abilityAnswer
-    ? getWorkingAbilityString(abilityAnswer)
+    ? getWorkingAbilityString(abilityAnswer, _externalData, locale)
     : ''
   const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
     answers,
@@ -152,7 +151,6 @@ export const useEmploymentInformationOverviewItems = (
       width: 'half',
       keyText: overviewMessages.labels.employmentInformation.information,
       valueText: [
-        reasons.mainReason,
         reasons.additionalReason,
         currentSituationString,
         abilityString,
@@ -186,9 +184,10 @@ export const useEducationOverviewItems = (
 
   const educationString = educationAnswer
     ? getLastTvelveMonthsEducationString(educationAnswer)
-    : ''
+    : undefined
 
-  const valueItems = [lastTvelveMonthsString]
+  const valueItems =
+    lastTvelveMonthsString !== '' ? [lastTvelveMonthsString] : []
   if (lastTvelveMonths === YES) {
     educationString && valueItems.push(educationString)
   }
@@ -253,7 +252,6 @@ export const usePayoutOverviewItems = (
     _externalData,
     locale,
   )
-  console.log('otherPaymentsAnswers', otherPaymentsAnswers)
   return [
     {
       width: 'half',
@@ -491,7 +489,7 @@ export const useResumeOverviewItems = (
       keyText: overviewMessages.labels.resume.resume,
       valueText: [
         hasResume === YES ? coreMessages.radioYes : coreMessages.radioNo,
-        hasResume === YES ? fileName[0]?.name : '',
+        fileName && fileName[0] ? fileName[0]?.name : '',
       ],
     },
   ]

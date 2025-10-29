@@ -217,6 +217,7 @@ export const renderSlice = (
           filterTags={(slice as GenericListSchema).filterTags}
           defaultOrder={(slice as GenericListSchema).defaultOrder}
           showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
+          textSearchOrder={slice.textSearchOrder ?? 'Default'}
         />
       )
     case 'TeamList':

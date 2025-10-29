@@ -35,13 +35,10 @@ import {
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
 import * as styles from './HealthRegistration.css'
-
-type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
-
-export type HealthCenterDoctorOption = {
-  label: string
-  value: number
-}
+import {
+  HealthCenterDoctorOption,
+  SelectedHealthCenter,
+} from '../../utils/types'
 
 export interface Dictionary<T> {
   [index: string]: T
