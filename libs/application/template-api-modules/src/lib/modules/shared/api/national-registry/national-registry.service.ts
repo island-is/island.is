@@ -269,6 +269,20 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * The new version of the getIndividual introduces the
+   * gendercode and genderdescription fields.
+   * The values are as follows:
+   *
+   * genderCode | genderDescription
+   * -----------|------------------
+   * 1          | Karl
+   * 2          | Kona
+   * 3          | Drengur
+   * 4          | Stúlka
+   * 7          | Kynsegin/annað fullorðinn
+   * 8          | Kynsegin/annað barn
+   */
   async getIndividual(
     nationalId: string,
     auth: User,
@@ -312,8 +326,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   /**
-   * Get get information about an individual that is not the logged in user.
+   * Get information about an individual that is not the logged in user.
    * There is much less data available for other individuals than for the logged in user.
+   * Note especially that the firstName and lastName fields are replaced with a fullName field
    */
   async getOtherIndividual(
     nationalId: string,
