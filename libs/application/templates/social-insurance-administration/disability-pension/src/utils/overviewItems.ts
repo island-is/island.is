@@ -40,6 +40,7 @@ import {
   OTHER_STATUS_VALUE,
 } from '../types/constants'
 import { Query } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 export const aboutApplicantItems = (
   answers: FormValue,
@@ -94,7 +95,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
 
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.paymentInfo.bank,
       valueText: formatBankAccount(paymentInfo),
     },
@@ -112,7 +113,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
       },
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.paymentInfo.taxationLevel,
       valueText: () => {
         if (
@@ -138,7 +139,7 @@ export const disabilityPeriodItems = (
 
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.disabilityPeriod.chosenDate,
       valueText: () => {
         const year = Number.parseInt(disabilityRenumerationDateYear)
@@ -159,7 +160,7 @@ export const livedAbroadItems = (answers: FormValue): Array<KeyValueItem> => {
 
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.employmentParticipation.livedAbroadQuestion,
       valueText:
         hasLivedAbroad === 'yes' ? coreMessages.radioYes : coreMessages.radioNo,
@@ -216,7 +217,7 @@ export const abroadPaymentsItems = (
 
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.employmentParticipation.abroadPaymentsTitle,
       valueText:
         isReceivingBenefitsFromAnotherCountry === 'yes'
@@ -255,7 +256,7 @@ export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
 
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.disabilityEvaluation.appliedBeforeTitle,
       valueText:
         hasAppliedForDisabilityBefore === 'yes'
@@ -269,7 +270,7 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
   const { inPaidWork, willContinueWorking } = getApplicationAnswers(answers)
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.employmentParticipation.inPaidWorkTitle,
       valueText: () =>
         inPaidWork === 'yes'
@@ -277,7 +278,7 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
           : m.employmentParticipation.no,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.employmentParticipation.continuedWorkTitle,
       valueText:
         willContinueWorking === 'yes'
@@ -335,22 +336,24 @@ export const selfEvaluationItems = async (
 
   return [
     {
-      width: 'full',
-      keyText: m.selfEvaluation.questionFormTitle,
+      width: 'full' as const,
+      keyText: m.selfEvaluation.assistance,
       valueText:
         hadAssistanceForSelfEvaluation !== undefined
-          ? m.selfEvaluation.applicantHasAnsweredAssistance
+          ? hadAssistanceForSelfEvaluation === YES
+            ? coreMessages.radioYes
+            : coreMessages.radioNo
           : m.selfEvaluation.applicantHasNotAnsweredAssistance,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.maritalStatusTitle,
       valueText: maritalStatuses.find(
         (m) => m.value.toString() === maritalStatus,
       )?.label,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.residenceTitle,
       valueText: () => {
         if (residence && Number(residence) === OTHER_RESIDENCE_STATUS_VALUE) {
@@ -361,42 +364,42 @@ export const selfEvaluationItems = async (
       },
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.childrenCountTitle,
       valueText: generateChildrenOptions(m).find((g) => g.value === children)
         ?.label,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.icelandicCapabilityTitle,
       valueText: generateIcelandicCapabilityOptions(m).find(
         (g) => g.value === icelandicCapability,
       )?.label,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.languageTitle,
       valueText: languageData?.data.socialInsuranceGeneral.languages?.find(
         (l) => l.value === language,
       )?.label,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.employmentStatusTitle,
       valueText: () => {
         return Array.isArray(employmentStatus)
           ? employmentStatus.map((e) => {
-              if (e === OTHER_STATUS_VALUE) {
-                return employmentStatusOther
-              }
-              const label = employmentTypes.find((et) => et.value === e)?.label
-              return label
-            })
+            if (e === OTHER_STATUS_VALUE) {
+              return employmentStatusOther
+            }
+            const label = employmentTypes.find((et) => et.value === e)?.label
+            return `${label}\n\n`
+          })
           : undefined
-      },
+      }
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.previousEmploymentTitle,
       valueText:
         previousEmployment?.hasEmployment === 'yes'
@@ -404,13 +407,13 @@ export const selfEvaluationItems = async (
           : coreMessages.radioNo,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.previousEmploymentWhen,
       valueText: previousEmployment?.when,
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.previousEmploymentJob,
       valueText:
         employmentJobData?.data.socialInsuranceGeneral.professions?.find(
@@ -419,7 +422,7 @@ export const selfEvaluationItems = async (
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.previousEmploymentField,
       valueText:
         employmentFieldData?.data.socialInsuranceGeneral.professionActivities?.find(
@@ -428,26 +431,26 @@ export const selfEvaluationItems = async (
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.educationLevelTitle,
       valueText: educationLevels.find((e) => e.code === educationLevel)
         ?.description,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.employmentCapabilityTitle,
       valueText: employmentCapability ? `${employmentCapability}%` : undefined,
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.employmentImportanceTitle,
       valueText: generateEmploymentImportanceOptions(m).find(
         (e) => e.value === employmentImportance,
       )?.label,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.rehabilitationOrTherapyTitle,
       valueText:
         hasHadRehabilitationOrTherapy === 'yes'
@@ -455,23 +458,23 @@ export const selfEvaluationItems = async (
           : coreMessages.radioNo,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.rehabilitationOrTherapyDescription,
       valueText: rehabilitationOrTherapyDescription,
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.rehabilitationOrTherapyResults,
       valueText: rehabilitationOrTherapyResults,
       hideIfEmpty: true,
     },
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.questions.biggestIssueTitle,
       valueText: biggestIssue,
       hideIfEmpty: true,
-    },
+    }
   ]
 }
 
@@ -487,7 +490,7 @@ export const capabilityImpairmentItems = (
   return hasCapabilityImpairment
     ? [
         {
-          width: 'full',
+          width: 'full' as const,
           keyText: m.capabilityImpairment.title,
           valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment,
         },
@@ -501,7 +504,7 @@ export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
   if (!extraInfo) return []
   return [
     {
-      width: 'full',
+      width: 'full' as const,
       keyText: m.extraInfo.title,
       valueText:
         extraInfo && extraInfo.trim() !== ''
