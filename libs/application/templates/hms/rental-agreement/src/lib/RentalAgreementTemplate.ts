@@ -30,6 +30,7 @@ import {
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 
 enum TemplateApiActions {
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
@@ -49,7 +50,18 @@ const RentalAgreementTemplate: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.RentalAgreement.translation,
   dataSchema,
   featureFlag: Features.rentalAgreement,
-  allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
