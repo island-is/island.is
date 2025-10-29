@@ -119,7 +119,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const personalInformationFromData =
       getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
         application.externalData,
-        'unemploymentApplication.data.supportData.personalInformation',
+        'unemploymentApplication.data.personalInformation',
       )
 
     /* 
