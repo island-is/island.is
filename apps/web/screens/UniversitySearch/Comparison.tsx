@@ -226,10 +226,10 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       rowGap={1}
                     >
                       {i.applicationPeriodOpen && (
-                          <Button size="small" fluid>
-                            {n('apply', 'Sækja um')}
-                          </Button>
-                        )}
+                        <Button size="small" fluid>
+                          {n('apply', 'Sækja um')}
+                        </Button>
+                      )}
 
                       <LinkV2
                         href={
