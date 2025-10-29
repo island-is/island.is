@@ -505,6 +505,7 @@ query Case($input: CaseQueryInput!) {
     }
     mergeCaseNumber
     civilDemands
+    penalties
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

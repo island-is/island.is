@@ -159,7 +159,9 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
           workingCase.court && (

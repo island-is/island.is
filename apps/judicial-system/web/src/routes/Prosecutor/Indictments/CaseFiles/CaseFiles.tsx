@@ -68,7 +68,9 @@ const CaseFiles = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}

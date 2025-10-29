@@ -75,7 +75,9 @@ const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box marginBottom={5}>
           <BlueBox>
             <Text whiteSpace="preLine">{workingCase.demands}</Text>
