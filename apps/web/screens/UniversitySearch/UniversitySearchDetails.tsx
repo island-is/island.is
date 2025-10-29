@@ -477,14 +477,14 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                         {`${n('applicationPeriod', 'Umsóknartímabil')}: ${
                           data.applicationStartDate && data.applicationEndDate
                             ? `${format(
-                              new Date(data.applicationStartDate),
-                              'd. MMMM yyyy',
-                              { locale: locale === 'en' ? en : is },
-                            )} - ${format(
-                              new Date(data.applicationEndDate),
-                              'd. MMMM yyyy',
-                              { locale: locale === 'en' ? en : is },
-                            )}`
+                                new Date(data.applicationStartDate),
+                                'd. MMMM yyyy',
+                                { locale: locale === 'en' ? en : is },
+                              )} - ${format(
+                                new Date(data.applicationEndDate),
+                                'd. MMMM yyyy',
+                                { locale: locale === 'en' ? en : is },
+                              )}`
                             : n('Not specified', 'Ótilgreint')
                         }`}
                       </Text>
