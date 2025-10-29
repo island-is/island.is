@@ -40,7 +40,6 @@ import {
   OTHER_STATUS_VALUE,
 } from '../types/constants'
 import { Query } from '@island.is/api/schema'
-import { isDefined } from '@island.is/shared/utils'
 
 export const aboutApplicantItems = (
   answers: FormValue,

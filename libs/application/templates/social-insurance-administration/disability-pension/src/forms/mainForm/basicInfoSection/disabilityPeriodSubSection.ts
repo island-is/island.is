@@ -7,9 +7,8 @@ import {
 import * as m from '../../../lib/messages'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { SectionRouteEnum } from '../../../types/routes'
-import { getYears } from '../../../utils/dates'
 import { generatePast24Months } from '../../../utils/generateYearsAndMonths'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../utils'
+import { getApplicationAnswers } from '../../../utils'
 
 export const disabilityPeriodSubsection = buildSubSection({
   id: SectionRouteEnum.DISABILITY_PERIOD,
