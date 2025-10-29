@@ -119,11 +119,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...(reasonForApplication ===
       ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
       siblings: siblings.map(
-        (sibling) => sibling.NationalIdWithName.nationalId,
+        (sibling) => sibling.nationalIdWithName.nationalId,
       ),
     }),
     emergencyContacts: relatives.map((relative) => ({
-      nationalId: relative.NationalIdWithName.nationalId,
+      nationalId: relative.nationalIdWithName.nationalId,
       phone: relative.phoneNumber,
       relationTypeId: relative.relation,
     })),

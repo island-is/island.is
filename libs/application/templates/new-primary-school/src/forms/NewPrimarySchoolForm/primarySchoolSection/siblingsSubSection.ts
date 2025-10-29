@@ -37,7 +37,7 @@ export const siblingsSubSection = buildSubSection({
           marginTop: 0,
           editField: true,
           fields: {
-            NationalIdWithName: {
+            nationalIdWithName: {
               component: 'nationalIdWithName',
               searchPersons: true,
               dataTestId: 'sibling-national-id-with-name',

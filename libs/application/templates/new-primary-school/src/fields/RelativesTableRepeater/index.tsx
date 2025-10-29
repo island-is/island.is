@@ -51,10 +51,10 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         maxRows: 4,
         editField: true,
         fields: {
-          NationalIdWithName: {
+          nationalIdWithName: {
             component: 'nationalIdWithName',
             searchPersons: true,
-            dataTestId: 'sibling-national-id-with-name',
+            dataTestId: 'relative-national-id-with-name',
           },
           phoneNumber: {
             component: 'input',
@@ -86,11 +86,10 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
           header: [
             newPrimarySchoolMessages.shared.fullName,
-            newPrimarySchoolMessages.shared.phoneNumber,
             newPrimarySchoolMessages.shared.nationalId,
+            newPrimarySchoolMessages.shared.phoneNumber,
             newPrimarySchoolMessages.shared.relation,
           ],
-          rows: ['name', 'phoneNumber', 'nationalId', 'relation'],
         },
       }}
     />

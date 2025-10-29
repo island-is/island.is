@@ -12,17 +12,16 @@ import {
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
 export interface RelativesRow {
-  NationalIdWithName: {
+  nationalIdWithName: {
     name: string
     nationalId: string
   }
-  email: string
   phoneNumber: string
   relation: string
 }
 
 export interface SiblingsRow {
-  NationalIdWithName: {
+  nationalIdWithName: {
     name: string
     nationalId: string
   }
