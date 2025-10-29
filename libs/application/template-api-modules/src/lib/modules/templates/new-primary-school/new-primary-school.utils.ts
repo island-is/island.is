@@ -143,7 +143,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               application.externalData,
             ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
               temporaryStay === YES && {
-                expectedEndDate: new Date(expectedEndDate || ''),
+                expectedEndDate: expectedEndDate
+                  ? new Date(expectedEndDate)
+                  : undefined,
               }),
           }
         : {
