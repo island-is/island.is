@@ -154,7 +154,6 @@ export class PassportService extends BaseTemplateApiService {
     }
     this.logger.info('submitPassportApplication', applicationId)
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

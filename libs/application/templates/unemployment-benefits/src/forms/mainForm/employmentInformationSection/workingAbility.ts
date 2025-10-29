@@ -5,14 +5,15 @@ import {
   buildMultiField,
   buildSelectField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   employment as employmentMessages,
   application as applicationMessages,
 } from '../../../lib/messages'
-import { WorkingAbility } from '../../../shared'
 import { needsMedicalReport } from '../../../utils/needsMedicalReport'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
+import { GaldurDomainModelsSettingsWorkingCapacityWorkingCapacityDTO } from '@island.is/clients/vmst-unemployment'
 
 export const workingAbilitySubSection = buildSubSection({
   id: 'workingAbilitySubSection',
@@ -33,20 +34,22 @@ export const workingAbilitySubSection = buildSubSection({
           title: employmentMessages.workingAbility.labels.workingAbilityLabel,
           backgroundColor: 'blue',
           required: true,
-          options: [
-            {
-              value: WorkingAbility.ABLE,
-              label: employmentMessages.workingAbility.labels.optionFullTime,
-            },
-            {
-              value: WorkingAbility.PARTLY_ABLE,
-              label: employmentMessages.workingAbility.labels.optionPartTime,
-            },
-            {
-              value: WorkingAbility.DISABILITY,
-              label: employmentMessages.workingAbility.labels.optionDisability,
-            },
-          ],
+          options: (application, _, locale) => {
+            const workingCapacities =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsWorkingCapacityWorkingCapacityDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.workingCapacities',
+                [],
+              ) || []
+            return workingCapacities.map((x) => {
+              return {
+                label: locale === 'is' ? x.name || '' : x.english || '',
+                value: x.id || '',
+              }
+            })
+          },
         }),
         buildAlertMessageField({
           id: 'workingAbilityAlertMessage',

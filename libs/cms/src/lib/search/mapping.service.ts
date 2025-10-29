@@ -91,9 +91,15 @@ export class MappingService {
   }
 
   mapData(entries: processSyncDataInput<unknown>) {
-    return this.contentSyncProviders.map((contentSyncProvider) => {
+    const entriesToDelete = new Set<string>()
+    const mappedData = this.contentSyncProviders.map((contentSyncProvider) => {
       const data = contentSyncProvider.processSyncData(entries)
-      return contentSyncProvider.doMapping(data)
+      for (const entry of data.entriesToDelete) entriesToDelete.add(entry)
+      return contentSyncProvider.doMapping(data.entriesToUpdate)
     })
+    return {
+      mappedData,
+      entriesToDelete: Array.from(entriesToDelete),
+    }
   }
 }
