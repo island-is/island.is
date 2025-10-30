@@ -5,20 +5,21 @@ import * as styles from './LoadingDots.css'
 
 interface LoadingDotsProps {
   single?: boolean
-  large?: boolean
   color?: 'blue' | 'white' | 'gradient'
+  size?: 'small' | 'medium' | 'large'
 }
 
 export const LoadingDots = ({
   color = 'blue',
-  large,
+  size = 'medium',
   single,
 }: LoadingDotsProps) => {
   return (
     <div
       className={cn(styles.container, styles.colors[color], {
         [styles.single]: single,
-        [styles.large]: large,
+        [styles.large]: size === 'large',
+        [styles.small]: size === 'small',
       })}
     >
       <div className={styles.dot} />

@@ -119,6 +119,12 @@ export const currentSituationSubSection = buildSubSection({
             },
             employer: {
               component: 'nationalIdWithName',
+              customNameLabel:
+                employmentMessages.employmentHistory.labels
+                  .customEmployerNameLabel,
+              customNationalIdLabel:
+                employmentMessages.employmentHistory.labels
+                  .customEmployerNationalIdLabel,
               searchPersons: true,
               searchCompanies: true,
               required: true,
@@ -179,6 +185,7 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               condition: (application) => isEmployed(application.answers),
               minDate: new Date(),
+
               maxDate: (application: Application, _) => {
                 const maxDays =
                   getValueViaPath<string>(
