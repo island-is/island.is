@@ -24,7 +24,7 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { assign } from 'xstate'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { ApiScope, HmsScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   HMSPaymentCatalogApi,
   IdentityApi,
