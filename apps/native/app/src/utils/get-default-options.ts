@@ -34,6 +34,19 @@ export function getDefaultOptions(
       animateLeftButtons: false,
       borderHeight: 0,
       borderColor: 'transparent',
+      ...(isIosLiquidGlassEnabled
+        ? {
+            background: {
+              color: 'transparent',
+            },
+            scrollEdgeAppearance: {
+              active: true,
+              noBorder: true,
+            },
+            drawBehind: true,
+            translucent: true,
+          }
+        : {}),
     },
     navigationBar: {
       backgroundColor: theme.shade.background,
