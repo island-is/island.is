@@ -44,8 +44,8 @@ const PatientDataPermits: React.FC = () => {
       serviceProviderSlug="landlaeknir"
       loading={loading}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
-      )} // TODO: Update this tooltip message if needed
+        messages.landlaeknirPatientPermitsTooltip,
+      )}
       buttonGroup={
         !loading && !error
           ? [
@@ -99,6 +99,12 @@ const PatientDataPermits: React.FC = () => {
           <Stack space={2}>
             {filteredData?.map((permit) => (
               <ActionCard
+                key={permit.id}
+                backgroundColor={
+                  permit.status === HealthDirectoratePermitStatus.unknown //TODO: Replace with "pending" status
+                    ? 'blue'
+                    : 'white'
+                }
                 heading={formatMessage(messages.permit)}
                 text={permit.countries
                   .flatMap((country) => country.name)
@@ -108,6 +114,7 @@ const PatientDataPermits: React.FC = () => {
                   toDate: formatDate(permit.validTo),
                 })}
                 tag={
+                  // TODO add "pending" status when available
                   permit.status === HealthDirectoratePermitStatus.active
                     ? {
                         label: formatMessage(messages.active),

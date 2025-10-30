@@ -11,13 +11,13 @@ import { messages } from '../../lib/messages'
 import { InfoModal } from './DataModal'
 import * as styles from './PatientDataPermit.css'
 
-interface ThirdStepProps {
+interface TermsProps {
   onClick?: () => void
   goBack?: () => void
 }
 
 // Permit approval step
-const ThirdStep: React.FC<ThirdStepProps> = ({ onClick, goBack }) => {
+const Terms: React.FC<TermsProps> = ({ onClick, goBack }) => {
   const { formatMessage } = useLocale()
 
   const [modalOpen, setModalOpen] = useState<boolean>(false)
@@ -94,4 +94,4 @@ const ThirdStep: React.FC<ThirdStepProps> = ({ onClick, goBack }) => {
   )
 }
 
-export default ThirdStep
+export default Terms

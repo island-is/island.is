@@ -5,20 +5,22 @@ import { Modal } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
 
-interface InvalidatePermitModalProps {
+interface ConfirmModalProps {
   open: boolean
   onClose: () => void
   onSubmit: () => void
+  loading?: boolean
   countries?: Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
   validFrom?: string
   validTo?: string
 }
 
-export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
+export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   open,
   onClose,
   onSubmit,
   countries = [],
+  loading = false,
   validFrom,
   validTo,
 }) => {
@@ -26,22 +28,22 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
 
   return (
     <Modal
-      id={'invalidate-permit-modal'}
+      id={'confirm-permit-modal'}
       initialVisibility={open}
       isVisible={open}
-      title={formatMessage(messages.areYouSureAboutInvalidatingPermit)}
+      title={formatMessage(messages.addNewPermitTitle)}
       onCloseModal={onClose}
       buttons={[
         {
-          id: 'invalidate-permit-cancel-button',
+          id: 'confirm-permit-cancel-button',
           loading: false,
           onClick: () => onClose(),
           text: formatMessage(messages.cancel),
           type: 'ghost',
         },
         {
-          id: 'invalidate-permit-confirm-button',
-          loading: false,
+          id: 'confirm-permit-confirm-button',
+          loading: loading,
           onClick: () => {
             onSubmit()
           },
@@ -50,7 +52,6 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
         },
       ]}
       buttonsSpacing="spaceBetween"
-      text={formatMessage(messages.youAreAboutToInvalidateThisPermit)}
     >
       <ActionCard
         date={formatMessage(messages.validToFrom, {

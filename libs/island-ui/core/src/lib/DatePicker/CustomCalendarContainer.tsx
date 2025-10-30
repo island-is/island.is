@@ -44,7 +44,7 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
 
       return () => window.removeEventListener('resize', updateWidth)
     }
-  }, [container])
+  }, [container, highlightWeekends])
 
   const weeks = container?.querySelectorAll('.react-datepicker__week')
 

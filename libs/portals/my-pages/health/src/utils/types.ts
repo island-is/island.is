@@ -1,4 +1,5 @@
 import {
+  HealthDirectoratePatientDataPermitInput,
   HealthDirectoratePrescription,
   HealthDirectoratePrescriptionDocument,
   RightsPortalCalculatorRequestInput,
@@ -53,4 +54,14 @@ export type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 export type HealthCenterDoctorOption = {
   label: string
   value: number
+}
+export interface PermitInput
+  extends Omit<
+    HealthDirectoratePatientDataPermitInput,
+    'countryCodes' | 'codes'
+  > {
+  countries: {
+    code: string
+    name: string
+  }[]
 }

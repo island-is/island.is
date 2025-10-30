@@ -778,6 +778,10 @@ export const messages = defineMessages({
       'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
     id: 'sp.health:landlaeknir-tooltip',
   },
+  landlaeknirPatientPermitsTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
+    id: 'sp.health:landlaeknir-patient-permits-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
@@ -1895,16 +1899,20 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate',
   },
   invalidatePermit: {
-    defaultMessage: 'Óvirkja heimild',
+    defaultMessage: 'Afturkalla',
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir afturkalla heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
+    defaultMessage: 'Þú ert að fara afturkalla eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
+  },
+  addNewPermitTitle: {
+    defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
+    id: 'sp.health:you-are-about-to-add-new-permit',
   },
   cancel: {
     defaultMessage: 'Hætta við',
@@ -1915,7 +1923,7 @@ export const messages = defineMessages({
     id: 'sp.health:confirm',
   },
   permitCreated: {
-    defaultMessage: 'Heimild hefur verið bætt við',
+    defaultMessage: 'Nýrri heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
   },
   permitCreatedError: {
@@ -1924,12 +1932,12 @@ export const messages = defineMessages({
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið óvirkjuð',
+    defaultMessage: 'Heimild hefur verið afturkölluð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að afturkalla heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
   },
   countriesError: {

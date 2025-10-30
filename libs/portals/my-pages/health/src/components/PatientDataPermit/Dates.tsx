@@ -5,17 +5,16 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { messages } from '../../lib/messages'
 import { addMonths, addYears, today } from '../../utils/dates'
 import * as styles from './PatientDataPermit.css'
-interface SecondStepProps {
+import { PermitInput } from '../../utils/types'
+interface DatesProps {
   onClick: () => void
   goBack: () => void
-  formState?: HealthDirectoratePatientDataPermitInput
-  setFormState: Dispatch<
-    SetStateAction<HealthDirectoratePatientDataPermitInput | undefined>
-  >
+  formState?: PermitInput
+  setFormState: Dispatch<SetStateAction<PermitInput | undefined>>
 }
 
 // Date step
-const SecondStep: FC<SecondStepProps> = ({
+const Dates: FC<DatesProps> = ({
   onClick,
   goBack,
   formState,
@@ -106,8 +105,7 @@ const SecondStep: FC<SecondStepProps> = ({
             onClick={() => {
               if (selectedRange.startDate && selectedRange.endDate) {
                 setFormState?.({
-                  codes: formState?.codes ?? [],
-                  countryCodes: formState?.countryCodes ?? [],
+                  countries: formState?.countries ?? [],
                   validFrom: selectedRange.startDate?.toISOString(),
                   validTo: selectedRange.endDate?.toISOString(),
                 })
@@ -123,4 +121,4 @@ const SecondStep: FC<SecondStepProps> = ({
   )
 }
 
-export default SecondStep
+export default Dates

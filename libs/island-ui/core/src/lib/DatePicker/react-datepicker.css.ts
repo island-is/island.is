@@ -1,8 +1,6 @@
 import { style, globalStyle } from '@vanilla-extract/css'
 
-export const root = style({
-  zIndex: 999,
-})
+export const root = style({})
 
 globalStyle(
   `${root} .react-datepicker__year-read-view--down-arrow, ${root} .react-datepicker__month-read-view--down-arrow, ${root} .react-datepicker__month-year-read-view--down-arrow, ${root} .react-datepicker__navigation-icon::before`,

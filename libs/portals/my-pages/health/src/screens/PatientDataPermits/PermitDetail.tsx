@@ -36,7 +36,6 @@ const PermitDetail: React.FC = () => {
   const permit = data?.healthDirectoratePatientDataPermit
 
   const onInvalidateSubmit = () => {
-    // Call the API to invalidate the permit
     if (permit?.id) {
       invalidatePermit({
         variables: {
@@ -46,12 +45,10 @@ const PermitDetail: React.FC = () => {
         },
       })
         .then(() => {
-          // Handle successful invalidation
           toast.success(formatMessage(messages.permitInvalidated))
           navigate(-1)
         })
-        .catch((error) => {
-          // Handle error
+        .catch(() => {
           toast.error(formatMessage(messages.permitInvalidatedError))
         })
     }
@@ -63,13 +60,8 @@ const PermitDetail: React.FC = () => {
       intro={formatMessage(messages.patientDataPermitDescription)}
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
-      )} // TODO: Update this tooltip message if needed
-      buttonGroup={[
-        <Button variant="utility" icon="download" iconType="outline">
-          {formatMessage(messages.downloadPDF)}
-        </Button>,
-      ]}
+        messages.landlaeknirPatientPermitsTooltip,
+      )}
     >
       {error && !loading && (
         <Problem title={formatMessage(messages.errorTryAgain)} />
@@ -120,8 +112,8 @@ const PermitDetail: React.FC = () => {
                   ? {
                       action: () => setModalOpen(true),
                       label: formatMessage(messages.invalidatePermit),
-                      icon: 'eyeOff',
                       type: 'action',
+                      icon: 'arrowForward',
                     }
                   : undefined
               }

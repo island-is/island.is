@@ -30,6 +30,7 @@ import CustomCalendarContainer from './CustomCalendarContainer'
 import * as styles from './DatePicker.css'
 import * as coreStyles from './react-datepicker.css'
 import { DatePickerCustomHeaderProps, DatePickerProps } from './types'
+import { isDefined } from '@island.is/shared/utils'
 
 const languageConfig = {
   is: {
@@ -88,10 +89,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     normalizeDate(selected) ?? null,
   )
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const datePickerRef = useRef<ReactDatePicker>(null)
 
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
+  const [forceOpen, setForceOpen] = useState<boolean | undefined>(undefined)
+
+  // Check if range selection is complete
+  const isRangeComplete = range && isDefined(startDate) && isDefined(endDate)
 
   const currentLanguage = languageConfig[locale]
   const errorId = `${id}-error`
@@ -115,6 +121,14 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected])
 
+  // Close calendar when range selection is complete
+  useEffect(() => {
+    console.log('isRangeComplete', isRangeComplete, forceOpen)
+    if (isRangeComplete && forceOpen) {
+      setForceOpen(undefined)
+    }
+  }, [isRangeComplete, forceOpen])
+
   return (
     <div className={coreStyles.root} data-testid="datepicker">
       <div
@@ -124,11 +138,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
         })}
       >
         <ReactDatePicker
-          key={
-            range
-              ? `${startDate?.getTime()}-${endDate?.getTime()}`
-              : startDate?.getTime()
-          }
+          ref={datePickerRef}
           popperClassName={cn(styles.popper, {
             [styles.popperInline]: appearInline,
             [styles.popperXsmall]: size === 'xs',
@@ -139,7 +149,10 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           id={id}
           name={name}
           disabled={disabled}
-          selected={normalizeDate(startDate ?? selected) ?? null}
+          preventOpenOnFocus={range}
+          selected={
+            range ? undefined : normalizeDate(startDate ?? selected) ?? null
+          }
           locale={currentLanguage.locale ?? 'is'}
           minDate={minDate}
           maxDate={maxDate}
@@ -152,23 +165,32 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           showPopperArrow={false}
           popperPlacement="bottom-start"
+          open={forceOpen ?? undefined}
+          onInputClick={() => setForceOpen(true)}
           onCalendarOpen={() => {
             setDatePickerState('open')
+            setForceOpen(true)
             handleOpenCalendar && handleOpenCalendar()
           }}
           onCalendarClose={() => {
             setDatePickerState('closed')
+            setForceOpen(undefined)
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
+          shouldCloseOnSelect={range ? false : true}
+          onClickOutside={() => setForceOpen(undefined)}
+          closeOnScroll={false}
           onChange={
             range
               ? (date: any) => {
-                  if (date === null) {
+                  console.log('onChange range date:', date)
+                  const [start, end] = date
+                  if (start === null && end === null) {
                     setStartDate(null)
+                    setEndDate(null)
                     return
                   }
 
-                  const [start, end] = date
                   if (
                     start instanceof Date &&
                     !isNaN(start.getTime()) &&
@@ -176,11 +198,16 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                       (end instanceof Date && !isNaN(end.getTime())))
                   ) {
                     setStartDate(start)
-                    range && setEndDate(end)
-                    if (range && end) {
-                      start && handleChange && handleChange(start, end)
-                    } else {
-                      start && handleChange && handleChange(start)
+                    setEndDate(end)
+
+                    // Keep calendar open if only start date is selected in range mode
+                    if (range && end === null) {
+                      setForceOpen(true)
+                    }
+
+                    // Only call handleChange when both dates are selected
+                    if (end !== null && start !== null && handleChange) {
+                      handleChange(start, end)
                     }
                   }
                 }
@@ -195,6 +222,20 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                   }
                 }
           }
+          onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
+            if (!range) return
+            const v = (e.target as HTMLInputElement).value
+            // If the input is cleared via keyboard, reset both dates
+            if (!v || v.trim() === '') {
+              setStartDate(null)
+              setEndDate(null)
+            }
+          }}
+          onKeyDown={(e) => {
+            if (!range) return
+            if (e.key === 'Enter' || e.key === 'ArrowDown') setForceOpen(true)
+            if (e.key === 'Escape') setForceOpen(undefined)
+          }}
           startDate={startDate}
           endDate={range ? endDate : undefined}
           selectsRange={range}
@@ -215,9 +256,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               icon={icon}
               isClearable={isClearable}
               size={size}
+              onClick={onInputClick}
               onClear={() => {
                 setStartDate(null)
                 setEndDate(null)
+                setForceOpen(undefined) // Reset to allow normal opening behavior
               }}
             />
           }

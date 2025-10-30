@@ -1,4 +1,3 @@
-import { HealthDirectoratePatientDataPermitInput } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
@@ -6,11 +5,13 @@ import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import FirstStep from '../../components/PatientDataPermit/FirstStep'
-import SecondStep from '../../components/PatientDataPermit/SecondStep'
-import ThirdStep from '../../components/PatientDataPermit/ThirdStep'
+import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
+import Countries from '../../components/PatientDataPermit/Countries'
+import Dates from '../../components/PatientDataPermit/Dates'
+import Terms from '../../components/PatientDataPermit/Terms'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { PermitInput } from '../../utils/types'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
@@ -18,19 +19,22 @@ const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 const NewPermit: React.FC = () => {
   const { formatMessage } = useLocale()
   const [step, setStep] = useState<number | undefined>(DEFAULT_STEP)
-  const [formState, setFormState] =
-    useState<HealthDirectoratePatientDataPermitInput>()
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [formState, setFormState] = useState<PermitInput>()
 
   const navigate = useNavigate()
 
-  const [createPermit] = useCreatePatientDataPermitMutation()
+  const [createPermit, { loading }] = useCreatePatientDataPermitMutation()
 
   const handleSubmit = () => {
     if (formState) {
+      setOpenModal(false)
       createPermit({
         variables: {
           input: {
-            ...formState,
+            validFrom: formState.validFrom,
+            validTo: formState.validTo,
+            countryCodes: formState.countries.map((c) => c.code),
             codes: [''],
           },
         },
@@ -56,18 +60,18 @@ const NewPermit: React.FC = () => {
       intro={formatMessage(messages.patientDataPermitDescription)}
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirPatientPermitsTooltip,
       )}
     >
       {step === 1 && (
-        <FirstStep
+        <Countries
           onClick={() => setStep(2)}
           formState={formState}
           setFormState={setFormState}
         />
       )}
       {step === 2 && (
-        <SecondStep
+        <Dates
           onClick={() => setStep(3)}
           goBack={() => setStep(1)}
           setFormState={setFormState}
@@ -75,10 +79,20 @@ const NewPermit: React.FC = () => {
         />
       )}
       {step === 3 && (
-        <ThirdStep goBack={() => setStep(2)} onClick={handleSubmit} />
+        <Terms goBack={() => setStep(2)} onClick={() => setOpenModal(true)} />
       )}
       {step === undefined && (
         <Problem title={formatMessage(messages.errorTryAgain)} />
+      )}
+
+      {openModal && (
+        <ConfirmModal
+          onSubmit={handleSubmit}
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          loading={loading}
+          countries={formState?.countries || []}
+        />
       )}
     </IntroWrapper>
   )

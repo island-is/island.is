@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Inline,
   Input,
   SkeletonLoader,
   Text,
@@ -20,17 +21,15 @@ import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { useHealthDirectoratePatientDataPermitCountriesQuery } from './FirstStep.generated'
 import * as styles from './PatientDataPermit.css'
+import { PermitInput } from '../../utils/types'
 
-interface FirstStepProps {
+interface CountriesProps {
   onClick: () => void
-  formState?: HealthDirectoratePatientDataPermitInput
-  setFormState: Dispatch<
-    SetStateAction<HealthDirectoratePatientDataPermitInput | undefined>
-  >
+  formState?: PermitInput
+  setFormState: Dispatch<SetStateAction<PermitInput | undefined>>
 }
 
-// Countries
-const FirstStep: FC<FirstStepProps> = ({
+const Countries: FC<CountriesProps> = ({
   onClick,
   setFormState,
   formState,
@@ -60,13 +59,15 @@ const FirstStep: FC<FirstStepProps> = ({
       <Text variant="eyebrow" color="purple400">
         {formatMessage(messages.step, { first: '1', second: '3' })}
       </Text>
-      <Text variant="h5" marginTop={1} marginBottom={3}>
-        {formatMessage(messages.whatCountriesShouldPermitApply)}
+      <Inline>
+        <Text variant="h5" marginTop={1} marginBottom={3}>
+          {formatMessage(messages.whatCountriesShouldPermitApply)}
+        </Text>
         <Tooltip
           text={formatMessage(messages.countriesTooltip)}
           placement={isMobile ? 'bottom' : 'right'}
         />
-      </Text>
+      </Inline>
       {loading && !error && (
         <Box className={styles.countryCheckboxContainer}>
           <Box marginBottom={3} marginRight={3}>
@@ -175,11 +176,10 @@ const FirstStep: FC<FirstStepProps> = ({
                 onClick={() => {
                   selectedCountries.length > 0 &&
                     setFormState?.({
-                      codes: formState?.codes ?? [],
+                      countries: selectedCountries,
                       validFrom:
                         formState?.validFrom ?? new Date().toISOString(),
                       validTo: formState?.validTo ?? new Date().toISOString(),
-                      countryCodes: selectedCountries.map((x) => x.code),
                     })
                   onClick()
                 }}
@@ -194,4 +194,4 @@ const FirstStep: FC<FirstStepProps> = ({
   )
 }
 
-export default FirstStep
+export default Countries
