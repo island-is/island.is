@@ -318,11 +318,14 @@ const EditableCaseFile: FC<Props> = (props) => {
                       onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
+                      [styles.background.disabled]: disabled,
                       [styles.background.primary]:
+                        !disabled &&
                         !!caseFile.canEdit?.length &&
                         caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === FileUploadStatus.error || isEmpty,
+                        !disabled &&
+                        (caseFile.status === FileUploadStatus.error || isEmpty),
                     })}
                     disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"
