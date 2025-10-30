@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { FileUploadStatus } from '@island.is/island-ui/core'
+import { Box, FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
@@ -48,7 +48,9 @@ import { strings } from './AddFiles.strings'
 
 const getUserProps = (user: User | undefined, workingCase: Case) => {
   const getCaseInfoNode = (workingCase: Case) => (
-    <ProsecutorCaseInfo workingCase={workingCase} />
+    <Box marginBottom={5}>
+      <ProsecutorCaseInfo workingCase={workingCase} />
+    </Box>
   )
   if (isDefenceUser(user)) {
     const caseFileCategory = isCaseDefendantDefender(user, workingCase)

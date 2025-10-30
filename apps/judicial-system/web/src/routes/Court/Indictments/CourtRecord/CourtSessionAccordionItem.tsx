@@ -861,6 +861,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             <Reorder.Item
                               key={item.id}
                               value={item}
+                              drag={!courtSession.isConfirmed}
                               data-reorder-item
                               onDragStart={() => {
                                 setDraggedFileId(item.id)
