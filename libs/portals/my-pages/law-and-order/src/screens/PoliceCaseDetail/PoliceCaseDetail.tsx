@@ -156,6 +156,7 @@ const PoliceCaseDetail = () => {
               isComplete={isComplete}
               isLast={index === POLICE_CASE_STATUS_TIMELINE_MILESTONES.length - 1}
               description={shouldDisplayText ? <Text>Lorem ipsum dolor sit amet</Text> : undefined}
+              date={policeCase?.modified ?? undefined}
             />
             )
           })}
