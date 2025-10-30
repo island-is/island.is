@@ -18,7 +18,6 @@ export const HistorySection: FC<
     description?: React.ReactNode
     customSection?: React.ReactNode
     forceRightAlignedDate?: boolean
-
   }>
 > = ({
   theme = types.FormStepperThemes.PURPLE,
@@ -72,7 +71,7 @@ export const HistorySection: FC<
         </Box>
         <Box paddingTop={2} width="full">
           {date && (
-            <Hidden above={forceRightAlignedDate ? undefined : "lg"}>
+            <Hidden above={forceRightAlignedDate ? undefined : 'lg'}>
               <Box paddingRight={2}>
                 <Text lineHeight="lg" variant="small">
                   {date}
