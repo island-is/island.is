@@ -208,7 +208,9 @@ export const CaseFiles = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
         <SectionHeading
           title={formatMessage(strings.policeCaseFilesHeading)}
