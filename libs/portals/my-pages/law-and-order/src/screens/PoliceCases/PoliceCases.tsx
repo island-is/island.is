@@ -3,7 +3,9 @@ import {
   ActionCard,
   CardLoader,
   m as coreMessages,
+  formatDate,
   IntroWrapper,
+  LinkButton,
   RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
@@ -30,6 +32,22 @@ const PoliceCases = () => {
       serviceProviderTooltip={formatMessage(
         coreMessages.nationalPoliceCommissionerTooltip,
       )}
+      buttonGroup={[
+        <LinkButton
+          key="link-button-1"
+          to={formatMessage(m.policeCasesHeaderLinkButton1Url)}
+          text={formatMessage(m.policeCasesHeaderLinkButton1Text)}
+          icon="open"
+          variant="utility"
+        />,
+        <LinkButton
+          key="link-button-2"
+          to={formatMessage(m.policeCasesHeaderLinkButton2Url)}
+          text={formatMessage(m.policeCasesHeaderLinkButton2Text)}
+          icon="open"
+          variant="utility"
+        />,
+      ]}
     >
       {loading && !error && (
         <Box width="full">
@@ -44,12 +62,12 @@ const PoliceCases = () => {
         cases.map((c) => (
           <Box marginTop={2}>
             <ActionCard
-              heading={formatMessage(m.policeCaseTitle, { arg: c.number })}
-              text={c.type ?? 'no type'}
+              heading={formatMessage(m.policeCaseCardTitle, { arg: c.number })}
+              text={c.modified ? formatMessage(m.policeCaseCardText, { arg: formatDate(c.modified)}) : undefined}
+              eyebrow={'Ríkislögreglustjóri'}
               tag={{
                 label: c.status?.headerDisplayString ?? 'no status',
                 variant: 'blue',
-                outlined: false,
               }}
               cta={{
                 label: formatMessage(messages.seeInfo),

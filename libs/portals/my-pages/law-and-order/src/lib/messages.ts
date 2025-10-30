@@ -18,17 +18,28 @@ export const messages = defineMessages({
     defaultMessage: 'Lögreglumál',
   },
   policeCasesDescription: {
-    id: 'sp.law-and-order:police-cases-description',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
+    id: 'sp.law-and-order:police-cases-description#markdown',
+    defaultMessage: 'Í þjónustugátt lögreglu getur þú nálgast upplýsingar um þín mál hjá lögreglu, auk fræðslu um stuðningsaðila, algengar spurningar og svör. Þjónustugáttin er öruggt netumhverfi þar sem þú getur fylgst með framvindu mála þinna og haft aðgang að helstu upplýsingum sem þau varða.\n\nÍ dag eru birt mál sem tengjast rannsóknum á kynferðisbrotum hjá lögreglunni á höfuðborgarsvæðinu og lögreglunni á Suðurnesjum.',
+  },
+  policeCaseDetailTitle: {
+    id: 'sp.law-and-order:police-cases-detail-title',
+    defaultMessage: 'Mál {arg}',
+  },
+  policeCaseDetailDescription: {
+    id: 'sp.law-and-order:police-cases-detail-description',
+    defaultMessage: 'Í þjónustugátt lögreglunnar geta getur þú fylgst með stöðu mála sem eru til rannsóknar hjá lögreglu. Gáttin veitir yfirsýn yfir framvindu málsins á meðan það er í rannsókn hjá lögreglu og í úrvinnslu hjá dómstólum.',
   },
   policeCases: {
     id: 'sp.law-and-order:police-cases',
     defaultMessage: 'Lögreglumál',
   },
-  policeCaseTitle: {
+  policeCaseCardTitle: {
     id: 'sp.law-and-order:police-case-title',
-    defaultMessage: 'Málsnúmer {arg}',
+    defaultMessage: 'Mál {arg}',
+  },
+  policeCaseCardText: {
+    id: 'sp.law-and-order:police-case-text',
+    defaultMessage: 'Síðast uppfært: {arg}',
   },
   court: {
     id: 'sp.law-and-order:court',
@@ -139,6 +150,10 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:case-data',
     defaultMessage: 'Málsgögn',
   },
+  caseInformation: {
+    id: 'sp.law-and-order:case-information',
+    defaultMessage: 'Málsupplýsingar',
+  },
   caseNumber: {
     id: 'sp.law-and-order:case-number',
     defaultMessage: 'Málsnúmer',
@@ -161,26 +176,58 @@ export const messages = defineMessages({
   },
   analysis: {
     id: 'sp.law-and-order:analysis',
-    defaultMessage: 'Greining',
+    defaultMessage: 'Greining lögreglu',
   },
   investigation: {
     id: 'sp.law-and-order:investigation',
-    defaultMessage: 'Rannsókn',
+    defaultMessage: 'Rannsókn sakamáls',
   },
   investigationFinished: {
-    id: 'sp.law-and-order:investigationFinished',
-    defaultMessage: 'Rannsókn lokið',
+    id: 'sp.law-and-order:investigation-finished',
+    defaultMessage: 'Rannsókn lýkur',
   },
   indictment: {
     id: 'sp.law-and-order:indictment',
     defaultMessage: 'Ákæra',
   },
   caseForwarded: {
-    id: 'sp.law-and-order:caseForwarded',
-    defaultMessage: 'Mál sent',
+    id: 'sp.law-and-order:case-forwarded',
+    defaultMessage: 'Mál sent til dómstóla',
   },
   updated: {
     id: 'sp.law-and-order:updated',
     defaultMessage: 'Uppfært',
   },
+  policeCasesHeaderLinkButton1Text: {
+    id: 'sp.law-and-order:police-cases-header-link-button-1-text',
+    defaultMessage: 'Takki 1'
+  },
+  policeCasesHeaderLinkButton1Url: {
+    id: 'sp.law-and-order:police-cases-header-link-button-1-url',
+    defaultMessage: 'island.is'
+  },
+  policeCasesHeaderLinkButton2Text: {
+    id: 'sp.law-and-order:police-cases-header-link-button-2-text',
+    defaultMessage: 'Takki 2'
+  },
+  policeCasesHeaderLinkButton2Url: {
+    id: 'sp.law-and-order:police-cases-header-link-button-2-url',
+    defaultMessage: 'island.is'
+  },
+  policeCasesDetailHeaderLinkButton1Text: {
+    id: 'sp.law-and-order:police-cases-detail-header-link-button-1-text',
+    defaultMessage: 'Takki 3'
+  },
+  policeCasesDetailHeaderLinkButton1Url: {
+    id: 'sp.law-and-order:police-cases-detail-header-link-button-1-url',
+    defaultMessage: 'island.is'
+  },
+  policeCasesDetailHeaderLinkButton2Text: {
+    id: 'sp.law-and-order:police-cases-detail-header-link-button-2-text',
+    defaultMessage: 'Takki 4'
+  },
+  policeCasesDetailHeaderLinkButton2Url: {
+    id: 'sp.law-and-order:police-cases-detail-header-link-button-2-url',
+    defaultMessage: 'island.is'
+  }
 })

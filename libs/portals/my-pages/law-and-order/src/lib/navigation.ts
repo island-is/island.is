@@ -18,11 +18,6 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
   },
   children: [
     {
-      name: m.overview,
-      searchHide: true,
-      path: LawAndOrderPaths.Overview,
-    },
-    {
       name: m.courtCases,
       description: m.myCourtCasesIntro,
       path: LawAndOrderPaths.CourtCases,

@@ -1,4 +1,4 @@
-import { AlertMessage, Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { Box, HistorySection, HistoryStepper, Stack, Tag, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -7,10 +7,9 @@ import {
   InfoLineStack,
   InfoLine,
   formatDate,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
 import {
-  FormatMessage,
   useLocale,
   useNamespaces,
 } from '@island.is/localization'
@@ -18,11 +17,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
-import Timeline from '../../components/Timeline/Timeline'
-import {
-  LawAndOrderPoliceCase,
-  LawAndOrderPoliceCaseStatusValueGroup,
-} from '@island.is/api/schema'
+import { LawAndOrderPoliceCaseStatusValueGroup } from '@island.is/api/schema'
 
 const POLICE_CASE_STATUS_TIMELINE_MILESTONES = [
   {
@@ -47,66 +42,6 @@ const POLICE_CASE_STATUS_TIMELINE_MILESTONES = [
   },
 ]
 
-const generateTimeline = (
-  data: LawAndOrderPoliceCase,
-  formatMessage: FormatMessage,
-): React.ReactNode | null => {
-  const { status, received, modified } = data
-  const currentProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(
-    (m) => m.group === status?.statusGroup,
-  )
-
-  if (currentProgress < 0) {
-    return null
-  }
-
-  const receivedDate: string | undefined = received
-    ? formatDate(data.received)
-    : undefined
-  const mostRecentDate: string | undefined = modified
-    ? formatDate(data.modified)
-    : undefined
-
-  const milestones = POLICE_CASE_STATUS_TIMELINE_MILESTONES.map(
-    (milestone, index) => {
-      if (index === 0 && receivedDate) {
-        return (
-          <Stack key={index} space={0}>
-            <Text variant="small" fontWeight="medium">
-              {formatMessage(milestone.label)}
-            </Text>
-            <Text variant="small">{receivedDate}</Text>
-          </Stack>
-        )
-      }
-      if (index === currentProgress && mostRecentDate) {
-        return (
-          <Stack key={index} space={0}>
-            <Text variant="small" fontWeight="medium">
-              {formatMessage(milestone.label)}
-            </Text>
-            <Text variant="small">{mostRecentDate}</Text>
-          </Stack>
-        )
-      }
-      return (
-        <Text variant="small" fontWeight="medium">
-          {formatMessage(milestone.label)}
-        </Text>
-      )
-    },
-  )
-
-  if (milestones.length > 0) {
-    return (
-      <Timeline title={formatMessage(m.timeline)} progress={currentProgress}>
-        {milestones}
-      </Timeline>
-    )
-  }
-  return null
-}
-
 type UseParams = {
   id: string
 }
@@ -114,18 +49,17 @@ type UseParams = {
 const PoliceCaseDetail = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-  const { id } = useParams() as UseParams
+  const { id: policeCaseNumber } = useParams() as UseParams
 
   const { data, loading, error } = useGetPoliceCaseDetailQuery({
     variables: {
       input: {
-        caseNumber: id,
+        caseNumber: policeCaseNumber,
       },
     },
   })
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
-
   if (!loading && !error && !policeCase) {
     return (
       <Problem
@@ -142,55 +76,42 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
-  const policeCaseNumber = id
-
-  const timeline = policeCase
-    ? generateTimeline(policeCase, formatMessage)
-    : null
-  const { headerDisplayString, descriptionDisplayString } =
-    policeCase?.status ?? {}
-
+ // const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
+  const currentCaseProgress = -1
   return (
     <>
       <IntroWrapper
-        title={formatMessage(m.policeCaseTitle, { arg: policeCaseNumber })}
-        intro={messages.policeCasesDescription}
+        title={formatMessage(m.policeCaseDetailTitle, { arg: policeCaseNumber })}
+        intro={m.policeCaseDetailDescription}
         serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
         serviceProviderTooltip={formatMessage(
           coreMessages.nationalPoliceCommissionerTooltip,
         )}
+        buttonGroup={[
+          <LinkButton
+            key="detail-link-button-1"
+            to={formatMessage(m.policeCasesDetailHeaderLinkButton1Url)}
+            text={formatMessage(m.policeCasesDetailHeaderLinkButton1Text)}
+            icon="open"
+            variant="utility"
+          />,
+          <LinkButton
+            key="detail-link-button-2"
+            to={formatMessage(m.policeCasesDetailHeaderLinkButton2Url)}
+            text={formatMessage(m.policeCasesDetailHeaderLinkButton2Text)}
+            icon="open"
+            variant="utility"
+          />,
+        ]}
       />
-      {loading && !error && (
-        <Box width="full">
-          <CardLoader />
-        </Box>
-      )}
-
       {error && !loading && <Problem error={error} noBorder={false} />}
 
       <Stack space={3}>
-        {timeline}
-        {headerDisplayString &&
-          descriptionDisplayString &&
-          policeCase?.modified && (
-            <AlertMessage
-              type="info"
-              title={`${formatMessage(m.updated)}: ${formatDate(
-                policeCase.modified,
-              )} - ${headerDisplayString}`}
-              message={policeCase?.status?.descriptionDisplayString}
-            />
-          )}
-        <InfoLineStack>
+        <InfoLineStack label={formatMessage(m.caseInformation)}>
           <InfoLine
             loading={loading}
             label={m.caseNumber}
             content={policeCase?.number}
-          />
-          <InfoLine
-            loading={loading}
-            label={coreMessages.type}
-            content={policeCase?.type ?? ''}
           />
           <InfoLine
             loading={loading}
@@ -207,27 +128,38 @@ const PoliceCaseDetail = () => {
             label={m.legalAdvisor}
             content={policeCase?.courtAdvocate ?? ''}
           />
-          {policeCase?.status?.headerDisplayString && (
-            <InfoLine
-              loading={loading}
-              label={m.caseStatus}
-              content={
-                <Box display="flex" alignItems="center" justifyContent="center">
-                  <Box marginRight={1}>
-                    <Icon
-                      icon="checkmarkCircle"
-                      color="blue400"
-                      type="filled"
-                    />
-                  </Box>
-                  <Text variant="small" fontWeight="medium">
-                    {policeCase.status.headerDisplayString}
-                  </Text>
-                </Box>
-              }
-            />
-          )}
+          <InfoLine
+            loading={loading}
+            label={m.caseStatus}
+            content={
+              policeCase?.status?.headerDisplayString ?
+                <Tag variant="blue" outlined disabled>{policeCase.status.headerDisplayString}</Tag>  : undefined}
+          />
+          <InfoLine
+            loading={loading}
+            label={coreMessages.type}
+            content={policeCase?.type ?? ''}
+          />
         </InfoLineStack>
+        <Text variant='eyebrow' color='purple600'>Ferill</Text>
+        <HistoryStepper
+          sections={POLICE_CASE_STATUS_TIMELINE_MILESTONES.map(({label}, index) => {
+          const shouldDisplayText = currentCaseProgress === index;
+          const isComplete = index <= currentCaseProgress
+          const section = isComplete ? <Text lineHeight='lg' fontWeight='semiBold'>{formatMessage(label)}</Text> : <Text lineHeight='lg' color="foregroundPrimaryMinimal">{formatMessage(label)}</Text>
+          return (
+            <HistorySection
+              key={`milestone-${index}`}
+              section={formatMessage(label)}
+              customSection={section}
+              sectionIndex={index}
+              isComplete={isComplete}
+              isLast={index === POLICE_CASE_STATUS_TIMELINE_MILESTONES.length - 1}
+              description={shouldDisplayText ? <Text>Lorem ipsum dolor sit amet</Text> : undefined}
+            />
+            )
+          })}
+          />
       </Stack>
     </>
   )

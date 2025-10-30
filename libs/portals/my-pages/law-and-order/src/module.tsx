@@ -4,11 +4,9 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
-import { Features } from '@island.is/feature-flags'
 import PoliceCases from './screens/PoliceCases/PoliceCases'
 import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
 
-const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
 const CourtCaseDetail = lazy(() =>
   import('./screens/CourtCaseDetail/CourtCaseDetail'),
@@ -21,13 +19,7 @@ export const lawAndOrderModule: PortalModule = {
       name: m.lawAndOrder,
       path: LawAndOrderPaths.Root,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <Navigate to={LawAndOrderPaths.Overview} replace />,
-    },
-    {
-      name: m.overview,
-      path: LawAndOrderPaths.Overview,
-      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <Overview />,
+      element: <Navigate to={LawAndOrderPaths.CourtCases} replace />,
     },
     {
       name: m.courtCases,

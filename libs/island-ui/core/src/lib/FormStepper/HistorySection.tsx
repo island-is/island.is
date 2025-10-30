@@ -16,6 +16,7 @@ export const HistorySection: FC<
     isLast?: boolean
     date?: string
     description?: React.ReactNode
+    customSection?: React.ReactNode
   }>
 > = ({
   theme = types.FormStepperThemes.PURPLE,
@@ -25,6 +26,7 @@ export const HistorySection: FC<
   description,
   isComplete = false,
   isLast = false,
+  customSection,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
@@ -75,9 +77,11 @@ export const HistorySection: FC<
               </Box>
             </Hidden>
           )}
-          <Text lineHeight="lg" fontWeight="light">
-            {section}
-          </Text>
+          {
+            customSection ? customSection : <Text lineHeight="lg" fontWeight="light">
+              {section}
+            </Text>
+          }
           {description && <Box paddingTop={2}>{description}</Box>}
         </Box>
       </Box>
