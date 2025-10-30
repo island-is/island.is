@@ -122,6 +122,10 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   filedDocuments?: CourtDocument[]
 
+  @HasMany(() => CourtDocument, 'mergedCourtSessionId')
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  mergedFiledDocuments?: CourtDocument[]
+
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isConfirmed?: boolean

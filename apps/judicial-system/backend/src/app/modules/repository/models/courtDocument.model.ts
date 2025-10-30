@@ -48,6 +48,11 @@ export class CourtDocument extends Model {
   @ApiPropertyOptional({ type: String })
   courtSessionId?: string
 
+  @ForeignKey(() => CourtSession)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergedCourtSessionId?: string
+
   @Column({
     type: DataType.ENUM,
     allowNull: false,
@@ -59,6 +64,10 @@ export class CourtDocument extends Model {
   @Column({ type: DataType.INTEGER, allowNull: false })
   @ApiProperty({ type: Number })
   documentOrder!: number
+
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  @ApiPropertyOptional({ type: Number })
+  mergedDocumentOrder?: number
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })

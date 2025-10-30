@@ -5,6 +5,7 @@ import {
   Transaction,
   UpdateOptions,
 } from 'sequelize'
+import { string } from 'yargs'
 
 import {
   BadRequestException,
@@ -279,6 +280,26 @@ export class CourtDocumentRepositoryService {
     }
   }
 
+  async updateMergedCourtDocuments({
+    parentCaseId,
+    parentCaseCourtSessionId,
+    caseId,
+    options,
+  }: {
+    parentCaseId: string
+    parentCaseCourtSessionId: string
+    caseId: string
+    options?: FileCourtDocumentInCourtSessionOptions
+  }) {
+    // TODO: find the latest order number
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { parentCaseId },
+      order: [['documentOrder', 'ASC']],
+      transaction: options?.transaction,
+    })
+    // TODO: find the case documents
+  }
+
   async fileInCourtSession(
     caseId: string,
     courtSessionId: string,
@@ -409,7 +430,7 @@ export class CourtDocumentRepositoryService {
     transaction?: Transaction,
   ) {
     const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId },
+      where: { caseId, courtSessionId }, // TODO: mergedCaseSessionId?
       order: [['documentOrder', 'DESC']], // Delete from highest to lowest order is cheaper
       transaction,
     })
@@ -421,7 +442,7 @@ export class CourtDocumentRepositoryService {
 
   private async makeNextCourtSessionDocumentOrderAvailable(
     caseId: string,
-    courtSessionId: string,
+    courtSessionId: string, // current court session id
     courtDocumentId: string | undefined,
     transaction: Transaction | undefined,
   ) {
@@ -461,7 +482,7 @@ export class CourtDocumentRepositoryService {
       }
     }
 
-    // Iincrease order of documents after the current position
+    // Increase order of documents after the current position
     await this.courtDocumentModel.update(
       { documentOrder: literal('document_order + 1') },
       {

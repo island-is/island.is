@@ -2300,6 +2300,38 @@ export class CaseService {
           )
         }
 
+        if (
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.MERGE &&
+          update.mergeCaseId
+        ) {
+          const parentCaseId = update.mergeCaseId
+          const parentCase = await this.findById(parentCaseId)
+
+          const parentCaseCourtSessions = parentCase.courtSessions
+          const latestCourtSession =
+            parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+              ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+              : undefined
+
+          // ensure there exists at least one court session and that the parent case should have court sessions
+          if (parentCase.withCourtSessions && latestCourtSession) {
+            const isCourtSessionActive =
+              latestCourtSession && !latestCourtSession.isConfirmed
+            const courtSessionId = isCourtSessionActive
+              ? latestCourtSession.id
+              : (await this.courtSessionService.create(theCase, transaction)).id
+
+            await this.courtDocumentService.updateMergedCourtDocuments({
+              parentCaseId,
+              parentCaseCourtSessionId: courtSessionId,
+              caseId: theCase.id,
+              transaction,
+            })
+          }
+        }
+
         const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(

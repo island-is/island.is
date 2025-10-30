@@ -71,6 +71,7 @@ const useFiledCourtDocuments = () => {
   const prefixGeneratedDocumentNameWithDocumentOrder = (
     partialUri: string,
     name: string,
+    caseId?: string,
   ) => {
     if (shouldNotSeePrefix) {
       return name
@@ -78,15 +79,17 @@ const useFiledCourtDocuments = () => {
 
     const { generatedFiledDocuments } = filedCourtDocuments
 
-    const document = generatedFiledDocuments.find((doc) =>
-      doc.generatedPdfUri?.includes(partialUri),
+    const document = generatedFiledDocuments.find(
+      (doc) =>
+        doc.generatedPdfUri?.includes(caseId ?? workingCase.id) &&
+        doc.generatedPdfUri?.includes(partialUri),
     )
 
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${document.documentOrder}. ${name}`
+    return `${document.mergedDocumentOrder ?? document.documentOrder}. ${name}`
   }
 
   return {

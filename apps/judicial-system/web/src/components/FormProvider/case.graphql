@@ -392,6 +392,7 @@ query Case($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          mergedDocumentOrder
           name
           caseFileId
           generatedPdfUri
