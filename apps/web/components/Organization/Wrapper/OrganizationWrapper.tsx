@@ -906,26 +906,6 @@ const SecondaryMenu = ({
   </Box>
 )
 
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  const clientUrlWithoutHashOrQueryParams = clientUrl
-    .split('?')[0]
-    .split('#')[0]
-
-  for (const item of navigationItems) {
-    if (clientUrlWithoutHashOrQueryParams === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
-
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
@@ -1005,7 +985,6 @@ export const OrganizationWrapper: React.FC<
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
-  const { linkResolver } = useLinkResolver()
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
@@ -1101,28 +1080,6 @@ export const OrganizationWrapper: React.FC<
     breadcrumbItemsProp,
   ])
 
-  const activeNavigationItemTitle = useMemo(() => {
-    const activeTitle = getActiveNavigationItemTitle(
-      navigationData.items,
-      router.asPath,
-    )
-    const pathname = new URL(router.asPath, 'https://island.is').pathname
-    if (
-      sitemapContentTypeDeterminesNavigationAndBreadcrumbs &&
-      linkResolver('organizationpage', [organizationPage.slug]).href ===
-        pathname
-    ) {
-      return undefined
-    }
-    return activeTitle
-  }, [
-    linkResolver,
-    navigationData.items,
-    organizationPage.slug,
-    router.asPath,
-    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
-  ])
-
   return (
     <>
       <HeadWithSocialSharing
@@ -1173,7 +1130,6 @@ export const OrganizationWrapper: React.FC<
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
                       link
@@ -1252,7 +1208,6 @@ export const OrganizationWrapper: React.FC<
                   isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href} legacyBehavior>

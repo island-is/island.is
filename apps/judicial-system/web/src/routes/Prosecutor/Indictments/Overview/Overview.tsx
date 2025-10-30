@@ -34,6 +34,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseState,
   CaseTransition,
@@ -190,7 +191,9 @@ const Overview: FC = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
           <Box marginBottom={2}>
             <AlertMessage
@@ -246,19 +249,11 @@ const Overview: FC = () => {
             )}
           </Box>
         )}
-        <Box
-          marginBottom={
-            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
-          }
-        >
+        <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {userCanAddDocuments && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button
               size="small"
               icon="add"
@@ -273,7 +268,7 @@ const Overview: FC = () => {
           </Box>
         )}
         {userCanSendIndictmentToCourt && (
-          <Box marginBottom={10}>
+          <Box marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
               required
@@ -302,6 +297,12 @@ const Overview: FC = () => {
             </BlueBox>
           </Box>
         )}
+        <Box component="section" marginBottom={10}>
+          <InputPenalties
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
