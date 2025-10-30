@@ -5,7 +5,7 @@ import {
   MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
-import { ApiActions } from '../utils/constants'
+import { ApiActions } from '../utils/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const IdentityApi = IdentityApiType.configure({

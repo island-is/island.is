@@ -1,7 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { confirmReadSection } from './confirmReadSection'
 import { externalDataSection } from './externalDataSection'
 

@@ -13,7 +13,7 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import * as m from '../lib/messages/application'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { ApiActions, Events, Roles, States } from '../utils/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -22,7 +22,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
-import { assign } from 'xstate'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -67,10 +66,6 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           actionCard: {
-            tag: {
-              label: m.application.actionCardPrerequisites,
-              variant: 'blue',
-            },
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
@@ -156,11 +151,6 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
-        lifecycle: {
-          shouldBeListed: true,
-          shouldBePruned: true,
-          whenToPrune: 600 * 1000 * 6, // 60 minutes
-        },
         onExit: [
           defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -191,17 +181,6 @@ const template: ApplicationTemplate<
           ],
         },
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole: (

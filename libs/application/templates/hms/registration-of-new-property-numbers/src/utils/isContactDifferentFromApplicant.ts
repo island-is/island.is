@@ -7,7 +7,8 @@ export const isContactDifferentFromApplicant = (formValue: FormValue) => {
     'contact.isSameAsApplicant',
   )
 
-  if (!sameAsApplicantCheckValue || !sameAsApplicantCheckValue.includes(YES))
+  if (!sameAsApplicantCheckValue || !sameAsApplicantCheckValue.includes(YES)) {
     return true
+  }
   return false
 }
