@@ -96,7 +96,9 @@ export const newSchoolSubSection = buildSubSection({
                 input: {
                   type: OrganizationTypeEnum.School,
                   municipalityCode: municipalityCode,
-                  gradeLevels: getCurrentAndNextGrade(childGradeLevel ?? ''),
+                  ...(childGradeLevel && {
+                    gradeLevels: getCurrentAndNextGrade(childGradeLevel),
+                  }),
                 },
               },
             })

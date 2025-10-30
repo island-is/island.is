@@ -264,11 +264,17 @@ test.describe.serial('Indictment tests', () => {
       },
       'TestDomur.pdf',
     )
-    await page.getByTestId('continueButton').click()
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Case overview
+    await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
     await page.getByTestId('continueButton').click()
 
+    await page.waitForSelector('input[type="checkbox"]', { state: 'visible' })
     await page
       .getByRole('checkbox', { name: 'Ég hef rýnt þetta dómskjal' })
       .check()
