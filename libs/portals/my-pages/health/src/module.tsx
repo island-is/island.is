@@ -99,20 +99,6 @@ const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
 
 const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
-const PatientData = lazy(() => import('./screens/PatientData/PatientData'))
-
-const PatientDataPermits = lazy(() =>
-  import('./screens/PatientDataPermits/Permits'),
-)
-
-const PatientDataPermitsDetail = lazy(() =>
-  import('./screens/PatientDataPermits/PermitDetail'),
-)
-
-const PatientDataNewPermit = lazy(() =>
-  import('./screens/PatientDataPermits/NewPermit'),
-)
-
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -388,42 +374,6 @@ export const healthModule: PortalModule = {
       key: 'HealthWaitlists',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <WaitlistDetail />,
-    },
-    {
-      name: hm.patientData,
-      path: HealthPaths.HealthPatientDataOverview,
-      //key: 'HealthPatientData', // TODO: Add feature flag
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <PatientData />,
-    },
-    {
-      name: hm.patientDataPermit,
-      path: HealthPaths.HealthPatientDataPermits,
-      //key: 'HealthPatientDataPermits', // TODO: Add feature flag
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <PatientDataPermits />,
-    },
-    {
-      name: hm.permit,
-      path: HealthPaths.HealthPatientDataPermitsDetail,
-      //key: 'HealthPatientDataPermitsDetail', // TODO: Add feature flag
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <PatientDataPermitsDetail />,
-    },
-    {
-      name: hm.addPermit,
-      path: HealthPaths.HealthPatientDataPermitsAdd,
-      //key: 'HealthPatientDataPermitsAdd', // TODO: Add feature flag
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <PatientDataNewPermit />,
     },
   ],
 }
