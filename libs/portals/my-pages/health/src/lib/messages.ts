@@ -1198,6 +1198,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur og réttindi',
     id: 'sp.health:payments-and-rights',
   },
+  noPaymentsAndRightsData: {
+    defaultMessage: 'Engin gögn um greiðslur og réttindi fundust',
+    id: 'sp.health:no-payments-and-rights-data',
+  },
   rights: {
     defaultMessage: 'Réttindi',
     id: 'sp.health:rights',
@@ -1641,9 +1645,45 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsla þín',
     id: 'sp.health:your-payment',
   },
+  dispensationPlace: {
+    defaultMessage: 'Afgreiðslustaður',
+    id: 'sp.health:dispensation-place',
+  },
+  renewalFormError: {
+    defaultMessage:
+      'Ekki tókst að senda endurnýjunarbeiðni, vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:renewal-form-error',
+  },
+  renewalFormSuccess: {
+    defaultMessage:
+      'Endurnýjunarbeiðni hefur verið send. Þú færð tilkynningu þegar hún hefur verið afgreidd.',
+    id: 'sp.health:renewal-form-success',
+  },
+  renewalAidRequest: {
+    defaultMessage: 'Beiðni um endurnýjun á hjálpartæki',
+    id: 'sp.health:renewal-aid-request',
+  },
+  renewalNutritionRequest: {
+    defaultMessage: 'Beiðni um endurnýjun á næringu',
+    id: 'sp.health:renewal-nutrition-request',
+  },
+  renewalAidRequestDetail: {
+    defaultMessage:
+      'Athugaðu að stundum tekur meira en einn dag að afgreiða beiðnir um endurnýjun hjálpartækja. Ef mikið liggur á hafðu þá samband við heilsugæsluna þína.',
+    id: 'sp.health:renewal-aid-request-detail',
+  },
+  renewalNutritionRequestDetail: {
+    defaultMessage:
+      'Athugaðu að stundum tekur meira en einn dag að afgreiða beiðnir um endurnýjun næringa. Ef mikið liggur á hafðu þá samband við heilsugæsluna þína.',
+    id: 'sp.health:renewal-nutrition-request-detail',
+  },
   bloodtype: {
     id: 'sp.health:bloodtype',
     defaultMessage: 'Blóðflokkur',
+  },
+  youAreInBloodGroup: {
+    id: 'sp.health:you-are-in-bloodgroup',
+    defaultMessage: 'Þú ert í blóðflokki {arg}',
   },
   bloodtypeDesc: {
     id: 'sp.health:bloodtype-desc',
@@ -1982,5 +2022,17 @@ export const messages = defineMessages({
   invalidNationalId: {
     defaultMessage: 'Tókst ekki að sækja nafn út frá kennitölu.',
     id: 'sp.health:invalid-national-id',
+  },
+  manyDispensationLocations: {
+    id: 'sp.health:many-dispensation-locations',
+    defaultMessage: 'Margir afgreiðslustaðir',
+  },
+  seeList: {
+    id: 'sp.health:see-list',
+    defaultMessage: 'Sjá lista',
+  },
+  dispensationPlaces: {
+    id: 'sp.health:dispensation-places',
+    defaultMessage: 'Afgreiðslustaðir',
   },
 })

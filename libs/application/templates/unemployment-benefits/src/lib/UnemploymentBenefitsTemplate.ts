@@ -20,7 +20,6 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
 import { LocaleApi, UnemploymentApi, UserProfileApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
@@ -71,7 +70,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              read: 'all',
               api: [
                 UserProfileApi,
                 NationalRegistryUserApi,
@@ -122,7 +120,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              read: 'all',
               delete: true,
             },
           ],
@@ -160,22 +157,14 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 
