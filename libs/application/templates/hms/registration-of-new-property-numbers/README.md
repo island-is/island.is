@@ -31,7 +31,7 @@ This application enables users to register new property numbers. Properties asso
 
 ### Payment
 
-- ARK payment step.
+- Island.is payment service step
 
 ### Completed
 
@@ -49,7 +49,7 @@ All localization is managed via Contentful:
 
 - **Gervimaður Færeyjar** `010130-2399`
 
-Use Gervimaður Færeyjar for individual testing. For company delegation, use "Hugbúnaðarhús Daníels ehf."
+Use Gervimaður Færeyjar for individual testing. For company delegation, use "Hugbúnaðarhús Daníels ehf." (Gervimaður Færeyjar has that procuration)
 
 ## Codeowners
 

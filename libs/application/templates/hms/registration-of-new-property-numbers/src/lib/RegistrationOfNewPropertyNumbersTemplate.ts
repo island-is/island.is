@@ -34,6 +34,7 @@ import {
 import { getChargeItems } from '../utils/getChargeItems'
 import { conclusion } from './messages'
 import { Features } from '@island.is/feature-flags'
+import { getHistoryLogSentWithSubjectAndActor } from '../utils/getHistorylogText'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -47,7 +48,7 @@ const template: ApplicationTemplate<
   institution: m.application.institutionName,
   translationNamespaces:
     ApplicationConfigurations.RegistrationOfNewPropertyNumbers.translation,
-  requiredScopes: [HmsScope.properties, ApiScope.hms],
+  requiredScopes: [ApiScope.hms],
   dataSchema,
   allowedDelegations: [
     {
@@ -123,7 +124,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: getHistoryLogSentWithSubjectAndActor,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

@@ -107,6 +107,7 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
         this.logger.error(
           '[RegistrationOfNewPropertyNumbersService]: Failed to submit application to HMS: ' +
             `status code ${response.status}`,
+          response.message,
         )
         throw new Error(
           `[RegistrationOfNewPropertyNumbersService]: HMS API responded with status code ${response.status}`,
