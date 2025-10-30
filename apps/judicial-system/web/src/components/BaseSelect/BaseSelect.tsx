@@ -9,13 +9,13 @@ import Select, {
 import { Option as CoreOption } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
+import { ReactSelectOption } from '../../types'
 import {
   DropdownIndicator,
   Option,
   Placeholder,
   SingleValue,
 } from '../SelectComponents/SelectComponents'
-import { ReactSelectOption } from '../../types'
 
 interface Props {
   options: ReactSelectOption[]
