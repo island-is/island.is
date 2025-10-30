@@ -38,7 +38,7 @@ const Countries: FC<CountriesProps> = ({
   const navigate = useNavigate()
   const [selectedCountries, setSelectedCountries] = useState<
     Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
-  >([])
+  >(formState?.countries ?? [])
   const [selectAll, setSelectAll] = useState<boolean>(false)
 
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -177,9 +177,16 @@ const Countries: FC<CountriesProps> = ({
                   selectedCountries.length > 0 &&
                     setFormState?.({
                       countries: selectedCountries,
-                      validFrom:
-                        formState?.validFrom ?? new Date().toISOString(),
-                      validTo: formState?.validTo ?? new Date().toISOString(),
+                      dates:
+                        formState?.dates.validFrom && formState?.dates.validTo
+                          ? {
+                              validFrom: formState.dates.validFrom,
+                              validTo: formState.dates.validTo,
+                            }
+                          : {
+                              validFrom: null,
+                              validTo: null,
+                            },
                     })
                   onClick()
                 }}

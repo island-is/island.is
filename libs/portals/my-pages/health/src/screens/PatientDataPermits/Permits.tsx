@@ -129,7 +129,7 @@ const PatientDataPermits: React.FC = () => {
                       }
                     : permit.status === HealthDirectoratePermitStatus.inactive
                     ? {
-                        label: formatMessage(messages.invalid),
+                        label: formatMessage(messages.withdrawn),
                         variant: 'purple',
                         outlined: true,
                       }

@@ -67,6 +67,10 @@ export interface DatePickerProps {
    * Predefined date ranges for quick selection
    */
   ranges?: { label: string; startDate: Date; endDate: Date }[]
+  selectedRange?: {
+    startDate?: Date | null
+    endDate?: Date | null
+  }
 }
 
 export interface DatePickerCustomHeaderProps {

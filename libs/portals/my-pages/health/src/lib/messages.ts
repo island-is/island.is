@@ -1601,6 +1601,10 @@ export const messages = defineMessages({
     defaultMessage: 'Ógild',
     id: 'sp.health:invalid',
   },
+  withdrawn: {
+    defaultMessage: 'Afturkölluð',
+    id: 'sp.health:withdrawn',
+  },
   validForRenewal: {
     defaultMessage: 'Endurnýja',
     id: 'sp.health:valid-for-renewal',

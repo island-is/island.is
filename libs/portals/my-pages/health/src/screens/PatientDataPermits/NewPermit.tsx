@@ -28,29 +28,35 @@ const NewPermit: React.FC = () => {
 
   const handleSubmit = () => {
     if (formState) {
-      setOpenModal(false)
-      createPermit({
-        variables: {
-          input: {
-            validFrom: formState.validFrom,
-            validTo: formState.validTo,
-            countryCodes: formState.countries.map((c) => c.code),
-            codes: [''],
+      if (
+        formState.countries.length > 0 &&
+        formState.dates.validFrom &&
+        formState.dates.validTo
+      ) {
+        setOpenModal(false)
+        createPermit({
+          variables: {
+            input: {
+              validFrom: formState.dates.validFrom?.toISOString(),
+              validTo: formState.dates.validTo?.toISOString(),
+              countryCodes: formState.countries.map((c) => c.code),
+              codes: [''],
+            },
           },
-        },
-      })
-        .then((response) => {
-          console.log('createPermitResponse', response)
-          if (response.data?.healthDirectoratePatientDataCreatePermit?.status) {
-            // Handle successful response
-            setFormState(undefined)
-            toast.success(formatMessage(messages.permitCreated))
-            navigate(HealthPaths.HealthPatientDataPermits)
-          } else toast.error(formatMessage(messages.permitCreatedError))
         })
-        .catch(() => {
-          toast.error(formatMessage(messages.permitCreatedError))
-        })
+          .then((response) => {
+            if (
+              response.data?.healthDirectoratePatientDataCreatePermit?.status
+            ) {
+              setFormState(undefined)
+              toast.success(formatMessage(messages.permitCreated))
+              navigate(HealthPaths.HealthPatientDataPermits)
+            } else toast.error(formatMessage(messages.permitCreatedError))
+          })
+          .catch(() => {
+            toast.error(formatMessage(messages.permitCreatedError))
+          })
+      }
     }
   }
 

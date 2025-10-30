@@ -21,11 +21,7 @@ const Dates: FC<DatesProps> = ({
   setFormState,
 }) => {
   const { formatMessage } = useLocale()
-  const [selectedRange, setSelectedRange] = useState<{
-    startDate: Date | null | undefined
-    endDate: Date | null | undefined
-  }>({ startDate: null, endDate: null })
-
+  console.log(formState)
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
@@ -42,6 +38,12 @@ const Dates: FC<DatesProps> = ({
         <DatePicker
           backgroundColor="blue"
           range
+          selectedRange={{
+            startDate: formState?.dates.validFrom
+              ? formState.dates.validFrom
+              : null,
+            endDate: formState?.dates.validTo ? formState.dates.validTo : null,
+          }}
           minDate={today}
           minYear={today.getFullYear()}
           maxDate={addYears(today, 3)}
@@ -70,9 +72,18 @@ const Dates: FC<DatesProps> = ({
               label: formatMessage(messages.threeYears),
             },
           ]}
-          selected={selectedRange.startDate}
           handleChange={(startDate, endDate) => {
-            setSelectedRange({ startDate, endDate })
+            console.log('startDate, endDate', startDate, endDate)
+            startDate &&
+              endDate &&
+              setFormState({
+                ...formState,
+                countries: formState?.countries ?? [],
+                dates: {
+                  validFrom: startDate,
+                  validTo: endDate,
+                },
+              })
           }}
           label={formatMessage(messages.period)}
           placeholderText={formatMessage(messages.choosePeriod)}
@@ -101,17 +112,8 @@ const Dates: FC<DatesProps> = ({
           <Button
             fluid
             size="small"
-            disabled={selectedRange.endDate === null}
-            onClick={() => {
-              if (selectedRange.startDate && selectedRange.endDate) {
-                setFormState?.({
-                  countries: formState?.countries ?? [],
-                  validFrom: selectedRange.startDate?.toISOString(),
-                  validTo: selectedRange.endDate?.toISOString(),
-                })
-                onClick()
-              }
-            }}
+            disabled={formState?.dates.validTo === null}
+            onClick={onClick}
           >
             {formatMessage(messages.forward)}
           </Button>

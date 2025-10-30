@@ -78,6 +78,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   calendarStartDay = 1,
   range = false,
   ranges,
+  selectedRange,
   highlightWeekends = false,
   isClearable = false,
   displaySelectInput = false,
@@ -86,9 +87,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     d instanceof Date && !isNaN((d as Date).getTime())
   const normalizeDate = (d?: Date | null) => (d && isValidDate(d) ? d : null)
   const [startDate, setStartDate] = useState<Date | null>(
-    normalizeDate(selected) ?? null,
+    normalizeDate(range ? selectedRange?.startDate : selected) ?? null,
   )
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(
+    normalizeDate(range ? selectedRange?.endDate : null) ?? null,
+  )
   const datePickerRef = useRef<ReactDatePicker>(null)
 
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -117,13 +120,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [locale])
 
   useEffect(() => {
-    setStartDate(normalizeDate(selected) ?? null)
+    if (range && selectedRange) {
+      setStartDate(normalizeDate(selectedRange.startDate) ?? null)
+      setEndDate(normalizeDate(selectedRange.endDate) ?? null)
+    } else {
+      setStartDate(normalizeDate(selected) ?? null)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected])
+  }, [selected, selectedRange])
 
   // Close calendar when range selection is complete
   useEffect(() => {
-    console.log('isRangeComplete', isRangeComplete, forceOpen)
     if (isRangeComplete && forceOpen) {
       setForceOpen(undefined)
     }
