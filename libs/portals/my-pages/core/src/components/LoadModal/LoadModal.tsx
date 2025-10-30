@@ -17,7 +17,7 @@ export const LoadModal = () => {
         alignItems="center"
         height="full"
       >
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     </ModalBase>
   )
