@@ -76,8 +76,7 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
- // const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
-  const currentCaseProgress = -1
+  const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
   return (
     <>
       <IntroWrapper
@@ -156,7 +155,8 @@ const PoliceCaseDetail = () => {
               isComplete={isComplete}
               isLast={index === POLICE_CASE_STATUS_TIMELINE_MILESTONES.length - 1}
               description={shouldDisplayText ? <Text>Lorem ipsum dolor sit amet</Text> : undefined}
-              date={policeCase?.modified ?? undefined}
+              date={isComplete && policeCase?.modified ? formatDate(policeCase.modified): undefined}
+              forceRightAlignedDate
             />
             )
           })}

@@ -17,6 +17,8 @@ export const HistorySection: FC<
     date?: string
     description?: React.ReactNode
     customSection?: React.ReactNode
+    forceRightAlignedDate?: boolean
+
   }>
 > = ({
   theme = types.FormStepperThemes.PURPLE,
@@ -27,6 +29,7 @@ export const HistorySection: FC<
   isComplete = false,
   isLast = false,
   customSection,
+  forceRightAlignedDate = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
@@ -49,7 +52,7 @@ export const HistorySection: FC<
         width="full"
         marginBottom={isLast ? 0 : [1, 1, 3]}
       >
-        {date && (
+        {date && !forceRightAlignedDate && (
           <Hidden below="xl">
             <Box paddingTop={2} paddingRight={2} className={styles.historyDate}>
               <Text lineHeight="lg" variant="small">
@@ -69,7 +72,7 @@ export const HistorySection: FC<
         </Box>
         <Box paddingTop={2} width="full">
           {date && (
-            <Hidden above="lg">
+            <Hidden above={forceRightAlignedDate ? undefined : "lg"}>
               <Box paddingRight={2}>
                 <Text lineHeight="lg" variant="small">
                   {date}
