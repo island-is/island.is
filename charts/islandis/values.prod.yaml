@@ -320,7 +320,7 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
@@ -449,9 +449,9 @@ api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 10
       path: '/liveness'
-      timeoutSeconds: 3
+      timeoutSeconds: 5
     readiness:
       initialDelaySeconds: 3
       path: '/health'
@@ -459,11 +459,11 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 90
+        cpuAverageUtilization: 75
         nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 2
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -486,16 +486,16 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 3
     max: 50
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '1200m'
-      memory: '3200Mi'
+      memory: '2500Mi'
     requests:
       cpu: '800m'
-      memory: '896Mi'
+      memory: '1500Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -2985,7 +2985,7 @@ services-payments:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
-    XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/payments-v1'
+    XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
@@ -4197,9 +4197,9 @@ web:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 10
       path: '/liveness'
-      timeoutSeconds: 3
+      timeoutSeconds: 5
     readiness:
       initialDelaySeconds: 20
       path: '/readiness'
@@ -4207,11 +4207,11 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 90
+        cpuAverageUtilization: 75
         nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 2
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -4236,16 +4236,16 @@ web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 3
     max: 50
-    min: 2
+    min: 3
   resources:
     limits:
-      cpu: '1000m'
+      cpu: '1200m'
       memory: '768Mi'
     requests:
       cpu: '800m'
-      memory: '384Mi'
+      memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
