@@ -18,7 +18,7 @@ import { testIDs } from '../../utils/test-ids'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
-const Host = styled.SafeAreaView`
+const Host = styled.View`
   flex: 1;
   margin-top: ${({ theme }) => theme.spacing[2]}px;
 `

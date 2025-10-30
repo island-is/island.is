@@ -1,6 +1,6 @@
 import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
-import { isAndroid } from './devices'
+import { isAndroid, isIosLiquidGlassEnabled } from './devices'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
@@ -71,6 +71,13 @@ export function getDefaultOptions(
       ...(isAndroid
         ? {
             backgroundColor: theme.shade.background,
+          }
+        : {}),
+      ...(isIosLiquidGlassEnabled
+        ? {
+            backgroundColor: 'transparent',
+            drawBehind: true,
+            translucent: true,
           }
         : {}),
     },
