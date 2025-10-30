@@ -5,6 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
@@ -16,6 +17,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -224,6 +226,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
+
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -429,7 +433,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   onOpenFile={onOpen}
                 />
               )}
-              {permissions.canViewVerdictServiceCertificate &&
+              {features?.includes(Feature.VERDICT_DELIVERY) &&
+                permissions.canViewVerdictServiceCertificate &&
                 workingCase.defendants?.map(
                   (defendant) =>
                     defendant.verdict?.serviceDate && (

@@ -70,7 +70,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   const loadingView = () => {
     return (
       <Box height="full" display="flex" justifyContent="center">
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     )
   }
