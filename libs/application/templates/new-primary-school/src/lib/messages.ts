@@ -500,6 +500,22 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'New school',
     },
 
+    newSchoolAlertMessage: {
+      id: 'nps.application:primary.school.new.school.alert.message',
+      defaultMessage:
+        'Einungis þau börn sem stundað hafa skipulagðar íþróttaæfingar með þjálfara hjá íþróttafélagi síðastliðið ár, eiga kost á því að vera teknir inn á afreksíþróttabraut. Ef þú telur að barnið þitt uppfylli ekki þau skilyrði mælum við með því að skrá barnið þitt á akademíubraut.',
+      description:
+        'Only children who have participated in organised sports training with a coach at a sports club in the past year are eligible to be admitted to the elite sports course. If you believe that your child does not meet these criteria, we recommend registering your child for the academy course.',
+    },
+
+    newSchoolSpecialSchoolOrDepartmentAlertMessage: {
+      id: 'nps.application:primary.school.new.school.special.school.or.department.alert.message',
+      defaultMessage:
+        'Þú hefur valið að sækja um sérúrræði fyrir barnið þitt. Sérúrræði eru fyrir börn með metnar sérþarfir sem talið er að ekki sé hægt að mæta með almennu námi í grunnskóla, hvort sem er með stuðningi í kennslustund eða sérkennslu.',
+      description:
+        'You have chosen to apply for special resources for your child. Special resources are for children with assessed special needs who are considered to be unable to attend general education in primary school, whether with support in the classroom or special education.',
+    },
+
     // Starting school
     startingSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.starting.school.sub.section.title',
