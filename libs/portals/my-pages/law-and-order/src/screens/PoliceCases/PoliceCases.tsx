@@ -63,7 +63,13 @@ const PoliceCases = () => {
           <Box marginTop={2}>
             <ActionCard
               heading={formatMessage(m.policeCaseCardTitle, { arg: c.number })}
-              text={c.modified ? formatMessage(m.policeCaseCardText, { arg: formatDate(c.modified)}) : undefined}
+              text={
+                c.modified
+                  ? formatMessage(m.policeCaseCardText, {
+                      arg: formatDate(c.modified),
+                    })
+                  : undefined
+              }
               eyebrow={'Ríkislögreglustjóri'}
               tag={{
                 label: c.status?.headerDisplayString ?? 'no status',

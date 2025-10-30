@@ -1,4 +1,11 @@
-import { Box, HistorySection, HistoryStepper, Stack, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  HistorySection,
+  HistoryStepper,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -9,10 +16,7 @@ import {
   formatDate,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
-import {
-  useLocale,
-  useNamespaces,
-} from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
@@ -76,11 +80,18 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
+<<<<<<< HEAD
   const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
+=======
+  // const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
+  const currentCaseProgress = -1
+>>>>>>> refs/remotes/origin/feat/new-police-case-screens
   return (
     <>
       <IntroWrapper
-        title={formatMessage(m.policeCaseDetailTitle, { arg: policeCaseNumber })}
+        title={formatMessage(m.policeCaseDetailTitle, {
+          arg: policeCaseNumber,
+        })}
         intro={m.policeCaseDetailDescription}
         serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
         serviceProviderTooltip={formatMessage(
@@ -131,8 +142,12 @@ const PoliceCaseDetail = () => {
             loading={loading}
             label={m.caseStatus}
             content={
-              policeCase?.status?.headerDisplayString ?
-                <Tag variant="blue" outlined disabled>{policeCase.status.headerDisplayString}</Tag>  : undefined}
+              policeCase?.status?.headerDisplayString ? (
+                <Tag variant="blue" outlined disabled>
+                  {policeCase.status.headerDisplayString}
+                </Tag>
+              ) : undefined
+            }
           />
           <InfoLine
             loading={loading}
@@ -140,7 +155,9 @@ const PoliceCaseDetail = () => {
             content={policeCase?.type ?? ''}
           />
         </InfoLineStack>
-        <Text variant='eyebrow' color='purple600'>Ferill</Text>
+        <Text variant="eyebrow" color="purple600">
+          Ferill
+        </Text>
         <HistoryStepper
           sections={POLICE_CASE_STATUS_TIMELINE_MILESTONES.map(({label}, index) => {
           const shouldDisplayText = currentCaseProgress === index;
