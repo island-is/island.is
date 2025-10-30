@@ -15,6 +15,11 @@ export function getDefaultOptions(
         : {},
       backButton: {
         color: theme.color.blue400,
+        ...(isIosLiquidGlassEnabled
+          ? {
+              showTitle: false,
+            }
+          : {}),
       },
       elevation: 0,
       title: {
