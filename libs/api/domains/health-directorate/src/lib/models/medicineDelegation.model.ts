@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateMedicineDelegationDates')
 export class MedicineDelegationDates {
@@ -11,6 +11,9 @@ export class MedicineDelegationDates {
 
 @ObjectType('HealthDirectorateMedicineDelegationItem')
 export class MedicineDelegationItem {
+  @Field(() => ID)
+  cacheId!: string
+
   @Field({ nullable: true })
   name!: string
 

@@ -34,7 +34,7 @@ export interface DatePickerProps {
   hasError?: boolean
   errorMessage?: string
   id?: string
-  handleChange?: (startDate: Date, endDate?: Date) => void
+  handleChange?: (startDate: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
   handleCloseCalendar?: (date: Date | null) => void
   handleOpenCalendar?: () => void
@@ -46,9 +46,6 @@ export interface DatePickerProps {
   icon?: { name: IconType; type?: Type }
   showTimeInput?: boolean
   timeInputLabel?: string
-  isClearable?: boolean
-  highlightWeekends?: boolean
-  displaySelectInput?: boolean // Whether month and year should be selectable via dropdowns
   /**
    * Minimum selectable year inside datepicker
    */
@@ -59,14 +56,6 @@ export interface DatePickerProps {
   maxYear?: number
   readOnly?: boolean
   calendarStartDay?: number
-  /**
-   * Whether the datepicker should allow selecting a range of dates
-   */
-  range?: boolean
-  /**
-   * Predefined date ranges for quick selection
-   */
-  ranges?: { label: string; startDate: Date; endDate: Date }[]
 }
 
 export interface DatePickerCustomHeaderProps {
@@ -84,5 +73,4 @@ export interface DatePickerCustomHeaderProps {
   locale: Locale
   minYear?: number
   maxYear?: number
-  displaySelectInput?: boolean // Should the month and year be selectable via dropdowns
 }

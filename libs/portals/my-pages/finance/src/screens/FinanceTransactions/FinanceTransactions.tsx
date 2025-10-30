@@ -190,21 +190,27 @@ const FinanceTransactions = () => {
                           flexDirection="column"
                         >
                           <DatePicker
-                            label={formatMessage(m.datepickPeriod)}
-                            placeholderText={formatMessage(
-                              m.datepickPeriodLabel,
-                            )}
+                            label={formatMessage(m.datepickerFromLabel)}
+                            placeholderText={formatMessage(m.datepickLabel)}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d, e) => {
-                              setFromDate(d)
-                              setToDate(e)
-                            }}
+                            handleChange={(d) => setFromDate(d)}
                             selected={fromDate}
                             appearInline
-                            range
                           />
+                          <Box marginTop={3}>
+                            <DatePicker
+                              label={formatMessage(m.datepickerToLabel)}
+                              placeholderText={formatMessage(m.datepickLabel)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => setToDate(d)}
+                              selected={toDate}
+                              appearInline
+                            />
+                          </Box>
                         </Box>
                       </AccordionItem>
                     </Accordion>
