@@ -499,6 +499,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nýr skóli',
       description: 'New school',
     },
+    newSchoolAlertMessage: {
+      id: 'nps.application:primary.school.new.school.alert.message',
+      defaultMessage:
+        'Einungis þau börn sem stundað hafa skipulagðar íþróttaæfingar með þjálfara hjá íþróttafélagi síðastliðið ár, eiga kost á því að vera teknir inn á afreksíþróttabraut. Ef þú telur að barnið þitt uppfylli ekki þau skilyrði mælum við með því að skrá barnið þitt á akademíubraut.',
+      description:
+        'Only children who have participated in organised sports training with a coach at a sports club in the past year are eligible to be admitted to the elite sports course. If you believe that your child does not meet these criteria, we recommend registering your child for the academy course.',
+    },
+    newSchoolSpecialSchoolOrDepartmentAlertMessage: {
+      id: 'nps.application:primary.school.new.school.special.school.or.department.alert.message',
+      defaultMessage:
+        'Þú hefur valið að sækja um sérúrræði fyrir barnið þitt. Sérúrræði eru fyrir börn með metnar sérþarfir sem talið er að ekki sé hægt að mæta með almennu námi í grunnskóla, hvort sem er með stuðningi í kennslustund eða sérkennslu.',
+      description:
+        'You have chosen to apply for special resources for your child. Special resources are for children with assessed special needs who are considered to be unable to attend general education in primary school, whether with support in the classroom or special education.',
+    },
 
     // Starting school
     startingSchoolSubSectionTitle: {
@@ -858,6 +872,69 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:different.needs.requesting.meeting.description',
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
+    },
+
+    // Child's circumstances
+    childCircumstancesSubSectionTitle: {
+      id: 'nps.application:different.needs.child.circumstances.sub.section.title',
+      defaultMessage: 'Aðstæður barns',
+      description: "Child's circumstances",
+    },
+    onSiteObservation: {
+      id: 'nps.application:different.needs.on.site.observation',
+      defaultMessage:
+        'Áður en afstaða er tekin til umsóknarinnar kann að vera þörf á því að meta frekar aðstæður barns með vettvangsathugun.',
+      description:
+        'Before a decision is made on the application, there may be a need to further assess the childs situation with an on-site observation.',
+    },
+    approveOnsiteObservation: {
+      id: 'nps.application:different.needs.approve.onsite.observation',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, framkvæmi athugun á barni og aðstæðum þess í núverandi skóla og skrái niðurstöðurnar.',
+      description:
+        'I approve that a professional council or an authorized representative conducts an observation of the child and their situation in the current school and records the findings.',
+    },
+    onSiteObservationAdditionalInfo: {
+      id: 'nps.application:different.needs.on.site.observation.additional.info',
+      defaultMessage:
+        'Einnig kann að vera þörf á því að afla frekari gagna frá sérfræðingum í þeim tilgangi að upplýsa betur um aðstæður barns í kjölfar vettvangsathugunar.',
+      description:
+        'There may also be a need to obtain further information from specialists in order to better understand the childs situation following the on-site observation.',
+    },
+    approveOnSiteObservationAdditionalInfo: {
+      id: 'nps.application:different.needs.approve.on.site.observation.additional.info',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, afli eftir þörfum frekari upplýsinga um barnið mitt í kjölfar vettvangsathugunar.',
+      description:
+        'I approve that a professional council or an authorized representative obtains further information about my child as needed following the on-site observation.',
+    },
+    callInExpert: {
+      id: 'nps.application:different.needs.call.in.expert',
+      defaultMessage:
+        'Þá kann að vera nauðsynlegt að kalla til sérfræðinga utan skólans í fötlun barns og námi og skólagöngu fatlaðra barna, eða eftir atvikum barna með tilfinninga- og/eða hegðunarvanda.',
+      description:
+        'It may then be necessary to call in experts outside the school regarding the childs disability and education, or as the case may be, children with emotional and/or behavioral difficulties.',
+    },
+    approveCallInExpert: {
+      id: 'nps.application:different.needs.approve.call.in.expert',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, sæki ráðgjöf sérfræðinga utan skólans í námi og skólagöngu barnsins míns, fötlun eða eftir atvikum vanda þess.',
+      description:
+        'I approve that a professional council or an authorized representative seeks advice from experts outside the school regarding my childs education and schooling, disability, or as the case may be, their difficulties.',
+    },
+    childViews: {
+      id: 'nps.application:different.needs.child.views',
+      defaultMessage:
+        'Loks er mikilvægt að kanna afstöðu barns og gefa því færi á að tjá sig um viðhorf sín til nýrra gagna sem fagráð kann að hafa safnað og mögulegrar skólavistar, með hliðstjón af aldri og þroska þess.',
+      description:
+        'Finally, it is important to explore the childs perspective and give them the opportunity to express their views on the new data that a professional council may have collected and possible school placement, taking into account their age and maturity.',
+    },
+    approveChildViews: {
+      id: 'nps.application:different.needs.approve.child.views',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, afli upplýsinga um viðhorf barnsins sjálfs til nýrra gagna sem safnað hefur verið og mögulegrar skólavistar í þeim skóla sem sótt er um.',
+      description:
+        'I agree that the professional council, or a party acting on its behalf, may obtain information about the childs own attitude towards the new data that has been collected and possible school placement at the school applied for.',
     },
 
     // Payer

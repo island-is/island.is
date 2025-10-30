@@ -656,6 +656,16 @@ export const getSelectedSchoolSubType = (
   return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
 }
 
+export const getSelectedSchoolUnitId = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+  return selectedSchoolId
+    ? getSelectedSchoolData(externalData, selectedSchoolId)?.unitId ?? ''
+    : ''
+}
+
 export const payerApprovalStatePendingAction = (
   _: Application,
   role: string,

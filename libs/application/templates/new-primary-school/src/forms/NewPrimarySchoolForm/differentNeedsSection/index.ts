@@ -1,5 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { childCircumstancesSubSection } from './childCircumstancesSubSection'
 import { healthProtectionSubSection } from './healthProtectionSubSection'
 import { languageSubSection } from './languageSubSection'
 import { payerSubSection } from './payerSubSection'
@@ -12,6 +13,7 @@ export const differentNeedsSection = buildSection({
     languageSubSection,
     healthProtectionSubSection,
     supportSubSection,
+    childCircumstancesSubSection,
     payerSubSection,
   ],
 })
