@@ -183,7 +183,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
           activationGrant: {
             applicationInformation: {
               ...emptyApplication?.applicationInformation,
-              created: emptyApplication?.applicationInformation?.created,
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
               additionalInformation: additionalCVInfo
                 ? additionalCVInfo
