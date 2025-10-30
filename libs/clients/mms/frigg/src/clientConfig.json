@@ -436,6 +436,14 @@
           "languages": { "type": "array", "items": { "type": "string" } }
         }
       },
+      "PayerInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" }
+        },
+        "required": ["name", "nationalId"]
+      },
       "RegistrationInput": {
         "type": "object",
         "properties": {
@@ -468,16 +476,11 @@
           "requestingMeeting": { "type": "boolean" },
           "expectedStartDate": { "format": "date-time", "type": "string" },
           "expectedEndDate": { "format": "date-time", "type": "string" },
+          "payer": { "$ref": "#/components/schemas/PayerInput" },
           "reasonId": {
             "type": "string",
             "description": "Reason ID for application",
             "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
-          },
-          "additionalRequesters": {
-            "description": "national IDs of additional requesters",
-            "example": ["1234567890", "2345678901"],
-            "type": "array",
-            "items": { "type": "string" }
           }
         },
         "required": ["applicant", "selectedOrganizationId", "expectedStartDate"]
@@ -485,9 +488,19 @@
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
-          "registration": { "$ref": "#/components/schemas/RegistrationInput" }
+          "registration": { "$ref": "#/components/schemas/RegistrationInput" },
+          "additionalRequesters": {
+            "description": "national IDs of additional requesters",
+            "example": ["1234567890", "2345678901"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "approvalRequester": {
+            "type": "string",
+            "description": "national ID of the approval requester"
+          }
         },
-        "required": ["registration"]
+        "required": ["registration", "approvalRequester"]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
@@ -810,6 +823,7 @@
       "AgentModel": {
         "type": "object",
         "properties": {
+          "id": { "type": "string" },
           "name": { "type": "string" },
           "nationalId": { "type": "string" },
           "preferredName": { "type": "string", "nullable": true },
@@ -834,6 +848,7 @@
           "preferredLanguage": { "type": "string", "nullable": true }
         },
         "required": [
+          "id",
           "name",
           "nationalId",
           "preferredName",

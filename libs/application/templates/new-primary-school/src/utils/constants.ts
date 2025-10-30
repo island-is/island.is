@@ -11,6 +11,8 @@ export enum Actions {
 export const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  PAYER_APPROVAL = 'payerApproval',
+  PAYER_REJECTED = 'payerRejected',
   SUBMITTED = 'submitted',
   REJECTED = 'rejected',
   APPROVED = 'approved',
@@ -20,16 +22,20 @@ export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
   getPreferredSchool = 'getPreferredSchool',
   sendApplication = 'sendApplication',
+  assignPayer = 'assignPayer',
+  notifyApplicantOfRejectionFromPayer = 'notifyApplicantOfRejectionFromPayer',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
   ORGANIZATION_REVIEWER = 'organizationReviewer',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ReasonForApplicationOptions {
@@ -104,4 +110,27 @@ export enum OrganizationSector {
 
 export enum ApplicationFeatureConfigType {
   REGISTRATION = 'registration',
+}
+
+export enum PayerOption {
+  APPLICANT = 'applicant',
+  OTHER = 'other',
+}
+
+export enum ApplicationFeatureKey {
+  APPLICANT_INFO = 'applicant_info',
+  GUARDIANS = 'guardians',
+  CURRENT_ORGANIZATION = 'current_organization',
+  EMERGENCY_CONTACTS = 'emergency_contacts',
+  HEALTH_INFO = 'health_info',
+  SOCIAL_INFO = 'social_info',
+  LANGUAGE_INFO = 'language_info',
+  APPLICATION_REASON = 'application_reason',
+  SIBLINGS = 'siblings',
+  TIMEFRAME = 'timeframe',
+  PAYMENT_INFO = 'payment_info',
+  ATTACHMENTS = 'attachments',
+  CONSENTS = 'consents',
+  TERMS = 'terms',
+  ADDITIONAL_REQUESTORS = 'additional_requestors',
 }

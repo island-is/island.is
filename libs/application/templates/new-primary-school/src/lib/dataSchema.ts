@@ -2,7 +2,11 @@ import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
+import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
+  PayerOption,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -248,14 +252,14 @@ export const dataSchema = z.object({
       hasWelfareContact: z.string().optional(),
       welfareContact: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
@@ -273,7 +277,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact && welfareContact.name.length > 0
+          ? welfareContact && !!welfareContact.name?.trim()
           : true,
       { path: ['welfareContact', 'name'] },
     )
@@ -281,9 +285,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact &&
-            welfareContact.email &&
-            welfareContact.email.length > 0
+          ? welfareContact && !!welfareContact.email?.trim()
           : true,
       { path: ['welfareContact', 'email'] },
     )
@@ -306,7 +308,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.name.length > 0
+          ? caseManager && !!caseManager.name?.trim()
           : true,
       { path: ['caseManager', 'name'] },
     )
@@ -321,7 +323,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.email && caseManager.email.length > 0
+          ? caseManager && !!caseManager.email?.trim()
           : true,
       {
         path: ['caseManager', 'email'],
@@ -340,6 +342,7 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+
   childCircumstances: z
     .object({
       onSiteObservation: z.array(z.enum([YES])).length(1),
@@ -362,6 +365,34 @@ export const dataSchema = z.object({
       {
         path: ['callInExpert'],
       },
+    ),
+  payer: z
+    .object({
+      option: z.nativeEnum(PayerOption),
+      other: z
+        .object({
+          name: z.string(),
+          nationalId: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.name?.trim() : true,
+      { path: ['other', 'name'] },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER
+          ? other && kennitala.isValid(other.nationalId)
+          : true,
+      { path: ['other', 'nationalId'], params: errorMessages.nationalId },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
+      { path: ['other', 'email'] },
     ),
 })
 

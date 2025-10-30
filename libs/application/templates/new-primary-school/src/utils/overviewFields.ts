@@ -1,6 +1,11 @@
 import { buildOverviewField, NO, YES } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import { shouldShowPage } from './conditionUtils'
+import {
+  ApplicationFeatureKey,
+  ApplicationType,
+  ReasonForApplicationOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -12,6 +17,7 @@ import {
   guardiansItems,
   healthProtectionItems,
   languagesItems,
+  payerItems,
   reasonForApplicationItems,
   relativesTable,
   schoolItems,
@@ -142,6 +148,18 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+    }),
+    buildOverviewField({
+      id: 'overview.payer',
+      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      backId: editable ? 'payer' : undefined,
+      items: payerItems,
+      condition: (answers, externalData) =>
+        shouldShowPage(
+          answers,
+          externalData,
+          ApplicationFeatureKey.PAYMENT_INFO,
+        ),
     }),
   ]
 }
