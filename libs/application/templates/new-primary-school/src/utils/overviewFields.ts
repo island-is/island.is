@@ -151,6 +151,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.payer',
+      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
       backId: editable ? 'payer' : undefined,
       items: payerItems,
       condition: (answers, externalData) =>

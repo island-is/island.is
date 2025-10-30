@@ -757,37 +757,30 @@ export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
   const { payer, payerName, payerNationalId, payerEmail } =
     getApplicationAnswers(answers)
 
-  const baseItems: Array<KeyValueItem> = [
-    {
-      width: 'full',
-      keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
-      valueText:
-        payer === PayerOption.APPLICANT
-          ? newPrimarySchoolMessages.differentNeeds.payerOptionApplicant
-          : newPrimarySchoolMessages.differentNeeds.payerOptionOther,
-    },
-  ]
-
-  const otherPayerItems: Array<KeyValueItem> =
-    payer === PayerOption.OTHER
-      ? [
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.fullName,
-            valueText: payerName,
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.nationalId,
-            valueText: formatKennitala(payerNationalId ?? ''),
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.email,
-            valueText: payerEmail,
-          },
-        ]
-      : []
-
-  return [...baseItems, ...otherPayerItems]
+  return payer === PayerOption.APPLICANT
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+          valueText:
+            newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+        },
+      ]
+    : [
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.fullName,
+          valueText: payerName,
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.nationalId,
+          valueText: formatKennitala(payerNationalId ?? ''),
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.email,
+          valueText: payerEmail,
+        },
+      ]
 }
