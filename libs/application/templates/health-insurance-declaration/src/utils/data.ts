@@ -4,7 +4,7 @@ import {
   NationalRegistryIndividual,
   Option,
   StaticText,
-  NationalRegistrySpouse,
+  NationalRegistrySpouseV3,
   FormValue,
 } from '@island.is/application/types'
 import { format } from 'kennitala'
@@ -24,7 +24,7 @@ export const getChildrenFromExternalData = (externalData: ExternalData) => {
   )
 }
 export const getSpouseFromExternalData = (externalData: ExternalData) => {
-  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
+  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouseV3
 }
 
 export const getInsuranceStatus = (externalData: ExternalData) => {

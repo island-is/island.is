@@ -55,15 +55,13 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
     const defaultParents = [
       {
         nationalId: '',
-        givenName: '',
-        familyName: '',
+        fullName: '',
         wasRemoved: 'false',
         currentName: '',
       },
       {
         nationalId: '',
-        givenName: '',
-        familyName: '',
+        fullName: '',
         wasRemoved: 'true',
         currentName: '',
       },

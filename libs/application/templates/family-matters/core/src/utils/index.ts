@@ -10,6 +10,7 @@ import {
   Address,
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
+  NationalRegistryOtherIndividual,
 } from '@island.is/application/types'
 
 export const formatSsn = (ssn: string) => {
@@ -37,7 +38,11 @@ interface ChildrenResidenceInfo {
 }
 
 const extractParentInfo = (
-  individual: NationalRegistryIndividual | null | undefined,
+  individual:
+    | NationalRegistryIndividual
+    | NationalRegistryOtherIndividual
+    | null
+    | undefined,
 ): ChildrenResidenceInfo | null => {
   if (!individual) {
     return null
@@ -98,12 +103,12 @@ export const formatDate = ({
 export const getOtherParentInformation = (
   children: ApplicantChildCustodyInformation[],
   selectedChildren: string[],
-): NationalRegistryIndividual => {
+): NationalRegistryOtherIndividual => {
   const selected = getSelectedChildrenFromExternalData(
     children,
     selectedChildren,
   )
-  return selected?.[0]?.otherParent ?? ({} as NationalRegistryIndividual)
+  return selected?.[0]?.otherParent ?? ({} as NationalRegistryOtherIndividual)
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
