@@ -1,9 +1,11 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { MultiValue, SingleValue } from 'react-select'
 
-import { Box, Select } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getRoleTitleFromCaseFileCategory } from '@island.is/judicial-system/formatters'
 import {
+  BaseSelect,
   BlueBox,
   DateTime,
   FormContext,
@@ -19,7 +21,7 @@ import { strings } from './AddFiles.strings'
 import * as styles from './SelectCaseFileRepresentative.css'
 
 type RepresentativeSelectOption = ReactSelectOption & {
-  selectedCaseRepresentative: CaseRepresentative
+  selectedCaseRepresentative: CaseRepresentative | null
 }
 
 interface SelectRepresentativeProps {
@@ -45,61 +47,97 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
     minimal = false,
   } = props
 
-  const options = useMemo(
-    () =>
-      workingCase.caseRepresentatives?.map((representative) => {
-        return {
-          label: `${representative.name} (${getRoleTitleFromCaseFileCategory(
-            representative.caseFileCategory,
-          )})`,
-          value: representative.name,
-          selectedCaseRepresentative: representative,
-        }
-      }) ?? [],
-    [workingCase.caseRepresentatives],
-  )
+  const options = useMemo(() => {
+    const reps =
+      workingCase.caseRepresentatives?.map((representative) => ({
+        label: `${representative.name} (${getRoleTitleFromCaseFileCategory(
+          representative.caseFileCategory,
+        )})`,
+        value: representative.name,
+        selectedCaseRepresentative: representative,
+      })) ?? []
+
+    return [
+      { label: 'Hreinsa val', value: null, selectedCaseRepresentative: null },
+      ...reps,
+    ]
+  }, [workingCase.caseRepresentatives])
 
   const [representative, setRepresentative] = useState<
-    RepresentativeSelectOption | undefined
+    RepresentativeSelectOption | undefined | null
   >(
     options.find((option) => {
       return (
         option.value === submitterName &&
-        option.selectedCaseRepresentative.caseFileCategory === caseFileCategory
+        option.selectedCaseRepresentative?.caseFileCategory === caseFileCategory
       )
     }),
   )
 
+  const handleChange = (
+    selectedOption:
+      | MultiValue<ReactSelectOption>
+      | SingleValue<ReactSelectOption>,
+  ) => {
+    const representativeSelectOption =
+      selectedOption as RepresentativeSelectOption
+
+    if (
+      !representativeSelectOption ||
+      !representativeSelectOption.selectedCaseRepresentative
+    ) {
+      setRepresentative(null)
+      return
+    }
+
+    setRepresentative(representativeSelectOption)
+    updateRepresentative(
+      representativeSelectOption.selectedCaseRepresentative.name,
+      representativeSelectOption.selectedCaseRepresentative.caseFileCategory,
+    )
+  }
+
   return (
-    <Box className={minimal ? styles.selectNoBorderOuter : undefined}>
-      <Box className={minimal ? styles.selectNoBorderInner : undefined}>
-        <Select
-          name="caseRepresentative"
-          label={
-            minimal ? undefined : formatMessage(strings.caseRepresentativeLabel)
-          }
-          placeholder={
-            minimal
-              ? 'Hver lagði fram?'
-              : formatMessage(strings.caseRepresentativePlaceholder)
-          }
-          value={representative}
-          options={options}
-          onChange={(selectedOption) => {
-            const representativeSelectOption =
-              selectedOption as RepresentativeSelectOption
-            setRepresentative(representativeSelectOption)
-            updateRepresentative(
-              representativeSelectOption.selectedCaseRepresentative.name,
-              representativeSelectOption.selectedCaseRepresentative
-                .caseFileCategory,
-            )
-          }}
-          required={required}
-          size={minimal ? 'xs' : undefined}
-        />
-      </Box>
-    </Box>
+    <BaseSelect
+      options={options}
+      isLoading={false} // TODO
+      placeholder={
+        minimal
+          ? 'Hver lagði fram?'
+          : formatMessage(strings.caseRepresentativePlaceholder)
+      }
+      value={representative}
+      onChange={handleChange}
+    />
+    // <Box className={minimal ? styles.selectNoBorderOuter : undefined}>
+    //   <Box className={minimal ? styles.selectNoBorderInner : undefined}>
+    //     <Select
+    //       name="caseRepresentative"
+    //       label={
+    //         minimal ? undefined : formatMessage(strings.caseRepresentativeLabel)
+    //       }
+    //       placeholder={
+    //         minimal
+    //           ? 'Hver lagði fram?'
+    //           : formatMessage(strings.caseRepresentativePlaceholder)
+    //       }
+    //       value={representative}
+    //       options={options}
+    //       onChange={(selectedOption) => {
+    //         const representativeSelectOption =
+    //           selectedOption as RepresentativeSelectOption
+    //         setRepresentative(representativeSelectOption)
+    //         updateRepresentative(
+    //           representativeSelectOption.selectedCaseRepresentative.name,
+    //           representativeSelectOption.selectedCaseRepresentative
+    //             .caseFileCategory,
+    //         )
+    //       }}
+    //       required={required}
+    //       size={minimal ? 'xs' : undefined}
+    //     />
+    //   </Box>
+    // </Box>
   )
 }
 

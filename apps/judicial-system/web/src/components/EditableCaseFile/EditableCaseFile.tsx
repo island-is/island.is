@@ -282,7 +282,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     <span
                       style={{
                         display: 'block',
-                        maxWidth: `${width - 180}px`,
+                        maxWidth: `${width - (displayDate ? 180 : 90)}px`,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -315,11 +315,8 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </Box>
                 )}
               </Box>
-              <Box display="flex" alignItems="center">
-                <Box marginRight={1}>
-                  <Text variant="small">{displayDate}</Text>
-                </Box>
-
+              <Box display="flex" alignItems="center" columnGap={1}>
+                {displayDate && <Text variant="small">{displayDate}</Text>}
                 {caseFile.status === FileUploadStatus.uploading ? (
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />

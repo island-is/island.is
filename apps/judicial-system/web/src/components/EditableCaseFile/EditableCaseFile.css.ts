@@ -13,6 +13,7 @@ export const caseFileWrapper = style({
   borderRadius: theme.border.radius.large,
   border: '1px solid',
   transition: 'background-color 0.2s ease-in-out',
+  height: '100%',
 })
 
 export const caseFileWrapperBackground = styleVariants({

@@ -752,12 +752,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               isDisabled={courtSession.isConfirmed || false}
               isLoading={courtDocument.create.loading}
             >
-              <Box
-                display="flex"
-                flexDirection="column"
-                rowGap={2}
-                marginTop={2}
-              >
+              <Box display="flex" flexDirection="column" rowGap={2}>
                 {index > 0 && (
                   <Box
                     background="white"
@@ -792,22 +787,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           ) {
                             const split = item.submittedBy?.split('|')
                             const enabled = (
-                              <SelectRepresentative
-                                submitterName={split?.[0]}
-                                caseFileCategory={
-                                  split?.[1] as CaseFileCategory
-                                }
-                                updateRepresentative={(
-                                  submitterName,
-                                  caseFileCategory,
-                                ) => {
-                                  handleUpdateFile(courtSession.id, item.id, {
-                                    submittedBy: `${submitterName}|${caseFileCategory}`,
-                                  })
-                                }}
-                                required={false}
-                                minimal={true}
-                              />
+                              <Box marginTop={1}>
+                                <SelectRepresentative
+                                  submitterName={split?.[0]}
+                                  caseFileCategory={
+                                    split?.[1] as CaseFileCategory
+                                  }
+                                  updateRepresentative={(
+                                    submitterName,
+                                    caseFileCategory,
+                                  ) => {
+                                    handleUpdateFile(courtSession.id, item.id, {
+                                      submittedBy: `${submitterName}|${caseFileCategory}`,
+                                    })
+                                  }}
+                                  required={false}
+                                  minimal={true}
+                                />
+                              </Box>
                             )
                             const disabled = split ? (
                               <Text variant="small" color="currentColor">
@@ -851,6 +848,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               )
                               suplement = { enabled: node, disabled: node }
                             }
+                          } else {
+                            const node = (
+                              <Text variant="small" color="currentColor">
+                                Liggur frammi
+                              </Text>
+                            )
+                            suplement = { enabled: node, disabled: node }
                           }
 
                           return (
@@ -864,8 +868,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               onDragEnd={() => {
                                 setDraggedFileId(null)
                               }}
-                              initial={{ opacity: 0, y: -10, height: 'auto' }}
-                              animate={{ opacity: 1, y: 0, height: 'auto' }}
+                              initial={{ opacity: 0, y: -10, height: 101 }}
+                              animate={{ opacity: 1, y: 0, height: 101 }}
                               exit={{ opacity: 0, y: 10, height: 0 }}
                               transition={{ duration: 0.2 }}
                             >
