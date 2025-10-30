@@ -285,15 +285,12 @@ export const employmentHistorySubSection = buildSubSection({
                     '',
                 }))
               },
-              readonly: (application, activeField, index) => {
-                const repeaterJobs =
-                  getValueViaPath<CurrentEmploymentInAnswers[]>(
-                    application.answers,
-                    'currentSituation.currentSituationRepeater',
-                    [],
-                  ) ?? []
-
-                return index !== undefined && !!repeaterJobs[index]
+              readonly: (application, _activeField, index) => {
+                return hasDataFromCurrentStatusItem(
+                  application.answers,
+                  index,
+                  'title',
+                )
               },
               defaultValue: (
                 application: Application,

@@ -14,7 +14,7 @@ export const useLazyIsVacationValid = () => {
       input: {
         hasUnpaidVacationTime: boolean
         unpaidVacations?: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnpaidVacationDTO>
-        resignationEnds?: Date
+        resignationEnds?: string
       }
     }
   >(VALIDATE_VACATION)
