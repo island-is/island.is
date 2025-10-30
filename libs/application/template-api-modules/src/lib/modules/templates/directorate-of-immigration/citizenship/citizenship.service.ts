@@ -257,9 +257,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
         ?.map((p) => ({
           nationalId: p.nationalId || '',
-          givenName:
-            p.givenName || p.currentName.split(' ').slice(0, -1).join(' '),
-          familyName: p.familyName || p.currentName.split(' ').pop(),
+          fullName: p.fullName || '',
         }))
 
     // Get attachment array with countryId field from attachment array of arrays
