@@ -19,7 +19,8 @@ export const messages = defineMessages({
   },
   policeCasesDescription: {
     id: 'sp.law-and-order:police-cases-description#markdown',
-    defaultMessage: 'Í þjónustugátt lögreglu getur þú nálgast upplýsingar um þín mál hjá lögreglu, auk fræðslu um stuðningsaðila, algengar spurningar og svör. Þjónustugáttin er öruggt netumhverfi þar sem þú getur fylgst með framvindu mála þinna og haft aðgang að helstu upplýsingum sem þau varða.\n\nÍ dag eru birt mál sem tengjast rannsóknum á kynferðisbrotum hjá lögreglunni á höfuðborgarsvæðinu og lögreglunni á Suðurnesjum.',
+    defaultMessage:
+      'Í þjónustugátt lögreglu getur þú nálgast upplýsingar um þín mál hjá lögreglu, auk fræðslu um stuðningsaðila, algengar spurningar og svör. Þjónustugáttin er öruggt netumhverfi þar sem þú getur fylgst með framvindu mála þinna og haft aðgang að helstu upplýsingum sem þau varða.\n\nÍ dag eru birt mál sem tengjast rannsóknum á kynferðisbrotum hjá lögreglunni á höfuðborgarsvæðinu og lögreglunni á Suðurnesjum.',
   },
   policeCaseDetailTitle: {
     id: 'sp.law-and-order:police-cases-detail-title',
@@ -27,7 +28,8 @@ export const messages = defineMessages({
   },
   policeCaseDetailDescription: {
     id: 'sp.law-and-order:police-cases-detail-description',
-    defaultMessage: 'Í þjónustugátt lögreglunnar geta getur þú fylgst með stöðu mála sem eru til rannsóknar hjá lögreglu. Gáttin veitir yfirsýn yfir framvindu málsins á meðan það er í rannsókn hjá lögreglu og í úrvinnslu hjá dómstólum.',
+    defaultMessage:
+      'Í þjónustugátt lögreglunnar geta getur þú fylgst með stöðu mála sem eru til rannsóknar hjá lögreglu. Gáttin veitir yfirsýn yfir framvindu málsins á meðan það er í rannsókn hjá lögreglu og í úrvinnslu hjá dómstólum.',
   },
   policeCases: {
     id: 'sp.law-and-order:police-cases',
@@ -200,34 +202,34 @@ export const messages = defineMessages({
   },
   policeCasesHeaderLinkButton1Text: {
     id: 'sp.law-and-order:police-cases-header-link-button-1-text',
-    defaultMessage: 'Takki 1'
+    defaultMessage: 'Takki 1',
   },
   policeCasesHeaderLinkButton1Url: {
     id: 'sp.law-and-order:police-cases-header-link-button-1-url',
-    defaultMessage: 'island.is'
+    defaultMessage: 'island.is',
   },
   policeCasesHeaderLinkButton2Text: {
     id: 'sp.law-and-order:police-cases-header-link-button-2-text',
-    defaultMessage: 'Takki 2'
+    defaultMessage: 'Takki 2',
   },
   policeCasesHeaderLinkButton2Url: {
     id: 'sp.law-and-order:police-cases-header-link-button-2-url',
-    defaultMessage: 'island.is'
+    defaultMessage: 'island.is',
   },
   policeCasesDetailHeaderLinkButton1Text: {
     id: 'sp.law-and-order:police-cases-detail-header-link-button-1-text',
-    defaultMessage: 'Takki 3'
+    defaultMessage: 'Takki 3',
   },
   policeCasesDetailHeaderLinkButton1Url: {
     id: 'sp.law-and-order:police-cases-detail-header-link-button-1-url',
-    defaultMessage: 'island.is'
+    defaultMessage: 'island.is',
   },
   policeCasesDetailHeaderLinkButton2Text: {
     id: 'sp.law-and-order:police-cases-detail-header-link-button-2-text',
-    defaultMessage: 'Takki 4'
+    defaultMessage: 'Takki 4',
   },
   policeCasesDetailHeaderLinkButton2Url: {
     id: 'sp.law-and-order:police-cases-detail-header-link-button-2-url',
-    defaultMessage: 'island.is'
-  }
+    defaultMessage: 'island.is',
+  },
 })

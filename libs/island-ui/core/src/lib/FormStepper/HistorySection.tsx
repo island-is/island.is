@@ -77,11 +77,13 @@ export const HistorySection: FC<
               </Box>
             </Hidden>
           )}
-          {
-            customSection ? customSection : <Text lineHeight="lg" fontWeight="light">
+          {customSection ? (
+            customSection
+          ) : (
+            <Text lineHeight="lg" fontWeight="light">
               {section}
             </Text>
-          }
+          )}
           {description && <Box paddingTop={2}>{description}</Box>}
         </Box>
       </Box>
