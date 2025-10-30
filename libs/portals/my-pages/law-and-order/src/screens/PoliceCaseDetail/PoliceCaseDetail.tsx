@@ -80,12 +80,7 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
-<<<<<<< HEAD
   const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
-=======
-  // const currentCaseProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(milestone => milestone.group === policeCase?.status?.statusGroup) ?? -1
-  const currentCaseProgress = -1
->>>>>>> refs/remotes/origin/feat/new-police-case-screens
   return (
     <>
       <IntroWrapper
