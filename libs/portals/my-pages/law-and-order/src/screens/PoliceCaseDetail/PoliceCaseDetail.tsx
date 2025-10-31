@@ -1,5 +1,4 @@
 import {
-  Box,
   HistorySection,
   HistoryStepper,
   Stack,
@@ -7,7 +6,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  CardLoader,
   IntroWrapper,
   m as coreMessages,
   RIKISLOGREGLUSTJORI_SLUG,
