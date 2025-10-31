@@ -17,12 +17,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '../../ui'
+import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -34,11 +29,17 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
+import { useOfflineStore } from '../../stores/offline-store'
+import {
+  dynamicColor,
+  Alert as InfoAlert,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
-import { useOfflineStore } from '../../stores/offline-store'
-import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
@@ -138,6 +139,12 @@ const getInfoAlertMessageIds = (
     licenseType === GenericLicenseType.IdentityDocument &&
     licenseNumber?.startsWith('ID')
   switch (licenseType) {
+    case GenericLicenseType.DriversLicense:
+      return {
+        title: 'licenseDetail.driversLicense.alert.title',
+        description: 'licenseDetail.driversLicense.alert.description',
+        dismissible: true,
+      }
     case GenericLicenseType.PCard:
       return {
         title: 'licenseDetail.pcard.alert.title',
@@ -165,6 +172,8 @@ const getInfoAlertMessageIds = (
   }
 }
 
+const INFO_ALERT_DISMISSED_STORAGE_KEY = 'walletPassDismissedInfoAlerts'
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   type: string
@@ -176,6 +185,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
+  const [dismissedAlerts, setDismissedAlerts] = useState<
+    Record<string, boolean>
+  >({})
+  const [hasCalculatedDismissedAlerts, setHasCalculatedDismissedAlerts] =
+    useState<boolean>(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
@@ -215,11 +229,31 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
+  const { getItem: getDismissedAlertsItem, setItem: setDismissedAlertsItem } =
+    useAsyncStorage(INFO_ALERT_DISMISSED_STORAGE_KEY)
+
+  const markInfoAlertAsDismissed = useCallback(async () => {
+    setDismissedAlertsItem(JSON.stringify({ ...dismissedAlerts, [type]: true }))
+    setDismissedAlerts((prev) => ({ ...prev, [type]: true }))
+  }, [type, setDismissedAlertsItem, dismissedAlerts])
+
+  useEffect(() => {
+    getDismissedAlertsItem().then((item) => {
+      if (item) {
+        setDismissedAlerts(JSON.parse(item))
+      }
+
+      setHasCalculatedDismissedAlerts(true)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const shouldShowExpireDate = !!(
     (licenseType === GenericLicenseType.IdentityDocument ||
       licenseType === GenericLicenseType.Passport) &&
     expireDate
   )
+
   const showInfoAlert =
     licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
 
@@ -229,6 +263,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         data?.payload?.metadata?.licenseNumber ?? undefined,
       )
     : undefined
+
+  const isInfoAlertDismissed = useCallback(
+    (type: string) => {
+      if (!alertMessageIds?.dismissible) {
+        return false
+      }
+
+      return dismissedAlerts[type] ? true : false
+    },
+    [dismissedAlerts, alertMessageIds?.dismissible],
+  )
 
   const { loading } = res
 
@@ -504,24 +549,31 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }}
         >
           {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
-          {showInfoAlert && (
-            <View
-              style={{
-                paddingTop: theme.spacing[3],
-              }}
-            >
-              <InfoAlert
-                title={intl.formatMessage({
-                  id: alertMessageIds?.title,
-                })}
-                message={intl.formatMessage({
-                  id: alertMessageIds?.description,
-                })}
-                type="info"
-                hasBorder
-              />
-            </View>
-          )}
+          {showInfoAlert &&
+            hasCalculatedDismissedAlerts &&
+            !isInfoAlertDismissed(licenseType) && (
+              <View
+                style={{
+                  paddingTop: theme.spacing[3],
+                }}
+              >
+                <InfoAlert
+                  title={intl.formatMessage({
+                    id: alertMessageIds?.title,
+                  })}
+                  message={intl.formatMessage({
+                    id: alertMessageIds?.description,
+                  })}
+                  {...(alertMessageIds?.dismissible && {
+                    onClose: () => {
+                      markInfoAlertAsDismissed()
+                    },
+                  })}
+                  type="info"
+                  hasBorder
+                />
+              </View>
+            )}
           {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
           {expireWarning &&
           (licenseType === GenericLicenseType.Passport ||
