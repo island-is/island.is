@@ -42,7 +42,7 @@ export const PaymentInformationValidation: FC<
     setInvalidError(false)
     setErrors([])
 
-    const paymentInfo: PayoutInAnswers = getValues('payout')
+    const paymentInfo: PayoutInAnswers | undefined = getValues('payout')
     const supportInfo =
       getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemployementApplicationSupportData>(
         props.application.externalData,
@@ -64,11 +64,11 @@ export const PaymentInformationValidation: FC<
 
     const ledgerSupportData =
       supportInfo?.ledgers?.find(
-        (val) => val.number === paymentInfo.bankAccount.ledger,
+        (val) => val.number === paymentInfo?.bankAccount.ledger,
       ) || undefined
     const bankNumberSupportData =
       supportInfo?.banks?.find(
-        (val) => val.bankNo === paymentInfo.bankAccount.bankNumber,
+        (val) => val.bankNo === paymentInfo?.bankAccount.bankNumber,
       ) || undefined
 
     if (!ledgerSupportData) {
@@ -87,19 +87,21 @@ export const PaymentInformationValidation: FC<
         bankNumber: bankNumberSupportData.id || '',
         ledger: ledgerSupportData.id || '',
         accountNumber:
-          paymentInfo.bankAccount.accountNumber?.padStart(6, '0') || '',
-        pensionFund: { id: paymentInfo.pensionFund || '', percentage: 0 },
-        privatePensionFunds: paymentInfo.privatePensionFund
+          paymentInfo?.bankAccount.accountNumber?.padStart(6, '0') || '',
+        pensionFund: { id: paymentInfo?.pensionFund || '', percentage: 0 },
+        privatePensionFunds: paymentInfo?.privatePensionFund
           ? [
               {
-                id: paymentInfo.privatePensionFund || '',
+                id: paymentInfo?.privatePensionFund,
                 percentage:
-                  Number(paymentInfo.privatePensionFundPercentage) || 0,
+                  Number(paymentInfo?.privatePensionFundPercentage) || 0,
               },
             ]
           : [],
-        doNotPayToUnion: !paymentInfo.union,
-        union: paymentInfo.union ? { id: paymentInfo.union || '' } : undefined,
+        doNotPayToUnion: !paymentInfo?.union,
+        union: paymentInfo?.union
+          ? { id: paymentInfo?.union || '' }
+          : undefined,
       })
 
       if (
