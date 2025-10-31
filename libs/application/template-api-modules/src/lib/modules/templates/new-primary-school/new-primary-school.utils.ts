@@ -11,7 +11,7 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   CaseWorkerInputTypeEnum,
-  RegistrationInput,
+  RegistrationApplicationInput,
 } from '@island.is/clients/mms/frigg'
 
 export const getSocialProfile = (application: Application) => {
@@ -65,7 +65,7 @@ export const getSocialProfile = (application: Application) => {
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
-): RegistrationInput => {
+): RegistrationApplicationInput => {
   const {
     applicationType,
     childInfo,
@@ -99,83 +99,90 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
-  const newPrimarySchoolDTO: RegistrationInput = {
-    applicant: {
-      nationalId: childInfo?.nationalId || '',
-      ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
-        preferredName: childInfo?.preferredName,
-        pronounIds: childInfo?.pronouns,
-      }),
-    },
-    guardians: guardians.map((guardian) => ({
-      nationalId: guardian.nationalId,
-      email: guardian.email,
-      phone: guardian.phoneNumber,
-      requiresInterpreter: guardian.requiresInterpreter.includes(YES),
-      ...(guardian.requiresInterpreter.includes(YES) && {
-        preferredLanguage: guardian.preferredLanguage,
-      }),
-    })),
-    ...(reasonForApplication ===
-      ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
-      siblings: siblings.map((sibling) => sibling.nationalId),
-    }),
-    emergencyContacts: relatives.map((relative) => ({
-      nationalId: relative.nationalId,
-      phone: relative.phoneNumber,
-      relationTypeId: relative.relation,
-    })),
-    ...((primaryOrgId || currentSchoolId) && {
-      defaultOrganizationId: primaryOrgId || currentSchoolId,
-    }),
-    selectedOrganizationId:
-      (applyForPreferredSchool === YES
-        ? preferredSchool?.id
-        : selectedSchoolId) || '',
-    requestingMeeting: requestingMeeting === YES,
-    ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-      ? {
-          expectedStartDate: new Date(expectedStartDate || ''),
-          ...(getSelectedSchoolSubType(
-            application.answers,
-            application.externalData,
-          ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
-            temporaryStay === YES && {
-              expectedEndDate: new Date(expectedEndDate || ''),
-            }),
-        }
-      : {
-          expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
+  const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    approvalRequester: application.applicant,
+    registration: {
+      applicant: {
+        nationalId: childInfo?.nationalId || '',
+        ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
+          preferredName: childInfo?.preferredName,
+          pronounIds: childInfo?.pronouns,
         }),
-    reasonId: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
-    health: {
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
-        foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,
+      },
+      guardians: guardians.map((guardian) => ({
+        nationalId: guardian.nationalId,
+        email: guardian.email,
+        phone: guardian.phoneNumber,
+        requiresInterpreter: guardian.requiresInterpreter.includes(YES),
+        ...(guardian.requiresInterpreter.includes(YES) && {
+          preferredLanguage: guardian.preferredLanguage,
+        }),
+      })),
+      ...(reasonForApplication ===
+        ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
+        siblings: siblings.map((sibling) => sibling.nationalId),
       }),
-      ...(hasOtherAllergies?.includes(YES) && {
-        allergiesIds: otherAllergies,
+      emergencyContacts: relatives.map((relative) => ({
+        nationalId: relative.nationalId,
+        phone: relative.phoneNumber,
+        relationTypeId: relative.relation,
+      })),
+      ...((primaryOrgId || currentSchoolId) && {
+        defaultOrganizationId: primaryOrgId || currentSchoolId,
       }),
-      ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
-        hasOtherAllergies?.includes(YES)) && {
-        usesEpipen: usesEpiPen === YES,
-      }),
-      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
-      requestsMedicationAdministration:
-        requestsMedicationAdministration === YES,
-    },
-    social: getSocialProfile(application),
-    language: {
-      languageEnvironmentId: languageEnvironmentId,
-      signLanguage: signLanguage === YES,
-      ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+      selectedOrganizationId:
+        (applyForPreferredSchool === YES
+          ? preferredSchool?.id
+          : selectedSchoolId) || '',
+      requestingMeeting: requestingMeeting === YES,
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
-            preferredLanguage: preferredLanguage || '',
-            languages: selectedLanguages.map((language) => language.code),
+            expectedStartDate: expectedStartDate
+              ? new Date(expectedStartDate)
+              : new Date(),
+            ...(getSelectedSchoolSubType(
+              application.answers,
+              application.externalData,
+            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+              temporaryStay === YES && {
+                expectedEndDate: expectedEndDate
+                  ? new Date(expectedEndDate)
+                  : undefined,
+              }),
           }
         : {
-            preferredLanguage: 'is',
-            languages: ['is'],
+            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
+      reasonId: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
+      health: {
+        ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
+          foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,
+        }),
+        ...(hasOtherAllergies?.includes(YES) && {
+          allergiesIds: otherAllergies,
+        }),
+        ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
+          hasOtherAllergies?.includes(YES)) && {
+          usesEpipen: usesEpiPen === YES,
+        }),
+        hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+        requestsMedicationAdministration:
+          requestsMedicationAdministration === YES,
+      },
+      social: getSocialProfile(application),
+      language: {
+        languageEnvironmentId: languageEnvironmentId,
+        signLanguage: signLanguage === YES,
+        ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? {
+              preferredLanguage: preferredLanguage || '',
+              languages: selectedLanguages.map((language) => language.code),
+            }
+          : {
+              preferredLanguage: 'is',
+              languages: ['is'],
+            }),
+      },
     },
   }
 
