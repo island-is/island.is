@@ -52,7 +52,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   id = name,
   label,
   placeholderText,
-  locale = 'is',
+  locale = 'en',
   minDate,
   maxDate,
   excludeDates,
@@ -75,12 +75,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   showTimeInput = false,
   timeInputLabel = 'Tími:',
   readOnly = false,
-  calendarStartDay = 1,
+  calendarStartDay = 0,
   range = false,
   ranges,
   selectedRange,
   highlightWeekends = false,
   isClearable = false,
+  clearLabel,
   displaySelectInput = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
@@ -190,7 +191,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
-                  console.log('onChange range date:', date)
                   const [start, end] = date
                   if (start === null && end === null) {
                     setStartDate(null)
@@ -262,6 +262,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               backgroundColor={backgroundColor}
               icon={icon}
               isClearable={isClearable}
+              clearLabel={clearLabel}
               size={size}
               onClick={onInputClick}
               onClear={() => {
@@ -271,7 +272,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               }}
             />
           }
-          calendarStartDay={calendarStartDay}
+          calendarStartDay={highlightWeekends ? 1 : calendarStartDay}
           timeFormat={currentLanguage.timeFormat}
           timeInputLabel={timeInputLabel}
           showTimeInput={showTimeInput}
@@ -320,6 +321,7 @@ const CustomInput = forwardRef<
   InputProps & {
     placeholderText?: string
     isClearable?: boolean
+    clearLabel?: string
     onClear?: () => void
     onInputClick?: ReactDatePickerProps['onInputClick']
   }
@@ -347,7 +349,7 @@ const CustomInput = forwardRef<
               {
                 name: 'close',
                 type: 'outline',
-                label: 'Closeit',
+                label: props.clearLabel || 'Clear',
                 onClick: props.onClear,
                 disabled: props.disabled,
               },

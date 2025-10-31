@@ -47,6 +47,7 @@ export interface DatePickerProps {
   showTimeInput?: boolean
   timeInputLabel?: string
   isClearable?: boolean
+  clearLabel?: string
   highlightWeekends?: boolean
   displaySelectInput?: boolean // Whether month and year should be selectable via dropdowns
   /**

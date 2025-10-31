@@ -1,12 +1,19 @@
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { CalendarContainer } from 'react-datepicker'
 import { Box, Tag } from '../..'
 import * as styles from './DatePicker.css'
 
 interface CustomCalendarContainerProps {
-  children: React.ReactNode
+  children: ReactNode
   className?: string
   setDate: (startDate: Date | null, endDate?: Date | null) => void
   startDate: Date | null
@@ -16,7 +23,7 @@ interface CustomCalendarContainerProps {
   ranges?: { label: string; startDate: Date; endDate: Date }[]
 }
 
-const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
+const CustomCalendarContainer: FC<CustomCalendarContainerProps> = ({
   children,
   className,
   setDate,
@@ -26,11 +33,12 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
   highlightWeekends,
   displaySelectInput,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
   const [weekCount, setWeekCount] = useState(0)
   const [weekendWidth, setWeekendWidth] = useState(82) // Default width for weekends
-  const container = document.querySelector('.react-datepicker')
 
   useEffect(() => {
+    const container = containerRef.current
     if (highlightWeekends && container) {
       const updateWidth = () => {
         setWeekendWidth(
@@ -44,24 +52,28 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
 
       return () => window.removeEventListener('resize', updateWidth)
     }
-  }, [container, highlightWeekends])
+  }, [highlightWeekends])
 
-  const weeks = container?.querySelectorAll('.react-datepicker__week')
+  const getWeeks = useCallback(() => {
+    const container = containerRef.current
+    return container?.querySelectorAll('.react-datepicker__week')
+  }, [])
 
   useEffect(() => {
+    const weeks = getWeeks()
     if (weeks) {
       setWeekCount(weeks.length)
     }
-  }, [weeks])
+  }, [getWeeks, children])
 
   return (
     <CalendarContainer className={className}>
-      <div className={styles.parentContainer}>
+      <div ref={containerRef} className={styles.parentContainer}>
         <div
           style={
             highlightWeekends
               ? ({
-                  '--weekend-width': `${weekendWidth}px`,
+                  '--weekend-width': `${weekendWidth + 8}px`, // Add a little margin for breather
                 } as React.CSSProperties)
               : undefined
           }
