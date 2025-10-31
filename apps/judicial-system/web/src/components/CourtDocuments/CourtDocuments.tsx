@@ -31,6 +31,10 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
 
   const whoFiledOptions = [
     {
+      value: null,
+      label: 'Hreinsa val',
+    },
+    {
       value: UserRole.PROSECUTOR,
       label: formatMessage(courtDocuments.whoFiled.prosecutor),
     },
