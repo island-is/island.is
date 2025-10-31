@@ -132,21 +132,14 @@ const CountriesOfResidenceSchema = z.object({
 export const ParentInformationSchema = z
   .object({
     nationalId: z.string().optional(),
-    givenName: z.string().optional(),
-    familyName: z.string().optional(),
-    currentName: z.string(),
+    fullName: z.string(),
     wasRemoved: z.string().min(1).optional(),
   })
   .refine(
-    ({ wasRemoved, nationalId, givenName, familyName }) => {
+    ({ wasRemoved, nationalId, fullName }) => {
       return (
         wasRemoved === 'true' ||
-        (nationalId &&
-          nationalId.length > 0 &&
-          givenName &&
-          givenName.length > 0 &&
-          familyName &&
-          familyName.length > 0)
+        (nationalId && nationalId.length > 0 && fullName && fullName.length > 0)
       )
     },
     {

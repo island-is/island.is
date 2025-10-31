@@ -38,9 +38,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 20
     path: '/readiness'
@@ -48,7 +48,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 75
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -79,11 +79,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '1000m'
+    cpu: '1200m'
     memory: '768Mi'
   requests:
     cpu: '800m'
-    memory: '384Mi'
+    memory: '512Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
