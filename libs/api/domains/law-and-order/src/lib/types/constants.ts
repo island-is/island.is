@@ -116,3 +116,12 @@ export const POLICE_CASE_STATUS_INFO: PoliceCaseStatusInfoMap = {
     description: m.statusDescriptionSupremeCourtAppealRequest,
   },
 }
+
+export const POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP = {
+  [PoliceCaseStatusValueGroup.POLICE_ANALYSIS]: 1,
+  [PoliceCaseStatusValueGroup.CRIMINAL_INVESTIGATION]: 2,
+  [PoliceCaseStatusValueGroup.POST_INVESTIGATION]: 3,
+  [PoliceCaseStatusValueGroup.INDICTMENT]: 4,
+  [PoliceCaseStatusValueGroup.SENT_TO_COURT]: 5,
+  [PoliceCaseStatusValueGroup.UNKNOWN]: -1,
+}

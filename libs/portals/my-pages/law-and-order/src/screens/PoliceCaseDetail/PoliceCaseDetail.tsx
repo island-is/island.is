@@ -13,36 +13,13 @@ import {
   InfoLine,
   formatDate,
   LinkButton,
+  CardLoader,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
-import { LawAndOrderPoliceCaseStatusValueGroup } from '@island.is/api/schema'
-
-const POLICE_CASE_STATUS_TIMELINE_MILESTONES = [
-  {
-    group: LawAndOrderPoliceCaseStatusValueGroup.POLICE_ANALYSIS,
-    label: m.analysis,
-  },
-  {
-    group: LawAndOrderPoliceCaseStatusValueGroup.CRIMINAL_INVESTIGATION,
-    label: m.investigation,
-  },
-  {
-    group: LawAndOrderPoliceCaseStatusValueGroup.POST_INVESTIGATION,
-    label: m.investigationFinished,
-  },
-  {
-    group: LawAndOrderPoliceCaseStatusValueGroup.INDICTMENT,
-    label: m.indictment,
-  },
-  {
-    group: LawAndOrderPoliceCaseStatusValueGroup.SENT_TO_COURT,
-    label: m.caseForwarded,
-  },
-]
 
 type UseParams = {
   id: string
@@ -50,7 +27,7 @@ type UseParams = {
 
 const PoliceCaseDetail = () => {
   useNamespaces('sp.law-and-order')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { id: policeCaseNumber } = useParams() as UseParams
 
   const { data, loading, error } = useGetPoliceCaseDetailQuery({
@@ -58,6 +35,7 @@ const PoliceCaseDetail = () => {
       input: {
         caseNumber: policeCaseNumber,
       },
+      locale
     },
   })
 
@@ -78,10 +56,8 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
-  const currentCaseProgress =
-    POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(
-      (milestone) => milestone.group === policeCase?.status?.statusGroup,
-    ) ?? -1
+  const currentCaseProgress = policeCase?.status?.timelineStep ?? -1
+
   return (
     <>
       <IntroWrapper
@@ -151,15 +127,21 @@ const PoliceCaseDetail = () => {
             content={policeCase?.type ?? ''}
           />
         </InfoLineStack>
-        <Text variant="eyebrow" color="purple600">
-          Ferill
+
+        {!error && loading && <CardLoader/>}
+        {!error && !loading && data?.lawAndOrderPoliceCaseTimelineStructure?.milestones && <><Text variant="eyebrow" color="purple600">
+          {formatMessage(m.timeline)}
         </Text>
         <HistoryStepper
-          sections={POLICE_CASE_STATUS_TIMELINE_MILESTONES.map(
-            ({ label }, index) => {
-              const shouldDisplayText = currentCaseProgress === index
-              const isComplete = index <= currentCaseProgress
-              const section = isComplete ? (
+          sections={data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.map(
+            ({ label, step }, index) => {
+              const isActiveStep = currentCaseProgress === step
+              const stepIsCompleted = step <= currentCaseProgress
+
+              const firstStepDate = step === 1 && policeCase?.received ? formatDate(policeCase.received) : undefined
+              const lastActiveStepDate = step === currentCaseProgress && policeCase?.modified ? formatDate(policeCase.modified) : undefined
+
+              const section = stepIsCompleted ? (
                 <Text lineHeight="lg" fontWeight="semiBold">
                   {formatMessage(label)}
                 </Text>
@@ -173,27 +155,24 @@ const PoliceCaseDetail = () => {
                   key={`milestone-${index}`}
                   section={formatMessage(label)}
                   customSection={section}
-                  sectionIndex={index}
-                  isComplete={isComplete}
+                  sectionIndex={step}
+                  isComplete={stepIsCompleted}
                   isLast={
-                    index === POLICE_CASE_STATUS_TIMELINE_MILESTONES.length - 1
+                    step === (data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.length ?? 0) -1
                   }
                   description={
-                    shouldDisplayText ? (
-                      <Text>Lorem ipsum dolor sit amet</Text>
+                    (isActiveStep && policeCase?.status?.descriptionDisplayString) ? (
+                      <Text>{policeCase?.status?.descriptionDisplayString}</Text>
                     ) : undefined
                   }
-                  date={
-                    isComplete && policeCase?.modified
-                      ? formatDate(policeCase.modified)
-                      : undefined
-                  }
+                  date={firstStepDate ?? lastActiveStepDate}
                   forceRightAlignedDate
                 />
               )
             },
           )}
-        />
+        /></>
+        }
       </Stack>
     </>
   )

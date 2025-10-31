@@ -13,6 +13,9 @@ export class CaseStatus {
   statusGroup!: PoliceCaseStatusValueGroup
 
   @Field({ nullable: true })
+  timelineStep?: number
+
+  @Field({ nullable: true })
   headerDisplayString?: string
 
   @Field({ nullable: true })

@@ -15,6 +15,7 @@ import { Case } from '../models/police-cases/case.model'
 import { GetPoliceCaseInput } from '../dto/getPoliceCaseInput'
 import type { Locale } from '@island.is/shared/types'
 import { PoliceCasesService } from '../services/police-cases.service'
+import { CaseTimelineStructure } from '../models/police-cases/caseTimelineStructure.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -49,5 +50,17 @@ export class PoliceCasesResolver {
     input: GetPoliceCaseInput,
   ) {
     return this.policeCasesService.getCase(user, input.caseNumber, locale)
+  }
+
+  @Query(() => CaseTimelineStructure, {
+    name: 'lawAndOrderPoliceCaseTimelineStructure',
+    nullable: true,
+  })
+  @Audit()
+  getPoliceCaseTimelineStructure(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.policeCasesService.getCaseTimelineStructure(locale)
   }
 }

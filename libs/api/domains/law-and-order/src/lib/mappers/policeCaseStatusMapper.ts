@@ -1,6 +1,6 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { CaseStatus } from '../models/police-cases/caseStatus.model'
-import { POLICE_CASE_STATUS_INFO } from '../types/constants'
+import { POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP, POLICE_CASE_STATUS_INFO } from '../types/constants'
 import {
   PoliceCaseStatusValue,
   PoliceCaseStatusValueGroup,
@@ -77,6 +77,7 @@ export const mapPoliceCaseStatus = (
   return {
     value: statusValue,
     statusGroup: group,
+    timelineStep: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[group],
     headerDisplayString: header ? formatMessage(header) : undefined,
     descriptionDisplayString: description
       ? formatMessage(description)

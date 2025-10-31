@@ -1,4 +1,4 @@
-query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
+query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!, $locale: String) {
   lawAndOrderPoliceCase(input: $input) {
     __typename
     cacheId
@@ -8,6 +8,7 @@ query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
       __typename
       value
       statusGroup
+      timelineStep
       headerDisplayString
       descriptionDisplayString
     }
@@ -17,5 +18,14 @@ query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
     received
     receivedLocation
     modified
+  }
+  lawAndOrderPoliceCaseTimelineStructure(locale: $locale) {
+    milestones {
+      __typename
+      cacheId
+      label
+      statusGroup
+      step
+    }
   }
 }

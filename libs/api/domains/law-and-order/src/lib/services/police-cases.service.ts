@@ -5,8 +5,11 @@ import { mapPoliceCase } from '../mappers/policeCaseMapper'
 import { isDefined } from '@island.is/shared/utils'
 import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
 import { IntlService } from '@island.is/cms-translations'
-import { NAMESPACE } from '../types/constants'
+import { NAMESPACE, POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP } from '../types/constants'
 import type { Locale } from '@island.is/shared/types'
+import { m } from '../messages'
+import { PoliceCaseStatusValueGroup } from '../types/enums'
+import { CaseTimelineStructure } from '../models/police-cases/caseTimelineStructure.model'
 
 @Injectable()
 export class PoliceCasesService {
@@ -60,5 +63,45 @@ export class PoliceCasesService {
     return policeCase
       ? mapPoliceCase(policeCase, locale, formatMessage)
       : undefined
+  }
+
+  async getCaseTimelineStructure(locale: Locale): Promise<CaseTimelineStructure> {
+     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
+
+    return {
+      milestones: [
+        {
+          cacheId: `first-step-${locale}`,
+          step: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[PoliceCaseStatusValueGroup.POLICE_ANALYSIS],
+          statusGroup: PoliceCaseStatusValueGroup.POLICE_ANALYSIS,
+          label: formatMessage(m.policeAnalysis)
+        },
+        {
+          cacheId: `second-step-${locale}`,
+          step: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[PoliceCaseStatusValueGroup.CRIMINAL_INVESTIGATION],
+          statusGroup: PoliceCaseStatusValueGroup.CRIMINAL_INVESTIGATION,
+          label: formatMessage(m.criminalInvestigation)
+        },
+        {
+          cacheId: `third-step-${locale}`,
+          step: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[PoliceCaseStatusValueGroup.POST_INVESTIGATION],
+          statusGroup: PoliceCaseStatusValueGroup.POST_INVESTIGATION,
+          label: formatMessage(m.postInvestigation,)
+        },
+        {
+          cacheId: `fourth-step-${locale}`,
+          step: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[PoliceCaseStatusValueGroup.INDICTMENT],
+          statusGroup: PoliceCaseStatusValueGroup.INDICTMENT,
+          label: formatMessage(m.indictment)
+        },
+        {
+          cacheId: `fifth-step-${locale}`,
+          step: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[PoliceCaseStatusValueGroup.SENT_TO_COURT],
+          statusGroup: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+          label: formatMessage(m.caseSentToCourt)
+        },
+      ]
+    }
+
   }
 }
