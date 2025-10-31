@@ -6,7 +6,7 @@ import {
   GetOrganizationsByTypeRequest,
   KeyOption,
   OrganizationModel,
-  RegistrationInput,
+  RegistrationApplicationInput,
   UserModel,
 } from '../../gen/fetch'
 
@@ -34,7 +34,7 @@ export class FriggClientService {
       type: input?.type,
       municipalityCode: input?.municipalityCode,
       gradeLevels: input?.gradeLevels,
-      limit: 1000, //Frigg is restricting to 100 by default
+      limit: 1000, // Frigg is restricting to 100 by default
     })
   }
 
@@ -69,10 +69,10 @@ export class FriggClientService {
 
   sendApplication(
     user: User,
-    form: RegistrationInput,
+    form: RegistrationApplicationInput,
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
-      registrationApplicationInput: { registration: form },
+      registrationApplicationInput: form,
     })
   }
 }

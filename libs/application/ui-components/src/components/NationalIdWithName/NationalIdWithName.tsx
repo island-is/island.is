@@ -131,6 +131,9 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
+    if (!nationalIdInput) {
+      return
+    }
     if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
@@ -239,6 +242,9 @@ export const NationalIdWithName: FC<
 
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
+    if (!nationalIdInput) {
+      return
+    }
     if (nationalIdInput.length !== 10) {
       // Clear name field whenever national id is not complete
       // avoids name lingering from previous valid national ids
