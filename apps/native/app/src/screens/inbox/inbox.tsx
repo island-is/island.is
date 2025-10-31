@@ -8,7 +8,6 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
 import {
@@ -564,7 +563,7 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
 
   return (
     <>
-      <SafeAreaView>
+      <View>
         <Animated.FlatList
           ref={flatListRef}
           scrollEventThrottle={16}
@@ -764,7 +763,7 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
             ) : null
           }
         />
-      </SafeAreaView>
+      </View>
       {selectState && selectedItems.length ? (
         <ActionBar
           loading={bulkSelectActionLoading}

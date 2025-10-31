@@ -25,7 +25,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
-import { isAndroid } from '../../utils/devices'
+import { isAndroid, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -75,6 +75,13 @@ const iconInsets = {
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
 }
 
+const iconActive = isIosLiquidGlassEnabled
+  ? require('../../assets/icons/home-icon-active.png')
+  : require('../../assets/icons/tabbar-home-selected.png')
+const iconInactive = isIosLiquidGlassEnabled
+  ? require('../../assets/icons/home-icon-inactive.png')
+  : require('../../assets/icons/tabbar-home.png')
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl) => ({
@@ -91,8 +98,8 @@ const { useNavigationOptions, getNavigationOptions } =
         textColor: isAndroid
           ? theme.shade.foreground
           : { light: 'black', dark: 'white' },
-        icon: require('../../assets/icons/tabbar-home.png'),
-        selectedIcon: require('../../assets/icons/tabbar-home-selected.png'),
+        icon: iconInactive,
+        selectedIcon: iconActive,
       },
     }),
     {
