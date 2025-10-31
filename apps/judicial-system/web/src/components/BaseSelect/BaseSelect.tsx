@@ -38,8 +38,6 @@ const BaseSelect: FC<Props> = (props) => {
     onChange,
   } = props
 
-  console.log(value)
-
   return (
     <Select
       classNamePrefix="court-documents-select"
