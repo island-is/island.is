@@ -1,11 +1,11 @@
 import { ApolloError } from '@apollo/client'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
+  Animated,
   Image,
   RefreshControl,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -38,6 +38,7 @@ import {
   Input,
   InputRow,
   Problem,
+  TopLine,
   Typography,
 } from '../../ui'
 
@@ -169,6 +170,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -268,7 +270,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
   return (
     <Host>
-      <ScrollView
+      <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
@@ -276,6 +278,12 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           paddingHorizontal: theme.spacing[2],
           paddingBottom: theme.spacing[4],
         }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
       >
         <Heading>
           <FormattedMessage
@@ -746,7 +754,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             noBorder
           />
         </InputRow>
-      </ScrollView>
+      </Animated.ScrollView>
+      <TopLine scrollY={scrollY} />
     </Host>
   )
 }

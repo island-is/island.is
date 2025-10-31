@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, Platform, SafeAreaView, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
+import { isIosLiquidGlassEnabled } from '../../../utils/devices'
 import { dynamicColor } from '../../utils'
 
 const Host = styled(Animated.View)`
@@ -15,6 +16,8 @@ interface TopLineProps {
 }
 
 export function TopLine({ scrollY }: TopLineProps) {
+  if (isIosLiquidGlassEnabled) return null
+
   const ref = useRef<SafeAreaView>(null)
   const offset = useRef(new Animated.Value(0)).current
 
