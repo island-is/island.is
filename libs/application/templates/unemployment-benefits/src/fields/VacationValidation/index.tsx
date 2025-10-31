@@ -27,7 +27,7 @@ export const VacationValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     async (input: {
       hasUnpaidVacationTime: boolean
       unpaidVacations?: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnpaidVacationDTO>
-      resignationEnds?: Date
+      resignationEnds?: string
     }) => {
       const { data } = await getIsValidVacationInformation({
         variables: { input },
@@ -46,12 +46,8 @@ export const VacationValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
     const unpaidVacations =
       vacationInfo?.vacationDays?.map((vacation) => ({
-        unpaidVacationStart: vacation.startDate
-          ? new Date(vacation.startDate)
-          : undefined,
-        unpaidVacationEnd: vacation.endDate
-          ? new Date(vacation.endDate)
-          : undefined,
+        unpaidVacationStart: vacation.startDate,
+        unpaidVacationEnd: vacation.endDate,
         unpaidVacationDays: parseInt(vacation.amount || ''),
       })) || []
 
@@ -72,9 +68,7 @@ export const VacationValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       const response = await getIsVacationValidCallback({
         hasUnpaidVacationTime: hasUnpaidVacationTime,
         unpaidVacations: unpaidVacations.filter((x) => !!x.unpaidVacationDays),
-        resignationEnds: predictedEndDate
-          ? new Date(predictedEndDate)
-          : new Date(),
+        resignationEnds: predictedEndDate || '',
       })
 
       if (
