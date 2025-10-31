@@ -298,8 +298,6 @@ export class HealthDirectorateHealthService {
   }
 
   public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
-    console.log('toNationalId', toNationalId)
-    console.log('nationalId Length', toNationalId.length)
     const input: DeactivatePrescriptionCommissionDto = {
       toNationalId:
         toNationalId.length === 9 ? `0${toNationalId}` : toNationalId,
@@ -311,7 +309,6 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
-    console.log('result', result)
     return result
   }
 }
