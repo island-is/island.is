@@ -116,6 +116,7 @@ const CourtRecord: FC = () => {
                 caseId={workingCase.id}
                 title="Þingbók - PDF"
                 pdfType="courtRecord"
+                elementId="Þingbók"
                 disabled={!hasGeneratedCourtRecord}
               />
             </Box>

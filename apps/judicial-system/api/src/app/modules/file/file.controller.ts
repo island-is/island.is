@@ -33,7 +33,7 @@ export class FileController {
     private readonly logger: Logger,
   ) {}
 
-  @Get('request')
+  @Get(['request', 'request/:fileName'])
   @Header('Content-Type', 'application/pdf')
   getRequestPdf(
     @Param('id') id: string,
@@ -56,7 +56,9 @@ export class FileController {
 
   @Get([
     'caseFilesRecord/:policeCaseNumber',
+    'caseFilesRecord/:policeCaseNumber/:fileName',
     'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber/:fileName',
   ])
   @Header('Content-Type', 'application/pdf')
   getCaseFilesRecordPdf(
@@ -117,7 +119,7 @@ export class FileController {
     )
   }
 
-  @Get('ruling')
+  @Get(['ruling', 'ruling/:fileName'])
   @Header('Content-Type', 'application/pdf')
   getRulingPdf(
     @Param('id') id: string,
@@ -138,7 +140,7 @@ export class FileController {
     )
   }
 
-  @Get('custodyNotice')
+  @Get(['custodyNotice', 'custodyNotice/:fileName'])
   @Header('Content-Type', 'application/pdf')
   getCustodyNoticePdf(
     @Param('id') id: string,
@@ -232,7 +234,10 @@ export class FileController {
     )
   }
 
-  @Get('subpoenaServiceCertificate/:defendantId/:subpoenaId')
+  @Get([
+    'subpoenaServiceCertificate/:defendantId/:subpoenaId',
+    'subpoenaServiceCertificate/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaServiceCertificatePdf(
     @Param('id') id: string,
@@ -257,7 +262,10 @@ export class FileController {
     )
   }
 
-  @Get('verdictServiceCertificate/:defendantId')
+  @Get([
+    'verdictServiceCertificate/:defendantId',
+    'verdictServiceCertificate/:defendantId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getVerdictServiceCertificatePdf(
     @Param('id') id: string,
