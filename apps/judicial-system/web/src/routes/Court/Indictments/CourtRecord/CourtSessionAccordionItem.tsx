@@ -317,7 +317,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     fileId: string,
     update: { name?: string; submittedBy?: string },
   ) => {
-    if (!update.name?.trim() && !update.submittedBy) {
+    if (!update.name?.trim() && update.submittedBy === undefined) {
       return
     }
 
