@@ -50,7 +50,9 @@ const NewPermit: React.FC = () => {
             ) {
               setFormState(undefined)
               toast.success(formatMessage(messages.permitCreated))
-              navigate(HealthPaths.HealthPatientDataPermits)
+              navigate(HealthPaths.HealthPatientDataPermits, {
+                replace: true,
+              })
             } else toast.error(formatMessage(messages.permitCreatedError))
           })
           .catch(() => {
@@ -98,6 +100,8 @@ const NewPermit: React.FC = () => {
           onClose={() => setOpenModal(false)}
           loading={loading}
           countries={formState?.countries || []}
+          validFrom={formState?.dates.validFrom?.toLocaleDateString()}
+          validTo={formState?.dates.validTo?.toLocaleDateString()}
         />
       )}
     </IntroWrapper>

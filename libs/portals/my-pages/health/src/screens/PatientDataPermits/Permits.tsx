@@ -28,15 +28,28 @@ const PatientDataPermits: React.FC = () => {
   const [showExipredPermits, setShowExpiredPermits] = React.useState(false)
 
   const { data, loading, error } = useGetPatientDataPermitsQuery({
-    variables: { locale: lang },
+    variables: {
+      locale: lang,
+      input: {
+        statuses: showExipredPermits
+          ? [
+              HealthDirectoratePermitStatus.active,
+              HealthDirectoratePermitStatus.expired,
+              HealthDirectoratePermitStatus.inactive,
+              HealthDirectoratePermitStatus.unknown,
+              HealthDirectoratePermitStatus.awaitingApproval,
+            ]
+          : [
+              HealthDirectoratePermitStatus.active,
+              HealthDirectoratePermitStatus.awaitingApproval,
+            ],
+      },
+    },
+    fetchPolicy: 'cache-and-network',
   })
-  const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
 
-  const filteredData = data?.healthDirectoratePatientDataPermits.data.filter(
-    (permit) =>
-      showExipredPermits ||
-      permit.status === HealthDirectoratePermitStatus.active,
-  )
+  const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
+  const filteredData = data?.healthDirectoratePatientDataPermits.data
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
@@ -101,7 +114,8 @@ const PatientDataPermits: React.FC = () => {
               <ActionCard
                 key={permit.id}
                 backgroundColor={
-                  permit.status === HealthDirectoratePermitStatus.unknown //TODO: Replace with "pending" status
+                  permit.status ===
+                  HealthDirectoratePermitStatus.awaitingApproval
                     ? 'blue'
                     : 'white'
                 }
@@ -131,6 +145,13 @@ const PatientDataPermits: React.FC = () => {
                     ? {
                         label: formatMessage(messages.withdrawn),
                         variant: 'purple',
+                        outlined: true,
+                      }
+                    : permit.status ===
+                      HealthDirectoratePermitStatus.awaitingApproval
+                    ? {
+                        label: formatMessage(messages.awaitingApproval),
+                        variant: 'darkerBlue',
                         outlined: true,
                       }
                     : {

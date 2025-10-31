@@ -1,4 +1,5 @@
 fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
+  cacheId
   id
   status
   createdAt
@@ -10,8 +11,11 @@ fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
   }
 }
 
-query GetPatientDataPermits($locale: String) {
-  healthDirectoratePatientDataPermits(locale: $locale) {
+query GetPatientDataPermits(
+  $locale: String
+  $input: HealthDirectoratePatientDataPermitsInput!
+) {
+  healthDirectoratePatientDataPermits(locale: $locale, input: $input) {
     data {
       ...PatientDataPermitFields
     }

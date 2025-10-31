@@ -1965,6 +1965,10 @@ export const messages = defineMessages({
     defaultMessage: 'Óvirk',
     id: 'sp.health:inactive',
   },
+  awaitingApproval: {
+    defaultMessage: 'Bíður gildistöku',
+    id: 'sp.health:awaiting-approval',
+  },
   filterByCountry: {
     defaultMessage: 'Sía eftir landi',
     id: 'sp.health:filter-by-country',
