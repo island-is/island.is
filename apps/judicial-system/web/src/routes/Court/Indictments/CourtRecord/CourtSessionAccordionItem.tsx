@@ -15,6 +15,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Icon,
   Input,
   RadioButton,
   Select,
@@ -30,6 +31,7 @@ import {
 import {
   BlueBox,
   DateTime,
+  FileNotFoundModal,
   FormContext,
   Modal,
   MultipleValueList,
@@ -43,12 +45,14 @@ import {
   CourtSessionResponse,
   CourtSessionRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useFileList,
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -105,6 +109,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { index, courtSession, isExpanded, onToggle } = props
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
+    caseId: workingCase.id,
+  })
   const { courtDocument } = useCourtDocuments()
   const { updateCourtSession, deleteCourtSession } = useCourtSessions()
   const [readyForInitialization, setReadyForInitialization] = useState(false)
@@ -208,6 +215,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const defaultJudge = judges?.find(
     (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
   )
+
+  const handleOnOpen = (id: string) => {
+    const filedDocument =
+      courtSession.filedDocuments?.find((doc) => doc.id === id) ??
+      workingCase.unfiledCourtDocuments?.find((doc) => doc.id === id)
+
+    if (!filedDocument) {
+      return
+    }
+
+    if (filedDocument.documentType === CourtDocumentType.UPLOADED_DOCUMENT) {
+      return onOpen(filedDocument.caseFileId ?? '')
+    }
+
+    if (filedDocument.documentType === CourtDocumentType.GENERATED_DOCUMENT) {
+      window.open(`${api.apiUrl}${filedDocument.generatedPdfUri}`, '_blank')
+    }
+  }
 
   const handleDeleteFile = async (file: TUploadFile) => {
     if (!file.id) {
@@ -760,9 +785,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 id: item.id,
                                 displayText: item.name,
                                 name: item.name,
+                                canOpen:
+                                  item.documentType !==
+                                  CourtDocumentType.EXTERNAL_DOCUMENT,
                                 canEdit: ['fileName'],
                               }}
                               backgroundColor="white"
+                              onOpen={handleOnOpen}
                               onRename={(id: string, newName: string) => {
                                 handleRename(courtSession.id, id, newName)
                               }}
@@ -831,12 +860,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           columnGap={2}
                           rowGap={2}
                         >
-                          {workingCase.unfiledCourtDocuments?.map((file) => (
+                          {workingCase.unfiledCourtDocuments?.map((item) => (
                             <Box
                               display="flex"
                               alignItems="center"
                               columnGap={2}
-                              key={file.id}
+                              key={item.id}
                             >
                               <Box
                                 flexGrow={1}
@@ -845,14 +874,28 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 border="standard"
                                 borderColor="blue200"
                               >
-                                <Box paddingX={2} paddingY={2}>
-                                  <Text variant="h5">{file.name}</Text>
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  component="button"
+                                  onClick={() => handleOnOpen(item.id)}
+                                  paddingX={2}
+                                  paddingY={2}
+                                >
+                                  <Text variant="h5">{item.name}</Text>
+                                  <Box marginLeft={1}>
+                                    <Icon
+                                      icon="open"
+                                      type="outline"
+                                      size="small"
+                                    />
+                                  </Box>
                                 </Box>
                               </Box>
                               <Tag
                                 outlined
                                 variant="darkerBlue"
-                                onClick={() => handleFileCourtDocument(file)}
+                                onClick={() => handleFileCourtDocument(item)}
                                 disabled={
                                   courtDocument.isLoading ||
                                   courtSession.isConfirmed ||
@@ -1180,6 +1223,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           />
         )}
       </Box>
+      <AnimatePresence>
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
+      </AnimatePresence>
     </AccordionItem>
   )
 }
