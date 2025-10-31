@@ -128,7 +128,6 @@ const PatientDataPermits: React.FC = () => {
                   toDate: formatDate(permit.validTo),
                 })}
                 tag={
-                  // TODO add "pending" status when available
                   permit.status === HealthDirectoratePermitStatus.active
                     ? {
                         label: formatMessage(messages.active),

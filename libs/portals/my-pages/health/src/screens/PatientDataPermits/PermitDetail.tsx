@@ -139,7 +139,7 @@ const PermitDetail: React.FC = () => {
             />
             <InfoLine
               label={formatMessage(messages.patientDataShared)}
-              content={formatMessage(messages.patientDataSharedDescription)} // TODO: Fetch from service ???
+              content={formatMessage(messages.patientDataSharedDescription)}
               loading={loading}
             />
           </InfoLineStack>
