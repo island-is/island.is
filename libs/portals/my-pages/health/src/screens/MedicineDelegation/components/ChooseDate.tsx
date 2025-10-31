@@ -13,12 +13,10 @@ import { addMonths, addYears, today } from '../../../utils/dates'
 import { DelegationState } from '../../../utils/types'
 
 interface SecondStepProps {
-  onClick: () => void
   formState?: DelegationState
   setFormState: Dispatch<SetStateAction<DelegationState | undefined>>
 }
 
-// Choose Date
 const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
   const { formatMessage } = useLocale()
 

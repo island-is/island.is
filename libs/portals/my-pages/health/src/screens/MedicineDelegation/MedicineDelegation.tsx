@@ -26,7 +26,7 @@ import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
-  const [showExipredPermits, setShowExpiredPermits] = useState(false)
+  const [showExpiredPermits, setShowExpiredPermits] = useState(false)
 
   const { data, loading, error } = useGetMedicineDelegationsQuery({
     variables: {
@@ -38,7 +38,7 @@ const MedicineDelegation = () => {
   })
   const filteredData =
     data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
-      showExipredPermits ? item : item.isActive,
+      showExpiredPermits ? item : item.isActive,
     )
 
   return (
@@ -95,9 +95,9 @@ const MedicineDelegation = () => {
             </Text>
             <ToggleSwitchButton
               className={styles.toggleButton}
-              label={formatMessage(messages.showExipredPermits)}
-              onChange={() => setShowExpiredPermits(!showExipredPermits)}
-              checked={showExipredPermits}
+              label={formatMessage(messages.showExpiredPermits)}
+              onChange={() => setShowExpiredPermits(!showExpiredPermits)}
+              checked={showExpiredPermits}
             />
           </Box>
 
@@ -114,9 +114,11 @@ const MedicineDelegation = () => {
                       : formatMessage(messages.pickupMedicine),
                   })}
                   subText={
-                    formatMessage(messages.medicineValidTo) +
-                    ' ' +
-                    formatDate(item.dates?.from)
+                    item.dates?.to
+                      ? formatMessage(messages.medicineValidTo) +
+                        ' ' +
+                        formatDate(item.dates.to)
+                      : undefined
                   }
                   tag={{
                     outlined: false,

@@ -20,7 +20,6 @@ interface FirstStepProps {
   setFormState: Dispatch<SetStateAction<DelegationState | undefined>>
 }
 
-// Choose Person by national ID
 const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
   const { formatMessage } = useLocale()
   const userProfile = useUserInfo()
@@ -65,7 +64,6 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
                 name="nationalId"
                 value={formState?.nationalId}
                 onChange={(e) => {
-                  console.log(e.target.value)
                   if (e.target.value.length === 10) {
                     getPersonById({
                       variables: { input: { nationalId: e.target.value } },
@@ -95,7 +93,13 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
         </GridContainer>
       </Box>
       <Box>
-        <Checkbox label={formatMessage(messages.medicineDelegationLookup)} />
+        <Checkbox
+          label={formatMessage(messages.medicineDelegationLookup)}
+          checked={Boolean(formState?.lookup)}
+          onChange={(e) =>
+            setFormState({ ...formState, lookup: e.target.checked })
+          }
+        />
       </Box>
     </Box>
   )

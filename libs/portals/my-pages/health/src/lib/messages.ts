@@ -1843,7 +1843,7 @@ export const messages = defineMessages({
       'Þú getur valið ákveðið tímabil eða allt að 3 ár fram í tímann.',
     id: 'sp.health:how-long-description',
   },
-  showExipredPermits: {
+  showExpiredPermits: {
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
   },

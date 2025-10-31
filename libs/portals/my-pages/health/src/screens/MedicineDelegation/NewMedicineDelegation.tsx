@@ -15,7 +15,7 @@ import FirstStep from './components/ChoosePerson'
 import { usePostMedicineDelegationMutation } from './MedicineDelegation.generated'
 
 const NewMedicineDelegation = () => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const [step, setStep] = useState<number>(1)
   const [formState, setFormState] = useState<DelegationState>()
   const navigate = useNavigate()
@@ -64,11 +64,7 @@ const NewMedicineDelegation = () => {
         <FirstStep setFormState={setFormState} formState={formState} />
       )}
       {step === 2 && (
-        <SecondStep
-          onClick={() => submit()}
-          setFormState={setFormState}
-          formState={formState}
-        />
+        <SecondStep setFormState={setFormState} formState={formState} />
       )}
       <Box
         display="flex"
