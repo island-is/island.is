@@ -106,14 +106,19 @@ export const mapPermitStatus = (
       return PermitStatusEnum.expired
     case EuPatientConsentStatus.INACTIVE:
       return PermitStatusEnum.inactive
-
+    case EuPatientConsentStatus.PENDING:
+      return PermitStatusEnum.awaitingApproval
     default:
       return PermitStatusEnum.unknown
   }
 }
 
-export const mapPermit = (permit: EuPatientConsentDto): Permit => {
+export const mapPermit = (
+  permit: EuPatientConsentDto,
+  locale: string,
+): Permit => {
   return {
+    cacheId: `${permit.id}-${locale}`,
     id: permit.id ?? '',
     status: mapPermitStatus(permit.status),
     createdAt: permit.createdAt,

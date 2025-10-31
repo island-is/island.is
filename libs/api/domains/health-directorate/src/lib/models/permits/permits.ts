@@ -5,6 +5,9 @@ import { Country } from './country.model'
 @ObjectType('HealthDirectoratePatientDataPermit')
 export class Permit {
   @Field(() => ID)
+  cacheId!: string
+
+  @Field()
   id!: string
 
   @Field(() => PermitStatusEnum)
