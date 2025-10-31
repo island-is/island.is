@@ -532,15 +532,20 @@ export const serviceSetup = (services: {
       },
     })
     .readiness('/health')
-    .liveness('/liveness')
+    .liveness({
+      path: '/liveness',
+      initialDelaySeconds: 10,
+      timeoutSeconds: 5,
+    })
     .resources({
-      limits: { cpu: '1200m', memory: '3200Mi' },
-      requests: { cpu: '800m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '2500Mi' },
+      requests: { cpu: '800m', memory: '1500Mi' },
     })
     .replicaCount({
-      default: 2,
+      default: 3,
       max: 50,
-      min: 2,
+      min: 3,
+      cpuAverageUtilization: 75,
     })
     .grantNamespaces(
       'nginx-ingress-external',
