@@ -29,7 +29,6 @@ import {
 } from '@island.is/application/templates/unemployment-benefits'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
@@ -78,7 +77,7 @@ export const getJobWishes = (answers: FormValue) => {
     requestedWorkRatio: parseInt(jobWishes?.wantedJobPercentage || ''),
     requestedWorkRatioType:
       jobWishes?.wantedJobPercentage === '100' ? '0' : '1',
-    canStartAt: new Date(jobWishes?.jobTimelineStartDate || ''),
+    canStartAt: jobWishes?.jobTimelineStartDate,
     alternateServiceAreas: jobWishes?.location,
     introductoryMeetingLanguage: introductoryMeeting?.language,
   }
@@ -156,8 +155,8 @@ export const getJobCareer = (
     return {
       employerSSN: job.employer?.nationalId,
       employer: job.employer?.name,
-      started: new Date(job.startDate || ''),
-      quit: new Date(job.endDate || ''),
+      started: job.startDate,
+      quit: job.endDate,
       workRatio: parseInt(job.percentage || ''),
       workHours: workHours || '',
       salary: salary || '',
@@ -323,8 +322,8 @@ export const getEmployerSettlement = (answers: FormValue) => {
     unpaidVacations: vacationInformation?.vacationDays?.map((vacation) => {
       return {
         unpaidVacationDays: parseInt(vacation.amount || ''),
-        unpaidVacationStart: new Date(vacation.startDate || ''),
-        unpaidVacationEnd: new Date(vacation.endDate || ''),
+        unpaidVacationStart: vacation.startDate,
+        unpaidVacationEnd: vacation.endDate,
       }
     }),
     //This is definitely in the wrong place but to hard to fix in Galdur at this moment so it remains here
@@ -332,51 +331,30 @@ export const getEmployerSettlement = (answers: FormValue) => {
       currentSituation?.status === EmploymentStatus.EMPLOYED &&
       currentSituation?.currentSituationRepeater &&
       currentSituation?.currentSituationRepeater.length > 0
-        ? new Date(
-            currentSituation.currentSituationRepeater[0].predictedEndDate || '',
-          )
+        ? currentSituation.currentSituationRepeater[0].predictedEndDate
         : null,
   }
 }
 
-export const getLanguageSkills = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
+export const getLanguageSkills = (answers: FormValue) => {
   const languageSkills = getValueViaPath<Array<LanguagesInAnswers>>(
     answers,
     'languageSkills',
   )
   return {
     languages: languageSkills?.map((language, index) => {
-      const languages =
-        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
-          externalData,
-          'unemploymentApplication.data.supportData.languageKnowledge',
-        ) || []
-
       // this is here because of some bug in readOnly for selectController that always returns value as null even though defaultValue is set
-      const languageId = language
-        ? language.language
-        : index === 0
-        ? LanguageIds.ICELANDIC
-        : index === 1
-        ? LanguageIds.ENGLISH
-        : ''
-      const languageName = language
-        ? languages.find((x) => x.id === language.language)?.name
-        : index === 0
-        ? 'Íslenska'
-        : index === 1
-        ? 'Enska'
-        : ''
+      const languageId =
+        index === 0
+          ? LanguageIds.ICELANDIC
+          : index === 1
+          ? LanguageIds.ENGLISH
+          : language && language.language
+          ? language.language
+          : ''
+
       return {
         id: languageId,
-        name: languageName,
-        readOnly:
-          //These are the id's from icelandic and english from supportData
-          language.language === LanguageIds.ICELANDIC ||
-          language.language === LanguageIds.ENGLISH,
         knowledge: language.skill,
         required:
           //These are the id's from icelandic and english from supportData
@@ -509,8 +487,8 @@ export const getPensionAndOtherPayments = (
           .map((payment) => {
             return {
               incomeTypeId: payment.subType,
-              periodFrom: payment.dateFrom ? new Date(payment.dateFrom) : null,
-              periodTo: payment.dateTo ? new Date(payment.dateTo) : null,
+              periodFrom: payment.dateFrom,
+              periodTo: payment.dateTo,
               estimatedIncome: parseInt(payment.paymentAmount || ''),
               realIncome: parseInt(payment.paymentAmount || ''),
             }
