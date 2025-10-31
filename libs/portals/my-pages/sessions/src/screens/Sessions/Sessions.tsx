@@ -203,7 +203,7 @@ const Sessions = () => {
               display={'flex'}
               justifyContent={'center'}
             >
-              {customLoading && <LoadingDots large />}
+              {customLoading && <LoadingDots size="large" />}
             </Box>
           }
         >

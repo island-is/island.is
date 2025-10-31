@@ -131,7 +131,10 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
-    if (!nationalIdInput || nationalIdInput.length !== 10) return
+    if (!nationalIdInput) {
+      return
+    }
+    if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
       coreErrorMessages.nationalRegistryNameNotFoundForNationalId,

@@ -107,6 +107,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
 
@@ -128,6 +129,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     console.log('personalInformationFromData', personalInformationFromData)
 
     //personalInformation
+
     const personalInformationFromAnswers = getPersonalInformation(answers)
     const personalInformation = {
       ...personalInformationFromAnswers,
@@ -287,7 +289,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const employerSettlement = getEmployerSettlement(answers)
 
     //languageKnowledge
-    const languageKnowledge = getLanguageSkills(answers, externalData)
+    const languageKnowledge = getLanguageSkills(answers)
 
     //workingCapacity
     const workingCapacity = {
@@ -388,6 +390,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
           {
             unemploymentApplication: {
+              applicationInformation: {
+                applicationLanguage: currentUserLocale === 'is' ? 'IS' : 'EN',
+              },
               personalInformation: personalInformation,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
