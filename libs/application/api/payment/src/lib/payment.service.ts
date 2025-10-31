@@ -304,7 +304,10 @@ export class PaymentService {
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
         },
       })
-    console.log('paymentFlowUrls', paymentFlowUrls)
+    console.log('--------------------------------')
+    console.log('paymentFlowUrls')
+    console.dir(paymentFlowUrls, { depth: null })
+    console.log('--------------------------------')
     paymentUrl =
       locale && locale === 'en'
         ? paymentFlowUrls.urls.en
