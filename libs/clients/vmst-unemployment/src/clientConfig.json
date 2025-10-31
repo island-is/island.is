@@ -1261,12 +1261,12 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "canStart": {
             "type": "string",
             "description": "Dagsetning Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "createdBy": {
@@ -1277,7 +1277,7 @@
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -1288,7 +1288,7 @@
           "confirmed": {
             "type": "string",
             "description": "Dagsetning Staðfestingar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "pendingStatusChange": {
@@ -1482,18 +1482,18 @@
           "date": {
             "type": "string",
             "description": "Dagsetning úrskurðar",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodDate": {
             "type": "string",
             "description": "Dagsetning bótatímabils síðasta úrskurðar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStart": {
             "type": "string",
             "description": "Getur byrjað dagsetning síðasta úrskurðar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -1512,7 +1512,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "grantRatio": {
             "type": "integer",
@@ -1521,7 +1521,7 @@
           },
           "canStart": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartDateChangeReason": {
@@ -1530,7 +1530,7 @@
           },
           "grantPeriodDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "grantPeriodLength": {
@@ -1543,7 +1543,7 @@
           },
           "decisionAppliesDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "decisionAppliesDateChangeReason": {
@@ -1607,7 +1607,7 @@
           },
           "dateOfBirth": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "socialSecurityNumber": {
             "nullable": true,
@@ -1742,7 +1742,7 @@
               },
               "birthDate": {
                 "type": "string",
-                "format": "date-time"
+                "format": ""
               },
               "isIndividual": {
                 "type": "boolean"
@@ -1856,7 +1856,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "createdBy": {
             "type": "string",
@@ -1868,7 +1868,7 @@
           },
           "lastSeenDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "data": {
@@ -1915,7 +1915,7 @@
           },
           "processedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "processedById": {
@@ -2077,7 +2077,7 @@
           "endDate": {
             "type": "string",
             "description": "Starfslok",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "isFromEmployment": {
@@ -2126,13 +2126,13 @@
           "unpaidVacationStart": {
             "type": "string",
             "description": "Orlof hófst",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "unpaidVacationEnd": {
             "type": "string",
             "description": "Orlof endaði",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -2195,7 +2195,7 @@
           "dateOfBirth": {
             "type": "string",
             "description": "Fæðingardagur",
-            "format": "date-time"
+            "format": ""
           },
           "currentAddressDifferent": {
             "type": "boolean",
@@ -2290,7 +2290,7 @@
           "canStartAt": {
             "type": "string",
             "description": "Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "alternateServiceAreas": {
@@ -2551,7 +2551,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "changedBy": {
             "type": "string",
@@ -2559,7 +2559,7 @@
           },
           "changed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "deletedBy": {
@@ -2568,7 +2568,7 @@
           },
           "deletedWhen": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "deleted": {
@@ -2619,13 +2619,13 @@
           "started": {
             "type": "string",
             "description": "Starf - Upphafsdagsetning",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "quit": {
             "type": "string",
             "description": "Starf - Lokadagsetning",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "workRatio": {
@@ -2822,7 +2822,7 @@
           "created": {
             "type": "string",
             "description": "Skrá - Stofnað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "isCreatedByMS": {
@@ -2869,13 +2869,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Barn á framfæri - Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Barn á framfæri - Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "payAlimony": {
@@ -2984,13 +2984,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -3019,13 +3019,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -3083,13 +3083,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "ssn": {
@@ -3880,11 +3880,11 @@
               },
               "dateFrom": {
                 "type": "string",
-                "format": "date-time"
+                "format": ""
               },
               "dateTo": {
                 "type": "string",
-                "format": "date-time",
+                "format": "",
                 "nullable": true
               },
               "taxable": {
@@ -4109,7 +4109,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "data": {
             "type": "string",
@@ -4157,11 +4157,11 @@
           },
           "dateFrom": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "dateTo": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -4234,15 +4234,15 @@
           },
           "gainPeriodFrom": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "gainPeriodTo": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodDate": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodLength": {
             "type": "number",
@@ -4323,7 +4323,7 @@
           },
           "canStartAt": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "applicationLanguage": {
             "type": "string",
@@ -4331,7 +4331,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "statusColor": {
@@ -4344,7 +4344,7 @@
           },
           "lastVerdictDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -4807,7 +4807,7 @@
           },
           "deadline": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "showOnEures": {
             "type": "boolean"
@@ -4829,12 +4829,12 @@
           },
           "temporaryJobDateFrom": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "temporaryJobDateTo": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "hireReducedWorkingCapacity": {
@@ -4937,12 +4937,12 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -5254,7 +5254,7 @@
           },
           "deadline": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "escoSkills": {
             "type": "array",
@@ -5919,7 +5919,7 @@
           },
           "hiredIPSStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -6555,18 +6555,18 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "startDate": {
             "type": "string",
             "description": "Viðmiðunardagur fyrir tekjutengingu",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStart": {
             "type": "string",
             "description": "Dagsetning Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "createdBy": {
@@ -6577,7 +6577,7 @@
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -6605,7 +6605,7 @@
           "confirmed": {
             "type": "string",
             "description": "Dagsetning Staðfestingar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "pendingReassessment": {
@@ -6659,7 +6659,7 @@
           "u2LateHomecomingDate": {
             "type": "string",
             "description": "Viðmiðunardags ef sein heimkoma í U2",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -6847,7 +6847,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationRatio": {
             "type": "integer",
@@ -6866,12 +6866,12 @@
           },
           "canStart": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "bankruptcyDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartDateChangeReason": {
@@ -6880,7 +6880,7 @@
           },
           "compensationPeriodDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "compensationPeriodLength": {
@@ -6893,7 +6893,7 @@
           },
           "decisionAppliesDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "decisionAppliesDateChangeReason": {
@@ -6989,7 +6989,7 @@
           "resignationEnds": {
             "type": "string",
             "description": "Hvenær lýkur Uppsagnarfresti",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -7106,19 +7106,19 @@
           "periodFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "periodTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "paymentDate": {
             "type": "string",
             "description": "DagsGreidslu",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "estimatedIncome": {
@@ -7167,7 +7167,7 @@
           "lastChange": {
             "type": "string",
             "description": "LastChange",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "lastChangeBy": {
@@ -7672,7 +7672,7 @@
           },
           "dateFrom": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -7760,7 +7760,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "createdBy": {
             "type": "string",
@@ -7768,7 +7768,7 @@
           },
           "changed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -7881,12 +7881,12 @@
           },
           "applicationConfirmed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartAt": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationRatio": {
             "type": "number",
@@ -7910,17 +7910,17 @@
           },
           "lastVerdictDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "date": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "bankruptcyDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "statusColor": {

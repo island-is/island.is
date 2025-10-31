@@ -188,16 +188,10 @@ export class DirectorateOfImmigrationClient {
             application.spouse?.reasonDifferentAddress,
           parent1SSN: application.parents[0]?.nationalId,
           parent1Name:
-            application.parents[0] &&
-            application.parents[0]?.givenName +
-              ' ' +
-              application.parents[0]?.familyName,
+            application.parents[0] && application.parents[0]?.fullName,
           parent2SSN: application.parents[1]?.nationalId,
           parent2Name:
-            application.parents[1] &&
-            application.parents[1]?.givenName +
-              ' ' +
-              application.parents[1]?.familyName,
+            application.parents[1] && application.parents[1]?.fullName,
           applicantIsChildOfIcelandicCitizen: application.parents.length > 0,
           applicantIsFormerIcelandicCitizen:
             application.isFormerIcelandicCitizen,
