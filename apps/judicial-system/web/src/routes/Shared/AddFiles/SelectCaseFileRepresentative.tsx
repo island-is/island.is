@@ -27,25 +27,19 @@ type RepresentativeSelectOption = ReactSelectOption & {
 interface SelectRepresentativeProps {
   submitterName?: string
   caseFileCategory?: CaseFileCategory
+  placeholder?: string
   updateRepresentative: (
     submitterName: string,
     caseFileCategory: CaseFileCategory,
   ) => void
-  required?: boolean
-  minimal?: boolean
 }
 
 export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  const {
-    submitterName,
-    caseFileCategory,
-    updateRepresentative,
-    required = true,
-    minimal = false,
-  } = props
+  const { submitterName, caseFileCategory, placeholder, updateRepresentative } =
+    props
 
   const options = useMemo(() => {
     const reps =
@@ -100,44 +94,13 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
   return (
     <BaseSelect
       options={options}
-      isLoading={false} // TODO
+      isLoading={false}
       placeholder={
-        minimal
-          ? 'Hver lagði fram?'
-          : formatMessage(strings.caseRepresentativePlaceholder)
+        placeholder ?? formatMessage(strings.caseRepresentativePlaceholder)
       }
       value={representative}
       onChange={handleChange}
     />
-    // <Box className={minimal ? styles.selectNoBorderOuter : undefined}>
-    //   <Box className={minimal ? styles.selectNoBorderInner : undefined}>
-    //     <Select
-    //       name="caseRepresentative"
-    //       label={
-    //         minimal ? undefined : formatMessage(strings.caseRepresentativeLabel)
-    //       }
-    //       placeholder={
-    //         minimal
-    //           ? 'Hver lagði fram?'
-    //           : formatMessage(strings.caseRepresentativePlaceholder)
-    //       }
-    //       value={representative}
-    //       options={options}
-    //       onChange={(selectedOption) => {
-    //         const representativeSelectOption =
-    //           selectedOption as RepresentativeSelectOption
-    //         setRepresentative(representativeSelectOption)
-    //         updateRepresentative(
-    //           representativeSelectOption.selectedCaseRepresentative.name,
-    //           representativeSelectOption.selectedCaseRepresentative
-    //             .caseFileCategory,
-    //         )
-    //       }}
-    //       required={required}
-    //       size={minimal ? 'xs' : undefined}
-    //     />
-    //   </Box>
-    // </Box>
   )
 }
 

@@ -793,6 +793,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                   caseFileCategory={
                                     split?.[1] as CaseFileCategory
                                   }
+                                  placeholder="Hver lagði fram?"
                                   updateRepresentative={(
                                     submitterName,
                                     caseFileCategory,
@@ -801,8 +802,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                       submittedBy: `${submitterName}|${caseFileCategory}`,
                                     })
                                   }}
-                                  required={false}
-                                  minimal={true}
                                 />
                               </Box>
                             )
