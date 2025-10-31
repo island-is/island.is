@@ -1,7 +1,9 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../shared'
-import { GaldurDomainModelsApplicantsApplicantProfileDTOsJob } from '@island.is/clients/vmst-unemployment'
+import { GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer } from '@island.is/clients/vmst-unemployment'
+import { employment as employmentMessages } from '../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export const isUnemployed = (answers: FormValue) => {
   const status = getValueViaPath<string>(answers, 'currentSituation.status')
@@ -44,17 +46,29 @@ export const doesOwnResume = (answers: FormValue) => {
 
 export const getEmploymentFromRsk = (externalData: ExternalData) => {
   const employmentList =
-    getValueViaPath<Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>>(
+    getValueViaPath<
+      Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+    >(
       externalData,
-      'unemploymentApplication.data.jobCareer.jobs',
+      'unemploymentApplication.data.rskEmploymentInformation',
       [],
     ) ?? []
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { formatMessage } = useLocale()
+
   const extendedList = [
-    ...employmentList,
+    ...employmentList.map((x) => {
+      return {
+        employerSSN: x.ssn,
+        employer: x.name,
+      }
+    }),
     {
       employerSSN: '-',
-      employer: 'Annað',
+      employer: formatMessage(
+        employmentMessages.currentSituation.labels.unregisteredEmployer,
+      ),
     },
   ]
 
