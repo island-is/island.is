@@ -1,4 +1,8 @@
-import { Application, ApplicationStatus } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationStatus,
+  InstitutionTypes,
+} from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationsPaths } from '../../lib/paths'
@@ -45,15 +49,23 @@ export const sortApplicationsOrganizations = (
   applications: Application[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
-  const apps: Application[] = applications
   let institutions: InstitutionOption[] = []
   if (!organizations) {
     return
   }
-  apps.forEach((elem) => {
-    const inst = institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
-    const contentfulId =
-      institutionMapper[elem.typeId].contentfulId ?? 'INSTITUTION_MISSING'
+  applications.forEach((elem) => {
+    const formSystemOrgSlug = elem.formSystemOrgSlug
+      ? (elem.formSystemOrgSlug as InstitutionTypes)
+      : undefined
+    const formSystemOrgContentfulId = elem.formSystemOrgContentfulId
+      ? elem.formSystemOrgContentfulId
+      : undefined
+    const inst = formSystemOrgSlug
+      ? formSystemOrgSlug
+      : institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
+    const contentfulId = formSystemOrgContentfulId
+      ? formSystemOrgContentfulId
+      : institutionMapper[elem.typeId].contentfulId ?? 'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
       label: organizations.find((x) => x.id === contentfulId)?.title ?? inst,
@@ -66,6 +78,7 @@ export const sortApplicationsOrganizations = (
   )
   // Sort alphabetically
   institutions.sort((a, b) => a.label.localeCompare(b.label))
+
   return institutions
 }
 
@@ -91,25 +104,37 @@ export const getBaseUrlForm = () => {
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
   applications: Application[] = [],
-  filteredOutApplication: string | undefined = undefined,
+  filteredOutApplication?: string,
 ) => {
-  const { searchQuery } = filterValue
-  const activeInstitution = filterValue?.activeInstitution?.value
-  const filteredApps = (applications as Application[]).filter(
-    (application: Application) =>
-      // Search in name and description
-      (application.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        application.actionCard?.description
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase())) &&
-      filteredOutApplication !== application.id &&
-      // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
-      // otherwise it filters it.
-      (activeInstitution !== ''
-        ? institutionMapper[application.typeId].slug === activeInstitution
-        : true),
-  )
-  return sortApplicationsStatus(filteredApps)
+  if (!filterValue) {
+    return sortApplicationsStatus(applications)
+  }
+
+  const search = filterValue.searchQuery.trim().toLowerCase()
+  const activeInstitution = filterValue.activeInstitution?.value || ''
+
+  const filtered = applications.filter((app) => {
+    if (filteredOutApplication && app.id === filteredOutApplication)
+      return false
+
+    // Institution filter (only when activeInstitution not empty)
+    if (activeInstitution) {
+      const appSlug =
+        app.formSystemOrgSlug || institutionMapper[app.typeId]?.slug
+      if (appSlug !== activeInstitution) return false
+    }
+
+    // Search filter (matches name or description)
+    if (search) {
+      const name = app.name?.toLowerCase() || ''
+      const description = app.actionCard?.description?.toLowerCase() || ''
+      if (!name.includes(search) && !description.includes(search)) return false
+    }
+
+    return true
+  })
+
+  return sortApplicationsStatus(filtered)
 }
 
 export const getInstitutions = (

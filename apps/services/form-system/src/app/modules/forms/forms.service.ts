@@ -90,7 +90,6 @@ export class FormsService {
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      console.log('changing nationalId')
       nationalId = token.nationalId
     }
 
@@ -101,18 +100,7 @@ export class FormsService {
     if (!organization) {
       organization = await this.organizationModel.create({
         nationalId: nationalId,
-        name: { is: '', en: '' },
       } as Organization)
-    }
-
-    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
-    // if Admin is logged in then the token.nationalId is always the nationalId of the admin organization
-    if (nationalId === token.nationalId) {
-      organization.name = {
-        is: token.name ?? 'unknown',
-        en: organization.name.en,
-      }
-      await organization.save()
     }
 
     const forms = await this.formModel.findAll({
@@ -132,7 +120,7 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedSectionInfo',
@@ -164,14 +152,14 @@ export class FormsService {
         .then((organizations) => organizations.map((org) => org.nationalId)),
       organizations: await this.organizationModel
         .findAll({
-          attributes: ['nationalId', 'name'],
+          attributes: ['nationalId'],
         })
         .then((organizations) =>
           organizations.map(
             (org) =>
               ({
                 value: org.nationalId,
-                label: org.name.is,
+                label: '',
                 isSelected: org.nationalId === nationalId,
               } as Option),
           ),
@@ -221,6 +209,7 @@ export class FormsService {
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
+      draftTotalSteps: 3,
       completedSectionInfo,
     } as Form)
 
@@ -324,7 +313,26 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
+    const originalHasPayment = form.hasPayment
+    const originalHasSummary = form.hasSummaryScreen
+
     Object.assign(form, updateFormDto)
+
+    if (originalHasPayment !== form.hasPayment) {
+      if (originalHasPayment) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
+
+    if (originalHasSummary !== form.hasSummaryScreen) {
+      if (originalHasSummary) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
 
     const response = new UpdateFormResponse()
 
@@ -610,7 +618,7 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedSectionInfo',
