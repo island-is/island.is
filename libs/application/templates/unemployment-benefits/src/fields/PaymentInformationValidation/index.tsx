@@ -92,16 +92,14 @@ export const PaymentInformationValidation: FC<
         privatePensionFunds: paymentInfo?.privatePensionFund
           ? [
               {
-                id: paymentInfo?.privatePensionFund,
+                id: paymentInfo.privatePensionFund,
                 percentage:
                   Number(paymentInfo?.privatePensionFundPercentage) || 0,
               },
             ]
           : [],
         doNotPayToUnion: !paymentInfo?.union,
-        union: paymentInfo?.union
-          ? { id: paymentInfo?.union || '' }
-          : undefined,
+        union: paymentInfo?.union ? { id: paymentInfo.union || '' } : undefined,
       })
 
       if (
