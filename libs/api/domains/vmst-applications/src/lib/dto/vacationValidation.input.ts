@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsInt, IsDate } from 'class-validator'
+import { IsBoolean, IsInt } from 'class-validator'
 
 @InputType('UnpaidVacationField')
 class UnpaidVacationField {
@@ -8,12 +8,10 @@ class UnpaidVacationField {
   unpaidVacationDays?: number
 
   @Field({ nullable: true })
-  @IsDate()
-  unpaidVacationStart?: Date
+  unpaidVacationStart?: string
 
   @Field({ nullable: true })
-  @IsDate()
-  unpaidVacationEnd?: Date
+  unpaidVacationEnd?: string
 }
 
 @InputType('VmstApplicationsVacationValidationInput')
@@ -28,6 +26,5 @@ export class VmstApplicationsVacationValidationInput {
   unpaidVacations?: UnpaidVacationField[]
 
   @Field({ nullable: true })
-  @IsDate()
-  resignationEnds!: Date
+  resignationEnds!: string
 }
