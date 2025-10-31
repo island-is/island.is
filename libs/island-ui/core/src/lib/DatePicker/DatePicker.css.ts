@@ -223,16 +223,9 @@ export const customHeaderContainer = style({
   marginBottom: theme.spacing[2],
   position: 'relative',
   zIndex: 1,
-  // '::before': {
-  //   content: '""',
-  //   display: 'block',
-  //   position: 'absolute',
-  //   top: 0,
-  //   height: '1px',
-  //   left: -3,
-  //   right: -3,
-  //   background: theme.color.blue200,
-  // },
+  position: 'relative',
+  zIndex: 1,
+})
 })
 
 export const headerSelect = style({
