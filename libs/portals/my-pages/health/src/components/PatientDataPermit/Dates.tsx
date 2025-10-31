@@ -1,7 +1,7 @@
 import { HealthDirectoratePatientDataPermitInput } from '@island.is/api/schema'
 import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { messages } from '../../lib/messages'
 import { addMonths, addYears, today } from '../../utils/dates'
 import * as styles from './PatientDataPermit.css'
@@ -21,7 +21,6 @@ const Dates: FC<DatesProps> = ({
   setFormState,
 }) => {
   const { formatMessage } = useLocale()
-  console.log(formState)
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
@@ -73,7 +72,6 @@ const Dates: FC<DatesProps> = ({
             },
           ]}
           handleChange={(startDate, endDate) => {
-            console.log('startDate, endDate', startDate, endDate)
             startDate &&
               endDate &&
               setFormState({

@@ -35,7 +35,6 @@ import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   EuPatientConsentDto,
-  EuPatientConsentStatus,
   Locale,
 } from './gen/fetch/types.gen'
 
