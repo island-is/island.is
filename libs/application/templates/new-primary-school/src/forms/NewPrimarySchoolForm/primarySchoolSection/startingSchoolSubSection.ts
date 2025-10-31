@@ -38,7 +38,7 @@ export const startingSchoolSubSection = buildSubSection({
           defaultValue: null,
           minDate: () => new Date(),
         }),
-        // Only show for International school types
+        // Only show for International schools and special education - behavior school/dept types
         buildRadioField({
           id: 'startingSchool.temporaryStay',
           title: newPrimarySchoolMessages.primarySchool.temporaryStay,
@@ -56,9 +56,17 @@ export const startingSchoolSubSection = buildSubSection({
             },
           ],
           condition: (answers, externalData) => {
+            const selectedSubType = getSelectedSchoolSubType(
+              answers,
+              externalData,
+            )
+
             return (
-              getSelectedSchoolSubType(answers, externalData) ===
-              OrganizationSubType.INTERNATIONAL_SCHOOL
+              selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
             )
           },
         }),
@@ -74,9 +82,18 @@ export const startingSchoolSubSection = buildSubSection({
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
+            const selectedSubType = getSelectedSchoolSubType(
+              answers,
+              externalData,
+            )
+
             return (
-              getSelectedSchoolSubType(answers, externalData) ===
-                OrganizationSubType.INTERNATIONAL_SCHOOL &&
+              (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -92,9 +109,18 @@ export const startingSchoolSubSection = buildSubSection({
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
+            const selectedSubType = getSelectedSchoolSubType(
+              answers,
+              externalData,
+            )
+
             return (
-              getSelectedSchoolSubType(answers, externalData) ===
-                OrganizationSubType.INTERNATIONAL_SCHOOL &&
+              (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )

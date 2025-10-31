@@ -104,6 +104,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const selectedSubType = getSelectedSchoolSubType(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
     registration: {
@@ -147,10 +152,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(getSelectedSchoolSubType(
-              application.answers,
-              application.externalData,
-            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+            ...((selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
