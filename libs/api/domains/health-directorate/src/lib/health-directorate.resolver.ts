@@ -24,7 +24,11 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
-import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
 import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
@@ -255,9 +259,11 @@ export class HealthDirectorateResolver {
   getPermits(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Args('input', { type: () => PermitsInput })
+    input: PermitsInput,
     @CurrentUser() user: User,
   ): Promise<Permits | null> {
-    return this.api.getPermits(user, locale)
+    return this.api.getPermits(user, locale, input)
   }
 
   @Query(() => Permit, {

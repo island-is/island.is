@@ -16,7 +16,12 @@ import {
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import isNumber from 'lodash/isNumber'
-import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
+import sortBy from 'lodash/sortBy'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
 import {
   MedicineHistory,
   MedicineHistoryDispensation,
@@ -24,7 +29,7 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { Countries, Country } from './models/permits/country.model'
+import { Countries } from './models/permits/country.model'
 import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
@@ -38,12 +43,12 @@ import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
   mapDispensationItem,
   mapPermit,
-  mapPermitStatus,
   mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
+import { PermitStatusEnum } from './models/enums'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -401,16 +406,26 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - Permits */
-  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
-    const permits = await this.healthApi.getPermits(auth, locale)
+  async getPermits(
+    auth: Auth,
+    locale: Locale,
+    input: PermitsInput,
+  ): Promise<Permits | null> {
+    const permits = await this.healthApi.getPermits(
+      auth,
+      locale,
+      input.statuses.map((status) =>
+        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+      ),
+    )
 
     if (!permits) {
       return null
     }
 
-    const data: Permit[] = permits.map((item) => mapPermit(item)) ?? []
-
-    return { data }
+    const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
+    const sorted = sortBy(data, 'status', 'asc')
+    return { data: sorted }
   }
 
   /* Patient data - Permit Detail */
@@ -425,7 +440,7 @@ export class HealthDirectorateService {
       return null
     }
 
-    return mapPermit(permit)
+    return mapPermit(permit, locale)
   }
 
   /* Patient data - Permit countries */

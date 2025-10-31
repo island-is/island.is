@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { ArrayNotEmpty, IsArray, IsISO8601, IsString } from 'class-validator'
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsISO8601,
+  IsString,
+} from 'class-validator'
 
 @InputType('HealthDirectoratePatientDataPermitInput')
 export class PermitInput {
@@ -22,6 +28,15 @@ export class PermitInput {
   @ArrayNotEmpty()
   @IsString({ each: true })
   countryCodes!: string[]
+}
+
+@InputType('HealthDirectoratePatientDataPermitsInput')
+export class PermitsInput {
+  @Field(() => [String])
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  statuses!: string[]
 }
 
 @InputType('HealthDirectoratePatientDataInvalidatePermitInput')

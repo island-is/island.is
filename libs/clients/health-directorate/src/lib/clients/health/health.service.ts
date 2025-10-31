@@ -35,6 +35,7 @@ import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
 } from './gen/fetch/types.gen'
 
@@ -265,12 +266,18 @@ export class HealthDirectorateHealthService {
   public async getPermits(
     auth: Auth,
     locale: Locale,
+    status: string[],
+    dateFrom?: Date | undefined,
+    dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {
     const permits = await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerGetEuPatientConsentForPatientV1({
           query: {
             locale: this.mapLocale(locale),
+            status: status,
+            validFrom: dateFrom ?? undefined,
+            validTo: dateTo ?? undefined,
           },
         }),
       ),
