@@ -48,11 +48,13 @@ export const SitemapTreeField = () => {
   const [mode, setMode] = useState<'edit' | 'select'>('edit')
   const selectedNodesRef = useRef<TreeNode[]>([])
 
-  useEffect(() => {
-    sdk.field.onValueChanged((value) => {
-      _setTree(value)
-    })
-  }, [sdk.field])
+  useEffect(
+    () =>
+      sdk.field.onValueChanged((value) => {
+        _setTree(value)
+      }),
+    [sdk.field],
+  )
 
   const updateTree = useCallback(
     (changeFunction?: (prevTree: Tree) => Tree) => {
