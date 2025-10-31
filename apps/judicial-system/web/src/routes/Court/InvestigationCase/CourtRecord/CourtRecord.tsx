@@ -560,6 +560,7 @@ const CourtRecord: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           />
         </Box>
       </FormContentContainer>

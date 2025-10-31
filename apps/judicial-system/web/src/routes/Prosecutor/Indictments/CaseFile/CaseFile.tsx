@@ -89,18 +89,22 @@ const CaseFile = () => {
           </LayoutGroup>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(m.pdfButtonText, {
-                  policeCaseNumber: policeCaseNumber,
-                })}
-                pdfType="caseFilesRecord"
-                elementId={policeCaseNumber}
-              />
-            </Box>
-          ))}
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            const caseFilesRecordFileName = formatMessage(m.pdfButtonText, {
+              policeCaseNumber: policeCaseNumber,
+            })
+
+            return (
+              <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={caseFilesRecordFileName}
+                  pdfType="caseFilesRecord"
+                  elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                />
+              </Box>
+            )
+          })}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
