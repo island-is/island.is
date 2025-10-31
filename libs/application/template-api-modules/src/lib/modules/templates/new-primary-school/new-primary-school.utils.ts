@@ -188,7 +188,5 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
   }
 
-  console.log('New Primary School DTO:', newPrimarySchoolDTO)
-  throw new Error('Debugging stop')
   return newPrimarySchoolDTO
 }
