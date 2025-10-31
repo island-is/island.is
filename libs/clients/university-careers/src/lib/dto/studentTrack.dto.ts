@@ -9,7 +9,7 @@ import { UniversityId } from '../universityCareers.types'
 import {
   StudentTrackInstitutionDto,
   mapToStudentTrackInstitutionDto,
-} from './studentTrackInstitutionDto'
+} from './studentTrackInstitution.dto'
 
 export interface StudentTrackDto {
   name?: string
@@ -46,5 +46,7 @@ export const mapToStudentTrackDto = (
     ...transcript,
     institution,
     graduationDate: new Date(transcript.graduationDate),
+    studyProgram: transcript.studyProgram ?? undefined,
+    degree: transcript.degree ?? undefined,
   }
 }
