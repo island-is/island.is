@@ -26,6 +26,7 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import {
   MedicineDelegationCreateInput,
+  MedicineDelegationDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
@@ -273,11 +274,23 @@ export class HealthDirectorateResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   postMedicineDelegation(
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @Args('input') input: MedicineDelegationCreateInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateResponse> {
-    return this.api.postMedicineDelegation(user, locale, input)
+    return this.api.postMedicineDelegation(user, input)
+  }
+
+  /* Add new Prescription Delegation */
+  @Mutation(() => HealthDirectorateResponse, {
+    name: 'healthDirectorateMedicineDelegationDelete',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  deleteMedicineDelegation(
+    @Args('input') input: MedicineDelegationDeleteInput,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectorateResponse> {
+    return this.api.deleteMedicineDelegation(user, input)
   }
 }

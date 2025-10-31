@@ -26,3 +26,10 @@ export class MedicineDelegationCreateInput {
   @IsBoolean()
   lookup?: boolean
 }
+
+@InputType('HealthDirectorateMedicineDelegationDeleteInput')
+export class MedicineDelegationDeleteInput {
+  @Field()
+  @IsString()
+  nationalId!: string
+}

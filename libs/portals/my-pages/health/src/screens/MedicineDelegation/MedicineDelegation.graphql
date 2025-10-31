@@ -12,6 +12,7 @@ query GetMedicineDelegations(
   healthDirectorateMedicineDelegations(locale: $locale, input: $input) {
     items {
       __typename
+      cacheId
       name
       nationalId
       isActive
@@ -25,10 +26,19 @@ query GetMedicineDelegations(
 }
 
 mutation PostMedicineDelegation(
-  $locale: String!
   $input: HealthDirectorateMedicineDelegationCreateInput!
 ) {
-  healthDirectorateMedicineDelegationCreate(locale: $locale, input: $input) {
+  healthDirectorateMedicineDelegationCreate(input: $input) {
+    __typename
+    success
+    message
+  }
+}
+
+mutation DeleteMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationDeleteInput!
+) {
+  healthDirectorateMedicineDelegationDelete(input: $input) {
     __typename
     success
     message

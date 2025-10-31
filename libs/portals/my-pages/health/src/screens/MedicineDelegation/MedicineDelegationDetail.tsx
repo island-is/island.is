@@ -1,3 +1,4 @@
+import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -7,15 +8,19 @@ import {
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
+import * as kennitala from 'kennitala'
+
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import DelegationModal from './components/DelegationModal'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
 
 const MedicineDelegationDetail = () => {
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [modalVisible, setModalVisible] = useState(false)
 
@@ -27,12 +32,15 @@ const MedicineDelegationDetail = () => {
       },
     },
   })
+
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
   )
 
-  if (!filteredData) {
-    return <Problem type="no_data" />
+  const onSubmit = () => {
+    toast.success(formatMessage(messages.permitDeleted))
+    setModalVisible(false)
+    navigate(HealthPaths.HealthMedicineDelegation, { replace: true })
   }
 
   return (
@@ -49,36 +57,35 @@ const MedicineDelegationDetail = () => {
       <InfoLineStack label={formatMessage(m.info)} space={1}>
         <InfoLine
           label={formatMessage(messages.nameHuman)}
-          content={filteredData.name ?? ''}
+          content={filteredData?.name ?? ''}
+          loading={loading}
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(m.natreg)}
-          content={
-            filteredData.nationalId
-              ? `${filteredData.nationalId.slice(
-                  0,
-                  -4,
-                )}-${filteredData.nationalId.slice(-4)}`
-              : ''
-          }
+          content={kennitala.format(filteredData?.nationalId ?? '')}
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.status)}
           content={
-            filteredData.isActive
+            filteredData?.isActive
               ? formatMessage(messages.valid)
               : formatMessage(messages.invalid)
           }
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.validityPeriod)}
           content={
-            formatDate(filteredData.dates?.from) +
-            ' - ' +
-            formatDate(filteredData.dates?.to)
+            filteredData?.dates?.from && filteredData?.dates?.to
+              ? formatDate(filteredData?.dates?.from) +
+                ' - ' +
+                formatDate(filteredData?.dates?.to)
+              : ''
           }
           button={
-            filteredData.isActive
+            filteredData?.isActive
               ? {
                   type: 'action',
                   label: formatMessage(messages.deleteDelegation),
@@ -90,21 +97,25 @@ const MedicineDelegationDetail = () => {
           }
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.permitValidForShort)}
           content={
-            filteredData.lookup
+            filteredData?.lookup
               ? formatMessage(messages.pickupMedicineAndLookup)
               : formatMessage(messages.pickupMedicine)
           }
         />
       </InfoLineStack>
 
-      <DelegationModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        id={filteredData.nationalId ?? 'medicine-delegation'}
-        activeDelegation={filteredData}
-      />
+      {filteredData?.nationalId && (
+        <DelegationModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSubmit={onSubmit}
+          id={filteredData?.nationalId}
+          activeDelegation={filteredData}
+        />
+      )}
     </IntroWrapper>
   )
 }

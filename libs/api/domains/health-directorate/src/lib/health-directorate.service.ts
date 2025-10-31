@@ -18,7 +18,10 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
-import { MedicineDelegationCreateInput } from './dto/medicineDelegation.input'
+import {
+  MedicineDelegationCreateInput,
+  MedicineDelegationDeleteInput,
+} from './dto/medicineDelegation.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 
 import { MedicineDelegations } from './models/medicineDelegation.model'
@@ -435,11 +438,10 @@ export class HealthDirectorateService {
 
   async postMedicineDelegation(
     auth: Auth,
-    locale: Locale,
     input: MedicineDelegationCreateInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .postMedicineDelegation(auth, locale, {
+      .postMedicineDelegation(auth, {
         commissionType: input.lookup ? 1 : 0,
         toNationalId: input.nationalId,
         validFrom: input.from?.toISOString(),
@@ -452,6 +454,23 @@ export class HealthDirectorateService {
         return {
           success: false,
           message: 'Failed to create medicine delegation',
+        }
+      })
+  }
+
+  async deleteMedicineDelegation(
+    auth: Auth,
+    input: MedicineDelegationDeleteInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .deleteMedicineDelegation(auth, input.nationalId)
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to deactivate medicine delegation',
         }
       })
   }

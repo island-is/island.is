@@ -19,6 +19,7 @@ import {
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
@@ -30,6 +31,7 @@ import {
 } from './gen/fetch'
 import {
   CreatePrescriptionCommissionDto,
+  DeactivatePrescriptionCommissionDto,
   Locale,
   PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
@@ -284,16 +286,32 @@ export class HealthDirectorateHealthService {
 
   public async postMedicineDelegation(
     auth: Auth,
-    locale: Locale,
     input: CreatePrescriptionCommissionDto,
-  ): Promise<boolean | null> {
-    const response = await withAuthContext(auth, () =>
+  ) {
+    return await withAuthContext(auth, () =>
       data(
         mePrescriptionCommissionControllerCreatePrescriptionCommissionV1({
           body: input,
         }),
       ),
     )
-    return response ? true : null
+  }
+
+  public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
+    console.log('toNationalId', toNationalId)
+    console.log('nationalId Length', toNationalId.length)
+    const input: DeactivatePrescriptionCommissionDto = {
+      toNationalId:
+        toNationalId.length === 9 ? `0${toNationalId}` : toNationalId,
+    }
+    const result = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1({
+          body: input,
+        }),
+      ),
+    )
+    console.log('result', result)
+    return result
   }
 }

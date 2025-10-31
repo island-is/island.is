@@ -1,3 +1,4 @@
+import { HealthDirectorateMedicineDelegationItem } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -8,15 +9,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
-import React, { useState } from 'react'
+import React from 'react'
 import { messages } from '../../../lib/messages'
+import { useDeleteMedicineDelegationMutation } from '../MedicineDelegation.generated'
 import * as styles from './DelegationModal.css'
-import { HealthDirectorateMedicineDelegationItem } from '@island.is/api/schema'
 
 interface Props {
   id: string
   activeDelegation?: HealthDirectorateMedicineDelegationItem
   onClose?: () => void
+  onSubmit?: () => void
   visible?: boolean
 }
 
@@ -25,37 +27,40 @@ const DelegationModal: React.FC<Props> = ({
   activeDelegation,
   visible,
   onClose,
+  onSubmit,
 }) => {
   const { formatMessage } = useLocale()
-  const [formData, setFormData] = useState<{
-    nationalId?: string
-    dateFrom?: Date
-    dateTo?: Date
-    lookup?: boolean
-  } | null>({
-    nationalId: activeDelegation?.nationalId ?? '',
-    dateFrom: activeDelegation?.dates?.from,
-    dateTo: activeDelegation?.dates?.to,
-    lookup: activeDelegation?.lookup ?? false,
-  })
+
+  const [deleteDelegation, { loading: deleting }] =
+    useDeleteMedicineDelegationMutation()
 
   const closeModal = () => {
     onClose && onClose()
   }
 
-  const submitForm = async (e?: React.FormEvent<HTMLFormElement>) => {
-    // TODO: Implement form submission when service is ready
-    e && e.preventDefault()
-    const formData2 = e && new FormData(e.currentTarget)
-    const data = formData2 && Object.fromEntries(formData2.entries())
-    console.log('Form submitted', data, formData)
-    toast.success(formatMessage(messages.permitDeleted))
-    const error = false // Simulate error for demonstration //TODO: fix when service is ready
-    if (error) {
-      toast.error(formatMessage(messages.permitDeletedError))
+  const submitForm = async () => {
+    if (activeDelegation?.nationalId) {
+      await deleteDelegation({
+        variables: {
+          input: {
+            nationalId: activeDelegation?.nationalId,
+          },
+        },
+      })
+        .then((response) => {
+          if (
+            response.data?.healthDirectorateMedicineDelegationDelete.success
+          ) {
+            toast.success(formatMessage(messages.permitDeleted))
+            onSubmit && onSubmit()
+          } else {
+            toast.error(formatMessage(messages.permitDeletedError))
+          }
+        })
+        .catch(() => {
+          toast.error(formatMessage(messages.permitDeletedError))
+        })
     }
-    setFormData(null)
-    onClose && onClose()
   }
 
   return (
@@ -108,10 +113,9 @@ const DelegationModal: React.FC<Props> = ({
           <Box>
             <Button
               size="small"
-              onClick={() => {
-                submitForm()
-              }}
+              onClick={submitForm}
               colorScheme="destructive"
+              loading={deleting}
             >
               {formatMessage(messages.deleteDelegation)}
             </Button>
