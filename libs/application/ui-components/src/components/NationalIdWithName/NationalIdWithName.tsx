@@ -91,8 +91,10 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
-  const [nationalIdInput, setNationalIdInput] = useState('')
+  const { setValue, getValues } = useFormContext()
+  const [nationalIdInput, setNationalIdInput] = useState(
+    getValues(nationalIdField) || '',
+  )
 
   const getFieldErrorString = (
     error: unknown,
@@ -129,6 +131,9 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
+    if (!nationalIdInput) {
+      return
+    }
     if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
@@ -237,6 +242,9 @@ export const NationalIdWithName: FC<
 
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
+    if (!nationalIdInput) {
+      return
+    }
     if (nationalIdInput.length !== 10) {
       // Clear name field whenever national id is not complete
       // avoids name lingering from previous valid national ids

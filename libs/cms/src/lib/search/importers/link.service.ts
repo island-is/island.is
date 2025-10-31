@@ -10,10 +10,14 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class LinkSyncService implements CmsSyncProvider<ILink> {
   processSyncData(entries: processSyncDataInput<ILink>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is ILink =>
         entry.sys.contentType.sys.id === 'link' && entry.fields.searchable,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ILink[]) {
