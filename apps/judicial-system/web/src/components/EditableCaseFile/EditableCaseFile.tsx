@@ -270,6 +270,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 <Box
                   display="flex"
                   alignItems="center"
+                  columnGap={1}
                   component={caseFile.canOpen ? 'button' : undefined}
                   onClick={() => {
                     if (caseFile.canOpen && caseFile.id) {
@@ -292,14 +293,12 @@ const EditableCaseFile: FC<Props> = (props) => {
                     </span>
                   </Text>
                   {caseFile.canOpen && (
-                    <Box
-                      marginLeft={1}
-                      style={{
-                        ...(disabled ? { color: theme.color.dark300 } : {}),
-                      }}
-                    >
-                      <Icon icon="open" type="outline" size="small" />
-                    </Box>
+                    <Icon
+                      icon="open"
+                      type="outline"
+                      size="small"
+                      color={disabled ? 'dark300' : undefined}
+                    />
                   )}
                 </Box>
                 {caseFile.supplement && (
