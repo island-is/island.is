@@ -34,7 +34,7 @@ export class FriggClientService {
       type: input?.type,
       municipalityCode: input?.municipalityCode,
       gradeLevels: input?.gradeLevels,
-      limit: 1000, //Frigg is restricting to 100 by default
+      limit: 1000, // Frigg is restricting to 100 by default
     })
   }
 
