@@ -57,10 +57,12 @@ export class JudicialSystemSPClientService {
   }
 
   async getVerdict(id: string, user: User, locale: string) {
-    return this.casesApiWithAuth(user).caseControllerGetRuling({
-      caseId: id,
-      locale: locale,
-    })
+    return this.casesApiWithAuth(user)
+      .caseControllerGetRuling({
+        caseId: id,
+        locale: locale,
+      })
+      .catch(handle404)
   }
 
   async patchVerdict(
@@ -69,7 +71,6 @@ export class JudicialSystemSPClientService {
     locale: string,
     choice: UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
   ) {
-    console.log('patchVerdict input', { id, locale, choice })
     return this.casesApiWithAuth(user).caseControllerSubmitVerdictAppeal({
       caseId: id,
       locale: locale,

@@ -62,9 +62,7 @@ const CourtCaseDetail = () => {
   ])
 
   const currentCanAppeal = useMemo(() => {
-    return (
-      postData?.lawAndOrderVerdictPost?.canAppeal ?? verdict?.canAppeal ?? false
-    )
+    return postData?.lawAndOrderVerdictPost?.canAppeal ?? verdict?.canAppeal
   }, [postData?.lawAndOrderVerdictPost?.canAppeal, verdict?.canAppeal])
 
   const handleSubmit = async (

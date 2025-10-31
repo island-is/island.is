@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { Group } from './group.model'
 
 export enum AppealDecision {
@@ -13,6 +13,9 @@ registerEnumType(AppealDecision, {
 
 @ObjectType('LawAndOrderVerdict')
 export class Verdict {
+  @Field(() => ID)
+  cacheId!: string
+
   @Field()
   caseId!: string
 

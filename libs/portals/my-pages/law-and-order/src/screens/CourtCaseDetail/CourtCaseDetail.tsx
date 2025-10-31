@@ -1,18 +1,17 @@
 import { Box } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useParams } from 'react-router-dom'
-import { LawAndOrderPaths } from '../../lib/paths'
-import InfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
-import { useEffect } from 'react'
-import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { useParams } from 'react-router-dom'
+import InfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
+import { messages } from '../../lib/messages'
+import { LawAndOrderPaths } from '../../lib/paths'
+import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 
 type UseParams = {
   id: string
@@ -24,7 +23,7 @@ const CourtCaseDetail = () => {
 
   const { id } = useParams() as UseParams
 
-  const { data, error, loading, refetch } = useGetCourtCaseQuery({
+  const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {
         id,
@@ -36,11 +35,6 @@ const CourtCaseDetail = () => {
   const courtCase = data?.lawAndOrderCourtCaseDetail
   const hasVerdict = courtCase?.data?.hasVerdict
   const hasVerdictBeenServed = courtCase?.data?.hasVerdictBeenServed
-
-  useEffect(() => {
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang])
 
   return (
     <>

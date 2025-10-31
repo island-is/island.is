@@ -225,6 +225,7 @@ export class LawAndOrderService {
     )
 
     const data: Verdict = {
+      cacheId: [verdictsResponse.caseId, locale].join('-'),
       caseId: verdictsResponse.caseId,
       title: formatMessage(verdicts.title),
       subtitle: formatMessage(verdicts.subtitle),
@@ -267,6 +268,7 @@ export class LawAndOrderService {
       ),
     )
     return {
+      cacheId: [data.caseId, locale].join('-'),
       caseId: data.caseId,
       title: data.title,
       canAppeal: hasForm,

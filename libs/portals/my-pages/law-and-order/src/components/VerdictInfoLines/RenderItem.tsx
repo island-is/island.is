@@ -64,10 +64,10 @@ export const RenderItem: React.FC<RenderItemProps> = ({
                 <Link
                   underline="normal"
                   underlineVisibility="always"
-                  href={item.link + item.value}
+                  href={item.link}
                   color="blue400"
                 >
-                  {item.value}
+                  {item.link}
                 </Link>
               ) : (
                 <Text>{item.value}</Text>
