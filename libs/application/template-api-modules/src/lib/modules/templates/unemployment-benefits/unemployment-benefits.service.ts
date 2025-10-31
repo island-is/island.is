@@ -3,11 +3,9 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
-  GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication,
+  GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   GaldurDomainModelsAttachmentsAttachmentViewModel,
   GaldurDomainModelsAttachmentsCreateAttachmentRequest,
@@ -53,6 +51,11 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
 
+interface ExtendedUnemploymentApplicationDto
+  extends GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto {
+  rskEmploymentInformation?: Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+}
+
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
   constructor(
@@ -74,7 +77,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
   async getEmptyApplication({
     auth,
     currentUserLocale,
-  }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
+  }: TemplateApiModuleActionProps): Promise<ExtendedUnemploymentApplicationDto> {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication(auth)
 
@@ -94,12 +97,17 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         400,
       )
     }
-    return results.unemploymentApplication || null
+    const extendedObject: ExtendedUnemploymentApplicationDto = {
+      ...results.unemploymentApplication,
+      rskEmploymentInformation: results.rskEmploymentHistory || [],
+    }
+    return extendedObject
   }
 
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
 
@@ -109,52 +117,22 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         'unemploymentApplication.data.supportData.jobCodes',
       ) ?? []
 
-    /* 
-      The following fields remain unchanged after application is done, so we sent them as they came from the api:
-    */
-
-    // applicationInformation
-    const applicationInformation =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation>(
-        application.externalData,
-        'unemploymentApplication.data.applicationInformation',
-        {},
-      )
-    // applicationAccess
-    const applicationAccess =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess>(
-        application.externalData,
-        'unemploymentApplication.data.applicationAccess',
-        {},
-      )
-
-    //electronicCommunication
-    const electronicCommunication =
-      getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication>(
-        application.externalData,
-        'unemploymentApplication.data.electronicCommunication',
-        {},
-      )
-
-    /* End of unchanged fields */
-
-    /* 
-      The following fields are updated with answers from the application, and we need to merge them with the data from the api:
-    */
-
-    //personalInformation
-    const personalInformationFromService =
+    const personalInformationFromData =
       getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
         application.externalData,
         'unemploymentApplication.data.personalInformation',
-        {},
       )
 
-    const personalInformationFromAnswers = getPersonalInformation(answers)
+    /* 
+      The following fields are updated with answers from the application, sometimes we need to merge with data from externalData
+    */
 
+    //personalInformation
+
+    const personalInformationFromAnswers = getPersonalInformation(answers)
     const personalInformation = {
-      ...personalInformationFromService,
       ...personalInformationFromAnswers,
+      nationality: personalInformationFromData?.nationality,
     }
 
     //Other information
@@ -310,7 +288,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const employerSettlement = getEmployerSettlement(answers)
 
     //languageKnowledge
-    const languageKnowledge = getLanguageSkills(answers, externalData)
+    const languageKnowledge = getLanguageSkills(answers)
 
     //workingCapacity
     const workingCapacity = {
@@ -409,10 +387,10 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
           {
             unemploymentApplication: {
-              applicationInformation: applicationInformation,
-              applicationAccess: applicationAccess,
+              applicationInformation: {
+                applicationLanguage: currentUserLocale === 'is' ? 'IS' : 'EN',
+              },
               personalInformation: personalInformation,
-              electronicCommunication: electronicCommunication,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
               educationHistory: educationInformation,
@@ -440,6 +418,23 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             finalize: true,
           },
       }
-    this.vmstUnemploymentClientService.submitApplication(auth, submitResponse)
+    const response = await this.vmstUnemploymentClientService.submitApplication(
+      auth,
+      submitResponse,
+    )
+
+    if (!response.success) {
+      this.logger.error(
+        '[VMST-Unemployment]: Failed to submit application',
+        response.errorMessage,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.submitError,
+          summary: response.errorMessage || errorMsgs.submitError,
+        },
+        400,
+      )
+    }
   }
 }

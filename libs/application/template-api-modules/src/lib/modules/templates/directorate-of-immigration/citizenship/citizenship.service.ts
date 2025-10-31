@@ -207,7 +207,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -257,9 +257,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
         ?.map((p) => ({
           nationalId: p.nationalId || '',
-          givenName:
-            p.givenName || p.currentName.split(' ').slice(0, -1).join(' '),
-          familyName: p.familyName || p.currentName.split(' ').pop(),
+          fullName: p.fullName || '',
         }))
 
     // Get attachment array with countryId field from attachment array of arrays
