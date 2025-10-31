@@ -2,7 +2,7 @@ import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { MultiValue, SingleValue } from 'react-select'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import { getRoleTitleFromCaseFileCategory } from '@island.is/judicial-system/formatters'
 import {
   BaseSelect,
@@ -19,6 +19,7 @@ import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './AddFiles.strings'
 import * as styles from './SelectCaseFileRepresentative.css'
+import isEmpty from 'lodash/isEmpty'
 
 type RepresentativeSelectOption = ReactSelectOption & {
   selectedCaseRepresentative: CaseRepresentative | null
@@ -28,6 +29,7 @@ interface SelectRepresentativeProps {
   submitterName?: string
   caseFileCategory?: CaseFileCategory
   placeholder?: string
+  size?: 'small' | 'medium'
   updateRepresentative: (
     submitterName: string,
     caseFileCategory: CaseFileCategory,
@@ -38,8 +40,13 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  const { submitterName, caseFileCategory, placeholder, updateRepresentative } =
-    props
+  const {
+    submitterName,
+    caseFileCategory,
+    placeholder,
+    size = 'medium',
+    updateRepresentative,
+  } = props
 
   const options = useMemo(() => {
     const reps =
@@ -91,7 +98,7 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
     )
   }
 
-  return (
+  return size === 'small' ? (
     <BaseSelect
       options={options}
       isLoading={false}
@@ -100,6 +107,22 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
       }
       value={representative}
       onChange={handleChange}
+    />
+  ) : (
+    <Select
+      name="caseRepresentative"
+      label={formatMessage(strings.caseRepresentativeLabel)}
+      placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
+      value={!isEmpty(representative) ? representative : undefined}
+      options={options.slice(1)} // Remove 'clear selection' option for default Select
+      onChange={(selectedOption) => {
+        const representativeSelectOption =
+          selectedOption as RepresentativeSelectOption
+        setRepresentative(representativeSelectOption)
+        handleChange(representativeSelectOption)
+      }}
+      isClearable
+      required
     />
   )
 }

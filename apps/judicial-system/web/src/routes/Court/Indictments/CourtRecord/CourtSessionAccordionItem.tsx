@@ -794,6 +794,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     split?.[1] as CaseFileCategory
                                   }
                                   placeholder="Hver lagði fram?"
+                                  size="small"
                                   updateRepresentative={(
                                     submitterName,
                                     caseFileCategory,
