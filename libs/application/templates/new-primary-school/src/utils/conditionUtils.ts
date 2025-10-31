@@ -1,10 +1,19 @@
 import { YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
-import { LanguageEnvironmentOptions } from './constants'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
+import {
+  ApplicationFeatureKey,
+  LanguageEnvironmentOptions,
+  PayerOption,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  getSelectedSchoolData,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -71,4 +80,41 @@ export const showCaseManagerFields = (answers: FormValue) => {
   const { hasCaseManager } = getApplicationAnswers(answers)
 
   return isWelfareContactSelected(answers) && hasCaseManager === YES
+}
+
+export const shouldShowPage = (
+  answers: FormValue,
+  externalData: ExternalData,
+  key: ApplicationFeatureKey,
+): boolean => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) return false
+
+  const selectedSchoolSettings = getSelectedSchoolData(
+    externalData,
+    selectedSchoolId,
+  )?.settings
+
+  if (!selectedSchoolSettings) return false
+
+  return selectedSchoolSettings.applicationConfigs[0].applicationFeatures.some(
+    (feature) => feature.key === key,
+  )
+}
+
+export const hasOtherPayer = (answers: FormValue) => {
+  const { payer } = getApplicationAnswers(answers)
+
+  return payer === PayerOption.OTHER
+}
+
+export const needsPayerApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.PAYMENT_INFO,
+    ) && hasOtherPayer(application.answers)
+  )
 }

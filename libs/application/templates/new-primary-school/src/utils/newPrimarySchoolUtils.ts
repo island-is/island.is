@@ -1,13 +1,23 @@
-import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import {
+  NO,
+  YES,
+  YesOrNo,
+  corePendingActionMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
+  PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  newPrimarySchoolMessages,
+  pendingActionMessages,
+} from '../lib/messages'
 import {
   Affiliation,
   Child,
@@ -27,7 +37,9 @@ import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  PayerOption,
   ReasonForApplicationOptions,
+  Roles,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -161,6 +173,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
+
+  const payerName = getValueViaPath<string>(answers, 'payer.other.name')
+
+  const payerNationalId = getValueViaPath<string>(
+    answers,
+    'payer.other.nationalId',
+  )
+
+  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
+
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -240,6 +263,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    payer,
+    payerName,
+    payerNationalId,
+    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -627,4 +654,33 @@ export const getSelectedSchoolSubType = (
   }
 
   return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
+}
+
+export const getSelectedSchoolUnitId = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+  return selectedSchoolId
+    ? getSelectedSchoolData(externalData, selectedSchoolId)?.unitId ?? ''
+    : ''
+}
+
+export const payerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.payerApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
 }

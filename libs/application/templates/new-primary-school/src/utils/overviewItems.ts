@@ -33,6 +33,7 @@ import {
   OptionsType,
   OrganizationSector,
   OrganizationSubType,
+  PayerOption,
 } from './constants'
 import {
   formatGrade,
@@ -239,14 +240,14 @@ export const relativesTable = async (
   return {
     header: [
       newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.nationalId,
+      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.relation,
     ],
     rows: relatives.map((r) => [
-      r.fullName,
+      r.nationalIdWithName.name,
+      formatKennitala(r.nationalIdWithName.nationalId),
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
     ]),
   }
@@ -430,7 +431,10 @@ export const siblingsTable = (answers: FormValue): TableData => {
       newPrimarySchoolMessages.shared.fullName,
       newPrimarySchoolMessages.shared.nationalId,
     ],
-    rows: siblings.map((s) => [s.fullName, formatKennitala(s.nationalId)]),
+    rows: siblings.map((s) => [
+      s.nationalIdWithName.name,
+      formatKennitala(s.nationalIdWithName.nationalId),
+    ]),
   }
 }
 
@@ -752,4 +756,36 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...welfareContactItems2,
     ...baseItems2,
   ]
+}
+
+export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
+  const { payer, payerName, payerNationalId, payerEmail } =
+    getApplicationAnswers(answers)
+
+  return payer === PayerOption.APPLICANT
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+          valueText:
+            newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+        },
+      ]
+    : [
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.fullName,
+          valueText: payerName,
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.nationalId,
+          valueText: formatKennitala(payerNationalId ?? ''),
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.email,
+          valueText: payerEmail,
+        },
+      ]
 }
