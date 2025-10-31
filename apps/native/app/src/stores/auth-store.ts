@@ -1,4 +1,4 @@
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
@@ -189,7 +189,10 @@ export const authStore = create<AuthStore>((set, get) => ({
     await Keychain.setGenericPassword(
       KEYCHAIN_AUTH_KEY,
       JSON.stringify(authorizeResult),
-      { service: KEYCHAIN_AUTH_KEY },
+      {
+        service: KEYCHAIN_AUTH_KEY,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      },
     )
     set({ authorizeResult })
   }),
@@ -209,7 +212,10 @@ export const authStore = create<AuthStore>((set, get) => ({
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,
         JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
+        {
+          service: KEYCHAIN_AUTH_KEY,
+          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        },
       )
       set({ authorizeResult })
       return true
@@ -272,21 +278,45 @@ export const useAuthStore = createUse(authStore)
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
+  // We already have an authorization result in memory, nothing else to do.
   if (authorizeResult) {
     return
   }
 
-  try {
-    const res = await Keychain.getGenericPassword({
-      service: KEYCHAIN_AUTH_KEY,
-    })
+  let hasOnboardedPinCode = false
+  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
+  hasOnboardedPinCode = preferencesStore.getState().hasOnboardedPinCode
 
-    if (res) {
-      const authRes = JSON.parse(res.password)
-      authStore.setState({ authorizeResult: authRes })
-    }
+  // Attempt to restore the last known authorization data from the secure keychain.
+  let keychainResult: Awaited<ReturnType<typeof Keychain.getGenericPassword>>
+  try {
+    keychainResult = await Keychain.getGenericPassword({
+      service: KEYCHAIN_AUTH_KEY,
+      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
+    keychainResult = false
+  }
+
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    try {
+      await authStore.getState().logout(true)
+    } catch (err) {
+      console.log('Unable to force logout after fresh install: ', err)
+    }
+    return
+  }
+
+  if (keychainResult) {
+    try {
+      // Persist the restored authorization result in memory for the rest of the session.
+      const authRes = JSON.parse(keychainResult.password)
+      authStore.setState({ authorizeResult: authRes })
+    } catch (err) {
+      console.log('Unable to parse authorize result: ', err)
+    }
   }
 }
 
