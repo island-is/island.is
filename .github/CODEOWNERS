@@ -197,6 +197,7 @@ codemagic.yaml                                                                  
 /libs/clients/documents-v2/                                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                      @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                   @island-is/hugsmidjan
+/libs/clients/police-cases/                                                                                                 @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                                      @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                                                @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                                           @island-is/hugsmidjan

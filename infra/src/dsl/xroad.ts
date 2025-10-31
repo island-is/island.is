@@ -401,6 +401,16 @@ export const Firearm = new XroadConf({
   },
 })
 
+export const PoliceCases = new XroadConf({
+  env: {
+    XROAD_POLICE_CASES_PATH: {
+      dev: 'IS-DEV/GOV/10005/Logreglan-Protected/MittLogreglanApi-v1',
+      staging: 'IS/GOV/5309672079/Logreglan-Protected/MittLogreglanApi-v1',
+      prod: 'IS/GOV/5309672079/Logreglan-Protected/MittLogreglanApi-v1',
+    },
+  },
+})
+
 export const Hunting = new XroadConf({
   env: {
     XROAD_HUNTING_LICENSE_PATH: {
