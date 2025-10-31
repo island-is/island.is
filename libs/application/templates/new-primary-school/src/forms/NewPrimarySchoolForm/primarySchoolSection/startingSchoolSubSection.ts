@@ -90,12 +90,12 @@ export const startingSchoolSubSection = buildSubSection({
 
             return (
               (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
-                temporaryStay === YES &&
-                expectedStartDate === expectedStartDateHiddenInput
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+              temporaryStay === YES &&
+              expectedStartDate === expectedStartDateHiddenInput
             )
           },
         }),
@@ -117,12 +117,12 @@ export const startingSchoolSubSection = buildSubSection({
 
             return (
               (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
-                temporaryStay === YES &&
-                expectedStartDate === expectedStartDateHiddenInput
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+                selectedSubType ===
+                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+              temporaryStay === YES &&
+              expectedStartDate === expectedStartDateHiddenInput
             )
           },
           minDate: (application: Application) =>

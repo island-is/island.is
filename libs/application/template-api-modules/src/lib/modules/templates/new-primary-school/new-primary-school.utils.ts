@@ -153,10 +153,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               ? new Date(expectedStartDate)
               : new Date(),
             ...((selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-            selectedSubType ===
-              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-            selectedSubType ===
-              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+              selectedSubType ===
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
