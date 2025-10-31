@@ -63,6 +63,8 @@ export type SitemapTreeNode = SitemapTree &
         url: string
         urlEN?: string
         urlType?: SitemapUrlType
+        description?: string
+        descriptionEN?: string
         status?: 'draft' | 'published'
       }
   )

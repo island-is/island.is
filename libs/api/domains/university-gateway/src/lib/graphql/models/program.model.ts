@@ -49,11 +49,11 @@ export class UniversityGatewayProgram {
   @Field()
   startingSemesterSeason!: string
 
-  @Field()
-  applicationStartDate!: Date
+  @Field({ nullable: true })
+  applicationStartDate?: Date
 
-  @Field()
-  applicationEndDate!: Date
+  @Field({ nullable: true })
+  applicationEndDate?: Date
 
   @Field({ nullable: true })
   schoolAnswerDate?: Date

@@ -59,7 +59,8 @@ export const getSelectedContractEndDate = (application: Application) => {
   if (selectedContract?.dateTo) {
     return new Date(selectedContract.dateTo)
   }
-  return getOneMonthFromToday()
+
+  return getNMonthsFromToday(3)
 }
 
 export const getOneMonthFromToday = () => {
@@ -67,4 +68,27 @@ export const getOneMonthFromToday = () => {
   const oneMonthLater = new Date(today)
   oneMonthLater.setMonth(today.getMonth() + 1)
   return oneMonthLater
+}
+
+export const getNMonthsFromToday = (n: number) => {
+  const today = new Date()
+  const nMonthsLater = new Date(today)
+  nMonthsLater.setMonth(today.getMonth() + n)
+  return nMonthsLater
+}
+
+export const nearestDateInFuture = (date1: Date, date2: Date) => {
+  const today = new Date()
+  const futureDate1 = date1 > today ? date1 : null
+  const futureDate2 = date2 > today ? date2 : null
+
+  if (futureDate1 && futureDate2) {
+    return futureDate1 < futureDate2 ? futureDate1 : futureDate2
+  }
+
+  if (futureDate1) return futureDate1
+  if (futureDate2) return futureDate2
+
+  // If both are in the past, return today
+  return today
 }

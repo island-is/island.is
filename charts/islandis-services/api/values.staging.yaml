@@ -45,6 +45,7 @@ env:
   ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net'
   ELFUR_CLIENT_ID: '@fjs.is/hugsmidjan'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+  ENVIRONMENT: 'staging'
   FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
   FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -72,7 +73,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
@@ -201,9 +202,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 3
     path: '/health'
@@ -211,7 +212,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 75
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -241,10 +242,10 @@ replicaCount:
 resources:
   limits:
     cpu: '1200m'
-    memory: '3200Mi'
+    memory: '2500Mi'
   requests:
-    cpu: '400m'
-    memory: '896Mi'
+    cpu: '800m'
+    memory: '1500Mi'
 secrets:
   ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
   ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -306,6 +307,7 @@ secrets:
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
   INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
   LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
+  LANDSPITALI_PAYMENT_ORGANISATION_ID: '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID'
   LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
   MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'

@@ -5,7 +5,6 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -29,7 +28,6 @@ import {
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
-  SchoolType,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -54,16 +52,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
-
-  const reasonForApplicationStreetAddress = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.streetAddress',
-  )
-
-  const reasonForApplicationPostalCode = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.postalCode',
-  )
 
   const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
 
@@ -199,19 +187,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   )
 
-  const selectedSchoolIdAndType = getValueViaPath<string>(
-    answers,
-    'newSchool.school',
-  )
-
-  // School type is piggybacked on the value like 'id::subType::sector'
-  const [selectedSchool, selectedSchoolSubType, selectedSchoolSector] =
-    selectedSchoolIdAndType?.split('::') ?? []
-
-  const selectedSchoolType = getValueViaPath<SchoolType>(
-    answers,
-    'newSchool.type',
-  )
+  const selectedSchoolId = getValueViaPath<string>(answers, 'newSchool.school')
 
   const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
@@ -241,8 +217,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -271,10 +245,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     temporaryStay,
     expectedEndDate,
     schoolMunicipality,
-    selectedSchool,
-    selectedSchoolSubType,
-    selectedSchoolSector,
-    selectedSchoolType,
+    selectedSchoolId,
     currentNurseryMunicipality,
     currentNursery,
     applyForPreferredSchool,
@@ -537,13 +508,10 @@ export const getApplicationType = (
   }
 
   // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    if (!childInformation?.primaryOrgId) {
-      return yearOfBirth === firstGradeYear
-        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-        : ApplicationType.NEW_PRIMARY_SCHOOL
-    }
+  if (!childInformation?.primaryOrgId) {
+    return yearOfBirth === firstGradeYear
+      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   return ApplicationType.NEW_PRIMARY_SCHOOL
@@ -624,4 +592,39 @@ export const getCurrentAndNextGrade = (grade: string): string[] => {
 
   // Only include the next grade if it's within bounds
   return next <= 10 ? [current, next.toString().padStart(2, '0')] : [current]
+}
+
+export const getSelectedSchoolData = (
+  externalData: ExternalData,
+  schoolId: string,
+) => {
+  const { schools } = getApplicationExternalData(externalData)
+
+  return schools.find((school) => school?.id === schoolId)
+}
+
+export const getSelectedSchoolSector = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector ?? ''
+}
+
+export const getSelectedSchoolSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
 }

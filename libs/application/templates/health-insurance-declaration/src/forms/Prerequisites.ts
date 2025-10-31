@@ -16,14 +16,14 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { application } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { prerequisites } from '../lib/messages/prerequisites'
 
 export const Prerequisites: Form = buildForm({
   id: 'HealthInsuranceDeclarationPrerequsites',
   title: application.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: IcelandHealthLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
