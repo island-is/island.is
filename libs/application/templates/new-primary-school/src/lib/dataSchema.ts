@@ -342,7 +342,7 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
-
+  acceptTerms: z.array(z.enum([YES])).nonempty(),
   childCircumstances: z
     .object({
       onSiteObservation: z.array(z.enum([YES])).length(1),
