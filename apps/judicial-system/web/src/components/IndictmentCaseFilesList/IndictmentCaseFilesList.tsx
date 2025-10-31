@@ -462,12 +462,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     <PdfButton
                       key={defendant.id}
                       caseId={workingCase.id}
-                      title={formatMessage(
-                        strings.serviceCertificateButtonText,
-                        {
-                          name: defendant.name,
-                        },
-                      )}
+                      title={serviceCertificateFileName}
                       pdfType="verdictServiceCertificate"
                       elementId={[defendant.id, serviceCertificateFileName]}
                       renderAs="row"
