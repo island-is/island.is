@@ -460,7 +460,7 @@ export class OrganizationPageResolver {
       const link = generateOrganizationSubpageLink(
         entry as IOrganizationParentSubpage | IOrganizationSubpage,
       )
-      if (Boolean(link?.url) && Boolean(link?.text)) {
+      if (link !== null && Boolean(link.url) && Boolean(link.text)) {
         entryMap.set(entry.sys.id, {
           link: {
             label: link.text,
