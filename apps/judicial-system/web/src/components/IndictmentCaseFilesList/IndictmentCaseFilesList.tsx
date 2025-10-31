@@ -446,24 +446,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
               )}
               {features?.includes(Feature.VERDICT_DELIVERY) &&
                 permissions.canViewVerdictServiceCertificate &&
-                workingCase.defendants?.map(
-                  (defendant) =>
-                    defendant.verdict?.serviceDate && (
-                      <PdfButton
-                        key={defendant.id}
-                        caseId={workingCase.id}
-                        title={formatMessage(
-                          strings.serviceCertificateButtonText,
-                          {
-                            name: defendant.name,
-                          },
-                        )}
-                        pdfType="verdictServiceCertificate"
-                        elementId={[defendant.id]}
-                        renderAs="row"
-                      />
-                    ),
-                )}
+                workingCase.defendants?.map((defendant) => {
+                  if (!defendant.verdict?.serviceDate) {
+                    return null
+                  }
+
+                  const serviceCertificateFileName = formatMessage(
+                    strings.serviceCertificateButtonText,
+                    {
+                      name: defendant.name,
+                    },
+                  )
+
+                  return (
+                    <PdfButton
+                      key={defendant.id}
+                      caseId={workingCase.id}
+                      title={serviceCertificateFileName}
+                      pdfType="verdictServiceCertificate"
+                      elementId={[defendant.id, serviceCertificateFileName]}
+                      renderAs="row"
+                    />
+                  )
+                })}
             </Box>
           )}
           <FileSection
