@@ -35,7 +35,7 @@ const PoliceCaseDetail = () => {
       input: {
         caseNumber: policeCaseNumber,
       },
-      locale
+      locale,
     },
   })
 
@@ -128,51 +128,68 @@ const PoliceCaseDetail = () => {
           />
         </InfoLineStack>
 
-        {!error && loading && <CardLoader/>}
-        {!error && !loading && data?.lawAndOrderPoliceCaseTimelineStructure?.milestones && <><Text variant="eyebrow" color="purple600">
-          {formatMessage(m.timeline)}
-        </Text>
-        <HistoryStepper
-          sections={data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.map(
-            ({ label, step }, index) => {
-              const isActiveStep = currentCaseProgress === step
-              const stepIsCompleted = step <= currentCaseProgress
+        {!error && loading && <CardLoader />}
+        {!error &&
+          !loading &&
+          data?.lawAndOrderPoliceCaseTimelineStructure?.milestones && (
+            <>
+              <Text variant="eyebrow" color="purple600">
+                {formatMessage(m.timeline)}
+              </Text>
+              <HistoryStepper
+                sections={data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.map(
+                  ({ label, step }, index) => {
+                    const isActiveStep = currentCaseProgress === step
+                    const stepIsCompleted = step <= currentCaseProgress
 
-              const firstStepDate = step === 1 && policeCase?.received ? formatDate(policeCase.received) : undefined
-              const lastActiveStepDate = step === currentCaseProgress && policeCase?.modified ? formatDate(policeCase.modified) : undefined
+                    const firstStepDate =
+                      step === 1 && policeCase?.received
+                        ? formatDate(policeCase.received)
+                        : undefined
+                    const lastActiveStepDate =
+                      step === currentCaseProgress && policeCase?.modified
+                        ? formatDate(policeCase.modified)
+                        : undefined
 
-              const section = stepIsCompleted ? (
-                <Text lineHeight="lg" fontWeight="semiBold">
-                  {formatMessage(label)}
-                </Text>
-              ) : (
-                <Text lineHeight="lg" color="foregroundPrimaryMinimal">
-                  {formatMessage(label)}
-                </Text>
-              )
-              return (
-                <HistorySection
-                  key={`milestone-${index}`}
-                  section={formatMessage(label)}
-                  customSection={section}
-                  sectionIndex={step}
-                  isComplete={stepIsCompleted}
-                  isLast={
-                    step === (data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.length ?? 0) -1
-                  }
-                  description={
-                    (isActiveStep && policeCase?.status?.descriptionDisplayString) ? (
-                      <Text>{policeCase?.status?.descriptionDisplayString}</Text>
-                    ) : undefined
-                  }
-                  date={firstStepDate ?? lastActiveStepDate}
-                  forceRightAlignedDate
-                />
-              )
-            },
+                    const section = stepIsCompleted ? (
+                      <Text lineHeight="lg" fontWeight="semiBold">
+                        {formatMessage(label)}
+                      </Text>
+                    ) : (
+                      <Text lineHeight="lg" color="foregroundPrimaryMinimal">
+                        {formatMessage(label)}
+                      </Text>
+                    )
+                    return (
+                      <HistorySection
+                        key={`milestone-${index}`}
+                        section={formatMessage(label)}
+                        customSection={section}
+                        sectionIndex={step}
+                        isComplete={stepIsCompleted}
+                        isLast={
+                          step ===
+                          (data?.lawAndOrderPoliceCaseTimelineStructure
+                            ?.milestones.length ?? 0) -
+                            1
+                        }
+                        description={
+                          isActiveStep &&
+                          policeCase?.status?.descriptionDisplayString ? (
+                            <Text>
+                              {policeCase?.status?.descriptionDisplayString}
+                            </Text>
+                          ) : undefined
+                        }
+                        date={firstStepDate ?? lastActiveStepDate}
+                        forceRightAlignedDate
+                      />
+                    )
+                  },
+                )}
+              />
+            </>
           )}
-        /></>
-        }
       </Stack>
     </>
   )

@@ -1,4 +1,7 @@
-query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!, $locale: String) {
+query GetPoliceCaseDetail(
+  $input: LawAndOrderPoliceCaseInput!
+  $locale: String
+) {
   lawAndOrderPoliceCase(input: $input) {
     __typename
     cacheId
