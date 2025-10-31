@@ -305,28 +305,24 @@ export const healthModule: PortalModule = {
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
-      key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: <OrganDonation />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationOld,
-      key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
-      key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: <OrganDonationRegistration />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistrationOld,
-      key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: (
         <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
@@ -335,7 +331,6 @@ export const healthModule: PortalModule = {
     {
       name: hm.vaccinations,
       path: HealthPaths.HealthVaccinations,
-      key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
     },
@@ -344,7 +339,6 @@ export const healthModule: PortalModule = {
       name: hm.bloodtype,
       path: HealthPaths.HealthBloodtype,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      key: 'HealthBlood',
       element: <Bloodtype />,
     },
     {

@@ -18,6 +18,11 @@ import {
   donationExceptionControllerGetOrgansV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerGetCountriesV1,
+  mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
+  mePatientConcentEuControllerGetEuPatientConsentV1,
   mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
@@ -30,8 +35,11 @@ import {
   meWaitingListControllerGetWaitingListEntriesV1,
 } from './gen/fetch'
 import {
+  ConsentCountryDto,
+  CreateEuPatientConsentDto,
   CreatePrescriptionCommissionDto,
   DeactivatePrescriptionCommissionDto,
+  EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
@@ -214,7 +222,7 @@ export class HealthDirectorateHealthService {
     )
 
     if (!organDonation) {
-      this.logger.warn('No organ donations data returned')
+      this.logger.debug('No organ donations data returned')
       return null
     }
 
@@ -253,7 +261,7 @@ export class HealthDirectorateHealthService {
     )
 
     if (!donationExceptions) {
-      this.logger.warn('No organ donations exceptions returned')
+      this.logger.debug('No organ donations exceptions returned')
       return null
     }
 
@@ -310,5 +318,123 @@ export class HealthDirectorateHealthService {
       ),
     )
     return result
+  }
+
+  public async getPermits(
+    auth: Auth,
+    locale: Locale,
+    status: string[],
+    dateFrom?: Date | undefined,
+    dateTo?: Date | undefined,
+  ): Promise<EuPatientConsentDto[] | null> {
+    const permits = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetEuPatientConsentForPatientV1({
+          query: {
+            locale: this.mapLocale(locale),
+            status: status,
+            validFrom: dateFrom ?? undefined,
+            validTo: dateTo ?? undefined,
+          },
+        }),
+      ),
+    )
+
+    return permits ?? null
+  }
+
+  public async getPermit(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<EuPatientConsentDto | null> {
+    const permit = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetEuPatientConsentV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    return permit ?? null
+  }
+
+  public async getPermitCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<ConsentCountryDto[] | null> {
+    const countries = await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerGetCountriesV1({
+          query: {
+            locale: this.mapLocale(locale),
+          },
+        }),
+      ),
+    )
+
+    if (!countries) {
+      return null
+    }
+
+    // Convert object with numeric keys to array
+    if (typeof countries === 'object' && !Array.isArray(countries)) {
+      return Object.values(
+        countries as unknown as Record<string, ConsentCountryDto>,
+      )
+    }
+
+    // If it's already an array, return as is
+    if (Array.isArray(countries)) {
+      return countries
+    }
+
+    return null
+  }
+
+  public async createPermit(
+    auth: Auth,
+    input: CreateEuPatientConsentDto,
+  ): Promise<unknown> {
+    if (!input.validTo || !input.validFrom) {
+      return null
+    }
+    const validFrom = new Date(input.validFrom)
+    const validTo = new Date(input.validTo)
+
+    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
+      this.logger.debug('Invalid date values provided to createPermit')
+      return null
+    }
+
+    return await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
+          body: {
+            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
+            countryCodes: input.countryCodes,
+            validFrom: validFrom,
+            validTo: validTo,
+          },
+        }),
+      ),
+    )
+  }
+
+  public async deactivatePermit(auth: Auth, id: string): Promise<unknown> {
+    return await withAuthContext(auth, () =>
+      data(
+        mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
   }
 }

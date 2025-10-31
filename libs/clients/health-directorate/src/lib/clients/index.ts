@@ -14,4 +14,6 @@ export {
   PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
   PrescriptionCommissionDto,
+  EuPatientConsentStatus,
+  EuPatientConsentDto,
 } from './health'

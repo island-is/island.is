@@ -29,16 +29,22 @@ import {
   MedicineDelegationDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
-
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import { MedicineHistory } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
+import { Countries } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescriptions } from './models/prescriptions.model'
@@ -61,7 +67,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -87,7 +92,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -103,7 +107,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthVaccinations, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -280,7 +283,7 @@ export class HealthDirectorateResolver {
     return this.api.postMedicineDelegation(user, input)
   }
 
-  /* Add new Prescription Delegation */
+  /* Delete prescription Delegation */
   @Mutation(() => HealthDirectorateResponse, {
     name: 'healthDirectorateMedicineDelegationDelete',
   })
@@ -292,5 +295,79 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateResponse> {
     return this.api.deleteMedicineDelegation(user, input)
+  }
+  /* Patient data - Permits */
+
+  @Query(() => Permits, {
+    name: 'healthDirectoratePatientDataPermits',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
+  getPermits(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input', { type: () => PermitsInput })
+    input: PermitsInput,
+    @CurrentUser() user: User,
+  ): Promise<Permits | null> {
+    return this.api.getPermits(user, locale, input)
+  }
+
+  @Query(() => Permit, {
+    name: 'healthDirectoratePatientDataPermit',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
+  getPermit(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('id', { type: () => String }) id: string,
+    @CurrentUser() user: User,
+  ): Promise<Permit | null> {
+    return this.api.getPermit(user, locale, id)
+  }
+
+  @Query(() => Countries, {
+    name: 'healthDirectoratePatientDataPermitCountries',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
+  getPermitCountries(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Countries | null> {
+    return this.api.getPermitCountries(user, locale)
+  }
+
+  @Mutation(() => PermitReturn, {
+    nullable: true,
+    name: 'healthDirectoratePatientDataCreatePermit',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
+  async createPermit(
+    @Args('input') input: PermitInput,
+    @CurrentUser() user: User,
+  ): Promise<PermitReturn | null> {
+    return this.api.createPermit(user, input)
+  }
+
+  @Mutation(() => PermitReturn, {
+    nullable: true,
+    name: 'healthDirectoratePatientDataInvalidatePermit',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
+  async invalidatePermit(
+    @Args('input') input: InvalidatePermitInput,
+    @CurrentUser() user: User,
+  ): Promise<PermitReturn | null> {
+    return this.api.invalidatePermit(user, input)
   }
 }

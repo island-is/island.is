@@ -20,5 +20,7 @@ export {
   PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
   PrescriptionCommissionDto,
+  EuPatientConsentDto,
+  EuPatientConsentStatus,
 } from './lib/clients'
 export { DispensationHistoryItemDto } from './lib/clients/health'
