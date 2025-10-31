@@ -5,6 +5,7 @@ import {
   getApplicationExternalData,
   getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
+  needsPayerApproval,
   OrganizationSubType,
   ReasonForApplicationOptions,
 } from '@island.is/application/templates/new-primary-school'
@@ -13,6 +14,8 @@ import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
 } from '@island.is/clients/mms/frigg'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -93,6 +96,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     currentSchoolId,
     applyForPreferredSchool,
+    payerName,
+    payerNationalId,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -185,8 +190,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               languages: ['is'],
             }),
       },
+      ...(needsPayerApproval(application) && {
+        payer: {
+          name: payerName || '',
+          nationalId: payerNationalId || '',
+        },
+      }),
     },
   }
 
   return newPrimarySchoolDTO
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./new-primary-school-assets/${file}`)
 }
