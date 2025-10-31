@@ -59,4 +59,9 @@ export const serviceErrors = defineMessages({
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðuð samband við Ísland.is',
     description: 'Error message when submit fails',
   },
+  requiredError: {
+    id: 'vmst.ub.application:requiredError',
+    defaultMessage: 'Þessi dálkur er skilyrtur',
+    description: 'Error message when validation fails',
+  },
 })

@@ -42,7 +42,7 @@ export const PaymentInformationValidation: FC<
     setInvalidError(false)
     setErrors([])
 
-    const paymentInfo: PayoutInAnswers = getValues('payout')
+    const paymentInfo: PayoutInAnswers | undefined = getValues('payout')
     const supportInfo =
       getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemployementApplicationSupportData>(
         props.application.externalData,
@@ -56,25 +56,6 @@ export const PaymentInformationValidation: FC<
       paymentInfo?.bankAccount.accountNumber || '',
     )
 
-    const pensionFund = getValueViaPath<string>(
-      props.application.answers,
-      'payout.pensionFund',
-    )
-
-    const union = getValueViaPath<string>(
-      props.application.answers,
-      'payout.union',
-    )
-
-    const privatePension = getValueViaPath<string>(
-      props.application.answers,
-      'payout.privatePensionFund',
-    )
-
-    const privatePensionPercentage = getValueViaPath<string>(
-      props.application.answers,
-      'payout.privatePensionFundPercentage',
-    )
     // Set the errors
     if (!bankNumberValidity || !ledger || !accountNumber) {
       setInvalidError(true)
@@ -83,11 +64,11 @@ export const PaymentInformationValidation: FC<
 
     const ledgerSupportData =
       supportInfo?.ledgers?.find(
-        (val) => val.number === paymentInfo.bankAccount.ledger,
+        (val) => val.number === paymentInfo?.bankAccount.ledger,
       ) || undefined
     const bankNumberSupportData =
       supportInfo?.banks?.find(
-        (val) => val.bankNo === paymentInfo.bankAccount.bankNumber,
+        (val) => val.bankNo === paymentInfo?.bankAccount.bankNumber,
       ) || undefined
 
     if (!ledgerSupportData) {
@@ -106,18 +87,19 @@ export const PaymentInformationValidation: FC<
         bankNumber: bankNumberSupportData.id || '',
         ledger: ledgerSupportData.id || '',
         accountNumber:
-          paymentInfo.bankAccount.accountNumber?.padStart(6, '0') || '',
-        pensionFund: { id: pensionFund || '', percentage: 0 },
-        privatePensionFunds: privatePension
+          paymentInfo?.bankAccount.accountNumber?.padStart(6, '0') || '',
+        pensionFund: { id: paymentInfo?.pensionFund || '', percentage: 0 },
+        privatePensionFunds: paymentInfo?.privatePensionFund
           ? [
               {
-                id: privatePension || '',
-                percentage: Number(privatePensionPercentage) || 0,
+                id: paymentInfo.privatePensionFund,
+                percentage:
+                  Number(paymentInfo?.privatePensionFundPercentage) || 0,
               },
             ]
           : [],
-        doNotPayToUnion: !union,
-        union: union ? { id: union || '' } : undefined,
+        doNotPayToUnion: !paymentInfo?.union,
+        union: paymentInfo?.union ? { id: paymentInfo.union || '' } : undefined,
       })
 
       if (

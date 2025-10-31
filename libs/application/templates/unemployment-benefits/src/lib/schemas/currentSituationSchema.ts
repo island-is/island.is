@@ -49,7 +49,10 @@ export const currentSituationSchema = z
               code: z.ZodIssueCode.custom,
             })
           }
-          if (job.nationalIdWithName === '-' && !job.employer?.nationalId) {
+          if (
+            job.nationalIdWithName === '-' &&
+            (!job.employer?.nationalId || !job.employer?.name)
+          ) {
             ctx.addIssue({
               path: ['currentSituationRepeater', index, 'employer'],
               code: z.ZodIssueCode.custom,
