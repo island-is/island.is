@@ -38,6 +38,12 @@ export interface DataState<T> {
   error?: boolean
 }
 
+export interface DelegationState {
+  dateFrom?: Date
+  dateTo?: Date
+  nationalId?: string
+  lookup?: boolean
+}
 export type DrugRowDrug = {
   name?: string | null
   strength?: string | null

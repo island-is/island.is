@@ -1,69 +1,73 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import { HealthDirectorateMedicineDelegationItem } from '@island.is/api/schema'
 import {
+  ActionCard,
   Box,
-  Checkbox,
-  DatePicker,
-  Input,
-  Text,
   Button,
   ModalBase,
+  Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { Delegation } from '../utils/mockdata'
-import { m } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
+import { formatDate } from '@island.is/portals/my-pages/core'
+import React from 'react'
 import { messages } from '../../../lib/messages'
+import { useDeleteMedicineDelegationMutation } from '../MedicineDelegation.generated'
 import * as styles from './DelegationModal.css'
 
 interface Props {
   id: string
-  activeDelegation?: Delegation
-  disclosure?: ReactElement
+  activeDelegation?: HealthDirectorateMedicineDelegationItem
+  onClose?: () => void
+  onSubmit?: () => void
   visible?: boolean
 }
 
 const DelegationModal: React.FC<Props> = ({
   id,
   activeDelegation,
-  disclosure,
   visible,
+  onClose,
+  onSubmit,
 }) => {
   const { formatMessage } = useLocale()
-  const [formData, setFormData] = useState<{
-    nationalId?: string
-    date?: Date
-    lookup?: boolean
-  } | null>({
-    nationalId: activeDelegation?.nationalId,
-    date: activeDelegation?.date,
-    lookup: activeDelegation?.delegationType.includes('/'),
-  })
-  const [modalVisible, setModalVisible] = useState<boolean>(!!visible)
+
+  const [deleteDelegation, { loading: deleting }] =
+    useDeleteMedicineDelegationMutation()
 
   const closeModal = () => {
-    setModalVisible(false)
+    onClose && onClose()
   }
 
-  useEffect(() => {
-    setModalVisible(!!visible)
-  }, [visible])
-
-  const submitForm = async (e?: React.FormEvent<HTMLFormElement>) => {
-    // TODO: Implement form submission when service is ready
-    e && e.preventDefault()
-    const formData2 = e && new FormData(e.currentTarget)
-    const data = formData2 && Object.fromEntries(formData2.entries())
-    setFormData(null)
-    setModalVisible(false)
+  const submitForm = async () => {
+    if (activeDelegation?.nationalId) {
+      await deleteDelegation({
+        variables: {
+          input: {
+            nationalId: activeDelegation?.nationalId,
+          },
+        },
+      })
+        .then((response) => {
+          if (
+            response.data?.healthDirectorateMedicineDelegationDelete.success
+          ) {
+            toast.success(formatMessage(messages.permitDeleted))
+            onSubmit && onSubmit()
+          } else {
+            toast.error(formatMessage(messages.permitDeletedError))
+          }
+        })
+        .catch(() => {
+          toast.error(formatMessage(messages.permitDeletedError))
+        })
+    }
   }
 
   return (
     <ModalBase
       baseId={id}
-      isVisible={modalVisible}
+      isVisible={visible}
       initialVisibility={false}
-      onVisibilityChange={(visibility) => {
-        setModalVisible(visibility)
-      }}
       removeOnClose
       className={styles.modal}
     >
@@ -79,87 +83,44 @@ const DelegationModal: React.FC<Props> = ({
         />
       </Box>
       <Box paddingY={8} paddingX={12}>
-        <Text variant="h3" marginBottom={5}>
-          {activeDelegation
-            ? formatMessage(messages.editDelegation)
-            : formatMessage(messages.grantMedicineDelegation)}
+        <Text variant="h3" marginBottom={1}>
+          {formatMessage(messages.areYouSureAboutDeletingDelegation)}
         </Text>
-        <form onSubmit={submitForm}>
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Box width="full" marginRight={1}>
-              <Input
-                type="number"
-                name="delegationMedicineModalNationalId"
-                value={formData?.nationalId}
-                label={formatMessage(m.natreg)}
-                size="xs"
-                required
-                maxLength={9}
-              />
-              <Text variant="small" color="dark300">
-                {activeDelegation?.name ?? 'Nonni Nonnason'}
-              </Text>
-            </Box>
-            <Box width="full" marginLeft={1}>
-              <DatePicker
-                label={formatMessage(m.validTo)}
-                name="delegationMedicineModalDateTo"
-                required
-                placeholderText={formatMessage(m.chooseDate)}
-                selected={formData?.date}
-                size="xs"
-              />
-            </Box>
+        <Text marginBottom={3}>
+          {formatMessage(messages.youAreAboutToDeleteThisPermit)}
+        </Text>
+
+        <ActionCard
+          heading={activeDelegation?.name ?? ''}
+          headingVariant="h4"
+          text={formatMessage(messages.permitTo, {
+            arg: activeDelegation?.lookup
+              ? formatMessage(messages.pickupMedicineAndLookup)
+              : formatMessage(messages.pickupMedicine),
+          })}
+          subText={
+            formatMessage(messages.medicineValidTo) +
+            ' ' +
+            formatDate(activeDelegation?.dates?.to)
+          }
+        />
+        <Box display={'flex'} justifyContent="spaceBetween" marginTop={6}>
+          <Box>
+            <Button size="small" variant="ghost" onClick={closeModal}>
+              {formatMessage(messages.cancel)}
+            </Button>
           </Box>
-          <Box marginTop={2} marginBottom={6}>
-            <Checkbox
-              label={formatMessage(messages.medicineDelegationLookup)}
-              name="delegationMedicineModalLookup"
-              checked={formData?.lookup}
-            />
+          <Box>
+            <Button
+              size="small"
+              onClick={submitForm}
+              colorScheme="destructive"
+              loading={deleting}
+            >
+              {formatMessage(messages.deleteDelegation)}
+            </Button>
           </Box>
-          <Box display="flex" flexDirection="row" marginTop={2}>
-            <Box>
-              <Button
-                id="delegationModalDecline"
-                type="button"
-                variant="ghost"
-                size="small"
-                onClick={() => {
-                  closeModal()
-                }}
-              >
-                {formatMessage(m.buttonCancel)}
-              </Button>
-            </Box>
-            {activeDelegation && (
-              <Box paddingLeft={2}>
-                <Button
-                  id="delegationModalDelete"
-                  type="button"
-                  variant="ghost"
-                  colorScheme="destructive"
-                  size="small"
-                  onClick={() => {
-                    closeModal()
-                  }}
-                >
-                  {formatMessage(messages.deleteDelegation)}
-                </Button>
-              </Box>
-            )}
-            <Box marginLeft="auto" paddingLeft={2}>
-              <Button
-                id="delegationModalDelete"
-                type="submit"
-                variant="primary"
-                size="small"
-              >
-                {formatMessage(m.submit)}
-              </Button>
-            </Box>
-          </Box>
-        </form>
+        </Box>
       </Box>
     </ModalBase>
   )

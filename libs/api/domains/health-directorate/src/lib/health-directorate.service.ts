@@ -5,23 +5,22 @@ import {
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
-} from '@island.is/clients/health-directorate'
-import type { Locale } from '@island.is/shared/types'
-import { Inject, Injectable } from '@nestjs/common'
-import { Donor, DonorInput, Organ } from './models/organ-donation.model'
-
-import {
   HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
+import type { Locale } from '@island.is/shared/types'
+import { Inject, Injectable } from '@nestjs/common'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
+import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import {
-  InvalidatePermitInput,
-  PermitInput,
-  PermitsInput,
-} from './dto/permit.input'
+  MedicineDelegationCreateInput,
+  MedicineDelegationDeleteInput,
+} from './dto/medicineDelegation.input'
+import { HealthDirectorateResponse } from './dto/response.dto'
+import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
   MedicineHistoryDispensation,
@@ -29,8 +28,6 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { Countries } from './models/permits/country.model'
-import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -40,6 +37,13 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
+import { Countries } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import {
   mapDispensationItem,
   mapPermit,
@@ -403,6 +407,77 @@ export class HealthDirectorateService {
       data.map(mapDispensationItem)
 
     return { dispensations }
+  }
+  /* Medicine Delegations */
+  async getMedicineDelegations(
+    auth: Auth,
+    locale: Locale,
+    active: boolean,
+  ): Promise<MedicineDelegations | null> {
+    const medicineDelegations = await this.healthApi.getMedicineDelegations(
+      auth,
+      locale,
+      active,
+    )
+
+    if (!medicineDelegations) {
+      return null
+    }
+
+    const data: MedicineDelegations = {
+      items: medicineDelegations.map((item) => ({
+        cacheId: [item.toName, item.toNationalId, locale].join('-'),
+        name: item.toName,
+        nationalId: item.toNationalId,
+        dates: {
+          from: item.validFrom,
+          to: item.validTo,
+        },
+        isActive: item.isActive,
+        lookup: item.commissionType === 1,
+      })),
+    }
+
+    return data
+  }
+
+  async postMedicineDelegation(
+    auth: Auth,
+    input: MedicineDelegationCreateInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .postMedicineDelegation(auth, {
+        commissionType: input.lookup ? 1 : 0,
+        toNationalId: input.nationalId,
+        validFrom: input.from?.toISOString(),
+        validTo: input.to?.toISOString(),
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to create medicine delegation',
+        }
+      })
+  }
+
+  async deleteMedicineDelegation(
+    auth: Auth,
+    input: MedicineDelegationDeleteInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .deleteMedicineDelegation(auth, input.nationalId)
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to deactivate medicine delegation',
+        }
+      })
   }
 
   /* Patient data - Permits */
