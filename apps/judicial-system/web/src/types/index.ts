@@ -2,7 +2,7 @@ import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema
 
 export type ReactSelectOption = {
   label: string
-  value: string | number
+  value: string | number | null
   __isNew__?: boolean
 }
 

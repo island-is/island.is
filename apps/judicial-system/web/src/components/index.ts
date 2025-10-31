@@ -1,5 +1,6 @@
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
+export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as BlueBoxWithDate } from './BlueBoxWithIcon/BlueBoxWithDate'
 export { default as CaseDates } from './CaseDates/CaseDates'

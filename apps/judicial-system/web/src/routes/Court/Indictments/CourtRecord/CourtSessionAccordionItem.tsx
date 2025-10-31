@@ -27,6 +27,7 @@ import { theme } from '@island.is/island-ui/theme'
 import {
   applyDativeCaseToCourtName,
   formatDOB,
+  getRoleTitleFromCaseFileCategory,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -38,8 +39,11 @@ import {
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile, {
+  Supplement,
+} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
+  CaseFileCategory,
   CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
@@ -59,6 +63,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -162,6 +167,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         )}`,
       )
     }
+
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       workingCase.defendants.forEach((defendant) => {
         if (defendant.defenderName) {
@@ -201,9 +207,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     const attendees = courtSession.attendees ?? getInitialAttendees()
     const endDate = courtSession.endDate ?? (now > startDate ? now : startDate)
 
-    const update = { startDate, judgeId, location, attendees, endDate }
-
-    patchSession(courtSession.id, update, { persist: true })
+    patchSession(
+      courtSession.id,
+      { startDate, judgeId, location, attendees, endDate },
+      { persist: true },
+    )
   }, [
     courtSession,
     workingCase.judge?.id,
@@ -304,12 +312,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     patchSession(courtSession.id, { filedDocuments: newOrder })
   }
 
-  const handleRename = (
+  const handleUpdateFile = (
     courtSessionId: string,
     fileId: string,
-    newName: string,
+    update: { name?: string; submittedBy?: string },
   ) => {
-    if (!fileId || !newName.trim()) {
+    if (!update.name?.trim() && update.submittedBy === undefined) {
       return
     }
 
@@ -317,12 +325,19 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       caseId: workingCase.id,
       courtSessionId,
       courtDocumentId: fileId,
-      name: newName,
+      name: update.name,
+      submittedBy: update.submittedBy,
     })
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.map((file) =>
-        file.id === fileId ? { ...file, name: newName } : file,
+        file.id === fileId
+          ? {
+              ...file,
+              name: update.name ?? file.name,
+              submittedBy: update.submittedBy ?? file.submittedBy,
+            }
+          : file,
       ),
     })
   }
@@ -737,12 +752,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               isDisabled={courtSession.isConfirmed || false}
               isLoading={courtDocument.create.loading}
             >
-              <Box
-                display="flex"
-                flexDirection="column"
-                rowGap={2}
-                marginTop={2}
-              >
+              <Box display="flex" flexDirection="column" rowGap={2}>
                 {index > 0 && (
                   <Box
                     background="white"
@@ -768,44 +778,127 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       className={styles.grid}
                     >
                       <AnimatePresence>
-                        {filedDocuments.map((item) => (
-                          <Reorder.Item
-                            key={item.id}
-                            value={item}
-                            data-reorder-item
-                            drag={!courtSession.isConfirmed}
-                            onDragStart={() => {
-                              setDraggedFileId(item.id)
-                            }}
-                            onDragEnd={() => {
-                              setDraggedFileId(null)
-                            }}
-                            initial={{ opacity: 0, y: -10, height: 'auto' }}
-                            animate={{ opacity: 1, y: 0, height: 'auto' }}
-                            exit={{ opacity: 0, y: 10, height: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <EditableCaseFile
-                              enableDrag
-                              caseFile={{
-                                id: item.id,
-                                displayText: item.name,
-                                name: item.name,
-                                canOpen:
-                                  item.documentType !==
-                                  CourtDocumentType.EXTERNAL_DOCUMENT,
-                                canEdit: ['fileName'],
+                        {filedDocuments.map((item) => {
+                          let supplement: Supplement | undefined = undefined
+
+                          if (
+                            item.documentType ===
+                            CourtDocumentType.EXTERNAL_DOCUMENT
+                          ) {
+                            const split = item.submittedBy?.split('|')
+                            const enabled = (
+                              <Box marginTop={1}>
+                                <SelectRepresentative
+                                  submitterName={split?.[0]}
+                                  caseFileCategory={
+                                    split?.[1] as CaseFileCategory
+                                  }
+                                  placeholder="Hver lagði fram?"
+                                  size="small"
+                                  updateRepresentative={(
+                                    submitterName,
+                                    caseFileCategory,
+                                  ) => {
+                                    handleUpdateFile(courtSession.id, item.id, {
+                                      submittedBy: `${submitterName}|${caseFileCategory}`,
+                                    })
+                                  }}
+                                />
+                              </Box>
+                            )
+                            const disabled = split ? (
+                              <Text variant="small" color="currentColor">
+                                {`${
+                                  split[0]
+                                } (${getRoleTitleFromCaseFileCategory(
+                                  split[1] as CaseFileCategory,
+                                  { notRegistered: 'Málsaðili' },
+                                )})`}
+                              </Text>
+                            ) : null
+                            supplement = { enabled, disabled }
+                          } else if (
+                            item.documentType ===
+                            CourtDocumentType.UPLOADED_DOCUMENT
+                          ) {
+                            const file = workingCase.caseFiles?.find(
+                              (file) => file.id === item.caseFileId,
+                            )
+
+                            if (
+                              file &&
+                              file.category &&
+                              [
+                                CaseFileCategory.PROSECUTOR_CASE_FILE,
+                                CaseFileCategory.DEFENDANT_CASE_FILE,
+                                CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+                                CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+                                CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+                              ].includes(file.category)
+                            ) {
+                              const node = (
+                                <Text variant="small" color="currentColor">
+                                  {`${
+                                    file.fileRepresentative ?? file.submittedBy
+                                  } (${getRoleTitleFromCaseFileCategory(
+                                    file.category,
+                                    { notRegistered: 'Málsaðili' },
+                                  )})`}
+                                </Text>
+                              )
+                              supplement = { enabled: node, disabled: node }
+                            }
+                          } else {
+                            const node = (
+                              <Text variant="small" color="currentColor">
+                                Liggur frammi
+                              </Text>
+                            )
+                            supplement = { enabled: node, disabled: node }
+                          }
+
+                          return (
+                            <Reorder.Item
+                              key={item.id}
+                              value={item}
+                              drag={!courtSession.isConfirmed}
+                              data-reorder-item
+                              onDragStart={() => {
+                                setDraggedFileId(item.id)
                               }}
-                              backgroundColor="white"
-                              onOpen={handleOnOpen}
-                              onRename={(id: string, newName: string) => {
-                                handleRename(courtSession.id, id, newName)
+                              onDragEnd={() => {
+                                setDraggedFileId(null)
                               }}
-                              onDelete={handleDeleteFile}
-                              disabled={courtSession.isConfirmed || false}
-                            />
-                          </Reorder.Item>
-                        ))}
+                              initial={{ opacity: 0, y: -10, height: 101 }}
+                              animate={{ opacity: 1, y: 0, height: 101 }}
+                              exit={{ opacity: 0, y: 10, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <EditableCaseFile
+                                enableDrag
+                                caseFile={{
+                                  id: item.id,
+                                  displayText: item.name,
+                                  name: item.name,
+                                  canOpen:
+                                    item.documentType !==
+                                    CourtDocumentType.EXTERNAL_DOCUMENT,
+                                  canEdit: ['fileName'],
+                                  supplement,
+                                }}
+                                backgroundColor="white"
+                                onOpen={handleOnOpen}
+                                onRename={(id: string, name: string) => {
+                                  handleUpdateFile(courtSession.id, id, {
+                                    name,
+                                  })
+                                }}
+                                onDelete={handleDeleteFile}
+                                disabled={courtSession.isConfirmed || false}
+                              />
+                            </Reorder.Item>
+                          )
+                        })}
                       </AnimatePresence>
                     </Reorder.Group>
                     <Box

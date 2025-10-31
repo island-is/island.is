@@ -290,6 +290,7 @@ query Case($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
     }
     unfiledCourtDocuments {
@@ -395,6 +396,7 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
       }
       court {
