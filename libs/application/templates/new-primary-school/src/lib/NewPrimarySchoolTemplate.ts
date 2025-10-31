@@ -365,12 +365,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+          (selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
           selectedSchoolSubType ===
             OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
-          (selectedSchoolSubType ===
-            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT &&
-            temporaryStay !== YES)
+          selectedSchoolSubType ===
+            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT) &&
+            temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
