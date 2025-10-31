@@ -58,7 +58,7 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda
   RVVS = 'RVVS', // Viðbótargögn sækjanda
   RVFK = 'RVFK', // Fyrirkall
-  RVBD = 'RVBD', // Birtingarvottorð dóms - TODO: Not supported by RLS?
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
 }
 
 export interface PoliceDocument {
@@ -169,8 +169,10 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
     defenderNationalId: z.string().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
+    deliveredToDefendant: z.boolean().nullish(),
     // TODO: this is not supported atm
     legalPaperRequestDate: z.string().nullish(),
+    deliveryMethod: z.string().nullish(),
   })
 
   constructor(
@@ -731,6 +733,8 @@ export class PoliceService {
               deliveredToLawyer: response.deliveredToLawyer ?? false,
               legalPaperRequestDate:
                 response.legalPaperRequestDate ?? undefined,
+              deliveredToDefendant: response.deliveredToDefendant ?? false,
+              deliveryMethod: response.deliveryMethod ?? undefined,
             }),
             deliveredToDefenderNationalId:
               response.defenderNationalId ?? undefined,

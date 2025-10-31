@@ -12,6 +12,12 @@ const useUsers = (institutionId?: string) => {
       errorPolicy: 'all',
     })
 
+  const mapUser = (user: User) => ({
+    label: user.name ?? '',
+    value: user.id,
+    user,
+  })
+
   const judges = (usersData?.users ?? [])
     .filter(
       (user: User) =>
@@ -19,9 +25,7 @@ const useUsers = (institutionId?: string) => {
           user.role === UserRole.DISTRICT_COURT_ASSISTANT) &&
         user.institution?.id === institutionId,
     )
-    .map((judge: User) => {
-      return { label: judge.name ?? '', value: judge.id, judge }
-    })
+    .map(mapUser)
 
   const registrars = (usersData?.users ?? [])
     .filter(
@@ -29,11 +33,17 @@ const useUsers = (institutionId?: string) => {
         user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
         user.institution?.id === institutionId,
     )
-    .map((registrar: User) => {
-      return { label: registrar.name ?? '', value: registrar.id, registrar }
-    })
+    .map(mapUser)
 
-  return { judges, registrars, loading: usersLoading }
+  const districtCourtAssistants = (usersData?.users ?? [])
+    .filter(
+      (user: User) =>
+        user.role === UserRole.DISTRICT_COURT_ASSISTANT &&
+        user.institution?.id === institutionId,
+    )
+    .map(mapUser)
+
+  return { judges, registrars, districtCourtAssistants, loading: usersLoading }
 }
 
 export default useUsers

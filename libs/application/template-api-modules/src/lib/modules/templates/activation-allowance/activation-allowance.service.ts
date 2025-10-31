@@ -162,7 +162,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
     if (cvInfo) {
       cvResponse =
-        await this.vmstUnemploymentClientService.createAttachmentForActivationGrant(
+        await this.vmstUnemploymentClientService.createAttachmentForApplication(
           {
             galdurDomainModelsAttachmentsCreateAttachmentRequest: {
               attachmentTypeId: CV_ID,
@@ -183,9 +183,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
           activationGrant: {
             applicationInformation: {
               ...emptyApplication?.applicationInformation,
-              created: new Date(
-                emptyApplication?.applicationInformation?.created || '',
-              ),
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
               additionalInformation: additionalCVInfo
                 ? additionalCVInfo

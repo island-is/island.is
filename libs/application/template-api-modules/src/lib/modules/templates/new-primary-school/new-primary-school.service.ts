@@ -3,12 +3,13 @@ import {
   errorMessages,
   FIRST_GRADE_AGE,
   getApplicationAnswers,
-  getOtherGuardian,
-  getSelectedChild,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
-import { FriggClientService } from '@island.is/clients/mms/frigg'
+import {
+  FriggClientService,
+  GetOrganizationsByTypeTypeEnum,
+} from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -91,38 +92,18 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
-  async getCitizenship({ application }: TemplateApiModuleActionProps) {
-    const child = getSelectedChild(
-      application.answers,
-      application.externalData,
+  async getPreferredSchool({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getPreferredSchool(
+      auth,
+      childNationalId,
     )
-    const guardian = getOtherGuardian(
-      application.answers,
-      application.externalData,
-    )
-
-    let childCitizenshipCode = ''
-    if (child) {
-      const citizenship = await this.nationalRegistryService.getCitizenship(
-        child.nationalId,
-      )
-
-      childCitizenshipCode = citizenship?.code || ''
-    }
-
-    let otherGuardianCitizenshipCode = ''
-    if (guardian) {
-      const citizenship = await this.nationalRegistryService.getCitizenship(
-        guardian.nationalId,
-      )
-
-      otherGuardianCitizenshipCode = citizenship?.code || ''
-    }
-
-    return {
-      childCitizenshipCode,
-      otherGuardianCitizenshipCode,
-    }
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
@@ -133,5 +114,11 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       auth,
       newPrimarySchoolDTO,
     )
+  }
+
+  async getSchools({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getOrganizationsByType(auth, {
+      type: GetOrganizationsByTypeTypeEnum.School,
+    })
   }
 }

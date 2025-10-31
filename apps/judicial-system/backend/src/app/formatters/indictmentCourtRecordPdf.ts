@@ -48,7 +48,7 @@ export const createIndictmentCourtRecordPdf = (
     addIndictmentCourtRecordConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, 11, doc.page.margins.left)
+  addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
   setLineGap(doc, 2)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
@@ -57,7 +57,7 @@ export const createIndictmentCourtRecordPdf = (
   let nrOfFiledDocuments = 0
 
   for (const courtSession of theCase.courtSessions ?? []) {
-    if (!courtSession.endDate && !showOpenCourtSession) {
+    if (!courtSession.isConfirmed && !showOpenCourtSession) {
       break
     }
 
@@ -67,7 +67,9 @@ export const createIndictmentCourtRecordPdf = (
       `Þann ${formatDate(
         courtSession.startDate ?? nowFactory(),
         'PPP',
-      )} heldur ${theCase.judge?.name ?? 'óþekktur'} héraðsdómari dómþing ${
+      )} heldur ${
+        courtSession.judge?.name ?? 'óþekktur'
+      } héraðsdómari dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
@@ -128,7 +130,7 @@ export const createIndictmentCourtRecordPdf = (
       addNormalText(doc, 'Nr.', 'Times-Roman')
       addNumberedList(
         doc,
-        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments.map((d) => d.name.normalize()),
         courtSession.filedDocuments[0].documentOrder,
       )
 
@@ -156,7 +158,10 @@ export const createIndictmentCourtRecordPdf = (
         'Times-Roman',
       )
       addEmptyLines(doc)
-      addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+      addNormalCenteredText(
+        doc,
+        courtSession.judge?.name ?? 'Óþekktur héraðsdómari',
+      )
 
       if (courtSession.closingEntries) {
         addEmptyLines(doc)
@@ -172,7 +177,10 @@ export const createIndictmentCourtRecordPdf = (
         'p',
       )}`,
     )
-    addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+    addNormalCenteredText(
+      doc,
+      courtSession.judge?.name ?? 'Óþekktur héraðsdómari',
+    )
 
     if (courtSession.isAttestingWitness) {
       const attestingWitnessName =

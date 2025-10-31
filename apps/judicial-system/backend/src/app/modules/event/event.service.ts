@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import partition from 'lodash/partition'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -199,6 +200,63 @@ export class EventService {
       })
     } catch (error) {
       this.logger.error(`Failed to reset lawyer registry`, {
+        error,
+      })
+    }
+  }
+
+  async postDailyVerdictServiceDeliveryEvent(
+    delivered: {
+      delivered: boolean
+      caseId: string
+      defendantId: string
+    }[],
+  ) {
+    const [success, failure] = partition(
+      delivered,
+      (result) => result.delivered,
+    )
+    const title = ':outbox_tray: Birtingarvottorð dóma'
+    const hasFailedDeliveries = failure.length > 0
+
+    const successList = success.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const successText = `Alls ${
+      success.length
+    } birtingarvottorð send í LÖKE: \n${successList.join('\n')}`
+
+    const failureList = failure.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const failureText = hasFailedDeliveries
+      ? `Tókst ekki að senda ${
+          failure.length
+        } birtingarvottorð í LÖKE: \n${failureList.join('\n')}`
+      : ''
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${successText}\n${failureText}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to log verdict service delivery event`, {
         error,
       })
     }

@@ -281,8 +281,8 @@ export class CourtDocumentRepositoryService {
 
   async fileInCourtSession(
     caseId: string,
-    courtDocumentId: string,
     courtSessionId: string,
+    courtDocumentId: string,
     options?: FileCourtDocumentInCourtSessionOptions,
   ): Promise<CourtDocument> {
     try {
@@ -347,10 +347,12 @@ export class CourtDocumentRepositoryService {
         `Deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
       )
 
+      const transaction = options?.transaction
+
       // Get the document to find its order before deletion
       const documentToDelete = await this.courtDocumentModel.findOne({
         where: { id: courtDocumentId, caseId, courtSessionId },
-        transaction: options?.transaction,
+        transaction,
       })
 
       if (!documentToDelete) {
@@ -364,17 +366,17 @@ export class CourtDocumentRepositoryService {
       // Delete the document
       if (!documentToDelete.caseFileId && !documentToDelete.generatedPdfUri) {
         await this.deleteFromDatabase(
-          courtDocumentId,
           caseId,
           courtSessionId,
-          options?.transaction,
+          courtDocumentId,
+          transaction,
         )
       } else {
         await this.courtDocumentModel.update(
           { courtSessionId: null, documentOrder: -1 },
           {
             where: { id: courtDocumentId, caseId, courtSessionId },
-            transaction: options?.transaction,
+            transaction,
           },
         )
       }
@@ -384,7 +386,7 @@ export class CourtDocumentRepositoryService {
         { documentOrder: literal('document_order - 1') },
         {
           where: { caseId, documentOrder: { [Op.gt]: deletedOrder } },
-          transaction: options?.transaction,
+          transaction,
         },
       )
 
@@ -398,6 +400,22 @@ export class CourtDocumentRepositoryService {
       )
 
       throw error
+    }
+  }
+
+  async deleteDocumentsInSession(
+    caseId: string,
+    courtSessionId: string,
+    transaction?: Transaction,
+  ) {
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { caseId, courtSessionId },
+      order: [['documentOrder', 'DESC']], // Delete from highest to lowest order is cheaper
+      transaction,
+    })
+
+    for (const f of filedDocuments) {
+      await this.delete(caseId, courtSessionId, f.id, { transaction })
     }
   }
 
@@ -458,14 +476,14 @@ export class CourtDocumentRepositoryService {
   }
 
   private async deleteFromDatabase(
-    courtDocumentId: string,
     caseId: string,
     courtSessionId: string,
+    courtDocumentId: string,
     transaction: Transaction | undefined,
   ) {
     const numberOfDeletedRows = await this.courtDocumentModel.destroy({
       where: { id: courtDocumentId, caseId, courtSessionId },
-      transaction: transaction,
+      transaction,
     })
 
     if (numberOfDeletedRows < 1) {

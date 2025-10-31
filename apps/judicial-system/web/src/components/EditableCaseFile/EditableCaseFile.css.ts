@@ -1,6 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, transparent } from '@island.is/island-ui/theme'
 
 export const caseFileWrapper = style({
   display: 'flex',
@@ -37,6 +37,10 @@ export const uploading = style({
   borderColor: theme.color.blue200,
 })
 
+export const disabled = style({
+  background: theme.color.blue100,
+})
+
 export const editCaseFileInputContainer = style({
   display: 'flex',
   flexDirection: 'row',
@@ -66,6 +70,14 @@ export const editCaseFileButton = style({
 })
 
 export const background = styleVariants({
+  disabled: {
+    selectors: {
+      '&:hover': {
+        backgroundColor: transparent,
+        cursor: 'auto',
+      },
+    },
+  },
   primary: {
     selectors: {
       '&:hover': {

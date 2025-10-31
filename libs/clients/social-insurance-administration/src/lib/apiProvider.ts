@@ -89,12 +89,12 @@ const apiCollection: Array<{
   },
   {
     api: MedicalDocumentApiForDisabilityPension,
-    scopes: ['@tr.is/ororkulifeyrir:read'],
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
     autoAuth: true,
   },
   {
     api: QuestionnairesApiForDisabilityPension,
-    scopes: ['@tr.is/ororkulifeyrir:read'],
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
     autoAuth: true,
   },
 ]

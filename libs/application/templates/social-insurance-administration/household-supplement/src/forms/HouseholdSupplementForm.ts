@@ -15,7 +15,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   fileUploadSharedProps,
   maritalStatuses,
@@ -30,7 +30,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouse,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
@@ -47,7 +47,7 @@ import { householdSupplementFormMessage } from '../lib/messages'
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -185,7 +185,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
+                      .data as NationalRegistrySpouseV3
                     return maritalStatuses[data.maritalStatus]
                   },
                   condition: (_, externalData) => {
@@ -205,7 +205,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
+                      .data as NationalRegistrySpouseV3
                     return data.name
                   },
                   condition: (_, externalData) => {
@@ -225,7 +225,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
+                      .data as NationalRegistrySpouseV3
                     return kennitala.format(data.nationalId)
                   },
                   condition: (_, externalData) => {

@@ -21,8 +21,8 @@ export type Events =
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
+  getPreferredSchool = 'getPreferredSchool',
   sendApplication = 'sendApplication',
-  getCitizenship = 'getCitizenship',
 }
 
 export enum Roles {
@@ -31,7 +31,6 @@ export enum Roles {
 }
 
 export enum ReasonForApplicationOptions {
-  MOVING_MUNICIPALITY = 'movingMuniciplaity',
   SIBLINGS_IN_SAME_SCHOOL = 'siblingsInSameSchool',
 }
 
@@ -48,16 +47,22 @@ export enum OptionsType {
 }
 
 export enum AffiliationRole {
-  Member = 'member',
+  Aide = 'aide',
+  Counselor = 'counselor',
   Guardian = 'guardian',
-  Parent = 'parent',
+  Member = 'member',
   Principal = 'principal',
-  Relative = 'relative',
   Student = 'student',
   Teacher = 'teacher',
 }
 
-export enum AffiliationOrganizationType {
+export enum AgentType {
+  EmergencyContact = 'emergencyContact',
+  Guardian = 'guardian',
+  Sibling = 'sibling',
+}
+
+export enum OrganizationType {
   ChildCare = 'childCare',
   Municipality = 'municipality',
   National = 'national',
@@ -76,14 +81,25 @@ export enum ApplicationType {
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
 }
 
-export enum SchoolType {
-  PUBLIC_SCHOOL = 'publicSchool',
-  PRIVATE_SCHOOL = 'privateSchool',
-  INTERNATIONAL_SCHOOL = 'internationalSchool',
-  NURSERY_SCHOOL = 'nurserySchool',
-}
-
 export enum CaseWorkerInputTypeEnum {
   CaseManager = 'caseManager',
   SupportManager = 'supportManager',
+}
+
+export enum OrganizationSubType {
+  SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT = 'specialEducationBehaviorDepartment',
+  SPECIAL_EDUCATION_BEHAVIOR_SCHOOL = 'specialEducationBehaviorSchool',
+  SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment',
+  SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool',
+  INTERNATIONAL_SCHOOL = 'internationalSchool',
+  GENERAL_SCHOOL = 'generalSchool',
+}
+
+export enum OrganizationSector {
+  PUBLIC = 'public',
+  PRIVATE = 'private',
+}
+
+export enum ApplicationFeatureConfigType {
+  REGISTRATION = 'registration',
 }

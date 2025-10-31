@@ -294,10 +294,9 @@ export class UserProfileService {
   }
 
   deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return this.v2UserProfileApiWithAuth(
+    return this.v2MeUserProfileApiWithAuth(
       user,
-    ).userTokenControllerDeleteUserDeviceToken({
-      xParamNationalId: user.nationalId,
+    ).meUserProfileControllerDeleteDeviceToken({
       deviceToken: input.deviceToken,
     })
   }

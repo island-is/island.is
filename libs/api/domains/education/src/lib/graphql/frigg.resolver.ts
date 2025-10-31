@@ -16,7 +16,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { KeyOptionModel } from './frigg/keyOption.model'
 import { FriggOptionListInput } from './frigg/optionList.input'
-import { FriggOrganizationModel } from './frigg/organization.model'
+import { FriggOrganizationInput } from './frigg/organization.input'
+import { FriggOrganization } from './frigg/organization.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -33,10 +34,12 @@ export class FriggResolver {
     return this.friggClientService.getAllKeyOptions(user, input.type)
   }
 
-  @Query(() => [FriggOrganizationModel], { nullable: true })
-  friggSchoolsByMunicipality(
+  @Query(() => [FriggOrganization], { nullable: true })
+  friggOrganizationsByType(
     @CurrentUser() user: User,
+    @Args('input', { type: () => FriggOrganizationInput, nullable: true })
+    input?: FriggOrganizationInput,
   ): Promise<OrganizationModel[]> {
-    return this.friggClientService.getAllSchoolsByMunicipality(user)
+    return this.friggClientService.getOrganizationsByType(user, input)
   }
 }
