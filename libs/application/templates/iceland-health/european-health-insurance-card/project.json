@@ -1,0 +1,25 @@
+{
+  "name": "application-templates-european-health-insurance-card",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/iceland-health/european-health-insurance-card/src",
+  "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/templates/iceland-health/european-health-insurance-card/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/iceland-health/european-health-insurance-card/src/lib/messages.ts'"
+      }
+    }
+  }
+}
