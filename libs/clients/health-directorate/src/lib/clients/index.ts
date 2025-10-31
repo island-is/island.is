@@ -13,4 +13,6 @@ export {
   PrescriptionRenewalBlockedReason,
   PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
+  EuPatientConsentStatus,
+  EuPatientConsentDto,
 } from './health'

@@ -11,7 +11,9 @@
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -32,7 +34,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -40,7 +44,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -48,7 +54,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -56,7 +64,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -74,14 +84,21 @@
             "required": false,
             "in": "query",
             "description": "The statuses to filter by",
-            "schema": { "type": "array", "items": { "type": "number" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
           },
           {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -91,7 +108,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReferralDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReferralDto"
+                  }
                 }
               }
             }
@@ -100,7 +119,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -108,7 +129,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -116,7 +139,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -124,7 +149,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -142,7 +169,9 @@
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -152,7 +181,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/PrescribedItemDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/PrescribedItemDto"
+                  }
                 }
               }
             }
@@ -161,7 +192,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -169,7 +202,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -177,7 +212,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -185,7 +222,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -203,7 +242,9 @@
             "required": true,
             "in": "path",
             "description": "The product id (Norrænt vörumerki)",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -213,7 +254,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ProductDocumentDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ProductDocumentDto"
+                  }
                 }
               }
             }
@@ -222,7 +265,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -230,7 +275,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -238,7 +285,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -246,7 +295,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -254,7 +305,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -272,7 +325,9 @@
             "required": true,
             "in": "path",
             "description": "The prescription id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -286,12 +341,16 @@
           }
         },
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -299,7 +358,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -307,7 +368,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -315,7 +378,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -323,7 +388,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -341,7 +408,9 @@
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -362,7 +431,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -370,7 +441,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -378,7 +451,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -386,7 +461,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -404,14 +481,18 @@
             "required": true,
             "in": "path",
             "description": "The ATC code to fetch dispensations for",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -432,7 +513,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -440,7 +523,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -448,7 +533,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -456,7 +543,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -464,7 +553,204 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/commissions": {
+      "get": {
+        "description": "Get user's prescription commissions",
+        "operationId": "MePrescriptionCommissionController_getPrescriptionCommissions_v1",
+        "parameters": [
+          {
+            "name": "active",
+            "required": true,
+            "in": "query",
+            "description": "Whether to only include active commissions",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrescriptionCommissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "post": {
+        "description": "Create a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createPrescriptionCommission_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrescriptionCommissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "delete": {
+        "description": "Deactivate a prescription commission",
+        "operationId": "MePrescriptionCommissionController_deactivatePrescriptionCommission_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivatePrescriptionCommissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -484,14 +770,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "ok" },
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
                     "info": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -502,18 +799,30 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
                     },
                     "details": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       }
                     }
@@ -529,14 +838,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "error" },
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
                     "info": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -552,7 +872,11 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -560,7 +884,9 @@
                     "details": {
                       "type": "object",
                       "example": {
-                        "database": { "status": "up" },
+                        "database": {
+                          "status": "up"
+                        },
                         "redis": {
                           "status": "down",
                           "message": "Could not connect"
@@ -569,7 +895,11 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       }
                     }
@@ -594,14 +924,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "ok" },
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
                     "info": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -612,18 +953,30 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
                     },
                     "details": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       }
                     }
@@ -639,14 +992,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "error" },
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
                     "info": {
                       "type": "object",
-                      "example": { "database": { "status": "up" } },
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -662,7 +1026,11 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       },
                       "nullable": true
@@ -670,7 +1038,9 @@
                     "details": {
                       "type": "object",
                       "example": {
-                        "database": { "status": "up" },
+                        "database": {
+                          "status": "up"
+                        },
                         "redis": {
                           "status": "down",
                           "message": "Could not connect"
@@ -679,7 +1049,11 @@
                       "additionalProperties": {
                         "type": "object",
                         "required": ["status"],
-                        "properties": { "status": { "type": "string" } },
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
                         "additionalProperties": true
                       }
                     }
@@ -696,7 +1070,11 @@
       "get": {
         "operationId": "SystemController_metrics",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": ["System"]
       }
     },
@@ -704,7 +1082,11 @@
       "get": {
         "operationId": "VersionController_version",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": ["Version"]
       }
     },
@@ -718,7 +1100,9 @@
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -728,7 +1112,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/OrganDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/OrganDto"
+                  }
                 }
               }
             }
@@ -737,7 +1123,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -745,7 +1133,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -753,7 +1143,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -761,7 +1153,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -779,14 +1173,18 @@
             "required": false,
             "in": "query",
             "description": "The IP address of the user",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -794,7 +1192,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/OrganDonorDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/OrganDonorDto"
+                }
               }
             }
           },
@@ -802,7 +1202,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -810,7 +1212,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -818,7 +1222,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -826,7 +1232,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -842,31 +1250,41 @@
             "required": false,
             "in": "query",
             "description": "The IP address of the user",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateOrganDonorDto" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganDonorDto"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -874,7 +1292,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -882,7 +1302,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -890,7 +1312,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -921,7 +1345,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -929,7 +1355,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -937,7 +1365,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -945,7 +1375,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -963,7 +1395,9 @@
             "required": true,
             "in": "path",
             "description": "Questionnaire id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -981,7 +1415,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -989,7 +1425,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -997,7 +1435,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1005,7 +1445,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1013,7 +1455,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1029,7 +1473,9 @@
             "required": true,
             "in": "path",
             "description": "Questionnaire id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -1073,7 +1519,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1081,7 +1529,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1089,7 +1539,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1097,7 +1549,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1115,14 +1569,18 @@
             "required": true,
             "in": "path",
             "description": "Questionnaire id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "submissionId",
             "required": true,
             "in": "path",
             "description": "Submission id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1143,7 +1601,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1151,7 +1611,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1159,7 +1621,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1167,7 +1631,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1175,7 +1641,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1193,7 +1661,9 @@
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "responses": {
@@ -1203,7 +1673,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/AllergyDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/AllergyDto"
+                  }
                 }
               }
             }
@@ -1212,7 +1684,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1220,7 +1694,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1228,7 +1704,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1236,7 +1714,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1250,136 +1730,27 @@
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
-            "name": "page",
-            "required": true,
-            "in": "query",
-            "description": "The page number",
-            "schema": { "type": "number" }
-          },
-          {
-            "name": "pageSize",
-            "required": true,
-            "in": "query",
-            "description": "The page size",
-            "schema": { "type": "number" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/AppointmentDataDto" }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          }
-        },
-        "tags": ["Appointments"]
-      }
-    },
-    "/v1/me/consent/cross-border-data-exchange/countries": {
-      "get": {
-        "description": "Get countries that can receive health care data from Iceland",
-        "operationId": "MeCrossBorderDataExchangeController_getCountries_v1",
-        "parameters": [
-          {
-            "name": "locale",
+            "name": "statuses",
             "required": false,
             "in": "query",
-            "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConsentCountryActorDto"
-                }
+            "description": "Filter appointments by status. Can include multiple statuses.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AppointmentStatus"
               }
             }
           },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          }
-        },
-        "tags": ["Patient consent"]
-      }
-    },
-    "/v1/me/consent/cross-border-data-exchange": {
-      "get": {
-        "description": "Get user's cross border data consent",
-        "operationId": "MeCrossBorderDataExchangeController_getCrossBorderDataConsentForPatient_v1",
-        "parameters": [
           {
-            "name": "locale",
+            "name": "fromStartTime",
             "required": false,
             "in": "query",
-            "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
+            "description": "Filter appointments to only include those starting at or after this time. Use current timestamp to get only future appointments.",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T10:30:00Z",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1390,7 +1761,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CrossBorderConsentDto"
+                    "$ref": "#/components/schemas/AppointmentDto"
                   }
                 }
               }
@@ -1400,7 +1771,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1408,7 +1781,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1416,7 +1791,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1424,34 +1801,49 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
         },
-        "tags": ["Patient consent"]
-      },
-      "post": {
-        "description": "Create a new cross border data consent for a patient",
-        "operationId": "MeCrossBorderDataExchangeController_createCrossBorderDataConsentForPatient_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCrossBorderConsentDto"
-              }
+        "tags": ["Appointments"]
+      }
+    },
+    "/v1/me/consents/eu/countries": {
+      "get": {
+        "description": "Get countries that can receive health care data from Iceland",
+        "operationId": "MePatientConcentEuController_getCountries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
             }
           }
-        },
+        ],
         "responses": {
-          "201": { "description": "" },
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentCountryDto"
+                }
+              }
+            }
+          },
           "400": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1459,7 +1851,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1467,15 +1861,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "409": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1483,7 +1871,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1491,26 +1881,82 @@
         "tags": ["Patient consent"]
       }
     },
-    "/v1/me/consent/cross-border-data-exchange/{id}/deactivate": {
-      "put": {
-        "description": "Deactivate a cross border data consent for a patient",
-        "operationId": "MeCrossBorderDataExchangeController_deactivateCrossBorderDataConsentForPatient_v1",
+    "/v1/me/consents/eu": {
+      "get": {
+        "description": "Get user's EU patient consents",
+        "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
-            "name": "id",
+            "name": "validFrom",
+            "required": false,
+            "in": "query",
+            "description": "The valid from date to filter the consents",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "validTo",
+            "required": false,
+            "in": "query",
+            "description": "The valid to date to filter the consents",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "required": true,
-            "in": "path",
-            "description": "The id of the cross border data consent to deactivate",
-            "schema": { "type": "string" }
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "statuses",
+            "required": false,
+            "in": "query",
+            "description": "The statuses to filter the consents",
+            "schema": {
+              "$ref": "#/components/schemas/EuPatientConsentStatus"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EuPatientConsentDto"
+                  }
+                }
+              }
+            }
+          },
           "400": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1518,7 +1964,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1526,15 +1974,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           },
@@ -1542,7 +1984,242 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      },
+      "post": {
+        "description": "Create a new EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_createEuPatientConsentForPatient_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEuPatientConsentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consents/eu/{id}": {
+      "get": {
+        "description": "Get a EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_getEuPatientConsent_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The id of the EU patient consent to get",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EuPatientConsentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consents/eu/{id}/deactivate": {
+      "put": {
+        "description": "Deactivate a EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_deactivateEuPatientConsentForPatient_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The id of the EU patient consent to deactivate",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
           }
@@ -1576,17 +2253,36 @@
       }
     },
     "schemas": {
-      "Locale": { "type": "string", "enum": ["en", "is"] },
+      "Locale": {
+        "type": "string",
+        "enum": ["en", "is"]
+      },
       "WaitingListEntryDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "waitBeganDate": { "format": "date-time", "type": "string" },
-          "lastUpdated": { "format": "date-time", "type": "string" },
-          "statusId": { "type": "number" },
-          "statusDisplay": { "type": "string" },
-          "organizationName": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "waitBeganDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastUpdated": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "statusId": {
+            "type": "number"
+          },
+          "statusDisplay": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          }
         },
         "required": ["id"]
       },
@@ -1601,7 +2297,10 @@
             "type": "string",
             "description": "A short, human-readable summary of the problem type"
           },
-          "status": { "type": "number", "description": "The HTTP status code" },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
           "detail": {
             "type": "string",
             "description": "A human-readable explanation specific to this occurrence of the problem"
@@ -1616,30 +2315,72 @@
       "ReferralContactInfoDto": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "profession": { "type": "string" },
-          "department": { "type": "string" },
-          "institute": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "profession": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "institute": {
+            "type": "string"
+          }
         },
         "required": ["name"]
       },
       "ReferralDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "serviceType": { "type": "string" },
-          "serviceName": { "type": "string" },
-          "createdDate": { "format": "date-time", "type": "string" },
-          "validUntilDate": { "format": "date-time", "type": "string" },
-          "closedDate": { "format": "date-time", "type": "string" },
-          "statusValue": { "type": "number" },
-          "statusDisplay": { "type": "string" },
-          "assignedProviderId": { "type": "string" },
-          "fromInstitute": { "type": "string" },
-          "toInstitute": { "type": "string" },
-          "reasonForReferral": { "type": "string" },
-          "diagnoses": { "type": "array", "items": { "type": "string" } },
-          "outcome": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "serviceType": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validUntilDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "closedDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "statusValue": {
+            "type": "number"
+          },
+          "statusDisplay": {
+            "type": "string"
+          },
+          "assignedProviderId": {
+            "type": "string"
+          },
+          "fromInstitute": {
+            "type": "string"
+          },
+          "toInstitute": {
+            "type": "string"
+          },
+          "reasonForReferral": {
+            "type": "string"
+          },
+          "diagnoses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcome": {
+            "type": "string"
+          },
           "fromContactInfo": {
             "$ref": "#/components/schemas/ReferralContactInfoDto"
           },
@@ -1665,28 +2406,52 @@
           "noHealthClinic"
         ]
       },
-      "PrescriptionRenewalStatus": { "type": "number", "enum": [0, 1, 2, 3] },
+      "PrescriptionRenewalStatus": {
+        "type": "number",
+        "enum": [0, 1, 2, 3]
+      },
       "DispensedItemDto": {
         "type": "object",
         "properties": {
-          "productId": { "type": "string" },
-          "productName": { "type": "string" },
-          "productStrength": { "type": "string" },
-          "dispensedAmount": { "type": "number" },
-          "dispensedAmountDisplay": { "type": "string" }
+          "productId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "productStrength": {
+            "type": "string"
+          },
+          "dispensedAmount": {
+            "type": "number"
+          },
+          "dispensedAmountDisplay": {
+            "type": "string"
+          }
         },
         "required": ["productId"]
       },
       "DispensationDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "number" },
-          "dispensingAgentId": { "type": "number" },
-          "dispensingAgentName": { "type": "string" },
-          "dispensationDate": { "format": "date-time", "type": "string" },
+          "id": {
+            "type": "number"
+          },
+          "dispensingAgentId": {
+            "type": "number"
+          },
+          "dispensingAgentName": {
+            "type": "string"
+          },
+          "dispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
           "dispensedItems": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/DispensedItemDto" }
+            "items": {
+              "$ref": "#/components/schemas/DispensedItemDto"
+            }
           }
         },
         "required": [
@@ -1699,40 +2464,93 @@
       "PrescribedItemDto": {
         "type": "object",
         "properties": {
-          "prescribedItemId": { "type": "number" },
-          "prescriptionId": { "type": "number" },
-          "medCardDrugId": { "type": "string" },
-          "medCardDrugCategory": { "type": "number" },
-          "prescriberId": { "type": "string" },
-          "prescriberName": { "type": "string" },
-          "healthClinic": { "type": "string" },
-          "issueDate": { "format": "date-time", "type": "string" },
-          "expiryDate": { "format": "date-time", "type": "string" },
-          "nextDispensationDate": { "format": "date-time", "type": "string" },
-          "productId": { "type": "string" },
-          "productName": { "type": "string" },
+          "prescribedItemId": {
+            "type": "number"
+          },
+          "prescriptionId": {
+            "type": "number"
+          },
+          "medCardDrugId": {
+            "type": "string"
+          },
+          "medCardDrugCategory": {
+            "type": "number"
+          },
+          "prescriberId": {
+            "type": "string"
+          },
+          "prescriberName": {
+            "type": "string"
+          },
+          "healthClinic": {
+            "type": "string"
+          },
+          "issueDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "nextDispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
           "productType": {
             "type": "string",
             "description": "Based on the ATC classification"
           },
-          "productForm": { "type": "string" },
-          "productUrl": { "type": "string" },
-          "productStrength": { "type": "string" },
+          "productForm": {
+            "type": "string"
+          },
+          "productUrl": {
+            "type": "string"
+          },
+          "productStrength": {
+            "type": "string"
+          },
           "productQuantity": {
             "type": "number",
             "description": "Product quantity per package"
           },
-          "numberOfPackages": { "type": "number" },
-          "dosageInstructions": { "type": "string" },
-          "indication": { "type": "string" },
-          "totalPrescribedAmount": { "type": "number" },
-          "totalDispensedAmount": { "type": "number" },
-          "prescribedAmountDisplay": { "type": "string" },
-          "category": {
-            "allOf": [{ "$ref": "#/components/schemas/PrescribedItemCategory" }]
+          "numberOfPackages": {
+            "type": "number"
           },
-          "isRegiment": { "type": "boolean" },
-          "isRenewable": { "type": "boolean" },
+          "dosageInstructions": {
+            "type": "string"
+          },
+          "indication": {
+            "type": "string"
+          },
+          "totalPrescribedAmount": {
+            "type": "number"
+          },
+          "totalDispensedAmount": {
+            "type": "number"
+          },
+          "prescribedAmountDisplay": {
+            "type": "string"
+          },
+          "category": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescribedItemCategory"
+              }
+            ]
+          },
+          "isRegiment": {
+            "type": "boolean"
+          },
+          "isRenewable": {
+            "type": "boolean"
+          },
           "renewalBlockedReason": {
             "allOf": [
               {
@@ -1742,16 +2560,28 @@
           },
           "renewalStatus": {
             "allOf": [
-              { "$ref": "#/components/schemas/PrescriptionRenewalStatus" }
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+              }
             ]
           },
-          "amountRemaining": { "type": "number" },
-          "amountRemainingDisplay": { "type": "string" },
-          "percentageRemaining": { "type": "number" },
-          "isFullyDispensed": { "type": "boolean" },
+          "amountRemaining": {
+            "type": "number"
+          },
+          "amountRemainingDisplay": {
+            "type": "string"
+          },
+          "percentageRemaining": {
+            "type": "number"
+          },
+          "isFullyDispensed": {
+            "type": "boolean"
+          },
           "dispensations": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/DispensationDto" }
+            "items": {
+              "$ref": "#/components/schemas/DispensationDto"
+            }
           }
         },
         "required": [
@@ -1774,55 +2604,113 @@
       "ProductDocumentDto": {
         "type": "object",
         "properties": {
-          "typeId": { "type": "number" },
-          "path": { "type": "string" },
-          "name": { "type": "string" }
+          "typeId": {
+            "type": "number"
+          },
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         },
         "required": ["typeId", "path", "name"]
       },
       "PrescriptionRenewalRequestDto": {
         "type": "object",
         "properties": {
-          "prescribedItemId": { "type": "number" },
-          "medCardDrugId": { "type": "string" },
-          "medCardDrugCategory": { "type": "number" }
+          "prescribedItemId": {
+            "type": "number"
+          },
+          "medCardDrugId": {
+            "type": "string"
+          },
+          "medCardDrugCategory": {
+            "type": "number"
+          }
         },
         "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
       "DispensationHistoryItemDto": {
         "type": "object",
         "properties": {
-          "dispensingAgentId": { "type": "number" },
-          "dispensingAgentName": { "type": "string" },
-          "dispensationDate": { "format": "date-time", "type": "string" },
-          "productStrength": { "type": "string" },
-          "productName": { "type": "string" },
-          "productId": { "type": "string" },
-          "productQuantity": { "type": "number" },
-          "productUnit": { "type": "string" },
+          "dispensingAgentId": {
+            "type": "number"
+          },
+          "dispensingAgentName": {
+            "type": "string"
+          },
+          "dispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "productStrength": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "productQuantity": {
+            "type": "number"
+          },
+          "productUnit": {
+            "type": "string"
+          },
           "productType": {
             "type": "string",
             "description": "Based on the ATC classification"
           },
-          "indication": { "type": "string" },
-          "dosageInstructions": { "type": "string" },
-          "issueDate": { "format": "date-time", "type": "string" },
-          "prescriberName": { "type": "string" },
-          "expirationDate": { "format": "date-time", "type": "string" },
-          "isExpired": { "type": "boolean" }
+          "indication": {
+            "type": "string"
+          },
+          "dosageInstructions": {
+            "type": "string"
+          },
+          "issueDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "prescriberName": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isExpired": {
+            "type": "boolean"
+          }
         },
         "required": ["prescriberName", "isExpired"]
       },
       "DispensationHistoryDto": {
         "type": "object",
         "properties": {
-          "productName": { "type": "string" },
-          "productId": { "type": "string" },
-          "productStrength": { "type": "string" },
-          "productAtcCode": { "type": "string" },
-          "indication": { "type": "string" },
-          "lastDispensationDate": { "format": "date-time", "type": "string" },
-          "dispensationCount": { "type": "number" },
+          "productName": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "productStrength": {
+            "type": "string"
+          },
+          "productAtcCode": {
+            "type": "string"
+          },
+          "indication": {
+            "type": "string"
+          },
+          "lastDispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dispensationCount": {
+            "type": "number"
+          },
           "dispensations": {
             "type": "array",
             "items": {
@@ -1832,47 +2720,196 @@
         },
         "required": ["dispensationCount", "dispensations"]
       },
+      "CommissionType": {
+        "type": "number",
+        "enum": [0, 1],
+        "description": "The type of commission. 0 is deliver, 1 is deliver and information."
+      },
+      "UserType": {
+        "type": "number",
+        "enum": [0, 1, 2, 3],
+        "description": "The type of user that registered the commission. 0 is parent, 1 is person, 2 is doctor, 3 is pharmacist."
+      },
+      "PrescriptionCommissionDto": {
+        "type": "object",
+        "properties": {
+          "toNationalId": {
+            "type": "string",
+            "description": "The national ID of the person receiving the commission"
+          },
+          "toName": {
+            "type": "string",
+            "description": "The name of the person receiving the commission"
+          },
+          "commissionType": {
+            "description": "The type of commission. 0 is deliver, 1 is deliver and information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CommissionType"
+              }
+            ]
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start date and time the commission becomes valid. If not defined, the commission is instantly valid."
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end date and time the commission is valid until. If not defined, the commission is valid until canceled."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Status of the commission."
+          },
+          "comment": {
+            "type": "string",
+            "description": "Explanation of commission change. If commission is made inactive, an explanation should be included."
+          },
+          "userType": {
+            "description": "The type of user that registered the commission. 0 is parent, 1 is person, 2 is doctor, 3 is pharmacist.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "toNationalId",
+          "toName",
+          "commissionType",
+          "isActive",
+          "userType"
+        ]
+      },
+      "CreatePrescriptionCommissionDto": {
+        "type": "object",
+        "properties": {
+          "toNationalId": {
+            "type": "string",
+            "description": "The national ID of the person receiving the commission"
+          },
+          "commissionType": {
+            "description": "The type of commission. 0 is deliver, 1 is deliver and information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CommissionType"
+              }
+            ]
+          },
+          "validFrom": {
+            "type": "string",
+            "description": "The start date and time the commission becomes valid."
+          },
+          "validTo": {
+            "type": "string",
+            "description": "The end date and time the commission is valid until."
+          }
+        },
+        "required": ["toNationalId", "commissionType"]
+      },
+      "DeactivatePrescriptionCommissionDto": {
+        "type": "object",
+        "properties": {
+          "toNationalId": {
+            "type": "string",
+            "description": "The national ID of the person receiving the commission"
+          }
+        },
+        "required": ["toNationalId"]
+      },
       "OrganDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         },
         "required": ["id", "name"]
       },
       "OrganDonorDto": {
         "type": "object",
         "properties": {
-          "isDonor": { "type": "boolean" },
+          "isDonor": {
+            "type": "boolean"
+          },
           "exceptions": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/OrganDto" }
+            "items": {
+              "$ref": "#/components/schemas/OrganDto"
+            }
           },
-          "exceptionComment": { "type": "string" },
-          "registrationDate": { "format": "date-time", "type": "string" },
-          "isMinor": { "type": "boolean" },
-          "isTemporaryResident": { "type": "boolean" }
+          "exceptionComment": {
+            "type": "string"
+          },
+          "registrationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isMinor": {
+            "type": "boolean"
+          },
+          "isTemporaryResident": {
+            "type": "boolean"
+          }
         },
         "required": ["isDonor", "exceptions"]
       },
       "UpdateOrganDonorDto": {
         "type": "object",
         "properties": {
-          "isDonor": { "type": "boolean" },
-          "exceptions": { "type": "array", "items": { "type": "string" } },
-          "exceptionComment": { "type": "string" }
+          "isDonor": {
+            "type": "boolean"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exceptionComment": {
+            "type": "string"
+          }
         },
         "required": ["isDonor", "exceptions"]
       },
       "QuestionnaireBaseDto": {
         "type": "object",
         "properties": {
-          "questionnaireId": { "type": "string" },
-          "title": { "type": "string" },
-          "message": { "type": "string" },
-          "numRepliesAllowed": { "type": "number", "default": 1 },
-          "numSubmissions": { "type": "number", "default": 0 },
-          "lastSubmitted": { "format": "date-time", "type": "string" }
+          "questionnaireId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "numRepliesAllowed": {
+            "type": "number",
+            "default": 1
+          },
+          "numSubmissions": {
+            "type": "number",
+            "default": 0
+          },
+          "lastSubmitted": {
+            "format": "date-time",
+            "type": "string"
+          }
         },
         "required": ["questionnaireId", "numRepliesAllowed", "numSubmissions"]
       },
@@ -1892,94 +2929,234 @@
       "BaseQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "StringQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "maxLength": { "type": "number" },
-          "multiline": { "type": "boolean" },
-          "default": { "type": "string" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "maxLength": {
+            "type": "number"
+          },
+          "multiline": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "string"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "BooleanQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "default": { "type": "boolean" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "type": "boolean"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "DateQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "default": { "format": "date-time", "type": "string" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "format": "date-time",
+            "type": "string"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "NumberQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "default": { "type": "number" },
-          "min": { "type": "number" },
-          "max": { "type": "number" },
-          "minDescription": { "type": "string" },
-          "maxDescription": { "type": "string" },
-          "decimals": { "type": "boolean" },
-          "displayClass": { "type": "string" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "minDescription": {
+            "type": "string"
+          },
+          "maxDescription": {
+            "type": "string"
+          },
+          "decimals": {
+            "type": "boolean"
+          },
+          "displayClass": {
+            "type": "string"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "ListQuestionDisplayClass": {
         "type": "string",
@@ -1988,25 +3165,54 @@
       "ListQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "minSelections": { "type": "number" },
-          "maxSelections": { "type": "number" },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "minSelections": {
+            "type": "number"
+          },
+          "maxSelections": {
+            "type": "number"
+          },
           "multiselect": {
             "type": "boolean",
             "description": "Will be deprecated in the future, use minSelections and maxSelections instead if provided"
           },
           "displayClass": {
             "allOf": [
-              { "$ref": "#/components/schemas/ListQuestionDisplayClass" }
+              {
+                "$ref": "#/components/schemas/ListQuestionDisplayClass"
+              }
             ]
           },
           "values": {
@@ -2014,116 +3220,241 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string" },
-                "label": { "type": "string" },
-                "active": { "type": "boolean" }
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "active": {
+                  "type": "boolean"
+                }
               },
               "required": ["id", "label"]
             }
           }
         },
-        "required": ["id", "type", "label", "values"]
+        "required": ["id", "type", "label", "required", "values"]
       },
       "AttachmentQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "fileTypes": { "type": "string" }
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "fileTypes": {
+            "type": "string"
+          }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "TableQuestionDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": {
-            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          "id": {
+            "type": "string"
           },
-          "label": { "type": "string" },
-          "htmlLabel": { "type": "string" },
-          "hint": { "type": "string" },
-          "required": { "type": "boolean" },
-          "active": { "type": "boolean" },
-          "visible": { "type": "boolean" },
-          "numRows": { "type": "number", "default": 1 },
-          "maxRows": { "type": "number" },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "numRows": {
+            "type": "number",
+            "default": 1
+          },
+          "maxRows": {
+            "type": "number"
+          },
           "items": {
             "type": "array",
             "items": {
               "anyOf": [
-                { "$ref": "#/components/schemas/BooleanQuestionDto" },
-                { "$ref": "#/components/schemas/StringQuestionDto" },
-                { "$ref": "#/components/schemas/DateQuestionDto" },
-                { "$ref": "#/components/schemas/NumberQuestionDto" },
-                { "$ref": "#/components/schemas/ListQuestionDto" },
-                { "$ref": "#/components/schemas/AttachmentQuestionDto" }
+                {
+                  "$ref": "#/components/schemas/BooleanQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/AttachmentQuestionDto"
+                }
               ]
             }
           }
         },
-        "required": ["id", "type", "label"]
+        "required": ["id", "type", "label", "required"]
       },
       "QuestionTriggerItemDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "value": { "type": "boolean" },
-          "attribute": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "value": {
+            "type": "boolean"
+          },
+          "attribute": {
+            "type": "string"
+          }
         },
         "required": ["id", "value", "attribute"]
       },
       "BooleanTriggerDto": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "triggerId": { "type": "string" },
-          "targetId": { "type": "string" },
-          "visible": { "type": "boolean" },
-          "value": { "type": "boolean" }
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "boolean"
+          }
         },
         "required": ["type", "triggerId", "targetId", "visible"]
       },
       "NumberTriggerDto": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "triggerId": { "type": "string" },
-          "targetId": { "type": "string" },
-          "visible": { "type": "boolean" },
-          "equals": { "type": "number" },
-          "lessThan": { "type": "number" },
-          "greaterThan": { "type": "number" },
-          "inRange": { "type": "array", "items": { "type": "number" } },
-          "contains": { "type": "array", "items": { "type": "number" } }
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "equals": {
+            "type": "number"
+          },
+          "lessThan": {
+            "type": "number"
+          },
+          "greaterThan": {
+            "type": "number"
+          },
+          "inRange": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "contains": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
         },
         "required": ["type", "triggerId", "targetId", "visible"]
       },
       "ListTriggerDto": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "triggerId": { "type": "string" },
-          "targetId": { "type": "string" },
-          "visible": { "type": "boolean" },
-          "equals": { "type": "string" },
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "equals": {
+            "type": "string"
+          },
           "contains": {
             "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when one value is selected",
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "containsAll": {
             "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when all values are selected",
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": ["type", "triggerId", "targetId", "visible"]
@@ -2131,38 +3462,58 @@
       "AttachmentReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
-          "answer": { "type": "string" }
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
         },
         "required": ["questionId", "answer"]
       },
       "BooleanReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
-          "answer": { "type": "boolean" }
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "boolean"
+          }
         },
         "required": ["questionId", "answer"]
       },
       "DateReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
-          "answer": { "type": "string" }
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          }
         },
         "required": ["questionId", "answer"]
       },
       "ListReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
+          "questionId": {
+            "type": "string"
+          },
           "values": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string" },
-                "answer": { "type": "string" }
+                "id": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
               },
               "required": ["id", "answer"]
             }
@@ -2173,80 +3524,118 @@
       "NumberReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
-          "answer": { "type": "number" }
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "number"
+          }
         },
         "required": ["questionId", "answer"]
       },
       "StringReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
-          "answer": { "type": "string" }
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
         },
         "required": ["questionId", "answer"]
       },
       "TableReplyDto": {
         "type": "object",
         "properties": {
-          "questionId": { "type": "string" },
+          "questionId": {
+            "type": "string"
+          },
           "rows": {
             "type": "array",
             "items": {
               "type": "array",
               "items": {
-                "oneOf": [
+                "anyOf": [
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
-                      "answer": { "type": "string" }
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
                     },
                     "required": ["questionId", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
-                      "answer": { "type": "number" }
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "number"
+                      }
                     },
                     "required": ["questionId", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
-                      "answer": { "type": "boolean" }
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "boolean"
+                      }
                     },
                     "required": ["questionId", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
-                      "answer": { "type": "string" }
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      }
                     },
                     "required": ["questionId", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
-                      "answer": { "type": "string" }
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
                     },
                     "required": ["questionId", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
-                      "questionId": { "type": "string" },
+                      "questionId": {
+                        "type": "string"
+                      },
                       "values": {
                         "type": "array",
                         "items": {
                           "type": "object",
                           "properties": {
-                            "id": { "type": "string" },
-                            "answer": { "type": "string" }
+                            "id": {
+                              "type": "string"
+                            },
+                            "answer": {
+                              "type": "string"
+                            }
                           },
                           "required": ["id", "answer"]
                         }
@@ -2264,33 +3653,70 @@
       "QuestionnaireSubmissionBaseDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "questionnaireId": { "type": "string" },
-          "isDraft": { "type": "boolean" },
-          "createdDate": { "format": "date-time", "type": "string" },
-          "lastUpdatedDate": { "format": "date-time", "type": "string" },
-          "submittedDate": { "format": "date-time", "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "questionnaireId": {
+            "type": "string"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastUpdatedDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "submittedDate": {
+            "format": "date-time",
+            "type": "string"
+          }
         },
         "required": ["id", "questionnaireId", "isDraft", "createdDate"]
       },
       "QuestionGroupDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "title": { "type": "string" },
-          "hint": { "type": "string" },
-          "visible": { "type": "boolean" },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
           "items": {
             "type": "array",
             "items": {
               "anyOf": [
-                { "$ref": "#/components/schemas/BooleanQuestionDto" },
-                { "$ref": "#/components/schemas/StringQuestionDto" },
-                { "$ref": "#/components/schemas/DateQuestionDto" },
-                { "$ref": "#/components/schemas/NumberQuestionDto" },
-                { "$ref": "#/components/schemas/ListQuestionDto" },
-                { "$ref": "#/components/schemas/AttachmentQuestionDto" },
-                { "$ref": "#/components/schemas/TableQuestionDto" }
+                {
+                  "$ref": "#/components/schemas/BooleanQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/AttachmentQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableQuestionDto"
+                }
               ]
             }
           }
@@ -2300,16 +3726,42 @@
       "QuestionnaireDetailDto": {
         "type": "object",
         "properties": {
-          "questionnaireId": { "type": "string" },
-          "title": { "type": "string" },
-          "message": { "type": "string" },
-          "numRepliesAllowed": { "type": "number", "default": 1 },
-          "numSubmissions": { "type": "number", "default": 0 },
-          "lastSubmitted": { "format": "date-time", "type": "string" },
-          "hint": { "type": "string" },
-          "daysBetweenReplies": { "type": "number", "default": 0 },
-          "createdDate": { "format": "date-time", "type": "string" },
-          "expiryDate": { "format": "date-time", "type": "string" },
+          "questionnaireId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "numRepliesAllowed": {
+            "type": "number",
+            "default": 1
+          },
+          "numSubmissions": {
+            "type": "number",
+            "default": 0
+          },
+          "lastSubmitted": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "daysBetweenReplies": {
+            "type": "number",
+            "default": 0
+          },
           "canSubmit": {
             "type": "boolean",
             "description": "Boolean field to check if the questionnaire can be submitted"
@@ -2320,10 +3772,14 @@
               "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
             }
           },
-          "hasDraft": { "type": "boolean" },
+          "hasDraft": {
+            "type": "boolean"
+          },
           "groups": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/QuestionGroupDto" }
+            "items": {
+              "$ref": "#/components/schemas/QuestionGroupDto"
+            }
           },
           "triggers": {
             "type": "object",
@@ -2331,9 +3787,15 @@
               "type": "array",
               "items": {
                 "anyOf": [
-                  { "$ref": "#/components/schemas/NumberTriggerDto" },
-                  { "$ref": "#/components/schemas/ListTriggerDto" },
-                  { "$ref": "#/components/schemas/BooleanTriggerDto" }
+                  {
+                    "$ref": "#/components/schemas/NumberTriggerDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ListTriggerDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BooleanTriggerDto"
+                  }
                 ]
               }
             }
@@ -2343,13 +3805,27 @@
             "description": "Draft replies for the questionnaire",
             "items": {
               "anyOf": [
-                { "$ref": "#/components/schemas/AttachmentReplyDto" },
-                { "$ref": "#/components/schemas/BooleanReplyDto" },
-                { "$ref": "#/components/schemas/DateReplyDto" },
-                { "$ref": "#/components/schemas/ListReplyDto" },
-                { "$ref": "#/components/schemas/NumberReplyDto" },
-                { "$ref": "#/components/schemas/StringReplyDto" },
-                { "$ref": "#/components/schemas/TableReplyDto" }
+                {
+                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/BooleanReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableReplyDto"
+                }
               ]
             }
           }
@@ -2372,58 +3848,86 @@
           "replies": {
             "type": "array",
             "items": {
-              "oneOf": [
+              "anyOf": [
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
-                    "answer": { "type": "string" }
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
                   },
                   "required": ["questionId", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
-                    "answer": { "type": "boolean" }
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "boolean"
+                    }
                   },
                   "required": ["questionId", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
-                    "answer": { "type": "string" }
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    }
                   },
                   "required": ["questionId", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
-                    "answer": { "type": "number" }
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "number"
+                    }
                   },
                   "required": ["questionId", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
-                    "answer": { "type": "string" }
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
                   },
                   "required": ["questionId", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
+                    "questionId": {
+                      "type": "string"
+                    },
                     "values": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "string" },
-                          "answer": { "type": "string" }
+                          "id": {
+                            "type": "string"
+                          },
+                          "answer": {
+                            "type": "string"
+                          }
                         },
                         "required": ["id", "answer"]
                       }
@@ -2434,64 +3938,94 @@
                 {
                   "type": "object",
                   "properties": {
-                    "questionId": { "type": "string" },
+                    "questionId": {
+                      "type": "string"
+                    },
                     "rows": {
                       "type": "array",
                       "items": {
                         "type": "array",
                         "items": {
-                          "oneOf": [
+                          "anyOf": [
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
-                                "answer": { "type": "string" }
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
                               },
                               "required": ["questionId", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
-                                "answer": { "type": "number" }
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "number"
+                                }
                               },
                               "required": ["questionId", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
-                                "answer": { "type": "boolean" }
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "boolean"
+                                }
                               },
                               "required": ["questionId", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
-                                "answer": { "type": "string" }
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string",
+                                  "format": "date",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                }
                               },
                               "required": ["questionId", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
-                                "answer": { "type": "string" }
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
                               },
                               "required": ["questionId", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
-                                "questionId": { "type": "string" },
+                                "questionId": {
+                                  "type": "string"
+                                },
                                 "values": {
                                   "type": "array",
                                   "items": {
                                     "type": "object",
                                     "properties": {
-                                      "id": { "type": "string" },
-                                      "answer": { "type": "string" }
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "answer": {
+                                        "type": "string"
+                                      }
                                     },
                                     "required": ["id", "answer"]
                                   }
@@ -2509,37 +4043,59 @@
               ]
             }
           },
-          "isDraft": { "type": "boolean" }
+          "isDraft": {
+            "type": "boolean"
+          }
         },
         "required": ["replies", "isDraft"]
       },
       "QuestionnaireSubmissionDetailDto": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "message": { "type": "string" },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
           "canSubmit": {
             "type": "boolean",
             "description": "Boolean field to check if the questionnaire can be submitted"
           },
           "groups": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/QuestionGroupDto" }
+            "items": {
+              "$ref": "#/components/schemas/QuestionGroupDto"
+            }
           },
           "replies": {
             "type": "array",
-            "description": "Draft replies for the questionnaire",
             "items": {
               "anyOf": [
-                { "$ref": "#/components/schemas/AttachmentReplyDto" },
-                { "$ref": "#/components/schemas/BooleanReplyDto" },
-                { "$ref": "#/components/schemas/DateReplyDto" },
-                { "$ref": "#/components/schemas/ListReplyDto" },
-                { "$ref": "#/components/schemas/NumberReplyDto" },
-                { "$ref": "#/components/schemas/StringReplyDto" },
-                { "$ref": "#/components/schemas/TableReplyDto" }
+                {
+                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/BooleanReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableReplyDto"
+                }
               ]
-            }
+            },
+            "description": "Draft replies for the questionnaire"
           },
           "submission": {
             "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
@@ -2553,11 +4109,21 @@
           "errorMessage": {
             "type": "object",
             "properties": {
-              "questionId": { "type": "string" },
-              "rowNum": { "type": "number" },
-              "rowQuestionId": { "type": "string" },
-              "errorCode": { "type": "string" },
-              "errorMessage": { "type": "string" }
+              "questionId": {
+                "type": "string"
+              },
+              "rowNum": {
+                "type": "number"
+              },
+              "rowQuestionId": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              }
             },
             "required": ["questionId", "errorCode", "errorMessage"]
           }
@@ -2584,25 +4150,55 @@
       "AllergyDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "allergen": { "type": "string" },
-          "categories": { "type": "array", "items": { "type": "string" } },
-          "clinicalStatus": {
-            "allOf": [{ "$ref": "#/components/schemas/AllergyClinicalStatus" }]
+          "id": {
+            "type": "string"
           },
-          "clinicalStatusDisplay": { "type": "string" },
-          "verificationStatus": {
+          "allergen": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clinicalStatus": {
             "allOf": [
-              { "$ref": "#/components/schemas/AllergyVerificationStatus" }
+              {
+                "$ref": "#/components/schemas/AllergyClinicalStatus"
+              }
             ]
           },
-          "verificationStatusDisplay": { "type": "string" },
-          "criticality": {
-            "allOf": [{ "$ref": "#/components/schemas/AllergyCriticality" }]
+          "clinicalStatusDisplay": {
+            "type": "string"
           },
-          "criticalityDisplay": { "type": "string" },
-          "note": { "type": "string" },
-          "recordedDate": { "format": "date-time", "type": "string" }
+          "verificationStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllergyVerificationStatus"
+              }
+            ]
+          },
+          "verificationStatusDisplay": {
+            "type": "string"
+          },
+          "criticality": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllergyCriticality"
+              }
+            ]
+          },
+          "criticalityDisplay": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "recordedDate": {
+            "format": "date-time",
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -2613,14 +4209,42 @@
           "recordedDate"
         ]
       },
+      "AppointmentStatus": {
+        "type": "string",
+        "enum": [
+          "booked",
+          "pending",
+          "proposed",
+          "cancelled",
+          "fulfilled",
+          "arrived",
+          "noshow",
+          "entered-in-error",
+          "checked-in",
+          "waitlist",
+          "deleted"
+        ]
+      },
       "AppointmentLocationDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization": {
+            "type": "string",
+            "description": "The organization the location belongs to"
+          },
           "address": {
             "type": "string",
             "description": "Street name, number, direction & P.O. Box etc."
+          },
+          "directions": {
+            "type": "string",
+            "description": "The directions to the location"
           },
           "city": {
             "type": "string",
@@ -2648,7 +4272,9 @@
       "AppointmentDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
           "startTime": {
             "format": "date-time",
             "type": "string",
@@ -2675,75 +4301,75 @@
             "type": "string",
             "description": "Patient facing information about the Appointment"
           },
-          "location": { "$ref": "#/components/schemas/AppointmentLocationDto" },
-          "practitioners": { "type": "array", "items": { "type": "string" } }
+          "location": {
+            "$ref": "#/components/schemas/AppointmentLocationDto"
+          },
+          "practitioners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "required": ["id", "status", "practitioners"]
       },
-      "PaginationDto": {
+      "ConsentCountryDto": {
         "type": "object",
         "properties": {
-          "page": { "type": "number" },
-          "pageSize": { "type": "number" },
-          "totalResults": { "type": "number" },
-          "totalPages": { "type": "number" },
-          "hasNext": { "type": "boolean" },
-          "hasPrevious": { "type": "boolean" }
-        },
-        "required": [
-          "page",
-          "pageSize",
-          "totalResults",
-          "totalPages",
-          "hasNext",
-          "hasPrevious"
-        ]
-      },
-      "AppointmentDataDto": {
-        "type": "object",
-        "properties": {
-          "appointments": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/AppointmentDto" }
+          "name": {
+            "type": "string"
           },
-          "pagination": { "$ref": "#/components/schemas/PaginationDto" }
+          "code": {
+            "type": "string"
+          }
         },
-        "required": ["appointments", "pagination"]
+        "required": ["name", "code"]
       },
-      "ConsentCountryActorDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "code": { "type": "string" }
-        },
-        "required": ["id", "name", "code"]
-      },
-      "CrossBorderDataConsentStatus": {
+      "EuPatientConsentStatus": {
         "type": "string",
-        "enum": ["active", "inactive", "expired"]
+        "enum": ["active", "inactive", "expired", "pending"]
       },
-      "CrossBorderConsentDto": {
+      "EuPatientConsentDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "validFrom": { "format": "date-time", "type": "string" },
-          "validTo": { "format": "date-time", "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string"
+          },
           "status": {
             "allOf": [
-              { "$ref": "#/components/schemas/CrossBorderDataConsentStatus" }
+              {
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
+              }
             ]
           },
-          "codes": { "type": "array", "items": { "type": "string" } },
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "countries": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ConsentCountryActorDto" }
+            "items": {
+              "$ref": "#/components/schemas/ConsentCountryDto"
+            }
           }
         },
         "required": ["status", "codes", "countries"]
       },
-      "CreateCrossBorderConsentDto": {
+      "CreateEuPatientConsentDto": {
         "type": "object",
         "properties": {
           "validFrom": {
@@ -2758,10 +4384,20 @@
             "description": "ISO 8601 date string",
             "example": "2024-06-01T00:00:00.000Z"
           },
-          "codes": { "type": "array", "items": { "type": "string" } },
-          "countryCodes": { "type": "array", "items": { "type": "string" } }
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "countryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
-        "required": ["validTo", "codes", "countryCodes"]
+        "required": ["codes", "countryCodes"]
       }
     }
   }

@@ -1,6 +1,5 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  DispensationHistoryItemDto,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
@@ -16,30 +15,40 @@ import {
   HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Prescription, Prescriptions } from './models/prescriptions.model'
-import { Referral, Referrals } from './models/referrals.model'
-import { Vaccination, Vaccinations } from './models/vaccinations.model'
-import { Waitlist, Waitlists } from './models/waitlists.model'
+import isNumber from 'lodash/isNumber'
+import sortBy from 'lodash/sortBy'
 import {
-  mapPrescriptionCategory,
-  mapPrescriptionRenewalBlockedReason,
-  mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
 import {
   MedicineHistory,
   MedicineHistoryDispensation,
   MedicineHistoryItem,
 } from './models/medicineHistory.model'
-import { isDefined } from '@island.is/shared/utils'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { Countries } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
-import { HealthDirectorateRenewalInput } from './models/renewal.input'
-import isNumber from 'lodash/isNumber'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { Prescription, Prescriptions } from './models/prescriptions.model'
 import { ReferralDetail } from './models/referral.model'
+import { Referral, Referrals } from './models/referrals.model'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
+import { Waitlist, Waitlists } from './models/waitlists.model'
+import {
+  mapDispensationItem,
+  mapPermit,
+  mapPrescriptionCategory,
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+  mapVaccinationStatus,
+} from './utils/mappers'
+import { PermitStatusEnum } from './models/enums'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -368,7 +377,7 @@ export class HealthDirectorateService {
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map(this.mapDispensationItem),
+          dispensations: item.dispensations.map(mapDispensationItem),
         }
       }) ?? []
 
@@ -390,11 +399,87 @@ export class HealthDirectorateService {
       return null
     }
 
-    const dispensations: Array<MedicineHistoryDispensation> = data.map(
-      this.mapDispensationItem,
-    )
+    const dispensations: Array<MedicineHistoryDispensation> =
+      data.map(mapDispensationItem)
 
     return { dispensations }
+  }
+
+  /* Patient data - Permits */
+  async getPermits(
+    auth: Auth,
+    locale: Locale,
+    input: PermitsInput,
+  ): Promise<Permits | null> {
+    const permits = await this.healthApi.getPermits(
+      auth,
+      locale,
+      input.statuses.map((status) =>
+        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+      ),
+    )
+
+    if (!permits) {
+      return null
+    }
+
+    const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
+    const sorted = sortBy(data, 'status', 'asc')
+    return { data: sorted }
+  }
+
+  /* Patient data - Permit Detail */
+  async getPermit(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<Permit | null> {
+    const permit = await this.healthApi.getPermit(auth, locale, id)
+
+    if (!permit) {
+      return null
+    }
+
+    return mapPermit(permit, locale)
+  }
+
+  /* Patient data - Permit countries */
+  async getPermitCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Countries | null> {
+    const countries = await this.healthApi.getPermitCountries(auth, locale)
+
+    if (!countries) {
+      return null
+    }
+
+    return {
+      data: countries,
+    }
+  }
+
+  /* Patient data - Create approval */
+  async createPermit(
+    auth: Auth,
+    input: PermitInput,
+  ): Promise<PermitReturn | null> {
+    const response = await this.healthApi.createPermit(auth, {
+      codes: input.codes,
+      countryCodes: input.countryCodes,
+      validFrom: new Date(input.validFrom),
+      validTo: new Date(input.validTo),
+    })
+    return response ? { status: true } : null
+  }
+
+  /* Patient data - invalidate permit */
+  async invalidatePermit(
+    auth: Auth,
+    input: InvalidatePermitInput,
+  ): Promise<PermitReturn | null> {
+    const data = await this.healthApi.deactivatePermit(auth, input.id)
+    return data ? { status: true } : null
   }
 
   private castRenewalInputToNumber = (
@@ -415,29 +500,5 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
-  }
-
-  private mapDispensationItem = (
-    item: DispensationHistoryItemDto,
-  ): MedicineHistoryDispensation => {
-    const quantity = item.productQuantity ?? 0
-
-    return {
-      id: item.productId,
-      name: item.productName,
-      quantity: [quantity.toString(), item.productUnit]
-        .filter((x) => isDefined(x))
-        .join(' '),
-      agentName: item.dispensingAgentName,
-      unit: item.productUnit,
-      type: item.productType,
-      indication: item.indication,
-      dosageInstructions: item.dosageInstructions,
-      issueDate: item.issueDate,
-      prescriberName: item.prescriberName,
-      expirationDate: item.expirationDate,
-      isExpired: item.isExpired,
-      date: item.dispensationDate,
-    }
   }
 }
