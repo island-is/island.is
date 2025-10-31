@@ -219,7 +219,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     </Box>
                   )}
                 </Box>
-                <Box display="flex" alignItems="center">
+                <Box display="flex" alignItems="center" columnGap={1}>
                   <button
                     onClick={handleEditFileButtonClick}
                     className={cn(styles.editCaseFileButton, {
@@ -232,23 +232,21 @@ const EditableCaseFile: FC<Props> = (props) => {
                   >
                     <Icon icon="checkmark" color={color} />
                   </button>
-                  <Box marginLeft={1}>
-                    <button
-                      onClick={() => {
-                        onDelete(caseFile as TUploadFile)
-                        onStopEditing?.()
-                      }}
-                      className={cn(styles.editCaseFileButton, {
-                        [styles.background.primary]:
-                          caseFile.status !== FileUploadStatus.error,
-                        [styles.background.secondary]:
-                          caseFile.status === FileUploadStatus.error || isEmpty,
-                      })}
-                      aria-label="Eyða skrá"
-                    >
-                      <Icon icon="trash" color={color} type="outline" />
-                    </button>
-                  </Box>
+                  <button
+                    onClick={() => {
+                      onDelete(caseFile as TUploadFile)
+                      onStopEditing?.()
+                    }}
+                    className={cn(styles.editCaseFileButton, {
+                      [styles.background.primary]:
+                        caseFile.status !== FileUploadStatus.error,
+                      [styles.background.secondary]:
+                        caseFile.status === FileUploadStatus.error || isEmpty,
+                    })}
+                    aria-label="Eyða skrá"
+                  >
+                    <Icon icon="trash" color={color} type="outline" />
+                  </button>
                 </Box>
               </Box>
             </motion.div>
@@ -264,6 +262,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                gap: 8,
               }}
               aria-live="polite"
             >
