@@ -336,7 +336,7 @@ export const ExamineesCSVUploader: FC<
           justifyContent={'center'}
           marginY={2}
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       <Controller

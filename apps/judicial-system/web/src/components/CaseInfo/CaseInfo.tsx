@@ -24,18 +24,18 @@ import { strings } from './CaseInfo.strings'
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
 }> = ({ policeCaseNumbers }) => (
-  <Box display="flex" flexWrap="wrap">
+  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
     {policeCaseNumbers?.map((policeCaseNumber, index) => (
-      <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
-        <Tag disabled>{policeCaseNumber}</Tag>
-      </Box>
+      <Tag disabled key={`${policeCaseNumber}-${index}`}>
+        {policeCaseNumber}
+      </Tag>
     ))}
   </Box>
 )
 
 const Entry: FC<{ label: string; value: string }> = ({ label, value }) => {
   return (
-    <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
+    <Text color="dark400" fontWeight="semiBold">
       {`${label}: ${value}`}
     </Text>
   )
@@ -103,10 +103,8 @@ export const ProsecutorCaseInfo: FC<
   const { formatMessage } = useIntl()
 
   return (
-    <Box component="section" marginBottom={5}>
-      <Box marginBottom={2}>
-        <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
-      </Box>
+    <Box component="section" display="flex" flexDirection="column" rowGap={1}>
+      <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}
@@ -120,10 +118,10 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 }: {
   workingCase: Case
 }) => (
-  <>
+  <Box display="flex" flexDirection="column" rowGap={1}>
     <Prosecutor workingCase={workingCase} />
     <Defendants workingCase={workingCase} />
-  </>
+  </Box>
 )
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {

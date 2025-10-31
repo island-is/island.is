@@ -30,8 +30,7 @@ export interface CitizenshipApplication {
   }
   parents: {
     nationalId: string
-    givenName?: string
-    familyName?: string
+    fullName: string
   }[]
   countriesOfResidence: {
     countryId: string
