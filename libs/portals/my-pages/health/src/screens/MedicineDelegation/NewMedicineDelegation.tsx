@@ -27,7 +27,6 @@ const NewMedicineDelegation = () => {
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
       postMedicineDelegation({
         variables: {
-          locale: lang,
           input: {
             nationalId: formState.nationalId,
             from: formState.dateFrom,
@@ -46,8 +45,7 @@ const NewMedicineDelegation = () => {
             toast.error(formatMessage(messages.permitCreatedError))
           }
         })
-        .catch((error) => {
-          console.warn(error.message)
+        .catch(() => {
           toast.error(formatMessage(messages.permitCreatedError))
         })
     }
@@ -63,11 +61,7 @@ const NewMedicineDelegation = () => {
       )}
     >
       {step === 1 && (
-        <FirstStep
-          onClick={() => setStep(2)}
-          setFormState={setFormState}
-          formState={formState}
-        />
+        <FirstStep setFormState={setFormState} formState={formState} />
       )}
       {step === 2 && (
         <SecondStep
