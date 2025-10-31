@@ -256,6 +256,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/health-insurance-declaration/                                                                   @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                 @island-is/norda
+/libs/application/templates/hms/registration-of-new-property-numbers/                                                       @island-is/origo
 /libs/application/templates/home-support/                                                                                   @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                                              @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                                   @island-is/norda
@@ -281,6 +282,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance-declaration/                              @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                           @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                              @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/                                 @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                                             @island-is/norda
