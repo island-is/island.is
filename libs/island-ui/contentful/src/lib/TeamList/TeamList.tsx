@@ -198,7 +198,7 @@ const TeamMemberAccordionList = ({
                   )}
                   {member.extraIntroProperties?.map((property) => (
                     <Inline key={property.label} space={1} alignY="center">
-                      <Text fontWeight="semiBold">{property.label}</Text>
+                      <Text fontWeight="semiBold">{property.label}:</Text>
                       <Text>{property.value}</Text>
                     </Inline>
                   ))}
