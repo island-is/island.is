@@ -779,7 +779,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     >
                       <AnimatePresence>
                         {filedDocuments.map((item) => {
-                          let suplement: Supplement | undefined = undefined
+                          let supplement: Supplement | undefined = undefined
 
                           if (
                             item.documentType ===
@@ -815,7 +815,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 )})`}
                               </Text>
                             ) : null
-                            suplement = { enabled, disabled }
+                            supplement = { enabled, disabled }
                           } else if (
                             item.documentType ===
                             CourtDocumentType.UPLOADED_DOCUMENT
@@ -845,7 +845,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                   )})`}
                                 </Text>
                               )
-                              suplement = { enabled: node, disabled: node }
+                              supplement = { enabled: node, disabled: node }
                             }
                           } else {
                             const node = (
@@ -853,7 +853,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 Liggur frammi
                               </Text>
                             )
-                            suplement = { enabled: node, disabled: node }
+                            supplement = { enabled: node, disabled: node }
                           }
 
                           return (
@@ -883,7 +883,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     item.documentType !==
                                     CourtDocumentType.EXTERNAL_DOCUMENT,
                                   canEdit: ['fileName'],
-                                  suplement,
+                                  supplement,
                                 }}
                                 backgroundColor="white"
                                 onOpen={handleOnOpen}

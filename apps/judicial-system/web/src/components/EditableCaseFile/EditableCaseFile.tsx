@@ -46,7 +46,7 @@ export interface TEditableCaseFile {
   status?: FileUploadStatus
   size?: number | null
   submissionDate?: string | null
-  suplement?: Supplement
+  supplement?: Supplement
 }
 
 interface Props {
@@ -303,15 +303,15 @@ const EditableCaseFile: FC<Props> = (props) => {
                     </Box>
                   )}
                 </Box>
-                {caseFile.suplement && (
+                {caseFile.supplement && (
                   <Box
                     style={{
                       ...(disabled ? { color: theme.color.dark300 } : {}),
                     }}
                   >
                     {disabled
-                      ? caseFile.suplement.disabled
-                      : caseFile.suplement.enabled}
+                      ? caseFile.supplement.disabled
+                      : caseFile.supplement.enabled}
                   </Box>
                 )}
               </Box>
