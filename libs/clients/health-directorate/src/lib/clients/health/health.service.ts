@@ -344,14 +344,25 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
+    if (!input.validTo || !input.validFrom) {
+      return null
+    }
+    const validFrom = new Date(input.validFrom)
+    const validTo = new Date(input.validTo)
+
+    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
+      this.logger.debug('Invalid date values provided to createPermit')
+      return null
+    }
+
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
           body: {
             codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
             countryCodes: input.countryCodes,
-            validFrom: input.validFrom,
-            validTo: input.validTo,
+            validFrom: validFrom,
+            validTo: validTo,
           },
         }),
       ),

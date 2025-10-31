@@ -60,7 +60,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -86,7 +85,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -102,7 +100,6 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @Scopes(ApiScope.healthVaccinations, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',

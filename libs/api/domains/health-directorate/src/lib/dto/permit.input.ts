@@ -1,11 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsDate,
-  IsISO8601,
-  IsString,
-} from 'class-validator'
+import { ArrayNotEmpty, IsArray, IsISO8601, IsString } from 'class-validator'
 
 @InputType('HealthDirectoratePatientDataPermitInput')
 export class PermitInput {
