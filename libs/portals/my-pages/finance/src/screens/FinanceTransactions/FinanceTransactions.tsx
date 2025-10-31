@@ -209,6 +209,19 @@ const FinanceTransactions = () => {
                               handleChange={(d) => setToDate(d)}
                               selected={toDate}
                               appearInline
+                              range
+                              ranges={[
+                                {
+                                  label: '7 days',
+                                  startDate: sub(new Date(), { days: 7 }),
+                                  endDate: new Date(),
+                                },
+                                {
+                                  label: '30 days',
+                                  startDate: sub(new Date(), { days: 30 }),
+                                  endDate: new Date(),
+                                },
+                              ]}
                             />
                           </Box>
                         </Box>
