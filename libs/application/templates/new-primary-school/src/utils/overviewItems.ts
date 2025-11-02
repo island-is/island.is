@@ -239,14 +239,14 @@ export const relativesTable = async (
   return {
     header: [
       newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.nationalId,
+      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.relation,
     ],
     rows: relatives.map((r) => [
-      r.fullName,
+      r.nationalIdWithName.name,
+      formatKennitala(r.nationalIdWithName.nationalId),
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
     ]),
   }
@@ -425,7 +425,10 @@ export const siblingsTable = (answers: FormValue): TableData => {
       newPrimarySchoolMessages.shared.fullName,
       newPrimarySchoolMessages.shared.nationalId,
     ],
-    rows: siblings.map((s) => [s.fullName, formatKennitala(s.nationalId)]),
+    rows: siblings.map((s) => [
+      s.nationalIdWithName.name,
+      formatKennitala(s.nationalIdWithName.nationalId),
+    ]),
   }
 }
 

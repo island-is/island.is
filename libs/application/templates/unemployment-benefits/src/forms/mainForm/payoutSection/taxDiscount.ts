@@ -26,7 +26,6 @@ export const taxDiscountSubSection = buildSubSection({
           placeholder: payoutMessages.taxDiscount.taxDiscountPlaceholder,
           variant: 'number',
           max: 100,
-          min: 0,
           suffix: '%',
         }),
         buildAlertMessageField({
