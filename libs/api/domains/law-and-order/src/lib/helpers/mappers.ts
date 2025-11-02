@@ -1,12 +1,17 @@
 import {
   DefenderInfoDefenderChoiceEnum,
+  ItemsLinkTypeEnum,
+  ItemsTypeEnum,
   StateTagColorEnum,
   SubpoenaDataDefaultDefenderChoiceEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
+  UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
 import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
 import { m } from '../messages'
+import { AppealDecision } from '../../models/verdict.model'
+import { ItemType, LinkType } from '../../models/item.model'
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (
@@ -68,6 +73,56 @@ export const mapDefenseChoiceForSummonDefaultChoice = (
   }
 }
 
+export const mapAppealDecision = (decision?: string): AppealDecision => {
+  switch (decision) {
+    case 'ACCEPT':
+      return AppealDecision.ACCEPT
+    case 'POSTPONE':
+      return AppealDecision.POSTPONE
+    default:
+      return AppealDecision.NO_ANSWER // No answer means the UI should render the form, otherwise infoLine with 'change' button
+  }
+}
+
+export const mapAppealDecisionReverse = (
+  decision?: AppealDecision,
+): UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum => {
+  switch (decision) {
+    case AppealDecision.ACCEPT:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.ACCEPT
+    case AppealDecision.POSTPONE:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.POSTPONE
+    default:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.POSTPONE
+  }
+}
+
+export const mapItemTypes = (type: ItemsTypeEnum): ItemType | undefined => {
+  switch (type) {
+    case ItemsTypeEnum.RichText:
+      return ItemType.RichText
+    case ItemsTypeEnum.Accordion:
+      return ItemType.Accordion
+    case ItemsTypeEnum.Text:
+      return ItemType.Text
+    case ItemsTypeEnum.RadioButton:
+      return ItemType.RadioButton
+    default:
+      return undefined
+  }
+}
+
+export const mapLinkTypes = (type: ItemsLinkTypeEnum): LinkType | undefined => {
+  switch (type) {
+    case ItemsLinkTypeEnum.Email:
+      return LinkType.Email
+    case ItemsLinkTypeEnum.Tel:
+      return LinkType.Tel
+    default:
+      return undefined
+  }
+}
+
 export const mapTagTypes = (
   color?: StateTagColorEnum,
 ): CourtCaseStateTagColorEnum => {
@@ -96,7 +151,6 @@ export const mapTagTypes = (
       return CourtCaseStateTagColorEnum.white
     case StateTagColorEnum.Yellow:
       return CourtCaseStateTagColorEnum.yellow
-
     default:
       return CourtCaseStateTagColorEnum.blue
   }

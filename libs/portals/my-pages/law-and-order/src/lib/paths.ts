@@ -5,4 +5,5 @@ export enum LawAndOrderPaths {
   CourtCaseDetail = '/log-og-reglur/domsmal/:id',
   SubpoenaDetail = '/log-og-reglur/domsmal/:id/fyrirkall',
   SubpoenaPopUp = '/log-og-reglur/domsmal/:id/fyrirkall/pop-up',
+  VerdictDetail = '/log-og-reglur/domsmal/:id/nidurstada',
 }

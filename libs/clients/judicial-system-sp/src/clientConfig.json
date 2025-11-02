@@ -192,6 +192,97 @@
         "tags": ["cases"]
       }
     },
+    "/api/case/{caseId}/verdict": {
+      "get": {
+        "operationId": "CaseController_getRuling",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns verdict by case id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VerdictResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "404": {
+            "description": "Verdict for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      }
+    },
+    "/api/case/{caseId}/verdict/appeal-decision": {
+      "patch": {
+        "operationId": "CaseController_submitVerdictAppeal",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVerdictAppealDecisionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submits verdict appeal decision",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VerdictResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "403": {
+            "description": "User is not allowed to submit verdict appeal or deadline has passed"
+          },
+          "404": {
+            "description": "Case for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      }
+    },
     "/api/defenders": {
       "get": {
         "operationId": "DefenderController_getLawyers",
@@ -208,7 +299,7 @@
               }
             }
           },
-          "500": { "description": "Failed to retrieve defenders" }
+          "502": { "description": "Failed to retrieve defenders" }
         },
         "tags": ["defenders"]
       }
@@ -232,7 +323,9 @@
                 "schema": { "$ref": "#/components/schemas/Defender" }
               }
             }
-          }
+          },
+          "404": { "description": "Defender not found" },
+          "502": { "description": "Failed to retrieve defender" }
         },
         "tags": ["defenders"]
       }
@@ -342,8 +435,8 @@
     }
   },
   "info": {
-    "title": "Judicial System xRoad robot API",
-    "description": "This is the xRoad robot API for the judicial system.",
+    "title": "Judicial System - Mínar Síður API",
+    "description": "This is the Judicial System API for Mínar Síður.",
     "version": "1.0",
     "contact": {}
   },
@@ -400,9 +493,13 @@
         "properties": {
           "label": { "type": "string" },
           "value": { "type": "string" },
-          "linkType": { "type": "string", "enum": ["email", "tel"] }
+          "linkType": { "type": "string", "enum": ["email", "tel"] },
+          "type": {
+            "type": "string",
+            "enum": ["text", "richText", "accordion", "radioButton"]
+          }
         },
-        "required": ["label", "value", "linkType"]
+        "required": ["label", "value", "linkType", "type"]
       },
       "Groups": {
         "type": "object",
@@ -420,12 +517,20 @@
         "properties": {
           "caseNumber": { "type": "string" },
           "hasBeenServed": { "type": "boolean" },
+          "hasRuling": { "type": "boolean" },
+          "hasRulingBeenServed": { "type": "boolean" },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
           }
         },
-        "required": ["caseNumber", "hasBeenServed", "groups"]
+        "required": [
+          "caseNumber",
+          "hasBeenServed",
+          "hasRuling",
+          "hasRulingBeenServed",
+          "groups"
+        ]
       },
       "CaseResponse": {
         "type": "object",
@@ -517,6 +622,30 @@
           "defenderNationalId": { "type": "string" }
         },
         "required": ["defenderChoice"]
+      },
+      "VerdictResponse": {
+        "type": "object",
+        "properties": {
+          "caseId": { "type": "string" },
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          },
+          "appealDecision": { "type": "string" }
+        },
+        "required": ["caseId", "title", "subtitle", "groups", "appealDecision"]
+      },
+      "UpdateVerdictAppealDecisionDto": {
+        "type": "object",
+        "properties": {
+          "verdictAppealDecision": {
+            "type": "string",
+            "enum": ["ACCEPT", "POSTPONE"]
+          }
+        },
+        "required": ["verdictAppealDecision"]
       },
       "Defender": {
         "type": "object",
