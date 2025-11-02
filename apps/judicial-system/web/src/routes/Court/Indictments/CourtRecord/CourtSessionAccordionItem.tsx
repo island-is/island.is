@@ -934,140 +934,100 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               const courtCaseNumber = mergeDocuments.courtCaseNumber
               const mergedFiledDocuments = mergeDocuments.mergedFileDocuments
               return (
-                <>
-                  <Box>
-                    <SectionHeading title={`Sameining ${courtCaseNumber}`} />
-                    {/* TODO: UPDATE INPUT */}
-                    <Input
-                      data-testid="entries"
-                      name="entries"
-                      label={`Bókanir um sameiningu máls ${courtCaseNumber}`}
-                      value={courtSession.entries || ''}
-                      placeholder=""
-                      onChange={(event) => {
-                        setEntriesErrorMessage('')
-
-                        patchSession(courtSession.id, {
-                          entries: event.target.value,
-                        })
-                      }}
-                      onBlur={(event) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          event.target.value,
-                          setEntriesErrorMessage,
-                        )
-
-                        patchSession(
-                          courtSession.id,
-                          { entries: event.target.value },
-                          { persist: true },
-                        )
-                      }}
-                      hasError={entriesErrorMessage !== ''}
-                      errorMessage={entriesErrorMessage}
-                      rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                      // required
-                    />
-                  </Box>
-                  <Box>
-                    <SectionHeading
-                      title={`Dómsskjöl úr sameinuðu máli ${mergeDocuments.courtCaseNumber}`}
-                    />
-                    <BlueBox>
-                      {mergedFiledDocuments && mergedFiledDocuments.length > 0 && (
+                <Box>
+                  <SectionHeading
+                    title={`Dómsskjöl úr sameinuðu máli ${courtCaseNumber}`}
+                  />
+                  <BlueBox>
+                    {mergedFiledDocuments && mergedFiledDocuments.length > 0 && (
+                      <Box
+                        display="flex"
+                        columnGap={2}
+                        justifyContent="spaceBetween"
+                      >
+                        <Reorder.Group
+                          axis="y"
+                          values={mergedFiledDocuments}
+                          onReorder={handleReorder}
+                          className={styles.grid}
+                        >
+                          <AnimatePresence>
+                            {mergedFiledDocuments.map((item) => (
+                              <Reorder.Item
+                                key={item.id}
+                                value={item}
+                                data-reorder-item
+                                onDragStart={() => {
+                                  setDraggedMergeFileId(item.id)
+                                }}
+                                onDragEnd={() => {
+                                  setDraggedMergeFileId(null)
+                                }}
+                                initial={{
+                                  opacity: 0,
+                                  y: -10,
+                                  height: 'auto',
+                                }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: 10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <EditableCaseFile
+                                  enableDrag
+                                  caseFile={{
+                                    id: item.id,
+                                    displayText: item.name,
+                                    name: item.name,
+                                    canEdit: ['fileName'],
+                                  }}
+                                  backgroundColor="white"
+                                  onRename={(id: string, newName: string) => {
+                                    handleRename(courtSession.id, id, newName)
+                                  }}
+                                  disabled={courtSession.isConfirmed || false}
+                                />
+                              </Reorder.Item>
+                            ))}
+                          </AnimatePresence>
+                        </Reorder.Group>
                         <Box
                           display="flex"
-                          columnGap={2}
-                          justifyContent="spaceBetween"
+                          flexDirection="column"
+                          justifyContent="spaceAround"
+                          rowGap={2}
                         >
-                          <Reorder.Group
-                            axis="y"
-                            values={mergedFiledDocuments}
-                            onReorder={handleReorder}
-                            className={styles.grid}
-                          >
-                            <AnimatePresence>
-                              {mergedFiledDocuments.map((item) => (
-                                <Reorder.Item
-                                  key={item.id}
-                                  value={item}
-                                  data-reorder-item
-                                  onDragStart={() => {
-                                    setDraggedMergeFileId(item.id)
-                                  }}
-                                  onDragEnd={() => {
-                                    setDraggedMergeFileId(null)
-                                  }}
+                          <AnimatePresence>
+                            {mergedFiledDocuments.map((_item, i) => {
+                              const currentIndex = getMergedDocumentIndex(i)
+
+                              return (
+                                <motion.div
                                   initial={{
                                     opacity: 0,
                                     y: -10,
                                     height: 'auto',
                                   }}
-                                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                  animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                    height: 'auto',
+                                  }}
                                   exit={{ opacity: 0, y: 10, height: 0 }}
                                   transition={{ duration: 0.2 }}
+                                  key={`þingmerkt_nr_${currentIndex + 1}`}
                                 >
-                                  <EditableCaseFile
-                                    enableDrag
-                                    caseFile={{
-                                      id: item.id,
-                                      displayText: item.name,
-                                      name: item.name,
-                                      canEdit: ['fileName'],
-                                    }}
-                                    backgroundColor="white"
-                                    onRename={(id: string, newName: string) => {
-                                      handleRename(courtSession.id, id, newName)
-                                    }}
-                                    disabled={courtSession.isConfirmed || false}
-                                  />
-                                </Reorder.Item>
-                              ))}
-                            </AnimatePresence>
-                          </Reorder.Group>
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="spaceAround"
-                            rowGap={2}
-                          >
-                            <AnimatePresence>
-                              {mergedFiledDocuments.map((_item, i) => {
-                                const currentIndex = getMergedDocumentIndex(i)
-
-                                return (
-                                  <motion.div
-                                    initial={{
-                                      opacity: 0,
-                                      y: -10,
-                                      height: 'auto',
-                                    }}
-                                    animate={{
-                                      opacity: 1,
-                                      y: 0,
-                                      height: 'auto',
-                                    }}
-                                    exit={{ opacity: 0, y: 10, height: 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    key={`þingmerkt_nr_${currentIndex + 1}`}
-                                  >
-                                    <Tag variant="darkerBlue" outlined disabled>
-                                      Þingmerkt nr. {currentIndex + 1}
-                                    </Tag>
-                                  </motion.div>
-                                )
-                              })}
-                            </AnimatePresence>
-                          </Box>
+                                  <Tag variant="darkerBlue" outlined disabled>
+                                    Þingmerkt nr. {currentIndex + 1}
+                                  </Tag>
+                                </motion.div>
+                              )
+                            })}
+                          </AnimatePresence>
                         </Box>
-                      )}
-                    </BlueBox>
-                  </Box>
-                </>
+                      </Box>
+                    )}
+                  </BlueBox>
+                </Box>
               )
             })}
             <Box>
