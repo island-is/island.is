@@ -337,8 +337,6 @@ export class CourtDocumentRepositoryService {
         },
       }
 
-      console.log({ data })
-
       if (options?.transaction) {
         updateOptions.transaction = options.transaction
       }
@@ -429,7 +427,7 @@ export class CourtDocumentRepositoryService {
       await this.courtDocumentModel.update(
         {
           mergedCourtSessionId: parentCaseCourtSessionId,
-          mergedDocumentOrder: literal(`document_order + ${nextOrder}`),
+          mergedDocumentOrder: literal(`${nextOrder} + document_order - 1`),
         },
         {
           where: {
@@ -505,6 +503,15 @@ export class CourtDocumentRepositoryService {
     }
   }
 
+  private getMergedCaseIds(courtSessions: CourtSession[]): string[] {
+    return courtSessions.flatMap((courtSession) =>
+      _uniqBy(
+        courtSession.mergedFiledDocuments ?? [],
+        (c: CourtDocument) => c.caseId,
+      ).map((courtDocument) => courtDocument.caseId),
+    )
+  }
+
   async delete(
     caseId: string,
     courtSessionId: string,
@@ -558,6 +565,33 @@ export class CourtDocumentRepositoryService {
           transaction,
         },
       )
+
+      const courtSessions = await this.courtSessionModel.findAll({
+        where: { caseId },
+        include: [{ model: CourtDocument, as: 'mergedFiledDocuments' }],
+        order: [
+          ['created', 'ASC'],
+          [
+            { model: CourtDocument, as: 'mergedFiledDocuments' },
+            'mergedDocumentOrder',
+            'ASC',
+          ],
+        ],
+        transaction: transaction,
+      })
+      const mergedCaseIds = this.getMergedCaseIds(courtSessions)
+      if (mergedCaseIds.length > 0) {
+        await this.courtDocumentModel.update(
+          { mergedDocumentOrder: literal('merged_document_order - 1') },
+          {
+            where: {
+              caseId: { [Op.in]: mergedCaseIds },
+              mergedDocumentOrder: { [Op.gt]: deletedOrder },
+            },
+            transaction,
+          },
+        )
+      }
 
       this.logger.debug(
         `Deleted court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} and adjusted remaining document orders`,
@@ -662,21 +696,16 @@ export class CourtDocumentRepositoryService {
         transaction: transaction,
       },
     )
-    // Increase order of potential merged documents after the current position
-    const mergedCaseIds = courtSessions.flatMap((courtSession) =>
-      _uniqBy(
-        courtSession.mergedFiledDocuments ?? [],
-        (c: CourtDocument) => c.caseId,
-      ).map((courtDocument) => courtDocument.caseId),
-    )
+    const mergedCaseIds = this.getMergedCaseIds(courtSessions)
 
     if (mergedCaseIds.length > 0) {
+      // Increase order of potential merged documents after the current position
       await this.courtDocumentModel.update(
-        { merged_document_order: literal('merged_document_order + 1') },
+        { mergedDocumentOrder: literal('merged_document_order + 1') },
         {
           where: {
             caseId: { [Op.in]: mergedCaseIds },
-            merged_document_order: { [Op.gte]: nextOrder },
+            mergedDocumentOrder: { [Op.gte]: nextOrder },
           },
           transaction: transaction,
         },

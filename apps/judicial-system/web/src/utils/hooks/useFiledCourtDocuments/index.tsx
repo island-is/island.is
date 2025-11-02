@@ -61,11 +61,19 @@ const useFiledCourtDocuments = () => {
       (doc) => doc.caseFileId === caseFileId,
     )
 
+    const isMergedCaseDocument = workingCase?.mergedCases?.some(
+      (mergedCase) => mergedCase.id === document?.caseId,
+    )
+
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${document.documentOrder}. ${name}`
+    return `${
+      isMergedCaseDocument
+        ? document.mergedDocumentOrder
+        : document.documentOrder
+    }. ${name}`
   }
 
   const prefixGeneratedDocumentNameWithDocumentOrder = (
@@ -85,11 +93,19 @@ const useFiledCourtDocuments = () => {
         doc.generatedPdfUri?.includes(partialUri),
     )
 
+    const isMergedCaseDocument = workingCase?.mergedCases?.some(
+      (mergedCase) => mergedCase.id === document?.caseId,
+    )
+
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${document.mergedDocumentOrder ?? document.documentOrder}. ${name}`
+    return `${
+      isMergedCaseDocument
+        ? document.mergedDocumentOrder
+        : document.documentOrder
+    }. ${name}`
   }
 
   return {

@@ -321,8 +321,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     })
 
     const isMergedDocument = courtSession.mergedFiledDocuments?.find(
-      (d) =>
-        courtSession.id === d.mergedCourtSessionId && d.id === draggedFileId,
+      (d) => courtSession.id === d.mergedCourtSessionId && d.id === fileId,
     )
     const update = isMergedDocument
       ? {
@@ -512,6 +511,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const isLastCourtSession =
     index >= 1 && index + 1 === workingCase.courtSessions?.length
+  const hasMergedCourtDocuments = courtSession.mergedFiledDocuments?.length
 
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
@@ -535,7 +535,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         rowGap={5}
         paddingY={3}
       >
-        {isLastCourtSession && (
+        {/* Note: Disable the option to delete a court session when it contains merged documents. 
+        Currently we don't have the option to assign merged documents to a dedicated court session, they are automatically assigned
+        to a court session on merge */}
+        {isLastCourtSession && !hasMergedCourtDocuments && (
           <Button
             variant="text"
             colorScheme="destructive"
