@@ -9,7 +9,7 @@ interface InvalidatePermitModalProps {
   open: boolean
   onClose: () => void
   onSubmit: () => void
-  countries?: Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
+  countries?: HealthDirectoratePatientDataApprovalCountry[]
   validFrom?: string
   validTo?: string
 }
@@ -59,7 +59,7 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
         })}
         heading={formatMessage(messages.permit)}
         text={formatMessage(messages.permitValidFor, {
-          country: countries.flatMap((country) => country.name).join(', '),
+          country: countries.map((country) => country.name).join(', '),
         })}
       />
     </Modal>

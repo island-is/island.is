@@ -34,7 +34,7 @@ const Countries: FC<CountriesProps> = ({
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [selectedCountries, setSelectedCountries] = useState<
-    Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
+    HealthDirectoratePatientDataApprovalCountry[]
   >(formState?.countries ?? [])
   const [selectAll, setSelectAll] = useState<boolean>(false)
 

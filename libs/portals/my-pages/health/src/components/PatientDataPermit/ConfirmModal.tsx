@@ -10,7 +10,7 @@ interface ConfirmModalProps {
   onClose: () => void
   onSubmit: () => void
   loading?: boolean
-  countries?: Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
+  countries?: HealthDirectoratePatientDataApprovalCountry[]
   validFrom?: string
   validTo?: string
 }
@@ -60,7 +60,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         })}
         heading={formatMessage(messages.permit)}
         text={formatMessage(messages.permitValidFor, {
-          country: countries.flatMap((country) => country.name).join(', '),
+          country: countries.map((country) => country.name).join(', '),
         })}
       />
     </Modal>

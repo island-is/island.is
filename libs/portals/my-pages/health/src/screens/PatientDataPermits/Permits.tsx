@@ -45,7 +45,6 @@ const PatientDataPermits: React.FC = () => {
             ],
       },
     },
-    fetchPolicy: 'cache-and-network',
   })
 
   const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
@@ -121,7 +120,7 @@ const PatientDataPermits: React.FC = () => {
                 }
                 heading={formatMessage(messages.permit)}
                 text={permit.countries
-                  .flatMap((country) => country.name)
+                  .map((country) => country.name)
                   .join(', ')}
                 date={formatMessage(messages.validToFrom, {
                   fromDate: formatDate(permit.validFrom),

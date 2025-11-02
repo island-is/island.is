@@ -17,6 +17,7 @@ import {
   useGetPatientDataPermitQuery,
   useInvalidatePatientDataPermitMutation,
 } from './PatientDataPermits.generated'
+import { HealthPaths } from '../../lib/paths'
 
 type UseParams = {
   id: string
@@ -46,7 +47,7 @@ const PermitDetail: React.FC = () => {
       })
         .then(() => {
           toast.success(formatMessage(messages.permitInvalidated))
-          navigate(-1)
+          navigate(HealthPaths.HealthPatientDataPermits, { replace: true })
         })
         .catch(() => {
           toast.error(formatMessage(messages.permitInvalidatedError))
@@ -133,7 +134,7 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.validForCountries)}
               content={permit?.countries
-                .flatMap((country) => country.name)
+                .map((country) => country.name)
                 .join(', ')}
               loading={loading}
             />
