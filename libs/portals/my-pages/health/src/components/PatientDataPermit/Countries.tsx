@@ -1,7 +1,4 @@
-import {
-  HealthDirectoratePatientDataApprovalCountry,
-  HealthDirectoratePatientDataPermitInput,
-} from '@island.is/api/schema'
+import { HealthDirectoratePatientDataApprovalCountry } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -19,9 +16,9 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
+import { PermitInput } from '../../utils/types'
 import { useHealthDirectoratePatientDataPermitCountriesQuery } from './FirstStep.generated'
 import * as styles from './PatientDataPermit.css'
-import { PermitInput } from '../../utils/types'
 
 interface CountriesProps {
   onClick: () => void

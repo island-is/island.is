@@ -1,11 +1,10 @@
-import { HealthDirectoratePatientDataPermitInput } from '@island.is/api/schema'
 import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, FC, SetStateAction } from 'react'
 import { messages } from '../../lib/messages'
 import { addMonths, addYears, today } from '../../utils/dates'
-import * as styles from './PatientDataPermit.css'
 import { PermitInput } from '../../utils/types'
+import * as styles from './PatientDataPermit.css'
 interface DatesProps {
   onClick: () => void
   goBack: () => void
@@ -13,7 +12,6 @@ interface DatesProps {
   setFormState: Dispatch<SetStateAction<PermitInput | undefined>>
 }
 
-// Date step
 const Dates: FC<DatesProps> = ({
   onClick,
   goBack,

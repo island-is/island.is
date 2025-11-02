@@ -1,5 +1,5 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
-import { Box, Button, Tag, toast } from '@island.is/island-ui/core'
+import { Box, Tag, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,

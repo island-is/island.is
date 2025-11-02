@@ -1,5 +1,4 @@
 import {
-  HealthDirectoratePatientDataPermitInput,
   HealthDirectoratePrescription,
   HealthDirectoratePrescriptionDocument,
   RightsPortalCalculatorRequestInput,
