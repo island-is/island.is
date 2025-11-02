@@ -21,6 +21,8 @@ import { Icon } from '../IconRC/Icon'
 import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
+import { theme } from '@island.is/island-ui/theme'
+import { isDefined } from '@island.is/shared/utils'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
@@ -30,7 +32,6 @@ import CustomCalendarContainer from './CustomCalendarContainer'
 import * as styles from './DatePicker.css'
 import * as coreStyles from './react-datepicker.css'
 import { DatePickerCustomHeaderProps, DatePickerProps } from './types'
-import { isDefined } from '@island.is/shared/utils'
 
 const languageConfig = {
   is: {
@@ -375,7 +376,6 @@ const CustomHeader = ({
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
-  const shortMonth = month.slice(0, 3)
   const months = monthsIndex.map((i) => {
     if (locale.localize) {
       return locale.localize.month(i)
@@ -421,7 +421,7 @@ const CustomHeader = ({
             size="xs"
             aria-label="Select month"
             className={styles.headerSelect}
-            value={{ label: shortMonth, value: month }}
+            value={{ label: month.slice(0, 3), value: month }}
             onChange={(selectedOption) =>
               changeMonth(months.indexOf(selectedOption?.value))
             }
@@ -434,7 +434,7 @@ const CustomHeader = ({
                 ...base,
                 textAlign: 'center',
                 width: 'auto',
-                marginRight: 4,
+                marginRight: theme.spacing.smallGutter,
               }),
             }}
           />
@@ -459,7 +459,7 @@ const CustomHeader = ({
                   ...base,
                   textAlign: 'center',
                   width: 'auto',
-                  marginRight: 4,
+                  marginRight: theme.spacing.smallGutter,
                 }),
               }}
               components={{
@@ -485,10 +485,8 @@ const CustomHeader = ({
             }
             style={{
               textAlign: 'center',
-
               width: 'auto',
-
-              marginRight: 8,
+              marginRight: theme.spacing[1],
             }}
           >
             {months.map((option) => (

@@ -453,7 +453,6 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {
     top: '33px !important',
-    zIndex: 999,
   },
 )
 
@@ -461,7 +460,6 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-17px !important',
-    zIndex: 999,
   },
 )
 
@@ -524,7 +522,7 @@ globalStyle(`${root} .react-datepicker__input-time-container`, {
   margin: '30px 0px 0px 5px !important',
 })
 
-globalStyle(`${root} .react-datepicker__day--in-range `, {
+globalStyle(`${root} .react-datepicker__day--in-range`, {
   backgroundColor: `${theme.color.blue200} !important`,
 })
 
