@@ -89,9 +89,6 @@ const NewPermit: React.FC = () => {
       {step === 3 && (
         <Terms goBack={() => setStep(2)} onClick={() => setOpenModal(true)} />
       )}
-      {step === undefined && (
-        <Problem title={formatMessage(messages.errorTryAgain)} />
-      )}
 
       {openModal && (
         <ConfirmModal
