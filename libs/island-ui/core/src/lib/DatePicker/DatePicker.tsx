@@ -52,7 +52,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   id = name,
   label,
   placeholderText,
-  locale = 'is',
+  locale = 'en',
   minDate,
   maxDate,
   excludeDates,
@@ -375,7 +375,6 @@ const CustomHeader = ({
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
-  const shortMonth = month.slice(0, 3)
   const months = monthsIndex.map((i) => {
     if (locale.localize) {
       return locale.localize.month(i)
