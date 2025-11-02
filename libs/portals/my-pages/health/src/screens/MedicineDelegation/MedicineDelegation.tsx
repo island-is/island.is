@@ -102,7 +102,7 @@ const MedicineDelegation = () => {
           </Box>
 
           <Stack space={2}>
-            {filteredData?.map((item, i) => {
+            {filteredData?.map((item) => {
               return (
                 <ActionCard
                   key={item.nationalId}

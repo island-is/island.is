@@ -1,25 +1,29 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
-  HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
-import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import {
   MedicineDelegationCreateInput,
   MedicineDelegationDeleteInput,
 } from './dto/medicineDelegation.input'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
+import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
@@ -28,6 +32,9 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { Donor, DonorInput, Organ } from './models/organ-donation.model'
+import { Countries } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -38,13 +45,6 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
-  InvalidatePermitInput,
-  PermitInput,
-  PermitsInput,
-} from './dto/permit.input'
-import { Countries } from './models/permits/country.model'
-import { Permit, PermitReturn, Permits } from './models/permits/permits'
-import {
   mapDispensationItem,
   mapPermit,
   mapPrescriptionCategory,
@@ -52,7 +52,6 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import { PermitStatusEnum } from './models/enums'
 
 @Injectable()
 export class HealthDirectorateService {
