@@ -269,7 +269,6 @@ export class CourtDocumentRepositoryService {
     if (!firstOrder || !lastOrder) {
       throw new BadRequestException(`Invalid merged order`)
     }
-    console.log({ newOrder })
     if (newOrder < firstOrder || newOrder > lastOrder) {
       throw new BadRequestException(
         `Order must be between ${firstOrder} and ${lastOrder}`,
@@ -351,8 +350,6 @@ export class CourtDocumentRepositoryService {
           transaction: options?.transaction,
         })
       } else if (data.mergedDocumentOrder !== undefined) {
-        console.log({ data })
-
         // If the merged document order is being updated, we need special handling.
         // We ensure that the original document order from the original case is not modified,
         // only the merged document order of the linked documents
