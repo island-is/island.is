@@ -1,7 +1,11 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
+import {
+  globalStyle,
+  style,
+  styleVariants,
+  ComplexStyleRule,
+} from '@vanilla-extract/css'
 import * as mixins from '../Input/Input.mixins'
-import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const root = style({
   position: 'relative',
@@ -26,7 +30,7 @@ export const calendarContainer = style({
 
 export const displaySelectInput = style({})
 
-const weekendBase: StyleWithSelectors = {
+const weekendBase: ComplexStyleRule = {
   zIndex: 0,
   content: '""',
   display: 'block',
@@ -223,9 +227,6 @@ export const customHeaderContainer = style({
   marginBottom: theme.spacing[2],
   position: 'relative',
   zIndex: 1,
-  position: 'relative',
-  zIndex: 1,
-})
 })
 
 export const headerSelect = style({
