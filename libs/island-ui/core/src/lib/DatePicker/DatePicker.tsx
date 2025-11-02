@@ -26,7 +26,6 @@ import { isDefined } from '@island.is/shared/utils'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
-import { ScrollToSelectedMenuList } from '../Select/Components/ScrollToSelectedMenuList'
 import { Select } from '../Select/Select'
 import CustomCalendarContainer from './CustomCalendarContainer'
 import * as styles from './DatePicker.css'
@@ -461,9 +460,6 @@ const CustomHeader = ({
                   width: 'auto',
                   marginRight: theme.spacing.smallGutter,
                 }),
-              }}
-              components={{
-                MenuList: ScrollToSelectedMenuList,
               }}
             />
           )}
