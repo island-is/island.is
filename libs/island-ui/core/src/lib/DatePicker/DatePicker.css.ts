@@ -6,7 +6,6 @@ import {
   ComplexStyleRule,
 } from '@vanilla-extract/css'
 import * as mixins from '../Input/Input.mixins'
-import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const root = style({
   position: 'relative',
@@ -461,14 +460,6 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-17px !important',
-    zIndex: 999,
-  },
-)
-
-globalStyle(
-  `${root}.island-ui-datepicker ${popperInline}.react-datepicker-popper[data-placement^="bottom"]`,
-  {
-    top: '-12px !important',
   },
 )
 
