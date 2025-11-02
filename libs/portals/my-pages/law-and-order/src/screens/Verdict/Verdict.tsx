@@ -50,7 +50,7 @@ const CourtCaseDetail = () => {
     { loading: postLoading, data: postData },
   ] = useSubmitVerdictAppealDecisionMutation()
 
-  // Use postData if available (after submission), otherwise fall back to verdict data
+  // Use postData if available (after submission), otherwise fall back to verdict data.
   const currentAppealDecision = useMemo(() => {
     return (
       postData?.lawAndOrderVerdictPost?.appealDecision ??
