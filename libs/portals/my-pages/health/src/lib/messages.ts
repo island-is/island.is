@@ -1790,7 +1790,7 @@ export const messages = defineMessages({
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
     defaultMessage:
-      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. <link>Lykilheilsufarsupplýsingar</link> fela í sér almennar persónuupplýsingar, sjúkdómsgreiningar, meðferðir, lyfjameðferð, ofnæmi og aðrar nauðsynlegar upplýsingar samkvæmt lögum nr. 55/2009 og EU reglugerð nr. 2025/327.Upplýsingarnarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. <link>Lykilheilsufarsupplýsingar</link> fela í sér almennar persónuupplýsingar, sjúkdómsgreiningar, meðferðir, lyfjameðferð, ofnæmi og aðrar nauðsynlegar upplýsingar samkvæmt lögum nr. 55/2009 og EU reglugerð nr. 2025/327. Upplýsingarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
   },
   permitApproval: {
     id: 'sp.health:permit-approval',
@@ -1827,7 +1827,7 @@ export const messages = defineMessages({
       'Þú getur valið ákveðið tímabil eða allt að 3 ár fram í tímann.',
     id: 'sp.health:how-long-description',
   },
-  showExipredPermits: {
+  showExpiredPermits: {
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
   },
@@ -1871,7 +1871,7 @@ export const messages = defineMessages({
   keyHealthInformationList: {
     id: 'sp.health:key-health-information-list#markdown',
     defaultMessage:
-      '* Sjúkdómsgreininar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
+      '* Sjúkdómsgreiningar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
   },
   errorTryAgain: {
     id: 'sp.health:error-try-again',

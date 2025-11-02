@@ -134,7 +134,7 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.validForCountries)}
               content={permit?.countries
-                .map((country) => country.name)
+                ?.map((country) => country.name)
                 .join(', ')}
               loading={loading}
             />

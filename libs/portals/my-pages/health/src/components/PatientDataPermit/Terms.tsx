@@ -45,19 +45,16 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack }) => {
           })}
         </Text>
       </Box>
-      <FocusableBox
-        onClick={() => setAccepted(!accepted)}
-        role="checkbox"
-        aria-checked={accepted}
-      >
-        <Checkbox
-          backgroundColor="blue"
-          checked={accepted}
-          onChange={() => setAccepted(!accepted)}
-          large
-          label={formatMessage(messages.permitApproval)}
-        ></Checkbox>
-      </FocusableBox>
+      <Checkbox
+        backgroundColor="blue"
+        checked={accepted}
+        onChange={() => {
+          console.log('checkbox')
+          setAccepted(!accepted)
+        }}
+        large
+        label={formatMessage(messages.permitApproval)}
+      />
       <Box
         display="flex"
         justifyContent="spaceBetween"

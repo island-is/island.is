@@ -25,13 +25,13 @@ const PatientDataPermits: React.FC = () => {
   useNamespaces('sp.health')
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
-  const [showExipredPermits, setShowExpiredPermits] = React.useState(false)
+  const [showExpiredPermits, setShowExpiredPermits] = React.useState(false)
 
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: {
       locale: lang,
       input: {
-        statuses: showExipredPermits
+        statuses: showExpiredPermits
           ? [
               HealthDirectoratePermitStatus.active,
               HealthDirectoratePermitStatus.expired,
@@ -61,10 +61,16 @@ const PatientDataPermits: React.FC = () => {
       buttonGroup={
         !loading && !error
           ? [
-              <Button variant="utility" icon="open" iconType="outline">
+              <Button
+                key="readAboutPermit"
+                variant="utility"
+                icon="open"
+                iconType="outline"
+              >
                 {formatMessage(messages.readAboutPermit)}
               </Button>,
               <Button
+                key={'addNewPermit'}
                 variant="utility"
                 colorScheme="primary"
                 icon="arrowForward"
@@ -103,9 +109,9 @@ const PatientDataPermits: React.FC = () => {
             </Text>
             <ToggleSwitchButton
               className={styles.toggleButton}
-              label={formatMessage(messages.showExipredPermits)}
-              onChange={() => setShowExpiredPermits(!showExipredPermits)}
-              checked={showExipredPermits}
+              label={formatMessage(messages.showExpiredPermits)}
+              onChange={() => setShowExpiredPermits(!showExpiredPermits)}
+              checked={showExpiredPermits}
             />
           </Box>
           <Stack space={2}>

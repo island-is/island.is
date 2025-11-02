@@ -18,7 +18,7 @@ const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
 const NewPermit: React.FC = () => {
   const { formatMessage } = useLocale()
-  const [step, setStep] = useState<number | undefined>(DEFAULT_STEP)
+  const [step, setStep] = useState<number>(DEFAULT_STEP)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<PermitInput>()
 
