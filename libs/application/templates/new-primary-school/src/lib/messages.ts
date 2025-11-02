@@ -893,6 +893,7 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Með því að haka hér við staðfesta forsjáraðilar sinn hluta samkomulagsins.',
       description:
         'By checking this box custodians confirm their part in the above agreement.',
+    },
 
     // Child's circumstances
     childCircumstancesSubSectionTitle: {

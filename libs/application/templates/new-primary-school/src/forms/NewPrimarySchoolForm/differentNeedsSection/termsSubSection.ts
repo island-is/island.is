@@ -4,14 +4,14 @@ import {
   YES,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { ApplicationFeatureKey } from '../../../utils/constants'
+import { shouldShowPage } from '../../../utils/conditionUtils'
 
 export const termsSubSection = buildSubSection({
   id: 'termsSubSection',
   title: newPrimarySchoolMessages.differentNeeds.termsSubSectionTitle,
-  condition: () => {
-    // TODO: Need to update when we get config from Júní and only show page for "sérskóli - hegðun" and "sérdeild - hegðun"
-    return false
-  },
+  condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.TERMS),
   children: [
     buildCheckboxField({
       id: 'acceptTerms',
