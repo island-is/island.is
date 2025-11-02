@@ -51,7 +51,7 @@ interface Props {
   disabled?: boolean
   onOpen?: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (file: TUploadFile) => void
+  onDelete?: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
   onStartEditing?: () => void
   onStopEditing?: () => void
@@ -226,23 +226,26 @@ const EditableCaseFile: FC<Props> = (props) => {
                   >
                     <Icon icon="checkmark" color={color} />
                   </button>
-                  <Box marginLeft={1}>
-                    <button
-                      onClick={() => {
-                        onDelete(caseFile as TUploadFile)
-                        onStopEditing?.()
-                      }}
-                      className={cn(styles.editCaseFileButton, {
-                        [styles.background.primary]:
-                          caseFile.status !== FileUploadStatus.error,
-                        [styles.background.secondary]:
-                          caseFile.status === FileUploadStatus.error || isEmpty,
-                      })}
-                      aria-label="Eyða skrá"
-                    >
-                      <Icon icon="trash" color={color} type="outline" />
-                    </button>
-                  </Box>
+                  {onDelete && (
+                    <Box marginLeft={1}>
+                      <button
+                        onClick={() => {
+                          onDelete(caseFile as TUploadFile)
+                          onStopEditing?.()
+                        }}
+                        className={cn(styles.editCaseFileButton, {
+                          [styles.background.primary]:
+                            caseFile.status !== FileUploadStatus.error,
+                          [styles.background.secondary]:
+                            caseFile.status === FileUploadStatus.error ||
+                            isEmpty,
+                        })}
+                        aria-label="Eyða skrá"
+                      >
+                        <Icon icon="trash" color={color} type="outline" />
+                      </button>
+                    </Box>
+                  )}
                 </Box>
               </Box>
             </motion.div>

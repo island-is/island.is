@@ -17,7 +17,8 @@ module.exports = {
           'court_document',
           'merged_court_session_id',
           {
-            type: Sequelize.INTEGER,
+            type: Sequelize.UUID,
+            references: { model: 'court_session', key: 'id' },
             allowNull: true,
           },
           { transaction: t },

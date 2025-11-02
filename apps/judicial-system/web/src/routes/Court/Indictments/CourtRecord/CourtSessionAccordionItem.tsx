@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import _uniqBy from 'lodash/uniqBy'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -112,6 +113,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
+  const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
+    null,
+  )
+
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
 
   const {
@@ -250,27 +255,53 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     })
   }
 
+  const getMergedDocumentIndex = (fileIndex: number) => {
+    const previousCourtSessionDocumentCount = countDocumentsBeforeSession(index)
+
+    const currentCourtSessionFiledDocumentCount = filedDocuments?.length || 0
+    return (
+      previousCourtSessionDocumentCount +
+      currentCourtSessionFiledDocumentCount +
+      fileIndex
+    )
+  }
+
+  const getFiledDocumentIndex = (fileIndex: number) =>
+    countDocumentsBeforeSession(index) + fileIndex || 0
+
   const handleReorder = (newOrder: CourtDocumentResponse[]) => {
     if (courtSession.isConfirmed) {
       return
     }
 
-    const newIndex =
-      newOrder.findIndex((f) => f.id === draggedFileId) +
-      countDocumentsBeforeSession(index)
+    const isMergedDocument = courtSession.mergedFiledDocuments?.find(
+      (d) =>
+        courtSession.id === d.mergedCourtSessionId &&
+        d.id === draggedMergeFileId,
+    )
 
-    if (!draggedFileId || newIndex === -1) {
+    const fileId = isMergedDocument ? draggedMergeFileId : draggedFileId
+    const targetFileIndex = newOrder.findIndex((f) => f.id === fileId)
+    const newIndex = isMergedDocument
+      ? getMergedDocumentIndex(targetFileIndex)
+      : getFiledDocumentIndex(targetFileIndex)
+
+    if (!fileId || newIndex === -1) {
       return
     }
 
     courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
-      courtDocumentId: draggedFileId,
-      documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
+      courtDocumentId: fileId,
+      ...(isMergedDocument
+        ? { mergedDocumentOrder: newIndex + 1 }
+        : { documentOrder: newIndex + 1 }),
     })
-
-    patchSession(courtSession.id, { filedDocuments: newOrder })
+    const stateUpdate = isMergedDocument
+      ? { mergedFiledDocuments: newOrder }
+      : { filedDocuments: newOrder }
+    patchSession(courtSession.id, stateUpdate)
   }
 
   const handleRename = (
@@ -289,11 +320,22 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       name: newName,
     })
 
-    patchSession(courtSession.id, {
-      filedDocuments: courtSession.filedDocuments?.map((file) =>
-        file.id === fileId ? { ...file, name: newName } : file,
-      ),
-    })
+    const isMergedDocument = courtSession.mergedFiledDocuments?.find(
+      (d) =>
+        courtSession.id === d.mergedCourtSessionId && d.id === draggedFileId,
+    )
+    const update = isMergedDocument
+      ? {
+          mergedFiledDocuments: courtSession.mergedFiledDocuments?.map((file) =>
+            file.id === fileId ? { ...file, name: newName } : file,
+          ),
+        }
+      : {
+          filedDocuments: courtSession.filedDocuments?.map((file) =>
+            file.id === fileId ? { ...file, name: newName } : file,
+          ),
+        }
+    patchSession(courtSession.id, update)
   }
 
   const handleFileCourtDocument = async (file: CourtDocumentResponse) => {
@@ -437,11 +479,33 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     [courtSession.id, workingCase.courtSessions],
   )
 
+  const mergedCaseDocumentsInCourtSession = useMemo(() => {
+    const mergedFileDocuments =
+      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
+        ?.mergedFiledDocuments || []
+
+    const mergedCaseIds = _uniqBy(
+      mergedFileDocuments ?? [],
+      (d: CourtDocumentResponse) => d.caseId,
+    ).map((document) => document.caseId)
+    return mergedCaseIds.map((caseId) => ({
+      courtCaseNumber: workingCase.mergedCases?.find((c) => c.id === caseId)
+        ?.courtCaseNumber,
+      mergedFileDocuments: mergedFileDocuments.filter(
+        (document) => document.caseId === caseId,
+      ),
+    }))
+  }, [courtSession.id, workingCase.courtSessions, workingCase.mergedCases])
+
   const countDocumentsBeforeSession = (index: number) => {
     const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
 
     return sessionsBefore.reduce(
-      (acc, session) => (acc += session.filedDocuments?.length || 0),
+      (acc, session) =>
+        (acc =
+          acc +
+          (session.filedDocuments?.length || 0) +
+          (session.mergedFiledDocuments?.length || 0)),
       0,
     )
   }
@@ -780,13 +844,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     >
                       <AnimatePresence>
                         {filedDocuments.map((_item, i) => {
-                          const currentIndex =
-                            (workingCase.courtSessions &&
-                              workingCase.courtSessions
-                                ?.slice(0, index)
-                                .flatMap((a) => a.filedDocuments || []).length +
-                                i) ||
-                            0
+                          const currentIndex = getFiledDocumentIndex(i)
 
                           return (
                             <motion.div
@@ -869,6 +927,146 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 </Box>
               </Box>
             </MultipleValueList>
+            {mergedCaseDocumentsInCourtSession.map((mergeDocuments) => {
+              const courtCaseNumber = mergeDocuments.courtCaseNumber
+              const mergedFiledDocuments = mergeDocuments.mergedFileDocuments
+              return (
+                <>
+                  <Box>
+                    <SectionHeading title={`Sameining ${courtCaseNumber}`} />
+                    {/* TODO: UPDATE INPUT */}
+                    <Input
+                      data-testid="entries"
+                      name="entries"
+                      label={`Bókanir um sameiningu máls ${courtCaseNumber}`}
+                      value={courtSession.entries || ''}
+                      placeholder=""
+                      onChange={(event) => {
+                        setEntriesErrorMessage('')
+
+                        patchSession(courtSession.id, {
+                          entries: event.target.value,
+                        })
+                      }}
+                      onBlur={(event) => {
+                        validateAndSetErrorMessage(
+                          ['empty'],
+                          event.target.value,
+                          setEntriesErrorMessage,
+                        )
+
+                        patchSession(
+                          courtSession.id,
+                          { entries: event.target.value },
+                          { persist: true },
+                        )
+                      }}
+                      hasError={entriesErrorMessage !== ''}
+                      errorMessage={entriesErrorMessage}
+                      rows={15}
+                      autoExpand={{ on: true, maxHeight: 300 }}
+                      disabled={courtSession.isConfirmed || false}
+                      textarea
+                      // required
+                    />
+                  </Box>
+                  <Box>
+                    <SectionHeading
+                      title={`Dómsskjöl úr sameinuðu máli ${mergeDocuments.courtCaseNumber}`}
+                    />
+                    <BlueBox>
+                      {mergedFiledDocuments && mergedFiledDocuments.length > 0 && (
+                        <Box
+                          display="flex"
+                          columnGap={2}
+                          justifyContent="spaceBetween"
+                        >
+                          <Reorder.Group
+                            axis="y"
+                            values={mergedFiledDocuments}
+                            onReorder={handleReorder}
+                            className={styles.grid}
+                          >
+                            <AnimatePresence>
+                              {mergedFiledDocuments.map((item) => (
+                                <Reorder.Item
+                                  key={item.id}
+                                  value={item}
+                                  data-reorder-item
+                                  onDragStart={() => {
+                                    setDraggedMergeFileId(item.id)
+                                  }}
+                                  onDragEnd={() => {
+                                    setDraggedMergeFileId(null)
+                                  }}
+                                  initial={{
+                                    opacity: 0,
+                                    y: -10,
+                                    height: 'auto',
+                                  }}
+                                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                  exit={{ opacity: 0, y: 10, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <EditableCaseFile
+                                    enableDrag
+                                    caseFile={{
+                                      id: item.id,
+                                      displayText: item.name,
+                                      name: item.name,
+                                      canEdit: ['fileName'],
+                                    }}
+                                    backgroundColor="white"
+                                    onRename={(id: string, newName: string) => {
+                                      handleRename(courtSession.id, id, newName)
+                                    }}
+                                    disabled={courtSession.isConfirmed || false}
+                                  />
+                                </Reorder.Item>
+                              ))}
+                            </AnimatePresence>
+                          </Reorder.Group>
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="spaceAround"
+                            rowGap={2}
+                          >
+                            <AnimatePresence>
+                              {mergedFiledDocuments.map((_item, i) => {
+                                const currentIndex = getMergedDocumentIndex(i)
+
+                                return (
+                                  <motion.div
+                                    initial={{
+                                      opacity: 0,
+                                      y: -10,
+                                      height: 'auto',
+                                    }}
+                                    animate={{
+                                      opacity: 1,
+                                      y: 0,
+                                      height: 'auto',
+                                    }}
+                                    exit={{ opacity: 0, y: 10, height: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    key={`þingmerkt_nr_${currentIndex + 1}`}
+                                  >
+                                    <Tag variant="darkerBlue" outlined disabled>
+                                      Þingmerkt nr. {currentIndex + 1}
+                                    </Tag>
+                                  </motion.div>
+                                )
+                              })}
+                            </AnimatePresence>
+                          </Box>
+                        </Box>
+                      )}
+                    </BlueBox>
+                  </Box>
+                </>
+              )
+            })}
             <Box>
               <SectionHeading title="Bókanir" />
               <Input

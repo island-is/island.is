@@ -1,3 +1,4 @@
+import _uniqBy from 'lodash/uniqBy'
 import {
   CreateOptions,
   literal,
@@ -5,7 +6,6 @@ import {
   Transaction,
   UpdateOptions,
 } from 'sequelize'
-import { string } from 'yargs'
 
 import {
   BadRequestException,
@@ -39,6 +39,7 @@ interface UpdateCourtDocumentOptions {
 
 interface UpdateCourtDocument {
   documentOrder?: number
+  mergedDocumentOrder?: number
   name?: string
 }
 
@@ -159,6 +160,160 @@ export class CourtDocumentRepositoryService {
     }
   }
 
+  private async updateFiledDocumentsOrder({
+    documentOrder,
+    caseId,
+    courtSessionId,
+    courtDocumentId,
+    transaction,
+  }: {
+    documentOrder: number
+    caseId: string
+    courtSessionId: string
+    courtDocumentId: string
+    transaction?: Transaction
+  }): Promise<void> {
+    // Get the filed documents for the court session ordered by document order
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { caseId, courtSessionId },
+      order: [['documentOrder', 'ASC']],
+      transaction,
+    })
+
+    const currentDocument = filedDocuments.find((d) => d.id === courtDocumentId)
+
+    if (!currentDocument) {
+      throw new InternalServerErrorException(
+        `Could not find court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      )
+    }
+
+    const newOrder = documentOrder
+    const firstOrder = filedDocuments[0].documentOrder
+    const lastOrder = filedDocuments[filedDocuments.length - 1].documentOrder
+
+    // Validate the document order bounds
+    if (newOrder < firstOrder || newOrder > lastOrder) {
+      throw new BadRequestException(
+        `Order must be between ${firstOrder} and ${lastOrder}`,
+      )
+    }
+
+    const currentOrder = currentDocument.documentOrder
+
+    // Only adjust other documents if the document order is actually changing
+    if (currentOrder !== newOrder) {
+      if (newOrder > currentOrder) {
+        // Moving down: decrease order of documents between current and new position
+        await this.courtDocumentModel.update(
+          { documentOrder: literal('document_order - 1') },
+          {
+            where: {
+              caseId,
+              courtSessionId,
+              documentOrder: { [Op.gt]: currentOrder, [Op.lte]: newOrder },
+            },
+            transaction,
+          },
+        )
+      } else {
+        // Moving up: increase order of documents between new and current position
+        await this.courtDocumentModel.update(
+          { documentOrder: literal('document_order + 1') },
+          {
+            where: {
+              caseId,
+              courtSessionId,
+              documentOrder: { [Op.gte]: newOrder, [Op.lt]: currentOrder },
+            },
+            transaction,
+          },
+        )
+      }
+    }
+  }
+
+  private async updateMergedFiledDocumentsOrder({
+    mergedDocumentOrder,
+    courtSessionId,
+    courtDocumentId,
+    transaction,
+  }: {
+    mergedDocumentOrder: number
+    courtSessionId: string
+    courtDocumentId: string
+    transaction?: Transaction
+  }): Promise<void> {
+    // Get the merged filed documents for the court session ordered by merged document order
+    const mergedFiledDocuments = await this.courtDocumentModel.findAll({
+      where: { mergedCourtSessionId: courtSessionId },
+      order: [['mergedDocumentOrder', 'ASC']],
+      transaction,
+    })
+
+    const currentMergedDocument = mergedFiledDocuments.find(
+      (d) => d.id === courtDocumentId,
+    )
+    if (!currentMergedDocument) {
+      throw new InternalServerErrorException(
+        `Could not find court document ${courtDocumentId} for court session ${courtSessionId}`,
+      )
+    }
+
+    const newOrder = mergedDocumentOrder
+    const firstOrder = mergedFiledDocuments[0].mergedDocumentOrder
+    const lastOrder =
+      mergedFiledDocuments[mergedFiledDocuments.length - 1].mergedDocumentOrder
+
+    // Validate the document order bounds
+    if (!firstOrder || !lastOrder) {
+      throw new BadRequestException(`Invalid merged order`)
+    }
+    console.log({ newOrder })
+    if (newOrder < firstOrder || newOrder > lastOrder) {
+      throw new BadRequestException(
+        `Order must be between ${firstOrder} and ${lastOrder}`,
+      )
+    }
+
+    const currentOrder = currentMergedDocument.mergedDocumentOrder
+
+    // Only adjust other documents if the document order is actually changing
+    if (currentOrder && currentOrder !== newOrder) {
+      if (newOrder > currentOrder) {
+        // Moving down: decrease order of documents between current and new position
+        await this.courtDocumentModel.update(
+          { mergedDocumentOrder: literal('merged_document_order - 1') },
+          {
+            where: {
+              mergedCourtSessionId: courtSessionId,
+              mergedDocumentOrder: {
+                [Op.gt]: currentOrder,
+                [Op.lte]: newOrder,
+              },
+            },
+            transaction,
+          },
+        )
+      } else {
+        // Moving up: increase order of documents between new and current position
+        await this.courtDocumentModel.update(
+          { mergedDocumentOrder: literal('merged_document_order + 1') },
+          {
+            where: {
+              mergedCourtSessionId: courtSessionId,
+              mergedDocumentOrder: {
+                [Op.gte]: newOrder,
+                [Op.lt]: currentOrder,
+              },
+            },
+            transaction,
+          },
+        )
+      }
+    }
+  }
+
   async update(
     caseId: string,
     courtSessionId: string,
@@ -173,76 +328,42 @@ export class CourtDocumentRepositoryService {
       )
 
       const updateOptions: UpdateOptions = {
-        where: { id: courtDocumentId, caseId, courtSessionId },
+        where: {
+          id: courtDocumentId,
+          [Op.or]: [
+            { courtSessionId },
+            { mergedCourtSessionId: courtSessionId },
+          ],
+        },
       }
+
+      console.log({ data })
 
       if (options?.transaction) {
         updateOptions.transaction = options.transaction
       }
 
-      // If the document order is being updated, we need special handling
       if (data.documentOrder !== undefined) {
-        // Get the filed documents for the court session ordered by document order
-        const filedDocuments = await this.courtDocumentModel.findAll({
-          where: { caseId, courtSessionId },
-          order: [['documentOrder', 'ASC']],
+        // If the document order is being updated, we need special handling
+        await this.updateFiledDocumentsOrder({
+          documentOrder: data.documentOrder,
+          caseId,
+          courtSessionId,
+          courtDocumentId,
           transaction: options?.transaction,
         })
+      } else if (data.mergedDocumentOrder !== undefined) {
+        console.log({ data })
 
-        const currentDocument = filedDocuments.find(
-          (d) => d.id === courtDocumentId,
-        )
-
-        if (!currentDocument) {
-          throw new InternalServerErrorException(
-            `Could not find court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
-          )
-        }
-
-        const newOrder = data.documentOrder
-        const firstOrder = filedDocuments[0].documentOrder
-        const lastOrder =
-          filedDocuments[filedDocuments.length - 1].documentOrder
-
-        // Validate the document order bounds
-        if (newOrder < firstOrder || newOrder > lastOrder) {
-          throw new BadRequestException(
-            `Order must be between ${firstOrder} and ${lastOrder}`,
-          )
-        }
-
-        const currentOrder = currentDocument.documentOrder
-
-        // Only adjust other documents if the document order is actually changing
-        if (currentOrder !== newOrder) {
-          if (newOrder > currentOrder) {
-            // Moving down: decrease order of documents between current and new position
-            await this.courtDocumentModel.update(
-              { documentOrder: literal('document_order - 1') },
-              {
-                where: {
-                  caseId,
-                  courtSessionId,
-                  documentOrder: { [Op.gt]: currentOrder, [Op.lte]: newOrder },
-                },
-                transaction: options?.transaction,
-              },
-            )
-          } else {
-            // Moving up: increase order of documents between new and current position
-            await this.courtDocumentModel.update(
-              { documentOrder: literal('document_order + 1') },
-              {
-                where: {
-                  caseId,
-                  courtSessionId,
-                  documentOrder: { [Op.gte]: newOrder, [Op.lt]: currentOrder },
-                },
-                transaction: options?.transaction,
-              },
-            )
-          }
-        }
+        // If the merged document order is being updated, we need special handling.
+        // We ensure that the original document order from the original case is not modified,
+        // only the merged document order of the linked documents
+        await this.updateMergedFiledDocumentsOrder({
+          mergedDocumentOrder: data.mergedDocumentOrder,
+          courtSessionId,
+          courtDocumentId,
+          transaction: options?.transaction,
+        })
       }
 
       const [numberOfAffectedRows, courtDocuments] =
@@ -284,20 +405,47 @@ export class CourtDocumentRepositoryService {
     parentCaseId,
     parentCaseCourtSessionId,
     caseId,
-    options,
+    transaction,
   }: {
     parentCaseId: string
     parentCaseCourtSessionId: string
     caseId: string
-    options?: FileCourtDocumentInCourtSessionOptions
+    transaction: Transaction
   }) {
-    // TODO: find the latest order number
-    const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { parentCaseId },
-      order: [['documentOrder', 'ASC']],
-      transaction: options?.transaction,
-    })
-    // TODO: find the case documents
+    try {
+      this.logger.debug(
+        `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
+      )
+      // get next order for the merged documents
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
+        parentCaseId,
+        parentCaseCourtSessionId,
+        undefined,
+        transaction,
+      )
+      this.logger.debug({ nextOrder })
+
+      // update all merging court documents
+      await this.courtDocumentModel.update(
+        {
+          mergedCourtSessionId: parentCaseCourtSessionId,
+          mergedDocumentOrder: literal(`document_order + ${nextOrder}`),
+        },
+        {
+          where: {
+            caseId,
+          },
+          transaction,
+        },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error updating merged court document from ${caseId} to court session ${parentCaseCourtSessionId} of case ${parentCaseId}: `,
+        { error },
+      )
+
+      throw error
+    }
   }
 
   async fileInCourtSession(
@@ -430,8 +578,8 @@ export class CourtDocumentRepositoryService {
     transaction?: Transaction,
   ) {
     const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId }, // TODO: mergedCaseSessionId?
-      order: [['documentOrder', 'DESC']], // Delete from highest to lowest order is cheaper
+      where: { caseId, courtSessionId },
+      order: [['documentOrder', 'DESC']],
       transaction,
     })
 
@@ -442,17 +590,29 @@ export class CourtDocumentRepositoryService {
 
   private async makeNextCourtSessionDocumentOrderAvailable(
     caseId: string,
-    courtSessionId: string, // current court session id
+    courtSessionId: string,
     courtDocumentId: string | undefined,
     transaction: Transaction | undefined,
   ) {
     // Get all court sessions and filed documents for the case
     const courtSessions = await this.courtSessionModel.findAll({
       where: { caseId },
-      include: [{ model: CourtDocument, as: 'filedDocuments' }],
+      include: [
+        { model: CourtDocument, as: 'filedDocuments' },
+        { model: CourtDocument, as: 'mergedFiledDocuments' },
+      ],
       order: [
         ['created', 'ASC'],
-        ['filedDocuments', 'documentOrder', 'ASC'],
+        [
+          { model: CourtDocument, as: 'filedDocuments' },
+          'documentOrder',
+          'ASC',
+        ],
+        [
+          { model: CourtDocument, as: 'mergedFiledDocuments' },
+          'mergedDocumentOrder',
+          'ASC',
+        ],
       ],
       transaction: transaction,
     })
@@ -480,6 +640,15 @@ export class CourtDocumentRepositoryService {
       if (s.id === courtSessionId) {
         break
       }
+
+      // set next order based on merge documents in previous court sessions only
+      if (s.mergedFiledDocuments && s.mergedFiledDocuments.length > 0) {
+        const lastMergedDocument =
+          s.mergedFiledDocuments[s.mergedFiledDocuments.length - 1]
+        if (lastMergedDocument.mergedDocumentOrder) {
+          nextOrder = lastMergedDocument.mergedDocumentOrder + 1
+        }
+      }
     }
 
     // Increase order of documents after the current position
@@ -493,6 +662,27 @@ export class CourtDocumentRepositoryService {
         transaction: transaction,
       },
     )
+    // Increase order of potential merged documents after the current position
+    const mergedCaseIds = courtSessions.flatMap((courtSession) =>
+      _uniqBy(
+        courtSession.mergedFiledDocuments ?? [],
+        (c: CourtDocument) => c.caseId,
+      ).map((courtDocument) => courtDocument.caseId),
+    )
+
+    if (mergedCaseIds.length > 0) {
+      await this.courtDocumentModel.update(
+        { merged_document_order: literal('merged_document_order + 1') },
+        {
+          where: {
+            caseId: { [Op.in]: mergedCaseIds },
+            merged_document_order: { [Op.gte]: nextOrder },
+          },
+          transaction: transaction,
+        },
+      )
+    }
+
     return nextOrder
   }
 

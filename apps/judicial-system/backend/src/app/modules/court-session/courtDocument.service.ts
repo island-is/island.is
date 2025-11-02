@@ -53,7 +53,6 @@ export class CourtDocumentService {
     )
   }
 
-  // TODO: currently used when a case is merged
   updateMergedCourtDocuments({
     parentCaseId,
     parentCaseCourtSessionId,
@@ -69,7 +68,7 @@ export class CourtDocumentService {
       parentCaseId,
       parentCaseCourtSessionId,
       caseId,
-      options: { transaction },
+      transaction,
     })
   }
 
