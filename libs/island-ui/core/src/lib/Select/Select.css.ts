@@ -199,7 +199,7 @@ export const option = style({
       position: 'relative',
       fontWeight: theme.typography.light,
       transition: 'background .2s, color .2s',
-      padding: '8px 16px',
+      padding: `${theme.spacing[1]} ${theme.spacing[3]}`,
     },
     [`${wrapper}${wrapperColor.blue} &`]: {
       background: theme.color.blue100,

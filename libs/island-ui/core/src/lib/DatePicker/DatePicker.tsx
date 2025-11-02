@@ -21,16 +21,16 @@ import { Icon } from '../IconRC/Icon'
 import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
+import { theme } from '@island.is/island-ui/theme'
+import { isDefined } from '@island.is/shared/utils'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
-import { ScrollToSelectedMenuList } from '../Select/Components/ScrollToSelectedMenuList'
 import { Select } from '../Select/Select'
 import CustomCalendarContainer from './CustomCalendarContainer'
 import * as styles from './DatePicker.css'
 import * as coreStyles from './react-datepicker.css'
 import { DatePickerCustomHeaderProps, DatePickerProps } from './types'
-import { isDefined } from '@island.is/shared/utils'
 
 const languageConfig = {
   is: {
@@ -75,12 +75,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   showTimeInput = false,
   timeInputLabel = 'Tími:',
   readOnly = false,
-  calendarStartDay = 1,
+  calendarStartDay = 0,
   range = false,
   ranges,
   selectedRange,
   highlightWeekends = false,
   isClearable = false,
+  clearLabel,
   displaySelectInput = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
@@ -190,7 +191,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
-                  console.log('onChange range date:', date)
                   const [start, end] = date
                   if (start === null && end === null) {
                     setStartDate(null)
@@ -262,6 +262,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               backgroundColor={backgroundColor}
               icon={icon}
               isClearable={isClearable}
+              clearLabel={clearLabel}
               size={size}
               onClick={onInputClick}
               onClear={() => {
@@ -271,7 +272,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               }}
             />
           }
-          calendarStartDay={calendarStartDay}
+          calendarStartDay={highlightWeekends ? 1 : calendarStartDay}
           timeFormat={currentLanguage.timeFormat}
           timeInputLabel={timeInputLabel}
           showTimeInput={showTimeInput}
@@ -320,6 +321,7 @@ const CustomInput = forwardRef<
   InputProps & {
     placeholderText?: string
     isClearable?: boolean
+    clearLabel?: string
     onClear?: () => void
     onInputClick?: ReactDatePickerProps['onInputClick']
   }
@@ -347,7 +349,7 @@ const CustomInput = forwardRef<
               {
                 name: 'close',
                 type: 'outline',
-                label: 'Closeit',
+                label: props.clearLabel || 'Clear',
                 onClick: props.onClear,
                 disabled: props.disabled,
               },
@@ -419,7 +421,7 @@ const CustomHeader = ({
             size="xs"
             aria-label="Select month"
             className={styles.headerSelect}
-            value={{ label: shortMonth, value: month }}
+            value={{ label: month.slice(0, 3), value: month }}
             onChange={(selectedOption) =>
               changeMonth(months.indexOf(selectedOption?.value))
             }
@@ -432,7 +434,7 @@ const CustomHeader = ({
                 ...base,
                 textAlign: 'center',
                 width: 'auto',
-                marginRight: 4,
+                marginRight: theme.spacing.smallGutter,
               }),
             }}
           />
@@ -457,11 +459,8 @@ const CustomHeader = ({
                   ...base,
                   textAlign: 'center',
                   width: 'auto',
-                  marginRight: 4,
+                  marginRight: theme.spacing.smallGutter,
                 }),
-              }}
-              components={{
-                MenuList: ScrollToSelectedMenuList,
               }}
             />
           )}
@@ -483,10 +482,8 @@ const CustomHeader = ({
             }
             style={{
               textAlign: 'center',
-
               width: 'auto',
-
-              marginRight: 8,
+              marginRight: theme.spacing[1],
             }}
           >
             {months.map((option) => (
