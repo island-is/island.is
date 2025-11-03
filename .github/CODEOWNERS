@@ -6,523 +6,527 @@
 # Organisation name is @island-is, not @island.is
 
 # Fallback. If there is no owner, assign to core maintainers.
-*                                                                                                                           @island-is/core
+*                                                                                                                            @island-is/core
 
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
-/apps/application-system/                                                                                                   @island-is/norda
-/apps/web*/                                                                                                                 @island-is/juni @island-is/stefna
-/libs/application/                                                                                                          @island-is/norda
-/libs/portals/my-pages/                                                                                                     @island-is/hugsmidjan
-/libs/portals/admin/                                                                                                        @island-is/aranja
-/libs/portals/core/                                                                                                         @island-is/aranja @island-is/hugsmidjan
-/libs/shared/connected/                                                                                                     @island-is/stefna
-/libs/shared/types/src/lib/api-cms-domain.ts                                                                                @island-is/stefna
+/apps/application-system/                                                                                                    @island-is/norda
+/apps/web*/                                                                                                                  @island-is/juni @island-is/stefna
+/libs/application/                                                                                                           @island-is/norda
+/libs/portals/my-pages/                                                                                                      @island-is/hugsmidjan
+/libs/portals/admin/                                                                                                         @island-is/aranja
+/libs/portals/core/                                                                                                          @island-is/aranja @island-is/hugsmidjan
+/libs/shared/connected/                                                                                                      @island-is/stefna
+/libs/shared/types/src/lib/api-cms-domain.ts                                                                                 @island-is/stefna
 
 # Subfolders containing application templates and template-api-modules
-/libs/application/templates/aosh/                                                                                           @island-is/norda
-/libs/application/templates/examples/                                                                                       @island-is/norda
-/libs/application/templates/family-matters/                                                                                 @island-is/norda
-/libs/application/templates/hms/                                                                                            @island-is/norda
-/libs/application/templates/inao/                                                                                           @island-is/norda
-/libs/application/templates/signature-collection                                                                            @island-is/norda
-/libs/application/templates/social-insurance-administration/                                                                @island-is/norda
-/libs/application/templates/transport-authority/                                                                            @island-is/norda
-/libs/application/template-api-modules/                                                                                     @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/hms/                                                       @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/aosh/                                                      @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                      @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                       @island-is/norda
+/libs/application/templates/aosh/                                                                                            @island-is/norda
+/libs/application/templates/examples/                                                                                        @island-is/norda
+/libs/application/templates/family-matters/                                                                                  @island-is/norda
+/libs/application/templates/hms/                                                                                             @island-is/norda
+/libs/application/templates/iceland-health/                                                                                  @island-is/norda
+/libs/application/templates/inao/                                                                                            @island-is/norda
+/libs/application/templates/signature-collection                                                                             @island-is/norda
+/libs/application/templates/social-insurance-administration/                                                                 @island-is/norda
+/libs/application/templates/transport-authority/                                                                             @island-is/norda
+/libs/application/template-api-modules/                                                                                      @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/                                                        @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/                                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/examples/                                                   @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/                                             @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/inao/                                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                        @island-is/norda
 
-/*                                                                                                                          @island-is/core
-/libs/api/domains/identity/                                                                                                 @island-is/core
+/*                                                                                                                           @island-is/core
+/libs/api/domains/identity/                                                                                                  @island-is/core
 # Edge case escaping the /infra/ and **/infra/ devops patterns below
-/libs/infra-nest-server/src/lib/infra/                                                                                      @island-is/core
-/libs/testing/                                                                                                              @island-is/core
-/libs/nest/swagger/                                                                                                         @island-is/core
+/libs/infra-nest-server/src/lib/infra/                                                                                       @island-is/core
+/libs/testing/                                                                                                               @island-is/core
+/libs/nest/swagger/                                                                                                          @island-is/core
 
-/apps/services/endorsements/                                                                                                @island-is/juni
-/apps/icelandic-names-registry*/                                                                                            @island-is/juni
-/apps/web/screens/PetitionView/                                                                                             @island-is/juni
-/libs/cms/                                                                                                                  @island-is/juni @island-is/stefna
-/libs/clients/cms/                                                                                                          @island-is/juni @island-is/aranja
-/libs/residence-history                                                                                                     @island-is/juni
-/libs/api/domains/endorsement-system                                                                                        @island-is/juni
-/libs/api/domains/icelandic-names-registry/                                                                                 @island-is/juni
-/libs/clients/rsk/                                                                                                          @island-is/juni
-/libs/clients/zendesk/                                                                                                      @island-is/juni
-/libs/icelandic-names-registry/                                                                                             @island-is/juni
-/libs/portals/my-pages/signature-collection/                                                                                @island-is/juni
-/libs/portals/my-pages/petitions/                                                                                           @island-is/juni
-/libs/portals/my-pages/education/                                                                                           @island-is/juni @island-is/hugsmidjan
-/libs/portals/my-pages/education-career/                                                                                    @island-is/juni @island-is/hugsmidjan
-/libs/portals/my-pages/education-degree/                                                                                    @island-is/juni @island-is/hugsmidjan
-/libs/portals/my-pages/education-license/                                                                                   @island-is/juni @island-is/hugsmidjan
-/libs/portals/my-pages/education-student-assessment/                                                                        @island-is/juni @island-is/norda @island-is/hugsmidjan
-/libs/clients/driving-license/                                                                                              @island-is/juni
-/libs/clients/judicial-administration/                                                                                      @island-is/juni
-/libs/application/templates/announcement-of-death/                                                                          @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                                      @island-is/juni
-/libs/application/templates/driving-license/                                                                                @island-is/juni
-/libs/application/templates/driving-assessment-approval/                                                                    @island-is/juni
-/libs/application/templates/driving-learners-permit/                                                                        @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                                   @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission                                 @island-is/juni
-/libs/api/domains/driving-license/                                                                                          @island-is/juni
-/libs/api/domains/education/                                                                                                @island-is/juni @island-is/hugsmidjan @island-is/deloitte
-/libs/application/templates/estate/                                                                                         @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/estate                                                     @island-is/juni
-/libs/application/templates/general-petition/                                                                               @island-is/juni
-/libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists/                                                        @island-is/juni
-/libs/shared/connected/src/lib/SignatureLists/                                                                              @island-is/juni
-/libs/api/domains/communications/                                                                                           @island-is/juni @island-is/stefna
-/apps/services/user-notification/                                                                                           @island-is/juni @island-is/aranja
-/apps/air-discount-scheme/                                                                                                  @island-is/hugsmidjan
-/libs/air-discount-scheme/                                                                                                  @island-is/hugsmidjan
-/libs/application/templates/p-sign/                                                                                         @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                                          @island-is/juni
-/libs/application/templates/marriage-conditions/                                                                            @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission                             @island-is/juni
-/libs/message-queue/                                                                                                        @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions                                    @island-is/juni
-/libs/application/templates/driving-school-confirmation/                                                                    @island-is/juni
-/libs/application/templates/driving-instructor-registrations/                                                               @island-is/juni
-/libs/api/domains/driving-license-book/                                                                                     @island-is/juni
-/libs/clients/driving-license-book/                                                                                         @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/passport                                                   @island-is/juni
-/libs/application/templates/passport/                                                                                       @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/passport-annulment                                         @island-is/juni
-/libs/application/templates/passport-annulment/                                                                             @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/                               @island-is/juni
-/libs/application/templates/operating-license/                                                                              @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/operating-license/                                         @island-is/juni
-/libs/application/templates/driving-license-duplicate/                                                                      @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/                                 @island-is/juni
-/libs/application/templates/inheritance-report/                                                                             @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                                         @island-is/juni
-/libs/application/templates/signature-collection/assets                                                                     @island-is/juni
-/libs/application/templates/signature-collection/parliamentary-list-creation                                                @island-is/juni
-/libs/application/templates/signature-collection/parliamentary-list-signing                                                 @island-is/juni
-/libs/application/templates/signature-collection/presidential-list-creation                                                 @island-is/juni
-/libs/application/templates/signature-collection/presidential-list-signing                                                  @island-is/juni
-/libs/application/templates/signature-collection/municipal-list-creation                                                    @island-is/juni
-/libs/application/templates/signature-collection/municipal-list-signing                                                     @island-is/juni
-/libs/api/domains/disability-license                                                                                        @island-is/juni
-/libs/portals/admin/petition                                                                                                @island-is/juni
-/libs/portals/admin/signature-collection                                                                                    @island-is/juni
-/libs/portals/admin/icelandic-names-registry                                                                                @island-is/juni
-/libs/api/domains/signature-collection                                                                                      @island-is/juni
-/libs/clients/signature-collection                                                                                          @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/signature-collection                                       @island-is/juni
-/libs/application/template-api-modules/src/lib/modules/templates/general-petition                                           @island-is/juni
+/apps/services/endorsements/                                                                                                 @island-is/juni
+/apps/icelandic-names-registry*/                                                                                             @island-is/juni
+/apps/web/screens/PetitionView/                                                                                              @island-is/juni
+/libs/cms/                                                                                                                   @island-is/juni @island-is/stefna
+/libs/clients/cms/                                                                                                           @island-is/juni @island-is/aranja
+/libs/residence-history                                                                                                      @island-is/juni
+/libs/api/domains/endorsement-system                                                                                         @island-is/juni
+/libs/api/domains/icelandic-names-registry/                                                                                  @island-is/juni
+/libs/clients/rsk/                                                                                                           @island-is/juni
+/libs/clients/zendesk/                                                                                                       @island-is/juni
+/libs/icelandic-names-registry/                                                                                              @island-is/juni
+/libs/portals/my-pages/signature-collection/                                                                                 @island-is/juni
+/libs/portals/my-pages/petitions/                                                                                            @island-is/juni
+/libs/portals/my-pages/education/                                                                                            @island-is/juni @island-is/hugsmidjan
+/libs/portals/my-pages/education-career/                                                                                     @island-is/juni @island-is/hugsmidjan
+/libs/portals/my-pages/education-degree/                                                                                     @island-is/juni @island-is/hugsmidjan
+/libs/portals/my-pages/education-license/                                                                                    @island-is/juni @island-is/hugsmidjan
+/libs/portals/my-pages/education-student-assessment/                                                                         @island-is/juni @island-is/norda @island-is/hugsmidjan
+/libs/clients/driving-license/                                                                                               @island-is/juni
+/libs/clients/judicial-administration/                                                                                       @island-is/juni
+/libs/application/templates/announcement-of-death/                                                                           @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                                       @island-is/juni
+/libs/application/templates/driving-license/                                                                                 @island-is/juni
+/libs/application/templates/transport-authority/driving-assessment-approval/                                                 @island-is/juni
+/libs/application/templates/transport-authority/driving-learners-permit/                                                     @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-learners-permit/                @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-submission              @island-is/juni
+/libs/api/domains/driving-license/                                                                                           @island-is/juni
+/libs/api/domains/education/                                                                                                 @island-is/juni @island-is/hugsmidjan @island-is/deloitte
+/libs/application/templates/estate/                                                                                          @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/estate                                                      @island-is/juni
+/libs/application/templates/general-petition/                                                                                @island-is/juni
+/libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists/                                                         @island-is/juni
+/libs/shared/connected/src/lib/SignatureLists/                                                                               @island-is/juni
+/libs/api/domains/communications/                                                                                            @island-is/juni @island-is/stefna
+/apps/services/user-notification/                                                                                            @island-is/juni @island-is/aranja
+/apps/air-discount-scheme/                                                                                                   @island-is/hugsmidjan
+/libs/air-discount-scheme/                                                                                                   @island-is/hugsmidjan
+/libs/application/templates/p-sign/                                                                                          @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                                           @island-is/juni
+/libs/application/templates/marriage-conditions/                                                                             @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission                              @island-is/juni
+/libs/message-queue/                                                                                                         @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/examples/example-payment-actions                            @island-is/juni
+/libs/application/templates/transport-authority/driving-school-confirmation/                                                 @island-is/juni
+/libs/application/templates/transport-authority/driving-instructor-registrations/                                            @island-is/juni
+/libs/api/domains/driving-license-book/                                                                                      @island-is/juni
+/libs/clients/driving-license-book/                                                                                          @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport                                                    @island-is/juni
+/libs/application/templates/passport/                                                                                        @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport-annulment                                          @island-is/juni
+/libs/application/templates/passport-annulment/                                                                              @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-school-confirmation/            @island-is/juni
+/libs/application/templates/operating-license/                                                                               @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/operating-license/                                          @island-is/juni
+/libs/application/templates/transport-authority/driving-license-duplicate/                                                   @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-duplicate/              @island-is/juni
+/libs/application/templates/inheritance-report/                                                                              @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                                          @island-is/juni
+/libs/application/templates/signature-collection/assets                                                                      @island-is/juni
+/libs/application/templates/signature-collection/parliamentary-list-creation                                                 @island-is/juni
+/libs/application/templates/signature-collection/parliamentary-list-signing                                                  @island-is/juni
+/libs/application/templates/signature-collection/presidential-list-creation                                                  @island-is/juni
+/libs/application/templates/signature-collection/presidential-list-signing                                                   @island-is/juni
+/libs/application/templates/signature-collection/municipal-list-creation                                                     @island-is/juni
+/libs/application/templates/signature-collection/municipal-list-signing                                                      @island-is/juni
+/libs/api/domains/disability-license                                                                                         @island-is/juni
+/libs/portals/admin/petition                                                                                                 @island-is/juni
+/libs/portals/admin/signature-collection                                                                                     @island-is/juni
+/libs/portals/admin/icelandic-names-registry                                                                                 @island-is/juni
+/libs/api/domains/signature-collection                                                                                       @island-is/juni
+/libs/clients/signature-collection                                                                                           @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/signature-collection                                        @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/general-petition                                            @island-is/juni
 
-/apps/portals/admin/                                                                                                        @island-is/aranja
-/libs/api/domains/auth-admin/                                                                                               @island-is/aranja
-/libs/api/domains/sessions/                                                                                                 @island-is/aranja
-/libs/clients/auth/                                                                                                         @island-is/aranja
-/libs/clients/middlewares/                                                                                                  @island-is/aranja
-libs/clients/rsk/relationships/                                                                                             @island-is/aranja
-/libs/clients/sessions                                                                                                      @island-is/aranja
-/libs/portals/shared-modules/delegations                                                                                    @island-is/aranja
-/libs/portals/admin/ids-admin                                                                                               @island-is/aranja
-/libs/portals/my-pages/consent                                                                                              @island-is/aranja
-/libs/portals/my-pages/restrictions                                                                                         @island-is/aranja
-/libs/portals/my-pages/sessions                                                                                             @island-is/aranja
-/apps/payments                                                                                                              @island-is/aranja
-/apps/services/payments                                                                                                     @island-is/aranja
-/libs/clients/payments                                                                                                      @island-is/aranja
-/libs/clients/fjs/bank-info/                                                                                                @island-is/aranja
+/apps/portals/admin/                                                                                                         @island-is/aranja
+/libs/api/domains/auth-admin/                                                                                                @island-is/aranja
+/libs/api/domains/sessions/                                                                                                  @island-is/aranja
+/libs/clients/auth/                                                                                                          @island-is/aranja
+/libs/clients/middlewares/                                                                                                   @island-is/aranja
+libs/clients/rsk/relationships/                                                                                              @island-is/aranja
+/libs/clients/sessions                                                                                                       @island-is/aranja
+/libs/portals/shared-modules/delegations                                                                                     @island-is/aranja
+/libs/portals/admin/ids-admin                                                                                                @island-is/aranja
+/libs/portals/my-pages/consent                                                                                               @island-is/aranja
+/libs/portals/my-pages/restrictions                                                                                          @island-is/aranja
+/libs/portals/my-pages/sessions                                                                                              @island-is/aranja
+/apps/payments                                                                                                               @island-is/aranja
+/apps/services/payments                                                                                                      @island-is/aranja
+/libs/clients/payments                                                                                                       @island-is/aranja
+/libs/clients/fjs/bank-info/                                                                                                 @island-is/aranja
 
-/apps/native/app/                                                                                                           @island-is/aranja-app
-codemagic.yaml                                                                                                              @island-is/aranja-app
-/apps/web/public/.well-known/                                                                                               @island-is/aranja-app
+/apps/native/app/                                                                                                            @island-is/aranja-app
+codemagic.yaml                                                                                                               @island-is/aranja-app
+/apps/web/public/.well-known/                                                                                                @island-is/aranja-app
 
-/apps/judicial-system/                                                                                                      @island-is/kolibri-justice-league
-/libs/judicial-system/                                                                                                      @island-is/kolibri-justice-league
-/libs/nova-sms/                                                                                                             @island-is/kolibri-justice-league
-/libs/dokobit-signing/                                                                                                      @island-is/kolibri-justice-league
-/libs/email-service/                                                                                                        @island-is/kolibri-justice-league
+/apps/judicial-system/                                                                                                       @island-is/kolibri-justice-league
+/libs/judicial-system/                                                                                                       @island-is/kolibri-justice-league
+/libs/nova-sms/                                                                                                              @island-is/kolibri-justice-league
+/libs/dokobit-signing/                                                                                                       @island-is/kolibri-justice-league
+/libs/email-service/                                                                                                         @island-is/kolibri-justice-league
 
 # No active contract.
-# /apps/financial-aid/                                                                                                      @island-is/kolibri-robin-hood
-# /libs/financial-aid/                                                                                                      @island-is/kolibri-robin-hood
-# /libs/next-ids-auth/                                                                                                      @island-is/kolibri-robin-hood
-# /libs/clients/rsk/personal-tax-return                                                                                     @island-is/kolibri-robin-hood
-# /libs/api/domains/municipalities-financial-aid                                                                            @island-is/kolibri-robin-hood
-# /libs/clients/municipalities-financial-aid                                                                                @island-is/kolibri-robin-hood
+# /apps/financial-aid/                                                                                                       @island-is/kolibri-robin-hood
+# /libs/financial-aid/                                                                                                       @island-is/kolibri-robin-hood
+# /libs/next-ids-auth/                                                                                                       @island-is/kolibri-robin-hood
+# /libs/clients/rsk/personal-tax-return                                                                                      @island-is/kolibri-robin-hood
+# /libs/api/domains/municipalities-financial-aid                                                                             @island-is/kolibri-robin-hood
+# /libs/clients/municipalities-financial-aid                                                                                 @island-is/kolibri-robin-hood
 
-/libs/clients/hms/                                                                                                          @island-is/norda
-/libs/clients/hms-rental-agreement/                                                                                         @island-is/norda
-/libs/api/domains/hms/                                                                                                      @island-is/norda
+/libs/clients/hms/                                                                                                           @island-is/norda
+/libs/clients/hms-rental-agreement/                                                                                          @island-is/norda
+/libs/api/domains/hms/                                                                                                       @island-is/norda
 
-/apps/download-service/                                                                                                     @island-is/hugsmidjan
-/apps/portals/my-pages*/                                                                                                    @island-is/hugsmidjan
-/apps/services/regulations-admin-backend/                                                                                   @island-is/hugsmidjan
-/apps/services/user-profile/                                                                                                @island-is/hugsmidjan @island-is/juni @island-is/aranja
-/apps/web/components/Grants/                                                                                                @island-is/hugsmidjan
-/apps/web/components/GrantCardsList/                                                                                        @island-is/hugsmidjan
-/apps/web/screens/Grants/                                                                                                   @island-is/hugsmidjan
-/apps/web/screens/Regulations/                                                                                              @island-is/hugsmidjan
-/apps/web/components/Regulations/                                                                                           @island-is/hugsmidjan
-/apps/web/screens/OfficialJournalOfIceland/                                                                                 @island-is/hugsmidjan
-/apps/web/components/OfficialJournalOfIceland/                                                                              @island-is/hugsmidjan
-/apps/web/pages/stjornartidindi/                                                                                            @island-is/hugsmidjan
-/libs/api/domains/air-discount-scheme                                                                                       @island-is/hugsmidjan
-/libs/api/domains/documents/                                                                                                @island-is/hugsmidjan
-/libs/api/domains/finance/                                                                                                  @island-is/hugsmidjan
-/libs/api/domains/assets/                                                                                                   @island-is/hugsmidjan
-/libs/api/domains/health-directorate/                                                                                       @island-is/hugsmidjan
-/libs/api/domains/hms-loans/                                                                                                @island-is/hugsmidjan
-/libs/api/domains/license-service/                                                                                          @island-is/hugsmidjan @island-is/aranja
-/libs/api/domains/work-machines/                                                                                            @island-is/hugsmidjan @island-is/origo
-/libs/api/domains/national-registry/                                                                                        @island-is/hugsmidjan
-/libs/api/domains/notifications/                                                                                            @island-is/hugsmidjan
-/libs/api/domains/user-profile/                                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
-/libs/api/domains/passport/                                                                                                 @island-is/hugsmidjan
-/libs/api/domains/vehicles/                                                                                                 @island-is/hugsmidjan
-/libs/api/domains/university-careers/                                                                                       @island-is/hugsmidjan
-/libs/api/domains/regulations/                                                                                              @island-is/hugsmidjan
-/libs/api/domains/regulations-admin/                                                                                        @island-is/hugsmidjan
-/libs/api/domains/rights-portal                                                                                             @island-is/hugsmidjan
-/libs/api/domains/social-insurance                                                                                          @island-is/hugsmidjan @island-is/stefna
-/libs/api/domains/occupational-licenses/                                                                                    @island-is/hugsmidjan
-/libs/api/domains/intellectual-properties/                                                                                  @island-is/hugsmidjan
-/libs/api/domains/official-journal-of-iceland/                                                                              @island-is/hugsmidjan
-/libs/api/domains/official-journal-of-iceland-application/                                                                  @island-is/hugsmidjan
-/libs/api/domains/document-provider/                                                                                        @island-is/hugsmidjan @island-is/core
-/libs/api/domains/housing-benefits/                                                                                         @island-is/hugsmidjan
-/libs/api/domains/law-and-order/                                                                                            @island-is/hugsmidjan
-/libs/clients/documents/                                                                                                    @island-is/hugsmidjan
-/libs/clients/documents-v2/                                                                                                 @island-is/hugsmidjan
-/libs/clients/finance/                                                                                                      @island-is/hugsmidjan
-/libs/clients/finance-v2/                                                                                                   @island-is/hugsmidjan
-/libs/clients/adr-and-machine-license/                                                                                      @island-is/hugsmidjan
-/libs/clients/work-machines/                                                                                                @island-is/hugsmidjan @island-is/origo
-/libs/clients/disability-license/                                                                                           @island-is/hugsmidjan
-/libs/clients/firearm-license/                                                                                              @island-is/hugsmidjan
-/libs/clients/hunting-license/                                                                                              @island-is/hugsmidjan
-/libs/clients/smartsolutions/                                                                                               @island-is/hugsmidjan
-/libs/clients/smart-solutions-v2/                                                                                           @island-is/hugsmidjan
-/libs/clients/license-client/                                                                                               @island-is/hugsmidjan @island-is/aranja
-/libs/clients/lsh/                                                                                                          @island-is/hugsmidjan
-/libs/clients/intellectual-properties/                                                                                      @island-is/hugsmidjan
-/libs/clients/national-registry/v3/                                                                                         @island-is/hugsmidjan
-/libs/clients/national-registry/v3-applications/                                                                            @island-is/juni
-/libs/clients/district-commissioners-licenses/                                                                              @island-is/hugsmidjan
-/libs/clients/regulations/                                                                                                  @island-is/hugsmidjan
-/libs/clients/vehicles/                                                                                                     @island-is/hugsmidjan @island-is/stefna
-/libs/clients/vehicles-mileage/                                                                                             @island-is/hugsmidjan
-/libs/clients/user-notification/                                                                                            @island-is/hugsmidjan
-/libs/clients/passports/                                                                                                    @island-is/hugsmidjan
-/libs/clients/p-card/                                                                                                       @island-is/hugsmidjan
-/libs/clients/assets/                                                                                                       @island-is/hugsmidjan
-/libs/clients/university-careers/                                                                                           @island-is/hugsmidjan
-/libs/clients/regulations-admin/                                                                                            @island-is/hugsmidjan
-/libs/clients/inna/                                                                                                         @island-is/hugsmidjan
-/libs/clients/grants/                                                                                                       @island-is/hugsmidjan
-/libs/clients/hms-loans/                                                                                                    @island-is/hugsmidjan
-/libs/clients/official-journal-of-iceland/                                                                                  @island-is/hugsmidjan
-/libs/clients/legal-gazette/                                                                                                @island-is/hugsmidjan
-/libs/clients/hms-housing-benefits/                                                                                         @island-is/hugsmidjan
-/apps/services/license-api/                                                                                                 @island-is/hugsmidjan
-/apps/services/cms-importer/                                                                                                @island-is/hugsmidjan
-/libs/regulations/                                                                                                          @island-is/hugsmidjan
-/libs/portals/admin/regulations-admin/                                                                                      @island-is/hugsmidjan
-/libs/portals/admin/document-provider/                                                                                      @island-is/hugsmidjan @island-is/core
-/libs/clients/icelandic-health-insurance/rights-portal/                                                                     @island-is/hugsmidjan
-/libs/clients/health-directorate                                                                                            @island-is/hugsmidjan
-/libs/clients/health-directorate/src/lib/clients/occupational-license                                                       @island-is/hugsmidjan @island-is/origo
-/libs/clients/mms/grade                                                                                                     @island-is/hugsmidjan
-/libs/portals/admin/air-discount-scheme                                                                                     @island-is/hugsmidjan
-/libs/application/templates/official-journal-of-iceland/                                                                    @island-is/hugsmidjan
-/libs/application/templates/legal-gazette/                                                                                  @island-is/hugsmidjan
-/libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/                               @island-is/hugsmidjan
-/libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                                             @island-is/hugsmidjan
-/libs/clients/judicial-system-sp/                                                                                           @island-is/hugsmidjan
+/apps/download-service/                                                                                                      @island-is/hugsmidjan
+/apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
+/apps/services/regulations-admin-backend/                                                                                    @island-is/hugsmidjan
+/apps/services/user-profile/                                                                                                 @island-is/hugsmidjan @island-is/juni @island-is/aranja
+/apps/web/components/Grants/                                                                                                 @island-is/hugsmidjan
+/apps/web/components/GrantCardsList/                                                                                         @island-is/hugsmidjan
+/apps/web/screens/Grants/                                                                                                    @island-is/hugsmidjan
+/apps/web/screens/Regulations/                                                                                               @island-is/hugsmidjan
+/apps/web/components/Regulations/                                                                                            @island-is/hugsmidjan
+/apps/web/screens/OfficialJournalOfIceland/                                                                                  @island-is/hugsmidjan
+/apps/web/components/OfficialJournalOfIceland/                                                                               @island-is/hugsmidjan
+/apps/web/pages/stjornartidindi/                                                                                             @island-is/hugsmidjan
+/libs/api/domains/air-discount-scheme                                                                                        @island-is/hugsmidjan
+/libs/api/domains/documents/                                                                                                 @island-is/hugsmidjan
+/libs/api/domains/finance/                                                                                                   @island-is/hugsmidjan
+/libs/api/domains/assets/                                                                                                    @island-is/hugsmidjan
+/libs/api/domains/health-directorate/                                                                                        @island-is/hugsmidjan
+/libs/api/domains/hms-loans/                                                                                                 @island-is/hugsmidjan
+/libs/api/domains/license-service/                                                                                           @island-is/hugsmidjan @island-is/aranja
+/libs/api/domains/work-machines/                                                                                             @island-is/hugsmidjan @island-is/origo
+/libs/api/domains/national-registry/                                                                                         @island-is/hugsmidjan
+/libs/api/domains/notifications/                                                                                             @island-is/hugsmidjan
+/libs/api/domains/user-profile/                                                                                              @island-is/hugsmidjan @island-is/juni @island-is/aranja
+/libs/api/domains/passport/                                                                                                  @island-is/hugsmidjan
+/libs/api/domains/vehicles/                                                                                                  @island-is/hugsmidjan
+/libs/api/domains/university-careers/                                                                                        @island-is/hugsmidjan
+/libs/api/domains/regulations/                                                                                               @island-is/hugsmidjan
+/libs/api/domains/regulations-admin/                                                                                         @island-is/hugsmidjan
+/libs/api/domains/rights-portal                                                                                              @island-is/hugsmidjan
+/libs/api/domains/social-insurance                                                                                           @island-is/hugsmidjan @island-is/stefna
+/libs/api/domains/occupational-licenses/                                                                                     @island-is/hugsmidjan
+/libs/api/domains/intellectual-properties/                                                                                   @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland/                                                                               @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland-application/                                                                   @island-is/hugsmidjan
+/libs/api/domains/document-provider/                                                                                         @island-is/hugsmidjan @island-is/core
+/libs/api/domains/housing-benefits/                                                                                          @island-is/hugsmidjan
+/libs/api/domains/law-and-order/                                                                                             @island-is/hugsmidjan
+/libs/clients/documents/                                                                                                     @island-is/hugsmidjan
+/libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
+/libs/clients/finance/                                                                                                       @island-is/hugsmidjan
+/libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
+/libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan
+/libs/clients/work-machines/                                                                                                 @island-is/hugsmidjan @island-is/origo
+/libs/clients/disability-license/                                                                                            @island-is/hugsmidjan
+/libs/clients/firearm-license/                                                                                               @island-is/hugsmidjan
+/libs/clients/hunting-license/                                                                                               @island-is/hugsmidjan
+/libs/clients/smartsolutions/                                                                                                @island-is/hugsmidjan
+/libs/clients/smart-solutions-v2/                                                                                            @island-is/hugsmidjan
+/libs/clients/license-client/                                                                                                @island-is/hugsmidjan @island-is/aranja
+/libs/clients/lsh/                                                                                                           @island-is/hugsmidjan
+/libs/clients/intellectual-properties/                                                                                       @island-is/hugsmidjan
+/libs/clients/national-registry/v3/                                                                                          @island-is/hugsmidjan
+/libs/clients/national-registry/v3-applications/                                                                             @island-is/juni
+/libs/clients/district-commissioners-licenses/                                                                               @island-is/hugsmidjan
+/libs/clients/regulations/                                                                                                   @island-is/hugsmidjan
+/libs/clients/vehicles/                                                                                                      @island-is/hugsmidjan @island-is/stefna
+/libs/clients/vehicles-mileage/                                                                                              @island-is/hugsmidjan
+/libs/clients/user-notification/                                                                                             @island-is/hugsmidjan
+/libs/clients/passports/                                                                                                     @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                                        @island-is/hugsmidjan
+/libs/clients/assets/                                                                                                        @island-is/hugsmidjan
+/libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
+/libs/clients/regulations-admin/                                                                                             @island-is/hugsmidjan
+/libs/clients/inna/                                                                                                          @island-is/hugsmidjan
+/libs/clients/grants/                                                                                                        @island-is/hugsmidjan
+/libs/clients/hms-loans/                                                                                                     @island-is/hugsmidjan
+/libs/clients/official-journal-of-iceland/                                                                                   @island-is/hugsmidjan
+/libs/clients/legal-gazette/                                                                                                 @island-is/hugsmidjan
+/libs/clients/hms-housing-benefits/                                                                                          @island-is/hugsmidjan
+/apps/services/license-api/                                                                                                  @island-is/hugsmidjan
+/apps/services/cms-importer/                                                                                                 @island-is/hugsmidjan
+/libs/regulations/                                                                                                           @island-is/hugsmidjan
+/libs/portals/admin/regulations-admin/                                                                                       @island-is/hugsmidjan
+/libs/portals/admin/document-provider/                                                                                       @island-is/hugsmidjan @island-is/core
+/libs/clients/icelandic-health-insurance/rights-portal/                                                                      @island-is/hugsmidjan
+/libs/clients/health-directorate                                                                                             @island-is/hugsmidjan
+/libs/clients/health-directorate/src/lib/clients/occupational-license                                                        @island-is/hugsmidjan @island-is/origo
+/libs/clients/mms/grade                                                                                                      @island-is/hugsmidjan
+/libs/portals/admin/air-discount-scheme                                                                                      @island-is/hugsmidjan
+/libs/application/templates/official-journal-of-iceland/                                                                     @island-is/hugsmidjan
+/libs/application/templates/legal-gazette/                                                                                   @island-is/hugsmidjan
+/libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/                                @island-is/hugsmidjan
+/libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                                              @island-is/hugsmidjan
+/libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
-/libs/application/templates/accident-notification/                                                                          @island-is/norda
-/libs/application/templates/alcohol-tax-redemption/                                                                         @island-is/norda
-/libs/application/templates/complaints-to-althingi-ombudsman/                                                               @island-is/norda
-/libs/application/templates/data-protection-complaint/                                                                      @island-is/norda
-/libs/application/templates/document-provider-onboarding/                                                                   @island-is/norda
-/libs/application/templates/european-health-insurance-card/                                                                 @island-is/norda
-/libs/application/templates/family-matters/children-residence-change-v2                                                     @island-is/norda
-/libs/application/templates/financial-aid/                                                                                  @island-is/norda
-/libs/application/templates/funding-government-projects/                                                                    @island-is/norda
-/libs/application/templates/general-fishing-license/                                                                        @island-is/norda
-/libs/application/templates/grindavik-housing-buyout/                                                                       @island-is/norda
-/libs/application/templates/health-insurance/                                                                               @island-is/norda
-/libs/application/templates/health-insurance-declaration/                                                                   @island-is/norda
-/libs/application/templates/hms/fire-compensation-appraisal/                                                                @island-is/norda
-/libs/application/templates/hms/terminate-rental-agreement/                                                                 @island-is/norda
-/libs/application/templates/home-support/                                                                                   @island-is/norda
-/libs/application/templates/inao/financial-statement-cemetery/                                                              @island-is/norda
-/libs/application/templates/inao/financial-statement-individual-election/                                                   @island-is/norda
-/libs/application/templates/inao/financial-statement-political-party/                                                       @island-is/norda
-/libs/application/templates/institution-collaboration/                                                                      @island-is/norda
-/libs/application/templates/login-service/                                                                                  @island-is/norda
-/libs/application/templates/public-debt-payment-plan/                                                                       @island-is/norda
+/libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
+/libs/application/templates/complaints-to-althingi-ombudsman/                                                                @island-is/norda
+/libs/application/templates/data-protection-complaint/                                                                       @island-is/norda
+/libs/application/templates/document-provider-onboarding/                                                                    @island-is/norda
+/libs/application/templates/family-matters/children-residence-change-v2                                                      @island-is/norda
+/libs/application/templates/financial-aid/                                                                                   @island-is/norda
+/libs/application/templates/funding-government-projects/                                                                     @island-is/norda
+/libs/application/templates/general-fishing-license/                                                                         @island-is/norda
+/libs/application/templates/grindavik-housing-buyout/                                                                        @island-is/norda
+/libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
+/libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
+/libs/application/templates/home-support/                                                                                    @island-is/norda
+/libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
+/libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/norda
+/libs/application/templates/iceland-health/health-insurance/                                                                 @island-is/norda
+/libs/application/templates/iceland-health/health-insurance-declaration/                                                     @island-is/norda
+/libs/application/templates/inao/financial-statement-cemetery/                                                               @island-is/norda
+/libs/application/templates/inao/financial-statement-individual-election/                                                    @island-is/norda
+/libs/application/templates/inao/financial-statement-political-party/                                                        @island-is/norda
+/libs/application/templates/institution-collaboration/                                                                       @island-is/norda
+/libs/application/templates/login-service/                                                                                   @island-is/norda
+/libs/application/templates/public-debt-payment-plan/                                                                        @island-is/norda
 
-/libs/application/template-api-modules/src/lib/modules/templates/accident-notification/                                     @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/                              @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/                          @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/                                 @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/document-provider-onboarding/                              @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/                            @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                                             @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/                              @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/                   @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statement-political-party/                       @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/                               @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                                   @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                  @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                                          @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/health-insurance-declaration/                              @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                           @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                            @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/home-support/                                              @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/                                 @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/login-service/                                             @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan/                                  @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/reference-template/                                        @island-is/norda
-
-
-/libs/clients/althingi-ombudsman/                                                                                           @island-is/norda
-/libs/clients/data-protection-complaint/                                                                                    @island-is/norda
-/libs/clients/ehic-client-v1                                                                                                @island-is/norda
-/libs/clients/financial-statements-inao                                                                                     @island-is/norda
-/libs/clients/fishing-license/                                                                                              @island-is/norda
-/libs/clients/hms-application-system/                                                                                       @island-is/norda
-/libs/clients/icelandic-health-insurance/health-insurance/                                                                  @island-is/norda
-/libs/clients/payment-schedule/                                                                                             @island-is/norda
-/libs/clients/rsk/company-registry                                                                                          @island-is/norda
-
-/libs/api/domains/company-registry                                                                                          @island-is/norda
-/libs/api/domains/financial-statements-inao/                                                                                @island-is/norda
-/libs/api/domains/fishing-license/                                                                                          @island-is/norda
-/libs/api/domains/health-insurance/                                                                                         @island-is/norda
-/libs/api/domains/payment-schedule/                                                                                         @island-is/norda
-
-/libs/shared/form-fields/                                                                                                   @island-is/norda @island-is/island-ui
-
-/libs/portals/my-pages/applications/                                                                                        @island-is/norda
-/libs/portals/admin/application-system/                                                                                     @island-is/norda
-/libs/api/domains/application/                                                                                              @island-is/norda
-/libs/api/domains/payment/                                                                                                  @island-is/norda
-
-/apps/contentful-apps/                                                                                                      @island-is/stefna
-/apps/services/search-indexer/                                                                                              @island-is/stefna @island-is/juni
-/apps/services/contentful-entry-tagger/                                                                                     @island-is/stefna
-/apps/tools/contentful-role-permissions/                                                                                    @island-is/stefna
-/apps/web/screens/Organization/                                                                                             @island-is/stefna
-/apps/web/screens/Project/                                                                                                  @island-is/stefna
-/apps/web/components/Organization/                                                                                          @island-is/stefna
-/apps/web/components/ChatPanel/                                                                                             @island-is/stefna
-/apps/web/components/Form/                                                                                                  @island-is/stefna
-/apps/web/components/Stepper/                                                                                               @island-is/stefna
-/libs/content-search-toolkit/                                                                                               @island-is/stefna @island-is/juni
-/libs/content-search-index-manager/                                                                                         @island-is/stefna @island-is/juni
-/libs/content-search-metrics/                                                                                               @island-is/stefna @island-is/juni
-/libs/content-search-indexer/                                                                                               @island-is/stefna @island-is/juni
-/libs/api/domains/content-search/                                                                                           @island-is/stefna @island-is/juni
-/libs/api/domains/syslumenn/                                                                                                @island-is/stefna
-/libs/api/domains/email-signup/                                                                                             @island-is/stefna
-/libs/api/domains/fiskistofa/                                                                                               @island-is/stefna
-/libs/clients/fiskistofa/                                                                                                   @island-is/stefna
-/libs/clients/syslumenn/                                                                                                    @island-is/stefna @island-is/juni
-/libs/api/domains/watson-assistant-chat/                                                                                    @island-is/stefna
-/libs/clients/icelandic-government-institution-vacancies/                                                                   @island-is/stefna
-/libs/api/domains/icelandic-government-institution-vacancies/                                                               @island-is/stefna
-/libs/clients/aircraft-registry/                                                                                            @island-is/stefna
-/libs/api/domains/aircraft-registry/                                                                                        @island-is/stefna
-/libs/api/domains/housing-benefit-calculator/                                                                               @island-is/stefna
-/libs/clients/housing-benefit-calculator/                                                                                   @island-is/stefna
-/libs/clients/ship-registry/                                                                                                @island-is/stefna
-/libs/api/domains/ship-registry/                                                                                            @island-is/stefna
-/libs/clients/administration-of-occupational-safety-and-health/                                                             @island-is/stefna
-/libs/api/domains/administration-of-occupational-safety-and-health/                                                         @island-is/stefna
-/libs/clients/ultraviolet-radiation/                                                                                        @island-is/stefna
-/libs/clients/ums-cost-of-living-calculator/                                                                                @island-is/stefna
-/libs/api/domains/umbodsmadur-skuldara/                                                                                     @island-is/stefna
-/libs/api/domains/verdicts/                                                                                                 @island-is/stefna
-/libs/clients/verdicts/                                                                                                     @island-is/stefna
-/libs/api/domains/landspitali/                                                                                              @island-is/stefna
-/apps/services/payment-flow-update-handler/                                                                                 @island-is/stefna
-
-/libs/island-ui/                                                                                                            @island-is/island-ui
-
-/apps/consultation-portal/                                                                                                  @island-is/advania
-/apps/services/form-system/                                                                                                 @island-is/advania
-/apps/form-system/                                                                                                          @island-is/advania
-/libs/clients/consultation-portal/                                                                                          @island-is/advania
-/libs/api/domains/consultation-portal/                                                                                      @island-is/advania
-/libs/api/domains/form-system                                                                                               @island-is/advania
-/libs/portals/admin/form-system                                                                                             @island-is/advania
-/libs/clients/form-system/                                                                                                  @island-is/advania
-/libs/form-system                                                                                                           @island-is/advania
-/libs/portals/form-system                                                                                                   @island-is/advania
-
-/apps/skilavottord/                                                                                                         @island-is/deloitte
-/libs/skilavottord/                                                                                                         @island-is/deloitte
-/libs/application/templates/parental-leave/                                                                                 @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                                            @island-is/deloitte
-/libs/clients/vmst/                                                                                                         @island-is/deloitte
-/libs/api/domains/directorate-of-labour/                                                                                    @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration                            @island-is/deloitte
-/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly                              @island-is/deloitte
-/libs/application/templates/social-insurance-administration/core                                                            @island-is/deloitte
-/libs/application/templates/social-insurance-administration/death-benefits                                                  @island-is/deloitte
-/libs/application/templates/social-insurance-administration/household-supplement                                            @island-is/deloitte
-/libs/application/templates/social-insurance-administration/income-plan                                                     @island-is/deloitte
-/libs/application/templates/social-insurance-administration/old-age-pension                                                 @island-is/deloitte
-/libs/application/templates/social-insurance-administration/pension-supplement                                              @island-is/deloitte
-/libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments                             @island-is/deloitte
-/libs/application/templates/social-insurance-administration/disability-pension                                              @island-is/hugsmidjan
-/libs/clients/social-insurance-administration/                                                                              @island-is/deloitte @island-is/stefna @island-is/hugsmidjan
-/libs/application/templates/car-recycling/                                                                                  @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                                             @island-is/deloitte
-/libs/clients/car-recycling/                                                                                                @island-is/deloitte
-/libs/application/templates/new-primary-school/                                                                             @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                                        @island-is/deloitte
-/libs/clients/mms/frigg                                                                                                     @island-is/deloitte
-
-/apps/services/auth/                                                                                                        @island-is/fuglar @island-is/aranja
-/apps/services/sessions/                                                                                                    @island-is/fuglar @island-is/aranja
-/apps/auth-admin-web/                                                                                                       @island-is/fuglar @island-is/aranja
-/libs/auth-api-lib/                                                                                                         @island-is/fuglar @island-is/aranja
-/libs/auth-api-lib/seeders/                                                                                                 @island-is/fuglar @island-is/aranja
-/libs/auth-nest-tools/                                                                                                      @island-is/fuglar @island-is/aranja
-
-/libs/application/templates/criminal-record/                                                                                @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/                                @island-is/origo
-
-/libs/application/templates/mortgage-certificate/                                                                           @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission/                           @island-is/origo
-/libs/api/domains/mortgage-certificate/                                                                                     @island-is/origo
-
-/libs/application/templates/no-debt-certificate/                                                                            @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                                       @island-is/origo
-
-/libs/application/templates/aosh/seminars/                                                                                  @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                                             @island-is/origo
-/libs/api/domains/seminars-ver/                                                                                             @island-is/origo
-/libs/clients/seminars-ver/                                                                                                 @island-is/origo
-
-/libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                       @island-is/origo
-/libs/application/templates/activation-allowance                                                                            @island-is/origo
-/libs/clients/vmst-unemployment                                                                                             @island-is/origo
-/libs/api/domains/vmst-applications                                                                                         @island-is/origo
-
-/libs/clients/practical-exams-ver                                                                                           @island-is/origo
-/libs/api/domains/practical-exams                                                                                           @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/aosh/practical-exam                                        @island-is/origo
-
-/libs/application/templates/id-card/                                                                                        @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/id-card/                                                   @island-is/origo
-
-/libs/clients/charge-fjs-v2/                                                                                                @island-is/origo @island-is/aranja
-/libs/clients/vehicle-service-fjs-v1/                                                                                       @island-is/origo
-
-/libs/application/templates/transport-authority/anonymity-in-vehicle-registry                                               @island-is/origo
-/libs/application/templates/transport-authority/change-co-owner-of-vehicle                                                  @island-is/origo
-/libs/application/templates/transport-authority/change-operator-of-vehicle                                                  @island-is/origo
-/libs/application/templates/transport-authority/digital-tachograph-drivers-card                                             @island-is/origo
-/libs/application/templates/transport-authority/license-plate-renewal                                                       @island-is/origo
-/libs/application/templates/transport-authority/order-vehicle-license-plate                                                 @island-is/origo
-/libs/application/templates/transport-authority/order-vehicle-registration-certificate                                      @island-is/origo
-/libs/application/templates/transport-authority/transfer-of-vehicle-ownership                                               @island-is/origo
-/libs/application/templates/transport-authority/exemption-for-transportation                                                @island-is/origo
-
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry          @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle             @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle             @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/digital-tachograph-drivers-card        @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/exemption-for-transportation           @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/license-plate-renewal                  @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate            @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership          @island-is/origo
-
-/libs/api/domains/transport-authority/                                                                                      @island-is/origo
-/libs/clients/transport-authority/                                                                                          @island-is/origo
-
-/libs/application/templates/driving-license-book-update-instructor/                                                         @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/                    @island-is/origo
-
-/apps/services/university-gateway/                                                                                          @island-is/origo
-/libs/clients/university-application/                                                                                       @island-is/origo
-/libs/clients/university-gateway-api/                                                                                       @island-is/origo
-/libs/api/domains/university-gateway/                                                                                       @island-is/origo
-/libs/university-gateway/                                                                                                   @island-is/origo
-/apps/web/screens/UniversitySearch/                                                                                         @island-is/origo
-/apps/web/screens/queries/UniversityGateway.ts                                                                              @island-is/origo
-/apps/web/components/ListViewCard/                                                                                          @island-is/origo
-
-/libs/application/templates/directorate-of-immigration/                                                                     @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                @island-is/origo
-/libs/clients/directorate-of-immigration/                                                                                   @island-is/origo
-
-/libs/application/templates/aosh/change-machine-supervisor                                                                  @island-is/origo
-/libs/application/templates/aosh/deregister-machine                                                                         @island-is/origo
-/libs/application/templates/aosh/register-new-machine                                                                       @island-is/origo
-/libs/application/templates/aosh/street-registration                                                                        @island-is/origo
-/libs/application/templates/aosh/training-license-on-a-work-machine                                                         @island-is/origo
-/libs/application/templates/aosh/transfer-of-machine-ownership                                                              @island-is/origo
-/libs/application/templates/aosh/work-accident-notification                                                                 @island-is/origo
-/libs/application/templates/aosh/practical-exam                                                                             @island-is/origo
-/libs/application/templates/aosh/request-for-inspection                                                                     @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/aosh                                                       @island-is/origo
-
-/libs/application/templates/healthcare-license-certificate/                                                                 @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/                            @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/                               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/                           @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/                                  @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/document-provider-onboarding/                               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                                              @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/                                @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                                    @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                   @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/health-insurance/                            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/health-insurance-declaration/                @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-cemetery/                          @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-individual-election/               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-political-party/                   @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/                                  @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/login-service/                                              @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan/                                   @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/reference-template/                                         @island-is/norda
 
 
-/libs/application/templates/healthcare-work-permit/                                                                         @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/healthcare-work-permit/                                    @island-is/origo
+/libs/clients/althingi-ombudsman/                                                                                            @island-is/norda
+/libs/clients/data-protection-complaint/                                                                                     @island-is/norda
+/libs/clients/ehic-client-v1                                                                                                 @island-is/norda
+/libs/clients/financial-statements-inao                                                                                      @island-is/norda
+/libs/clients/fishing-license/                                                                                               @island-is/norda
+/libs/clients/hms-application-system/                                                                                        @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                                                   @island-is/norda
+/libs/clients/payment-schedule/                                                                                              @island-is/norda
+/libs/clients/rsk/company-registry                                                                                           @island-is/norda
 
-/libs/application/templates/energy-funds/                                                                                   @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                                              @island-is/origo
-/libs/api/domains/energy-funds/                                                                                             @island-is/origo
-/libs/clients/energy-funds/                                                                                                 @island-is/origo
+/libs/api/domains/company-registry                                                                                           @island-is/norda
+/libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda
+/libs/api/domains/fishing-license/                                                                                           @island-is/norda
+/libs/api/domains/health-insurance/                                                                                          @island-is/norda
+/libs/api/domains/payment-schedule/                                                                                          @island-is/norda
 
-/libs/application/templates/university/                                                                                     @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/university/                                                @island-is/origo
+/libs/shared/form-fields/                                                                                                    @island-is/norda @island-is/island-ui
 
-/libs/application/templates/secondary-school/                                                                               @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/secondary-school/                                          @island-is/origo
-/libs/api/domains/secondary-school/                                                                                         @island-is/origo
-/libs/clients/secondary-school/                                                                                             @island-is/origo
+/libs/portals/my-pages/applications/                                                                                         @island-is/norda
+/libs/portals/admin/application-system/                                                                                      @island-is/norda
+/libs/api/domains/application/                                                                                               @island-is/norda
+/libs/api/domains/payment/                                                                                                   @island-is/norda
 
-/libs/application/templates/unemployment-benefits/                                                                          @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/unemployment-benefits/                                     @island-is/origo
-/libs/api/domains/vmst-applications/                                                                                        @island-is/origo
-/libs/clients/vmst-unemployment/                                                                                            @island-is/origo
+/apps/contentful-apps/                                                                                                       @island-is/stefna
+/apps/services/search-indexer/                                                                                               @island-is/stefna @island-is/juni
+/apps/services/contentful-entry-tagger/                                                                                      @island-is/stefna
+/apps/tools/contentful-role-permissions/                                                                                     @island-is/stefna
+/apps/web/screens/Organization/                                                                                              @island-is/stefna
+/apps/web/screens/Project/                                                                                                   @island-is/stefna
+/apps/web/components/Organization/                                                                                           @island-is/stefna
+/apps/web/components/ChatPanel/                                                                                              @island-is/stefna
+/apps/web/components/Form/                                                                                                   @island-is/stefna
+/apps/web/components/Stepper/                                                                                                @island-is/stefna
+/libs/content-search-toolkit/                                                                                                @island-is/stefna @island-is/juni
+/libs/content-search-index-manager/                                                                                          @island-is/stefna @island-is/juni
+/libs/content-search-metrics/                                                                                                @island-is/stefna @island-is/juni
+/libs/content-search-indexer/                                                                                                @island-is/stefna @island-is/juni
+/libs/api/domains/content-search/                                                                                            @island-is/stefna @island-is/juni
+/libs/api/domains/syslumenn/                                                                                                 @island-is/stefna
+/libs/api/domains/email-signup/                                                                                              @island-is/stefna
+/libs/api/domains/fiskistofa/                                                                                                @island-is/stefna
+/libs/clients/fiskistofa/                                                                                                    @island-is/stefna
+/libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
+/libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
+/libs/clients/icelandic-government-institution-vacancies/                                                                    @island-is/stefna
+/libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
+/libs/clients/aircraft-registry/                                                                                             @island-is/stefna
+/libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
+/libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
+/libs/clients/housing-benefit-calculator/                                                                                    @island-is/stefna
+/libs/clients/ship-registry/                                                                                                 @island-is/stefna
+/libs/api/domains/ship-registry/                                                                                             @island-is/stefna
+/libs/clients/administration-of-occupational-safety-and-health/                                                              @island-is/stefna
+/libs/api/domains/administration-of-occupational-safety-and-health/                                                          @island-is/stefna
+/libs/clients/ultraviolet-radiation/                                                                                         @island-is/stefna
+/libs/clients/ums-cost-of-living-calculator/                                                                                 @island-is/stefna
+/libs/api/domains/umbodsmadur-skuldara/                                                                                      @island-is/stefna
+/libs/api/domains/verdicts/                                                                                                  @island-is/stefna
+/libs/clients/verdicts/                                                                                                      @island-is/stefna
+/libs/api/domains/landspitali/                                                                                               @island-is/stefna
+/apps/services/payment-flow-update-handler/                                                                                  @island-is/stefna
+
+/libs/island-ui/                                                                                                             @island-is/island-ui
+
+/apps/consultation-portal/                                                                                                   @island-is/advania
+/apps/services/form-system/                                                                                                  @island-is/advania
+/apps/form-system/                                                                                                           @island-is/advania
+/libs/clients/consultation-portal/                                                                                           @island-is/advania
+/libs/api/domains/consultation-portal/                                                                                       @island-is/advania
+/libs/api/domains/form-system                                                                                                @island-is/advania
+/libs/portals/admin/form-system                                                                                              @island-is/advania
+/libs/clients/form-system/                                                                                                   @island-is/advania
+/libs/form-system                                                                                                            @island-is/advania
+/libs/portals/form-system                                                                                                    @island-is/advania
+
+/apps/skilavottord/                                                                                                          @island-is/deloitte
+/libs/skilavottord/                                                                                                          @island-is/deloitte
+/libs/application/templates/parental-leave/                                                                                  @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                                             @island-is/deloitte
+/libs/clients/vmst/                                                                                                          @island-is/deloitte
+/libs/api/domains/directorate-of-labour/                                                                                     @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration                             @island-is/deloitte
+/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly                               @island-is/deloitte
+/libs/application/templates/social-insurance-administration/core                                                             @island-is/deloitte
+/libs/application/templates/social-insurance-administration/death-benefits                                                   @island-is/deloitte
+/libs/application/templates/social-insurance-administration/household-supplement                                             @island-is/deloitte
+/libs/application/templates/social-insurance-administration/income-plan                                                      @island-is/deloitte
+/libs/application/templates/social-insurance-administration/old-age-pension                                                  @island-is/deloitte
+/libs/application/templates/social-insurance-administration/pension-supplement                                               @island-is/deloitte
+/libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments                              @island-is/deloitte
+/libs/application/templates/social-insurance-administration/disability-pension                                               @island-is/hugsmidjan
+/libs/clients/social-insurance-administration/                                                                               @island-is/deloitte @island-is/stefna @island-is/hugsmidjan
+/libs/application/templates/car-recycling/                                                                                   @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                                              @island-is/deloitte
+/libs/clients/car-recycling/                                                                                                 @island-is/deloitte
+/libs/application/templates/new-primary-school/                                                                              @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                                         @island-is/deloitte
+/libs/clients/mms/frigg                                                                                                      @island-is/deloitte
+
+/apps/services/auth/                                                                                                         @island-is/fuglar @island-is/aranja
+/apps/services/sessions/                                                                                                     @island-is/fuglar @island-is/aranja
+/apps/auth-admin-web/                                                                                                        @island-is/fuglar @island-is/aranja
+/libs/auth-api-lib/                                                                                                          @island-is/fuglar @island-is/aranja
+/libs/auth-api-lib/seeders/                                                                                                  @island-is/fuglar @island-is/aranja
+/libs/auth-nest-tools/                                                                                                       @island-is/fuglar @island-is/aranja
+
+/libs/application/templates/criminal-record/                                                                                 @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/                                 @island-is/origo
+
+/libs/application/templates/mortgage-certificate/                                                                            @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission/                            @island-is/origo
+/libs/api/domains/mortgage-certificate/                                                                                      @island-is/origo
+
+/libs/application/templates/no-debt-certificate/                                                                             @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                                        @island-is/origo
+
+/libs/application/templates/aosh/seminars/                                                                                   @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                                              @island-is/origo
+/libs/api/domains/seminars-ver/                                                                                              @island-is/origo
+/libs/clients/seminars-ver/                                                                                                  @island-is/origo
+
+/libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                        @island-is/origo
+/libs/application/templates/activation-allowance                                                                             @island-is/origo
+/libs/clients/vmst-unemployment                                                                                              @island-is/origo
+/libs/api/domains/vmst-applications                                                                                          @island-is/origo
+
+/libs/clients/practical-exams-ver                                                                                            @island-is/origo
+/libs/api/domains/practical-exams                                                                                            @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/practical-exam                                         @island-is/origo
+
+/libs/application/templates/id-card/                                                                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/id-card/                                                    @island-is/origo
+
+/libs/clients/charge-fjs-v2/                                                                                                 @island-is/origo @island-is/aranja
+/libs/clients/vehicle-service-fjs-v1/                                                                                        @island-is/origo
+
+/libs/application/templates/transport-authority/anonymity-in-vehicle-registry                                                @island-is/origo
+/libs/application/templates/transport-authority/change-co-owner-of-vehicle                                                   @island-is/origo
+/libs/application/templates/transport-authority/change-operator-of-vehicle                                                   @island-is/origo
+/libs/application/templates/transport-authority/digital-tachograph-drivers-card                                              @island-is/origo
+/libs/application/templates/transport-authority/license-plate-renewal                                                        @island-is/origo
+/libs/application/templates/transport-authority/order-vehicle-license-plate                                                  @island-is/origo
+/libs/application/templates/transport-authority/order-vehicle-registration-certificate                                       @island-is/origo
+/libs/application/templates/transport-authority/transfer-of-vehicle-ownership                                                @island-is/origo
+/libs/application/templates/transport-authority/exemption-for-transportation                                                 @island-is/origo
+
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry           @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle              @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle              @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/digital-tachograph-drivers-card         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/exemption-for-transportation            @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/license-plate-renewal                   @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate             @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership           @island-is/origo
+
+/libs/api/domains/transport-authority/                                                                                       @island-is/origo
+/libs/clients/transport-authority/                                                                                           @island-is/origo
+
+/libs/application/templates/transport-authority/driving-license-book-update-instructor/                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-book-update-instructor/ @island-is/origo
+
+/apps/services/university-gateway/                                                                                           @island-is/origo
+/libs/clients/university-application/                                                                                        @island-is/origo
+/libs/clients/university-gateway-api/                                                                                        @island-is/origo
+/libs/api/domains/university-gateway/                                                                                        @island-is/origo
+/libs/university-gateway/                                                                                                    @island-is/origo
+/apps/web/screens/UniversitySearch/                                                                                          @island-is/origo
+/apps/web/screens/queries/UniversityGateway.ts                                                                               @island-is/origo
+/apps/web/components/ListViewCard/                                                                                           @island-is/origo
+
+/libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
+/libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
+
+/libs/application/templates/aosh/change-machine-supervisor                                                                   @island-is/origo
+/libs/application/templates/aosh/deregister-machine                                                                          @island-is/origo
+/libs/application/templates/aosh/register-new-machine                                                                        @island-is/origo
+/libs/application/templates/aosh/street-registration                                                                         @island-is/origo
+/libs/application/templates/aosh/training-license-on-a-work-machine                                                          @island-is/origo
+/libs/application/templates/aosh/transfer-of-machine-ownership                                                               @island-is/origo
+/libs/application/templates/aosh/work-accident-notification                                                                  @island-is/origo
+/libs/application/templates/aosh/practical-exam                                                                              @island-is/origo
+/libs/application/templates/aosh/request-for-inspection                                                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh                                                        @island-is/origo
+
+/libs/application/templates/healthcare-license-certificate/                                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/                             @island-is/origo
+
+
+/libs/application/templates/healthcare-work-permit/                                                                          @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-work-permit/                                     @island-is/origo
+
+/libs/application/templates/energy-funds/                                                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                                               @island-is/origo
+/libs/api/domains/energy-funds/                                                                                              @island-is/origo
+/libs/clients/energy-funds/                                                                                                  @island-is/origo
+
+/libs/application/templates/university/                                                                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/university/                                                 @island-is/origo
+
+/libs/application/templates/secondary-school/                                                                                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/secondary-school/                                           @island-is/origo
+/libs/api/domains/secondary-school/                                                                                          @island-is/origo
+/libs/clients/secondary-school/                                                                                              @island-is/origo
+
+/libs/application/templates/unemployment-benefits/                                                                           @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/unemployment-benefits/                                      @island-is/origo
+/libs/api/domains/vmst-applications/                                                                                         @island-is/origo
+/libs/clients/vmst-unemployment/                                                                                             @island-is/origo
 
 # DevOps
-/.github/                                                                                                                   @island-is/devops
-/.githooks/                                                                                                                 @island-is/devops
-/apps/reference-backend/                                                                                                    @island-is/devops
-/apps/github-actions-cache/                                                                                                 @island-is/devops
-/infra/                                                                                                                     @island-is/devops
-**/infra/                                                                                                                   @island-is/devops
-/libs/logging/                                                                                                              @island-is/devops
-/scripts/                                                                                                                   @island-is/devops
-/scripts/postinstall.js                                                                                                     @island-is/devops @island-is/core
-/scripts/codegen.js                                                                                                         @island-is/devops @island-is/core
-/charts/                                                                                                                    @island-is/devops
-.dockerignore                                                                                                               @island-is/devops
+/.github/                                                                                                                    @island-is/devops
+/.githooks/                                                                                                                  @island-is/devops
+/apps/reference-backend/                                                                                                     @island-is/devops
+/apps/github-actions-cache/                                                                                                  @island-is/devops
+/infra/                                                                                                                      @island-is/devops
+**/infra/                                                                                                                    @island-is/devops
+/libs/logging/                                                                                                               @island-is/devops
+/scripts/                                                                                                                    @island-is/devops
+/scripts/postinstall.js                                                                                                      @island-is/devops @island-is/core
+/scripts/codegen.js                                                                                                          @island-is/devops @island-is/core
+/charts/                                                                                                                     @island-is/devops
+.dockerignore                                                                                                                @island-is/devops
 
 # QA
-/apps/system-e2e/                                                                                                           @island-is/qa
-/libs/testing/e2e                                                                                                           @island-is/qa
+/apps/system-e2e/                                                                                                            @island-is/qa
+/libs/testing/e2e                                                                                                            @island-is/qa
 
 # Islandis
-/apps/system-e2e/src/tests/islandis/admin-portal/                                                                           @island-is/aranja
-/apps/system-e2e/src/tests/islandis/application-system/                                                                     @island-is/norda
-/apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                                    @island-is/deloitte
-/apps/system-e2e/src/tests/islandis/consultation-portal/                                                                    @island-is/advania
-/apps/system-e2e/src/tests/islandis/service-portal/                                                                         @island-is/hugsmidjan @island-is/juni @island-is/norda
-/apps/system-e2e/src/tests/islandis/web/                                                                                    @island-is/hugsmidjan @island-is/juni @island-is/stefna
+/apps/system-e2e/src/tests/islandis/admin-portal/                                                                            @island-is/aranja
+/apps/system-e2e/src/tests/islandis/application-system/                                                                      @island-is/norda
+/apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                                     @island-is/deloitte
+/apps/system-e2e/src/tests/islandis/consultation-portal/                                                                     @island-is/advania
+/apps/system-e2e/src/tests/islandis/service-portal/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/norda
+/apps/system-e2e/src/tests/islandis/web/                                                                                     @island-is/hugsmidjan @island-is/juni @island-is/stefna
 # Judicial system
-/apps/system-e2e/src/tests/judicial-system/                                                                                 @island-is/kolibri-justice-league
+/apps/system-e2e/src/tests/judicial-system/                                                                                  @island-is/kolibri-justice-league

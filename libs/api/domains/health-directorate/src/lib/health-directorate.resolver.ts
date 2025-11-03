@@ -25,13 +25,20 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import {
+  MedicineDelegationCreateInput,
+  MedicineDelegationDeleteInput,
+  MedicineDelegationInput,
+} from './dto/medicineDelegation.input'
+import {
   InvalidatePermitInput,
   PermitInput,
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
+import { HealthDirectorateResponse } from './dto/response.dto'
 import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
+import { MedicineDelegations } from './models/medicineDelegation.model'
 import { MedicineHistory } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
@@ -245,6 +252,50 @@ export class HealthDirectorateResolver {
     return this.api.getMedicineDispensationsForATC(user, locale, input)
   }
 
+  /* Prescription Delegations */
+  @Query(() => MedicineDelegations, {
+    nullable: true,
+    name: 'healthDirectorateMedicineDelegations',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  getMedicineDelegations(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: MedicineDelegationInput,
+    @CurrentUser() user: User,
+  ): Promise<MedicineDelegations | null> {
+    return this.api.getMedicineDelegations(user, locale, input.active)
+  }
+
+  /* Add new Prescription Delegation */
+  @Mutation(() => HealthDirectorateResponse, {
+    name: 'healthDirectorateMedicineDelegationCreate',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  postMedicineDelegation(
+    @Args('input') input: MedicineDelegationCreateInput,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectorateResponse> {
+    return this.api.postMedicineDelegation(user, input)
+  }
+
+  /* Delete prescription Delegation */
+  @Mutation(() => HealthDirectorateResponse, {
+    name: 'healthDirectorateMedicineDelegationDelete',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  deleteMedicineDelegation(
+    @Args('input') input: MedicineDelegationDeleteInput,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectorateResponse> {
+    return this.api.deleteMedicineDelegation(user, input)
+  }
   /* Patient data - Permits */
 
   @Query(() => Permits, {
