@@ -10,15 +10,11 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { error, userInformation } from '../../../lib/messages'
+import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import { ApplicationType } from '../../../shared'
 import {
   checkIsActor,
-  checkIsFreshman,
-  getSchoolsData,
   Routes,
-  Student,
 } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
