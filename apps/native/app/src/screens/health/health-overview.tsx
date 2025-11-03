@@ -42,10 +42,6 @@ import {
   Typography,
 } from '../../ui'
 
-const Host = styled(SafeAreaView)`
-  flex: 1;
-`
-
 const ButtonWrapper = styled.View`
   flex-direction: row;
   margin-top: ${({ theme }) => theme.spacing[3]}px;
@@ -269,7 +265,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   ])
 
   return (
-    <Host>
+    <>
       <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -756,7 +752,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         </InputRow>
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
-    </Host>
+    </>
   )
 }
 

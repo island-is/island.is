@@ -172,10 +172,12 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             marginTop: theme.spacing[3],
           }}
         >
-          <MoreInfoContiner
-            externalLinks={externalLinks}
-            componentId={componentId}
-          />
+          <View style={{ paddingBottom: theme.spacing[4] }}>
+            <MoreInfoContiner
+              externalLinks={externalLinks}
+              componentId={componentId}
+            />
+          </View>
         </View>
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />

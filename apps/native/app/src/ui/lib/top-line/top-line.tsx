@@ -16,8 +16,6 @@ interface TopLineProps {
 }
 
 export function TopLine({ scrollY }: TopLineProps) {
-  if (isIosLiquidGlassEnabled) return null
-
   const ref = useRef<SafeAreaView>(null)
   const offset = useRef(new Animated.Value(0)).current
 
@@ -29,6 +27,8 @@ export function TopLine({ scrollY }: TopLineProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollY])
+
+  if (isIosLiquidGlassEnabled) return null
 
   return (
     <SafeAreaView
