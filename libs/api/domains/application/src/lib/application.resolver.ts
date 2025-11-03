@@ -70,6 +70,16 @@ export class ApplicationResolver {
     return this.applicationService.findAll(user, locale, input)
   }
 
+  // @Query(() => [Application], { nullable: true })
+  // async myPagesApplications(
+  //   @CurrentUser() user: User,
+  //   @Args('locale', { type: () => String, nullable: true })
+  //   locale: Locale = 'is',
+  //   @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
+  // ): Promise<Application[] | null> {
+  //   return this.applicationService.combinedApplications(user, locale, input)
+  // }
+
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('locale', { type: () => String, nullable: true })

@@ -71,9 +71,6 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
-  formSystemFormSlug?: string
-  formSystemOrgContentfulId?: string
-  formSystemOrgSlug?: string
 }
 
 export interface ApplicationWithAttachments extends Application {

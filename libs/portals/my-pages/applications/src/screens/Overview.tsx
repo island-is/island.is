@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
+  EmptyState,
   FootNote,
   IntroHeader,
   m as coreMessage,
@@ -14,8 +15,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import {
-  useApplications,
-  useFormSystemApplications,
+  useCombinedApplications,
   useGetOrganizationsQuery,
 } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -49,17 +49,11 @@ const Overview = () => {
   useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
   const {
-    data: applicationsData,
-    loading: applicationsLoading,
-    error: applicationsError,
-    refetch: applicationsRefetch,
-  } = useApplications()
-  const {
-    data: formSystemData,
-    loading: formSystemLoading,
-    error: formSystemError,
-    refetch: formSystemRefetch,
-  } = useFormSystemApplications()
+    data: applications,
+    loading,
+    error,
+    refetch,
+  } = useCombinedApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
@@ -71,28 +65,6 @@ const Overview = () => {
       },
     },
   })
-
-  const combinedApplications: Application[] = useMemo(() => {
-    const a = applicationsData ?? []
-    const b = formSystemData ?? []
-    if (!a.length && !b.length) return []
-    const map = new Map<string, Application>()
-    ;[...a, ...b].forEach((app) => {
-      if (app) map.set(app.id, app)
-    })
-    return Array.from(map.values()).sort((x, y) => {
-      const xt = x.modified ? new Date(x.modified).getTime() : 0
-      const yt = y.modified ? new Date(y.modified).getTime() : 0
-      return yt - xt
-    })
-  }, [applicationsData, formSystemData])
-
-  const loading = applicationsLoading || formSystemLoading
-  const error = applicationsError || formSystemError
-
-  const refetch = async () => {
-    await Promise.all([applicationsRefetch(), formSystemRefetch()])
-  }
 
   defaultInstitution.label = formatMessage(m.defaultInstitutionLabel)
 
@@ -117,19 +89,19 @@ const Overview = () => {
 
   const institutions = getInstitutions(
     defaultInstitution,
-    combinedApplications,
+    applications,
     organizations,
   )
 
-  if (combinedApplications && location.hash) {
-    focusedApplication = combinedApplications.find(
+  if (applications && location.hash) {
+    focusedApplication = applications.find(
       (item: Application) => item.id === location.hash.slice(1),
     )
   }
 
   const applicationsSortedByStatus = getFilteredApplicationsByStatus(
     filterValue,
-    combinedApplications,
+    applications,
     focusedApplication?.id,
   )
 
@@ -163,7 +135,7 @@ const Overview = () => {
   }
 
   const noApplications =
-    (combinedApplications.length === 0 && !focusedApplication) ||
+    (applications.length === 0 && !focusedApplication) ||
     (statusToShow === ApplicationOverViewStatus.incomplete &&
       applicationsSortedByStatus.incomplete.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.inProgress &&
@@ -179,11 +151,11 @@ const Overview = () => {
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-      {(error || (!loading && !combinedApplications)) && (
+      {(error || (!loading && !applications)) && (
         <Problem error={error} noBorder={false} />
       )}
-      {combinedApplications &&
-        combinedApplications.length > 0 &&
+      {applications &&
+        applications.length > 0 &&
         orgData &&
         !loading &&
         !loadingOrg &&

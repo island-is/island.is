@@ -1,45 +1,35 @@
 import { Module, DynamicModule } from '@nestjs/common'
-import { ApplicationResolver } from './application.resolver'
-import { ApplicationService } from './application.service'
-import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
+import { ApplicationsApi, Configuration } from '../../../application/gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
+// import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   Configuration as FormSystemConfiguration,
 } from '@island.is/clients/form-system'
+import { MyPagesApplicationResolver } from './myPagesApplication.resolver'
+import { MyPagesApplicationService } from './myPagesApplication.service'
 
 export interface Config {
   baseApiUrl: string
+  formSystemBaseApiUrl: string
 }
 
 @Module({})
-export class ApplicationModule {
+export class MyPagesApplicationModule {
   static register(config: Config): DynamicModule {
     return {
-      module: ApplicationModule,
+      module: MyPagesApplicationModule,
       providers: [
-        ApplicationResolver,
-        ApplicationAdminResolver,
-        ApplicationService,
+        MyPagesApplicationResolver,
+        // ApplicationAdminResolver,
+        MyPagesApplicationService,
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(
             new Configuration({
               fetchApi: createEnhancedFetch({
-                name: 'ApplicationModule.applicationsApi',
+                name: 'MyPagesApplicationModule.applicationsApi',
                 timeout: 60000,
-              }),
-              basePath: config.baseApiUrl,
-            }),
-          ),
-        },
-        {
-          provide: PaymentsApi,
-          useValue: new PaymentsApi(
-            new Configuration({
-              fetchApi: createEnhancedFetch({
-                name: 'ApplicationModule.paymentsApi',
               }),
               basePath: config.baseApiUrl,
             }),
@@ -50,10 +40,10 @@ export class ApplicationModule {
           useValue: new FormSystemApplicationsApi(
             new FormSystemConfiguration({
               fetchApi: createEnhancedFetch({
-                name: 'ApplicationModule.formSystemApplicationsApi',
+                name: 'MyPagesApplicationModule.formSystemApplicationsApi',
                 timeout: 60000,
               }),
-              basePath: 'http://localhost:3434',
+              basePath: config.formSystemBaseApiUrl,
             }),
           ),
         },

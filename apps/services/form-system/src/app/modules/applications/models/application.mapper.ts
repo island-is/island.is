@@ -234,10 +234,9 @@ export class ApplicationMapper {
         history: [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
-        historyButton: 'historyButton',
       },
       attachments: {},
-      typeId: 'ExampleCommonActions', // TODO: What to put here?
+      typeId: '',
       answers: { approveExternalData: true },
       externalData: {},
       name: app.formName,
@@ -273,10 +272,9 @@ export class ApplicationMapper {
         history: [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
-        historyButton: 'historyButton',
       },
       attachments: {},
-      typeId: 'ExampleCommonActions', // TODO: What to put here?
+      typeId: '',
       answers: { approveExternalData: true },
       externalData: {},
       name: app.formName,
