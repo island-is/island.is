@@ -271,6 +271,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/exemption-for-transportation'
     ),
+  [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: () =>
+    import(
+      '@island.is/application/templates/hms/registration-of-new-property-numbers'
+    ),
 }
 
 export default templates
