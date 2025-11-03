@@ -26,7 +26,12 @@ const FileSchema = z.object({
 
 export const languageSkillsSchema = z.object({
   language: z.string().nullish(),
-  skill: z.string(),
+  skill: z
+    .string()
+    .optional()
+    .refine((v) => v !== undefined && v !== '', {
+      params: serviceErrors.requiredError,
+    }),
 })
 
 const euresSchema = z.object({
