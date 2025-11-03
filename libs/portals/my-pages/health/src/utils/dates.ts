@@ -1,4 +1,4 @@
-export const today = () => new Date()
+export const today = new Date()
 
 export const addMonths = (date: Date, months: number) => {
   const newDate = new Date(date)
