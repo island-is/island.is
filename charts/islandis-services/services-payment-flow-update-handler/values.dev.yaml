@@ -61,7 +61,7 @@ ingress:
           - '/'
 namespace: 'services-payment-flow-update-handler'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

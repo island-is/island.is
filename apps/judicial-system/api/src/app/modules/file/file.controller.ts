@@ -22,6 +22,18 @@ import {
 } from '@island.is/judicial-system/auth'
 import { SubpoenaType, type User } from '@island.is/judicial-system/types'
 
+import {
+  CASE_FILES_RECORD_ENDPOINTS,
+  COURT_RECORD_ENDPOINTS,
+  CUSTODY_NOTICE_ENDPOINTS,
+  INDICTMENT_ENDPOINTS,
+  REQUEST_ENDPOINTS,
+  RULING_ENDPOINTS,
+  RULING_SENT_TO_PRISON_ADMIN_ENDPOINTS,
+  SUBPOENA_ENDPOINTS,
+  SUBPOENA_SERVICE_CERTIFICATE_ENDPOINTS,
+  VERDICT_SERVICE_CERTIFICATE_ENDPOINTS,
+} from './file.constants'
 import { FileService } from './file.service'
 
 @UseGuards(JwtInjectBearerAuthGuard)
@@ -33,7 +45,7 @@ export class FileController {
     private readonly logger: Logger,
   ) {}
 
-  @Get(['request', 'request/:fileName'])
+  @Get(REQUEST_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getRequestPdf(
     @Param('id') id: string,
@@ -54,12 +66,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'caseFilesRecord/:policeCaseNumber',
-    'caseFilesRecord/:policeCaseNumber/:fileName',
-    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
-    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber/:fileName',
-  ])
+  @Get(CASE_FILES_RECORD_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getCaseFilesRecordPdf(
     @Param('id') id: string,
@@ -86,12 +93,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'courtRecord',
-    'courtRecord/:fileName',
-    'mergedCase/:mergedCaseId/courtRecord',
-    'mergedCase/:mergedCaseId/courtRecord/:fileName',
-  ])
+  @Get(COURT_RECORD_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getCourtRecordPdf(
     @Param('id') id: string,
@@ -119,7 +121,7 @@ export class FileController {
     )
   }
 
-  @Get(['ruling', 'ruling/:fileName'])
+  @Get(RULING_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getRulingPdf(
     @Param('id') id: string,
@@ -140,7 +142,7 @@ export class FileController {
     )
   }
 
-  @Get(['custodyNotice', 'custodyNotice/:fileName'])
+  @Get(CUSTODY_NOTICE_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getCustodyNoticePdf(
     @Param('id') id: string,
@@ -163,12 +165,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'indictment',
-    'indictment/:fileName',
-    'mergedCase/:mergedCaseId/indictment',
-    'mergedCase/:mergedCaseId/indictment/:fileName',
-  ])
+  @Get(INDICTMENT_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,
@@ -194,12 +191,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'subpoena/:defendantId',
-    'subpoena/:defendantId/:fileName',
-    'subpoena/:defendantId/:subpoenaId',
-    'subpoena/:defendantId/:subpoenaId/:fileName',
-  ])
+  @Get(SUBPOENA_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
@@ -234,10 +226,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'subpoenaServiceCertificate/:defendantId/:subpoenaId',
-    'subpoenaServiceCertificate/:defendantId/:subpoenaId/:fileName',
-  ])
+  @Get(SUBPOENA_SERVICE_CERTIFICATE_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getSubpoenaServiceCertificatePdf(
     @Param('id') id: string,
@@ -262,10 +251,7 @@ export class FileController {
     )
   }
 
-  @Get([
-    'verdictServiceCertificate/:defendantId',
-    'verdictServiceCertificate/:defendantId/:fileName',
-  ])
+  @Get(VERDICT_SERVICE_CERTIFICATE_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getVerdictServiceCertificatePdf(
     @Param('id') id: string,
@@ -289,7 +275,7 @@ export class FileController {
     )
   }
 
-  @Get(['rulingSentToPrisonAdmin', 'rulingSentToPrisonAdmin/:fileName'])
+  @Get(RULING_SENT_TO_PRISON_ADMIN_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getIndictmentRulingSentToPrisonAdminPdf(
     @Param('id') id: string,
