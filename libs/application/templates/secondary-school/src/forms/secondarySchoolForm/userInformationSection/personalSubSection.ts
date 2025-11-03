@@ -12,7 +12,7 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
-import { checkIsActor, Routes } from '../../../utils'
+import { checkIsActor, getSchoolsData, Routes } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
@@ -170,26 +170,26 @@ export const personalSubSection = buildSubSection({
           component: 'UpdateExternalDataSchools',
           id: 'updateExternalDataSchools',
         }),
-        // buildHiddenInput({
-        //   id: 'applicationType.isOpenForAdmissionFreshman',
-        //   condition: (_, externalData) => {
-        //     const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
-        //       (x) => x.isOpenForAdmissionFreshman,
-        //     )
-        //     return !!schoolIsOpenForAdmission
-        //   },
-        //   defaultValue: true,
-        // }),
-        // buildHiddenInput({
-        //   id: 'applicationType.isOpenForAdmissionGeneral',
-        //   condition: (_, externalData) => {
-        //     const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
-        //       (x) => x.isOpenForAdmissionGeneral,
-        //     )
-        //     return !!schoolIsOpenForAdmission
-        //   },
-        //   defaultValue: true,
-        // }),
+        buildHiddenInput({
+          id: 'applicationType.isOpenForAdmissionFreshman',
+          condition: (_, externalData) => {
+            const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+              (x) => x.isOpenForAdmissionFreshman,
+            )
+            return !!schoolIsOpenForAdmission
+          },
+          defaultValue: true,
+        }),
+        buildHiddenInput({
+          id: 'applicationType.isOpenForAdmissionGeneral',
+          condition: (_, externalData) => {
+            const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+              (x) => x.isOpenForAdmissionGeneral,
+            )
+            return !!schoolIsOpenForAdmission
+          },
+          defaultValue: true,
+        }),
         // buildAlertMessageField({
         //   id: 'applicationTypeIsOpenForAdmissionAlertMessage',
         //   alertType: 'error',
