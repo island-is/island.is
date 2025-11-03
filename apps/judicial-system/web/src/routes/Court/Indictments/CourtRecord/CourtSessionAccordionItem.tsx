@@ -352,7 +352,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         const firstIndex = currentMergedDocuments.findIndex(
           (document) => mergedDocument.caseId === document.caseId,
         )
-        if (firstIndex === undefined || firstIndex === null) {
+        if (firstIndex === -1) {
           return
         }
         const lastIndex = firstIndex + newOrder.length - 1
@@ -1109,7 +1109,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 i,
                                 previousMergedCaseDocumentCount,
                               )
-                              console.log({ currentIndex })
 
                               return (
                                 <motion.div
