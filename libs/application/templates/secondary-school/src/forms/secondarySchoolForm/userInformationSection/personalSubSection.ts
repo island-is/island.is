@@ -6,9 +6,11 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  buildCustomField, buildHiddenInput,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import { ApplicationType } from '../../../shared'
 import {
   checkIsActor,
   Routes,
@@ -92,6 +94,127 @@ export const personalSubSection = buildSubSection({
             },
           ],
         }),
+
+        // Application type (Fresman vs General)
+        // buildDescriptionField({
+        //   id: 'applicationTypeInfo.subtitle',
+        //   condition: (_, externalData) => {
+        //     const isFreshmanExternalData = getValueViaPath<Student>(
+        //       externalData,
+        //       'studentInfo.data',
+        //     )?.isFreshman
+        //     return !isFreshmanExternalData
+        //   },
+        //   title: userInformation.applicationType.subtitle,
+        //   titleVariant: 'h5',
+        //   space: 3,
+        // }),
+        // buildRadioField({
+        //   id: 'applicationType.value',
+        //   condition: (_, externalData) => {
+        //     const isFreshmanExternalData = getValueViaPath<Student>(
+        //       externalData,
+        //       'studentInfo.data',
+        //     )?.isFreshman
+        //     return !isFreshmanExternalData
+        //   },
+        //   options: [
+        //     {
+        //       value: ApplicationType.FRESHMAN,
+        //       label: userInformation.applicationType.freshmanOptionTitle,
+        //     },
+        //     {
+        //       value: ApplicationType.GENERAL_APPLICATION,
+        //       label:
+        //       userInformation.applicationType.generalApplicationOptionTitle,
+        //     },
+        //   ],
+        //   width: 'full',
+        // }),
+
+        buildHiddenInput({
+          id: 'applicationType.value',
+          defaultValue: ApplicationType.GENERAL_APPLICATION
+        }),
+        // buildHiddenInput({
+        //   id: 'applicationType.value',
+        //   condition: (_, externalData) => {
+        //     const isFreshmanExternalData = getValueViaPath<Student>(
+        //       externalData,
+        //       'studentInfo.data',
+        //     )?.isFreshman
+        //
+        //     return !!isFreshmanExternalData
+        //   },
+        //   defaultValue: ApplicationType.FRESHMAN,
+        // }),
+        // buildAlertMessageField({
+        //   id: 'applicationTypeValueAlertMessage',
+        //   alertType: 'warning',
+        //   message: userInformation.applicationType.alertMessage,
+        //   condition: (answers, externalData) => {
+        //     const isFreshmanExternalData = getValueViaPath<Student>(
+        //       externalData,
+        //       'studentInfo.data',
+        //     )?.isFreshman
+        //     const isFreshmanAnswers = checkIsFreshman(answers)
+        //     return !isFreshmanExternalData && isFreshmanAnswers
+        //   },
+        // }),
+
+        // Validation for whether there are any schools open for admission depending on the application type selected above
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
+        // buildHiddenInput({
+        //   id: 'applicationType.isOpenForAdmissionFreshman',
+        //   condition: (_, externalData) => {
+        //     const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+        //       (x) => x.isOpenForAdmissionFreshman,
+        //     )
+        //     return !!schoolIsOpenForAdmission
+        //   },
+        //   defaultValue: true,
+        // }),
+        // buildHiddenInput({
+        //   id: 'applicationType.isOpenForAdmissionGeneral',
+        //   condition: (_, externalData) => {
+        //     const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+        //       (x) => x.isOpenForAdmissionGeneral,
+        //     )
+        //     return !!schoolIsOpenForAdmission
+        //   },
+        //   defaultValue: true,
+        // }),
+        // buildAlertMessageField({
+        //   id: 'applicationTypeIsOpenForAdmissionAlertMessage',
+        //   alertType: 'error',
+        //   title: error.errorNoSchoolOpenForAdmissionTitle,
+        //   message: error.errorNoSchoolOpenForAdmissionDescription,
+        //   condition: (answers) => {
+        //     const applicationType = getValueViaPath<ApplicationType>(
+        //       answers,
+        //       'applicationType.value',
+        //     )
+        //     if (!applicationType) return false
+        //
+        //     let isOpenForAdmission: boolean | undefined
+        //     if (checkIsFreshman(answers)) {
+        //       isOpenForAdmission = getValueViaPath<boolean>(
+        //         answers,
+        //         'applicationType.isOpenForAdmissionFreshman',
+        //       )
+        //     } else {
+        //       isOpenForAdmission = getValueViaPath<boolean>(
+        //         answers,
+        //         'applicationType.isOpenForAdmissionGeneral',
+        //       )
+        //     }
+        //
+        //     return !isOpenForAdmission
+        //   },
+        // }),
       ],
     }),
   ],
