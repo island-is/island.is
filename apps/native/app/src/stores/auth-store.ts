@@ -43,6 +43,10 @@ interface UserInfo {
   name: string
 }
 
+type KeychainAuthorizeCredentials = Awaited<
+  ReturnType<typeof Keychain.getGenericPassword>
+>
+
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
@@ -283,40 +287,61 @@ export async function readAuthorizeResult(): Promise<void> {
     return
   }
 
-  let hasOnboardedPinCode = false
   // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
-  hasOnboardedPinCode = preferencesStore.getState().hasOnboardedPinCode
+  const hasOnboardedPinCode =
+    preferencesStore.getState().hasOnboardedPinCode ?? false
 
   // Attempt to restore the last known authorization data from the secure keychain.
-  let keychainResult: Awaited<ReturnType<typeof Keychain.getGenericPassword>>
+  const keychainResult = await readStoredAuthorizeCredentials()
+  if (!keychainResult) {
+    return
+  }
+
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    await forceLogoutAfterFreshInstall()
+    return
+  }
+
+  const restoredAuthorizeResult = parseAuthorizeResult(keychainResult.password)
+  if (!restoredAuthorizeResult) {
+    return
+  }
+
+  // Persist the restored authorization result in memory for the rest of the session.
+  authStore.setState({ authorizeResult: restoredAuthorizeResult })
+}
+
+async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCredentials> {
   try {
-    keychainResult = await Keychain.getGenericPassword({
+    return await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
       accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
     })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
-    keychainResult = false
+    return false
   }
+}
 
-  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
-  if (!hasOnboardedPinCode && keychainResult && Platform.OS === 'ios') {
-    try {
-      await authStore.getState().logout(true)
-    } catch (err) {
-      console.log('Unable to force logout after fresh install: ', err)
-    }
-    return
+async function forceLogoutAfterFreshInstall(): Promise<void> {
+  try {
+    await authStore.getState().logout(true)
+  } catch (err) {
+    console.log('Unable to force logout after fresh install: ', err)
   }
+}
 
-  if (keychainResult) {
-    try {
-      // Persist the restored authorization result in memory for the rest of the session.
-      const authRes = JSON.parse(keychainResult.password)
-      authStore.setState({ authorizeResult: authRes })
-    } catch (err) {
-      console.log('Unable to parse authorize result: ', err)
-    }
+function parseAuthorizeResult(
+  serializedAuthorizeResult: string,
+): AuthorizeResult | RefreshResult | undefined {
+  try {
+    return JSON.parse(serializedAuthorizeResult) as
+      | AuthorizeResult
+      | RefreshResult
+  } catch (err) {
+    console.log('Unable to parse authorize result: ', err)
+    return undefined
   }
 }
 
