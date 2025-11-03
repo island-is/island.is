@@ -50,7 +50,7 @@ export class VmstApplicationsBankInformationInput {
   pensionFund?: VmstApplicationsBankInformationPensionFundInput
 
   @Field()
-  doNotPayToUnion!: boolean
+  doNotPayToUnion?: boolean
 
   @Field(() => VmstApplicationsBankInformationUnionInput, { nullable: true })
   union?: VmstApplicationsBankInformationUnionInput
