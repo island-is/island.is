@@ -48,6 +48,8 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
+  HealthMedicineDelegationDetail = '/heilsa/lyf/lyfjaumbod/:id',
+  HealthMedicineDelegationAdd = '/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',

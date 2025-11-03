@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
   addDelegation: {
-    defaultMessage: 'Bæta við umboði',
+    defaultMessage: 'Bæta við heimild',
     id: 'sp.health:add-delegation',
   },
   aids: {
@@ -437,7 +437,7 @@ export const messages = defineMessages({
     id: 'sp.health:delegation-type',
   },
   deleteDelegation: {
-    defaultMessage: 'Eyða umboði',
+    defaultMessage: 'Eyða heimild',
     id: 'sp.health:delete-delegation',
   },
   dentist: {
@@ -575,10 +575,6 @@ export const messages = defineMessages({
   generalVaccinations: {
     defaultMessage: 'Almennar bólusetningar',
     id: 'sp.health:general-vaccinations',
-  },
-  grantMedicineDelegation: {
-    defaultMessage: 'Veita lyfjaumboð',
-    id: 'sp.health:grant-medicine-delegation',
   },
   hasHealthInsurance: {
     defaultMessage: 'Sjúkratrygging',
@@ -831,13 +827,33 @@ export const messages = defineMessages({
     id: 'sp.health:max-unit-refund',
   },
   medicineDelegation: {
-    defaultMessage: 'Lyfjaumboð',
+    defaultMessage: 'Lyfjaheimild',
     id: 'sp.health:medicine-delegation',
+  },
+  permitTo: {
+    defaultMessage: 'Heimild til að: {arg}',
+    id: 'sp.health:permit-to',
+  },
+  pickupMedicine: {
+    defaultMessage: 'Sækja lyf í apóteki.',
+    id: 'sp.health:pickup-medicine',
+  },
+  pickupMedicineAndLookup: {
+    defaultMessage: 'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+    id: 'sp.health:pickup-medicine-and-lookup',
+  },
+  choosePersonToGivePermit: {
+    defaultMessage: 'Veldu aðila sem má sækja lyfin þín í apóteki',
+    id: 'sp.health:choose-person-to-give-permit',
   },
   medicineDelegationIntroText: {
     defaultMessage:
-      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstakt umboð fyrir þig. Hér getur þú skráð þá aðila sem þú veitir umboð til að sækja lyf í apótek fyrir þig.',
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð þá aðila sem þú veitir heimild til að sækja lyf í apótek fyrir þig.',
     id: 'sp.health:medicine-delegation-intro-text',
+  },
+  medicineDelegationReadAboutLink: {
+    defaultMessage: 'https://island.is/s/landlaeknir/frett',
+    id: 'sp.health:medicine-delegation-read-about-link',
   },
   referrals: {
     id: 'sp.health:referrals',
@@ -959,6 +975,10 @@ export const messages = defineMessages({
   myRegistration: {
     defaultMessage: 'Mín skráning',
     id: 'sp.health:my-registration',
+  },
+  nameHuman: {
+    defaultMessage: 'Nafn',
+    id: 'sp.health:name-human',
   },
   name: {
     defaultMessage: 'Heiti',
@@ -1822,6 +1842,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hve lengi viltu að aðgangurinn gildi?',
     id: 'sp.health:how-long-should-permit-apply',
   },
+  howLongShouldDelegationApply: {
+    defaultMessage: 'Hve lengi viltu að heimildin gildi?',
+    id: 'sp.health:how-long-should-delegation-apply',
+  },
   howLongDescription: {
     defaultMessage:
       'Þú getur valið ákveðið tímabil eða allt að 3 ár fram í tímann.',
@@ -1918,6 +1942,10 @@ export const messages = defineMessages({
     defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-add-new-permit',
   },
+  areYouSureAboutDeletingDelegation: {
+    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
+    id: 'sp.health:are-you-sure-about-deleting-delegation',
+  },
   cancel: {
     defaultMessage: 'Hætta við',
     id: 'sp.health:cancel',
@@ -1929,6 +1957,15 @@ export const messages = defineMessages({
   permitCreated: {
     defaultMessage: 'Nýrri heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
+  },
+  permitDeleted: {
+    defaultMessage: 'Heimild hefur verið eytt',
+    id: 'sp.health:permit-deleted',
+  },
+  permitDeletedError: {
+    defaultMessage:
+      'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:permit-deleted-error',
   },
   permitCreatedError: {
     defaultMessage:
@@ -1993,6 +2030,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkdómsgreiningar, ofnæmi og lífsógnandi sjúkdómar, yfirlit yfir núverandi lyf, ígræði, t.d. hjartagangráður og bjargráður, bólusetningar, nýlegar meðferðir og meðganga.',
     id: 'sp.health:patient-data-shared-description',
+  },
+  invalidNationalId: {
+    defaultMessage: 'Tókst ekki að sækja nafn út frá kennitölu.',
+    id: 'sp.health:invalid-national-id',
   },
   manyDispensationLocations: {
     id: 'sp.health:many-dispensation-locations',
