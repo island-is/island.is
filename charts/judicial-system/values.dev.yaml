@@ -75,6 +75,7 @@ judicial-system-api:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -192,6 +193,7 @@ judicial-system-backend:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -298,6 +300,7 @@ judicial-system-digital-mailbox-api:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -366,6 +369,7 @@ judicial-system-message-handler:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -433,6 +437,7 @@ judicial-system-scheduler:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -504,6 +509,7 @@ judicial-system-web:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -569,6 +575,7 @@ judicial-system-xrd-api:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534

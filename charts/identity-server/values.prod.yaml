@@ -54,6 +54,7 @@ auth-admin-web:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -173,6 +174,7 @@ identity-server:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -296,6 +298,7 @@ services-auth-admin-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -408,6 +411,7 @@ services-auth-delegation-api:
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -551,6 +555,7 @@ services-auth-ids-api:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -631,6 +636,7 @@ services-auth-ids-api-cleanup:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -723,6 +729,7 @@ services-auth-personal-representative:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -800,6 +807,7 @@ services-auth-personal-representative-public:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -908,6 +916,7 @@ services-auth-public-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
