@@ -29,13 +29,16 @@ type ShortcutItemCard = ShortcutItem & {
 
 type Shortcuts = {
   title?: string
-} & ({
-  variant: 'tags'
-  items: Array<ShortcutItem>
-} | {
-  variant: 'cards'
-  items: Array<ShortcutItemCard>
-})
+} & (
+  | {
+      variant: 'tags'
+      items: Array<ShortcutItem>
+    }
+  | {
+      variant: 'cards'
+      items: Array<ShortcutItemCard>
+    }
+)
 
 export type HeaderProps = {
   title: string
@@ -89,13 +92,25 @@ export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
       return
     }
 
-    const { title, variant, items} = props.shortcuts;
+    const { title, variant, items } = props.shortcuts
 
-    const cardsOrTags = variant === 'cards'
-      ? items.map(({href, title, imgSrc, imgAlt}) => <CardWithFeaturedItems key={`${href}-${title}`} featuredItems={[]} href={href} heading={title} imgSrc={imgSrc} imgAlt={imgAlt}/>)
-      : items.map(({href, title, variant}) => <Tag key={`${href}-${title}`} href={href} variant={variant}>
-        {title}
-      </Tag>)
+    const cardsOrTags =
+      variant === 'cards'
+        ? items.map(({ href, title, imgSrc, imgAlt }) => (
+            <CardWithFeaturedItems
+              key={`${href}-${title}`}
+              featuredItems={[]}
+              href={href}
+              heading={title}
+              imgSrc={imgSrc}
+              imgAlt={imgAlt}
+            />
+          ))
+        : items.map(({ href, title, variant }) => (
+            <Tag key={`${href}-${title}`} href={href} variant={variant}>
+              {title}
+            </Tag>
+          ))
 
     return (
       <Box marginTop={4}>
@@ -104,9 +119,7 @@ export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
             {title}
           </Text>
         )}
-        <Inline space={1}>
-          {cardsOrTags}
-        </Inline>
+        <Inline space={1}>{cardsOrTags}</Inline>
       </Box>
     )
   }

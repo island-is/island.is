@@ -47,6 +47,6 @@ export const m = {
     searchInputPlaceholder: {
       id: 'web.openinvoices:overview.searchInputPlaceholder',
       defaultMessage: 'Leita í reikningum',
-    }
+    },
   }),
 }

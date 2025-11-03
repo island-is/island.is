@@ -1,26 +1,38 @@
-import { useMemo, useState } from "react";
-import { useIntl } from "react-intl";
-import { useWindowSize } from "react-use";
+import { useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
-import { parseAsInteger, useQueryState } from "next-usequerystate";
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
-import { Box, Breadcrumbs, Filter, FilterInput, Pagination, Stack,Table as T,Text,  } from "@island.is/island-ui/core";
-import { theme } from "@island.is/island-ui/theme";
-import { CustomPageUniqueIdentifier } from "@island.is/shared/types";
+import {
+  Box,
+  Breadcrumbs,
+  Filter,
+  FilterInput,
+  Pagination,
+  Stack,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
 import { Locale } from '@island.is/shared/types'
-import { formatCurrency } from "@island.is/shared/utils";
-import { CustomPageLayoutHeader, CustomPageLayoutWrapper } from "@island.is/web/components";
-import { Query } from "@island.is/web/graphql/schema";
-import { useLinkResolver } from "@island.is/web/hooks";
-import useContentfulId from "@island.is/web/hooks/useContentfulId";
-import useLocalLinkTypeResolver from "@island.is/web/hooks/useLocalLinkTypeResolver";
-import { withMainLayout } from "@island.is/web/layouts/main";
+import { formatCurrency } from '@island.is/shared/utils'
+import {
+  CustomPageLayoutHeader,
+  CustomPageLayoutWrapper,
+} from '@island.is/web/components'
+import { Query } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
-import { CustomScreen, withCustomPageWrapper } from "../../CustomPage";
-import SidebarLayout from "../../Layouts/SidebarLayout";
-import { m } from "../messages";
+import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
+import SidebarLayout from '../../Layouts/SidebarLayout'
+import { m } from '../messages'
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 12
 
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
@@ -51,9 +63,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
 
-  const [totalHits, setTotalHits] = useState<number | undefined>(
-    0,
-  )
+  const [totalHits, setTotalHits] = useState<number | undefined>(0)
 
   const totalPages = useMemo(() => {
     if (!totalHits) {
@@ -134,36 +144,18 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData
-                    scope="col"
-                    cellPadding={'16px'}
-                  >
-                    <Text
-                      variant="medium"
-                      fontWeight="semiBold"
-                    >
+                  <T.HeadData scope="col" cellPadding={'16px'}>
+                    <Text variant="medium" fontWeight="semiBold">
                       Seljandi
                     </Text>
                   </T.HeadData>
-                  <T.HeadData
-                    scope="col"
-                    cellPadding={'16px'}
-                  >
-                    <Text
-                      variant="medium"
-                      fontWeight="semiBold"
-                    >
+                  <T.HeadData scope="col" cellPadding={'16px'}>
+                    <Text variant="medium" fontWeight="semiBold">
                       Kaupandi
                     </Text>
                   </T.HeadData>
-                  <T.HeadData
-                    scope="col"
-                    cellPadding={'16px'}
-                  >
-                    <Text
-                      variant="medium"
-                      fontWeight="semiBold"
-                    >
+                  <T.HeadData scope="col" cellPadding={'16px'}>
+                    <Text variant="medium" fontWeight="semiBold">
                       Upphæð
                     </Text>
                   </T.HeadData>
@@ -208,8 +200,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         </SidebarLayout>
       </Box>
     </CustomPageLayoutWrapper>
-)}
-
+  )
+}
 
 interface OpenInvoicesOverviewProps {
   organization?: Query['getOrganization']

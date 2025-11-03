@@ -120,7 +120,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
               title: formatMessage(m.bullets.companies),
               href: searchUrl + '?query=fyrirtæki',
             },
-          ]
+          ],
         }}
         featuredImage={formatMessage(m.home.featuredImage)}
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
