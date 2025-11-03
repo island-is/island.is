@@ -8,13 +8,14 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, OrganizationSubType } from '../../../utils/constants'
+import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getSelectedSchoolSubType,
 } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
+import { subTypeWithExpectedEndDate } from '../../../utils/conditionUtils'
 
 export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
@@ -62,11 +63,7 @@ export const startingSchoolSubSection = buildSubSection({
             )
 
             return (
-              selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+              subTypeWithExpectedEndDate(selectedSubType)
             )
           },
         }),
@@ -89,11 +86,7 @@ export const startingSchoolSubSection = buildSubSection({
             )
 
             return (
-              (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-                selectedSubType ===
-                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-                selectedSubType ===
-                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+              subTypeWithExpectedEndDate(selectedSubType) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -116,11 +109,7 @@ export const startingSchoolSubSection = buildSubSection({
             )
 
             return (
-              (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-                selectedSubType ===
-                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-                selectedSubType ===
-                  OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+              subTypeWithExpectedEndDate(selectedSubType) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )

@@ -7,6 +7,7 @@ import {
 import {
   ApplicationFeatureKey,
   LanguageEnvironmentOptions,
+  OrganizationSubType,
   PayerOption,
 } from './constants'
 import {
@@ -116,5 +117,17 @@ export const needsPayerApproval = (application: Application) => {
       application.externalData,
       ApplicationFeatureKey.PAYMENT_INFO,
     ) && hasOtherPayer(application.answers)
+  )
+}
+
+export const subTypeWithExpectedEndDate = (
+  selectedSubType: OrganizationSubType | ''
+) => {
+  if (!selectedSubType) return false
+
+  return (
+    selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+    selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
   )
 }

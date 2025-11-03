@@ -6,8 +6,8 @@ import {
   getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
   needsPayerApproval,
-  OrganizationSubType,
   ReasonForApplicationOptions,
+  subTypeWithExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -152,11 +152,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...((selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-              selectedSubType ===
-                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+            ...(subTypeWithExpectedEndDate(selectedSubType) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
