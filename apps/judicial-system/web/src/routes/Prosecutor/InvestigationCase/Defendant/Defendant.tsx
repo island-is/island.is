@@ -165,11 +165,13 @@ const Defendant = () => {
       <FormContentContainer>
         <Box marginBottom={10}>
           <PageTitle>{formatMessage(m.heading)}</PageTitle>
-          <ProsecutorCaseInfo
-            workingCase={workingCase}
-            hideDefendants
-            hideCourt
-          />
+          <Box marginBottom={5}>
+            <ProsecutorCaseInfo
+              workingCase={workingCase}
+              hideDefendants
+              hideCourt
+            />
+          </Box>
           <Box component="section" marginBottom={5}>
             <SectionHeading title="Varnaraðili" />
             <AnimatePresence>

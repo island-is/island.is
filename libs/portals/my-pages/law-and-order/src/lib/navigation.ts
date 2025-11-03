@@ -37,6 +37,11 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
               path: LawAndOrderPaths.SubpoenaDetail,
               navHide: true,
             },
+            {
+              name: m.case,
+              path: LawAndOrderPaths.VerdictDetail,
+              navHide: true,
+            },
           ],
         },
       ],
