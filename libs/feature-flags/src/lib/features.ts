@@ -37,6 +37,7 @@ export enum Features {
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
+  RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

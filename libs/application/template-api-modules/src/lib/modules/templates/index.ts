@@ -1,3 +1,5 @@
+import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
+import { RegistrationOfNewPropertyNumbersService } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service'
 import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
 import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
 import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
@@ -264,6 +266,7 @@ export const modules = [
   TerminateRentalAgreementModule,
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
+  RegistrationOfNewPropertyNumbersModule,
 ]
 
 export const services = [
@@ -354,4 +357,5 @@ export const services = [
   TerminateRentalAgreementService,
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
+  RegistrationOfNewPropertyNumbersService,
 ]

@@ -1,3 +1,9 @@
 {{#> center}}
-  <img style="height: 24px" src="{{{src}}}" alt="{{{alt}}}" />
+  <img
+    {{#unless removeFixedHeight}}
+      style="height: 32px"
+    {{/unless}}
+    src="{{{src}}}"
+    alt="{{{alt}}}"
+  />
 {{/center}}
