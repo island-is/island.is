@@ -57,7 +57,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
         items: [
           {
             title: 'Yfirlit reikninga',
-            href: `island.is`,
+            href: linkResolver('openinvoicesoverview', [], locale).href
           },
           {
             title: 'Reikningar',

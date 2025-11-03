@@ -191,6 +191,10 @@ export const routesTemplate = {
     is: '/opnir-reikningar',
     en: '/en/open-invoices',
   },
+  openinvoicesoverview: {
+    is: '/opnir-reikningar/yfirlit',
+    en: '/en/open-invoices/overview',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',

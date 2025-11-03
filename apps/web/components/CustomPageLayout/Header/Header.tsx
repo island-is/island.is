@@ -53,8 +53,8 @@ export type ImageProps = HeaderProps & {
 }
 
 export type NoImageProps = HeaderProps & {
-  featuredImage: never
-  featuredImageAlt: never
+  featuredImage?: never
+  featuredImageAlt?: never
 }
 
 export type HeaderWithImageProps = ImageProps | NoImageProps
