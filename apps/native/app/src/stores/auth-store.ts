@@ -300,7 +300,7 @@ export async function readAuthorizeResult(): Promise<void> {
   }
 
   // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
-  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+  if (!hasOnboardedPinCode && keychainResult && Platform.OS === 'ios') {
     try {
       await authStore.getState().logout(true)
     } catch (err) {
