@@ -62,9 +62,7 @@ export const startingSchoolSubSection = buildSubSection({
               externalData,
             )
 
-            return (
-              subTypeWithExpectedEndDate(selectedSubType)
-            )
+            return subTypeWithExpectedEndDate(selectedSubType)
           },
         }),
         buildDescriptionField({

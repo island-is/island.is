@@ -121,13 +121,14 @@ export const needsPayerApproval = (application: Application) => {
 }
 
 export const subTypeWithExpectedEndDate = (
-  selectedSubType: OrganizationSubType | ''
+  selectedSubType: OrganizationSubType | '',
 ) => {
   if (!selectedSubType) return false
 
   return (
     selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-    selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
     selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
   )
 }
