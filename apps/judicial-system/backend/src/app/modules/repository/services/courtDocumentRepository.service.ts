@@ -133,12 +133,12 @@ export class CourtDocumentRepositoryService {
       }
 
       // Make space for the next court session document
-      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId,
         courtSessionId,
-        undefined,
-        options?.transaction,
-      )
+        courtDocumentId: undefined,
+        transaction: options?.transaction,
+      })
 
       const courtDocument = await this.courtDocumentModel.create(
         { ...data, caseId, courtSessionId, documentOrder: nextOrder },
@@ -411,13 +411,14 @@ export class CourtDocumentRepositoryService {
       this.logger.debug(
         `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
-      // get next order for the merged documents
-      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
-        parentCaseId,
-        parentCaseCourtSessionId,
-        undefined,
+
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
+        caseId: parentCaseId,
+        courtSessionId: parentCaseCourtSessionId,
+        isMergedDocumentOrder: true,
+        courtDocumentId: undefined,
         transaction,
-      )
+      })
       this.logger.debug({ nextOrder })
 
       // update all merging court documents
@@ -455,12 +456,12 @@ export class CourtDocumentRepositoryService {
       )
 
       // Make space for the next court session document
-      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId,
         courtSessionId,
         courtDocumentId,
-        options?.transaction,
-      )
+        transaction: options?.transaction,
+      })
 
       const [numberOfAffectedRows, courtDocuments] =
         await this.courtDocumentModel.update(
@@ -619,12 +620,19 @@ export class CourtDocumentRepositoryService {
     }
   }
 
-  private async makeNextCourtSessionDocumentOrderAvailable(
-    caseId: string,
-    courtSessionId: string,
-    courtDocumentId: string | undefined,
-    transaction: Transaction | undefined,
-  ) {
+  private async makeNextCourtSessionDocumentOrderAvailable({
+    caseId,
+    courtSessionId,
+    isMergedDocumentOrder,
+    courtDocumentId,
+    transaction,
+  }: {
+    caseId: string
+    courtSessionId: string
+    isMergedDocumentOrder?: boolean
+    courtDocumentId: string | undefined
+    transaction: Transaction | undefined
+  }) {
     // Get all court sessions and filed documents for the case
     const courtSessions = await this.courtSessionModel.findAll({
       where: { caseId },
@@ -668,7 +676,8 @@ export class CourtDocumentRepositoryService {
           s.filedDocuments[s.filedDocuments.length - 1].documentOrder + 1
       }
 
-      if (s.id === courtSessionId) {
+      // for next order in file documents, we don't consider merged documents within the same court session
+      if (!isMergedDocumentOrder && s.id === courtSessionId) {
         break
       }
 
@@ -679,6 +688,10 @@ export class CourtDocumentRepositoryService {
         if (lastMergedDocument.mergedDocumentOrder) {
           nextOrder = lastMergedDocument.mergedDocumentOrder + 1
         }
+      }
+
+      if (s.id === courtSessionId) {
+        break
       }
     }
 
@@ -694,7 +707,6 @@ export class CourtDocumentRepositoryService {
       },
     )
     const mergedCaseIds = this.getMergedCaseIds(courtSessions)
-
     if (mergedCaseIds.length > 0) {
       // Increase order of potential merged documents after the current position
       await this.courtDocumentModel.update(
