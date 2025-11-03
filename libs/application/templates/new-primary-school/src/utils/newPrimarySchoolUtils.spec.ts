@@ -10,6 +10,7 @@ import { uuid } from 'uuidv4'
 import {
   hasOtherGuardian,
   hasOtherPayer,
+  needsOtherGuardianApproval,
   needsPayerApproval,
   shouldShowPage,
   showPreferredLanguageFields,
@@ -47,12 +48,15 @@ const buildApplication = (data: {
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
-    const answers = {}
+    const answers = {
+      childNationalId: '1212121212',
+    }
     const externalData = {
       children: {
         data: [
           {
-            fullName: 'Stúfur Maack ',
+            fullName: 'Stúfur Maack',
+            nationalId: '1212121212',
             otherParent: {
               nationalId: '1234567890',
               name: 'John Doe',
@@ -61,17 +65,19 @@ describe('hasOtherGuardian', () => {
         ],
       },
     } as unknown as ExternalData
-
     expect(hasOtherGuardian(answers, externalData)).toBe(true)
   })
 
   it('should return false if otherParent does not exist in externalData', () => {
-    const answers = {}
+    const answers = {
+      childNationalId: '1212121212',
+    }
     const externalData = {
       children: {
         data: [
           {
             fullName: 'Stúfur Maack ',
+            nationalId: '1212121212',
           },
         ],
       },
@@ -266,7 +272,7 @@ describe('shouldShowPage', () => {
         date: new Date(),
         status: 'success',
       },
-    }
+    } as ExternalData
 
     expect(
       shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
@@ -300,7 +306,7 @@ describe('shouldShowPage', () => {
         date: new Date(),
         status: 'success',
       },
-    }
+    } as ExternalData
 
     expect(
       shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
@@ -453,5 +459,147 @@ describe('needsPayerApproval', () => {
     })
 
     expect(needsPayerApproval(application2)).toBe(false)
+  })
+})
+
+describe('needsOtherGuardianApproval', () => {
+  it('should return true if the application feature for the selected school includes ADDITIONAL_REQUESTORS key and otherParent exists in externalData', () => {
+    const schoolId = uuid()
+    const application = buildApplication({
+      answers: {
+        childNationalId: '1212121212',
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+      },
+      externalData: {
+        children: {
+          data: [
+            {
+              fullName: 'Stúfur Maack',
+              nationalId: '1212121212',
+              otherParent: {
+                nationalId: '1234567890',
+                name: 'John Doe',
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsOtherGuardianApproval(application)).toBe(true)
+  })
+
+  it('should return false if the application feature for the selected school does not include ADDITIONAL_REQUESTORS key or otherParent does not exist in externalData', () => {
+    const schoolId = uuid()
+    const application1 = buildApplication({
+      answers: {
+        childNationalId: '1212121212',
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+      },
+      externalData: {
+        children: {
+          data: [
+            {
+              fullName: 'Stúfur Maack',
+              nationalId: '1212121212',
+              otherParent: {
+                nationalId: '1234567890',
+                name: 'John Doe',
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.APPLICANT_INFO },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsOtherGuardianApproval(application1)).toBe(false)
+
+    const application2 = buildApplication({
+      answers: {
+        childNationalId: '1212121212',
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+      },
+      externalData: {
+        children: {
+          data: [
+            {
+              fullName: 'Stúfur Maack',
+              nationalId: '1212121212',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsOtherGuardianApproval(application2)).toBe(false)
   })
 })

@@ -210,4 +210,174 @@ describe('New Primary School Template', () => {
     expect(hasChanged).toBe(true)
     expect(newState).toBe(States.DRAFT)
   })
+
+  it('should transition from draft to otherGuardianApproval on submit', () => {
+    const schoolId = uuid()
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.DRAFT,
+        answers: {
+          childNationalId: '1212121212',
+          newSchool: {
+            municipality: '3000',
+            school: schoolId,
+          },
+        },
+        externalData: {
+          children: {
+            data: [
+              {
+                fullName: 'Stúfur Maack',
+                nationalId: '1212121212',
+                otherParent: {
+                  nationalId: '1234567890',
+                  name: 'John Doe',
+                },
+              },
+            ],
+            date: new Date(),
+            status: 'success',
+          },
+          schools: {
+            data: [
+              {
+                id: schoolId,
+                settings: {
+                  applicationConfigs: [
+                    {
+                      applicationFeatures: [
+                        { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
+                      ],
+                    },
+                  ],
+                },
+              },
+            ],
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.OTHER_GUARDIAN_APPROVAL)
+  })
+
+  it('should transition from otherGuardianApproval to payerApproval on approve', () => {
+    const schoolId = uuid()
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.OTHER_GUARDIAN_APPROVAL,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: schoolId,
+          },
+          payer: {
+            option: PayerOption.OTHER,
+            other: {
+              name: 'John Doe',
+              nationalId: '1234567890',
+            },
+          },
+        },
+        externalData: {
+          schools: {
+            data: [
+              {
+                id: schoolId,
+                settings: {
+                  applicationConfigs: [
+                    {
+                      applicationFeatures: [
+                        { key: ApplicationFeatureKey.PAYMENT_INFO },
+                        { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
+                      ],
+                    },
+                  ],
+                },
+              },
+            ],
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.APPROVE,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.PAYER_APPROVAL)
+  })
+
+  it('should transition from otherGuardianApproval to submitted on approve', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.OTHER_GUARDIAN_APPROVAL,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: uuid(),
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.APPROVE,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.SUBMITTED)
+  })
+
+  it('should transition from otherGuardianApproval to otherGuardianRejected on reject', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.OTHER_GUARDIAN_APPROVAL,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: uuid(),
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.REJECT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.OTHER_GUARDIAN_REJECTED)
+  })
+
+  it('should transition from otherGuardianRejected to draft on edit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.OTHER_GUARDIAN_REJECTED,
+        answers: {
+          newSchool: {
+            municipality: '3000',
+            school: uuid(),
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.EDIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.DRAFT)
+  })
 })

@@ -3,9 +3,11 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  getOtherGuardian,
   getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
   needsPayerApproval,
+  needsOtherGuardianApproval,
   OrganizationSubType,
   ReasonForApplicationOptions,
 } from '@island.is/application/templates/new-primary-school'
@@ -104,8 +106,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
       applicant: {
         nationalId: childInfo?.nationalId || '',

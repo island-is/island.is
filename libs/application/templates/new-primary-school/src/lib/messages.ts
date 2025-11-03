@@ -1086,84 +1086,109 @@ export const newPrimarySchoolMessages: MessageDir = {
   }),
 }
 
-export const payerApprovalMessages = defineMessages({
-  title: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.approval.title',
-    defaultMessage: 'Greiðandi skólagjalda',
-    description: 'english description',
-  },
-  description: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.approval.description',
-    defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
-    description: 'english description',
-  },
-  tabTitle: {
-    id: 'nps.application:payer.approval.tab.title',
-    defaultMessage: 'Staðfesting greiðanda',
-    description: 'Payer confirmation',
-  },
-  childName: {
-    id: 'nps.application:payer.approval.child.name',
-    defaultMessage: 'Nafn barns',
-    description: 'Child’s name',
-  },
-  confirm: {
-    id: 'nps.application:payer.approval.confirm',
-    defaultMessage: 'Staðfesta',
-    description: 'Confirm',
-  },
-  reject: {
-    id: 'nps.application:payer.approval.reject',
-    defaultMessage: 'Hafna',
-    description: 'Reject',
-  },
-  thanksDescription: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.approval.thanks.description',
-    defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
-    description: 'english description',
-  },
-})
+export const assigneeMessages: MessageDir = {
+  shared: defineMessages({
+    childName: {
+      id: 'nps.application:assignee.shared.child.name',
+      defaultMessage: 'Nafn barns',
+      description: 'Child’s name',
+    },
+    approve: {
+      id: 'nps.application:assignee.shared.approve',
+      defaultMessage: 'Samþykkja',
+      description: 'Approve',
+    },
+    reject: {
+      id: 'nps.application:assignee.shared.reject',
+      defaultMessage: 'Hafna',
+      description: 'Reject',
+    },
+    editApplication: {
+      id: 'nps.application:assignee.shared.edit.application',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
+  }),
 
-export const payerRejectedMessages = defineMessages({
-  title: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.rejected.title',
-    defaultMessage: 'Greiðandi skólagjalda',
-    description: 'english description',
-  },
-  description: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.rejected.description',
-    defaultMessage:
-      'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
-    description: 'english description',
-  },
-  payerName: {
-    id: 'nps.application:payer.rejected.payer.name',
-    defaultMessage: 'Nafn greiðanda',
-    description: 'Payer name',
-  },
-  alertMessage: {
-    // TODO: MMS needs to update the text
-    id: 'nps.application:payer.rejected.alert.message',
-    defaultMessage:
-      'Vinsamlegast farðu inn í umsóknina og veldu annan greiðanda',
-    description: 'english description',
-  },
-  tabTitle: {
-    id: 'nps.application:payer.rejected.tab.title',
-    defaultMessage: 'Höfnun greiðanda',
-    description: 'Payer rejection',
-  },
-  edit: {
-    id: 'nps.application:payer.rejected.edit',
-    defaultMessage: 'Breyta umsókn',
-    description: 'Edit application',
-  },
-})
+  otherGuardian: defineMessages({
+    title: {
+      id: 'nps.application:assignee.other.guardian.title',
+      defaultMessage: 'Undirritun beggja forsjáraðila',
+      description: 'Signature of both guardians',
+    },
+    approvalDescription: {
+      id: 'nps.application:assignee.other.guardian.approval.description',
+      defaultMessage:
+        'Óskað hefur verið eftir undirritun þinni á umsókn fyrir barnið þitt í eftirfarandi skóla',
+      description:
+        'Your signature has been requested on an application for your child’s enrolment in the following school',
+    },
+    thanksDescription: {
+      id: 'nps.application:assignee.other.guardian.thanks.description',
+      defaultMessage: 'Takk fyrir! Undirritun þín hefur verið skráð.',
+      description: 'Thank you! Your signature has been registered',
+    },
+    rejectedDescription: {
+      id: 'nps.application:assignee.other.guardian.rejected.description',
+      defaultMessage:
+        'Forsjáraðili hefur hafnað því að undirrita umsókn fyrir barnið ykkar í eftirfarandi skóla',
+      description:
+        'The guardian has refused to sign your child’s application for the following school',
+    },
+    name: {
+      id: 'nps.application:assignee.other.guardian.name',
+      defaultMessage: 'Nafn forsjáraðila',
+      description: 'Name of guardian',
+    },
+    alertMessage: {
+      id: 'nps.application:assignee.other.guardian.alert.message',
+      defaultMessage:
+        'Ekki er hægt að senda inn umsókn nema að undirritun beggja forsjáraðila liggi fyrir.',
+      description:
+        'Unable to submit application without the signatures of both guardians',
+    },
+  }),
+
+  payer: defineMessages({
+    title: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.title',
+      defaultMessage: 'Greiðandi skólagjalda',
+      description: 'english description',
+    },
+    approvalDescription: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.approval.description',
+      defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
+      description: 'english description',
+    },
+    thanksDescription: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.thanks.description',
+      defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
+      description: 'english description',
+    },
+    rejectedDescription: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.rejected.description',
+      defaultMessage:
+        'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
+      description: 'english description',
+    },
+    name: {
+      id: 'nps.application:assignee.payer.name',
+      defaultMessage: 'Nafn greiðanda',
+      description: 'Payer name',
+    },
+    alertMessage: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.alert.message',
+      defaultMessage:
+        'Vinsamlegast farðu inn í umsóknina og veldu annan greiðanda',
+      description: 'english description',
+    },
+  }),
+}
 
 export const errorMessages = defineMessages({
   phoneNumber: {
@@ -1249,13 +1274,37 @@ export const statesMessages = defineMessages({
 export const pendingActionMessages = defineMessages({
   applicationApprovedDescription: {
     id: 'nps.application:pending.action.application.approved.description',
-    defaultMessage: 'Umsókn um grunnskóla samþykkt',
+    defaultMessage: 'Umsókn í grunnskóla samþykkt',
     description: 'The application for primary school has been approved',
   },
   applicationRejectedDescription: {
     id: 'nps.application:pending.action.application.rejected.description',
-    defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
+    defaultMessage: 'Umsókn í grunnskóla hefur verið hafnað',
     description: 'The application for primary school has been rejected',
+  },
+  otherGuardianApprovalAssigneeDescription: {
+    id: 'nps.application:pending.action.other.guardian.approval.assignee.description',
+    defaultMessage:
+      'Óskað hefur verið eftir undirritun þinni á umsókn fyrir barnið þitt í skóla.',
+    description:
+      'Your signature has been requested on an application for your child’s enrolment in school.',
+  },
+  otherGuardianApprovalApplicantDescription: {
+    id: 'nps.application:pending.action.other.guardian.approval.applicant.description',
+    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá forsjáraðila.',
+    description: 'Your application is pending approval from guardian.',
+  },
+  otherGuardianRejectedTitle: {
+    id: 'nps.application:pending.action.other.guardian.rejected.title',
+    defaultMessage: 'Forsjáraðili hefur hafnað umsókn',
+    description: 'The guardian has rejected the application',
+  },
+  otherGuardianRejectedDescription: {
+    id: 'nps.application:pending.action.other.guardian.rejected.description',
+    defaultMessage:
+      'Forsjáraðili hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
+    description:
+      'The application has been rejected by a guardian, please make changes to the application.',
   },
   payerApprovalAssigneeDescription: {
     id: 'nps.application:pending.action.payer.approval.assignee.description',
@@ -1285,6 +1334,16 @@ export const pendingActionMessages = defineMessages({
 })
 
 export const historyMessages = defineMessages({
+  otherGuardianApprovalApproved: {
+    id: 'nps.application:history.other.guardian.approval.approved',
+    defaultMessage: 'Forsjáraðili samþykkti umsókn',
+    description: 'The guardian approved the application',
+  },
+  otherGuardianApprovalRejected: {
+    id: 'nps.application:history.other.guardian.approval.rejected',
+    defaultMessage: 'Forsjáraðili hafnaði umsókn',
+    description: 'The guardian rejected the application',
+  },
   payerApprovalApproved: {
     id: 'nps.application:history.payer.approval.approved',
     defaultMessage: 'Skráður greiðandi samþykkti umsókn',
@@ -1295,8 +1354,8 @@ export const historyMessages = defineMessages({
     defaultMessage: 'Skráður greiðandi hafnaði umsókn',
     description: 'The registered payer rejected the application',
   },
-  payerRejectedEdit: {
-    id: 'nps.application:history.payer.rejected.edit',
+  applicationEdited: {
+    id: 'nps.application:history.application.edited',
     defaultMessage: 'Umsókn breytt',
     description: 'Application edited',
   },

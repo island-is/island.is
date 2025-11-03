@@ -684,3 +684,22 @@ export const payerApprovalStatePendingAction = (
     }
   }
 }
+
+export const otherGuardianApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.otherGuardianApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.otherGuardianApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
+}

@@ -118,3 +118,13 @@ export const needsPayerApproval = (application: Application) => {
     ) && hasOtherPayer(application.answers)
   )
 }
+
+export const needsOtherGuardianApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ADDITIONAL_REQUESTORS,
+    ) && hasOtherGuardian(application.answers, application.externalData)
+  )
+}
