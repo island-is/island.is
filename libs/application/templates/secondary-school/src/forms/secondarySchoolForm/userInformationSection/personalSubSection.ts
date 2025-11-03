@@ -6,15 +6,13 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
-  buildCustomField, buildHiddenInput,
+  buildCustomField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
-import {
-  checkIsActor,
-  Routes,
-} from '../../../utils'
+import { checkIsActor, Routes } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
