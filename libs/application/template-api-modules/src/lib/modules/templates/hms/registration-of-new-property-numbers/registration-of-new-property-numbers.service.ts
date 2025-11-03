@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
@@ -12,12 +12,8 @@ import { coreErrorMessages } from '@island.is/application/core'
 
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { getRecipients, getRequestDto } from './utils'
+import { getRequestDto } from './utils'
 import { SharedTemplateApiService } from '../../../shared'
-import {
-  generateApplicationSubmittedEmail,
-  generateApplicationSubmittedEmailWithDelegation,
-} from './emailGenerators'
 
 @Injectable()
 export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiService {
@@ -113,8 +109,6 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           `[RegistrationOfNewPropertyNumbersService]: HMS API responded with status code ${response.status}`,
         )
       }
-
-      await this.sendEmailAboutSubmitApplication(application)
     } catch (e) {
       this.logger.error(
         '[RegistrationOfNewPropertyNumbersService] Failed to submit application to HMS:',
@@ -122,33 +116,5 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
       )
       throw e
     }
-  }
-
-  private async sendEmailAboutSubmitApplication(application: Application) {
-    const recipientList = getRecipients(application)
-
-    await Promise.all(
-      recipientList.map((recipient) =>
-        this.sharedTemplateAPIService
-          .sendEmail((props) => {
-            // Check if delegation or not
-            if (
-              props.application.applicantActors &&
-              props.application.applicantActors.length > 0
-            )
-              return generateApplicationSubmittedEmailWithDelegation(
-                props,
-                recipient,
-              )
-            else return generateApplicationSubmittedEmail(props, recipient)
-          }, application)
-          .catch((e) => {
-            this.logger.error(
-              `[Registration of new property numbers]: Error sending email in submitApplication for applicationID: ${application.id}`,
-              e,
-            )
-          }),
-      ),
-    )
   }
 }

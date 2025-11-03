@@ -9,7 +9,6 @@ import {
   APPLICATION_NAME,
   APPLICATION_TYPE,
   ContactAnswer,
-  EmailRecipient,
   formatCurrency,
   Hlutverk,
   NotandagognFlokkur,
@@ -20,7 +19,6 @@ import {
 import * as kennitala from 'kennitala'
 import { randomUUID } from 'node:crypto'
 import { join } from 'path'
-import { ApplicantAnswer } from '@island.is/application/templates/hms/registration-of-new-property-numbers'
 
 export const pathToAsset = (file: string) => {
   return join(
@@ -36,33 +34,6 @@ const getApplicant = (answers: FormValue) => {
     nationalId: getValueViaPath<string>(answers, 'applicant.nationalId'),
     phoneNumber: getValueViaPath<string>(answers, 'applicant.phoneNumber'),
   }
-}
-
-export const getRecipients = (
-  application: Application,
-): Array<EmailRecipient> => {
-  const applicant = getValueViaPath<ApplicantAnswer>(
-    application.answers,
-    'applicant',
-  )
-  const contact = getValueViaPath<ContactAnswer>(application.answers, 'contact')
-
-  const applicantRecipient = {
-    email: applicant?.email || '',
-    name: applicant?.name || '',
-  }
-  const contactRecipient = {
-    email: contact?.email || '',
-    name: contact?.name || '',
-  }
-
-  if (
-    contactRecipient.email &&
-    applicantRecipient.email !== contactRecipient.email
-  )
-    return [applicantRecipient, contactRecipient]
-
-  return [applicantRecipient]
 }
 
 export const getRequestDto = (application: Application): ApplicationDto => {

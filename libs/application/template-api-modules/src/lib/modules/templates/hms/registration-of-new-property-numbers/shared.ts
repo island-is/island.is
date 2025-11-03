@@ -43,11 +43,6 @@ export enum Hlutverk {
   Contact = 'Tengiliður',
 }
 
-export interface EmailRecipient {
-  name: string
-  email: string
-}
-
 export type RealEstateAnswers = {
   realEstateName: string
   realEstateAmount: string
