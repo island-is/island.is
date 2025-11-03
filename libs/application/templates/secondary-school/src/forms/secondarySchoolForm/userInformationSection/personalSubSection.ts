@@ -12,7 +12,7 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
-import { checkIsActor, getSchoolsData, Routes} from '../../../utils'
+import { checkIsActor, getSchoolsData, Routes } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
