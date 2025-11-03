@@ -11,6 +11,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import differenceInYears from 'date-fns/differenceInYears'
+import sanitizeHtml from 'sanitize-html'
 import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { getBirthday } from './helpers/getBirthday'
 import { Action } from './models/v2/actions.model'
@@ -100,6 +101,7 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
+    // Data dor the two way communication
     const ticket = use2Way
       ? {
           id: document.ticket?.id?.toString(),
@@ -445,14 +447,32 @@ export class DocumentServiceV2 {
 
   async postReply(user: User, input: ReplyInput): Promise<Reply | null> {
     try {
+      // Sanitize user inputs to prevent XSS and injection attacks
+      const sanitizedBody = this.sanitizeTextInput(input.body)
+      const sanitizedSubject = input.subject
+        ? this.sanitizeTextInput(input.subject)
+        : undefined
+      const sanitizedName = input.requesterName
+        ? this.sanitizeTextInput(input.requesterName)
+        : undefined
+
+      // Validate that body is not empty after sanitization
+      if (!sanitizedBody || sanitizedBody.trim().length === 0) {
+        this.logger.warn('Reply body is empty after sanitization', {
+          category: LOG_CATEGORY,
+          documentId: input.documentId,
+        })
+        return null
+      }
+
       const res = await this.documentService.postTicket(
         user.nationalId,
         input.documentId,
         {
-          body: input.body,
-          subject: input.subject,
-          requesterEmail: input.requesterEmail,
-          requesterName: input.requesterName,
+          body: sanitizedBody,
+          subject: sanitizedSubject,
+          requesterEmail: input.requesterEmail, // Email already validated by @IsEmail decorator
+          requesterName: sanitizedName,
         },
       )
       // if no ticket id is returned we handle error client side
@@ -468,6 +488,24 @@ export class DocumentServiceV2 {
       })
       return null
     }
+  }
+
+  private sanitizeTextInput(text: string): string {
+    // Remove HTML tags and potential XSS vectors while preserving text content
+    return sanitizeHtml(text, {
+      allowedTags: [], // No HTML tags allowed
+      allowedAttributes: {},
+      disallowedTagsMode: 'discard',
+      // Preserve line breaks and basic text formatting
+      textFilter: (text) => {
+        return (
+          text
+            .trim()
+            // Normalize whitespace but preserve line breaks
+            .replace(/[^\S\r\n]+/g, ' ')
+        )
+      },
+    })
   }
 
   private actionMapper = (id: string, actions?: Array<MessageAction>) => {
