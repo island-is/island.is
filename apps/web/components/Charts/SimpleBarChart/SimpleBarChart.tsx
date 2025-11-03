@@ -72,21 +72,22 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
             // @ts-ignore make web strict
             content={RenderLegend}
           />
-          {parsedDatakeys.bars.map((item: any, index: number) => (
+          {parsedDatakeys.bars.map((item: any, index: number) => {
             //TODO: Better way to fix implicit any type?
-            <Bar
+            return <Bar
               key={index}
               dataKey={item.datakey}
               fill={item.color ? item.color : COLORS[index % COLORS.length]}
-              stackId={item.stackId}
+              stackId={index % 2}
               barSize={16}
+              display={index%2}
               radius={
                 index === parsedDatakeys.bars.length - 1 || !shouldStack
                   ? [20, 20, 0, 0]
                   : 0
               }
             />
-          ))}
+          })}
         </BarChart>
       </ResponsiveContainer>
     </Box>

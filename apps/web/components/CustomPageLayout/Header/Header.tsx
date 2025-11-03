@@ -12,21 +12,36 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
+import { CardWithFeaturedItems } from '../../real'
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'
 
-type QuickLink = {
+type ShortcutItem = {
   title: string
   href: string
   variant?: TagVariant
 }
 
+type ShortcutItemCard = ShortcutItem & {
+  imgSrc: string
+  imgAlt?: string
+}
+
+type Shortcuts = {
+  title?: string
+} & ({
+  variant: 'tags'
+  items: Array<ShortcutItem>
+} | {
+  variant: 'cards'
+  items: Array<ShortcutItemCard>
+})
+
 export type HeaderProps = {
   title: string
   description?: string
   breadcrumbs: ReactNode
-  quickLinks?: Array<QuickLink>
-  shortcutsTitle?: string
+  shortcuts?: Shortcuts
   searchUrl?: string
   searchPlaceholder?: string
   offset?: boolean
@@ -69,23 +84,28 @@ export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
     )
   }
 
-  const renderQuickLinks = () => {
-    if (!props.quickLinks) {
+  const renderShortcuts = () => {
+    if (!props.shortcuts) {
       return
     }
+
+    const { title, variant, items} = props.shortcuts;
+
+    const cardsOrTags = variant === 'cards'
+      ? items.map(({href, title, imgSrc, imgAlt}) => <CardWithFeaturedItems key={`${href}-${title}`} featuredItems={[]} href={href} heading={title} imgSrc={imgSrc} imgAlt={imgAlt}/>)
+      : items.map(({href, title, variant}) => <Tag key={`${href}-${title}`} href={href} variant={variant}>
+        {title}
+      </Tag>)
+
     return (
       <Box marginTop={4}>
-        {props.shortcutsTitle && (
+        {title && (
           <Text variant="eyebrow" as="h3" paddingBottom={1} color="purple400">
-            {props.shortcutsTitle}
+            {title}
           </Text>
         )}
         <Inline space={1}>
-          {props.quickLinks.map((q) => (
-            <Tag key={`${q.href}-${q.title}`} href={q.href} variant={q.variant}>
-              {q.title}
-            </Tag>
-          ))}
+          {cardsOrTags}
         </Inline>
       </Box>
     )
@@ -133,7 +153,7 @@ export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
               <Text variant="intro">{props.description}</Text>
             )}
             {renderSearchSection()}
-            {renderQuickLinks()}
+            {renderShortcuts()}
           </GridColumn>
           <GridColumn
             span={['0', '0', '2/6', '4/12', '4/12']}

@@ -96,32 +96,35 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
         }
         searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
         searchUrl={searchUrl}
-        shortcutsTitle={formatMessage(m.home.mostVisited)}
+        shortcuts={{
+          title: formatMessage(m.home.mostVisited),
+          variant: 'tags',
+          items: [
+            {
+              title: formatMessage(m.bullets.open),
+              href: searchUrl + '?status=open',
+            },
+            {
+              title: formatMessage(m.bullets.nativeFunds),
+              href: searchUrl + '?category=grant-category-native',
+            },
+            {
+              title: formatMessage(m.bullets.technologyDevelopmentFund),
+              href: searchUrl + '?query=tækniþróunar',
+            },
+            {
+              title: formatMessage(m.bullets.financing),
+              href: searchUrl + '?type=grant-type-financing',
+            },
+            {
+              title: formatMessage(m.bullets.companies),
+              href: searchUrl + '?query=fyrirtæki',
+            },
+          ]
+        }}
         featuredImage={formatMessage(m.home.featuredImage)}
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         offset
-        quickLinks={[
-          {
-            title: formatMessage(m.bullets.open),
-            href: searchUrl + '?status=open',
-          },
-          {
-            title: formatMessage(m.bullets.nativeFunds),
-            href: searchUrl + '?category=grant-category-native',
-          },
-          {
-            title: formatMessage(m.bullets.technologyDevelopmentFund),
-            href: searchUrl + '?query=tækniþróunar',
-          },
-          {
-            title: formatMessage(m.bullets.financing),
-            href: searchUrl + '?type=grant-type-financing',
-          },
-          {
-            title: formatMessage(m.bullets.companies),
-            href: searchUrl + '?query=fyrirtæki',
-          },
-        ]}
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs
