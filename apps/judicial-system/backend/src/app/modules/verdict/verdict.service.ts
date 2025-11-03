@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventLogService } from '../event-log'
