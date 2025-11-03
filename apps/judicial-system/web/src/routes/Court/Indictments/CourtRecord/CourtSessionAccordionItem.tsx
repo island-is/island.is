@@ -1039,7 +1039,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 mergeDocumentsPerCase.previousMergedCaseDocumentCount
 
               return (
-                <Box>
+                <Box key={`merged-case-${courtCaseNumber}`}>
                   <SectionHeading
                     title={`Dómsskjöl úr sameinuðu máli ${courtCaseNumber}`}
                   />
