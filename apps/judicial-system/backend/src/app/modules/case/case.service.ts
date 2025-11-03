@@ -2363,6 +2363,7 @@ export class CaseService {
               caseId: theCase.id,
               transaction,
             })
+            // TODO: create court session case string
           }
         }
 

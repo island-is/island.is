@@ -46,6 +46,7 @@ import {
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
+  CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -60,6 +61,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { CourtSessionMergeCaseEntries } from './CourtSessionMergeCaseEntries'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -568,6 +570,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         (document) => document.caseId === caseId,
       )
       const courtCaseNumberPerMergedDocuments = {
+        caseId,
         courtCaseNumber: workingCase.mergedCases?.find((c) => c.id === caseId)
           ?.courtCaseNumber,
         mergedFileDocuments: mergedFileDocumentsPerCase,
@@ -1037,9 +1040,23 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 mergeDocumentsPerCase.mergedFileDocuments
               const previousMergedCaseDocumentCount =
                 mergeDocumentsPerCase.previousMergedCaseDocumentCount
+              const courtSessionString = courtSession.courtSessionStrings?.find(
+                (string) =>
+                  string.stringType === CourtSessionStringType.ENTRIES &&
+                  string.mergedCaseId === mergeDocumentsPerCase.caseId,
+              )
 
               return (
                 <Box key={`merged-case-${courtCaseNumber}`}>
+                  <CourtSessionMergeCaseEntries
+                    courtSessionId={courtSession.id}
+                    courtCaseNumber={courtCaseNumber ?? ''}
+                    value={courtSessionString?.value ?? ''}
+                    courtSessionStrings={courtSession.courtSessionStrings ?? []}
+                    mergedCaseId={mergeDocumentsPerCase.caseId}
+                    disabled={courtSession.isConfirmed || false}
+                    patchSession={patchSession}
+                  />
                   <SectionHeading
                     title={`Dómsskjöl úr sameinuðu máli ${courtCaseNumber}`}
                   />
