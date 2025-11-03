@@ -412,14 +412,19 @@ export class CourtDocumentRepositoryService {
         `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
+      const filedDocumentsInMergedCaseCount =
+        await this.courtDocumentModel.count({
+          where: { caseId },
+          transaction,
+        })
       const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId: parentCaseId,
         courtSessionId: parentCaseCourtSessionId,
         isMergedDocumentOrder: true,
+        reservedSlots: filedDocumentsInMergedCaseCount,
         courtDocumentId: undefined,
         transaction,
       })
-      this.logger.debug({ nextOrder })
 
       // update all merging court documents
       await this.courtDocumentModel.update(
@@ -624,12 +629,14 @@ export class CourtDocumentRepositoryService {
     caseId,
     courtSessionId,
     isMergedDocumentOrder,
+    reservedSlots = 1,
     courtDocumentId,
     transaction,
   }: {
     caseId: string
     courtSessionId: string
     isMergedDocumentOrder?: boolean
+    reservedSlots?: number
     courtDocumentId: string | undefined
     transaction: Transaction | undefined
   }) {
@@ -653,7 +660,7 @@ export class CourtDocumentRepositoryService {
           'ASC',
         ],
       ],
-      transaction: transaction,
+      transaction,
     })
 
     const alreadyFiled =
@@ -697,7 +704,7 @@ export class CourtDocumentRepositoryService {
 
     // Increase order of documents after the current position
     await this.courtDocumentModel.update(
-      { documentOrder: literal('document_order + 1') },
+      { documentOrder: literal(`document_order + ${reservedSlots}`) },
       {
         where: {
           caseId,
@@ -710,7 +717,11 @@ export class CourtDocumentRepositoryService {
     if (mergedCaseIds.length > 0) {
       // Increase order of potential merged documents after the current position
       await this.courtDocumentModel.update(
-        { mergedDocumentOrder: literal('merged_document_order + 1') },
+        {
+          mergedDocumentOrder: literal(
+            `merged_document_order + ${reservedSlots}`,
+          ),
+        },
         {
           where: {
             caseId: { [Op.in]: mergedCaseIds },
