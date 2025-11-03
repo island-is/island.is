@@ -74,7 +74,6 @@ judicial-system-api:
             - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -192,7 +191,6 @@ judicial-system-backend:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -299,7 +297,6 @@ judicial-system-digital-mailbox-api:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -368,7 +365,6 @@ judicial-system-message-handler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -436,7 +432,6 @@ judicial-system-scheduler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -508,7 +503,6 @@ judicial-system-web:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
@@ -574,7 +568,6 @@ judicial-system-xrd-api:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:

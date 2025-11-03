@@ -108,7 +108,6 @@ initContainer:
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
 namespace: 'services-payments'
 podDisruptionBudget:
-  maxUnavailable: 1
   minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:

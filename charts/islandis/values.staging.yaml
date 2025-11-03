@@ -53,7 +53,6 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -169,7 +168,6 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -256,7 +254,6 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
@@ -490,7 +487,6 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -826,7 +822,6 @@ application-system-api:
       DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -969,7 +964,6 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1058,7 +1052,6 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1121,7 +1114,6 @@ cms-importer-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
@@ -1190,7 +1182,6 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1288,7 +1279,6 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1414,7 +1404,6 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1488,7 +1477,6 @@ form-system-web:
             - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1600,7 +1588,6 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1667,7 +1654,6 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
@@ -1742,7 +1728,6 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1868,7 +1853,6 @@ payments:
             - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -1943,7 +1927,6 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2044,7 +2027,6 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2182,7 +2164,6 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2261,7 +2242,6 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2378,7 +2358,6 @@ service-portal-api:
       DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2476,7 +2455,6 @@ services-bff-portals-admin:
             - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2564,7 +2542,6 @@ services-bff-portals-my-pages:
             - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2652,7 +2629,6 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2740,7 +2716,6 @@ services-form-system-api:
       DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
   namespace: 'services-form-system-api'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2817,7 +2792,6 @@ services-payment-flow-update-handler:
             - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -2937,7 +2911,6 @@ services-payments:
       DB_PASS: '/k8s/services-payments/DB_PASSWORD'
   namespace: 'services-payments'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3029,7 +3002,6 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3099,7 +3071,6 @@ services-sessions-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
@@ -3191,7 +3162,6 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3320,7 +3290,6 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3407,7 +3376,6 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3480,7 +3448,6 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3579,7 +3546,6 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3703,7 +3669,6 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3805,7 +3770,6 @@ user-notification-birthday-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -3906,7 +3870,6 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -4028,7 +3991,6 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -4114,7 +4076,6 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
@@ -4183,7 +4144,6 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:

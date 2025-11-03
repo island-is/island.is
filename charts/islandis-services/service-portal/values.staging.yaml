@@ -63,7 +63,6 @@ ingress:
           - '/minarsidur'
 namespace: 'service-portal'
 podDisruptionBudget:
-  maxUnavailable: 1
   minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:

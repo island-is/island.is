@@ -97,7 +97,6 @@ ingress:
           - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
-  maxUnavailable: 1
   minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
