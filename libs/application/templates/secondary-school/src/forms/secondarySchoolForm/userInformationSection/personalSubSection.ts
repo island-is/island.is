@@ -9,10 +9,7 @@ import {
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import {
-  checkIsActor,
-  Routes,
-} from '../../../utils'
+import { checkIsActor, Routes } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
