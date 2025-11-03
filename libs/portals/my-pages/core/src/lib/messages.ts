@@ -1289,6 +1289,14 @@ export const m = defineMessages({
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  datepickPeriodLabel: {
+    id: 'service.portal:datepicker-period-placeholder',
+    defaultMessage: 'Veldu tímabil',
+  },
+  datepickPeriod: {
+    id: 'service.portal:datepicker-period',
+    defaultMessage: 'Tímabil',
+  },
   pick: {
     id: 'service.portal:pick',
     defaultMessage: 'Velja',
@@ -1460,7 +1468,7 @@ export const m = defineMessages({
   },
   medicineDelegation: {
     id: 'service.portal:medicine-delegation',
-    defaultMessage: 'Lyfjaumboð',
+    defaultMessage: 'Lyfjaheimildir',
   },
   medicinePaymentParticipation: {
     id: 'service.portal:medicine-payment-participation',
@@ -1974,6 +1982,10 @@ export const m = defineMessages({
     id: 'service.portal:copied',
     defaultMessage: 'Afritað!',
   },
+  forward: {
+    id: 'service.portal:forward',
+    defaultMessage: 'Áfram',
+  },
 })
 
 export const searchTagsMessages = defineMessages({
@@ -2105,6 +2117,10 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
   },
+  healthPatientData: {
+    id: 'sp.search.tags:health-patient-data',
+    defaultMessage: 'Sjúkraupplýsingar',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',
@@ -2120,5 +2136,13 @@ export const searchTagsMessages = defineMessages({
   assetsMachines: {
     id: 'sp.search.tags:assets-machines',
     defaultMessage: 'Vélar',
+  },
+  medicineDelegationOther: {
+    id: 'sp.search.tags:medicine-delegation-other',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicineDelegationOtherNew: {
+    id: 'sp.search.tags:medicine-delegation-other-new',
+    defaultMessage: 'Nýtt lyfjaumboð',
   },
 })
