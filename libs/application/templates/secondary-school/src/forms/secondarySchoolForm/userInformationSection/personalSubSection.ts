@@ -93,6 +93,12 @@ export const personalSubSection = buildSubSection({
           ],
         }),
 
+        /* Commenting out the code below as it is in conflict with current data being sent from MMS.
+        * This will break some existing handling of freshman vs general applicant but as there will be no freshmen
+        * applying until the next application period (February) this will work as a fix for now.
+         */
+
+
         // Application type (Fresman vs General)
         // buildDescriptionField({
         //   id: 'applicationTypeInfo.subtitle',
