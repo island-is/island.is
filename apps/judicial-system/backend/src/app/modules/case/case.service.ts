@@ -2321,7 +2321,11 @@ export class CaseService {
           theCase.mergeCaseId
         ) {
           const parentCaseId = theCase.mergeCaseId
-          const parentCase = await this.findById(parentCaseId, false, transaction)
+          const parentCase = await this.findById(
+            parentCaseId,
+            false,
+            transaction,
+          )
 
           const parentCaseCourtSessions = parentCase.courtSessions
           const latestCourtSession =
