@@ -17,7 +17,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -31,6 +30,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { useOfflineStore } from '../../stores/offline-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import {
   dynamicColor,
   Alert as InfoAlert,
@@ -172,8 +172,6 @@ const getInfoAlertMessageIds = (
   }
 }
 
-const INFO_ALERT_DISMISSED_STORAGE_KEY = 'walletPassDismissedInfoAlerts'
-
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   type: string
@@ -185,11 +183,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
-  const [dismissedAlerts, setDismissedAlerts] = useState<
-    Record<string, boolean>
-  >({})
-  const [hasCalculatedDismissedAlerts, setHasCalculatedDismissedAlerts] =
-    useState<boolean>(false)
+  const { walletPassDismissedInfoAlerts, setWalletPassInfoAlertDismissed } =
+    usePreferencesStore((state) => ({
+      walletPassDismissedInfoAlerts: state.walletPassDismissedInfoAlerts,
+      setWalletPassInfoAlertDismissed: state.setWalletPassInfoAlertDismissed,
+    }))
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
@@ -228,25 +226,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
-
-  const { getItem: getDismissedAlertsItem, setItem: setDismissedAlertsItem } =
-    useAsyncStorage(INFO_ALERT_DISMISSED_STORAGE_KEY)
-
   const markInfoAlertAsDismissed = useCallback(async () => {
-    setDismissedAlertsItem(JSON.stringify({ ...dismissedAlerts, [type]: true }))
-    setDismissedAlerts((prev) => ({ ...prev, [type]: true }))
-  }, [type, setDismissedAlertsItem, dismissedAlerts])
-
-  useEffect(() => {
-    getDismissedAlertsItem().then((item) => {
-      if (item) {
-        setDismissedAlerts(JSON.parse(item))
-      }
-
-      setHasCalculatedDismissedAlerts(true)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setWalletPassInfoAlertDismissed(type)
+  }, [type, setWalletPassInfoAlertDismissed])
 
   const shouldShowExpireDate = !!(
     (licenseType === GenericLicenseType.IdentityDocument ||
@@ -265,14 +247,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     : undefined
 
   const isInfoAlertDismissed = useCallback(
-    (type: string) => {
-      if (!alertMessageIds?.dismissible) {
+    (alertType?: string) => {
+      if (!alertMessageIds?.dismissible || !alertType) {
         return false
       }
 
-      return dismissedAlerts[type] ? true : false
+      return walletPassDismissedInfoAlerts?.[alertType] ? true : false
     },
-    [dismissedAlerts, alertMessageIds?.dismissible],
+    [walletPassDismissedInfoAlerts, alertMessageIds?.dismissible],
   )
 
   const { loading } = res
@@ -549,31 +531,29 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }}
         >
           {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
-          {showInfoAlert &&
-            hasCalculatedDismissedAlerts &&
-            !isInfoAlertDismissed(licenseType) && (
-              <View
-                style={{
-                  paddingTop: theme.spacing[3],
-                }}
-              >
-                <InfoAlert
-                  title={intl.formatMessage({
-                    id: alertMessageIds?.title,
-                  })}
-                  message={intl.formatMessage({
-                    id: alertMessageIds?.description,
-                  })}
-                  {...(alertMessageIds?.dismissible && {
-                    onClose: () => {
-                      markInfoAlertAsDismissed()
-                    },
-                  })}
-                  type="info"
-                  hasBorder
-                />
-              </View>
-            )}
+          {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
+            <View
+              style={{
+                paddingTop: theme.spacing[3],
+              }}
+            >
+              <InfoAlert
+                title={intl.formatMessage({
+                  id: alertMessageIds?.title,
+                })}
+                message={intl.formatMessage({
+                  id: alertMessageIds?.description,
+                })}
+                {...(alertMessageIds?.dismissible && {
+                  onClose: () => {
+                    markInfoAlertAsDismissed()
+                  },
+                })}
+                type="info"
+                hasBorder
+              />
+            </View>
+          )}
           {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
           {expireWarning &&
           (licenseType === GenericLicenseType.Passport ||
