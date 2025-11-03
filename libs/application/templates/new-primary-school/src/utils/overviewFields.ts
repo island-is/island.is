@@ -156,7 +156,7 @@ export const overviewFields = (editable?: boolean) => {
       attachments: fileItems,
       hideIfEmpty: true,
       bottomLine: true,
-    }),      
+    }),
     buildOverviewField({
       id: 'overview.payer',
       title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,

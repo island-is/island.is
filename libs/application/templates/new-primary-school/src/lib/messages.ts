@@ -925,7 +925,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Some documents will be submitted electronically and some submitted on paper to the school',
     },
-      
+
     // Child's circumstances
     childCircumstancesSubSectionTitle: {
       id: 'nps.application:different.needs.child.circumstances.sub.section.title',
