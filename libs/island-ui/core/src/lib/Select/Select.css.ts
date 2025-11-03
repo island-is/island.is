@@ -69,7 +69,7 @@ globalStyle(
 
 globalStyle(`${wrapper} .island-select__multi-value__label`, {
   borderRadius: 0,
-  paddingLeft: '0.22rem',
+  paddingLeft: '0.5rem',
   paddingBottom: '0.33rem',
   paddingTop: '0.33rem',
   paddingRight: 0,
@@ -154,10 +154,17 @@ globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
   flexDirection: 'column',
   alignItems: 'flex-start',
-  paddingRight: theme.spacing[2],
+  paddingRight: 70,
   border: 0,
-  minWidth: 100,
 })
+
+globalStyle(
+  `${wrapper} .island-select__control${container}${containerSizes.xs}`,
+  {
+    paddingRight: theme.spacing[2],
+    minWidth: 100,
+  },
+)
 globalStyle(
   `${wrapper}${wrapperColor.blue} .island-select__control${container}`,
   {
@@ -192,6 +199,25 @@ globalStyle(`${wrapper}  .island-select__menu-list`, {
 })
 
 export const option = style({
+  selectors: {
+    [`${wrapper} &.island-select__option`]: {
+      display: 'flex',
+      cursor: 'pointer',
+      position: 'relative',
+      fontWeight: theme.typography.light,
+      transition: 'background .2s, color .2s',
+      padding: '23px 24px',
+    },
+    [`${wrapper}${wrapperColor.blue} &`]: {
+      background: theme.color.blue100,
+    },
+    [`${wrapper} .island-select__option&:not(:first-of-type)`]: {
+      borderTop: `1px solid ${theme.color.blue200}`,
+    },
+  },
+})
+
+export const optionExtraSmall = style({
   selectors: {
     [`${wrapper} &.island-select__option`]: {
       display: 'flex',
