@@ -485,6 +485,8 @@ export const determineNameFromApplicationAnswers = (
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+    ? newPrimarySchoolMessages.shared.continuingEnrollmentApplicationName
     : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
@@ -512,7 +514,7 @@ export const getGenderMessage = (
   return gender
 }
 
-export const getApplicationType = (
+export const getApplicationTypeIfFirstGradeYear = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
@@ -522,26 +524,20 @@ export const getApplicationType = (
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
-
-  if (!isValid(nationalId)) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
-  if (!yearOfBirth) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
+  if (!isValid(nationalId) || !yearOfBirth) {
+    return undefined
   }
 
-  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  if (!childInformation?.primaryOrgId) {
-    return yearOfBirth === firstGradeYear
-      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      : ApplicationType.NEW_PRIMARY_SCHOOL
+  // if the child is a first grader and not currently enrolled in a primary school, set the application type to enrollment in primary school
+  if (yearOfBirth === firstGradeYear && !childInformation?.primaryOrgId) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
   }
 
-  return ApplicationType.NEW_PRIMARY_SCHOOL
+  // else the application type should be determined by the applicant
+  return undefined
 }
 
 export const getGuardianByNationalId = (

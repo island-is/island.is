@@ -43,7 +43,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
-  getApplicationType,
+  getApplicationTypeIfFirstGradeYear,
   getSelectedSchoolSubType,
   payerApprovalStatePendingAction,
 } from '../utils/newPrimarySchoolUtils'
@@ -406,7 +406,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         set(
           application.answers,
           'applicationType',
-          getApplicationType(application.answers, application.externalData),
+          getApplicationTypeIfFirstGradeYear(
+            application.answers,
+            application.externalData,
+          ),
         )
 
         return context

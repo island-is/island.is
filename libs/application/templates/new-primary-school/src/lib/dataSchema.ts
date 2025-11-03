@@ -28,12 +28,13 @@ const nationalIdWithNameSchema = z.object({
 })
 
 export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  childNationalId: z.string().min(1),
   applicationType: z.enum([
     ApplicationType.NEW_PRIMARY_SCHOOL,
     ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    ApplicationType.CONTINUING_ENROLLMENT,
   ]),
-  approveExternalData: z.boolean().refine((v) => v),
-  childNationalId: z.string().min(1),
   childInfo: z
     .object({
       usePronounAndPreferredName: z.array(z.string()),

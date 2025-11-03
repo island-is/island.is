@@ -76,7 +76,10 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.CONTINUING_ENROLLMENT
+        )
       },
     }),
     buildOverviewField({
@@ -104,6 +107,11 @@ export const overviewFields = (editable?: boolean) => {
           : undefined
       },
       items: schoolItems,
+      condition: (answers) => {
+        const { applicationType } = getApplicationAnswers(answers)
+
+        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      },
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',

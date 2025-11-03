@@ -85,8 +85,9 @@ export enum LanguageEnvironmentOptions {
 }
 
 export enum ApplicationType {
-  NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
-  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+  NEW_PRIMARY_SCHOOL = 'newPrimarySchool', // Umsókn um skólaskipti
+  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool', // Innritun í 1. bekk
+  CONTINUING_ENROLLMENT = 'continuingEnrollment', // Umsókn um áframhaldandi skólavist
 }
 
 export enum CaseWorkerInputTypeEnum {
