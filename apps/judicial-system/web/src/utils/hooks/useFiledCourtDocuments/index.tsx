@@ -19,19 +19,13 @@ const useFiledCourtDocuments = () => {
     : false
 
   const filedCourtDocuments = useMemo(() => {
-    const mergedFiledDocuments =
-      workingCase.mergedCases?.flatMap(
-        (mergedCase) =>
-          (mergedCase.courtSessions ?? [])
-            .filter((session) => session.isConfirmed)
-            .flatMap((session) => session.filedDocuments ?? []) ?? [],
-      ) ?? []
-
-    const filedDocuments =
-      (workingCase.courtSessions ?? [])
-        .filter((session) => session.isConfirmed)
-        .flatMap((session) => session.filedDocuments ?? [])
-        .concat(mergedFiledDocuments) ?? []
+    const filedDocuments = (workingCase.courtSessions ?? [])
+      .filter((session) => session.isConfirmed)
+      .flatMap((session) => {
+        const filedDocuments = session.filedDocuments ?? []
+        const mergedFiledDocuments = session.mergedFiledDocuments ?? []
+        return [...filedDocuments, ...mergedFiledDocuments]
+      })
 
     const uploadedFiledDocuments = filedDocuments.filter(
       (doc) => doc.documentType === CourtDocumentType.UPLOADED_DOCUMENT,
@@ -93,9 +87,10 @@ const useFiledCourtDocuments = () => {
         doc.generatedPdfUri?.includes(partialUri),
     )
 
-    const isMergedCaseDocument = workingCase?.mergedCases?.some(
-      (mergedCase) => mergedCase.id === document?.caseId,
-    )
+    const isMergedCaseDocument =
+      workingCase?.mergedCases?.some(
+        (mergedCase) => mergedCase.id === document?.caseId,
+      ) && document?.mergedDocumentOrder
 
     if (!document || !document.documentOrder) {
       return name
