@@ -132,7 +132,7 @@ export const personalSubSection = buildSubSection({
 
         buildHiddenInput({
           id: 'applicationType.value',
-          defaultValue: ApplicationType.GENERAL_APPLICATION
+          defaultValue: ApplicationType.GENERAL_APPLICATION,
         }),
         // buildHiddenInput({
         //   id: 'applicationType.value',
