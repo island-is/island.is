@@ -86,6 +86,26 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: m.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
+          searchTags: [s.medicineDelegationOther],
+          children: [
+            {
+              name: m.medicineDelegation,
+              path: HealthPaths.HealthMedicineDelegationDetail,
+              navHide: true,
+              breadcrumbHide: true,
+              searchHide: true,
+            },
+            {
+              name: messages.addDelegation,
+              path: HealthPaths.HealthMedicineDelegationAdd,
+              navHide: true,
+              breadcrumbHide: true,
+              searchTags: [
+                s.medicineDelegationOther,
+                s.medicineDelegationOtherNew,
+              ],
+            },
+          ],
         },
         {
           name: m.medicinePaymentParticipation,

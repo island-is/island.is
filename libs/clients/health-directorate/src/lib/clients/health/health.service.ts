@@ -23,6 +23,9 @@ import {
   mePatientConcentEuControllerGetCountriesV1,
   mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetEuPatientConsentV1,
+  mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
   mePrescriptionControllerRenewPrescriptionV1,
@@ -34,8 +37,11 @@ import {
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
+  CreatePrescriptionCommissionDto,
+  DeactivatePrescriptionCommissionDto,
   EuPatientConsentDto,
   Locale,
+  PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -260,6 +266,58 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  /** Medicine Delegation */
+
+  public async getMedicineDelegations(
+    auth: Auth,
+    locale: Locale,
+    active: boolean,
+  ): Promise<Array<PrescriptionCommissionDto> | null> {
+    const medicineDelegations = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
+          query: {
+            active: active,
+          },
+        }),
+      ),
+    )
+
+    if (!medicineDelegations) {
+      return null
+    }
+
+    return medicineDelegations
+  }
+
+  public async postMedicineDelegation(
+    auth: Auth,
+    input: CreatePrescriptionCommissionDto,
+  ) {
+    return await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerCreatePrescriptionCommissionV1({
+          body: input,
+        }),
+      ),
+    )
+  }
+
+  public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
+    const input: DeactivatePrescriptionCommissionDto = {
+      toNationalId:
+        toNationalId.length === 9 ? `0${toNationalId}` : toNationalId,
+    }
+    const result = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1({
+          body: input,
+        }),
+      ),
+    )
+    return result
   }
 
   public async getPermits(

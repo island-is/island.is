@@ -10,7 +10,6 @@ export const HealthTable = ({
   footerText,
   headerData,
   rowData,
-  noDataMessage,
 }: DetailTable) => {
   return (
     <Box padding={3} background="blue100">
