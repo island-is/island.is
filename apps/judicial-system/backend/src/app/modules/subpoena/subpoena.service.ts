@@ -41,7 +41,14 @@ import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
-import { Case, Defendant, Institution, Subpoena, User } from '../repository'
+import {
+  Case,
+  CourtSession,
+  Defendant,
+  Institution,
+  Subpoena,
+  User,
+} from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -65,6 +72,10 @@ export const include: Includeable[] = [
       {
         model: Institution,
         as: 'court',
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
       },
     ],
   },
@@ -239,7 +250,12 @@ export class SubpoenaService {
         ].includes(serviceStatus)
 
       // File the service certificate as a court document
-      if (wasSubpoenaSuccessfullyServed) {
+      if (
+        wasSubpoenaSuccessfullyServed &&
+        theCase.withCourtSessions &&
+        theCase.courtSessions &&
+        theCase.courtSessions.length > 0
+      ) {
         const name = `Birtingarvottorð ${defendant.name}`
 
         return this.courtDocumentService.create(
@@ -247,7 +263,7 @@ export class SubpoenaService {
           {
             documentType: CourtDocumentType.GENERATED_DOCUMENT,
             name,
-            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
           },
           transaction,
         )

@@ -281,9 +281,12 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
-      const appealDecision =
-        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.supplements?.find(
+        (supplement) => supplement.code === 'APPEAL_DECISION',
+      )
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision?.value
 
       if (
         !Object.values(VerdictAppealDecision).includes(
@@ -304,6 +307,7 @@ export class AppService {
       deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
       deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
       deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
     })
 
     const parsedPoliceUpdate = {
@@ -313,10 +317,12 @@ export class AppService {
       serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
-      appealDecision:
-        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
-        undefined,
+      appealDecision: deliveredAppealDecision?.value,
     }
+    this.logger.info(
+      `Parsed update request ${JSON.stringify(parsedPoliceUpdate)}`,
+    )
+
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
@@ -329,8 +335,6 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
-      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
-      // once service date has been recorded for the verdict
 
       const response = await res.json()
 

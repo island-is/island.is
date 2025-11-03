@@ -8,18 +8,21 @@ export const prosecutorRequestCasesTableGroup: CaseTableGroup = {
       route: 'rannsoknarmal-i-vinnslu',
       title: 'Rannsóknarmál í vinnslu',
       description: 'Drög, send mál, móttekin mál og mál á dagskrá.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE,
       route: 'virk-rannsoknarmal',
       title: 'Virk mál',
       description: 'Virk gæsluvarðhöld, farbönn og vistanir.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED,
       route: 'rannsoknarmal-i-kaeuferli',
       title: 'Mál í kæruferli',
       description: 'Úrskurðir sem eru í kæruferli hjá Landsrétti.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_REQUEST_CASES_COMPLETED,
@@ -38,18 +41,21 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
       route: 'sakamal-i-drogum',
       title: 'Ákærur í drögum',
       description: 'Ákærur í drögum.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION,
       route: 'sakamal-sem-bida-stadfestingar',
       title: 'Ákærur sem bíða staðfestingar',
       description: 'Ákærur sem á eftir að staðfesta og senda til héraðsdóms.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS,
       route: 'sakamal-i-vinnslu',
       title: 'Sakamál í vinnslu',
       description: 'Sakamál sem eru í vinnslu.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED,

@@ -1,7 +1,6 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  NO,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
@@ -23,26 +22,40 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { ChildrenApi } from '../dataProviders'
-import { hasForeignLanguages } from '../utils/conditionUtils'
+import { ChildrenApi, SchoolsApi } from '../dataProviders'
+import {
+  hasForeignLanguages,
+  hasOtherPayer,
+  needsPayerApproval,
+} from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
+  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
-  SchoolType,
   States,
 } from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
+  getSelectedSchoolSubType,
+  payerApprovalStatePendingAction,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages, statesMessages } from './messages'
+import {
+  historyMessages,
+  newPrimarySchoolMessages,
+  payerApprovalMessages,
+  payerRejectedMessages,
+  pendingActionMessages,
+  statesMessages,
+} from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,6 +68,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
   featureFlag: Features.newPrimarySchool,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -99,8 +117,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ChildrenApi,
+                SchoolsApi,
+              ],
             },
           ],
         },
@@ -112,11 +136,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
-          'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
           'clearExpectedEndDate',
+          'clearPayer',
         ],
         meta: {
           name: States.DRAFT,
@@ -130,11 +154,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.sendApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -150,23 +169,140 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
               delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYER_APPROVAL,
+              cond: (context) => needsPayerApproval(context?.application),
+            },
+            {
+              target: States.SUBMITTED,
+            },
+          ],
+        },
+      },
+      [States.PAYER_APPROVAL]: {
+        entry: ['assignPayer'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.PAYER_APPROVAL,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: payerApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: historyMessages.payerApprovalApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: historyMessages.payerApprovalRejected,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignPayer,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/PayerApproval').then((val) =>
+                  Promise.resolve(val.PayerApproval),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: payerApprovalMessages.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: payerApprovalMessages.confirm,
+                  type: 'primary',
+                },
+              ],
+              read: {
+                answers: ['childInfo', 'newSchool'],
+                externalData: ['schools'],
+              },
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.SUBMITTED },
+          [DefaultEvents.REJECT]: { target: States.PAYER_REJECTED },
+        },
+      },
+      [States.PAYER_REJECTED]: {
+        meta: {
+          name: States.PAYER_REJECTED,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: pendingActionMessages.payerRejectedTitle,
+              content: pendingActionMessages.payerRejectedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: historyMessages.payerRejectedEdit,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromPayer,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PayerRejected').then((val) =>
+                  Promise.resolve(val.PayerRejected),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: payerRejectedMessages.edit,
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.SUBMITTED]: {
         entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.SUBMITTED,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: statesMessages.applicationReceivedTitle,
+              label: statesMessages.applicationReceivedTag,
             },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
@@ -176,14 +312,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.applicationApproved,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
             ],
           },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -214,8 +354,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
-              content: statesMessages.applicationApprovedDescription,
+              title: coreHistoryMessages.applicationApproved,
+              content: pendingActionMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
           },
@@ -238,8 +378,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           status: FormModes.REJECTED,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationRejected,
-              content: statesMessages.applicationRejectedDescription,
+              title: coreHistoryMessages.applicationRejected,
+              content: pendingActionMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
           },
@@ -278,31 +418,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
-        if (
-          reasonForApplication !==
-          ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ) {
-          unset(
-            application.answers,
-            'reasonForApplication.transferOfLegalDomicile',
-          )
-        }
-
         // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
           ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
-        }
-        return context
-      }),
-      clearPlaceOfResidence: assign((context) => {
-        const { application } = context
-        const { childInfo } = getApplicationAnswers(application.answers)
-        if (childInfo?.differentPlaceOfResidence === NO) {
-          unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
@@ -362,20 +483,34 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearExpectedEndDate: assign((context) => {
         const { application } = context
-        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+        const { temporaryStay } = getApplicationAnswers(application.answers)
+
+        const selectedSchoolSubType = getSelectedSchoolSubType(
           application.answers,
+          application.externalData,
         )
 
-        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+        if (
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+        ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
+        return context
+      }),
+      clearPayer: assign((context) => {
+        const { application } = context
+
+        if (!hasOtherPayer(application.answers)) {
+          unset(application.answers, 'payer.other')
+        }
+
         return context
       }),
       assignOrganization: assign((context) => {
@@ -395,6 +530,23 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignPayer: assign((context) => {
+        const { application } = context
+        const { payerNationalId } = getApplicationAnswers(application.answers)
+
+        if (payerNationalId !== undefined && payerNationalId !== '') {
+          set(application, 'assignees', [payerNationalId])
+        }
+
+        return context
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
 
@@ -402,7 +554,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    const { applicant, assignees } = application
+
+    if (nationalId === applicant) {
       return Roles.APPLICANT
     }
 
@@ -410,6 +564,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
     ) {
       return Roles.ORGANIZATION_REVIEWER
+    }
+
+    if (assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
     }
 
     return undefined

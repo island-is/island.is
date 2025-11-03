@@ -56,10 +56,15 @@ export class CourtSessionController {
     type: CourtSession,
     description: 'Creates a new court session',
   })
-  create(@Param('caseId') caseId: string): Promise<CourtSession> {
+  create(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<CourtSession> {
     this.logger.debug(`Creating a new court session for case ${caseId}`)
 
-    return this.courtSessionService.create(caseId)
+    return this.sequelize.transaction(async (transaction) =>
+      this.courtSessionService.create(theCase, transaction),
+    )
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)

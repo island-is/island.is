@@ -1,14 +1,23 @@
-import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import {
+  NO,
+  YES,
+  YesOrNo,
+  corePendingActionMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
+  PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  newPrimarySchoolMessages,
+  pendingActionMessages,
+} from '../lib/messages'
 import {
   Affiliation,
   Child,
@@ -25,12 +34,13 @@ import {
   YesOrNoOrEmpty,
 } from '../types'
 import {
-  AffiliationRole,
+  AgentType,
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  PayerOption,
   ReasonForApplicationOptions,
-  SchoolType,
+  Roles,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -55,16 +65,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
-
-  const reasonForApplicationStreetAddress = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.streetAddress',
-  )
-
-  const reasonForApplicationPostalCode = getValueViaPath<string>(
-    answers,
-    'reasonForApplication.transferOfLegalDomicile.postalCode',
-  )
 
   const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
 
@@ -174,6 +174,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
+
+  const payerName = getValueViaPath<string>(answers, 'payer.other.name')
+
+  const payerNationalId = getValueViaPath<string>(
+    answers,
+    'payer.other.nationalId',
+  )
+
+  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
+
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -200,20 +211,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   )
 
-  const selectedSchoolIdAndType = getValueViaPath<string>(
-    answers,
-    'newSchool.school',
-  )
-
-  // School type is piggybacked on the value like 'id::type'
-  const selectedSchool = selectedSchoolIdAndType
-    ? selectedSchoolIdAndType.split('::')[0]
-    : ''
-
-  const selectedSchoolType = getValueViaPath<SchoolType>(
-    answers,
-    'newSchool.type',
-  )
+  const selectedSchoolId = getValueViaPath<string>(answers, 'newSchool.school')
 
   const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
@@ -248,8 +246,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -273,13 +269,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    payer,
+    payerName,
+    payerNationalId,
+    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
     expectedEndDate,
     schoolMunicipality,
-    selectedSchool,
-    selectedSchoolType,
+    selectedSchoolId,
     currentNurseryMunicipality,
     currentNursery,
     applyForPreferredSchool,
@@ -372,6 +371,9 @@ export const getApplicationExternalData = (
     'preferredSchool.data',
   )
 
+  const schools =
+    getValueViaPath<Organization[]>(externalData, 'schools.data') ?? []
+
   return {
     children,
     applicantName,
@@ -390,6 +392,7 @@ export const getApplicationExternalData = (
     healthProfile,
     socialProfile,
     preferredSchool,
+    schools,
   }
 }
 
@@ -461,6 +464,17 @@ export const getCurrentSchoolName = (externalData: ExternalData) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
+export const getSchoolName = (externalData: ExternalData, schoolId: string) => {
+  const { schools } = getApplicationExternalData(externalData)
+
+  if (!schools) {
+    return undefined
+  }
+
+  // Find the school name since we only have id
+  return schools.find((school) => school?.id === schoolId)?.name
+}
+
 export const getPreferredSchoolName = (externalData: ExternalData) => {
   const { preferredSchool } = getApplicationExternalData(externalData)
 
@@ -505,70 +519,6 @@ export const getGenderMessage = (
   return gender
 }
 
-/*
- This function is used to get the municipality code based on the school unit id for private owned shcools.
- This should be removed when Frigg starts to return the private owned in the same way as the public schools, under the municipality.
-*/
-export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
-  const municipalities = [
-    {
-      // Kopavogur
-      municipalityCode: '1000',
-      schools: [
-        'G-2297-A', // Arnarskóli
-        'G-2396-A', // Waldorfskólinn Lækjarbotnum
-      ],
-    },
-    {
-      // Hafnarfjordur
-      municipalityCode: '1400',
-      schools: [
-        'G-2235-A', // Barnaskóli Hjallastefnunnar
-        'G-2236-A', // NÚ - Framsýn menntun
-      ],
-    },
-    {
-      // Reykjavik
-      municipalityCode: '0000',
-      schools: [
-        'G-1170-A', // Barnaskóli Hjallastefnunnar
-        'G-1425-A', // Waldorfskólinn Sólstafir
-        'G-1157-B', // Landakotsskóli - Grunnskólastig-IBprogram
-        'G-1157-A', // Landakotsskóli - Grunnskólastig-íslenskubraut
-        'G-1189-A', // Tjarnarskóli
-        'G-1249-A', // Skóli Ísaks Jónssonar
-      ],
-    },
-    {
-      // Gardabaer
-      municipalityCode: '1300',
-      schools: [
-        'G-2247-A', // Barnaskóli Hjallastefnunnar
-        'G-2250-B', // Alþjóðaskólinn á Íslandi - Bilingual-program
-        'G-2250-A', // Alþjóðaskólinn á Íslandi - IB-program
-      ],
-    },
-    {
-      // Akureyri
-      municipalityCode: '6000',
-      schools: [
-        'G-5120-A', // Ásgarður - skóli í skýjunum
-      ],
-    },
-  ]
-
-  const municipalityCode = municipalities.find((municipality) =>
-    municipality.schools.includes(schoolUnitId),
-  )?.municipalityCode
-
-  return municipalityCode
-}
-
-export const getInternationalSchoolsIds = () => {
-  // Since the data from Frigg is not structured for international schools, we need to manually identify them
-  return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
-}
-
 export const getApplicationType = (
   answers: FormValue,
   externalData: ExternalData,
@@ -592,13 +542,10 @@ export const getApplicationType = (
   }
 
   // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    if (!childInformation?.primaryOrgId) {
-      return yearOfBirth === firstGradeYear
-        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-        : ApplicationType.NEW_PRIMARY_SCHOOL
-    }
+  if (!childInformation?.primaryOrgId) {
+    return yearOfBirth === firstGradeYear
+      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   return ApplicationType.NEW_PRIMARY_SCHOOL
@@ -616,8 +563,7 @@ export const getGuardianByNationalId = (
 
   return childInformation?.agents?.find(
     (agent) =>
-      agent.nationalId === nationalId &&
-      agent.type === AffiliationRole.Guardian,
+      agent.nationalId === nationalId && agent.type === AgentType.Guardian,
   )
 }
 
@@ -683,4 +629,80 @@ export const getAttachmentTitles = (answers: FormValue): Array<FileType> => {
     return attachments
   }
   return []
+}
+
+export const getCurrentAndNextGrade = (grade: string): string[] => {
+  const gradeNumber = parseInt(grade, 10)
+
+  if (Number.isNaN(gradeNumber)) return []
+
+  const current = grade.padStart(2, '0')
+  const next = gradeNumber + 1
+
+  // Only include the next grade if it's within bounds
+  return next <= 10 ? [current, next.toString().padStart(2, '0')] : [current]
+}
+
+export const getSelectedSchoolData = (
+  externalData: ExternalData,
+  schoolId: string,
+) => {
+  const { schools } = getApplicationExternalData(externalData)
+
+  return schools.find((school) => school?.id === schoolId)
+}
+
+export const getSelectedSchoolSector = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector ?? ''
+}
+
+export const getSelectedSchoolSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
+}
+
+export const getSelectedSchoolUnitId = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+  return selectedSchoolId
+    ? getSelectedSchoolData(externalData, selectedSchoolId)?.unitId ?? ''
+    : ''
+}
+
+export const payerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.payerApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
 }

@@ -51,6 +51,7 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        modified
         caseId
         defendantId
         created
@@ -66,6 +67,7 @@ query Case($input: CaseQueryInput!) {
         comment
         deliveredToDefenderNationalId
         servedBy
+        isDefaultJudgement
       }
     }
     defenderName
@@ -249,6 +251,7 @@ query Case($input: CaseQueryInput!) {
       recordedSpeed
       speedLimit
     }
+    withCourtSessions
     courtSessions {
       id
       created
@@ -375,6 +378,7 @@ query Case($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      withCourtSessions
       courtSessions {
         id
         startDate
@@ -501,6 +505,7 @@ query Case($input: CaseQueryInput!) {
     }
     mergeCaseNumber
     civilDemands
+    penalties
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

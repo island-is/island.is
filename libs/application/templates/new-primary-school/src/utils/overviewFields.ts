@@ -1,6 +1,11 @@
 import { buildOverviewField, NO, YES } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import { shouldShowPage } from './conditionUtils'
+import {
+  ApplicationFeatureKey,
+  ApplicationType,
+  ReasonForApplicationOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -13,6 +18,7 @@ import {
   guardiansItems,
   healthProtectionItems,
   languagesItems,
+  payerItems,
   reasonForApplicationItems,
   relativesTable,
   schoolItems,
@@ -60,14 +66,14 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.currentSchool',
       title:
         newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
-      backId: (answers, externalData) => {
+      backId: (_, externalData) => {
         const { primaryOrgId } = getApplicationExternalData(externalData)
 
         // If the primaryOrgId doesn't exists it means Frigg doesn't have the data
         // and applicant should be able to edit if editable
         return primaryOrgId ? undefined : editable ? 'currentSchool' : undefined
       },
-      loadItems: currentSchoolItems,
+      items: currentSchoolItems,
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
@@ -98,7 +104,7 @@ export const overviewFields = (editable?: boolean) => {
             : 'newSchool'
           : undefined
       },
-      loadItems: schoolItems,
+      items: schoolItems,
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',
@@ -150,6 +156,18 @@ export const overviewFields = (editable?: boolean) => {
       attachments: fileItems,
       hideIfEmpty: true,
       bottomLine: true,
+    }),      
+    buildOverviewField({
+      id: 'overview.payer',
+      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      backId: editable ? 'payer' : undefined,
+      items: payerItems,
+      condition: (answers, externalData) =>
+        shouldShowPage(
+          answers,
+          externalData,
+          ApplicationFeatureKey.PAYMENT_INFO,
+        ),
     }),
   ]
 }

@@ -72,7 +72,6 @@ export const courtSubtypes: CourtSubtypes = {
   MINOR_ASSAULT: 'Líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
-  BODILY_INJURY: 'Líkamsmeiðingar',
   MEDICINES_OFFENSE: 'Lyfjalög',
   MURDER: 'Manndráp',
   RAPE: 'Nauðgun',
@@ -105,7 +104,7 @@ export const courtSubtypes: CourtSubtypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is intended
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
@@ -122,6 +121,8 @@ export const courtSubtypes: CourtSubtypes = {
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
   // TODO: replace with appropriate type when it has been created in the court system
   VIDEO_RECORDING_EQUIPMENT: 'Annað',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY: 'Hegningarlagabrot önnur',
 }
 
 enum RobotEmailType {

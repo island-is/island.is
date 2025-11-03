@@ -13,13 +13,13 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { application, dataProvider, section } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { AlthingiOmbudsmanLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'ComplaintToAlthinigOmbudsmanPrerequisites',
   title: application.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: AlthingiOmbudsmanLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

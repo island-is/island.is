@@ -483,6 +483,40 @@
         ]
       }
     },
+    "/api/Attachment/attachmenttypes": {
+      "get": {
+        "tags": ["Attachment"],
+        "operationId": "Attachment_AttachmentTypes",
+        "parameters": [
+          {
+            "name": "onlyVisible",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypes_AttachmentTypeListViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/Auth/login": {
       "post": {
         "tags": ["Auth"],
@@ -762,39 +796,6 @@
             "JWT": []
           }
         ]
-      },
-      "put": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_Edit",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_EditUnemploymentApplication_EditUnemploymentApplicationCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
       }
     },
     "/api/UnemploymentApplication/{applicationId}": {
@@ -813,29 +814,6 @@
             "x-position": 1
           }
         ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/empty": {
-      "get": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplication",
         "responses": {
           "200": {
             "description": "",
@@ -877,41 +855,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/withdraw": {
-      "put": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_WithdrawApplication",
-        "requestBody": {
-          "x-name": "cmd",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_WithdrawApplication_WithdrawApplicationCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -967,110 +910,6 @@
         ]
       }
     },
-    "/api/UnemploymentApplication/addattachment": {
-      "post": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_AddAttachment",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_AddAttachment_AddAttachmentCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/{applicantSSN}/status": {
-      "get": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_GetStatusInfo",
-        "parameters": [
-          {
-            "name": "applicantSSN",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_ViewModels_StatusInfoViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/confirm": {
-      "put": {
-        "tags": ["UnemploymentApplication"],
-        "operationId": "UnemploymentApplication_Confirm",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_ConfirmCreateUnemploymentApplication_ConfirmCreateUnemploymentApplicationCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/UnemploymentApplication/deleteAttachment": {
       "delete": {
         "tags": ["UnemploymentApplication"],
@@ -1095,6 +934,76 @@
                 "schema": {
                   "type": "string",
                   "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/validatepaymentpage": {
+      "post": {
+        "tags": ["UnemploymentApplication"],
+        "operationId": "UnemploymentApplication_ValidatePaymentPage",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationPaymentPage_ValidateUnemploymentApplicationPaymentPageCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/validateunpaidvacation": {
+      "post": {
+        "tags": ["UnemploymentApplication"],
+        "operationId": "UnemploymentApplication_ValidatePaymentPage2",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationUnpaidVacation_ValidateUnemploymentApplicationUnpaidVacationCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
                 }
               }
             }
@@ -1352,12 +1261,12 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "canStart": {
             "type": "string",
             "description": "Dagsetning Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "createdBy": {
@@ -1368,7 +1277,7 @@
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -1379,7 +1288,7 @@
           "confirmed": {
             "type": "string",
             "description": "Dagsetning Staðfestingar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "pendingStatusChange": {
@@ -1573,18 +1482,18 @@
           "date": {
             "type": "string",
             "description": "Dagsetning úrskurðar",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodDate": {
             "type": "string",
             "description": "Dagsetning bótatímabils síðasta úrskurðar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStart": {
             "type": "string",
             "description": "Getur byrjað dagsetning síðasta úrskurðar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -1603,7 +1512,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "grantRatio": {
             "type": "integer",
@@ -1612,7 +1521,7 @@
           },
           "canStart": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartDateChangeReason": {
@@ -1621,7 +1530,7 @@
           },
           "grantPeriodDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "grantPeriodLength": {
@@ -1634,7 +1543,7 @@
           },
           "decisionAppliesDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "decisionAppliesDateChangeReason": {
@@ -1698,7 +1607,7 @@
           },
           "dateOfBirth": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "socialSecurityNumber": {
             "nullable": true,
@@ -1833,7 +1742,7 @@
               },
               "birthDate": {
                 "type": "string",
-                "format": "date-time"
+                "format": ""
               },
               "isIndividual": {
                 "type": "boolean"
@@ -1947,7 +1856,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "createdBy": {
             "type": "string",
@@ -1959,7 +1868,7 @@
           },
           "lastSeenDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "data": {
@@ -2006,7 +1915,7 @@
           },
           "processedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "processedById": {
@@ -2168,7 +2077,7 @@
           "endDate": {
             "type": "string",
             "description": "Starfslok",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "isFromEmployment": {
@@ -2217,13 +2126,13 @@
           "unpaidVacationStart": {
             "type": "string",
             "description": "Orlof hófst",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "unpaidVacationEnd": {
             "type": "string",
             "description": "Orlof endaði",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -2286,7 +2195,7 @@
           "dateOfBirth": {
             "type": "string",
             "description": "Fæðingardagur",
-            "format": "date-time"
+            "format": ""
           },
           "currentAddressDifferent": {
             "type": "boolean",
@@ -2381,7 +2290,7 @@
           "canStartAt": {
             "type": "string",
             "description": "Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "alternateServiceAreas": {
@@ -2642,7 +2551,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "changedBy": {
             "type": "string",
@@ -2650,7 +2559,7 @@
           },
           "changed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "deletedBy": {
@@ -2659,7 +2568,7 @@
           },
           "deletedWhen": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "deleted": {
@@ -2710,13 +2619,13 @@
           "started": {
             "type": "string",
             "description": "Starf - Upphafsdagsetning",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "quit": {
             "type": "string",
             "description": "Starf - Lokadagsetning",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "workRatio": {
@@ -2913,7 +2822,7 @@
           "created": {
             "type": "string",
             "description": "Skrá - Stofnað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "isCreatedByMS": {
@@ -2960,13 +2869,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Barn á framfæri - Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Barn á framfæri - Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "payAlimony": {
@@ -3075,13 +2984,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -3110,13 +3019,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -3174,13 +3083,13 @@
           "dateFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "dateTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "ssn": {
@@ -3946,6 +3855,11 @@
                     "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_AttachmentDto"
                   }
                 ]
+              },
+              "categoryId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
               }
             }
           }
@@ -3966,11 +3880,11 @@
               },
               "dateFrom": {
                 "type": "string",
-                "format": "date-time"
+                "format": ""
               },
               "dateTo": {
                 "type": "string",
-                "format": "date-time",
+                "format": "",
                 "nullable": true
               },
               "taxable": {
@@ -4195,7 +4109,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "data": {
             "type": "string",
@@ -4243,11 +4157,11 @@
           },
           "dateFrom": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "dateTo": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -4320,15 +4234,15 @@
           },
           "gainPeriodFrom": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "gainPeriodTo": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodDate": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationPeriodLength": {
             "type": "number",
@@ -4409,7 +4323,7 @@
           },
           "canStartAt": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "applicationLanguage": {
             "type": "string",
@@ -4417,7 +4331,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "statusColor": {
@@ -4430,7 +4344,7 @@
           },
           "lastVerdictDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -4720,6 +4634,26 @@
           }
         }
       },
+      "Galdur_Domain_Models_Settings_AttachmentTypes_AttachmentTypeListViewModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "attachmentTypes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypes_AttachmentTypeDTO"
+                }
+              }
+            }
+          }
+        ]
+      },
       "Galdur_XRoad_API_ViewModels_AuthViewModel": {
         "type": "object",
         "additionalProperties": false,
@@ -4873,7 +4807,7 @@
           },
           "deadline": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "showOnEures": {
             "type": "boolean"
@@ -4895,12 +4829,12 @@
           },
           "temporaryJobDateFrom": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "temporaryJobDateTo": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "hireReducedWorkingCapacity": {
@@ -5003,12 +4937,12 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -5320,7 +5254,7 @@
           },
           "deadline": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "escoSkills": {
             "type": "array",
@@ -5924,6 +5858,14 @@
               "typeNumber": {
                 "type": "string",
                 "nullable": true
+              },
+              "subsistenceTypeIds": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "type": "string",
+                  "format": "guid"
+                }
               }
             }
           }
@@ -5977,7 +5919,7 @@
           },
           "hiredIPSStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -6317,14 +6259,33 @@
                   }
                 ]
               },
-              "canApply": {
-                "type": "boolean"
+              "rskEmploymentHistory": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer"
+                }
               },
               "reopenApplication": {
                 "type": "boolean"
               },
               "hasApplicationInLast4Weeks": {
                 "type": "boolean"
+              },
+              "canApply": {
+                "type": "boolean"
+              },
+              "userMessageIS": {
+                "type": "string",
+                "nullable": true
+              },
+              "userMessageEN": {
+                "type": "string",
+                "nullable": true
+              },
+              "errorCode": {
+                "type": "string",
+                "nullable": true
               }
             }
           }
@@ -6594,18 +6555,18 @@
           "created": {
             "type": "string",
             "description": "Búin til",
-            "format": "date-time"
+            "format": ""
           },
           "startDate": {
             "type": "string",
             "description": "Viðmiðunardagur fyrir tekjutengingu",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStart": {
             "type": "string",
             "description": "Dagsetning Getur byrjað",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "createdBy": {
@@ -6616,7 +6577,7 @@
           "changed": {
             "type": "string",
             "description": "Breytt",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -6644,7 +6605,7 @@
           "confirmed": {
             "type": "string",
             "description": "Dagsetning Staðfestingar",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "pendingReassessment": {
@@ -6698,7 +6659,7 @@
           "u2LateHomecomingDate": {
             "type": "string",
             "description": "Viðmiðunardags ef sein heimkoma í U2",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -6886,7 +6847,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationRatio": {
             "type": "integer",
@@ -6905,12 +6866,12 @@
           },
           "canStart": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "bankruptcyDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartDateChangeReason": {
@@ -6919,7 +6880,7 @@
           },
           "compensationPeriodDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "compensationPeriodLength": {
@@ -6932,7 +6893,7 @@
           },
           "decisionAppliesDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "decisionAppliesDateChangeReason": {
@@ -7027,8 +6988,8 @@
           },
           "resignationEnds": {
             "type": "string",
-            "description": "Tölvuþekking",
-            "format": "date-time",
+            "description": "Hvenær lýkur Uppsagnarfresti",
+            "format": "",
             "nullable": true
           }
         }
@@ -7069,6 +7030,13 @@
               "$ref": "#/components/schemas/Galdur_Domain_Models_Income_IncomeDTO"
             }
           },
+          "sicknessBenefitPayments": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Income_IncomeDTO"
+            }
+          },
           "capitalGains": {
             "nullable": true,
             "oneOf": [
@@ -7092,6 +7060,9 @@
             "type": "boolean"
           },
           "showType3": {
+            "type": "boolean"
+          },
+          "showType4": {
             "type": "boolean"
           }
         }
@@ -7135,19 +7106,19 @@
           "periodFrom": {
             "type": "string",
             "description": "Tímabil frá",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "periodTo": {
             "type": "string",
             "description": "Tímabil til",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "paymentDate": {
             "type": "string",
             "description": "DagsGreidslu",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "estimatedIncome": {
@@ -7196,7 +7167,7 @@
           "lastChange": {
             "type": "string",
             "description": "LastChange",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "lastChangeBy": {
@@ -7211,6 +7182,22 @@
           "lockRealIncome": {
             "type": "boolean",
             "description": "LockRealIncome"
+          },
+          "unionId": {
+            "type": "string",
+            "description": "UnionId",
+            "format": "guid",
+            "nullable": true
+          },
+          "unionName": {
+            "type": "string",
+            "description": "UnionName",
+            "nullable": true
+          },
+          "unionSSN": {
+            "type": "string",
+            "description": "UnionSSN",
+            "nullable": true
           }
         }
       },
@@ -7219,6 +7206,10 @@
         "additionalProperties": false,
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
             "type": "string",
             "nullable": true
           },
@@ -7238,7 +7229,12 @@
         "properties": {
           "hasOwnBusinessPast36Months": {
             "type": "boolean",
-            "description": "Hefur verið með eigin atvinnurekstur síðastliðin 36 mánuði"
+            "description": "Ertu eða varstu sjálfstætt starfandi?"
+          },
+          "workedUnderOwnSSN": {
+            "type": "boolean",
+            "description": "Varstu starfandi á eigin kennitölu?",
+            "nullable": true
           },
           "unemploymentReasonCodeId": {
             "type": "string",
@@ -7421,6 +7417,13 @@
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_IncomeTypes_IncomeTypeDTO"
             }
           },
+          "incomeTypeCategories": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_IncomeTypes_IncomeTypeCategoryDTO"
+            }
+          },
           "postCodes": {
             "type": "array",
             "nullable": true,
@@ -7473,6 +7476,13 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_UnemploymentReasons_UnemploymentReasonDTO"
+            }
+          },
+          "unemploymentReasonCategories": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_UnemploymentReasons_UnemploymentReasonCatagoryDTO"
             }
           },
           "unemploymentApplicationStates": {
@@ -7531,6 +7541,10 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          "maxCanStartDate": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -7658,7 +7672,7 @@
           },
           "dateFrom": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           }
         }
@@ -7746,7 +7760,7 @@
           },
           "created": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "createdBy": {
             "type": "string",
@@ -7754,7 +7768,7 @@
           },
           "changed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "changedBy": {
@@ -7786,6 +7800,26 @@
           }
         ]
       },
+      "Galdur_Domain_Models_Settings_IncomeTypes_IncomeTypeCategoryDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "incomeTypes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_IncomeTypes_IncomeTypeDTO"
+                }
+              }
+            }
+          }
+        ]
+      },
       "Galdur_Domain_Models_Settings_UnemploymentReasons_UnemploymentReasonDTO": {
         "allOf": [
           {
@@ -7803,6 +7837,31 @@
               },
               "bankruptcyReason": {
                 "type": "boolean"
+              },
+              "categoryId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Models_Settings_UnemploymentReasons_UnemploymentReasonCatagoryDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "unemploymentReasons": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_UnemploymentReasons_UnemploymentReasonDTO"
+                }
               }
             }
           }
@@ -7822,12 +7881,12 @@
           },
           "applicationConfirmed": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "canStartAt": {
             "type": "string",
-            "format": "date-time"
+            "format": ""
           },
           "compensationRatio": {
             "type": "number",
@@ -7851,17 +7910,17 @@
           },
           "lastVerdictDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "date": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "bankruptcyDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "",
             "nullable": true
           },
           "statusColor": {
@@ -7871,6 +7930,56 @@
           "serviceAreas": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string",
+                "nullable": true
+              },
+              "periods": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_RskPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -8118,169 +8227,6 @@
           }
         }
       },
-      "Galdur_Application_Applications_UnemploymentApplications_Commands_WithdrawApplication_WithdrawApplicationCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "applicantSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "withDrawalDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "delistingReasonId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Application_Applications_UnemploymentApplications_Commands_AddAttachment_AddAttachmentCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "attachmentId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "applicationId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "attachmentStatusId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "applicationType": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationDataRequestItemId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "isExternal": {
-            "type": "boolean"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_Applications_UnemploymentApplications_ViewModels_StatusInfoViewModel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "status": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_StatusInfoDTO"
-                  }
-                ]
-              },
-              "isActive": {
-                "type": "boolean"
-              },
-              "applicationId": {
-                "type": "string",
-                "format": "guid"
-              },
-              "canStart": {
-                "type": "string",
-                "format": "date-time",
-                "nullable": true
-              },
-              "applicationDate": {
-                "type": "string",
-                "format": "date-time",
-                "nullable": true
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_StatusInfoDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "descriptionEN": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Application_Applications_UnemploymentApplications_Commands_EditUnemploymentApplication_EditUnemploymentApplicationCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "unemploymentApplication": {
-            "description": "Umsókn um atvinnuleysisbætur",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_ViewModels_UnemploymentApplicationInputViewModel"
-              }
-            ]
-          },
-          "finalize": {
-            "type": "boolean"
-          },
-          "save": {
-            "type": "boolean"
-          },
-          "external": {
-            "type": "boolean"
-          },
-          "changedByMsUserSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "changedByMsUserOnBehalfOfSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "liteVersion": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Galdur_Application_Applications_UnemploymentApplications_Commands_ConfirmCreateUnemploymentApplication_ConfirmCreateUnemploymentApplicationCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "unemploymentApplicationId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "isExternal": {
-            "type": "boolean"
-          }
-        }
-      },
       "Galdur_Application_Applications_UnemploymentApplications_Commands_DeleteAttachment_DeleteAttachmentCommand": {
         "type": "object",
         "additionalProperties": false,
@@ -8306,6 +8252,59 @@
           "changedByMsUserOnBehalfOfSSN": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "userMessageIS": {
+            "type": "string",
+            "nullable": true
+          },
+          "userMessageEN": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationPaymentPage_ValidateUnemploymentApplicationPaymentPageCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankingPensionUnion": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_BankingPensionUnion"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationUnpaidVacation_ValidateUnemploymentApplicationUnpaidVacationCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "employerSettlement": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EmployerSettlementDTO"
+              }
+            ]
           }
         }
       }

@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import {
@@ -33,7 +34,11 @@ type OrganizationParentSubpageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
 }
 
-export type OrganizationParentSubpageProps = StandaloneParentSubpageProps
+export type OrganizationParentSubpageProps = StandaloneParentSubpageProps & {
+  organizationPageSlug: string
+  parentSubpageSlug: string
+  baseUrl: string
+}
 
 const OrganizationParentSubpage: Screen<
   OrganizationParentSubpageProps,
@@ -45,6 +50,10 @@ const OrganizationParentSubpage: Screen<
   subpage,
   tableOfContentHeadings,
   namespace,
+  organizationPageSlug,
+  parentSubpageSlug,
+  baseUrl,
+  selectedIndex,
 }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -55,11 +64,15 @@ const OrganizationParentSubpage: Screen<
 
   const showTableOfContents = parentSubpage.childLinks.length > 1
 
+  const pageTitle = `${parentSubpage?.title ?? ''}${
+    Boolean(parentSubpage?.title) && Boolean(subpage?.title) ? ' - ' : ''
+  }${subpage?.title ?? ''}`
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage?.title ?? ''}
+      pageTitle={pageTitle}
       organizationPage={organizationPage}
       fullWidthContent={true}
       pageFeaturedImage={
@@ -85,6 +98,19 @@ const OrganizationParentSubpage: Screen<
       }}
       mainContent={
         <Box paddingTop={4}>
+          {selectedIndex === 0 && (
+            <Head>
+              <link
+                rel="canonical"
+                href={`${baseUrl}${
+                  linkResolver('organizationsubpage', [
+                    organizationPageSlug,
+                    parentSubpageSlug,
+                  ]).href
+                }`}
+              />
+            </Head>
+          )}
           <GridContainer>
             <GridRow>
               <GridColumn
@@ -92,11 +118,11 @@ const OrganizationParentSubpage: Screen<
                 offset={['0', '0', '1/9']}
               >
                 <Stack space={3}>
-                  {showTableOfContents && (
-                    <Stack space={4}>
-                      <Text variant="h1" as="h1">
-                        {parentSubpage.title}
-                      </Text>
+                  <Stack space={4}>
+                    <Text variant="h1" as="h1">
+                      {parentSubpage.title}
+                    </Text>
+                    {showTableOfContents && (
                       <Box
                         paddingX={4}
                         paddingY={2}
@@ -141,8 +167,8 @@ const OrganizationParentSubpage: Screen<
                           </Stack>
                         </Stack>
                       </Box>
-                    </Stack>
-                  )}
+                    )}
+                  </Stack>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -151,10 +177,7 @@ const OrganizationParentSubpage: Screen<
             namespace={namespace}
             organizationPage={organizationPage}
             subpage={subpage}
-            subpageTitleVariant={
-              parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
-            }
-            paddingTop={showTableOfContents ? 4 : 0}
+            subpageTitleVariant="h2"
           />
         </Box>
       }
@@ -170,8 +193,17 @@ const OrganizationParentSubpage: Screen<
 
 OrganizationParentSubpage.getProps = async (context) => {
   const props = await getProps(context)
+  const querySlugs = (context.query.slugs ?? []) as string[]
+  const [organizationPageSlug, parentSubpageSlug] = querySlugs
+  const host = context.req.headers.host ?? ''
+  const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
+  const baseUrl = `${protocol}${host}`
+
   return {
     ...props,
+    baseUrl,
+    organizationPageSlug,
+    parentSubpageSlug,
     ...getThemeConfig(
       props.organizationPage.theme,
       props.organizationPage.organization,

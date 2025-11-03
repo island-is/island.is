@@ -1,5 +1,9 @@
 import { ApolloClient } from '@apollo/client'
-import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
+import {
+  EducationFriggOptionsListInput,
+  OrganizationTypeEnum,
+  Query,
+} from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
   AttachmentItem,
@@ -28,8 +32,9 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
-  ReasonForApplicationOptions,
-  SchoolType,
+  OrganizationSector,
+  OrganizationSubType,
+  PayerOption,
 } from './constants'
 import {
   formatGrade,
@@ -39,7 +44,10 @@ import {
   getCurrentSchoolName,
   getGenderMessage,
   getPreferredSchoolName,
+  getSchoolName,
   getSelectedOptionLabel,
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 const getFriggOptions = async (
@@ -150,25 +158,7 @@ export const childItems = async (
         ]
       : []
 
-  const differentPlaceOfResidenceItems: Array<KeyValueItem> =
-    childInfo?.differentPlaceOfResidence === YES
-      ? [
-          {
-            width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians
-                .childInfoPlaceOfResidence,
-            valueText: `${childInfo?.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
-          },
-        ]
-      : []
-
-  return [
-    ...baseItems,
-    ...preferredNameItems,
-    ...pronounsItems,
-    ...differentPlaceOfResidenceItems,
-  ]
+  return [...baseItems, ...preferredNameItems, ...pronounsItems]
 }
 
 export const guardiansItems = (
@@ -252,42 +242,36 @@ export const relativesTable = async (
   return {
     header: [
       newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.nationalId,
+      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.relation,
     ],
     rows: relatives.map((r) => [
-      r.fullName,
+      r.nationalIdWithName.name,
+      formatKennitala(r.nationalIdWithName.nationalId),
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
     ]),
   }
 }
 
-export const currentSchoolItems = async (
+export const currentSchoolItems = (
   answers: FormValue,
   externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
   locale: Locale,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const { currentSchoolId } = getApplicationAnswers(answers)
   const { childGradeLevel, primaryOrgId } =
     getApplicationExternalData(externalData)
-
-  const { data } = await apolloClient.query<Query>({
-    query: friggOrganizationsByTypeQuery,
-  })
-  const selectedSchoolName = data?.friggOrganizationsByType
-    ?.flatMap((m) => m.managing ?? [])
-    .find((school) => school?.id === currentSchoolId)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.primarySchool.currentSchool,
-      valueText: getCurrentSchoolName(externalData) || selectedSchoolName,
+      valueText:
+        getCurrentSchoolName(externalData) ||
+        getSchoolName(externalData, currentSchoolId ?? ''),
     },
   ]
 
@@ -319,10 +303,15 @@ export const currentNurseryItems = async (
 
   const { data } = await apolloClient.query<Query>({
     query: friggOrganizationsByTypeQuery,
+    variables: {
+      input: {
+        type: OrganizationTypeEnum.ChildCare,
+      },
+    },
   })
-  const currentNurseryName = data?.friggOrganizationsByType
-    ?.flatMap((municipality) => municipality.managing)
-    .find((nursery) => nursery?.id === currentNursery)?.name
+  const currentNurseryName = data?.friggOrganizationsByType?.find(
+    (nursery) => nursery?.id === currentNursery,
+  )?.name
 
   return [
     {
@@ -333,28 +322,18 @@ export const currentNurseryItems = async (
   ]
 }
 
-export const schoolItems = async (
+export const schoolItems = (
   answers: FormValue,
   externalData: ExternalData,
-  _userNationalId: string,
-  apolloClient: ApolloClient<object>,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const {
     applicationType,
     expectedStartDate,
-    selectedSchool,
+    selectedSchoolId,
     applyForPreferredSchool,
-    selectedSchoolType,
     temporaryStay,
     expectedEndDate,
   } = getApplicationAnswers(answers)
-
-  const { data } = await apolloClient.query<Query>({
-    query: friggOrganizationsByTypeQuery,
-  })
-  const selectedSchoolName = data?.friggOrganizationsByType
-    ?.flatMap((municipality) => municipality.managing)
-    .find((school) => school?.id === selectedSchool)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -366,7 +345,7 @@ export const schoolItems = async (
       valueText:
         applyForPreferredSchool === YES
           ? getPreferredSchoolName(externalData)
-          : selectedSchoolName,
+          : getSchoolName(externalData, selectedSchoolId ?? ''),
     },
   ]
 
@@ -385,7 +364,8 @@ export const schoolItems = async (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+    getSelectedSchoolSubType(answers, externalData) ===
+      OrganizationSubType.INTERNATIONAL_SCHOOL &&
     temporaryStay === YES
       ? [
           {
@@ -403,23 +383,19 @@ export const schoolItems = async (
 
 export const reasonForApplicationItems = async (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
   locale: Locale,
 ): Promise<KeyValueItem[]> => {
-  const {
-    reasonForApplication,
-    reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
-    selectedSchoolType,
-  } = getApplicationAnswers(answers)
+  const { reasonForApplicationId } = getApplicationAnswers(answers)
 
   const friggOptionsType =
-    selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+    getSelectedSchoolSector(answers, externalData) ===
+    OrganizationSector.PRIVATE
       ? OptionsType.REASON_PRIVATE_SCHOOL
-      : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+      : getSelectedSchoolSubType(answers, externalData) ===
+        OrganizationSubType.INTERNATIONAL_SCHOOL
       ? OptionsType.REASON_INTERNATIONAL_SCHOOL
       : OptionsType.REASON
 
@@ -441,23 +417,7 @@ export const reasonForApplicationItems = async (
     },
   ]
 
-  const movingMunicipalityItems: Array<KeyValueItem> =
-    reasonForApplication === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-      ? [
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.address,
-            valueText: reasonForApplicationStreetAddress,
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.postalCode,
-            valueText: reasonForApplicationPostalCode,
-          },
-        ]
-      : []
-
-  return [...baseItems, ...movingMunicipalityItems]
+  return [...baseItems]
 }
 
 export const siblingsTable = (answers: FormValue): TableData => {
@@ -468,7 +428,10 @@ export const siblingsTable = (answers: FormValue): TableData => {
       newPrimarySchoolMessages.shared.fullName,
       newPrimarySchoolMessages.shared.nationalId,
     ],
-    rows: siblings.map((s) => [s.fullName, formatKennitala(s.nationalId)]),
+    rows: siblings.map((s) => [
+      s.nationalIdWithName.name,
+      formatKennitala(s.nationalIdWithName.nationalId),
+    ]),
   }
 }
 
@@ -807,4 +770,36 @@ export const fileItems = (answers: FormValue): Array<AttachmentItem> => {
       fileType: fileType || undefined,
     }
   })
+}
+
+export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
+  const { payer, payerName, payerNationalId, payerEmail } =
+    getApplicationAnswers(answers)
+
+  return payer === PayerOption.APPLICANT
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+          valueText:
+            newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+        },
+      ]
+    : [
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.fullName,
+          valueText: payerName,
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.nationalId,
+          valueText: formatKennitala(payerNationalId ?? ''),
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.email,
+          valueText: payerEmail,
+        },
+      ]
 }

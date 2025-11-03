@@ -1,16 +1,49 @@
-import { ExternalData } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
-import { hasOtherGuardian, showPreferredLanguageFields } from './conditionUtils'
 import {
+  hasOtherGuardian,
+  hasOtherPayer,
+  needsPayerApproval,
+  shouldShowPage,
+  showPreferredLanguageFields,
+} from './conditionUtils'
+import {
+  ApplicationFeatureKey,
   ApplicationType,
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
+  PayerOption,
+  States,
 } from './constants'
-import {
-  getApplicationType,
-  getMunicipalityCodeBySchoolUnitId,
-} from './newPrimarySchoolUtils'
+import { getApplicationType } from './newPrimarySchoolUtils'
+
+const buildApplication = (data: {
+  answers?: FormValue
+  externalData?: ExternalData
+  state?: string
+}): Application => {
+  const { answers = {}, externalData = {}, state = States.DRAFT } = data
+  return {
+    id: '12345',
+    assignees: [],
+    applicant: '123456-7890',
+    typeId: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+    created: new Date(),
+    status: ApplicationStatus.IN_PROGRESS,
+    modified: new Date(),
+    applicantActors: [],
+    answers,
+    state,
+    externalData,
+  }
+}
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -127,17 +160,6 @@ describe('showPreferredLanguageFields', () => {
     expect(showPreferredLanguageFields(answers)).toBe(true)
   })
 })
-describe('getMunicipalityCodeBySchoolUnitId', () => {
-  it('should return the correct municipality code for a given school unitId', () => {
-    const schoolId = 'G-2297-A'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
-  })
-
-  it('should return undefined for an unknown school unit id', () => {
-    const schoolId = 'unknown-school-id'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
-  })
-})
 
 describe('getApplicationType', () => {
   const currentDate = new Date()
@@ -178,24 +200,23 @@ describe('getApplicationType', () => {
     )
   })
 
-  // ADD BACK WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  // it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
-  //   const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
-  //   const answers = {
-  //     childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
-  //   }
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+    }
 
-  //   const externalData = {
-  //     childInformation: {
-  //       data: {},
-  //     },
-  //   } as unknown as ExternalData
+    const externalData = {
+      childInformation: {
+        data: {},
+      },
+    } as unknown as ExternalData
 
-  //   expect(getApplicationType(answers, externalData)).toBe(
-  //     ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  //   )
-  // })
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    )
+  })
 
   it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
@@ -214,5 +235,223 @@ describe('getApplicationType', () => {
     expect(getApplicationType(answers, externalData)).toBe(
       ApplicationType.NEW_PRIMARY_SCHOOL,
     )
+  })
+})
+
+describe('shouldShowPage', () => {
+  it('should return true if the application feature for the selected school includes key', () => {
+    const schoolId = uuid()
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    const externalData = {
+      schools: {
+        data: [
+          {
+            id: schoolId,
+            settings: {
+              applicationConfigs: [
+                {
+                  applicationFeatures: [
+                    { key: ApplicationFeatureKey.PAYMENT_INFO },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    expect(
+      shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
+    ).toBe(true)
+  })
+
+  it('should return false if the application feature for the selected school does not include key', () => {
+    const schoolId = uuid()
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    const externalData = {
+      schools: {
+        data: [
+          {
+            id: schoolId,
+            settings: {
+              applicationConfigs: [
+                {
+                  applicationFeatures: [
+                    { key: ApplicationFeatureKey.APPLICANT_INFO },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    expect(
+      shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
+    ).toBe(false)
+  })
+})
+
+describe('hasOtherPayer', () => {
+  it('should return true when payer is OTHER', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: uuid(),
+      },
+      payer: {
+        option: PayerOption.OTHER,
+      },
+    }
+
+    expect(hasOtherPayer(answers)).toBe(true)
+  })
+
+  it('should return false when payer is APPLICANT', () => {
+    const answers = {
+      newSchool: {
+        municipality: '3000',
+        school: uuid(),
+      },
+      payer: {
+        option: PayerOption.APPLICANT,
+      },
+    }
+
+    expect(hasOtherPayer(answers)).toBe(false)
+  })
+})
+
+describe('needsPayerApproval', () => {
+  it('should return true if the application feature for the selected school includes PAYMENT_INFO key and payer is OTHER', () => {
+    const schoolId = uuid()
+    const application = buildApplication({
+      answers: {
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+        payer: {
+          option: PayerOption.OTHER,
+          other: {
+            name: 'John Doe',
+            nationalId: '1234567890',
+          },
+        },
+      },
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.PAYMENT_INFO },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsPayerApproval(application)).toBe(true)
+  })
+
+  it('should return false if the application feature for the selected school does not include PAYMENT_INFO key or payer is APPLICANT', () => {
+    const schoolId = uuid()
+    const application1 = buildApplication({
+      answers: {
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+        payer: {
+          option: PayerOption.OTHER,
+          other: {
+            name: 'John Doe',
+            nationalId: '1234567890',
+          },
+        },
+      },
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.APPLICANT_INFO },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsPayerApproval(application1)).toBe(false)
+
+    const application2 = buildApplication({
+      answers: {
+        newSchool: {
+          municipality: '3000',
+          school: schoolId,
+        },
+        payer: {
+          option: PayerOption.APPLICANT,
+        },
+      },
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.PAYMENT_INFO },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(needsPayerApproval(application2)).toBe(false)
   })
 })

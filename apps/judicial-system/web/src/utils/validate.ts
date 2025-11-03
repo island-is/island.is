@@ -582,14 +582,19 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordStepValid = (
-  courtSessions?: CourtSessionResponse[] | null,
-) => {
-  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
+export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
+  if (!workingCase.withCourtSessions) {
+    return true
+  }
+
+  if (
+    !Array.isArray(workingCase.courtSessions) ||
+    workingCase.courtSessions.length === 0
+  ) {
     return false
   }
 
-  return courtSessions.every(isCourtSessionValid)
+  return workingCase.courtSessions.every(isCourtSessionValid)
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
@@ -696,3 +701,6 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
 }
+
+export const isNullOrUndefined = <T>(value?: T) =>
+  value === undefined || value === null
