@@ -216,6 +216,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         flexDirection="row"
         marginTop={hasTag ? 'auto' : 0}
         paddingTop={hasTag ? 1 : 0}
+        marginLeft={[0, 0, 5]}
       >
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}

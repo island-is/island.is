@@ -774,6 +774,10 @@ export const messages = defineMessages({
       'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
     id: 'sp.health:landlaeknir-tooltip',
   },
+  landlaeknirPatientPermitsTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
+    id: 'sp.health:landlaeknir-patient-permits-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
@@ -1617,6 +1621,10 @@ export const messages = defineMessages({
     defaultMessage: 'Ógild',
     id: 'sp.health:invalid',
   },
+  withdrawn: {
+    defaultMessage: 'Afturkölluð',
+    id: 'sp.health:withdrawn',
+  },
   validForRenewal: {
     defaultMessage: 'Endurnýja',
     id: 'sp.health:valid-for-renewal',
@@ -1802,7 +1810,7 @@ export const messages = defineMessages({
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
     defaultMessage:
-      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. <link>Lykilheilsufarsupplýsingar</link> fela í sér almennar persónuupplýsingar, sjúkdómsgreiningar, meðferðir, lyfjameðferð, ofnæmi og aðrar nauðsynlegar upplýsingar samkvæmt lögum nr. 55/2009 og EU reglugerð nr. 2025/327.Upplýsingarnarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. <link>Lykilheilsufarsupplýsingar</link> fela í sér almennar persónuupplýsingar, sjúkdómsgreiningar, meðferðir, lyfjameðferð, ofnæmi og aðrar nauðsynlegar upplýsingar samkvæmt lögum nr. 55/2009 og EU reglugerð nr. 2025/327. Upplýsingarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
   },
   permitApproval: {
     id: 'sp.health:permit-approval',
@@ -1887,7 +1895,7 @@ export const messages = defineMessages({
   keyHealthInformationList: {
     id: 'sp.health:key-health-information-list#markdown',
     defaultMessage:
-      '* Sjúkdómsgreininar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
+      '* Sjúkdómsgreiningar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
   },
   errorTryAgain: {
     id: 'sp.health:error-try-again',
@@ -1919,24 +1927,28 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate',
   },
   invalidatePermit: {
-    defaultMessage: 'Óvirkja heimild',
+    defaultMessage: 'Afturkalla',
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir afturkalla heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
-  areYouSureAboutDeletingDelegation: {
-    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
-    id: 'sp.health:are-you-sure-about-deleting-delegation',
-  },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
+    defaultMessage: 'Þú ert að fara afturkalla eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   youAreAboutToDeleteThisPermit: {
     defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-delete-this-permit',
+  },
+  addNewPermitTitle: {
+    defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
+    id: 'sp.health:you-are-about-to-add-new-permit',
+  },
+  areYouSureAboutDeletingDelegation: {
+    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
+    id: 'sp.health:are-you-sure-about-deleting-delegation',
   },
   cancel: {
     defaultMessage: 'Hætta við',
@@ -1947,7 +1959,7 @@ export const messages = defineMessages({
     id: 'sp.health:confirm',
   },
   permitCreated: {
-    defaultMessage: 'Heimild hefur verið bætt við',
+    defaultMessage: 'Nýrri heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
   },
   permitDeleted: {
@@ -1965,12 +1977,12 @@ export const messages = defineMessages({
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið óvirkjuð',
+    defaultMessage: 'Heimild hefur verið afturkölluð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að afturkalla heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
   },
   countriesError: {
@@ -1993,6 +2005,10 @@ export const messages = defineMessages({
   inactive: {
     defaultMessage: 'Óvirk',
     id: 'sp.health:inactive',
+  },
+  awaitingApproval: {
+    defaultMessage: 'Bíður gildistöku',
+    id: 'sp.health:awaiting-approval',
   },
   filterByCountry: {
     defaultMessage: 'Sía eftir landi',

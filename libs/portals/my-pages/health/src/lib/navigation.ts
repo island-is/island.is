@@ -203,6 +203,30 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: messages.patientData,
+      path: HealthPaths.HealthPatientData,
+      searchTags: [s.healthPatientData],
+      children: [
+        {
+          name: messages.patientDataPermit,
+          path: HealthPaths.HealthPatientDataPermits,
+          children: [
+            {
+              name: messages.addPermit,
+              path: HealthPaths.HealthPatientDataPermitsAdd,
+              navHide: true,
+            },
+            {
+              name: messages.permit,
+              path: HealthPaths.HealthPatientDataPermitsDetail,
+              navHide: true,
+              searchHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: messages.basicInformation,
       path: HealthPaths.HealthBasicInformation,
       searchHide: true,
