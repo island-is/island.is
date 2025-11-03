@@ -13,7 +13,7 @@ export const application = defineMessages({
   },
   applicationName: {
     id: 'ronp.application:applicationName',
-    defaultMessage: 'Skráning nýrra fasteignanúmera',
+    defaultMessage: 'Stofnun á nýjum fasteignanúmerum {value}',
     description: 'Application name',
   },
   institutionName: {

@@ -20,6 +20,7 @@ import {
   coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -34,6 +35,28 @@ import { getChargeItems } from '../utils/getChargeItems'
 import { conclusion } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { getHistoryLogSentWithSubjectAndActor } from '../utils/getHistorylogText'
+import { Fasteign } from '@island.is/clients/assets'
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const properties = getValueViaPath<Array<Fasteign>>(
+    application.externalData,
+    'getProperties.data',
+  )
+  const selectedRealEstateId = getValueViaPath<string>(
+    application.answers,
+    'realEstate.realEstateName',
+  )
+  const chosenProperty = properties?.find(
+    (property) => property.fasteignanumer === selectedRealEstateId,
+  )
+
+  return {
+    name: m.application.applicationName,
+    value: chosenProperty
+      ? `- ${chosenProperty?.sjalfgefidStadfang?.birting} (${chosenProperty?.fasteignanumer})`
+      : '',
+  }
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -41,7 +64,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS,
-  name: m.application.applicationName,
+  name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   featureFlag: Features.RegistrationOfNewPropertyNumbersEnabled,
   institution: m.application.institutionName,
