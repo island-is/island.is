@@ -62,4 +62,10 @@ export enum HealthPaths {
 
   HealthWaitlists = '/heilsa/bidlistar',
   HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
+
+  HealthPatientData = '/heilsa/sjukraskra',
+  HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
+  HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
+  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
+  HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
 }

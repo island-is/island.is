@@ -60,3 +60,13 @@ export type HealthCenterDoctorOption = {
   label: string
   value: number
 }
+export interface PermitInput {
+  dates: {
+    validFrom: Date | null
+    validTo: Date | null
+  }
+  countries: {
+    code: string
+    name: string
+  }[]
+}
