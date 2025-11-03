@@ -321,6 +321,12 @@ export class PaymentService {
     )
     await paymentModel.reload()
 
+    console.log('--------------------------------')
+    console.log('paymentModel')
+    console.log('paymentModel request_id', paymentModel.request_id)
+    console.dir(paymentModel, { depth: null })
+    console.log('--------------------------------')
+
     // Update payment with a fixed user4 since services-payments does not need it
     await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
