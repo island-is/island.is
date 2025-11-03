@@ -12,7 +12,7 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
-import { checkIsActor, Routes} from '../../../utils'
+import { checkIsActor, Routes } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
@@ -132,7 +132,7 @@ export const personalSubSection = buildSubSection({
 
         buildHiddenInput({
           id: 'applicationType.value',
-          defaultValue: ApplicationType.GENERAL_APPLICATION
+          defaultValue: ApplicationType.GENERAL_APPLICATION,
         }),
         // buildHiddenInput({
         //   id: 'applicationType.value',
