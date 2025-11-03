@@ -5,19 +5,19 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   AttachmentOptions,
   FILE_SIZE_LIMIT,
   UPLOAD_ACCEPT,
 } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { shouldShowPage } from '../../../utils/conditionUtils'
 
 export const attachmentSubSection = buildSubSection({
   id: 'attachmentSubSection',
   title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
-  // condition: () => {
-  //   // TODO: Need to update when we get config from Júní and only show page for "sérskóli - hegðun" and "sérdeild - hegðun"
-  //   return false
-  // },
+  condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.ATTACHMENTS),
   children: [
     buildMultiField({
       id: 'attachments',
