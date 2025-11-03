@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FocusableBox,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { messages } from '../../lib/messages'

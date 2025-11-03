@@ -1,7 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
