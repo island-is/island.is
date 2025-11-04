@@ -55,18 +55,14 @@ export const sortApplicationsOrganizations = (
     return
   }
   applications.forEach((elem) => {
-    const formSystemOrgSlug = elem.formSystemOrgSlug
-      ? (elem.formSystemOrgSlug as InstitutionTypes)
-      : undefined
-    const formSystemOrgContentfulId = elem.formSystemOrgContentfulId
-      ? elem.formSystemOrgContentfulId
-      : undefined
-    const inst = formSystemOrgSlug
-      ? formSystemOrgSlug
-      : institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
-    const contentfulId = formSystemOrgContentfulId
-      ? formSystemOrgContentfulId
-      : institutionMapper[elem.typeId].contentfulId ?? 'INSTITUTION_MISSING'
+    const inst =
+      elem.formSystemOrgSlug ??
+      institutionMapper[elem.typeId].slug ??
+      'INSTITUTION_MISSING'
+    const contentfulId =
+      elem.formSystemOrgContentfulId ??
+      institutionMapper[elem.typeId].contentfulId ??
+      'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
       label: organizations.find((x) => x.id === contentfulId)?.title ?? inst,
@@ -96,11 +92,11 @@ export const mapLinkToStatus = (link: string) => {
   return ApplicationOverViewStatus.all
 }
 
-// export const getBaseUrlForm = () => {
-//   const path = window.location.origin
-//   const isLocalhost = path.includes('localhost')
-//   return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
-// }
+export const getBaseUrlForm = () => {
+  const path = window.location.origin
+  const isLocalhost = path.includes('localhost')
+  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
+}
 
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,

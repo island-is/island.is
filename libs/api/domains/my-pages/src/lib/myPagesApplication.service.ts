@@ -60,10 +60,10 @@ export class MyPagesApplicationService {
     const mappedFormSystem = (formSystemApplications ?? []).map(
       (app: any): MyPagesApplication => ({
         ...app,
-        typeId: ApplicationTypes.EXAMPLE_INPUTS,
+        typeId: ApplicationTypes.EXAMPLE_INPUTS, // dummy typeId, as form system applications don't have typeId
         path: '/form',
         localhostPath: 'http://localhost:4201/form',
-        slug: app.formSlug,
+        slug: app.formSystemFormSlug,
       }),
     )
 

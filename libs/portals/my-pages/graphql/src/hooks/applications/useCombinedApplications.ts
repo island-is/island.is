@@ -47,6 +47,9 @@ export const COMBINED_APPLICATIONS = gql`
       formSystemFormSlug
       formSystemOrgContentfulId
       formSystemOrgSlug
+      path
+      localhostPath
+      slug
     }
   }
 `
