@@ -2385,6 +2385,7 @@ export class CaseService {
                     : ''
                 }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
               },
+              transaction,
             })
           }
         }
