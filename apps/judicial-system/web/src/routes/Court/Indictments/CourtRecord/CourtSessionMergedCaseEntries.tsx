@@ -2,31 +2,26 @@ import { useState } from 'react'
 
 import { Input } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import {
-  CourtSessionResponse,
-  CourtSessionString,
-  CourtSessionStringType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-export const CourtSessionMergeCaseEntries = ({
+export const CourtSessionMergedCaseEntries = ({
   courtSessionId,
   courtCaseNumber,
-  value,
-  courtSessionStrings,
+  courtSessionString,
   mergedCaseId,
   disabled,
-  patchSession,
+  patchCourtSessionStrings,
 }: {
   courtSessionId: string
   courtCaseNumber: string
-  value: string
-  courtSessionStrings: CourtSessionString[]
+  courtSessionString?: CourtSessionString
   mergedCaseId: string
   disabled: boolean
-  patchSession: (
+  patchCourtSessionStrings: (
     courtSessionId: string,
-    updates: Partial<CourtSessionResponse>,
+    mergedCaseId: string,
+    updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
     {
       persist,
     }?: {
@@ -37,32 +32,27 @@ export const CourtSessionMergeCaseEntries = ({
   const [mergedEntriesErrorMessage, setMergedEntriesErrorMessage] =
     useState<string>('')
 
-  const getUpdatedCourtSessionStrings = (updatedValue: string) =>
-    courtSessionStrings.map((string) =>
-      string.mergedCaseId === mergedCaseId &&
-      string.courtSessionId === courtSessionId &&
-      string.stringType === CourtSessionStringType.ENTRIES
-        ? { ...string, value: updatedValue }
-        : string,
-    )
   return (
     <>
       <SectionHeading title={`Sameining ${courtCaseNumber}`} />
       <Input
         name="merged-case-entries"
         label={`Bókanir um sameiningu máls ${courtCaseNumber}`}
-        value={value}
+        value={courtSessionString?.value ?? ''}
         placeholder=""
         onChange={(event) => {
           setMergedEntriesErrorMessage('')
 
           const updatedValue = event.target.value
-          const updatedCourtSessionStrings =
-            getUpdatedCourtSessionStrings(updatedValue)
+          const updatedCaseSessionString = {
+            value: updatedValue,
+          }
 
-          patchSession(courtSessionId, {
-            courtSessionStrings: updatedCourtSessionStrings,
-          })
+          patchCourtSessionStrings(
+            courtSessionId,
+            mergedCaseId,
+            updatedCaseSessionString,
+          )
         }}
         onBlur={(event) => {
           const updatedValue = event.target.value
@@ -72,12 +62,14 @@ export const CourtSessionMergeCaseEntries = ({
             setMergedEntriesErrorMessage,
           )
 
-          const updatedCourtSessionStrings =
-            getUpdatedCourtSessionStrings(updatedValue)
+          const updatedCaseSessionString = {
+            value: updatedValue,
+          }
 
-          patchSession(
+          patchCourtSessionStrings(
             courtSessionId,
-            { courtSessionStrings: updatedCourtSessionStrings },
+            mergedCaseId,
+            updatedCaseSessionString,
             { persist: true },
           )
         }}

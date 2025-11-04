@@ -6,8 +6,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
-import { CourtSessionString } from '../model/courtSessionString.model'
 import { CourtDocumentResponse } from './courtDocument.response'
+import { CourtSessionString } from './courtSessionString.response'
 
 registerEnumType(CourtSessionClosedLegalBasis, {
   name: 'CourtSessionClosedLegalBasis',

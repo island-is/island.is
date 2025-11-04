@@ -7,7 +7,6 @@ import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
-import { CourtSessionString } from './models/courtSessionString.model'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
@@ -20,7 +19,6 @@ import { repositoryModuleConfig } from './repository.config'
       Case,
       CaseArchive,
       CourtSession,
-      CourtSessionString,
       CourtDocument,
     ]),
     ConfigModule.forFeature(repositoryModuleConfig),
