@@ -154,7 +154,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     return {
       forms: forms,
       organizations: organizations,
-      // organizations: mapOrganization(organizations),
       isAdmin,
       organizationNationalId: organizationNationalId,
       applications,

@@ -64,8 +64,6 @@ export const useCombinedApplications = () => {
     },
   )
 
-  console.log('useCombinedApplications data', data)
-
   return {
     data: data?.myPagesApplications ?? [],
     loading,
