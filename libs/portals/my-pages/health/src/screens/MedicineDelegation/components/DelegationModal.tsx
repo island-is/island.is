@@ -32,7 +32,9 @@ const DelegationModal: React.FC<Props> = ({
   const { formatMessage } = useLocale()
 
   const [deleteDelegation, { loading: deleting }] =
-    useDeleteMedicineDelegationMutation()
+    useDeleteMedicineDelegationMutation({
+      refetchQueries: ['GetMedicineDelegations'],
+    })
 
   const closeModal = () => {
     onClose && onClose()

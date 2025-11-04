@@ -274,11 +274,13 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: Locale,
     active: boolean,
+    status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
       data(
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
+            status: status,
             active: active,
           },
         }),
@@ -289,6 +291,7 @@ export class HealthDirectorateHealthService {
       return null
     }
 
+    console.log(medicineDelegations)
     return medicineDelegations
   }
 
@@ -306,18 +309,15 @@ export class HealthDirectorateHealthService {
   }
 
   public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
-    const input: DeactivatePrescriptionCommissionDto = {
-      toNationalId:
-        toNationalId.length === 9 ? `0${toNationalId}` : toNationalId,
-    }
-    const result = await withAuthContext(auth, () =>
+    return await withAuthContext(auth, () =>
       data(
         mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1({
-          body: input,
+          body: {
+            toNationalId,
+          },
         }),
       ),
     )
-    return result
   }
 
   public async getPermits(

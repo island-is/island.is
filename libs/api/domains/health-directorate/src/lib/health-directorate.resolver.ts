@@ -266,7 +266,7 @@ export class HealthDirectorateResolver {
     @Args('input') input: MedicineDelegationInput,
     @CurrentUser() user: User,
   ): Promise<MedicineDelegations | null> {
-    return this.api.getMedicineDelegations(user, locale, input.active)
+    return this.api.getMedicineDelegations(user, locale, input)
   }
 
   /* Add new Prescription Delegation */

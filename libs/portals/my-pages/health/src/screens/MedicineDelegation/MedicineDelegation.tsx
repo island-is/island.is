@@ -22,6 +22,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
@@ -33,12 +34,23 @@ const MedicineDelegation = () => {
       locale: lang,
       input: {
         active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
+        status: [
+          HealthDirectoratePermitStatus.active,
+          HealthDirectoratePermitStatus.expired,
+          HealthDirectoratePermitStatus.inactive,
+          HealthDirectoratePermitStatus.unknown,
+          HealthDirectoratePermitStatus.awaitingApproval,
+        ],
       },
     },
   })
+
   const filteredData =
     data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
-      showExpiredPermits ? item : item.isActive,
+      showExpiredPermits
+        ? item.status
+        : item.status === HealthDirectoratePermitStatus.active ||
+          item.status === HealthDirectoratePermitStatus.awaitingApproval,
     )
 
   return (
@@ -75,9 +87,7 @@ const MedicineDelegation = () => {
       {!loading && error && (
         <Problem type="internal_service_error" noBorder={false} />
       )}
-      {!loading && !error && (!filteredData || filteredData.length === 0) && (
-        <Problem type="no_data" noBorder={false} />
-      )}
+
       {loading && !error && (
         <Box marginY={3}>
           <ActionCardLoader />
@@ -100,7 +110,11 @@ const MedicineDelegation = () => {
               checked={showExpiredPermits}
             />
           </Box>
-
+          {!loading &&
+            !error &&
+            (!filteredData || filteredData.length === 0) && (
+              <Problem type="no_data" noBorder={false} />
+            )}
           <Stack space={2}>
             {filteredData?.map((item) => {
               return (

@@ -31,24 +31,27 @@ const PatientDataPermits: React.FC = () => {
     variables: {
       locale: lang,
       input: {
-        statuses: showExpiredPermits
-          ? [
-              HealthDirectoratePermitStatus.active,
-              HealthDirectoratePermitStatus.expired,
-              HealthDirectoratePermitStatus.inactive,
-              HealthDirectoratePermitStatus.unknown,
-              HealthDirectoratePermitStatus.awaitingApproval,
-            ]
-          : [
-              HealthDirectoratePermitStatus.active,
-              HealthDirectoratePermitStatus.awaitingApproval,
-            ],
+        status: [
+          HealthDirectoratePermitStatus.active,
+          HealthDirectoratePermitStatus.expired,
+          HealthDirectoratePermitStatus.inactive,
+          HealthDirectoratePermitStatus.unknown,
+          HealthDirectoratePermitStatus.awaitingApproval,
+        ],
       },
     },
   })
 
   const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
-  const filteredData = data?.healthDirectoratePatientDataPermits.data
+
+  const filteredData = data?.healthDirectoratePatientDataPermits?.data?.filter(
+    (item) =>
+      showExpiredPermits
+        ? item.status
+        : item.status === HealthDirectoratePermitStatus.active ||
+          item.status === HealthDirectoratePermitStatus.awaitingApproval,
+  )
+
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
@@ -86,7 +89,7 @@ const PatientDataPermits: React.FC = () => {
           : undefined
       }
     >
-      {!loading && dataLength === 0 && !error && (
+      {!loading && showExpiredPermits && dataLength === 0 && !error && (
         <Problem
           type="no_data"
           noBorder={false}
@@ -97,23 +100,23 @@ const PatientDataPermits: React.FC = () => {
       )}
       {loading && <ActionCardLoader repeat={3} />}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && dataLength > 0 && (
-        <Box>
-          <Box justifyContent="spaceBetween" alignItems="center" display="flex">
-            <Text variant="medium">
-              {filteredData?.length === 1
-                ? formatMessage(messages.singlePermit)
-                : formatMessage(messages.numberOfPermits, {
-                    number: filteredData?.length,
-                  })}
-            </Text>
-            <ToggleSwitchButton
-              className={styles.toggleButton}
-              label={formatMessage(messages.showExpiredPermits)}
-              onChange={() => setShowExpiredPermits(!showExpiredPermits)}
-              checked={showExpiredPermits}
-            />
-          </Box>
+      <Box>
+        <Box justifyContent="spaceBetween" alignItems="center" display="flex">
+          <Text variant="medium">
+            {filteredData?.length === 1
+              ? formatMessage(messages.singlePermit)
+              : formatMessage(messages.numberOfPermits, {
+                  number: filteredData?.length,
+                })}
+          </Text>
+          <ToggleSwitchButton
+            className={styles.toggleButton}
+            label={formatMessage(messages.showExpiredPermits)}
+            onChange={() => setShowExpiredPermits(!showExpiredPermits)}
+            checked={showExpiredPermits}
+          />
+        </Box>
+        {!error && !loading && dataLength > 0 && (
           <Stack space={2}>
             {filteredData?.map((permit) => (
               <ActionCard
@@ -179,8 +182,8 @@ const PatientDataPermits: React.FC = () => {
               />
             ))}
           </Stack>
-        </Box>
-      )}
+        )}
+      </Box>
     </IntroWrapper>
   )
 }

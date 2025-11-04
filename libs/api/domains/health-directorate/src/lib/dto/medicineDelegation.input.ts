@@ -6,6 +6,10 @@ export class MedicineDelegationInput {
   @Field()
   @IsBoolean()
   active!: boolean
+
+  @Field(() => [String])
+  @IsString({ each: true })
+  status!: string[]
 }
 
 @InputType('HealthDirectorateMedicineDelegationCreateInput')

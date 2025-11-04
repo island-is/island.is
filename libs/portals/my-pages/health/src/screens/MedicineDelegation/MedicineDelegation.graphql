@@ -16,6 +16,7 @@ query GetMedicineDelegations(
       name
       nationalId
       isActive
+      status
       lookup
       dates {
         from
