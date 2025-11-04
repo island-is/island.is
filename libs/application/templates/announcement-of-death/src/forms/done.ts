@@ -8,7 +8,7 @@ import {
   buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import CoatOfArms from '../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 import {
   files,

@@ -7,10 +7,7 @@ import {
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
 } from './constants'
-import {
-  getApplicationType,
-  getMunicipalityCodeBySchoolUnitId,
-} from './newPrimarySchoolUtils'
+import { getApplicationType } from './newPrimarySchoolUtils'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -127,17 +124,6 @@ describe('showPreferredLanguageFields', () => {
     expect(showPreferredLanguageFields(answers)).toBe(true)
   })
 })
-describe('getMunicipalityCodeBySchoolUnitId', () => {
-  it('should return the correct municipality code for a given school unitId', () => {
-    const schoolId = 'G-2297-A'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
-  })
-
-  it('should return undefined for an unknown school unit id', () => {
-    const schoolId = 'unknown-school-id'
-    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
-  })
-})
 
 describe('getApplicationType', () => {
   const currentDate = new Date()
@@ -178,24 +164,23 @@ describe('getApplicationType', () => {
     )
   })
 
-  // ADD BACK WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  // it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
-  //   const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
-  //   const answers = {
-  //     childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
-  //   }
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+    }
 
-  //   const externalData = {
-  //     childInformation: {
-  //       data: {},
-  //     },
-  //   } as unknown as ExternalData
+    const externalData = {
+      childInformation: {
+        data: {},
+      },
+    } as unknown as ExternalData
 
-  //   expect(getApplicationType(answers, externalData)).toBe(
-  //     ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  //   )
-  // })
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    )
+  })
 
   it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE

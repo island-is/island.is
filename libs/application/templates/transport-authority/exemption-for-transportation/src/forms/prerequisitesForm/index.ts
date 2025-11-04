@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import {
   ExemptionRulesApi,
   NationalRegistryUserApi,
@@ -18,7 +18,7 @@ import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesForm',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

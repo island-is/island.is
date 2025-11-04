@@ -1,35 +1,18 @@
-import { NO, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedChild,
+  getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
+  OrganizationSubType,
   ReasonForApplicationOptions,
-  SchoolType,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
-  AgentInput,
-  AgentInputTypeEnum,
-  ApplicationInput,
-  ApplicationInputTypeEnum,
   CaseWorkerInputTypeEnum,
-  UserInputGenderEnum,
+  RegistrationApplicationInput,
 } from '@island.is/clients/mms/frigg'
-
-export const getGenderCode = (genderCode: string) => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return UserInputGenderEnum.Male
-    case '2':
-    case '4':
-      return UserInputGenderEnum.Female
-    default:
-      return UserInputGenderEnum.Other
-  }
-}
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -82,7 +65,7 @@ export const getSocialProfile = (application: Application) => {
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
-): ApplicationInput => {
+): RegistrationApplicationInput => {
   const {
     applicationType,
     childInfo,
@@ -90,8 +73,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -109,138 +90,101 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     expectedStartDate,
     temporaryStay,
     expectedEndDate,
-    selectedSchool,
-    selectedSchoolType,
+    selectedSchoolId,
     currentSchoolId,
+    applyForPreferredSchool,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
-    application.externalData,
-  )
-  const selectedChild = getSelectedChild(
-    application.answers,
+  const { primaryOrgId, preferredSchool } = getApplicationExternalData(
     application.externalData,
   )
 
-  const agents: AgentInput[] = [
-    ...guardians.map((guardian) => ({
-      name: guardian.fullName,
-      nationalId: guardian.nationalId,
-      nationality: guardian.citizenshipCode,
-      type: AgentInputTypeEnum.Guardian,
-      domicile: {
-        address: guardian.address.streetAddress,
-        postCode: guardian.address.postalCode,
-      },
-      email: guardian.email,
-      phone: guardian.phoneNumber,
-      requiresInterpreter: guardian.requiresInterpreter.includes(YES),
-      ...(guardian.requiresInterpreter.includes(YES) && {
-        preferredLanguage: guardian.preferredLanguage,
-      }),
-    })),
-    ...relatives.map((relative) => ({
-      name: relative.fullName,
-      nationalId: relative.nationalId,
-      type: AgentInputTypeEnum.EmergencyContact,
-      phone: relative.phoneNumber,
-      relationTypeId: relative.relation,
-    })),
-    ...(reasonForApplication ===
-    ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
-      ? siblings.map((sibling) => ({
-          name: sibling.fullName,
-          nationalId: sibling.nationalId,
-          type: AgentInputTypeEnum.Sibling,
-        }))
-      : []),
-  ]
-
-  const newPrimarySchoolDTO: ApplicationInput = {
-    type: ApplicationInputTypeEnum.Registration,
-    user: {
-      name: childInfo?.name || '',
-      nationalId: childInfo?.nationalId || '',
-      nationality: childCitizenshipCode,
-      gender: getGenderCode(selectedChild?.genderCode || ''),
-      ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
-        preferredName: childInfo?.preferredName,
-        pronouns: childInfo?.pronouns,
-      }),
-      domicile: {
-        address: childInfo?.address?.streetAddress || '',
-        postCode: childInfo?.address?.postalCode || '',
-      },
-      ...(childInfo?.differentPlaceOfResidence === YES &&
-        childInfo?.placeOfResidence && {
-          residence: {
-            address: childInfo?.placeOfResidence?.streetAddress,
-            postCode: childInfo?.placeOfResidence?.postalCode,
-          },
-        }),
-      ...(childInfo?.differentPlaceOfResidence === NO &&
-        childInfo?.placeOfResidence && {
-          residence: {
-            address: '',
-            postCode: '',
-          },
-        }),
-    },
-    agents,
+  const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    approvalRequester: application.applicant,
     registration: {
+      applicant: {
+        nationalId: childInfo?.nationalId || '',
+        ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
+          preferredName: childInfo?.preferredName,
+          pronounIds: childInfo?.pronouns,
+        }),
+      },
+      guardians: guardians.map((guardian) => ({
+        nationalId: guardian.nationalId,
+        email: guardian.email,
+        phone: guardian.phoneNumber,
+        requiresInterpreter: guardian.requiresInterpreter.includes(YES),
+        ...(guardian.requiresInterpreter.includes(YES) && {
+          preferredLanguage: guardian.preferredLanguage,
+        }),
+      })),
+      ...(reasonForApplication ===
+        ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
+        siblings: siblings.map(
+          (sibling) => sibling.nationalIdWithName.nationalId,
+        ),
+      }),
+      emergencyContacts: relatives.map((relative) => ({
+        nationalId: relative.nationalIdWithName.nationalId,
+        phone: relative.phoneNumber,
+        relationTypeId: relative.relation,
+      })),
       ...((primaryOrgId || currentSchoolId) && {
         defaultOrganizationId: primaryOrgId || currentSchoolId,
       }),
-      selectedOrganizationId: selectedSchool,
+      selectedOrganizationId:
+        (applyForPreferredSchool === YES
+          ? preferredSchool?.id
+          : selectedSchoolId) || '',
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
-            expectedStartDate: new Date(expectedStartDate || ''),
-            ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+            expectedStartDate: expectedStartDate
+              ? new Date(expectedStartDate)
+              : new Date(),
+            ...(getSelectedSchoolSubType(
+              application.answers,
+              application.externalData,
+            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
               temporaryStay === YES && {
-                expectedEndDate: new Date(expectedEndDate || ''),
+                expectedEndDate: expectedEndDate
+                  ? new Date(expectedEndDate)
+                  : undefined,
               }),
           }
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reason: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
-      ...(reasonForApplication ===
-        ReasonForApplicationOptions.MOVING_MUNICIPALITY && {
-        tempDomicile: {
-          address: reasonForApplicationStreetAddress || '',
-          postCode: reasonForApplicationPostalCode || '',
-        },
-      }),
-    },
-    health: {
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
-        foodAllergiesOrIntolerances,
-      }),
-      ...(hasOtherAllergies?.includes(YES) && {
-        allergies: otherAllergies,
-      }),
-      ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
-        hasOtherAllergies?.includes(YES)) && {
-        usesEpipen: usesEpiPen === YES,
-      }),
-      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
-      requestsMedicationAdministration:
-        requestsMedicationAdministration === YES,
-    },
-    social: getSocialProfile(application),
-    language: {
-      languageEnvironment: languageEnvironmentId,
-      signLanguage: signLanguage === YES,
-      ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-        ? {
-            preferredLanguage: preferredLanguage || '',
-            languages: selectedLanguages.map((language) => language.code),
-          }
-        : {
-            preferredLanguage: 'is',
-            languages: ['is'],
-          }),
+      reasonId: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
+      health: {
+        ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
+          foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,
+        }),
+        ...(hasOtherAllergies?.includes(YES) && {
+          allergiesIds: otherAllergies,
+        }),
+        ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
+          hasOtherAllergies?.includes(YES)) && {
+          usesEpipen: usesEpiPen === YES,
+        }),
+        hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+        requestsMedicationAdministration:
+          requestsMedicationAdministration === YES,
+      },
+      social: getSocialProfile(application),
+      language: {
+        languageEnvironmentId: languageEnvironmentId,
+        signLanguage: signLanguage === YES,
+        ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? {
+              preferredLanguage: preferredLanguage || '',
+              languages: selectedLanguages.map((language) => language.code),
+            }
+          : {
+              preferredLanguage: 'is',
+              languages: ['is'],
+            }),
+      },
     },
   }
 

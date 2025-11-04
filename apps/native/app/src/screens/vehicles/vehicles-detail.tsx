@@ -1,19 +1,33 @@
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 
-import { Button, Divider, Input, InputRow, Problem } from '../../ui'
+import { Button, Divider, Input, InputRow, Problem, theme } from '../../ui'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { getRightButtons } from '../../utils/get-main-root'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
+import { ExternalLink } from '../../components/external-links/external-links'
+import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
+import { useBrowser } from '../../lib/use-browser'
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks(() => ({
+  createNavigationOptionHooks((theme) => ({
     topBar: {
       visible: true,
+      rightButtons: getRightButtons({ icons: ['dots'], theme }),
     },
     bottomTabs: {
       visible: false,
@@ -26,9 +40,10 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   id: string
 }> = ({ componentId, title, id }) => {
   useNavigationOptions(componentId)
+  const myPagesLinks = useMyPagesLinks()
+  const { openBrowser } = useBrowser()
 
   const intl = useIntl()
-
   const { data, loading, error } = useGetVehicleQuery({
     variables: {
       input: {
@@ -42,7 +57,71 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   useConnectivityIndicator({
     componentId,
     queryResult: { data, loading },
+    rightButtons: getRightButtons({ icons: ['dots'] }),
   })
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.HomeScreenDropdownButton) {
+      const items = [
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.orderNumberPlate',
+          }),
+          link: myPagesLinks.orderNumberPlate,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.orderRegistrationCertificate',
+          }),
+          link: myPagesLinks.orderRegistrationCertificate,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.changeCoOwner',
+          }),
+          link: myPagesLinks.changeCoOwner,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.changeOperator',
+          }),
+          link: myPagesLinks.changeOperator,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.vehicleHistoryReport',
+          }),
+          link: myPagesLinks.vehicleHistoryReport,
+        },
+      ]
+
+      const contentId = `vehicle-dropdown-${id}`
+      setDropdownContent(
+        contentId,
+        <View>
+          {items.map((item, index) => (
+            <ExternalLink
+              componentId={componentId}
+              key={item.title}
+              links={{ link: item.link, title: item.title }}
+              borderBottom={index !== items.length - 1}
+              fontWeight={'bold'}
+              fontSize={14}
+            />
+          ))}
+        </View>,
+      )
+
+      void Navigation.showOverlay({
+        component: {
+          name: ComponentRegistry.DropdownMenuOverlay,
+          passProps: {
+            contentId,
+          },
+        },
+      })
+    }
+  }, componentId)
 
   const {
     mainInfo,
@@ -80,6 +159,52 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <ScrollView style={{ flex: 1 }}>
         <View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              margin: theme.spacing.p4,
+              gap: theme.spacing.p4,
+            }}
+          >
+            {allowMilageRegistration && (
+              <Button
+                style={{ flex: 1 }}
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                isOutlined
+                title={intl.formatMessage({
+                  id: 'vehicles.registerMileage',
+                })}
+                iconPosition="end"
+                icon={require('../../assets/icons/edit.png')}
+                isUtilityButton
+                onPress={() => {
+                  navigateTo(`/vehicle-mileage/`, {
+                    id,
+                    title: {
+                      type: title,
+                      year: basicInfo?.year,
+                      color: registrationInfo?.color,
+                    },
+                  })
+                }}
+              />
+            )}
+            <Button
+              style={{ flex: 1 }}
+              isOutlined
+              iconPosition="end"
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              icon={require('../../assets/icons/external-link.png')}
+              isUtilityButton
+              title={intl.formatMessage({
+                id: 'vehicle.links.reportOwnerChange',
+              })}
+              onPress={() => {
+                openBrowser(myPagesLinks.reportOwnerChange, componentId)
+              }}
+            />
+          </View>
           <InputRow>
             <Input
               loading={inputLoading}
@@ -144,22 +269,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             )}
           </InputRow>
 
-          {allowMilageRegistration && (
-            <Button
-              title={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
-              onPress={() => {
-                navigateTo(`/vehicle-mileage/`, {
-                  id,
-                  title: {
-                    type: title,
-                    year: basicInfo?.year,
-                    color: registrationInfo?.color,
-                  },
-                })
-              }}
-              style={{ marginHorizontal: 16 }}
-            />
-          )}
           <Divider spacing={2} />
 
           <InputRow>

@@ -1,36 +1,32 @@
+import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
-  buildHiddenInputWithWatchedValue,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { ApplicationType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getInternationalSchoolsIds,
-  getMunicipalityCodeBySchoolUnitId,
+  getCurrentAndNextGrade,
 } from '../../../utils/newPrimarySchoolUtils'
-import {
-  Application,
-  OrganizationModelTypeEnum,
-  Query,
-} from '@island.is/api/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
-    const { applyForNeighbourhoodSchool, applicationType } =
+    const { applyForPreferredSchool, applicationType } =
       getApplicationAnswers(answers)
+
     return (
       applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
       (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForNeighbourhoodSchool === NO)
+        applyForPreferredSchool === NO)
     )
   },
   children: [
@@ -50,28 +46,18 @@ export const newSchoolSubSection = buildSubSection({
 
             return applicantMunicipalityCode
           },
-          loadOptions: async ({ application, apolloClient }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
+          loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
             })
 
             return (
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type, managing }) =>
-                    type === OrganizationModelTypeEnum.Municipality &&
-                    managing &&
-                    managing.length > 0 &&
-                    managing.filter(({ gradeLevels }) =>
-                      !childGradeLevel
-                        ? true
-                        : gradeLevels?.includes(childGradeLevel),
-                    )?.length > 0,
-                )
+              data?.friggOrganizationsByType
                 ?.map(({ name, unitId }) => ({
                   value: unitId || '',
                   label: name,
@@ -91,73 +77,29 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
-            })
-
             const municipalityCode = selectedValues?.[0]
 
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
 
-            // Find all private owned schools by municipality
-            const privateOwnedSchools =
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
-                )
-                ?.flatMap(
-                  ({ managing }) =>
-                    managing
-                      ?.filter(
-                        ({ type, gradeLevels, unitId }) =>
-                          unitId &&
-                          getMunicipalityCodeBySchoolUnitId(unitId) ===
-                            municipalityCode &&
-                          type === OrganizationModelTypeEnum.School &&
-                          (!childGradeLevel
-                            ? true
-                            : gradeLevels?.includes(childGradeLevel)),
-                      )
-                      ?.map((school) => ({
-                        ...school,
-                        type: getInternationalSchoolsIds().some(
-                          (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
-                        )
-                          ? SchoolType.INTERNATIONAL_SCHOOL
-                          : SchoolType.PRIVATE_SCHOOL,
-                      })) || [],
-                ) || []
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.School,
+                  municipalityCode: municipalityCode,
+                  ...(childGradeLevel && {
+                    gradeLevels: getCurrentAndNextGrade(childGradeLevel),
+                  }),
+                },
+              },
+            })
 
-            // Find all municipality schools
-            const municipalitySchools =
-              data?.friggSchoolsByMunicipality
-                ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.managing?.filter(
-                  ({ type, gradeLevels }) =>
-                    // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
-                    type === OrganizationModelTypeEnum.School &&
-                    (!childGradeLevel
-                      ? true
-                      : gradeLevels?.includes(childGradeLevel)),
-                )
-                ?.map((school) => ({
-                  ...school,
-                  type: SchoolType.PUBLIC_SCHOOL,
-                })) || []
-
-            // Merge the private owned schools and the municipality schools together
-            const allMunicipalitySchools = [
-              ...municipalitySchools,
-              ...privateOwnedSchools,
-            ]
-
-            // Piggyback the type as part of the value
             return (
-              allMunicipalitySchools
-                .map(({ id, type, name }) => ({
-                  value: `${id}::${type}`,
+              data?.friggOrganizationsByType
+                ?.map(({ id, name }) => ({
+                  value: id,
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
@@ -169,10 +111,9 @@ export const newSchoolSubSection = buildSubSection({
             return !!schoolMunicipality
           },
         }),
-        buildHiddenInputWithWatchedValue({
-          id: 'newSchool.type',
-          watchValue: 'newSchool.school',
-          valueModifier: (value) => value?.toString()?.split('::')[1],
+        buildHiddenInput({
+          id: 'newSchool.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

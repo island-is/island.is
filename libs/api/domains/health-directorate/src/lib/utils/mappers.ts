@@ -1,15 +1,24 @@
 import {
   DiseaseVaccinationDtoVaccinationStatusEnum,
-  PrescribedItemDtoRenewalBlockedReasonEnum,
-  PrescribedItemDtoRenewalStatusEnum,
-  PrescribedItemDtoCategoryEnum,
+  DispensationHistoryItemDto,
+  EuPatientConsentDto,
+  EuPatientConsentStatus,
+  PrescribedItemCategory,
+  PrescriptionRenewalBlockedReason,
+  PrescriptionRenewalStatus,
 } from '@island.is/clients/health-directorate'
 import {
+  PermitStatusEnum,
   PrescribedItemCategoryEnum,
   PrescribedItemRenewalBlockedReasonEnum,
   PrescribedItemRenewalStatusEnum,
   VaccinationStatusEnum,
 } from '../models/enums'
+
+import { isDefined } from '@island.is/shared/utils'
+import { MedicineHistoryDispensation } from '../models/medicineHistory.model'
+import { Country } from '../models/permits/country.model'
+import { Permit } from '../models/permits/permits'
 
 export const mapVaccinationStatus = (
   status?: DiseaseVaccinationDtoVaccinationStatusEnum,
@@ -37,33 +46,35 @@ export const mapVaccinationStatus = (
 }
 
 export const mapPrescriptionRenewalBlockedReason = (
-  status: PrescribedItemDtoRenewalBlockedReasonEnum,
+  status: PrescriptionRenewalBlockedReason,
 ): PrescribedItemRenewalBlockedReasonEnum => {
   switch (status) {
-    case PrescribedItemDtoRenewalBlockedReasonEnum.RejectedRequest:
+    case PrescriptionRenewalBlockedReason.REJECTED_REQUEST:
       return PrescribedItemRenewalBlockedReasonEnum.RejectedRequest
-    case PrescribedItemDtoRenewalBlockedReasonEnum.PendingRequest:
+    case PrescriptionRenewalBlockedReason.PENDING_REQUEST:
       return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
-    case PrescribedItemDtoRenewalBlockedReasonEnum.NotFullyDispensed:
+    case PrescriptionRenewalBlockedReason.NOT_FULLY_DISPENSED:
       return PrescribedItemRenewalBlockedReasonEnum.NotFullyDispensed
-    case PrescribedItemDtoRenewalBlockedReasonEnum.IsRegiment:
+    case PrescriptionRenewalBlockedReason.IS_REGIMENT:
       return PrescribedItemRenewalBlockedReasonEnum.IsRegiment
-    case PrescribedItemDtoRenewalBlockedReasonEnum.NoMedCard:
+    case PrescriptionRenewalBlockedReason.NO_MED_CARD:
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
+    case PrescriptionRenewalBlockedReason.NO_HEALTH_CLINIC:
+      return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
     default:
       return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
   }
 }
 
 export const mapPrescriptionRenewalStatus = (
-  status: PrescribedItemDtoRenewalStatusEnum,
+  status: PrescriptionRenewalStatus,
 ): PrescribedItemRenewalStatusEnum => {
   switch (status) {
-    case PrescribedItemDtoRenewalStatusEnum.NUMBER_0:
+    case PrescriptionRenewalStatus[0]:
       return PrescribedItemRenewalStatusEnum.NUMBER_0
-    case PrescribedItemDtoRenewalStatusEnum.NUMBER_1:
+    case PrescriptionRenewalStatus[1]:
       return PrescribedItemRenewalStatusEnum.NUMBER_1
-    case PrescribedItemDtoRenewalStatusEnum.NUMBER_2:
+    case PrescriptionRenewalStatus[2]:
       return PrescribedItemRenewalStatusEnum.NUMBER_2
     default:
       return PrescribedItemRenewalStatusEnum.NUMBER_0
@@ -71,16 +82,80 @@ export const mapPrescriptionRenewalStatus = (
 }
 
 export const mapPrescriptionCategory = (
-  status: PrescribedItemDtoCategoryEnum,
+  status: PrescribedItemCategory,
 ): PrescribedItemCategoryEnum => {
   switch (status) {
-    case PrescribedItemDtoCategoryEnum.Pn:
+    case PrescribedItemCategory.PN:
       return PrescribedItemCategoryEnum.Pn
-    case PrescribedItemDtoCategoryEnum.Regimen:
-      return PrescribedItemCategoryEnum.Regimen
-    case PrescribedItemDtoCategoryEnum.Regular:
+    case PrescribedItemCategory.REGIMENT:
+      return PrescribedItemCategoryEnum.Regiment
+    case PrescribedItemCategory.REGULAR:
       return PrescribedItemCategoryEnum.Regular
     default:
       return PrescribedItemCategoryEnum.Owner
+  }
+}
+
+export const mapPermitStatus = (
+  status: EuPatientConsentStatus,
+): PermitStatusEnum => {
+  switch (status) {
+    case EuPatientConsentStatus.ACTIVE:
+      return PermitStatusEnum.active
+    case EuPatientConsentStatus.EXPIRED:
+      return PermitStatusEnum.expired
+    case EuPatientConsentStatus.INACTIVE:
+      return PermitStatusEnum.inactive
+    case EuPatientConsentStatus.PENDING:
+      return PermitStatusEnum.awaitingApproval
+    default:
+      return PermitStatusEnum.unknown
+  }
+}
+
+export const mapPermit = (
+  permit: EuPatientConsentDto,
+  locale: string,
+): Permit => {
+  return {
+    cacheId: `${permit.id}-${locale}`,
+    id: permit.id ?? '',
+    status: mapPermitStatus(permit.status),
+    createdAt: permit.createdAt,
+    validFrom: permit.validFrom,
+    validTo: permit.validTo,
+    codes: permit.codes ?? [],
+    countries:
+      permit.countries?.map((country) => {
+        const countryObj: Country = {
+          code: country.code,
+          name: country.name,
+        }
+        return countryObj
+      }) ?? [],
+  }
+}
+
+export const mapDispensationItem = (
+  item: DispensationHistoryItemDto,
+): MedicineHistoryDispensation => {
+  const quantity = item.productQuantity ?? 0
+
+  return {
+    id: item.productId,
+    name: item.productName,
+    quantity: [quantity.toString(), item.productUnit]
+      .filter((x) => isDefined(x))
+      .join(' '),
+    agentName: item.dispensingAgentName,
+    unit: item.productUnit,
+    type: item.productType,
+    indication: item.indication,
+    dosageInstructions: item.dosageInstructions,
+    issueDate: item.issueDate,
+    prescriberName: item.prescriberName,
+    expirationDate: item.expirationDate,
+    isExpired: item.isExpired,
+    date: item.dispensationDate,
   }
 }

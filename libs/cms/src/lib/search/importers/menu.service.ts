@@ -10,10 +10,14 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class MenuSyncService implements CmsSyncProvider<IMenu> {
   processSyncData(entries: processSyncDataInput<IMenu>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IMenu =>
         entry.sys.contentType.sys.id === 'menu',
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IMenu[]) {
