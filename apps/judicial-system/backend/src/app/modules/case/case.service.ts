@@ -41,6 +41,7 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
+  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -2363,7 +2364,23 @@ export class CaseService {
               caseId: theCase.id,
               transaction,
             })
-            // TODO: create court session case string
+            await this.courtSessionService.createOrUpdateCourtSessionString({
+              caseId: parentCaseId,
+              courtSessionId,
+              mergedCaseId: theCase.id,
+              update: {
+                stringType: CourtSessionStringType.ENTRIES,
+                value: `Mál nr. ${
+                  theCase.courtCaseNumber
+                } sem var höfðað á hendur ákærða með ákæru útgefinni ${formatDate(
+                  EventLog.getEventLogDateByEventType(
+                    EventType.CASE_SENT_TO_COURT,
+                    theCase.eventLogs,
+                  ),
+                  'PPP',
+                )}, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+              },
+            })
           }
         }
 
