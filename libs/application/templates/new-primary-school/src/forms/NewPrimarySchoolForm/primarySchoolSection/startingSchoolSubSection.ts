@@ -10,9 +10,7 @@ import {
 } from '@island.is/application/core'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-} from '../../../utils/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
 import { shouldShowExpectedEndDate } from '../../../utils/conditionUtils'
 

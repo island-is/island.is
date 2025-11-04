@@ -146,7 +146,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(shouldShowExpectedEndDate(application.answers, application.externalData) &&
+            ...(shouldShowExpectedEndDate(
+              application.answers,
+              application.externalData,
+            ) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)

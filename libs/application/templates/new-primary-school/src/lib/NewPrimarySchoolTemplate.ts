@@ -485,13 +485,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { temporaryStay } = getApplicationAnswers(application.answers)
 
         if (
-          !shouldShowExpectedEndDate(application.answers, application.externalData)
+          !shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          )
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          shouldShowExpectedEndDate(application.answers, application.externalData) &&
+          shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          ) &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')

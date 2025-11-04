@@ -125,10 +125,7 @@ export const shouldShowExpectedEndDate = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const selectedSubType = getSelectedSchoolSubType(
-    answers,
-    externalData,
-  )
+  const selectedSubType = getSelectedSchoolSubType(answers, externalData)
   if (!selectedSubType) return false
 
   return (
