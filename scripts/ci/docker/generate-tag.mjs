@@ -86,6 +86,13 @@ function getArtifactname() {
     throw new Error(`Unable to determine artifact name for merge_group event`)
   }
 
+  if (eventName === "push") {
+    if (typeOfDeployment.dev) {
+      return `prerelease-${context.sha}`;
+    }
+    throw new Error(`Only supports pre-release push`);
+  }
+
   if (eventName === 'workflow_dispatch') {
     if (typeOfDeployment.dev) {
       return `main-${context.sha}`
@@ -114,7 +121,10 @@ function getTypeOfDeployment() {
       prod: true,
     }
   }
-
+  return {
+    dev: true,
+    prod: false
+  }
   throw new Error(`Unsupported branch: ${targetBranch}`)
 }
 
@@ -126,6 +136,10 @@ function getTargetBranch() {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
   if (eventName === 'workflow_dispatch') {
+    return context.ref.replace('refs/heads/', '')
+  }
+
+  if (eventName === 'push') {
     return context.ref.replace('refs/heads/', '')
   }
 
