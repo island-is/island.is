@@ -86,6 +86,13 @@ function getArtifactname() {
     throw new Error(`Unable to determine artifact name for merge_group event`)
   }
 
+  if (eventName === "push") {
+    if (typeOfDeployment.dev) {
+      return `prerelease-${context.sha}`;
+    }
+    throw new Error(`Only supports pre-release push`);
+  }
+
   if (eventName === 'workflow_dispatch') {
     if (typeOfDeployment.dev) {
       return `main-${context.sha}`
