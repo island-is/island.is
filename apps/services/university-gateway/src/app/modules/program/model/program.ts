@@ -170,7 +170,7 @@ export class ProgramBase extends Model<
     type: DataType.DATE,
     allowNull: true,
   })
-  applicationStartDate?: Date
+  declare applicationStartDate: Date | null
 
   @ApiPropertyOptional({
     description: 'When the application period for this program ends',
@@ -180,7 +180,7 @@ export class ProgramBase extends Model<
     type: DataType.DATE,
     allowNull: true,
   })
-  applicationEndDate?: Date
+  declare applicationEndDate: Date | null
 
   @ApiPropertyOptional({
     description: 'Last date for school to accept/decline student into program',
