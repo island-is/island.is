@@ -31,11 +31,11 @@ import {
   hasForeignLanguages,
   hasOtherPayer,
   needsPayerApproval,
+  shouldShowExpectedEndDate,
 } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
-  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
   States,
@@ -44,7 +44,6 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
-  getSelectedSchoolSubType,
   payerApprovalStatePendingAction,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
@@ -485,27 +484,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
         const { temporaryStay } = getApplicationAnswers(application.answers)
 
-        const selectedSchoolSubType = getSelectedSchoolSubType(
-          application.answers,
-          application.externalData,
-        )
-
         if (
-          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL &&
-          selectedSchoolSubType !==
-            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL &&
-          selectedSchoolSubType !==
-            OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT
+          !shouldShowExpectedEndDate(application.answers, application.externalData)
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          (selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-            selectedSchoolSubType ===
-              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
-            selectedSchoolSubType ===
-              OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT) &&
+          shouldShowExpectedEndDate(application.answers, application.externalData) &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')

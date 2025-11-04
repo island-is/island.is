@@ -3,11 +3,10 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
   needsPayerApproval,
   ReasonForApplicationOptions,
-  subTypeWithExpectedEndDate,
+  shouldShowExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -104,11 +103,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
-  const selectedSubType = getSelectedSchoolSubType(
-    application.answers,
-    application.externalData,
-  )
-
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
     registration: {
@@ -152,7 +146,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(subTypeWithExpectedEndDate(selectedSubType) &&
+            ...(shouldShowExpectedEndDate(application.answers, application.externalData) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)

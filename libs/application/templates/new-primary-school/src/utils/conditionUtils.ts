@@ -15,6 +15,7 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   getSelectedSchoolData,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -120,9 +121,14 @@ export const needsPayerApproval = (application: Application) => {
   )
 }
 
-export const subTypeWithExpectedEndDate = (
-  selectedSubType: OrganizationSubType | '',
+export const shouldShowExpectedEndDate = (
+  answers: FormValue,
+  externalData: ExternalData,
 ) => {
+  const selectedSubType = getSelectedSchoolSubType(
+    answers,
+    externalData,
+  )
   if (!selectedSubType) return false
 
   return (

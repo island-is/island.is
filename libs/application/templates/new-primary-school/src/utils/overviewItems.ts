@@ -47,6 +47,7 @@ import {
   getSelectedSchoolSector,
   getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
+import { shouldShowExpectedEndDate } from './conditionUtils'
 
 const getFriggOptions = async (
   apolloClient: ApolloClient<object>,
@@ -333,8 +334,6 @@ export const schoolItems = (
     expectedEndDate,
   } = getApplicationAnswers(answers)
 
-  const selectedSubType = getSelectedSchoolSubType(answers, externalData)
-
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
@@ -364,11 +363,7 @@ export const schoolItems = (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    (selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-      selectedSubType ===
-        OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-      selectedSubType ===
-        OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL) &&
+    shouldShowExpectedEndDate(answers, externalData) &&
     temporaryStay === YES
       ? [
           {

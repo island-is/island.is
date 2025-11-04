@@ -12,10 +12,9 @@ import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getSelectedSchoolSubType,
 } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
-import { subTypeWithExpectedEndDate } from '../../../utils/conditionUtils'
+import { shouldShowExpectedEndDate } from '../../../utils/conditionUtils'
 
 export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
@@ -57,12 +56,7 @@ export const startingSchoolSubSection = buildSubSection({
             },
           ],
           condition: (answers, externalData) => {
-            const selectedSubType = getSelectedSchoolSubType(
-              answers,
-              externalData,
-            )
-
-            return subTypeWithExpectedEndDate(selectedSubType)
+            return shouldShowExpectedEndDate(answers, externalData)
           },
         }),
         buildDescriptionField({
@@ -78,13 +72,8 @@ export const startingSchoolSubSection = buildSubSection({
               temporaryStay,
             } = getApplicationAnswers(answers)
 
-            const selectedSubType = getSelectedSchoolSubType(
-              answers,
-              externalData,
-            )
-
             return (
-              subTypeWithExpectedEndDate(selectedSubType) &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -101,13 +90,8 @@ export const startingSchoolSubSection = buildSubSection({
               temporaryStay,
             } = getApplicationAnswers(answers)
 
-            const selectedSubType = getSelectedSchoolSubType(
-              answers,
-              externalData,
-            )
-
             return (
-              subTypeWithExpectedEndDate(selectedSubType) &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
