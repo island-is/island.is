@@ -14,8 +14,8 @@ export const differentNeedsSection = buildSection({
     languageSubSection,
     healthProtectionSubSection,
     supportSubSection,
-    termsSubSection,
     childCircumstancesSubSection,
     payerSubSection,
+    termsSubSection,
   ],
 })
