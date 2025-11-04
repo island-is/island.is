@@ -1,6 +1,4 @@
-import { getSlugFromType } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { MyPagesApplication } from '@island.is/portals/my-pages/applications'
+import { MyPagesApplication } from '../types/myPagesApplication'
 
 const getBaseUrl = (localhostPath: string, path: string) => {
   const basePath = window.location.origin
