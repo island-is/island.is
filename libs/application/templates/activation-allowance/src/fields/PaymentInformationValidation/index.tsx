@@ -93,11 +93,13 @@ export const PaymentInformationValidation: FC<
   return (
     <Box>
       {invalidError && (
-        <AlertMessage
-          title={formatMessage(paymentErrors.invalidValue)}
-          message={formatMessage(paymentErrors.paymentInfoValueErrorsMessage)}
-          type="warning"
-        />
+        <Box marginTop={2}>
+          <AlertMessage
+            title={formatMessage(paymentErrors.invalidValue)}
+            message={formatMessage(paymentErrors.paymentInfoValueErrorsMessage)}
+            type="warning"
+          />
+        </Box>
       )}
       {errors &&
         errors.length > 0 &&
