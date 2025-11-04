@@ -1,7 +1,7 @@
-import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
+import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
@@ -54,9 +54,17 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-// const MedicineDelegation = lazy(() =>
-//   import('./screens/MedicineDelegation/MedicineDelegation'),
-// )
+const MedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegation'),
+)
+
+const MedicineDelegationDetail = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegationDetail'),
+)
+
+const NewMedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/NewMedicineDelegation'),
+)
 
 const PaymentParticipation = lazy(() =>
   import('./screens/PaymentsAndRights/PaymentParticipation'),
@@ -91,7 +99,23 @@ const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
 
 const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
+const PatientData = lazy(() => import('./screens/PatientData/PatientData'))
+
+const PatientDataPermits = lazy(() =>
+  import('./screens/PatientDataPermits/Permits'),
+)
+
+const PatientDataPermitsDetail = lazy(() =>
+  import('./screens/PatientDataPermits/PermitDetail'),
+)
+
+const PatientDataNewPermit = lazy(() =>
+  import('./screens/PatientDataPermits/NewPermit'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
+
+const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -217,14 +241,27 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
     },
-    // Commented out because not ready yet
-    // {
-    //   name: hm.medicineDelegation,
-    //   path: HealthPaths.HealthMedicineDelegation,
-    //   key: MEDICINE_LANDLAEKNIR_FLAG,
-    //   enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-    //   element: <MedicineDelegation />,
-    // },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegation,
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineDelegation />,
+    },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegationDetail,
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineDelegationDetail />,
+    },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegationAdd,
+      key: MEDICINE_DELEGATION_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <NewMedicineDelegation />,
+    },
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,
@@ -345,6 +382,42 @@ export const healthModule: PortalModule = {
       key: 'HealthWaitlists',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <WaitlistDetail />,
+    },
+    {
+      name: hm.patientData,
+      path: HealthPaths.HealthPatientDataOverview,
+      key: 'HealthPatientPermits',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PatientData />,
+    },
+    {
+      name: hm.patientDataPermit,
+      path: HealthPaths.HealthPatientDataPermits,
+      key: 'HealthPatientPermits',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PatientDataPermits />,
+    },
+    {
+      name: hm.permit,
+      path: HealthPaths.HealthPatientDataPermitsDetail,
+      key: 'HealthPatientPermits',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PatientDataPermitsDetail />,
+    },
+    {
+      name: hm.addPermit,
+      path: HealthPaths.HealthPatientDataPermitsAdd,
+      key: 'HealthPatientPermits',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PatientDataNewPermit />,
     },
   ],
 }
