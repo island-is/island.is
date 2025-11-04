@@ -324,16 +324,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
       const fileId = mergedDocument ? draggedMergeFileId : draggedFileId
       const targetFileIndex = newOrder.findIndex((f) => f.id === fileId)
+      if (targetFileIndex === -1 || !fileId) {
+        return
+      }
       const newIndex = mergedDocument
         ? getMergedDocumentIndex(
             targetFileIndex,
             previousMergedCaseDocumentCount ?? 0,
           )
         : getFiledDocumentIndex(targetFileIndex)
-
-      if (!fileId || newIndex === -1) {
-        return
-      }
 
       courtDocument.update.action({
         caseId: workingCase.id,
@@ -345,9 +344,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       })
 
       if (mergedDocument) {
-        // For merged filed documents reordering, the newOrder will only contain the new order for merged documents for a single case id.
+        // For merged filed documents reordering, the newOrder will only contain the new order for merged documents for a single merged case id.
         // But courtSession.mergedFiledDocuments can contain merged filed documents for many cases that are linked to the same court session.
-        // Thus we have to create a new merged documents array to persist the ordered state for other merged case filed documents.
+        // Thus we have to create a new merged documents array to persist the order state for other merged case filed documents.
         const currentMergedDocuments = courtSession.mergedFiledDocuments ?? []
         const firstIndex = currentMergedDocuments.findIndex(
           (document) => mergedDocument.caseId === document.caseId,
@@ -355,18 +354,22 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         if (firstIndex === -1) {
           return
         }
-        const lastIndex = firstIndex + newOrder.length - 1
 
-        const newMergedDocumentsOrder: CourtDocumentResponse[] = []
         let newOrderIndex = 0
-        currentMergedDocuments.forEach((document, index) => {
-          if (index < firstIndex || index > lastIndex) {
-            newMergedDocumentsOrder.push(document)
-          } else if (newOrderIndex < newOrder.length) {
-            newMergedDocumentsOrder.push(newOrder[newOrderIndex])
+        const newMergedDocumentsOrder: CourtDocumentResponse[] =
+          currentMergedDocuments.map((document) => {
+            if (document.caseId !== mergedDocument.caseId) {
+              return document
+            }
+
+            const reorderedDocument = newOrder[newOrderIndex]
             newOrderIndex += 1
-          }
-        })
+            return reorderedDocument
+          })
+
+        if (newOrderIndex !== newOrder.length) {
+          return
+        }
 
         patchSession(courtSession.id, {
           mergedFiledDocuments: newMergedDocumentsOrder,

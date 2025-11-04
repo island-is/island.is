@@ -414,9 +414,18 @@ export class CourtDocumentRepositoryService {
 
       const filedDocumentsInMergedCaseCount =
         await this.courtDocumentModel.count({
-          where: { caseId },
+          where: {
+            caseId,
+            courtSessionId: { [Op.ne]: null },
+            documentOrder: { [Op.gt]: 0 },
+          },
           transaction,
         })
+      if (filedDocumentsInMergedCaseCount === 0) {
+        this.logger.debug(`No filed documents to merge from case ${caseId}`)
+        return
+      }
+
       const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId: parentCaseId,
         courtSessionId: parentCaseCourtSessionId,
@@ -435,6 +444,8 @@ export class CourtDocumentRepositoryService {
         {
           where: {
             caseId,
+            courtSessionId: { [Op.ne]: null },
+            documentOrder: { [Op.gt]: 0 },
           },
           transaction,
         },
