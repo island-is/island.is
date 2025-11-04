@@ -240,7 +240,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tegund umsóknar',
       description: 'Application type',
     },
-
     applicationTypeSchoolTransferSubLabel: {
       id: 'nps.application:application.type.school.transfer.sub.label',
       defaultMessage:
@@ -248,7 +247,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'If your child is already registered in a school, you can request a transfer to another school within your municipality. You can also apply for your child to attend a school in another municipality or an independent school. In general, families can choose between primary schools within the municipality. In general, municipalities offer a choice of primary schools. However, if it becomes necessary to limit the number of students in certain schools, students still retain the right to continue their schooling at the school where they are already enrolled.',
     },
-
     applicationTypeContinuingEnrollmentSubLabel: {
       id: 'nps.application:application.type.continuing.enrollment.sub.label',
       defaultMessage:

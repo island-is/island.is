@@ -9,6 +9,7 @@ import { ApplicationType } from '../../utils/constants'
 export const applicationTypeSection = buildSection({
   id: 'applicationTypeSection',
   title: newPrimarySchoolMessages.applicationType.applicationTypeSectionTitle,
+  condition: (answers) => !answers.applicationType,
   children: [
     buildMultiField({
       id: 'applicationTypeMultiField',

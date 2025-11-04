@@ -110,7 +110,10 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        )
       },
     }),
     buildOverviewField({

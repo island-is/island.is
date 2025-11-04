@@ -514,7 +514,7 @@ export const getGenderMessage = (
   return gender
 }
 
-export const getApplicationTypeIfFirstGradeYear = (
+export const getApplicationType = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
@@ -531,9 +531,16 @@ export const getApplicationTypeIfFirstGradeYear = (
     return undefined
   }
 
-  // if the child is a first grader and not currently enrolled in a primary school, set the application type to enrollment in primary school
+  // if the child is a first grader and not currently enrolled in a primary
+  // school, set the application type to enrollment in primary school
   if (yearOfBirth === firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  // if the child is not a first grader and not currently enrolled in a primary
+  // school (no data in Frigg), set the application type to new primary school
+  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   // else the application type should be determined by the applicant

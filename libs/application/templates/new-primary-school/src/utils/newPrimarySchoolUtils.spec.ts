@@ -22,7 +22,7 @@ import {
   PayerOption,
   States,
 } from './constants'
-// import { getApplicationType } from './newPrimarySchoolUtils'
+import { getApplicationType } from './newPrimarySchoolUtils'
 
 const buildApplication = (data: {
   answers?: FormValue
@@ -161,82 +161,78 @@ describe('showPreferredLanguageFields', () => {
   })
 })
 
-// describe('getApplicationType', () => {
-//   const currentDate = new Date()
+describe('getApplicationType', () => {
+  const currentDate = new Date()
 
-//   it('should return NEW_PRIMARY_SCHOOL for child in 2. grade', () => {
-//     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has enrolled before (data is found in Frigg)', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
-//     const answers = {
-//       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
-//     }
-//     const externalData = {
-//       childInformation: {
-//         data: {
-//           primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
-//         },
-//       },
-//     } as unknown as ExternalData
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+    }
 
-//     expect(getApplicationType(answers, externalData)).toBe(
-//       ApplicationType.NEW_PRIMARY_SCHOOL,
-//     )
-//   })
+    const externalData = {
+      childInformation: {
+        data: {},
+      },
+    } as unknown as ExternalData
 
-//   it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
-//     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    )
+  })
 
-//     const answers = {
-//       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
-//     }
-//     const externalData = {
-//       childInformation: {
-//         data: {},
-//       },
-//     } as unknown as ExternalData
+  it('should return undefined for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
-//     expect(getApplicationType(answers, externalData)).toBe(
-//       ApplicationType.NEW_PRIMARY_SCHOOL,
-//     )
-//   })
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+    }
+    const externalData = {
+      childInformation: {
+        data: {
+          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
+        },
+      },
+    } as unknown as ExternalData
 
-//   it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
-//     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+    expect(getApplicationType(answers, externalData)).toBe(undefined)
+  })
 
-//     const answers = {
-//       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
-//     }
+  it('should return undefined for child in 2. grade, and data is found in Frigg', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
 
-//     const externalData = {
-//       childInformation: {
-//         data: {},
-//       },
-//     } as unknown as ExternalData
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
+    }
+    const externalData = {
+      childInformation: {
+        data: {
+          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
+        },
+      },
+    } as unknown as ExternalData
 
-//     expect(getApplicationType(answers, externalData)).toBe(
-//       ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-//     )
-//   })
+    expect(getApplicationType(answers, externalData)).toBe(undefined)
+  })
 
-//   it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
-//     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
 
-//     const answers = {
-//       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
-//     }
-//     const externalData = {
-//       childInformation: {
-//         data: {
-//           primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
-//         },
-//       },
-//     } as unknown as ExternalData
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
+    }
+    const externalData = {
+      childInformation: {
+        data: {},
+      },
+    } as unknown as ExternalData
 
-//     expect(getApplicationType(answers, externalData)).toBe(
-//       ApplicationType.NEW_PRIMARY_SCHOOL,
-//     )
-//   })
-// })
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
+  })
+})
 
 describe('shouldShowPage', () => {
   it('should return true if the application feature for the selected school includes key', () => {
