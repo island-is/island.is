@@ -121,7 +121,10 @@ function getTypeOfDeployment() {
       prod: true,
     }
   }
-
+  return {
+    dev: true,
+    prod: false
+  }
   throw new Error(`Unsupported branch: ${targetBranch}`)
 }
 
@@ -133,6 +136,10 @@ function getTargetBranch() {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
   if (eventName === 'workflow_dispatch') {
+    return context.ref.replace('refs/heads/', '')
+  }
+
+  if (eventName === 'push') {
     return context.ref.replace('refs/heads/', '')
   }
 
