@@ -1,15 +1,15 @@
-import { PortalModule } from '@island.is/portals/core'
-import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Navigate } from 'react-router-dom'
+import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import PoliceCases from './screens/PoliceCases/PoliceCases'
 import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
+import { Navigate } from 'react-router-dom'
+import { LawAndOrderPaths } from './lib/paths'
+import Verdict from './screens/Verdict/Verdict'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
-const CourtCaseDetail = lazy(() =>
-  import('./screens/CourtCaseDetail/CourtCaseDetail'),
+const CourtCaseDetail = lazy(() => import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
 export const lawAndOrderModule: PortalModule = {
@@ -50,6 +50,12 @@ export const lawAndOrderModule: PortalModule = {
       path: LawAndOrderPaths.PoliceCasesDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <PoliceCaseDetail />,
+    },
+    {
+      name: m.case,
+      path: LawAndOrderPaths.VerdictDetail,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <Verdict />,
     },
   ],
 }

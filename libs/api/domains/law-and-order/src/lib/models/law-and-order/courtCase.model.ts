@@ -23,7 +23,13 @@ export class Data {
   caseNumberTitle?: string
 
   @Field({ nullable: true })
-  hasBeenServed?: boolean
+  hasSubpoenaBeenServed?: boolean
+
+  @Field({ nullable: true })
+  hasVerdictBeenServed?: boolean
+
+  @Field({ nullable: true })
+  hasVerdict?: boolean
 
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>

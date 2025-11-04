@@ -1,4 +1,5 @@
 import { Box, TagVariant } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
@@ -6,11 +7,10 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { useGetCourtCasesQuery } from './CourtCases.generated'
-import { Problem } from '@island.is/react-spa/shared'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
