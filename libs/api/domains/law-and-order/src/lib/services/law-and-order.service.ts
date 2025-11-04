@@ -13,23 +13,6 @@ import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
 import {
-<<<<<<< HEAD:libs/api/domains/law-and-order/src/lib/services/law-and-order.service.ts
-  mapDefenseChoiceForSummon,
-  mapDefenseChoiceForSummonDefaultChoice,
-  mapDefenseChoice,
-} from '../mappers/defenseChoiceMapper'
-import { DefenseChoices } from '../mappers/messageMapper'
-import { mapTagTypes } from '../mappers/tagTypeMapper'
-import { m } from '../messages'
-import { ActionTypeEnum } from '../models/law-and-order/actions.model'
-import { CourtCase } from '../models/law-and-order/courtCase.model'
-import { CourtCases } from '../models/law-and-order/courtCases.model'
-import { Lawyers } from '../models/law-and-order/lawyers.model'
-import { Subpoena } from '../models/law-and-order/summon.model'
-import { Item } from '../models/law-and-order/item.model'
-import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { NAMESPACE } from '../types/constants'
-=======
   DefenseChoices,
   mapAppealDecision,
   mapAppealDecisionReverse,
@@ -39,13 +22,20 @@ import { NAMESPACE } from '../types/constants'
   mapItemTypes,
   mapLinkTypes,
   mapTagTypes,
-} from './helpers/mappers'
-import { m } from './messages'
-import { Verdict } from '../models/verdict.model'
+} from '../mappers'
+import { ActionTypeEnum } from '../models/law-and-order/actions.model'
+import { CourtCase } from '../models/law-and-order/courtCase.model'
+import { CourtCases } from '../models/law-and-order/courtCases.model'
+import { Lawyers } from '../models/law-and-order/lawyers.model'
+import { Subpoena } from '../models/law-and-order/summon.model'
+import { Item } from '../models/law-and-order/item.model'
+import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { NAMESPACE } from '../types/constants'
+import { Verdict } from '../models/law-and-order/verdict.model'
 import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
+import { m } from '../messages'
 
 const namespaces = ['api.law-and-order']
->>>>>>> main:libs/api/domains/law-and-order/src/lib/law-and-order.service.ts
 
 @Injectable()
 export class LawAndOrderService {
