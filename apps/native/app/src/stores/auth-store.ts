@@ -287,19 +287,9 @@ export async function readAuthorizeResult(): Promise<void> {
     return
   }
 
-  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
-  const hasOnboardedPinCode =
-    preferencesStore.getState().hasOnboardedPinCode ?? false
-
   // Attempt to restore the last known authorization data from the secure keychain.
   const keychainResult = await readStoredAuthorizeCredentials()
   if (!keychainResult) {
-    return
-  }
-
-  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
-  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
-    await forceLogoutAfterFreshInstall()
     return
   }
 
@@ -310,6 +300,16 @@ export async function readAuthorizeResult(): Promise<void> {
 
   // Persist the restored authorization result in memory for the rest of the session.
   authStore.setState({ authorizeResult: restoredAuthorizeResult })
+
+  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
+  const hasOnboardedPinCode =
+    preferencesStore.getState().hasOnboardedPinCode ?? false
+
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    await forceLogoutAfterFreshInstall()
+    return
+  }
 }
 
 async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCredentials> {
