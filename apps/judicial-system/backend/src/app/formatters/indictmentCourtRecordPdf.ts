@@ -139,13 +139,8 @@ export const createIndictmentCourtRecordPdf = (
       )
 
       nrOfFiledDocuments =
-        courtSession.mergedFiledDocuments &&
-        courtSession.mergedFiledDocuments.length > 0
-          ? courtSession.mergedFiledDocuments[
-              courtSession.mergedFiledDocuments.length - 1
-            ].mergedDocumentOrder ?? 0
-          : courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
-              .documentOrder
+        courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
+          .documentOrder
     }
 
     if (
@@ -182,6 +177,10 @@ export const createIndictmentCourtRecordPdf = (
           mergedCaseFiledDocuments[0].mergedDocumentOrder,
         )
       }
+      nrOfFiledDocuments =
+        courtSession.mergedFiledDocuments[
+          courtSession.mergedFiledDocuments.length - 1
+        ].mergedDocumentOrder ?? nrOfFiledDocuments
     }
 
     addEmptyLines(doc, 2)
