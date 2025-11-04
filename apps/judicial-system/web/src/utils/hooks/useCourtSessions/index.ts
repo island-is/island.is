@@ -68,7 +68,6 @@ const useCourtSessions = () => {
   const updateCourtSessionString = useCallback(
     async (updateCourtSessionString: UpdateCourtSessionStringInput) => {
       try {
-        console.log({ updateCourtSessionString })
         const { data } = await updateCourtSessionStringMutation({
           variables: {
             input: updateCourtSessionString,

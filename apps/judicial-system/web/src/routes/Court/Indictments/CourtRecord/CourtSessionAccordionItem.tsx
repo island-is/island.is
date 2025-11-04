@@ -158,10 +158,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           courtSessionId,
           caseId: workingCase.id,
         })
-        if (courtSessionStrings) {
-          // updateCourtSessionStrings: only pass down a single string
-          // per court session, and merged case id
-        }
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],

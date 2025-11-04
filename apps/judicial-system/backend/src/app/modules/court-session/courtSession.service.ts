@@ -263,13 +263,12 @@ export class CourtSessionService {
     update: UpdateCourtSessionDto,
     transaction?: Transaction,
   ): Promise<CourtSession> {
-    const updates = this.courtSessionRepositoryService.update(
+    return this.courtSessionRepositoryService.update(
       caseId,
       courtSessionId,
       update,
       { transaction },
     )
-    return updates
   }
 
   async delete(
