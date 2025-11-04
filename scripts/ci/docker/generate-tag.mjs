@@ -66,7 +66,12 @@ function getTagname() {
     }
     throw new Error(`Unable to determine artifact name for merge_group event`)
   }
-
+  if (eventName === 'push') {
+      if (typeOfDeployment.dev) {
+        return `prerelease_${shortSha}_${randomTag}`
+      }
+      throw new Error(`Only supports pre-release push`)
+  }
   throw new Error(
     `Unable to determine artifact name for event type: ${eventName}`,
   )
