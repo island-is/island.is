@@ -54,7 +54,7 @@ export class ApplicationChargeService {
       // Delete the charge, using the ID we got from FJS
       const paymentUrl = JSON.parse(payment.definition as unknown as string)
         .paymentUrl as string
-      let requestId = payment.request_id as string
+      let requestId = payment.request_id as string // mockpayments should have requestIds
 
       //if requestId is not set, we need to get it from the paymentUrl
       if (!requestId && paymentUrl) {
@@ -62,12 +62,9 @@ export class ApplicationChargeService {
         requestId = url.pathname.split('/').pop() ?? ''
       }
 
-      if (requestId !== '') {
+      if (requestId) {
         this.logger.info('deleteCharge chargeId', requestId)
         await this.chargeFjsV2ClientService.deleteCharge(requestId)
-      } else {
-        this.logger.error('No requestId found for payment', payment)
-        throw new Error('No requestId found for payment')
       }
     } catch (error) {
       this.logger.error(
