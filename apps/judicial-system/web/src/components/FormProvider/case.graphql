@@ -310,6 +310,7 @@ query Case($input: CaseQueryInput!) {
         id
         courtSessionId
         mergedCaseId
+        stringType
         value
       }
     }
@@ -436,6 +437,7 @@ query Case($input: CaseQueryInput!) {
           id
           courtSessionId
           mergedCaseId
+          stringType
           value
         }
       }

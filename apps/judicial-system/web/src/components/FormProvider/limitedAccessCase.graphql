@@ -257,6 +257,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         courtSessionId
         mergedCaseId
+        stringType
         value
       }
     }
@@ -303,6 +304,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           id
           courtSessionId
           mergedCaseId
+          stringType
           value
         }
       }

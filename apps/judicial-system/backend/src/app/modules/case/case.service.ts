@@ -2364,6 +2364,10 @@ export class CaseService {
               caseId: theCase.id,
               transaction,
             })
+            const caseSentToCourt = EventLog.getEventLogDateByEventType(
+              [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+              theCase.eventLogs,
+            )
             await this.courtSessionService.createOrUpdateCourtSessionString({
               caseId: parentCaseId,
               courtSessionId,
@@ -2372,13 +2376,14 @@ export class CaseService {
                 stringType: CourtSessionStringType.ENTRIES,
                 value: `Mál nr. ${
                   theCase.courtCaseNumber
-                } sem var höfðað á hendur ákærða með ákæru útgefinni ${formatDate(
-                  EventLog.getEventLogDateByEventType(
-                    EventType.CASE_SENT_TO_COURT,
-                    theCase.eventLogs,
-                  ),
-                  'PPP',
-                )}, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+                } sem var höfðað á hendur ákærða${
+                  caseSentToCourt
+                    ? ` með ákæru útgefinni ${formatDate(
+                        caseSentToCourt,
+                        'PPP',
+                      )}`
+                    : ''
+                }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
               },
             })
           }

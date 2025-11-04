@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Input } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -33,7 +33,7 @@ export const CourtSessionMergedCaseEntries = ({
     useState<string>('')
 
   return (
-    <>
+    <Box paddingBottom={3}>
       <SectionHeading title={`Sameining ${courtCaseNumber}`} />
       <Input
         name="merged-case-entries"
@@ -81,6 +81,6 @@ export const CourtSessionMergedCaseEntries = ({
         textarea
         required
       />
-    </>
+    </Box>
   )
 }
