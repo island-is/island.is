@@ -439,7 +439,7 @@ const getFileExtension = (fileName: string): string | undefined => {
 export const getCanStartAt = (answers: FormValue): string => {
   const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
 
-  let canStartAtString = ''
+  let canStartAtString = new Date().toISOString()
 
   incomeAnswers.forEach((income) => {
     if (income.hasEmploymentEnded === NO && income.endOfEmploymentDate) {
