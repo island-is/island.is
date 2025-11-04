@@ -183,11 +183,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
-  const { walletPassDismissedInfoAlerts, setWalletPassInfoAlertDismissed } =
-    usePreferencesStore((state) => ({
-      walletPassDismissedInfoAlerts: state.walletPassDismissedInfoAlerts,
-      setWalletPassInfoAlertDismissed: state.setWalletPassInfoAlertDismissed,
-    }))
+  const walletPassDismissedInfoAlerts = usePreferencesStore(
+    (state) => state.walletPassDismissedInfoAlerts,
+  )
+  const setWalletPassInfoAlertDismissed = usePreferencesStore(
+    (state) => state.setWalletPassInfoAlertDismissed,
+  )
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
