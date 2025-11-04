@@ -31,8 +31,8 @@ interface SelectRepresentativeProps {
   placeholder?: string
   size?: 'small' | 'medium'
   updateRepresentative: (
-    submitterName: string,
-    caseFileCategory: CaseFileCategory,
+    submitterName: string | null,
+    caseFileCategory: CaseFileCategory | null,
   ) => void
 }
 
@@ -88,6 +88,7 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
       !representativeSelectOption.selectedCaseRepresentative
     ) {
       setRepresentative(null)
+      updateRepresentative(null, null)
       return
     }
 
@@ -132,8 +133,8 @@ interface SelectCaseFileRepresentativeProps {
   caseFileCategory?: CaseFileCategory
   submissionDate: Date
   handleCaseFileRepresentativeUpdate: (update: {
-    submitterName?: string
-    caseFileCategory?: CaseFileCategory
+    submitterName?: string | null
+    caseFileCategory?: CaseFileCategory | null
     submissionDate?: Date
   }) => void
 }
