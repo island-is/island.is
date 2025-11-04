@@ -41,12 +41,4 @@ export class MyPagesApplicationResolver {
       input,
     )
   }
-
-  //   @Mutation(() => MyPagesApplication, { nullable: true })
-  //   async deleteApplication(
-  //     @Args('input') input: DeleteApplicationInput,
-  //     @CurrentUser() user: User,
-  //   ): Promise<void> {
-  //     return this.myPagesService.deleteApplication(input, user)
-  //   }
 }

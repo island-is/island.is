@@ -1,7 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common'
 import { ApplicationsApi, Configuration } from '../../../application/gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-// import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   Configuration as FormSystemConfiguration,
@@ -21,7 +20,6 @@ export class MyPagesApplicationModule {
       module: MyPagesApplicationModule,
       providers: [
         MyPagesApplicationResolver,
-        // ApplicationAdminResolver,
         MyPagesApplicationService,
         {
           provide: ApplicationsApi,

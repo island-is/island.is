@@ -11,13 +11,4 @@ export class MyPagesApplication extends Application {
 
   @Field(() => String, { nullable: true })
   formSystemOrgContentfulId?: string
-
-  @Field(() => String, { nullable: true })
-  path?: string
-
-  @Field(() => String, { nullable: true })
-  localhostPath?: string
-
-  @Field(() => String, { nullable: true })
-  slug?: string
 }

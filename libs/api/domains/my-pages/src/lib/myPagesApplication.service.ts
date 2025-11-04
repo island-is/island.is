@@ -7,7 +7,6 @@ import { ApplicationApplicationsInput } from '@island.is/api/domains/application
 import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
 import { MyPagesApplication } from './myPagesApplication.model'
 import { ApplicationTypes } from '@island.is/application/types'
-import { getSlugFromType } from '@island.is/application/core'
 
 @Injectable()
 export class MyPagesApplicationService {
@@ -41,15 +40,6 @@ export class MyPagesApplicationService {
       scopeCheck: input?.scopeCheck,
     })
 
-    const mappedApplication = (applicationApplications ?? []).map(
-      (app: any): MyPagesApplication => ({
-        ...app,
-        path: '/umsoknir',
-        localhostPath: 'http://localhost:4242/umsoknir',
-        slug: getSlugFromType(app.typeId),
-      }),
-    )
-
     const formSystemApplications = await this.formSystemApplicationsApiWithAuth(
       user,
     ).applicationsControllerFindAllByUser({
@@ -61,13 +51,10 @@ export class MyPagesApplicationService {
       (app: any): MyPagesApplication => ({
         ...app,
         typeId: ApplicationTypes.EXAMPLE_INPUTS, // dummy typeId, as form system applications don't have typeId
-        path: '/form',
-        localhostPath: 'http://localhost:4201/form',
-        slug: app.formSystemFormSlug,
       }),
     )
 
-    const a = mappedApplication ?? []
+    const a = applicationApplications ?? []
     const b = mappedFormSystem ?? []
     if (!a.length && !b.length) return []
     const map = new Map<string, MyPagesApplication>()
@@ -80,10 +67,4 @@ export class MyPagesApplicationService {
       return yt - xt
     })
   }
-
-  // async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
-  //   return this.applicationApiWithAuth(auth).applicationControllerDelete({
-  //     id: input.id,
-  //   })
-  // }
 }
