@@ -10,6 +10,8 @@ export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
 export type AppearanceMode = ThemeMode | 'automatic'
 
+export const PREFERENCES_KEY = 'preferences_04'
+
 export interface PreferencesStore extends State {
   dev__useLockScreen: boolean
   hasOnboardedPinCode: boolean
@@ -105,7 +107,7 @@ export const preferencesStore = create<PreferencesStore>(
       },
     }),
     {
-      name: 'preferences_04',
+      name: PREFERENCES_KEY,
       getStorage: () => AsyncStorage,
       onRehydrateStorage: () => (state, err) => {
         if (state) {
