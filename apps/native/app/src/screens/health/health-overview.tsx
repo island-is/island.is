@@ -5,7 +5,6 @@ import {
   Animated,
   Image,
   RefreshControl,
-  SafeAreaView,
   TouchableOpacity,
   useWindowDimensions,
   View,
