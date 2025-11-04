@@ -1,8 +1,4 @@
-import {
-  // Application,
-  ApplicationStatus,
-  InstitutionTypes,
-} from '@island.is/application/types'
+import { Application, ApplicationStatus } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationsPaths } from '../../lib/paths'
@@ -11,20 +7,18 @@ import {
   FilterValues,
   InstitutionOption,
 } from '../types'
-import { MyPagesApplication } from '@island.is/portals/my-pages/applications'
-
 interface SortedApplication {
-  incomplete: MyPagesApplication[]
-  inProgress: MyPagesApplication[]
-  finished: MyPagesApplication[]
+  incomplete: Application[]
+  inProgress: Application[]
+  finished: Application[]
 }
 
 export const sortApplicationsStatus = (
-  applications: MyPagesApplication[],
+  applications: Application[],
 ): SortedApplication => {
-  const incomplete: MyPagesApplication[] = []
-  const inProgress: MyPagesApplication[] = []
-  const finished: MyPagesApplication[] = []
+  const incomplete: Application[] = []
+  const inProgress: Application[] = []
+  const finished: Application[] = []
 
   applications.forEach((application) => {
     if (
@@ -47,7 +41,7 @@ export const sortApplicationsStatus = (
 }
 
 export const sortApplicationsOrganizations = (
-  applications: MyPagesApplication[],
+  applications: Application[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
   let institutions: InstitutionOption[] = []
@@ -100,7 +94,7 @@ export const getBaseUrlForm = () => {
 
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
-  applications: MyPagesApplication[] = [],
+  applications: Application[] = [],
   filteredOutApplication?: string,
 ) => {
   if (!filterValue) {
@@ -136,7 +130,7 @@ export const getFilteredApplicationsByStatus = (
 
 export const getInstitutions = (
   defaultInstitution: InstitutionOption,
-  applications: MyPagesApplication[],
+  applications: Application[],
   organizations: any,
 ): InstitutionOption[] => {
   if (!applications || !organizations) {
