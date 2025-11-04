@@ -1,5 +1,9 @@
 import { Module, DynamicModule } from '@nestjs/common'
-import { ApplicationsApi, Configuration } from '../../../application/gen/fetch'
+// import { ApplicationsApi, Configuration } from '../../../application/gen/fetch'
+import {
+  ApplicationsApi,
+  Configuration,
+} from '@island.is/api/domains/application'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ApplicationsApi as FormSystemApplicationsApi,

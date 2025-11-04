@@ -11,10 +11,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { MyPagesApplicationService } from './myPagesApplication.service'
 import { MyPagesApplication } from './myPagesApplication.model'
-import {
-  ApplicationApplicationsInput,
-  Application,
-} from '@island.is/api/domains/application'
+import { ApplicationApplicationsInput } from '@island.is/api/domains/application'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @CodeOwner(CodeOwners.NordaApplications)

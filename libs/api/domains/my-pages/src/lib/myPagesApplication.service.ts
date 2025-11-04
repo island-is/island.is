@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
-import { ApplicationsApi } from '../../../application/gen/fetch'
+// import { ApplicationsApi } from '../../../application/gen/fetch'
+import { ApplicationsApi } from '@island.is/api/domains/application'
 import { ApplicationApplicationsInput } from '@island.is/api/domains/application'
 import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
 import { MyPagesApplication } from './myPagesApplication.model'
@@ -48,6 +49,7 @@ export class MyPagesApplicationService {
     })
 
     const mappedFormSystem = (formSystemApplications ?? []).map(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (app: any): MyPagesApplication => ({
         ...app,
         typeId: ApplicationTypes.EXAMPLE_INPUTS, // dummy typeId, as form system applications don't have typeId
