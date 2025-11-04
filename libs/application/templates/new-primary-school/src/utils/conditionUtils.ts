@@ -7,6 +7,7 @@ import {
 import {
   ApplicationFeatureKey,
   LanguageEnvironmentOptions,
+  OrganizationSubType,
   PayerOption,
 } from './constants'
 import {
@@ -14,6 +15,7 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   getSelectedSchoolData,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -116,5 +118,20 @@ export const needsPayerApproval = (application: Application) => {
       application.externalData,
       ApplicationFeatureKey.PAYMENT_INFO,
     ) && hasOtherPayer(application.answers)
+  )
+}
+
+export const shouldShowExpectedEndDate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSubType = getSelectedSchoolSubType(answers, externalData)
+  if (!selectedSubType) return false
+
+  return (
+    selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+    selectedSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
   )
 }

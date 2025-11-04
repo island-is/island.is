@@ -3,11 +3,10 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedSchoolSubType,
   LanguageEnvironmentOptions,
   needsPayerApproval,
-  OrganizationSubType,
   ReasonForApplicationOptions,
+  shouldShowExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -147,10 +146,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(getSelectedSchoolSubType(
+            ...(shouldShowExpectedEndDate(
               application.answers,
               application.externalData,
-            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+            ) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
