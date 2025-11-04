@@ -28,7 +28,7 @@ export const serviceSetup = (services: {
         memory: '512Mi',
       },
       requests: {
-        cpu: '30m',
+        cpu: '100m',
         memory: '256Mi',
       },
     })
