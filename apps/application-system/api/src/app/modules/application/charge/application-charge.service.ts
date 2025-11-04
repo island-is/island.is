@@ -54,8 +54,9 @@ export class ApplicationChargeService {
       // Delete the charge, using the ID we got from FJS
       const paymentUrl = JSON.parse(payment.definition as unknown as string)
         .paymentUrl as string
-      let requestId = payment.request_id as string // mockpayments should have requestIds
+      let requestId = payment.request_id as string
 
+      // new mockpayments are getting requestIds and fake urls
       //if requestId is not set, we need to get it from the paymentUrl
       if (!requestId && paymentUrl) {
         const url = new URL(paymentUrl)

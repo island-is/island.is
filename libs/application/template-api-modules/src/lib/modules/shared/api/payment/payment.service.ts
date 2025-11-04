@@ -129,12 +129,12 @@ export class PaymentService extends BaseTemplateApiService {
         application.id,
         organizationId ?? 'string',
       )
-
+      const requestId = uuid()
       await this.paymentModelService.addPaymentUrlAndRequestId(
         application.id,
         result.id,
-        'https://fakeUrl.fake',
-        uuid(),
+        'https://fakeUrl.fake/' + requestId,
+        requestId,
       )
 
       await this.paymentModelService.setUser4(
