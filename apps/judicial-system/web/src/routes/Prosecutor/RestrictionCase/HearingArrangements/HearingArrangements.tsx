@@ -114,7 +114,9 @@ export const HearingArrangements = () => {
           <PageTitle>
             {formatMessage(rcRequestedHearingArrangements.heading)}
           </PageTitle>
-          <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+          <Box marginBottom={5}>
+            <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+          </Box>
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section" marginBottom={5}>
             <SelectCourt />

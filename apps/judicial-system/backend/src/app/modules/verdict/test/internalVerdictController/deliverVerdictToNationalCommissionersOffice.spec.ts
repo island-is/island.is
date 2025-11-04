@@ -106,7 +106,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
             documentBase64: 'RMOzbXVy',
           },
         ],
-        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 1, 1) }],
+        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 3, 1) }],
         fileTypeCode: PoliceFileTypeCode.VERDICT,
         caseSupplements: [
           { code: 'RVG_CASE_ID', value: caseId },

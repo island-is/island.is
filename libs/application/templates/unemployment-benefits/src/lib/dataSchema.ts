@@ -16,7 +16,6 @@ import {
   licenseSchema,
   currentSituationSchema,
 } from './schemas'
-import { WorkingAbility } from '../shared'
 import { reasonForJobSearchSchema } from './schemas/reasonForJobSearchSchema'
 
 const FileSchema = z.object({
@@ -27,7 +26,12 @@ const FileSchema = z.object({
 
 export const languageSkillsSchema = z.object({
   language: z.string().nullish(),
-  skill: z.string(),
+  skill: z
+    .string()
+    .optional()
+    .refine((v) => v !== undefined && v !== '', {
+      params: serviceErrors.requiredError,
+    }),
 })
 
 const euresSchema = z.object({
@@ -48,9 +52,7 @@ export const introductoryMeetingSchema = z.object({
 })
 
 export const workingAbilitySchema = z.object({
-  status: z
-    .nativeEnum(WorkingAbility)
-    .refine((v) => Object.values(WorkingAbility).includes(v)),
+  status: z.string(),
   medicalReport: z.array(FileSchema).optional(),
 })
 

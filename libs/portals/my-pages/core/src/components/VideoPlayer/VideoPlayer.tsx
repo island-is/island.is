@@ -124,7 +124,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
           textAlign="center"
           height="full"
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       {isReady && (
