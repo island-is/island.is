@@ -171,6 +171,7 @@ workflows:
       app_store_connect: 'Island.is API Key'
     environment:
       <<: *environment
+      xcode: '26.0.1'
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev

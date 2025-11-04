@@ -34,7 +34,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { isAndroid, isIos } from '../../utils/devices'
+import { isAndroid, isIos, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 import { useOfflineStore } from '../../stores/offline-store'
@@ -448,7 +448,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: cardHeight }} />
+      <View
+        style={{
+          height: isIosLiquidGlassEnabled ? 2 * cardHeight : cardHeight,
+        }}
+      />
       <LicenseCardWrapper>
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
