@@ -21,14 +21,12 @@ import {
   ApplicationApplicationsInstitutionAdminInput,
   ApplicationTypesInstitutionAdminInput,
 } from './application-admin/dto/applications-applications-admin-input'
-import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private applicationApi: ApplicationsApi,
     private applicationPaymentApi: PaymentsApi,
-    private formSystemApplicationsApi: FormSystemApplicationsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -37,12 +35,6 @@ export class ApplicationService {
 
   paymentApiWithAuth(auth: Auth) {
     return this.applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  formSystemApplicationsApiWithAuth(auth: User) {
-    return this.formSystemApplicationsApi.withMiddleware(
-      new AuthMiddleware(auth),
-    )
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
@@ -88,47 +80,6 @@ export class ApplicationService {
       },
     )
   }
-
-  // async combinedApplications(
-  //   user: User,
-  //   locale: Locale,
-  //   input?: ApplicationApplicationsInput,
-  // ) {
-  //   const applicationApplications = await this.applicationApiWithAuth(
-  //     user,
-  //   ).applicationControllerFindAll({
-  //     nationalId: user.nationalId,
-  //     locale,
-  //     typeId: input?.typeId?.join(','),
-  //     status: input?.status?.join(','),
-  //     scopeCheck: input?.scopeCheck,
-  //   })
-
-  //   const formSystemApplications = await this.formSystemApplicationsApiWithAuth(
-  //     user,
-  //   ).applicationsControllerFindAllByUser({
-  //     nationalId: user.nationalId,
-  //     locale,
-  //   })
-
-  //   console.log('applicationApplications', applicationApplications)
-  //   console.log('formSystemApplications', formSystemApplications)
-
-  //   // const a = applicationAp ?? []
-  //   // const b = formSystemData ?? []
-  //   // if (!a.length && !b.length) return []
-  //   // const map = new Map<string, Application>()
-  //   // ;[...a, ...b].forEach((app) => {
-  //   //   if (app) map.set(app.id, app)
-  //   // })
-  //   // return Array.from(map.values()).sort((x, y) => {
-  //   //   const xt = x.modified ? new Date(x.modified).getTime() : 0
-  //   //   const yt = y.modified ? new Date(y.modified).getTime() : 0
-  //   //   return yt - xt
-  //   // })
-
-  //   return applicationApplications
-  // }
 
   async findAllAdmin(
     user: User,

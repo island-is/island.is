@@ -29,7 +29,6 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { Application as MyPagesApplication } from '@island.is/api/domains/application'
 
 @Injectable()
 export class ApplicationsService {
@@ -104,21 +103,6 @@ export class ApplicationsService {
       )
     return response as ApplicationResponse
   }
-
-  // async myPagesApplications(
-  //   auth: User,
-  //   locale: string,
-  // ): Promise<MyPagesApplication[]> {
-  //   const response = await this.applicationsApiWithAuth(auth)
-  //     .applicationsControllerFindAllByUser({
-  //       nationalId: auth.nationalId,
-  //       locale,
-  //     })
-  //     .catch((e) =>
-  //       handle4xx(e, this.handleError, 'failed to get mypages applications'),
-  //     )
-  //   return response as MyPagesApplication[]
-  // }
 
   async updateDependencies(
     auth: User,
