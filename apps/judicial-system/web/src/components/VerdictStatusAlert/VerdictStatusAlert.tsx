@@ -105,6 +105,18 @@ const VerdictStatusAlertMessage = ({
 
   const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
   if (isServed) {
+    if (verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER) {
+      return (
+        <AlertMessage
+          type="info"
+          title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
+          message={`Dómur sendur ${formatDate(
+            verdict.serviceDate,
+          )} kl. ${formatDate(verdict.serviceDate, TIME_FORMAT)}`}
+        />
+      )
+    }
+
     return (
       <AlertMessage
         type="success"
@@ -118,18 +130,6 @@ const VerdictStatusAlertMessage = ({
             ))}
           </Box>
         }
-      />
-    )
-  }
-
-  if (verdict.serviceDate) {
-    return (
-      <AlertMessage
-        type="info"
-        title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
-        message={`Dómur sendur ${formatDate(
-          verdict.serviceDate,
-        )} kl. ${formatDate(verdict.serviceDate, TIME_FORMAT)}`}
       />
     )
   }
