@@ -47,7 +47,7 @@ export const PaymentInformationValidation: FC<
       )
     const bankNumberValidity = /^\d{4}$/.test(paymentInfo?.bankNumber || '')
     const ledger = /^\d{2}$/.test(paymentInfo?.ledger || '')
-    const accountNumber = /^\d{4,6}$/.test(paymentInfo?.accountNumber || '')
+    const accountNumber = /^\d{6}$/.test(paymentInfo?.accountNumber || '')
 
     // Set the errors
     if (!bankNumberValidity || !ledger || !accountNumber) {
@@ -93,16 +93,18 @@ export const PaymentInformationValidation: FC<
   return (
     <Box>
       {invalidError && (
-        <AlertMessage
-          title={formatMessage(paymentErrors.invalidValue)}
-          message={formatMessage(paymentErrors.paymentInfoValueErrorsMessage)}
-          type="warning"
-        />
+        <Box marginTop={2}>
+          <AlertMessage
+            title={formatMessage(paymentErrors.invalidValue)}
+            message={formatMessage(paymentErrors.paymentInfoValueErrorsMessage)}
+            type="warning"
+          />
+        </Box>
       )}
       {errors &&
         errors.length > 0 &&
         errors.map((val, index) => (
-          <Box key={index} marginBottom={2}>
+          <Box key={index} marginTop={2}>
             <AlertMessage
               title={formatMessage(paymentErrors.invalidValue)}
               message={formatMessage(val)}
