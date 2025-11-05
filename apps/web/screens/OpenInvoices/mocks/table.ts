@@ -2,6 +2,7 @@ interface InvoiceItemizationGroup {
   date: Date
   id: string
   items: Array<{ label: string; value: number }>
+  total: number
 }
 
 interface OpenInvoice {
@@ -19,13 +20,23 @@ interface MockTable {
   rows: Array<OpenInvoice & { subrows?: Array<InvoiceItemizationGroup> }>
 }
 
-export const MOCK_TABLE_DATA: MockTable = {
+interface PaginatedMockTable {
   headers: {
-    seller: 'Seljandi',
-    buyer: 'Kaupandi',
-    amount: 'Upphæð',
-  },
-  rows: [
+    seller: string
+    buyer: string
+    amount: string
+  }
+  pagination: {
+    currentPage: number
+    pageSize: number
+    totalPages: number
+    totalItems: number
+  }
+  rows: Array<OpenInvoice & { subrows?: Array<InvoiceItemizationGroup> }>
+}
+
+const ALL_MOCK_ROWS: Array<OpenInvoice & { subrows?: Array<InvoiceItemizationGroup> }> = [
+
     {
       seller: 'Reykjavík Ráðgjöf ehf.',
       buyer: 'Íslenska Byggingafélagið hf.',
@@ -39,6 +50,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Verkefnastjórnun', value: 450000 },
             { label: 'Útlagður kostnaður', value: 200000 },
           ],
+          total: 2450000,
         },
       ],
     },
@@ -54,6 +66,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Rafmagnsframleiðsla', value: 280000 },
             { label: 'Þjónustugjald', value: 60000 },
           ],
+          total: 340000,
         },
         {
           date: new Date('2024-01-20'),
@@ -62,6 +75,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Rafmagnsframleiðsla', value: 450000 },
             { label: 'Viðhaldsgjald', value: 100000 },
           ],
+          total: 550000,
         },
       ],
     },
@@ -78,6 +92,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Veitingaþjónusta', value: 350000 },
             { label: 'Aukaþjónusta', value: 100000 },
           ],
+          total: 1250000,
         },
       ],
     },
@@ -94,6 +109,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Eldsneyti', value: 1800000 },
             { label: 'Afgreiðslugjöld', value: 375000 },
           ],
+          total: 5675000,
         },
       ],
     },
@@ -110,6 +126,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Eldsneytisgjald', value: 400000 },
             { label: 'Afgreiðslugjald', value: 200000 },
           ],
+          total: 1800000,
         },
         {
           date: new Date('2024-02-05'),
@@ -119,6 +136,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Meðhöndlunargjald', value: 350000 },
             { label: 'Tryggingagjald', value: 150000 },
           ],
+          total: 1400000,
         },
       ],
     },
@@ -135,6 +153,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Hitaveita', value: 220000 },
             { label: 'Þjónustugjald', value: 80000 },
           ],
+          total: 780000,
         },
       ],
     },
@@ -151,6 +170,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Viðhald og þjónusta', value: 800000 },
             { label: 'Uppsetning og þjálfun', value: 500000 },
           ],
+          total: 4500000,
         },
       ],
     },
@@ -167,6 +187,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Tækniþjónusta', value: 180000 },
             { label: 'Þjálfun starfsfólks', value: 70000 },
           ],
+          total: 650000,
         },
       ],
     },
@@ -183,6 +204,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Lögfræðiþjónusta', value: 800000 },
             { label: 'Stimpilgjöld og gjöld', value: 600000 },
           ],
+          total: 8900000,
         },
       ],
     },
@@ -199,6 +221,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Pepsi', value: 65000 },
             { label: 'Flutningskostnaður', value: 30000 },
           ],
+          total: 180000,
         },
         {
           date: new Date('2024-01-28'),
@@ -208,6 +231,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Pepsi', value: 90000 },
             { label: 'Flutningskostnaður', value: 30000 },
           ],
+          total: 240000,
         },
       ],
     },
@@ -224,6 +248,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Internetþjónusta', value: 450000 },
             { label: 'Viðhaldsþjónusta', value: 200000 },
           ],
+          total: 1850000,
         },
       ],
     },
@@ -240,6 +265,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Lánveitingar', value: 500000 },
             { label: 'Fjármálaráðgjöf', value: 200000 },
           ],
+          total: 2100000,
         },
       ],
     },
@@ -256,6 +282,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Stoðtæki', value: 650000 },
             { label: 'Þjálfun og þjónusta', value: 300000 },
           ],
+          total: 3750000,
         },
       ],
     },
@@ -272,6 +299,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Internetþjónusta', value: 225000 },
             { label: 'Tækniþjónusta', value: 100000 },
           ],
+          total: 925000,
         },
       ],
     },
@@ -288,6 +316,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Naglar og skrúfur', value: 200000 },
             { label: 'Einangrun', value: 150000 },
           ],
+          total: 950000,
         },
         {
           date: new Date('2024-02-12'),
@@ -297,6 +326,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Jarðvegur og áburður', value: 250000 },
             { label: 'Fræ og plöntur', value: 100000 },
           ],
+          total: 650000,
         },
       ],
     },
@@ -313,6 +343,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Bankaþjónusta', value: 600000 },
             { label: 'Fjármálaráðgjöf', value: 200000 },
           ],
+          total: 2800000,
         },
       ],
     },
@@ -329,6 +360,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Bankaþjónusta', value: 400000 },
             { label: 'Tækniþjónusta', value: 150000 },
           ],
+          total: 1450000,
         },
       ],
     },
@@ -345,6 +377,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Netþjónusta', value: 800000 },
             { label: 'Tækniviðhald', value: 350000 },
           ],
+          total: 3350000,
         },
       ],
     },
@@ -361,6 +394,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Prentþjónusta', value: 220000 },
             { label: 'Flutningur', value: 110000 },
           ],
+          total: 780000,
         },
       ],
     },
@@ -377,6 +411,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Þjónustugjöld', value: 500000 },
             { label: 'Viðhaldsgjald', value: 300000 },
           ],
+          total: 3800000,
         },
         {
           date: new Date('2024-02-15'),
@@ -386,6 +421,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Þjónustugjöld', value: 350000 },
             { label: 'Viðhaldsgjald', value: 150000 },
           ],
+          total: 2400000,
         },
       ],
     },
@@ -402,6 +438,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Bensín og dísel', value: 600000 },
             { label: 'Smurðu og viðhald', value: 300000 },
           ],
+          total: 4700000,
         },
       ],
     },
@@ -418,6 +455,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Hitaveita', value: 550000 },
             { label: 'Vatn og fráveita', value: 200000 },
           ],
+          total: 1950000,
         },
       ],
     },
@@ -434,6 +472,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Þjónustugjald', value: 1200000 },
             { label: 'Viðhaldsgjald', value: 500000 },
           ],
+          total: 8500000,
         },
       ],
     },
@@ -450,6 +489,7 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Mjólkurvörur', value: 100000 },
             { label: 'Flutningskostnaður', value: 40000 },
           ],
+          total: 620000,
         },
       ],
     },
@@ -466,8 +506,46 @@ export const MOCK_TABLE_DATA: MockTable = {
             { label: 'Þjónustugjald', value: 250000 },
             { label: 'Flutningskostnaður', value: 100000 },
           ],
+          total: 1100000,
         },
       ],
     },
-  ],
+]
+
+const PAGE_SIZE = 10
+
+export const MOCK_TABLE_DATA: MockTable = {
+  headers: {
+    seller: 'Seljandi',
+    buyer: 'Kaupandi',
+    amount: 'Upphæð',
+  },
+  rows: ALL_MOCK_ROWS
 }
+
+export const getPaginatedMockData = (page = 1, pageSize: number = PAGE_SIZE): PaginatedMockTable => {
+  const startIndex = (page - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  const totalItems = ALL_MOCK_ROWS.length
+  const totalPages = Math.ceil(totalItems / pageSize)
+
+  return {
+    headers: {
+      seller: 'Seljandi',
+      buyer: 'Kaupandi',
+      amount: 'Upphæð',
+    },
+    pagination: {
+      currentPage: page,
+      pageSize,
+      totalPages,
+      totalItems
+    },
+    rows: ALL_MOCK_ROWS.slice(startIndex, endIndex)
+  }
+}
+
+// Pre-generated pages for convenience
+export const MOCK_TABLE_PAGE_1 = getPaginatedMockData(1)
+export const MOCK_TABLE_PAGE_2 = getPaginatedMockData(2)
+export const MOCK_TABLE_PAGE_3 = getPaginatedMockData(3)

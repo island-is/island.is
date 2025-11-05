@@ -31,7 +31,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import { m } from '../messages'
-import { CHART_MOCK_DATA } from './mocks/chart'
+import { CHART_MOCK_DATA } from '../mocks/chart'
 import * as styles from './Home.css'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({

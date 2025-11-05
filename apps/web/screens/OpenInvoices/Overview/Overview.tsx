@@ -5,10 +5,15 @@ import NextLink from 'next/link'
 import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
 import {
+  Accordion,
+  AccordionItem,
   Box,
   Breadcrumbs,
+  DatePicker,
+  Divider,
   Filter,
   FilterInput,
+  FilterMultiChoice,
   Pagination,
   Stack,
   Table as T,
@@ -31,8 +36,8 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
-import { MOCK_TABLE_DATA } from '../Home/mocks/table'
 import { m } from '../messages'
+import { getPaginatedMockData, MOCK_TABLE_DATA } from '../mocks/table'
 import * as styles from './Overview.css'
 
 const PAGE_SIZE = 12
@@ -66,16 +71,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
 
-  const [totalHits, setTotalHits] = useState<number | undefined>(
-    MOCK_TABLE_DATA.rows.length,
-  )
+  const invoiceData = useMemo(() => getPaginatedMockData(
+    page,
+    PAGE_SIZE,
+  ), [page])
 
-  const totalPages = useMemo(() => {
-    if (!totalHits) {
-      return
-    }
-    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
-  }, [totalHits])
+  const totalHits = useMemo(() => invoiceData?.pagination?.totalItems ?? 0, [invoiceData.pagination?.totalItems])
+  const totalPages = useMemo(() => invoiceData?.pagination?.totalPages ?? 0, [invoiceData.pagination?.totalPages])
 
   return (
     <CustomPageLayoutWrapper
@@ -137,25 +139,111 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                   labelResult={'view results'}
                   resultCount={totalHits}
                   onFilterClear={() => null}
-                  variant={'dialog'}
                   align={'right'}
-                  usePopoverDiscloureButtonStyling
-                />
+                >
+                  <Box borderRadius="large" background="white">
+                    <Box paddingTop={1} paddingX={3}>
+                    <Accordion
+                      space={3}
+                      dividerOnBottom={false}
+                      dividerOnTop={false}
+                      singleExpand
+                    >
+                      <AccordionItem
+                        key='date-from'
+                        id='date-from'
+                        label='Tímabil'
+                        labelUse='h5'
+                        labelVariant="h5"
+                        iconVariant="small"
+                      >
+                        <Stack space={2}>
+                        <DatePicker
+                          name="test"
+                          backgroundColor='blue'
+                          label="Dagsetning frá" placeholderText={'fej'}
+                          size="xs"
+                    />
+                        <DatePicker
+                        backgroundColor='blue'
+                          name="test2"
+                          label="Dagsetning til" placeholderText={'fej'}
+                          size="xs"
+                    /></Stack></AccordionItem>
+                    </Accordion>
+                    <Divider />
+                  </Box>
+                    <FilterMultiChoice
+                      labelClear={'clear'}
+                      onChange={() => null}
+                      onClear={() => null}
+                      categories={[
+                        {
+                          id: 'type',
+                          label: 'Tegund',
+                          singleOption: true,
+                          selected:[],
+                          filters: [
+                            {
+                              value: 'test',
+                              label: 'Test 1',
+                            },
+                            {
+                              value: 'test2',
+                              label: 'Test 2',
+                            },
+                          ],
+                        },
+                        {
+                          id: 'sellers',
+                          label: 'Seljendur',
+                          selected: [],
+                          filters: [
+                            {
+                              value: 'test1',
+                              label: 'test 1',
+                            },
+                            {
+                              value: 'test2',
+                              label: 'test 2',
+                            },
+                          ],
+                        },
+                        {
+                          id: 'buyers',
+                          label: 'Kaupendur',
+                          selected: [],
+                          filters: [
+                            {
+                              value: 'test1',
+                              label: 'test 1',
+                            },
+                            {
+                              value: 'test2',
+                              label: 'test 2',
+                            },
+                          ],
+                        },
+                      ]}
+                    />
+                  </Box>
+                </Filter>
               </Box>
             </Stack>
           }
         >
+          <Box display="flex"><Text fontWeight='semiBold'>{totalHits + " "}</Text><Text> færslur fundust</Text></Box>
           <Box background="white">
             <SortableTable
               labels={{
-                seller: MOCK_TABLE_DATA.headers.seller,
-                buyer: MOCK_TABLE_DATA.headers.buyer,
-                amount: MOCK_TABLE_DATA.headers.amount,
+                seller: invoiceData.headers.seller,
+                buyer: invoiceData.headers.buyer,
+                amount: invoiceData.headers.amount,
               }}
               expandable
               align="left"
               defaultSortByKey="amount"
-              items={MOCK_TABLE_DATA.rows.map((row, i) => {
+              items={invoiceData.rows.map((row, i) => {
                 return {
                   id: `${row.buyer}-${i}`,
                   seller: row.seller,
@@ -165,40 +253,65 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                     row.subrows && row.subrows.length > 0 ? (
                       <Box>
                         {row?.subrows?.map((item, j) => (
-                          <Box key={item.id} background="blue100">
-                            <Text>{item.date.toLocaleDateString('IS')}</Text>
-                            <Text>{item.id}</Text>
+                          <Box paddingY={2} paddingLeft={2} key={item.id} background="blue100">
+                            <Box marginBottom={2} display="flex">
+                              <Box marginRight={2}><Text variant="small" fontWeight='semiBold'>{item.date.toLocaleDateString('IS')}</Text></Box>
+                              <Text variant="small">{item.id}</Text>
+                            </Box>
                             <T.Table>
                               <T.Body>
                                 {item.items?.map((invoiceItem, jj) => {
                                   const background =
                                     jj % 2 === 0 ? 'white' : undefined
-                                  console.log(background)
+                                  const isLastRow = jj === item.items.length - 1
                                   return (
-                                    <T.Row key={jj}>
-                                      <T.Data
-                                        box={{
-                                          textAlign: 'left',
-                                          background,
-                                          className: styles.noBorder,
-                                        }}
-                                      >
-                                        <Text variant="small">
-                                          {invoiceItem.label}
-                                        </Text>
-                                      </T.Data>
-                                      <T.Data
-                                        box={{
-                                          textAlign: 'right',
-                                          background,
-                                          className: styles.noBorder,
-                                        }}
-                                      >
-                                        <Text variant="small">
-                                          {formatCurrency(invoiceItem.value)}
-                                        </Text>
-                                      </T.Data>
-                                    </T.Row>
+                                    <>
+                                      <T.Row key={jj}>
+                                        <T.Data
+                                          box={{
+                                            textAlign: 'left',
+                                            background,
+                                            className: styles.noBorder,
+                                          }}
+                                        >
+                                          <Text variant="small">
+                                            {invoiceItem.label}
+                                          </Text>
+                                        </T.Data>
+                                        <T.Data
+                                          box={{
+                                            textAlign: 'right',
+                                            background,
+                                            className: styles.noBorder,
+                                          }}
+                                        >
+                                          <Text variant="small">
+                                            {formatCurrency(invoiceItem.value)}
+                                          </Text>
+                                        </T.Data>
+                                      </T.Row>
+                                      {isLastRow && (
+                                        <T.Row>
+                                          <T.Data
+                                            box={{
+                                              background: background === 'white' ? undefined : 'white',
+                                              className: styles.noBorder,
+                                            }}
+                                          />
+                                          <T.Data
+                                            box={{
+                                              textAlign: 'right',
+                                              background: background === 'white' ? undefined : 'white',
+                                              className: styles.noBorder,
+                                            }}
+                                          >
+                                            <Text fontWeight="semiBold" variant="small">
+                                              {formatCurrency(item.total)}
+                                            </Text>
+                                          </T.Data>
+                                        </T.Row>
+                                      )}
+                                    </>
                                   )
                                 })}
                               </T.Body>
