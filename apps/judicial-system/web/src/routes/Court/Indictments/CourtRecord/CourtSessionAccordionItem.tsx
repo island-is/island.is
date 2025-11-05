@@ -1123,7 +1123,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     patchCourtSessionStrings={patchCourtSessionStrings}
                   />
                   <SectionHeading
-                    title={`Dómsskjöl úr sameinuðu máli ${courtCaseNumber}`}
+                    title={`Dómskjöl úr sameinuðu máli ${courtCaseNumber}`}
                   />
                   <BlueBox>
                     {mergedFiledDocuments && mergedFiledDocuments.length > 0 && (
