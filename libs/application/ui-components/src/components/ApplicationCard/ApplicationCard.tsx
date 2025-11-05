@@ -12,7 +12,7 @@ import { defaultCardDataByStatus } from './utils/defaultData'
 import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
-import { useOpenApplication } from '../../hooks/useOpenApplication'
+import { useOpenApplication } from '@island.is/portals/my-pages/applications'
 
 export type ApplicationCardProps = {
   /**
