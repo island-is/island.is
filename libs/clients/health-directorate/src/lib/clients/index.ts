@@ -30,4 +30,5 @@ export {
   PrescriptionCommissionDto,
   EuPatientConsentStatus,
   EuPatientConsentDto,
+  PrescriptionCommissionStatus,
 } from './health'

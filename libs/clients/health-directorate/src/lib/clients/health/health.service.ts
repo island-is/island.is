@@ -20,6 +20,7 @@ import {
   mePatientConcentEuControllerGetCountriesV1,
   mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetEuPatientConsentV1,
+  mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
@@ -39,6 +40,7 @@ import {
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
+  CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
@@ -47,7 +49,6 @@ import {
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
-  CreateOrUpdatePrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -319,13 +320,14 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: Locale,
     active: boolean,
+    status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
       data(
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
+            status: status,
             active: active,
-            status: [],
           },
         }),
       ),
@@ -337,36 +339,22 @@ export class HealthDirectorateHealthService {
     return medicineDelegations
   }
 
-  public async postQuestionnaire(
+  public async putMedicineDelegation(
     auth: Auth,
-    locale: Locale,
-    id: string,
-    input: QuestionnaireSubmissionDetailDto,
-  ): Promise<QuestionnaireSubmissionDetailDto[] | null> {
-    const response = await withAuthContext(auth, () =>
-      //TODO: Fix input mapping
+    input: CreateOrUpdatePrescriptionCommissionDto,
+  ) {
+    return await withAuthContext(auth, () =>
       data(
-        questionnaireControllerSubmitQuestionnaireV1({
-          body: {
-            isDraft: false, // False for now as we don't have draft saving in the UI yet
-            replies: [],
+        mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1(
+          {
+            body: input,
           },
-          path: {
-            id: id,
-          },
-          isDraft: false,
-          replies: [],
-        }),
+        ),
       ),
     )
-
-    if (!response) {
-      this.logger.debug('Posting questionnaire data failed')
-      return null
-    }
-
-    return response
   }
+
+  /* Patient Data Permits */
 
   public async getPermits(
     auth: Auth,
