@@ -50,10 +50,10 @@ export class UniversityGatewayProgram {
   startingSemesterSeason!: string
 
   @Field({ nullable: true })
-  applicationStartDate?: Date
+  declare applicationStartDate: Date | null
 
   @Field({ nullable: true })
-  applicationEndDate?: Date
+  declare applicationEndDate: Date | null
 
   @Field({ nullable: true })
   schoolAnswerDate?: Date

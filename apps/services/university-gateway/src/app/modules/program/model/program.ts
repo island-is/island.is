@@ -162,9 +162,12 @@ export class ProgramBase extends Model<
   })
   startingSemesterSeason!: Season
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'When the application period for this program starts',
     example: new Date('2023-05-01'),
+    type: String,
+    format: 'date-time',
+    nullable: true,
   })
   @Column({
     type: DataType.DATE,
@@ -172,9 +175,12 @@ export class ProgramBase extends Model<
   })
   declare applicationStartDate: Date | null
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'When the application period for this program ends',
     example: new Date('2023-08-01'),
+    type: String,
+    format: 'date-time',
+    nullable: true
   })
   @Column({
     type: DataType.DATE,
