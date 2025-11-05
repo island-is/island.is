@@ -34,8 +34,8 @@ export const createBullModule = () => {
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
         prefix: `{${config.bullModuleName}}`,
         defaultJobOptions: {
-          removeOnComplete: true,
-          removeOnFail: 1000,
+          removeOnComplete: { age: 5 * 60 },
+          removeOnFail: { age: 14 * 24 * 60 * 60 }, // 2 weeks
         },
         createClient: () =>
           // Type assertion needed due to Bull's Redis client interface requirements
