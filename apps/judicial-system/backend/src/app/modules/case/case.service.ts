@@ -591,9 +591,9 @@ export class CaseService {
     const theCase = await this.caseRepositoryService.create(
       {
         ...caseToCreate,
-        state: isRequestCase(caseToCreate.type)
-          ? CaseState.NEW
-          : CaseState.DRAFT,
+        ...(isRequestCase(caseToCreate.type)
+          ? { state: CaseState.NEW }
+          : { state: CaseState.DRAFT, withCourtSessions: true }),
       },
       { transaction },
     )
