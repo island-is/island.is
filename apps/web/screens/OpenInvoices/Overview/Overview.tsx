@@ -71,13 +71,19 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
 
-  const invoiceData = useMemo(() => getPaginatedMockData(
-    page,
-    PAGE_SIZE,
-  ), [page])
+  const invoiceData = useMemo(
+    () => getPaginatedMockData(page, PAGE_SIZE),
+    [page],
+  )
 
-  const totalHits = useMemo(() => invoiceData?.pagination?.totalItems ?? 0, [invoiceData.pagination?.totalItems])
-  const totalPages = useMemo(() => invoiceData?.pagination?.totalPages ?? 0, [invoiceData.pagination?.totalPages])
+  const totalHits = useMemo(
+    () => invoiceData?.pagination?.totalItems ?? 0,
+    [invoiceData.pagination?.totalItems],
+  )
+  const totalPages = useMemo(
+    () => invoiceData?.pagination?.totalPages ?? 0,
+    [invoiceData.pagination?.totalPages],
+  )
 
   return (
     <CustomPageLayoutWrapper
@@ -143,36 +149,40 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 >
                   <Box borderRadius="large" background="white">
                     <Box paddingTop={1} paddingX={3}>
-                    <Accordion
-                      space={3}
-                      dividerOnBottom={false}
-                      dividerOnTop={false}
-                      singleExpand
-                    >
-                      <AccordionItem
-                        key='date-from'
-                        id='date-from'
-                        label='Tímabil'
-                        labelUse='h5'
-                        labelVariant="h5"
-                        iconVariant="small"
+                      <Accordion
+                        space={3}
+                        dividerOnBottom={false}
+                        dividerOnTop={false}
+                        singleExpand
                       >
-                        <Stack space={2}>
-                        <DatePicker
-                          name="test"
-                          backgroundColor='blue'
-                          label="Dagsetning frá" placeholderText={'fej'}
-                          size="xs"
-                    />
-                        <DatePicker
-                        backgroundColor='blue'
-                          name="test2"
-                          label="Dagsetning til" placeholderText={'fej'}
-                          size="xs"
-                    /></Stack></AccordionItem>
-                    </Accordion>
-                    <Divider />
-                  </Box>
+                        <AccordionItem
+                          key="date-from"
+                          id="date-from"
+                          label="Tímabil"
+                          labelUse="h5"
+                          labelVariant="h5"
+                          iconVariant="small"
+                        >
+                          <Stack space={2}>
+                            <DatePicker
+                              name="test"
+                              backgroundColor="blue"
+                              label="Dagsetning frá"
+                              placeholderText={'fej'}
+                              size="xs"
+                            />
+                            <DatePicker
+                              backgroundColor="blue"
+                              name="test2"
+                              label="Dagsetning til"
+                              placeholderText={'fej'}
+                              size="xs"
+                            />
+                          </Stack>
+                        </AccordionItem>
+                      </Accordion>
+                      <Divider />
+                    </Box>
                     <FilterMultiChoice
                       labelClear={'clear'}
                       onChange={() => null}
@@ -182,7 +192,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                           id: 'type',
                           label: 'Tegund',
                           singleOption: true,
-                          selected:[],
+                          selected: [],
                           filters: [
                             {
                               value: 'test',
@@ -232,7 +242,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Stack>
           }
         >
-          <Box display="flex"><Text fontWeight='semiBold'>{totalHits + " "}</Text><Text> færslur fundust</Text></Box>
+          <Box display="flex">
+            <Text fontWeight="semiBold">{totalHits + ' '}</Text>
+            <Text> færslur fundust</Text>
+          </Box>
           <Box background="white">
             <SortableTable
               labels={{
@@ -253,9 +266,18 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                     row.subrows && row.subrows.length > 0 ? (
                       <Box>
                         {row?.subrows?.map((item, j) => (
-                          <Box paddingY={2} paddingLeft={2} key={item.id} background="blue100">
+                          <Box
+                            paddingY={2}
+                            paddingLeft={2}
+                            key={item.id}
+                            background="blue100"
+                          >
                             <Box marginBottom={2} display="flex">
-                              <Box marginRight={2}><Text variant="small" fontWeight='semiBold'>{item.date.toLocaleDateString('IS')}</Text></Box>
+                              <Box marginRight={2}>
+                                <Text variant="small" fontWeight="semiBold">
+                                  {item.date.toLocaleDateString('IS')}
+                                </Text>
+                              </Box>
                               <Text variant="small">{item.id}</Text>
                             </Box>
                             <T.Table>
@@ -294,18 +316,27 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                                         <T.Row>
                                           <T.Data
                                             box={{
-                                              background: background === 'white' ? undefined : 'white',
+                                              background:
+                                                background === 'white'
+                                                  ? undefined
+                                                  : 'white',
                                               className: styles.noBorder,
                                             }}
                                           />
                                           <T.Data
                                             box={{
                                               textAlign: 'right',
-                                              background: background === 'white' ? undefined : 'white',
+                                              background:
+                                                background === 'white'
+                                                  ? undefined
+                                                  : 'white',
                                               className: styles.noBorder,
                                             }}
                                           >
-                                            <Text fontWeight="semiBold" variant="small">
+                                            <Text
+                                              fontWeight="semiBold"
+                                              variant="small"
+                                            >
                                               {formatCurrency(item.total)}
                                             </Text>
                                           </T.Data>
