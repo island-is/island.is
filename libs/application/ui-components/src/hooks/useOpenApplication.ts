@@ -19,8 +19,9 @@ export const useOpenApplication = (
   const baseUrl = application.formSystemFormSlug
     ? getFormSystemBaseUrl()
     : getBaseUrl()
-  const slug =
-    application.formSystemFormSlug ?? getSlugFromType(application.typeId)
+  const slug = application.formSystemFormSlug
+    ? application.formSystemFormSlug
+    : getSlugFromType(application.typeId)
   const url = `${baseUrl}/${slug}/${application.id}`
   const openApplication = () => {
     window.open(url)

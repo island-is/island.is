@@ -1,5 +1,4 @@
 import { Module, DynamicModule } from '@nestjs/common'
-// import { ApplicationsApi, Configuration } from '../../../application/gen/fetch'
 import {
   ApplicationsApi,
   Configuration,
