@@ -26,6 +26,10 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
     name: sessionsQueueName,
     useFactory: (config: ConfigType<typeof SessionsConfig>) => ({
       prefix: `{${bullModuleName}}`,
+      defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: 1000,
+      },
       createClient: () =>
         createRedisCluster({
           name: bullModuleName,
