@@ -16,7 +16,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { AUDIT_NAMESPACE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.education)
 @Resolver(() => Institution)
 @Audit({ namespace: AUDIT_NAMESPACE })
 export class InstitutionResolver {

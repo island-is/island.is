@@ -20,7 +20,7 @@ import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.education)
 @Resolver(() => StudentTrack)
 @Audit({ namespace: AUDIT_NAMESPACE })
 export class StudentTrackResolver {

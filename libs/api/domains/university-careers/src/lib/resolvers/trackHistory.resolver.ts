@@ -16,7 +16,7 @@ import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.education)
 @Resolver(() => StudentTrackHistory)
 @Audit({ namespace: AUDIT_NAMESPACE })
 export class TrackHistoryResolver {
