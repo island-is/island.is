@@ -60,6 +60,7 @@ type BankAccount = {
   balance?: string | number
   accruedInterest?: string | number
   accountTotal?: string | number
+  foreignBankAccount?: string[]
 }
 
 type Stock = {
