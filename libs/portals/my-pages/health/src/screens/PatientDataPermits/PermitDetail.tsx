@@ -32,7 +32,9 @@ const PermitDetail: React.FC = () => {
     variables: { locale: lang, id },
   })
 
-  const [invalidatePermit] = useInvalidatePatientDataPermitMutation()
+  const [invalidatePermit] = useInvalidatePatientDataPermitMutation({
+    refetchQueries: ['GetPatientDataPermits'],
+  })
 
   const permit = data?.healthDirectoratePatientDataPermit
 

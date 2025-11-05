@@ -1,4 +1,5 @@
 import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { PermitStatusEnum } from './enums'
 
 @ObjectType('HealthDirectorateMedicineDelegationDates')
 export class MedicineDelegationDates {
@@ -25,6 +26,9 @@ export class MedicineDelegationItem {
 
   @Field(() => Boolean, { nullable: true })
   isActive?: boolean
+
+  @Field(() => PermitStatusEnum)
+  status!: PermitStatusEnum
 
   @Field(() => Boolean, { nullable: true })
   lookup?: boolean

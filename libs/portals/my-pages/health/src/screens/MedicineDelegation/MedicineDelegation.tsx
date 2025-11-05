@@ -1,3 +1,4 @@
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -22,6 +23,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
+import { permitTagSelector } from '../../utils/tagSelector'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
@@ -33,12 +35,23 @@ const MedicineDelegation = () => {
       locale: lang,
       input: {
         active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
+        status: [
+          HealthDirectoratePermitStatus.active,
+          HealthDirectoratePermitStatus.expired,
+          HealthDirectoratePermitStatus.inactive,
+          HealthDirectoratePermitStatus.unknown,
+          HealthDirectoratePermitStatus.awaitingApproval,
+        ],
       },
     },
   })
+
   const filteredData =
     data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
-      showExpiredPermits ? item : item.isActive,
+      showExpiredPermits
+        ? item.status
+        : item.status === HealthDirectoratePermitStatus.active ||
+          item.status === HealthDirectoratePermitStatus.awaitingApproval,
     )
 
   return (
@@ -75,9 +88,7 @@ const MedicineDelegation = () => {
       {!loading && error && (
         <Problem type="internal_service_error" noBorder={false} />
       )}
-      {!loading && !error && (!filteredData || filteredData.length === 0) && (
-        <Problem type="no_data" noBorder={false} />
-      )}
+
       {loading && !error && (
         <Box marginY={3}>
           <ActionCardLoader />
@@ -100,7 +111,11 @@ const MedicineDelegation = () => {
               checked={showExpiredPermits}
             />
           </Box>
-
+          {!loading &&
+            !error &&
+            (!filteredData || filteredData.length === 0) && (
+              <Problem type="no_data" noBorder={false} />
+            )}
           <Stack space={2}>
             {filteredData?.map((item) => {
               return (
@@ -113,6 +128,12 @@ const MedicineDelegation = () => {
                       ? formatMessage(messages.pickupMedicineAndLookup)
                       : formatMessage(messages.pickupMedicine),
                   })}
+                  backgroundColor={
+                    item.status ===
+                    HealthDirectoratePermitStatus.awaitingApproval
+                      ? 'blue'
+                      : 'white'
+                  }
                   subText={
                     item.dates?.to
                       ? formatMessage(messages.medicineValidTo) +
@@ -120,14 +141,9 @@ const MedicineDelegation = () => {
                         formatDate(item.dates.to)
                       : undefined
                   }
-                  tag={{
-                    outlined: false,
-                    label: item.isActive
-                      ? formatMessage(messages.valid)
-                      : formatMessage(messages.expired),
-                    variant: item.isActive ? 'blue' : 'red',
-                  }}
+                  tag={permitTagSelector(item.status, formatMessage)}
                   cta={{
+                    size: 'small',
                     variant: 'text',
                     label: formatMessage(m.seeDetails),
                     onClick: () =>

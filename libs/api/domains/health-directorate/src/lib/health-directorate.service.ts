@@ -14,8 +14,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import {
-  MedicineDelegationCreateInput,
-  MedicineDelegationDeleteInput,
+  MedicineDelegationCreateOrDeleteInput,
+  MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
   InvalidatePermitInput,
@@ -45,6 +45,7 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapDelegationStatus,
   mapDispensationItem,
   mapPermit,
   mapPrescriptionCategory,
@@ -411,12 +412,15 @@ export class HealthDirectorateService {
   async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
+    input: MedicineDelegationInput,
   ): Promise<MedicineDelegations | null> {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      active,
+      input.active,
+      input.status.map((status) =>
+        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+      ),
     )
 
     if (!medicineDelegations) {
@@ -425,14 +429,21 @@ export class HealthDirectorateService {
 
     const data: MedicineDelegations = {
       items: medicineDelegations.map((item) => ({
-        cacheId: [item.toName, item.toNationalId, locale].join('-'),
+        cacheId: [
+          item.toNationalId,
+          item.validFrom?.toISOString() || 'no-start',
+          item.validTo?.toISOString() || 'no-end',
+          item.status,
+          locale,
+        ].join('-'),
         name: item.toName,
         nationalId: item.toNationalId,
         dates: {
           from: item.validFrom,
           to: item.validTo,
         },
-        isActive: item.isActive,
+        isActive: item.status === 'active',
+        status: mapDelegationStatus(item.status),
         lookup: item.commissionType === 1,
       })),
     }
@@ -442,14 +453,15 @@ export class HealthDirectorateService {
 
   async postMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationCreateInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .postMedicineDelegation(auth, {
+      .putMedicineDelegation(auth, {
         commissionType: input.lookup ? 1 : 0,
         toNationalId: input.nationalId,
         validFrom: input.from?.toISOString(),
         validTo: input.to?.toISOString(),
+        isActive: true,
       })
       .then(() => {
         return { success: true }
@@ -464,10 +476,14 @@ export class HealthDirectorateService {
 
   async deleteMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationDeleteInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .deleteMedicineDelegation(auth, input.nationalId)
+      .putMedicineDelegation(auth, {
+        isActive: false,
+        toNationalId: input.nationalId,
+        commissionType: input.lookup ? 1 : 0,
+      })
       .then(() => {
         return { success: true }
       })
@@ -488,7 +504,7 @@ export class HealthDirectorateService {
     const permits = await this.healthApi.getPermits(
       auth,
       locale,
-      input.statuses.map((status) =>
+      input.status.map((status) =>
         status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
       ),
     )

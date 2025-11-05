@@ -569,6 +569,17 @@
         "operationId": "MePrescriptionCommissionController_getPrescriptionCommissions_v1",
         "parameters": [
           {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
             "name": "active",
             "required": true,
             "in": "query",
@@ -635,77 +646,16 @@
         },
         "tags": ["Prescriptions"]
       },
-      "post": {
-        "description": "Create a prescription commission",
-        "operationId": "MePrescriptionCommissionController_createPrescriptionCommission_v1",
+      "put": {
+        "description": "Create or update a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createOrUpdatePrescriptionCommission_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePrescriptionCommissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Prescriptions"]
-      },
-      "delete": {
-        "description": "Deactivate a prescription commission",
-        "operationId": "MePrescriptionCommissionController_deactivatePrescriptionCommission_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeactivatePrescriptionCommissionDto"
+                "$ref": "#/components/schemas/CreateOrUpdatePrescriptionCommissionDto"
               }
             }
           }
@@ -2565,6 +2515,9 @@
               }
             ]
           },
+          "renewalResponseMessage": {
+            "type": "string"
+          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2725,6 +2678,11 @@
         "enum": [0, 1],
         "description": "The type of commission. 0 is deliver, 1 is deliver and information."
       },
+      "PrescriptionCommissionStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired", "pending"],
+        "description": "Status of the commission."
+      },
       "UserType": {
         "type": "number",
         "enum": [0, 1, 2, 3],
@@ -2759,9 +2717,13 @@
             "type": "string",
             "description": "The end date and time the commission is valid until. If not defined, the commission is valid until canceled."
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "Status of the commission."
+          "status": {
+            "description": "Status of the commission.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionCommissionStatus"
+              }
+            ]
           },
           "comment": {
             "type": "string",
@@ -2780,11 +2742,11 @@
           "toNationalId",
           "toName",
           "commissionType",
-          "isActive",
+          "status",
           "userType"
         ]
       },
-      "CreatePrescriptionCommissionDto": {
+      "CreateOrUpdatePrescriptionCommissionDto": {
         "type": "object",
         "properties": {
           "toNationalId": {
@@ -2806,19 +2768,13 @@
           "validTo": {
             "type": "string",
             "description": "The end date and time the commission is valid until."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the commission is active."
           }
         },
         "required": ["toNationalId", "commissionType"]
-      },
-      "DeactivatePrescriptionCommissionDto": {
-        "type": "object",
-        "properties": {
-          "toNationalId": {
-            "type": "string",
-            "description": "The national ID of the person receiving the commission"
-          }
-        },
-        "required": ["toNationalId"]
       },
       "OrganDto": {
         "type": "object",

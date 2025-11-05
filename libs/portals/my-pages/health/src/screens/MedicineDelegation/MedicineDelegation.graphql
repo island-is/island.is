@@ -16,6 +16,7 @@ query GetMedicineDelegations(
       name
       nationalId
       isActive
+      status
       lookup
       dates {
         from
@@ -26,7 +27,7 @@ query GetMedicineDelegations(
 }
 
 mutation PostMedicineDelegation(
-  $input: HealthDirectorateMedicineDelegationCreateInput!
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
 ) {
   healthDirectorateMedicineDelegationCreate(input: $input) {
     __typename
@@ -36,7 +37,7 @@ mutation PostMedicineDelegation(
 }
 
 mutation DeleteMedicineDelegation(
-  $input: HealthDirectorateMedicineDelegationDeleteInput!
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
 ) {
   healthDirectorateMedicineDelegationDelete(input: $input) {
     __typename

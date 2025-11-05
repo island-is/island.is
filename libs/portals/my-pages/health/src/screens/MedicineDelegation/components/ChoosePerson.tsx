@@ -57,7 +57,7 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
       <Box marginBottom={2}>
         <GridContainer>
           <GridRow>
-            <GridColumn span={['12/12', '8/12', '8/12', '6/12']}>
+            <GridColumn span={['12/12', '5/12']}>
               <Input
                 loading={loading}
                 type="text"
