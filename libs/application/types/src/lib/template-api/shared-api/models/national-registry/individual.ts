@@ -12,16 +12,9 @@ export interface NationalRegistryIndividual {
   } | null
   address: Address | null
   genderCode: string
-  genderDescription?: string
   maritalTitle?: {
     code?: string | null
     description?: string | null
   } | null
   birthDate: Date
-}
-
-export interface NationalRegistryOtherIndividual {
-  nationalId: string
-  fullName: string
-  address: Address | null
 }
