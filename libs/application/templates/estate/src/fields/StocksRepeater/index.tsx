@@ -68,7 +68,8 @@ export const StocksRepeater: FC<
 
     const total = values.reduce((acc: number, current: StockFormField) => {
       if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.value ?? '0', ',')
+      // value is stored as integer string (toFixed(0)), use default dot parsing
+      const currentValue = valueToNumber(current.value ?? '0')
       return Number(acc) + currentValue
     }, 0)
 

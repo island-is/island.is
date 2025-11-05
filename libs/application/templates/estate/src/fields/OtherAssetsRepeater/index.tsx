@@ -65,7 +65,7 @@ export const OtherAssetsRepeater: FC<
 
     const total = values.reduce((acc: number, current: OtherAssetFormField) => {
       if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.value ?? '0', ',')
+      const currentValue = valueToNumber(current.value ?? '0')
       return Number(acc) + currentValue
     }, 0)
 

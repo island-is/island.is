@@ -83,7 +83,8 @@ export const BankAccountsRepeater: FC<
     const total = values.reduce(
       (acc: number, current: BankAccountFormField) => {
         if (!current.enabled) return acc
-        const currentValue = valueToNumber(current.accountTotal ?? '0', ',')
+        // accountTotal is stored with dot decimal (via toString()), so parse with dot
+        const currentValue = valueToNumber(current.accountTotal ?? '0')
         return Number(acc) + currentValue
       },
       0,
@@ -93,7 +94,10 @@ export const BankAccountsRepeater: FC<
   }, [getValues, id])
 
   // Calculate bank account total from balance + accruedInterest
-  const updateBankAccountValue = (fieldIndex: string) => {
+  const updateBankAccountValue = (
+    fieldIndex: string,
+    skipTotalCalc = false,
+  ) => {
     const bankAccountValues = getValues(fieldIndex)
     const balance =
       bankAccountValues?.balance?.replace(',', '.').replace(/[^\d.]/g, '') ||
@@ -110,7 +114,10 @@ export const BankAccountsRepeater: FC<
       clearErrors(`${fieldIndex}.balance`)
     }
 
-    calculateTotal()
+    // Only recalculate total when called from onChange handlers, not during init loop
+    if (!skipTotalCalc) {
+      calculateTotal()
+    }
   }
 
   const handleAddBankAccount = () =>
@@ -131,7 +138,8 @@ export const BankAccountsRepeater: FC<
     if (fields.length > 0) {
       fields.forEach((_, index) => {
         const fieldIndex = `${id}[${index}]`
-        updateBankAccountValue(fieldIndex)
+        // Skip calculateTotal in loop; it will run once via the next useEffect
+        updateBankAccountValue(fieldIndex, true)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

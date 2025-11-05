@@ -63,7 +63,7 @@ export const ClaimsRepeater: FC<
 
     const total = values.reduce((acc: number, current: ClaimFormField) => {
       if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.value ?? '0', ',')
+      const currentValue = valueToNumber(current.value ?? '0')
       return Number(acc) + currentValue
     }, 0)
 
