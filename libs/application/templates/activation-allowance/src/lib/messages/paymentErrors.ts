@@ -9,7 +9,7 @@ export const paymentErrors = defineMessages({
   paymentInfoValueErrorsMessage: {
     id: 'aa.application:paymentErrors.paymentInfoValueErrors',
     defaultMessage:
-      'Ógild gildi fundust. Athugaðu að bankanúmer skal vera 4 tölustafir, höfuðbók 2 tölustafir og reikningsnúmer 4-6 tölustafir',
+      'Ógild gildi fundust. Athugaðu að bankanúmer skal vera 4 tölustafir, höfuðbók 2 tölustafir og reikningsnúmer 6 tölustafir',
     description: 'Message for invalid input in payment',
   },
   invalidLedger: {
