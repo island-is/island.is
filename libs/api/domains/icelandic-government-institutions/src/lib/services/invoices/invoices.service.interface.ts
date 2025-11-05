@@ -1,5 +1,6 @@
+import { InvoiceListInput } from '../../dtos/getInvoiceList.input'
 import { InvoiceList } from '../../models/invoiceList.model'
 
 export interface IInvoicesService {
-  getOpenInvoices(): Promise<InvoiceList | null>
+  getOpenInvoices(input: InvoiceListInput): Promise<InvoiceList | null>
 }
