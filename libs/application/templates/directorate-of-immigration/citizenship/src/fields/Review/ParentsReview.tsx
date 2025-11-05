@@ -46,7 +46,9 @@ export const ParentsReview: FC<Props> = ({
               if (parent.wasRemoved === 'false') {
                 return (
                   <GridColumn span="1/2">
-                    <Text>{parent.fullName}</Text>
+                    <Text>
+                      {parent.givenName} {parent.familyName}
+                    </Text>
                   </GridColumn>
                 )
               } else return null

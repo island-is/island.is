@@ -11,7 +11,7 @@ import { personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
 import { ParentsToApplicant } from '../../shared'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
 interface Props {
   customId?: string
@@ -42,9 +42,11 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const [fullName, setFullName] = useState('')
+  const [currentName, setCurrentName] = useState('')
 
-  const fullNameField = `${usedId}.fullName`
+  const givenNameField = `${usedId}.givenName`
+  const familyNameField = `${usedId}.familyName`
+  const currentNameField = `${usedId}.currentName`
   const nationalIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
@@ -57,9 +59,11 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        const fullName = data.identity?.name ?? ''
-        setFullName(fullName)
-        setValue(fullNameField, fullName)
+        setValue(givenNameField, data.identity?.givenName ?? undefined)
+        setValue(familyNameField, data.identity?.familyName ?? undefined)
+        const currentName = data.identity?.name ?? ''
+        setCurrentName(currentName)
+        setValue(currentNameField, currentName)
       },
     },
   )
@@ -86,22 +90,36 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       })
     }
 
+    const givenName = getValueViaPath(
+      application.answers,
+      givenNameField,
+      '',
+    ) as string
+
+    const familyName = getValueViaPath(
+      application.answers,
+      familyNameField,
+      '',
+    ) as string
+
+    if (!!givenName && !!familyName) {
+      setCurrentName(`${givenName} ${familyName}`)
+    }
+
     if (nationalIdInput === '' && !isRequired) {
       setValue(wasRemovedField, 'true')
-      setFullName('')
-      setValue(fullNameField, '')
-      setNationalIdInput('')
-      setValue(nationalIdField, '')
+      setCurrentName('')
+      setValue(currentNameField, '')
     } else {
       setValue(wasRemovedField, 'false')
     }
   }, [nationalIdInput])
 
   useEffect(() => {
-    if (fullName !== '') {
+    if (currentName !== '') {
       addParentToApplication(itemNumber)
     }
-  }, [fullName, itemNumber])
+  }, [currentName, itemNumber])
 
   return (
     <Box>
@@ -124,8 +142,8 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <Input
-            name={fullNameField}
-            value={fullName}
+            name={currentNameField}
+            value={currentName}
             label={formatMessage(personal.labels.userInformation.name)}
             disabled
           />

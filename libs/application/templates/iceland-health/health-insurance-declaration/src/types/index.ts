@@ -2,7 +2,7 @@ import {
   ApplicantChildCustodyInformation,
   Application,
   NationalRegistryIndividual,
-  NationalRegistrySpouseV3,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
 
@@ -34,7 +34,7 @@ export type HealthInsuranceDeclarationExternalData = {
     status: string
   }
   nationalRegistrySpouse: {
-    data: NationalRegistrySpouseV3
+    data: NationalRegistrySpouse
     date: string
     status: string
   }
