@@ -7,6 +7,7 @@ import {
 
 import { User } from '../../user'
 import { CourtDocumentResponse } from './courtDocument.response'
+import { CourtSessionString } from './courtSessionString.response'
 
 registerEnumType(CourtSessionClosedLegalBasis, {
   name: 'CourtSessionClosedLegalBasis',
@@ -80,6 +81,9 @@ export class CourtSessionResponse {
 
   @Field(() => [CourtDocumentResponse], { nullable: true })
   readonly mergedFiledDocuments?: CourtDocumentResponse[]
+
+  @Field(() => [CourtSessionString], { nullable: true })
+  readonly courtSessionStrings?: CourtSessionString[]
 
   @Field(() => Boolean, { nullable: true })
   readonly isConfirmed?: boolean

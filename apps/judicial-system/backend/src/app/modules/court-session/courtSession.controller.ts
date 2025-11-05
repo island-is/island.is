@@ -29,7 +29,8 @@ import {
   districtCourtRegistrarRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { Case, CourtSession } from '../repository'
+import { Case, CourtSession, CourtSessionString } from '../repository'
+import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
@@ -92,6 +93,33 @@ export class CourtSessionController {
       courtSessionId,
       courtSessionToUpdate,
     )
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch(':courtSessionId/courtSessionString')
+  @ApiOkResponse({
+    type: CourtSessionString,
+    description: 'Creates or updates a court session string',
+  })
+  createOrUpdateCourtSessionString(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @Body() courtSessionString: CourtSessionStringDto,
+  ): Promise<CourtSessionString> {
+    this.logger.debug(
+      `Updating court session string of ${courtSessionId} of case ${caseId}`,
+    )
+    return this.courtSessionService.createOrUpdateCourtSessionString({
+      caseId,
+      courtSessionId,
+      mergedCaseId: courtSessionString.mergedCaseId,
+      update: courtSessionString,
+    })
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)

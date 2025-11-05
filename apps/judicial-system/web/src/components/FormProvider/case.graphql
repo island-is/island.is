@@ -306,6 +306,13 @@ query Case($input: CaseQueryInput!) {
         caseFileId
         generatedPdfUri
       }
+      courtSessionStrings {
+        id
+        courtSessionId
+        mergedCaseId
+        stringType
+        value
+      }
     }
     unfiledCourtDocuments {
       id
@@ -425,6 +432,13 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+        }
+        courtSessionStrings {
+          id
+          courtSessionId
+          mergedCaseId
+          stringType
+          value
         }
       }
       court {

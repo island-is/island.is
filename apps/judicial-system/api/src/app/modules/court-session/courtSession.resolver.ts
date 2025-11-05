@@ -16,10 +16,12 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CourtSessionResponse } from './dto/courtSession.response'
+import { CourtSessionString } from './dto/courtSessionString.response'
 import { CreateCourtSessionInput } from './dto/createCourtSession.input'
 import { DeleteCourtSessionInput } from './dto/deleteCourtSession.input'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionInput } from './dto/updateCourtSession.input'
+import { UpdateCourtSessionStringInput } from './dto/updateCourtSessionString.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
@@ -71,6 +73,32 @@ export class CourtSessionResolver {
         caseId,
         courtSessionId,
         updateCourtSession,
+      ),
+      courtSessionId,
+    )
+  }
+
+  @Mutation(() => CourtSessionString, { nullable: true })
+  updateCourtSessionString(
+    @Args('input', { type: () => UpdateCourtSessionStringInput })
+    input: UpdateCourtSessionStringInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CourtSessionString> {
+    const { caseId, courtSessionId, ...updateCourtSessionString } = input
+
+    this.logger.debug(
+      `Updating court session string in ${courtSessionId} for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_COURT_SESSION,
+      backendService.updateCourtSessionString(
+        caseId,
+        courtSessionId,
+        updateCourtSessionString,
       ),
       courtSessionId,
     )
