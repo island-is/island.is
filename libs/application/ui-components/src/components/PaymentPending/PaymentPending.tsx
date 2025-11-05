@@ -127,7 +127,7 @@ export const PaymentPending: FC<
           height: 400,
         }}
       >
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     </Box>
   )

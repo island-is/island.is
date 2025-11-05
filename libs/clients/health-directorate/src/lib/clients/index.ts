@@ -27,4 +27,7 @@ export {
   NumberTriggerDto,
   ListTriggerDto,
   BooleanTriggerDto,
+  PrescriptionCommissionDto,
+  EuPatientConsentStatus,
+  EuPatientConsentDto,
 } from './health'

@@ -70,7 +70,13 @@ export class VMSTApplicationsService {
           ssn: auth.nationalId,
           employerSettlement: {
             hasUnpaidVacationTime: input.hasUnpaidVacationTime,
-            unpaidVacations: input.unpaidVacations,
+            unpaidVacations: input.unpaidVacations?.map((x) => {
+              return {
+                unpaidVacationDays: x.unpaidVacationDays,
+                unpaidVacationStart: x.unpaidVacationStart,
+                unpaidVacationEnd: x.unpaidVacationEnd,
+              }
+            }),
             resignationEnds: input.resignationEnds,
           },
         },

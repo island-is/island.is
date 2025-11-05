@@ -48,6 +48,8 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
+  HealthMedicineDelegationDetail = '/heilsa/lyf/lyfjaumbod/:id',
+  HealthMedicineDelegationAdd = '/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
@@ -65,4 +67,10 @@ export enum HealthPaths {
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:id/svara',
   HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:id/svarad',
+
+  HealthPatientData = '/heilsa/sjukraskra',
+  HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
+  HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
+  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
+  HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
 }

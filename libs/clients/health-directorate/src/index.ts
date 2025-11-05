@@ -33,5 +33,8 @@ export {
   NumberTriggerDto,
   ListTriggerDto,
   BooleanTriggerDto,
+  PrescriptionCommissionDto,
+  EuPatientConsentDto,
+  EuPatientConsentStatus,
 } from './lib/clients'
 export { Form, LshDevService, LshDevConfig } from './lib/clients/lsh-dev'
