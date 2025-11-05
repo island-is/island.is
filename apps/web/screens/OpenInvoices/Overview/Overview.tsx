@@ -66,7 +66,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
 
-  const [totalHits, setTotalHits] = useState<number | undefined>(MOCK_TABLE_DATA.rows.length)
+  const [totalHits, setTotalHits] = useState<number | undefined>(
+    MOCK_TABLE_DATA.rows.length,
+  )
 
   const totalPages = useMemo(() => {
     if (!totalHits) {
@@ -154,51 +156,59 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               align="left"
               defaultSortByKey="amount"
               items={MOCK_TABLE_DATA.rows.map((row, i) => {
-                return ({
-                  id:`${row.buyer}-${i}`,
+                return {
+                  id: `${row.buyer}-${i}`,
                   seller: row.seller,
                   buyer: row.buyer,
                   amount: formatCurrency(row.amount),
-                  children: row.subrows && row.subrows.length > 0 ? (
-                    <Box>
-                      {row?.subrows?.map((item, j) => (
-                        <Box key={item.id} background='blue100'>
-                          <Text>{item.date.toLocaleDateString('IS')}</Text>
-                          <Text>{item.id}</Text>
-                          <T.Table>
-                            <T.Body>
-                              {item.items?.map((invoiceItem, jj) => {
-                                const background = jj % 2 === 0 ? 'white' : undefined;
-                                console.log(background)
-                                return <T.Row key={jj}>
-                                  <T.Data
-                                 box={{
-                                   textAlign: 'left',
-                                   background,
-                                   className: styles.noBorder,
-                                 }}
-                               >
-                                 <Text variant="small">{invoiceItem.label}</Text>
-                               </T.Data>
-                               <T.Data
-                                 box={{
-                                   textAlign: 'right',
-                                   background,
-                                   className: styles.noBorder,
-                                 }}
-                               >
-                                 <Text variant="small">{formatCurrency(invoiceItem.value)}</Text>
-                               </T.Data>
-                             </T.Row>
-                           })}
-                          </T.Body>
-                        </T.Table>
+                  children:
+                    row.subrows && row.subrows.length > 0 ? (
+                      <Box>
+                        {row?.subrows?.map((item, j) => (
+                          <Box key={item.id} background="blue100">
+                            <Text>{item.date.toLocaleDateString('IS')}</Text>
+                            <Text>{item.id}</Text>
+                            <T.Table>
+                              <T.Body>
+                                {item.items?.map((invoiceItem, jj) => {
+                                  const background =
+                                    jj % 2 === 0 ? 'white' : undefined
+                                  console.log(background)
+                                  return (
+                                    <T.Row key={jj}>
+                                      <T.Data
+                                        box={{
+                                          textAlign: 'left',
+                                          background,
+                                          className: styles.noBorder,
+                                        }}
+                                      >
+                                        <Text variant="small">
+                                          {invoiceItem.label}
+                                        </Text>
+                                      </T.Data>
+                                      <T.Data
+                                        box={{
+                                          textAlign: 'right',
+                                          background,
+                                          className: styles.noBorder,
+                                        }}
+                                      >
+                                        <Text variant="small">
+                                          {formatCurrency(invoiceItem.value)}
+                                        </Text>
+                                      </T.Data>
+                                    </T.Row>
+                                  )
+                                })}
+                              </T.Body>
+                            </T.Table>
+                          </Box>
+                        ))}
                       </Box>
-                    ))}</Box>) : undefined
-                })
-              })
-
-              }
+                    ) : undefined,
+                }
+              })}
             />
           </Box>
 

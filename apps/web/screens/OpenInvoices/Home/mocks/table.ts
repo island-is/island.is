@@ -1,29 +1,29 @@
 interface InvoiceItemizationGroup {
-  date: Date;
-  id: string;
-  items: Array<{ label: string, value: number }>;
+  date: Date
+  id: string
+  items: Array<{ label: string; value: number }>
 }
 
 interface OpenInvoice {
-  seller: string,
-  buyer: string;
-  amount: number;
+  seller: string
+  buyer: string
+  amount: number
 }
 
 interface MockTable {
   headers: {
-    seller: string,
-    buyer: string,
+    seller: string
+    buyer: string
     amount: string
   }
-  rows: Array<OpenInvoice & { subrows?: Array<InvoiceItemizationGroup>}>
+  rows: Array<OpenInvoice & { subrows?: Array<InvoiceItemizationGroup> }>
 }
 
 export const MOCK_TABLE_DATA: MockTable = {
-  headers:{
+  headers: {
     seller: 'Seljandi',
     buyer: 'Kaupandi',
-    amount: 'Upphæð'
+    amount: 'Upphæð',
   },
   rows: [
     {
@@ -37,10 +37,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Ráðgjöf um byggingarverkefni', value: 1800000 },
             { label: 'Verkefnastjórnun', value: 450000 },
-            { label: 'Útlagður kostnaður', value: 200000 }
-          ]
-        }
-      ]
+            { label: 'Útlagður kostnaður', value: 200000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Norðurorka ehf.',
@@ -52,18 +52,18 @@ export const MOCK_TABLE_DATA: MockTable = {
           id: 'INV-001-A',
           items: [
             { label: 'Rafmagnsframleiðsla', value: 280000 },
-            { label: 'Þjónustugjald', value: 60000 }
-          ]
+            { label: 'Þjónustugjald', value: 60000 },
+          ],
         },
         {
           date: new Date('2024-01-20'),
           id: 'INV-001-B',
           items: [
             { label: 'Rafmagnsframleiðsla', value: 450000 },
-            { label: 'Viðhaldsgjald', value: 100000 }
-          ]
-        }
-      ]
+            { label: 'Viðhaldsgjald', value: 100000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Bláa lónið ehf.',
@@ -76,10 +76,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Aðgöngumiðar', value: 800000 },
             { label: 'Veitingaþjónusta', value: 350000 },
-            { label: 'Aukaþjónusta', value: 100000 }
-          ]
-        }
-      ]
+            { label: 'Aukaþjónusta', value: 100000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Icelandair Group hf.',
@@ -92,10 +92,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Flugvallarsgjöld', value: 3500000 },
             { label: 'Eldsneyti', value: 1800000 },
-            { label: 'Afgreiðslugjöld', value: 375000 }
-          ]
-        }
-      ]
+            { label: 'Afgreiðslugjöld', value: 375000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Eimskip hf.',
@@ -108,8 +108,8 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Flutningsgjald', value: 1200000 },
             { label: 'Eldsneytisgjald', value: 400000 },
-            { label: 'Afgreiðslugjald', value: 200000 }
-          ]
+            { label: 'Afgreiðslugjald', value: 200000 },
+          ],
         },
         {
           date: new Date('2024-02-05'),
@@ -117,10 +117,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Geymslugjald', value: 900000 },
             { label: 'Meðhöndlunargjald', value: 350000 },
-            { label: 'Tryggingagjald', value: 150000 }
-          ]
-        }
-      ]
+            { label: 'Tryggingagjald', value: 150000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Orkuveita Reykjavíkur',
@@ -133,10 +133,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Raforkuframleiðsla', value: 480000 },
             { label: 'Hitaveita', value: 220000 },
-            { label: 'Þjónustugjald', value: 80000 }
-          ]
-        }
-      ]
+            { label: 'Þjónustugjald', value: 80000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Marel hf.',
@@ -149,10 +149,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Vélar og tæki', value: 3200000 },
             { label: 'Viðhald og þjónusta', value: 800000 },
-            { label: 'Uppsetning og þjálfun', value: 500000 }
-          ]
-        }
-      ]
+            { label: 'Uppsetning og þjálfun', value: 500000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'CCP Games ehf.',
@@ -165,10 +165,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Hugbúnaðarleyfi', value: 400000 },
             { label: 'Tækniþjónusta', value: 180000 },
-            { label: 'Þjálfun starfsfólks', value: 70000 }
-          ]
-        }
-      ]
+            { label: 'Þjálfun starfsfólks', value: 70000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Lífeyrissjóður Verslunarmanna',
@@ -181,10 +181,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fasteignakaup', value: 7500000 },
             { label: 'Lögfræðiþjónusta', value: 800000 },
-            { label: 'Stimpilgjöld og gjöld', value: 600000 }
-          ]
-        }
-      ]
+            { label: 'Stimpilgjöld og gjöld', value: 600000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Vífilfell hf.',
@@ -197,8 +197,8 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Coca Cola', value: 85000 },
             { label: 'Pepsi', value: 65000 },
-            { label: 'Flutningskostnaður', value: 30000 }
-          ]
+            { label: 'Flutningskostnaður', value: 30000 },
+          ],
         },
         {
           date: new Date('2024-01-28'),
@@ -206,10 +206,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Coca Cola', value: 120000 },
             { label: 'Pepsi', value: 90000 },
-            { label: 'Flutningskostnaður', value: 30000 }
-          ]
-        }
-      ]
+            { label: 'Flutningskostnaður', value: 30000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Síminn hf.',
@@ -222,10 +222,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fjarskiptaþjónusta', value: 1200000 },
             { label: 'Internetþjónusta', value: 450000 },
-            { label: 'Viðhaldsþjónusta', value: 200000 }
-          ]
-        }
-      ]
+            { label: 'Viðhaldsþjónusta', value: 200000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Íslandsbanki hf.',
@@ -238,10 +238,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Bankaþjónusta', value: 1400000 },
             { label: 'Lánveitingar', value: 500000 },
-            { label: 'Fjármálaráðgjöf', value: 200000 }
-          ]
-        }
-      ]
+            { label: 'Fjármálaráðgjöf', value: 200000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Össur hf.',
@@ -254,10 +254,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Gervilimir', value: 2800000 },
             { label: 'Stoðtæki', value: 650000 },
-            { label: 'Þjálfun og þjónusta', value: 300000 }
-          ]
-        }
-      ]
+            { label: 'Þjálfun og þjónusta', value: 300000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Nova ehf.',
@@ -270,10 +270,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fjarskiptaþjónusta', value: 600000 },
             { label: 'Internetþjónusta', value: 225000 },
-            { label: 'Tækniþjónusta', value: 100000 }
-          ]
-        }
-      ]
+            { label: 'Tækniþjónusta', value: 100000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Byko ehf.',
@@ -286,8 +286,8 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Timbur', value: 600000 },
             { label: 'Naglar og skrúfur', value: 200000 },
-            { label: 'Einangrun', value: 150000 }
-          ]
+            { label: 'Einangrun', value: 150000 },
+          ],
         },
         {
           date: new Date('2024-02-12'),
@@ -295,10 +295,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Garðáhöld', value: 300000 },
             { label: 'Jarðvegur og áburður', value: 250000 },
-            { label: 'Fræ og plöntur', value: 100000 }
-          ]
-        }
-      ]
+            { label: 'Fræ og plöntur', value: 100000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Arion Banki hf.',
@@ -311,10 +311,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Viðskiptalán', value: 2000000 },
             { label: 'Bankaþjónusta', value: 600000 },
-            { label: 'Fjármálaráðgjöf', value: 200000 }
-          ]
-        }
-      ]
+            { label: 'Fjármálaráðgjöf', value: 200000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Landsbankinn hf.',
@@ -327,10 +327,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Greiðsluvinnslur', value: 900000 },
             { label: 'Bankaþjónusta', value: 400000 },
-            { label: 'Tækniþjónusta', value: 150000 }
-          ]
-        }
-      ]
+            { label: 'Tækniþjónusta', value: 150000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Vodafone Iceland ehf.',
@@ -343,10 +343,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fjarskiptaþjónusta', value: 2200000 },
             { label: 'Netþjónusta', value: 800000 },
-            { label: 'Tækniviðhald', value: 350000 }
-          ]
-        }
-      ]
+            { label: 'Tækniviðhald', value: 350000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Penninn ehf.',
@@ -359,10 +359,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Skrifstofuvörur', value: 450000 },
             { label: 'Prentþjónusta', value: 220000 },
-            { label: 'Flutningur', value: 110000 }
-          ]
-        }
-      ]
+            { label: 'Flutningur', value: 110000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Reitir fasteignafélag hf.',
@@ -375,8 +375,8 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fasteignaleiga', value: 3000000 },
             { label: 'Þjónustugjöld', value: 500000 },
-            { label: 'Viðhaldsgjald', value: 300000 }
-          ]
+            { label: 'Viðhaldsgjald', value: 300000 },
+          ],
         },
         {
           date: new Date('2024-02-15'),
@@ -384,10 +384,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Fasteignaleiga', value: 1900000 },
             { label: 'Þjónustugjöld', value: 350000 },
-            { label: 'Viðhaldsgjald', value: 150000 }
-          ]
-        }
-      ]
+            { label: 'Viðhaldsgjald', value: 150000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Olís hf.',
@@ -400,10 +400,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Flugeldsneyti', value: 3800000 },
             { label: 'Bensín og dísel', value: 600000 },
-            { label: 'Smurðu og viðhald', value: 300000 }
-          ]
-        }
-      ]
+            { label: 'Smurðu og viðhald', value: 300000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Veitur ohf.',
@@ -416,10 +416,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Raforkuframleiðsla', value: 1200000 },
             { label: 'Hitaveita', value: 550000 },
-            { label: 'Vatn og fráveita', value: 200000 }
-          ]
-        }
-      ]
+            { label: 'Vatn og fráveita', value: 200000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Atorka ehf.',
@@ -432,10 +432,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Iðnaðarrafmagn', value: 6800000 },
             { label: 'Þjónustugjald', value: 1200000 },
-            { label: 'Viðhaldsgjald', value: 500000 }
-          ]
-        }
-      ]
+            { label: 'Viðhaldsgjald', value: 500000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Ísey skyr ehf.',
@@ -448,10 +448,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Ísey skyr vörur', value: 480000 },
             { label: 'Mjólkurvörur', value: 100000 },
-            { label: 'Flutningskostnaður', value: 40000 }
-          ]
-        }
-      ]
+            { label: 'Flutningskostnaður', value: 40000 },
+          ],
+        },
+      ],
     },
     {
       seller: 'Kaupfélag Eyfirðinga',
@@ -464,10 +464,10 @@ export const MOCK_TABLE_DATA: MockTable = {
           items: [
             { label: 'Matvörur og vörur', value: 750000 },
             { label: 'Þjónustugjald', value: 250000 },
-            { label: 'Flutningskostnaður', value: 100000 }
-          ]
-        }
-      ]
-    }
-  ]
+            { label: 'Flutningskostnaður', value: 100000 },
+          ],
+        },
+      ],
+    },
+  ],
 }

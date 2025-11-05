@@ -12,7 +12,6 @@ export const line = style({
   position: 'absolute',
 })
 
-
 export const loader = style({
   minHeight: 24,
   minWidth: 24,

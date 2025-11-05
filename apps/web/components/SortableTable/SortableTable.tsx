@@ -1,11 +1,7 @@
 import { isValidElement, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import {
-  Box,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 
 import { ExpandableTableHeader } from './ExpandableTableHeader'
 import { HeaderButton } from './HeaderButton'
@@ -108,93 +104,91 @@ export const SortableTable = (props: SortableTableProps) => {
           {props.title}
         </Text>
       )}
-     <T.Table>
-          {props.expandable ? (
-            <ExpandableTableHeader
-              data={headerSorted.map((headItem, i) => ({
-                value: (
-                  <HeaderButton
-                    headItem={headItem}
-                    sortConfig={sortConfig}
-                    requestSort={requestSort}
-                    labels={props.labels}
-                    index={i}
-                    align={props.align ?? 'left'}
-                  />
-                ),
-                element: true,
-              }))}
-            />
-          ) : (
-            <T.Head>
-              <T.Row>
-                {headerSorted.map((headItem, i) => (
-                  <T.HeadData
-                    key={`head-${headItem}`}
-                    align={props.align ?? 'left'}
-                  >
-                    <Text variant="medium" fontWeight="semiBold" as="p">
-                      <HeaderButton
-                        headItem={headItem}
-                        sortConfig={sortConfig}
-                        requestSort={requestSort}
-                        labels={props.labels}
-                        index={i}
-                      />
-                    </Text>
-                  </T.HeadData>
-                ))}
-              </T.Row>
-            </T.Head>
-          )}
-          <T.Body>
-            {items.length > 0 ? (
-              items.map((item) => (
-                <TableRow
-                  key={item.id}
-                  item={item}
-                  tagOutlined={props.tagOutlined}
-                  expandable={props.expandable}
-                  onExpandCallback={item.onExpandCallback}
+      <T.Table>
+        {props.expandable ? (
+          <ExpandableTableHeader
+            data={headerSorted.map((headItem, i) => ({
+              value: (
+                <HeaderButton
+                  headItem={headItem}
+                  sortConfig={sortConfig}
+                  requestSort={requestSort}
+                  labels={props.labels}
+                  index={i}
                   align={props.align ?? 'left'}
-                  ellipsisLength={props.ellipsisLength}
                 />
-              ))
-            ) : (
-              <Box background="blue100" padding={3}>
-                <Box background="white">
-                  <Text>Nothing here...</Text>
-                </Box>
+              ),
+              element: true,
+            }))}
+          />
+        ) : (
+          <T.Head>
+            <T.Row>
+              {headerSorted.map((headItem, i) => (
+                <T.HeadData
+                  key={`head-${headItem}`}
+                  align={props.align ?? 'left'}
+                >
+                  <Text variant="medium" fontWeight="semiBold" as="p">
+                    <HeaderButton
+                      headItem={headItem}
+                      sortConfig={sortConfig}
+                      requestSort={requestSort}
+                      labels={props.labels}
+                      index={i}
+                    />
+                  </Text>
+                </T.HeadData>
+              ))}
+            </T.Row>
+          </T.Head>
+        )}
+        <T.Body>
+          {items.length > 0 ? (
+            items.map((item) => (
+              <TableRow
+                key={item.id}
+                item={item}
+                tagOutlined={props.tagOutlined}
+                expandable={props.expandable}
+                onExpandCallback={item.onExpandCallback}
+                align={props.align ?? 'left'}
+                ellipsisLength={props.ellipsisLength}
+              />
+            ))
+          ) : (
+            <Box background="blue100" padding={3}>
+              <Box background="white">
+                <Text>Nothing here...</Text>
               </Box>
-            )}
-            {props.footer
-              ? !isValidElement(props.footer) && (
-                  <T.Row>
+            </Box>
+          )}
+          {props.footer
+            ? !isValidElement(props.footer) && (
+                <T.Row>
+                  <T.Data
+                    text={{ fontWeight: 'semiBold' }}
+                    borderColor="white"
+                    key="footer-empty"
+                    unselectable="on"
+                  >
+                    {/* Empty cell at index 0 */}
+                  </T.Data>
+                  {Object.values(props.footer).map((valueItem) => (
                     <T.Data
                       text={{ fontWeight: 'semiBold' }}
                       borderColor="white"
-                      key="footer-empty"
-                      unselectable="on"
+                      key={`footer-${valueItem}`}
                     >
-                      {/* Empty cell at index 0 */}
+                      {valueItem}
                     </T.Data>
-                    {Object.values(props.footer).map((valueItem) => (
-                      <T.Data
-                        text={{ fontWeight: 'semiBold' }}
-                        borderColor="white"
-                        key={`footer-${valueItem}`}
-                      >
-                        {valueItem}
-                      </T.Data>
-                    ))}
-                  </T.Row>
-                )
-              : null}
-          </T.Body>
+                  ))}
+                </T.Row>
+              )
+            : null}
+        </T.Body>
       </T.Table>
-      {props.footer && isValidElement(props.footer)
-        ? props.footer
-        : undefined}
+      {props.footer && isValidElement(props.footer) ? props.footer : undefined}
     </>
   )
 }

@@ -133,9 +133,7 @@ export const ExpandableTableRow = ({
               position: 'relative',
             }}
           >
-            <Text variant={last ? 'eyebrow' : 'medium'}>
-              {item.value}
-            </Text>
+            <Text variant={last ? 'eyebrow' : 'medium'}>{item.value}</Text>
           </T.Data>
         ))}
       </T.Row>

@@ -25,15 +25,12 @@ export const ExpandableTableHeader = ({ data }: Props) => {
               key={i}
               width={item.width}
             >
-              <Text
-                variant="medium"
-                fontWeight="semiBold"
-              >
+              <Text variant="medium" fontWeight="semiBold">
                 {item.value}
               </Text>
             </T.HeadData>
           ) : (
-            <T.Data key={i}/>
+            <T.Data key={i} />
           ),
         )}
       </T.Row>
