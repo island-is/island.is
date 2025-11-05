@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useCallback, useState } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -13,12 +13,15 @@ import {
   GridRow,
   Button,
   Text,
+  Input,
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue, BankAccount } from '../../types'
 import { YES } from '../../lib/constants'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { formatCurrency } from '@island.is/application/ui-components'
+import DoubleColumnRow from '../DoubleColumnRow'
 
 interface BankAccountFormField {
   id: string
@@ -50,6 +53,7 @@ export const BankAccountsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
+  const [total, setTotal] = useState(0)
   const estateData = getEstateDataFromApplication(application)
   const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
     number[]
@@ -71,6 +75,25 @@ export const BankAccountsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Calculate overall total from all bank account totals
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce(
+      (acc: number, current: BankAccountFormField) => {
+        if (!current.enabled) return acc
+        const currentValue = valueToNumber(current.accountTotal ?? '0', ',')
+        return Number(acc) + currentValue
+      },
+      0,
+    )
+
+    setTotal(total)
+  }, [getValues, id])
+
   // Calculate bank account total from balance + accruedInterest
   const updateBankAccountValue = (fieldIndex: string) => {
     const bankAccountValues = getValues(fieldIndex)
@@ -88,6 +111,8 @@ export const BankAccountsRepeater: FC<
     if (accountTotal > 0) {
       clearErrors(`${fieldIndex}.balance`)
     }
+
+    calculateTotal()
   }
 
   const handleAddBankAccount = () =>
@@ -113,6 +138,10 @@ export const BankAccountsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields.length, fields])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [fields, calculateTotal])
 
   return (
     <Box marginTop={2}>
@@ -311,6 +340,24 @@ export const BankAccountsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      {!!fields.length && (
+        <Box marginTop={5}>
+          <GridRow>
+            <DoubleColumnRow
+              right={
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
+                  backgroundColor="white"
+                  readOnly
+                />
+              }
+            />
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }

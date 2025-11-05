@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useCallback, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -9,11 +9,14 @@ import {
   GridRow,
   Button,
   Text,
+  Input,
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { formatCurrency } from '@island.is/application/ui-components'
+import DoubleColumnRow from '../DoubleColumnRow'
 
 interface ClaimFormField {
   id: string
@@ -43,6 +46,7 @@ export const ClaimsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
+  const [total, setTotal] = useState(0)
   const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {
@@ -51,6 +55,26 @@ export const ClaimsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Calculate overall total from all claim values
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce((acc: number, current: ClaimFormField) => {
+      if (!current.enabled) return acc
+      const currentValue = valueToNumber(current.value ?? '0', ',')
+      return Number(acc) + currentValue
+    }, 0)
+
+    setTotal(total)
+  }, [getValues, id])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [fields, calculateTotal])
 
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {
@@ -66,6 +90,8 @@ export const ClaimsRepeater: FC<
     if (Number.isFinite(numeric) && numeric > 0) {
       clearErrors(`${fieldIndex}.value`)
     }
+
+    calculateTotal()
   }
 
   const handleAddClaim = () =>
@@ -223,6 +249,24 @@ export const ClaimsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      {!!fields.length && (
+        <Box marginTop={5}>
+          <GridRow>
+            <DoubleColumnRow
+              right={
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
+                  backgroundColor="white"
+                  readOnly
+                />
+              }
+            />
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }

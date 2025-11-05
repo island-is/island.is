@@ -10,11 +10,14 @@ import {
   GridRow,
   Button,
   Text,
+  Input,
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { formatCurrency } from '@island.is/application/ui-components'
+import DoubleColumnRow from '../DoubleColumnRow'
 
 interface StockFormField {
   id: string
@@ -49,6 +52,7 @@ export const StocksRepeater: FC<
   const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
+  const [total, setTotal] = useState(0)
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.stocks) {
@@ -56,6 +60,26 @@ export const StocksRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Calculate overall total from all stock values
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce((acc: number, current: StockFormField) => {
+      if (!current.enabled) return acc
+      const currentValue = valueToNumber(current.value ?? '0', ',')
+      return Number(acc) + currentValue
+    }, 0)
+
+    setTotal(total)
+  }, [getValues, id])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [fields, calculateTotal])
 
   // Calculate stock value from faceValue * rateOfExchange
   const updateStocksValue = (fieldIndex: string) => {
@@ -94,6 +118,7 @@ export const StocksRepeater: FC<
     }
 
     forceUpdate()
+    calculateTotal()
   }
 
   const handleAddStock = () =>
@@ -270,6 +295,24 @@ export const StocksRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      {!!fields.length && (
+        <Box marginTop={5}>
+          <GridRow>
+            <DoubleColumnRow
+              right={
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
+                  backgroundColor="white"
+                  readOnly
+                />
+              }
+            />
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }

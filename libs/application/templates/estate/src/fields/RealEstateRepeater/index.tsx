@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useCallback, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -8,13 +8,16 @@ import {
   GridRow,
   Button,
   ProfileCard,
+  Input,
 } from '@island.is/island-ui/core'
 import { AssetFormField, ErrorValue } from '../../types'
 
 import { m } from '../../lib/messages'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { formatCurrency } from '@island.is/application/ui-components'
+import DoubleColumnRow from '../DoubleColumnRow'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -26,9 +29,25 @@ export const RealEstateRepeater: FC<
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
+  const { clearErrors, getValues } = useFormContext()
+  const [total, setTotal] = useState(0)
 
   const estateData = getEstateDataFromApplication(application)
+
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce((acc: number, current: AssetFormField) => {
+      if (!current.enabled) return acc
+      const currentValue = valueToNumber(current.marketValue ?? '0', ',')
+      return Number(acc) + currentValue
+    }, 0)
+
+    setTotal(total)
+  }, [getValues, id])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.assets) {
@@ -36,6 +55,10 @@ export const RealEstateRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [fields, calculateTotal])
 
   const handleAddProperty = () =>
     append({
@@ -106,6 +129,7 @@ export const RealEstateRepeater: FC<
                   currency
                   size="sm"
                   required
+                  onChange={() => calculateTotal()}
                 />
               </Box>
             </GridColumn>,
@@ -125,6 +149,7 @@ export const RealEstateRepeater: FC<
               remove={handleRemoveProperty}
               index={index}
               error={error && error[index] ? error[index] : null}
+              calculateTotal={calculateTotal}
             />
           </Box>
         )
@@ -140,6 +165,24 @@ export const RealEstateRepeater: FC<
           {formatMessage(m.addProperty)}
         </Button>
       </Box>
+      {!!fields.length && (
+        <Box marginTop={5}>
+          <GridRow>
+            <DoubleColumnRow
+              right={
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
+                  backgroundColor="white"
+                  readOnly
+                />
+              }
+            />
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }
