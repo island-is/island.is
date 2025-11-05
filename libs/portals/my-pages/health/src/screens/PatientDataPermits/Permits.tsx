@@ -20,6 +20,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
 import * as styles from './Permits.css'
+import { permitTagSelector } from '../../utils/tagSelector'
 
 const PatientDataPermits: React.FC = () => {
   useNamespaces('sp.health')
@@ -135,38 +136,7 @@ const PatientDataPermits: React.FC = () => {
                   fromDate: formatDate(permit.validFrom),
                   toDate: formatDate(permit.validTo),
                 })}
-                tag={
-                  permit.status === HealthDirectoratePermitStatus.active
-                    ? {
-                        label: formatMessage(messages.active),
-                        variant: 'blue',
-                        outlined: true,
-                      }
-                    : permit.status === HealthDirectoratePermitStatus.expired
-                    ? {
-                        label: formatMessage(messages.expired),
-                        variant: 'red',
-                        outlined: true,
-                      }
-                    : permit.status === HealthDirectoratePermitStatus.inactive
-                    ? {
-                        label: formatMessage(messages.withdrawn),
-                        variant: 'purple',
-                        outlined: true,
-                      }
-                    : permit.status ===
-                      HealthDirectoratePermitStatus.awaitingApproval
-                    ? {
-                        label: formatMessage(messages.awaitingApproval),
-                        variant: 'darkerBlue',
-                        outlined: true,
-                      }
-                    : {
-                        label: formatMessage(messages.unknown),
-                        variant: 'purple',
-                        outlined: true,
-                      }
-                }
+                tag={permitTagSelector(permit.status, formatMessage)}
                 cta={{
                   size: 'small',
                   variant: 'text',

@@ -14,7 +14,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import {
-  MedicineDelegationCreateInput,
+  MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
@@ -453,7 +453,7 @@ export class HealthDirectorateService {
 
   async postMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationCreateInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
       .putMedicineDelegation(auth, {
@@ -476,7 +476,7 @@ export class HealthDirectorateService {
 
   async deleteMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationCreateInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
       .putMedicineDelegation(auth, {

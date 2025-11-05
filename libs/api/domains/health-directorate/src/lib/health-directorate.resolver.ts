@@ -25,7 +25,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import {
-  MedicineDelegationCreateInput,
+  MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
@@ -276,7 +276,7 @@ export class HealthDirectorateResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   postMedicineDelegation(
-    @Args('input') input: MedicineDelegationCreateInput,
+    @Args('input') input: MedicineDelegationCreateOrDeleteInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateResponse> {
     return this.api.postMedicineDelegation(user, input)
@@ -290,7 +290,7 @@ export class HealthDirectorateResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   deleteMedicineDelegation(
-    @Args('input') input: MedicineDelegationCreateInput,
+    @Args('input') input: MedicineDelegationCreateOrDeleteInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateResponse> {
     return this.api.deleteMedicineDelegation(user, input)

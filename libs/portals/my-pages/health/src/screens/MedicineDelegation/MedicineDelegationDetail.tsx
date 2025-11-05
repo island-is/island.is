@@ -69,9 +69,6 @@ const MedicineDelegationDetail = () => {
           setModalVisible(false)
           navigate(HealthPaths.HealthMedicineDelegation, { replace: true })
         } else {
-          console.log(
-            response.data?.healthDirectorateMedicineDelegationDelete.message,
-          )
           toast.error(formatMessage(messages.permitDeletedError))
         }
       })

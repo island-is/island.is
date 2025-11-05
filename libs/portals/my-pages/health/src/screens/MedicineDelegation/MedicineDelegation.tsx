@@ -23,6 +23,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
+import { permitTagSelector } from '../../utils/tagSelector'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
@@ -140,38 +141,7 @@ const MedicineDelegation = () => {
                         formatDate(item.dates.to)
                       : undefined
                   }
-                  tag={
-                    item.status === HealthDirectoratePermitStatus.active
-                      ? {
-                          label: formatMessage(messages.active),
-                          variant: 'blue',
-                          outlined: true,
-                        }
-                      : item.status === HealthDirectoratePermitStatus.expired
-                      ? {
-                          label: formatMessage(messages.expired),
-                          variant: 'red',
-                          outlined: true,
-                        }
-                      : item.status === HealthDirectoratePermitStatus.inactive
-                      ? {
-                          label: formatMessage(messages.withdrawn),
-                          variant: 'purple',
-                          outlined: true,
-                        }
-                      : item.status ===
-                        HealthDirectoratePermitStatus.awaitingApproval
-                      ? {
-                          label: formatMessage(messages.awaitingApproval),
-                          variant: 'darkerBlue',
-                          outlined: true,
-                        }
-                      : {
-                          label: formatMessage(messages.unknown),
-                          variant: 'purple',
-                          outlined: true,
-                        }
-                  }
+                  tag={permitTagSelector(item.status, formatMessage)}
                   cta={{
                     size: 'small',
                     variant: 'text',

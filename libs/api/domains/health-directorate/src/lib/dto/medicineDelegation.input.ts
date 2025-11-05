@@ -12,8 +12,8 @@ export class MedicineDelegationInput {
   status!: string[]
 }
 
-@InputType('HealthDirectorateMedicineDelegationCreateInput')
-export class MedicineDelegationCreateInput {
+@InputType('HealthDirectorateMedicineDelegationCreateOrDeleteInput')
+export class MedicineDelegationCreateOrDeleteInput {
   @Field()
   @IsString()
   nationalId!: string
