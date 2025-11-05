@@ -122,14 +122,14 @@ const VerdictStatusAlertMessage = ({
     )
   }
 
-  if (verdict.legalPaperRequestDate) {
+  if (verdict.serviceDate) {
     return (
       <AlertMessage
         type="info"
         title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
         message={`Dómur sendur ${formatDate(
-          verdict.legalPaperRequestDate,
-        )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
+          verdict.serviceDate,
+        )} kl. ${formatDate(verdict.serviceDate, TIME_FORMAT)}`}
       />
     )
   }
