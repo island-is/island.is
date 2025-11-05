@@ -569,6 +569,17 @@
         "operationId": "MePrescriptionCommissionController_getPrescriptionCommissions_v1",
         "parameters": [
           {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
             "name": "active",
             "required": true,
             "in": "query",
@@ -635,16 +646,16 @@
         },
         "tags": ["Prescriptions"]
       },
-      "post": {
-        "description": "Create a prescription commission",
-        "operationId": "MePrescriptionCommissionController_createPrescriptionCommission_v1",
+      "put": {
+        "description": "Create or update a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createOrUpdatePrescriptionCommission_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePrescriptionCommissionDto"
+                "$ref": "#/components/schemas/CreateOrUpdatePrescriptionCommissionDto"
               }
             }
           }
@@ -690,70 +701,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/HttpProblemResponse"
                 }
-<<<<<<< HEAD
-=======
-              }
-            }
-          }
-        },
-        "tags": ["Prescriptions"]
-      },
-      "delete": {
-        "description": "Deactivate a prescription commission",
-        "operationId": "MePrescriptionCommissionController_deactivatePrescriptionCommission_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeactivatePrescriptionCommissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
->>>>>>> main
               }
             }
           }
@@ -1733,156 +1680,6 @@
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
-<<<<<<< HEAD
-            "name": "page",
-            "required": true,
-            "in": "query",
-            "description": "The page number",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": true,
-            "in": "query",
-            "description": "The page size",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AppointmentDataDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Appointments"]
-      }
-    },
-    "/v1/me/consent/eu/countries": {
-      "get": {
-        "description": "Get countries that can receive health care data from Iceland",
-        "operationId": "MePatientConcentEuController_getCountries_v1",
-        "parameters": [
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConsentCountryDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Patient consent"]
-      }
-    },
-    "/v1/me/consent/eu": {
-      "get": {
-        "description": "Get user's EU patient consents",
-        "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
-        "parameters": [
-=======
             "name": "statuses",
             "required": false,
             "in": "query",
@@ -1894,22 +1691,15 @@
               }
             }
           },
->>>>>>> main
           {
             "name": "fromStartTime",
             "required": false,
             "in": "query",
-<<<<<<< HEAD
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
-=======
             "description": "Filter appointments to only include those starting at or after this time. Use current timestamp to get only future appointments.",
             "schema": {
               "format": "date-time",
               "example": "2024-01-15T10:30:00Z",
               "type": "string"
->>>>>>> main
             }
           }
         ],
@@ -1921,11 +1711,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-<<<<<<< HEAD
-                    "$ref": "#/components/schemas/EuPatientConsentDto"
-=======
                     "$ref": "#/components/schemas/AppointmentDto"
->>>>>>> main
                   }
                 }
               }
@@ -1972,21 +1758,6 @@
             }
           }
         },
-<<<<<<< HEAD
-        "tags": ["Patient consent"]
-      },
-      "post": {
-        "description": "Create a new EU patient consent for a patient",
-        "operationId": "MePatientConcentEuController_createEuPatientConsentForPatient_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateEuPatientConsentDto"
-              }
-=======
         "tags": ["Appointments"]
       }
     },
@@ -2002,15 +1773,10 @@
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
->>>>>>> main
             }
           }
         ],
         "responses": {
-<<<<<<< HEAD
-          "201": {
-            "description": ""
-=======
           "200": {
             "description": "",
             "content": {
@@ -2020,7 +1786,6 @@
                 }
               }
             }
->>>>>>> main
           },
           "400": {
             "description": "",
@@ -2049,19 +1814,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/HttpProblemResponse"
                 }
-<<<<<<< HEAD
-              }
-            }
-          },
-          "409": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-=======
->>>>>>> main
               }
             }
           },
@@ -2079,17 +1831,10 @@
         "tags": ["Patient consent"]
       }
     },
-<<<<<<< HEAD
-    "/v1/me/consent/eu/{id}": {
-      "get": {
-        "description": "Get a EU patient consent for a patient",
-        "operationId": "MePatientConcentEuController_getEuPatientConsent_v1",
-=======
     "/v1/me/consents/eu": {
       "get": {
         "description": "Get user's EU patient consents",
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
->>>>>>> main
         "parameters": [
           {
             "name": "validFrom",
@@ -2114,19 +1859,12 @@
           {
             "name": "status",
             "required": true,
-<<<<<<< HEAD
-            "in": "path",
-            "description": "The id of the EU patient consent to get",
-            "schema": {
-              "type": "string"
-=======
             "in": "query",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
->>>>>>> main
             }
           },
           {
@@ -2137,8 +1875,6 @@
             "schema": {
               "$ref": "#/components/schemas/Locale"
             }
-<<<<<<< HEAD
-=======
           },
           {
             "name": "statuses",
@@ -2148,7 +1884,6 @@
             "schema": {
               "$ref": "#/components/schemas/EuPatientConsentStatus"
             }
->>>>>>> main
           }
         ],
         "responses": {
@@ -2157,14 +1892,10 @@
             "content": {
               "application/json": {
                 "schema": {
-<<<<<<< HEAD
-                  "$ref": "#/components/schemas/EuPatientConsentDto"
-=======
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/EuPatientConsentDto"
                   }
->>>>>>> main
                 }
               }
             }
@@ -2196,19 +1927,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/HttpProblemResponse"
                 }
-<<<<<<< HEAD
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-=======
->>>>>>> main
               }
             }
           },
@@ -2224,11 +1942,6 @@
           }
         },
         "tags": ["Patient consent"]
-<<<<<<< HEAD
-      }
-    },
-    "/v1/me/consent/eu/{id}/deactivate": {
-=======
       },
       "post": {
         "description": "Create a new EU patient consent for a patient",
@@ -2392,7 +2105,6 @@
       }
     },
     "/v1/me/consents/eu/{id}/deactivate": {
->>>>>>> main
       "put": {
         "description": "Deactivate a EU patient consent for a patient",
         "operationId": "MePatientConcentEuController_deactivateEuPatientConsentForPatient_v1",
@@ -2803,6 +2515,9 @@
               }
             ]
           },
+          "renewalResponseMessage": {
+            "type": "string"
+          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2960,21 +2675,18 @@
       },
       "CommissionType": {
         "type": "number",
-<<<<<<< HEAD
-        "enum": [0, 1]
-      },
-      "UserType": {
-        "type": "number",
-        "enum": [0, 1, 2, 3]
-=======
         "enum": [0, 1],
         "description": "The type of commission. 0 is deliver, 1 is deliver and information."
+      },
+      "PrescriptionCommissionStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired", "pending"],
+        "description": "Status of the commission."
       },
       "UserType": {
         "type": "number",
         "enum": [0, 1, 2, 3],
         "description": "The type of user that registered the commission. 0 is parent, 1 is person, 2 is doctor, 3 is pharmacist."
->>>>>>> main
       },
       "PrescriptionCommissionDto": {
         "type": "object",
@@ -3005,9 +2717,13 @@
             "type": "string",
             "description": "The end date and time the commission is valid until. If not defined, the commission is valid until canceled."
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "Status of the commission."
+          "status": {
+            "description": "Status of the commission.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionCommissionStatus"
+              }
+            ]
           },
           "comment": {
             "type": "string",
@@ -3026,11 +2742,11 @@
           "toNationalId",
           "toName",
           "commissionType",
-          "isActive",
+          "status",
           "userType"
         ]
       },
-      "CreatePrescriptionCommissionDto": {
+      "CreateOrUpdatePrescriptionCommissionDto": {
         "type": "object",
         "properties": {
           "toNationalId": {
@@ -3052,23 +2768,14 @@
           "validTo": {
             "type": "string",
             "description": "The end date and time the commission is valid until."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the commission is active."
           }
         },
         "required": ["toNationalId", "commissionType"]
       },
-<<<<<<< HEAD
-=======
-      "DeactivatePrescriptionCommissionDto": {
-        "type": "object",
-        "properties": {
-          "toNationalId": {
-            "type": "string",
-            "description": "The national ID of the person receiving the commission"
-          }
-        },
-        "required": ["toNationalId"]
-      },
->>>>>>> main
       "OrganDto": {
         "type": "object",
         "properties": {
@@ -3139,8 +2846,6 @@
           "message": {
             "type": "string"
           },
-<<<<<<< HEAD
-=======
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -3149,7 +2854,6 @@
             "format": "date-time",
             "type": "string"
           },
->>>>>>> main
           "numRepliesAllowed": {
             "type": "number",
             "default": 1
@@ -3195,12 +2899,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3209,12 +2909,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3223,7 +2917,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           }
         },
         "required": ["id", "type", "label", "required"]
@@ -3245,12 +2938,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3259,12 +2948,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3273,7 +2956,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "maxLength": {
             "type": "number"
@@ -3304,12 +2986,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3318,12 +2996,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3332,7 +3004,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "default": {
             "type": "boolean"
@@ -3357,12 +3028,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3371,12 +3038,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3385,7 +3046,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "default": {
             "format": "date-time",
@@ -3411,12 +3071,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3425,12 +3081,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3439,7 +3089,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "default": {
             "type": "number"
@@ -3486,12 +3135,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3500,12 +3145,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3514,7 +3153,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "minSelections": {
             "type": "number"
@@ -3571,12 +3209,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3585,12 +3219,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3599,7 +3227,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "fileTypes": {
             "type": "string"
@@ -3624,12 +3251,8 @@
             "type": "string"
           },
           "htmlLabel": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
->>>>>>> main
           },
           "hint": {
             "type": "string"
@@ -3638,12 +3261,6 @@
             "type": "boolean"
           },
           "active": {
-<<<<<<< HEAD
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-=======
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown, used to deprecate questions"
@@ -3652,7 +3269,6 @@
             "type": "boolean",
             "default": true,
             "description": "If false, the question is not shown unless it is triggered"
->>>>>>> main
           },
           "numRows": {
             "type": "number",
@@ -3830,13 +3446,9 @@
             "type": "string"
           },
           "answer": {
-<<<<<<< HEAD
-            "type": "string"
-=======
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
->>>>>>> main
           }
         },
         "required": ["questionId", "answer"]
@@ -3944,13 +3556,9 @@
                         "type": "string"
                       },
                       "answer": {
-<<<<<<< HEAD
-                        "type": "string"
-=======
                         "type": "string",
                         "format": "date",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
->>>>>>> main
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -4083,8 +3691,6 @@
           "message": {
             "type": "string"
           },
-<<<<<<< HEAD
-=======
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -4093,7 +3699,6 @@
             "format": "date-time",
             "type": "string"
           },
->>>>>>> main
           "numRepliesAllowed": {
             "type": "number",
             "default": 1
@@ -4113,17 +3718,6 @@
             "type": "number",
             "default": 0
           },
-<<<<<<< HEAD
-          "createdDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "expiryDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-=======
->>>>>>> main
           "canSubmit": {
             "type": "boolean",
             "description": "Boolean field to check if the questionnaire can be submitted"
@@ -4242,13 +3836,9 @@
                       "type": "string"
                     },
                     "answer": {
-<<<<<<< HEAD
-                      "type": "string"
-=======
                       "type": "string",
                       "format": "date",
                       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
->>>>>>> main
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -4356,13 +3946,9 @@
                                   "type": "string"
                                 },
                                 "answer": {
-<<<<<<< HEAD
-                                  "type": "string"
-=======
                                   "type": "string",
                                   "format": "date",
                                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
->>>>>>> main
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -4604,13 +4190,10 @@
           "name": {
             "type": "string"
           },
-<<<<<<< HEAD
-=======
           "organization": {
             "type": "string",
             "description": "The organization the location belongs to"
           },
->>>>>>> main
           "address": {
             "type": "string",
             "description": "Street name, number, direction & P.O. Box etc."
@@ -4689,61 +4272,6 @@
       "ConsentCountryDto": {
         "type": "object",
         "properties": {
-<<<<<<< HEAD
-          "page": {
-            "type": "number"
-          },
-          "pageSize": {
-            "type": "number"
-          },
-          "totalResults": {
-            "type": "number"
-          },
-          "totalPages": {
-            "type": "number"
-          },
-          "hasNext": {
-            "type": "boolean"
-          },
-          "hasPrevious": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "page",
-          "pageSize",
-          "totalResults",
-          "totalPages",
-          "hasNext",
-          "hasPrevious"
-        ]
-      },
-      "AppointmentDataDto": {
-        "type": "object",
-        "properties": {
-          "appointments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AppointmentDto"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationDto"
-=======
-          "name": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
->>>>>>> main
-          }
-        },
-        "required": ["name", "code"]
-      },
-<<<<<<< HEAD
-      "ConsentCountryDto": {
-        "type": "object",
-        "properties": {
           "name": {
             "type": "string"
           },
@@ -4753,8 +4281,6 @@
         },
         "required": ["name", "code"]
       },
-=======
->>>>>>> main
       "EuPatientConsentStatus": {
         "type": "string",
         "enum": ["active", "inactive", "expired", "pending"]
