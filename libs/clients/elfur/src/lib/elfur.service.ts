@@ -7,6 +7,7 @@ import {
 } from '../../gen/fetch'
 import { OpenInvoicesDto } from './dtos/openInvoices.dto'
 import { isDefined } from '@island.is/shared/utils'
+import { mapInvoiceDto } from './dtos/invoice.dto'
 
 @Injectable()
 export class ElfurClientService {
@@ -39,18 +40,7 @@ export class ElfurClientService {
     }
 
     return {
-      invoices:
-        invoices
-          ?.map((invoice) => {
-            if (!invoice.invoiceSK || !invoice.invoiceNum) {
-              return null
-            }
-            return {
-              cacheId: invoice.invoiceSK,
-              id: invoice.invoiceNum,
-            }
-          })
-          .filter(isDefined) ?? [],
+      invoices: invoices?.map(mapInvoiceDto).filter(isDefined) ?? [],
       pageInfo: {
         hasPreviousPage: pageInfo.hasPreviousPage ?? undefined,
         hasNextPage: pageInfo.hasNextPage,

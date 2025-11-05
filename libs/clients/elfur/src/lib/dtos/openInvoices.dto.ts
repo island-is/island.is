@@ -1,5 +1,7 @@
+import { InvoiceDto } from "./invoice.dto"
+
 export interface OpenInvoicesDto {
-  invoices: Array<OpenInvoiceDto> | null
+  invoices: Array<InvoiceDto> | null
   pageInfo: {
     hasNextPage: boolean
     hasPreviousPage?: boolean
@@ -7,9 +9,4 @@ export interface OpenInvoicesDto {
     endCursor?: string
   }
   totalCount: number
-}
-
-export interface OpenInvoiceDto {
-  cacheId: number
-  id: string
 }

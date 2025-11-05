@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
 import { InvoiceList } from '../../models/invoiceList.model'
 import { InvoiceListInput } from '../../dtos/getInvoiceList.input'
+import { mapInvoiceList } from '../../mappers/invoiceMapper'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
@@ -15,14 +16,6 @@ export class InvoicesService implements IInvoicesService {
       return null
     }
 
-    return {
-      pageInfo: data.pageInfo,
-      totalCount: data.totalCount,
-      data:
-        data.invoices?.map((invoice) => ({
-          cacheId: invoice.cacheId,
-          number: invoice.id,
-        })) ?? [],
-    }
+    return mapInvoiceList(data)
   }
 }
