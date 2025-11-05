@@ -23,7 +23,9 @@ const NewPermit: React.FC = () => {
 
   const navigate = useNavigate()
 
-  const [createPermit, { loading }] = useCreatePatientDataPermitMutation()
+  const [createPermit, { loading }] = useCreatePatientDataPermitMutation({
+    refetchQueries: ['GetPatientDataPermits'],
+  })
 
   const handleSubmit = () => {
     if (formState) {

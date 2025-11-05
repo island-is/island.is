@@ -32,7 +32,7 @@ const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
       <Box marginBottom={2}>
         <GridContainer>
           <GridRow>
-            <GridColumn span={['12/12', '8/12', '8/12', '6/12']}>
+            <GridColumn span={['12/12', '8/12', '8/12', '6/12', '5/12']}>
               <DatePicker
                 backgroundColor="blue"
                 highlightWeekends

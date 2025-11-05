@@ -21,7 +21,9 @@ const NewMedicineDelegation = () => {
   const navigate = useNavigate()
 
   const [postMedicineDelegation, { loading }] =
-    usePostMedicineDelegationMutation()
+    usePostMedicineDelegationMutation({
+      refetchQueries: ['GetMedicineDelegations'],
+    })
 
   const submit = () => {
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
@@ -40,7 +42,9 @@ const NewMedicineDelegation = () => {
             response.data?.healthDirectorateMedicineDelegationCreate.success
           ) {
             toast.success(formatMessage(messages.permitCreated))
-            navigate(HealthPaths.HealthMedicineDelegation)
+            navigate(HealthPaths.HealthMedicineDelegation, {
+              replace: true,
+            })
           } else {
             toast.error(formatMessage(messages.permitCreatedError))
           }
