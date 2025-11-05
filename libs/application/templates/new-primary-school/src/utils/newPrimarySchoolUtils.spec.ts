@@ -10,6 +10,7 @@ import { uuid } from 'uuidv4'
 import {
   hasOtherGuardian,
   hasOtherPayer,
+  hasSpecialEducationSubType,
   needsPayerApproval,
   shouldShowPage,
   showPreferredLanguageFields,
@@ -19,6 +20,8 @@ import {
   ApplicationType,
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
+  OrganizationSector,
+  OrganizationSubType,
   PayerOption,
   States,
 } from './constants'
@@ -453,5 +456,127 @@ describe('needsPayerApproval', () => {
     })
 
     expect(needsPayerApproval(application2)).toBe(false)
+  })
+})
+
+describe('hasSpecialEducationSubType', () => {
+  let application: Application
+
+  const specialEducationBehaviorDepartmentSchoolId = uuid()
+  const specialEducationBehaviorSchoolSchoolId = uuid()
+  const specialEducationDisabilityDepartmentSchoolId = uuid()
+  const specialEducationDisabilitySchoolSchoolId = uuid()
+  const internationalSchoolSchoolId = uuid()
+  const generalSchoolSchoolId = uuid()
+
+  beforeEach(() => {
+    application = buildApplication({
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: specialEducationBehaviorDepartmentSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+            },
+            {
+              id: specialEducationBehaviorSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL,
+            },
+            {
+              id: specialEducationDisabilityDepartmentSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+            },
+            {
+              id: specialEducationDisabilitySchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL,
+            },
+            {
+              id: internationalSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.INTERNATIONAL_SCHOOL,
+            },
+            {
+              id: generalSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.GENERAL_SCHOOL,
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationBehaviorDepartmentSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_BEHAVIOR_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationBehaviorSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_DISABILITY_DEPARTMENT', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationDisabilityDepartmentSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_DISABILITY_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationDisabilitySchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return false if the selected school has subType INTERNATIONAL_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: internationalSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(false)
+  })
+
+  it('should return false if the selected school has subType GENERAL_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: generalSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(false)
   })
 })

@@ -125,13 +125,35 @@ export const shouldShowExpectedEndDate = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const selectedSubType = getSelectedSchoolSubType(answers, externalData)
-  if (!selectedSubType) return false
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
 
   return (
-    selectedSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-    selectedSubType ===
+    selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+    selectedSchoolSubType ===
       OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-    selectedSubType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+  )
+}
+
+export const hasSpecialEducationSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
   )
 }
