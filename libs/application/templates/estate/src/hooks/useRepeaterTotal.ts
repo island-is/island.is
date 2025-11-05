@@ -31,7 +31,8 @@ export const useRepeaterTotal = <T extends RepeaterField>(
     }
 
     const total = values.reduce((acc: number, current: T) => {
-      if (!current.enabled) return acc
+      // Only exclude items explicitly set to false; treat undefined as enabled
+      if (current.enabled === false) return acc
       const currentValue = valueToNumber(getFieldValue(current) ?? '0')
       return Number(acc) + currentValue
     }, 0)
