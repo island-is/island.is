@@ -6,7 +6,7 @@ export class Invoice {
   @Field(() => ID)
   id!: number
 
-  @Field({description: 'ISO8601'})
+  @Field({ description: 'ISO8601' })
   date!: string
 
   @Field(() => [InvoiceItem])

@@ -1,4 +1,4 @@
-import { OpenInvoiceDetailResponseDto } from "../../../gen/fetch"
+import { OpenInvoiceDetailResponseDto } from '../../../gen/fetch'
 
 export interface InvoiceDto {
   id: number
@@ -14,8 +14,22 @@ export interface InvoiceDto {
   supplierNationalid: string
 }
 
-export const mapInvoiceDto = (invoice: OpenInvoiceDetailResponseDto): InvoiceDto | null => {
-  if (!invoice.erpInvoiceId || !invoice.invoiceNum || !invoice.erpInvoiceAmountISK ||!invoice.invoiceCurrencyCode || !invoice.apInvoiceGlDate|| !invoice.customerId || !invoice.customerName || !invoice.customerLegalId || !invoice.supplierId || !invoice.supplierName || !invoice.supplierLegalId) {
+export const mapInvoiceDto = (
+  invoice: OpenInvoiceDetailResponseDto,
+): InvoiceDto | null => {
+  if (
+    !invoice.erpInvoiceId ||
+    !invoice.invoiceNum ||
+    !invoice.erpInvoiceAmountISK ||
+    !invoice.invoiceCurrencyCode ||
+    !invoice.apInvoiceGlDate ||
+    !invoice.customerId ||
+    !invoice.customerName ||
+    !invoice.customerLegalId ||
+    !invoice.supplierId ||
+    !invoice.supplierName ||
+    !invoice.supplierLegalId
+  ) {
     return null
   }
 
@@ -31,5 +45,5 @@ export const mapInvoiceDto = (invoice: OpenInvoiceDetailResponseDto): InvoiceDto
     supplierId: invoice.supplierId,
     supplierName: invoice.supplierName,
     supplierNationalid: invoice.supplierLegalId,
-  };
+  }
 }
