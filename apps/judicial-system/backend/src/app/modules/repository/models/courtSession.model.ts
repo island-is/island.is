@@ -118,9 +118,19 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
 
-  @HasMany(() => CourtDocument, 'courtSessionId')
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'courtSessionId',
+    as: 'filedDocuments',
+  })
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   filedDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'mergedCourtSessionId',
+    as: 'mergedFiledDocuments',
+  })
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  mergedFiledDocuments?: CourtDocument[]
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

@@ -282,6 +282,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               title={prefixGeneratedDocumentNameWithDocumentOrder(
                 'indictment',
                 formatMessage(caseFiles.indictmentTitle),
+                workingCase.id,
               )}
               pdfType="indictment"
               renderAs="row"
@@ -333,6 +334,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     title={prefixGeneratedDocumentNameWithDocumentOrder(
                       `caseFilesRecord/${policeCaseNumber}`,
                       caseFilesRecordFileName,
+                      workingCase.id,
                     )}
                     pdfType="caseFilesRecord"
                     elementId={[policeCaseNumber, caseFilesRecordFileName]}
@@ -371,6 +373,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                         title={prefixGeneratedDocumentNameWithDocumentOrder(
                           `subpoena/${defendant.id}/${subpoena.id}`,
                           subpoenaFileName,
+                          workingCase.id,
                         )}
                         pdfType="subpoena"
                         elementId={[
@@ -387,6 +390,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                             title={prefixGeneratedDocumentNameWithDocumentOrder(
                               `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
                               serviceCertificateFileName,
+                              workingCase.id,
                             )}
                             pdfType="subpoenaServiceCertificate"
                             elementId={[
