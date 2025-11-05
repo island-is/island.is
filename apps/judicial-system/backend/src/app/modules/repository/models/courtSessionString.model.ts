@@ -61,6 +61,6 @@ export class CourtSessionString extends Model {
   mergedCaseId?: string
 
   @Column({ type: DataType.TEXT, allowNull: false })
-  @ApiPropertyOptional({ type: String })
+  @ApiProperty({ type: String })
   value!: string
 }
