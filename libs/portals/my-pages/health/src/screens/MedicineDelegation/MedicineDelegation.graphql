@@ -37,7 +37,7 @@ mutation PostMedicineDelegation(
 }
 
 mutation DeleteMedicineDelegation(
-  $input: HealthDirectorateMedicineDelegationDeleteInput!
+  $input: HealthDirectorateMedicineDelegationCreateInput!
 ) {
   healthDirectorateMedicineDelegationDelete(input: $input) {
     __typename

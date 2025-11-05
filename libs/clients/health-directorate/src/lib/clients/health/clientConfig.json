@@ -646,77 +646,16 @@
         },
         "tags": ["Prescriptions"]
       },
-      "post": {
-        "description": "Create a prescription commission",
-        "operationId": "MePrescriptionCommissionController_createPrescriptionCommission_v1",
+      "put": {
+        "description": "Create or update a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createOrUpdatePrescriptionCommission_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePrescriptionCommissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Prescriptions"]
-      },
-      "delete": {
-        "description": "Deactivate a prescription commission",
-        "operationId": "MePrescriptionCommissionController_deactivatePrescriptionCommission_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeactivatePrescriptionCommissionDto"
+                "$ref": "#/components/schemas/CreateOrUpdatePrescriptionCommissionDto"
               }
             }
           }
@@ -2576,7 +2515,7 @@
               }
             ]
           },
-          "renewalRequestMessage": {
+          "renewalResponseMessage": {
             "type": "string"
           },
           "amountRemaining": {
@@ -2807,7 +2746,7 @@
           "userType"
         ]
       },
-      "CreatePrescriptionCommissionDto": {
+      "CreateOrUpdatePrescriptionCommissionDto": {
         "type": "object",
         "properties": {
           "toNationalId": {
@@ -2829,19 +2768,13 @@
           "validTo": {
             "type": "string",
             "description": "The end date and time the commission is valid until."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the commission is active."
           }
         },
         "required": ["toNationalId", "commissionType"]
-      },
-      "DeactivatePrescriptionCommissionDto": {
-        "type": "object",
-        "properties": {
-          "toNationalId": {
-            "type": "string",
-            "description": "The national ID of the person receiving the commission"
-          }
-        },
-        "required": ["toNationalId"]
       },
       "OrganDto": {
         "type": "object",

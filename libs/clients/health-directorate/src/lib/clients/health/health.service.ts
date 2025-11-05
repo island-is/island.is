@@ -23,8 +23,7 @@ import {
   mePatientConcentEuControllerGetCountriesV1,
   mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetEuPatientConsentV1,
-  mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
-  mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
@@ -37,8 +36,7 @@ import {
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
-  CreatePrescriptionCommissionDto,
-  DeactivatePrescriptionCommissionDto,
+  CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
@@ -291,31 +289,20 @@ export class HealthDirectorateHealthService {
       return null
     }
 
-    console.log(medicineDelegations)
     return medicineDelegations
   }
 
-  public async postMedicineDelegation(
+  public async putMedicineDelegation(
     auth: Auth,
-    input: CreatePrescriptionCommissionDto,
+    input: CreateOrUpdatePrescriptionCommissionDto,
   ) {
     return await withAuthContext(auth, () =>
       data(
-        mePrescriptionCommissionControllerCreatePrescriptionCommissionV1({
-          body: input,
-        }),
-      ),
-    )
-  }
-
-  public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
-    return await withAuthContext(auth, () =>
-      data(
-        mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1({
-          body: {
-            toNationalId,
+        mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1(
+          {
+            body: input,
           },
-        }),
+        ),
       ),
     )
   }

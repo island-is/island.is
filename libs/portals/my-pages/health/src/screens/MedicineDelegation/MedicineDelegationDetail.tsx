@@ -43,9 +43,11 @@ const MedicineDelegationDetail = () => {
     },
   })
 
-  const [deleteMedicineDelegation] = useDeleteMedicineDelegationMutation({
-    refetchQueries: ['GetMedicineDelegations'],
-  })
+  const [deleteMedicineDelegation, { loading: deleteLoading }] =
+    useDeleteMedicineDelegationMutation({
+      refetchQueries: ['GetMedicineDelegations'],
+    })
+
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
   )
@@ -55,6 +57,9 @@ const MedicineDelegationDetail = () => {
       variables: {
         input: {
           nationalId: filteredData?.nationalId || '',
+          lookup: filteredData?.lookup,
+          from: filteredData?.dates?.from,
+          to: filteredData?.dates?.to,
         },
       },
     })
@@ -146,6 +151,7 @@ const MedicineDelegationDetail = () => {
           onSubmit={onSubmit}
           id={filteredData?.nationalId}
           activeDelegation={filteredData}
+          loading={deleteLoading}
         />
       )}
     </IntroWrapper>

@@ -41,8 +41,6 @@ const toNodeFetchRequest = async (
     body = Readable.fromWeb(globalReqBody as any)
   }
 
-  console.log('Converted body:', JSON.stringify(body))
-
   return new NodeFetchRequest(globalReq.url, {
     method: globalReq.method,
     headers,

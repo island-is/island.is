@@ -1,3 +1,4 @@
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -22,7 +23,6 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
-import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
@@ -127,6 +127,12 @@ const MedicineDelegation = () => {
                       ? formatMessage(messages.pickupMedicineAndLookup)
                       : formatMessage(messages.pickupMedicine),
                   })}
+                  backgroundColor={
+                    item.status ===
+                    HealthDirectoratePermitStatus.awaitingApproval
+                      ? 'blue'
+                      : 'white'
+                  }
                   subText={
                     item.dates?.to
                       ? formatMessage(messages.medicineValidTo) +
@@ -134,14 +140,40 @@ const MedicineDelegation = () => {
                         formatDate(item.dates.to)
                       : undefined
                   }
-                  tag={{
-                    outlined: false,
-                    label: item.isActive
-                      ? formatMessage(messages.valid)
-                      : formatMessage(messages.expired),
-                    variant: item.isActive ? 'blue' : 'red',
-                  }}
+                  tag={
+                    item.status === HealthDirectoratePermitStatus.active
+                      ? {
+                          label: formatMessage(messages.active),
+                          variant: 'blue',
+                          outlined: true,
+                        }
+                      : item.status === HealthDirectoratePermitStatus.expired
+                      ? {
+                          label: formatMessage(messages.expired),
+                          variant: 'red',
+                          outlined: true,
+                        }
+                      : item.status === HealthDirectoratePermitStatus.inactive
+                      ? {
+                          label: formatMessage(messages.withdrawn),
+                          variant: 'purple',
+                          outlined: true,
+                        }
+                      : item.status ===
+                        HealthDirectoratePermitStatus.awaitingApproval
+                      ? {
+                          label: formatMessage(messages.awaitingApproval),
+                          variant: 'darkerBlue',
+                          outlined: true,
+                        }
+                      : {
+                          label: formatMessage(messages.unknown),
+                          variant: 'purple',
+                          outlined: true,
+                        }
+                  }
                   cta={{
+                    size: 'small',
                     variant: 'text',
                     label: formatMessage(m.seeDetails),
                     onClick: () =>

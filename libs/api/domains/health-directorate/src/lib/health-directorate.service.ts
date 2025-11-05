@@ -15,7 +15,6 @@ import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import {
   MedicineDelegationCreateInput,
-  MedicineDelegationDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
@@ -457,11 +456,12 @@ export class HealthDirectorateService {
     input: MedicineDelegationCreateInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .postMedicineDelegation(auth, {
+      .putMedicineDelegation(auth, {
         commissionType: input.lookup ? 1 : 0,
         toNationalId: input.nationalId,
         validFrom: input.from?.toISOString(),
         validTo: input.to?.toISOString(),
+        isActive: true,
       })
       .then(() => {
         return { success: true }
@@ -476,10 +476,14 @@ export class HealthDirectorateService {
 
   async deleteMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationDeleteInput,
+    input: MedicineDelegationCreateInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .deleteMedicineDelegation(auth, input.nationalId)
+      .putMedicineDelegation(auth, {
+        isActive: false,
+        toNationalId: input.nationalId,
+        commissionType: input.lookup ? 1 : 0,
+      })
       .then(() => {
         return { success: true }
       })

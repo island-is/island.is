@@ -26,7 +26,6 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import {
   MedicineDelegationCreateInput,
-  MedicineDelegationDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
@@ -291,7 +290,7 @@ export class HealthDirectorateResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   deleteMedicineDelegation(
-    @Args('input') input: MedicineDelegationDeleteInput,
+    @Args('input') input: MedicineDelegationCreateInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateResponse> {
     return this.api.deleteMedicineDelegation(user, input)
