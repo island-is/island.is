@@ -15,7 +15,7 @@ import { UniversityContentfulReferenceIds } from '../universityCareers.types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.education)
 @Resolver(() => Institution)
 @Audit({ namespace: '@island.is/api/university-careers' })
 export class InstitutionResolver {
