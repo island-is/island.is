@@ -1,4 +1,4 @@
-import { FC, useEffect, useCallback, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -14,9 +14,10 @@ import {
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { getEstateDataFromApplication } from '../../lib/utils'
 import { AssetFormField, AssetsRepeaterProps, ErrorValue } from '../../types'
 import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>
@@ -30,23 +31,14 @@ export const AssetsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const [total, setTotal] = useState(0)
   const estateData = getEstateDataFromApplication(application)
 
-  const calculateTotal = useCallback(() => {
-    const values = getValues(id)
-    if (!values) {
-      return
-    }
-
-    const total = values.reduce((acc: number, current: AssetFormField) => {
-      if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.marketValue ?? '0')
-      return Number(acc) + currentValue
-    }, 0)
-
-    setTotal(total)
-  }, [getValues, id])
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.[assetName]) {
@@ -54,10 +46,6 @@ export const AssetsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    calculateTotal()
-  }, [fields, calculateTotal])
 
   const handleAddAsset = () =>
     append({

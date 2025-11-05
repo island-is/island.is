@@ -1,4 +1,4 @@
-import { FC, useEffect, useCallback, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -12,9 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
 import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface ClaimFormField {
   id: string
@@ -44,8 +45,14 @@ export const ClaimsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const [total, setTotal] = useState(0)
   const estateData = getEstateDataFromApplication(application)
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: ClaimFormField) => field.value,
+  )
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.claims) {
@@ -53,26 +60,6 @@ export const ClaimsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // Calculate overall total from all claim values
-  const calculateTotal = useCallback(() => {
-    const values = getValues(id)
-    if (!values) {
-      return
-    }
-
-    const total = values.reduce((acc: number, current: ClaimFormField) => {
-      if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.value ?? '0')
-      return Number(acc) + currentValue
-    }, 0)
-
-    setTotal(total)
-  }, [getValues, id])
-
-  useEffect(() => {
-    calculateTotal()
-  }, [fields, calculateTotal])
 
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {

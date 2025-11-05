@@ -1,4 +1,4 @@
-import { FC, useEffect, useCallback, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -18,8 +18,9 @@ import {
 import { m } from '../../lib/messages'
 import { ErrorValue, BankAccount } from '../../types'
 import { YES } from '../../lib/constants'
-import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { getEstateDataFromApplication } from '../../lib/utils'
 import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface BankAccountFormField {
   id: string
@@ -51,11 +52,17 @@ export const BankAccountsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
-  const [total, setTotal] = useState(0)
   const estateData = getEstateDataFromApplication(application)
   const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
     number[]
   >([])
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: BankAccountFormField) => field.accountTotal,
+  )
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
@@ -72,26 +79,6 @@ export const BankAccountsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // Calculate overall total from all bank account totals
-  const calculateTotal = useCallback(() => {
-    const values = getValues(id)
-    if (!values) {
-      return
-    }
-
-    const total = values.reduce(
-      (acc: number, current: BankAccountFormField) => {
-        if (!current.enabled) return acc
-        // accountTotal is stored with dot decimal (via toString()), so parse with dot
-        const currentValue = valueToNumber(current.accountTotal ?? '0')
-        return Number(acc) + currentValue
-      },
-      0,
-    )
-
-    setTotal(total)
-  }, [getValues, id])
 
   // Calculate bank account total from balance + accruedInterest
   const updateBankAccountValue = (

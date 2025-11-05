@@ -13,9 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
+import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
 import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface OtherAssetFormField {
   id: string
@@ -47,7 +48,13 @@ export const OtherAssetsRepeater: FC<
   const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
-  const [total, setTotal] = useState(0)
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: OtherAssetFormField) => field.value,
+  )
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.otherAssets) {
@@ -55,26 +62,6 @@ export const OtherAssetsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // Calculate overall total from all other asset values
-  const calculateTotal = useCallback(() => {
-    const values = getValues(id)
-    if (!values) {
-      return
-    }
-
-    const total = values.reduce((acc: number, current: OtherAssetFormField) => {
-      if (!current.enabled) return acc
-      const currentValue = valueToNumber(current.value ?? '0')
-      return Number(acc) + currentValue
-    }, 0)
-
-    setTotal(total)
-  }, [getValues, id])
-
-  useEffect(() => {
-    calculateTotal()
-  }, [fields, calculateTotal])
 
   // Clear errors when other asset value changes
   const updateOtherAssetValue = (fieldIndex: string) => {
