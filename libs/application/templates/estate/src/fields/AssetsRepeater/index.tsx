@@ -10,15 +10,13 @@ import {
   Button,
   ProfileCard,
   Text,
-  Input,
 } from '@island.is/island-ui/core'
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
 import { AssetFormField, AssetsRepeaterProps, ErrorValue } from '../../types'
-import { formatCurrency } from '@island.is/application/ui-components'
-import DoubleColumnRow from '../DoubleColumnRow'
+import { RepeaterTotal } from '../RepeaterTotal'
 
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>
@@ -229,24 +227,7 @@ export const AssetsRepeater: FC<
           {formatMessage(texts.addAsset)}
         </Button>
       </Box>
-      {!!fields.length && (
-        <Box marginTop={5}>
-          <GridRow>
-            <DoubleColumnRow
-              right={
-                <Input
-                  id={`${id}.total`}
-                  name={`${id}.total`}
-                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
-                  label={formatMessage(m.total)}
-                  backgroundColor="white"
-                  readOnly
-                />
-              }
-            />
-          </GridRow>
-        </Box>
-      )}
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

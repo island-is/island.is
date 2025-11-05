@@ -13,15 +13,13 @@ import {
   GridRow,
   Button,
   Text,
-  Input,
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
 import { ErrorValue, BankAccount } from '../../types'
 import { YES } from '../../lib/constants'
 import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
-import { formatCurrency } from '@island.is/application/ui-components'
-import DoubleColumnRow from '../DoubleColumnRow'
+import { RepeaterTotal } from '../RepeaterTotal'
 
 interface BankAccountFormField {
   id: string
@@ -340,24 +338,7 @@ export const BankAccountsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
-      {!!fields.length && (
-        <Box marginTop={5}>
-          <GridRow>
-            <DoubleColumnRow
-              right={
-                <Input
-                  id={`${id}.total`}
-                  name={`${id}.total`}
-                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
-                  label={formatMessage(m.total)}
-                  backgroundColor="white"
-                  readOnly
-                />
-              }
-            />
-          </GridRow>
-        </Box>
-      )}
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

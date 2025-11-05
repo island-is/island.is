@@ -8,7 +8,6 @@ import {
   GridRow,
   Button,
   ProfileCard,
-  Input,
 } from '@island.is/island-ui/core'
 import { AssetFormField, ErrorValue } from '../../types'
 
@@ -16,8 +15,7 @@ import { m } from '../../lib/messages'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
-import { formatCurrency } from '@island.is/application/ui-components'
-import DoubleColumnRow from '../DoubleColumnRow'
+import { RepeaterTotal } from '../RepeaterTotal'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -165,24 +163,7 @@ export const RealEstateRepeater: FC<
           {formatMessage(m.addProperty)}
         </Button>
       </Box>
-      {!!fields.length && (
-        <Box marginTop={5}>
-          <GridRow>
-            <DoubleColumnRow
-              right={
-                <Input
-                  id={`${id}.total`}
-                  name={`${id}.total`}
-                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
-                  label={formatMessage(m.total)}
-                  backgroundColor="white"
-                  readOnly
-                />
-              }
-            />
-          </GridRow>
-        </Box>
-      )}
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }
