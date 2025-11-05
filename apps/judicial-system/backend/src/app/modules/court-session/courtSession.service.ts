@@ -224,20 +224,20 @@ export class CourtSessionService {
         )
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
-          `Could not update court session string ${courtSessionId} for court session ${courtSessionId} of case ${caseId}`,
+          `Could not update court session string for court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court document string ${courtSessionId} for court session ${courtSessionId} of case ${caseId} with data:`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session string for court session ${courtSessionId} of case ${caseId} with data:`,
           { data: Object.keys({ value: update.value }) },
         )
       }
 
       this.logger.debug(
-        `Updated court session string ${courtSessionId} for court session ${courtSessionId} of case ${caseId}`,
+        `Updated court session string for court session ${courtSessionId} of case ${caseId}`,
       )
       return courtSessionString[0]
     } else {

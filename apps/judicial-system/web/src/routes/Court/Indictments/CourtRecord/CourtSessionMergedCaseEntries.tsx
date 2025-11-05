@@ -39,7 +39,7 @@ export const CourtSessionMergedCaseEntries = ({
         name="merged-case-entries"
         label={`Bókanir um sameiningu máls ${courtCaseNumber}`}
         value={courtSessionString?.value ?? ''}
-        placeholder=""
+        placeholder="Hér er hægt að bóka um sameiningu máls"
         onChange={(event) => {
           setMergedEntriesErrorMessage('')
 

@@ -103,8 +103,8 @@ export class CourtSessionController {
   )
   @Patch(':courtSessionId/courtSessionString')
   @ApiOkResponse({
-    type: CourtSession,
-    description: 'Updates a court session',
+    type: CourtSessionString,
+    description: 'Creates or updates a court session string',
   })
   createOrUpdateCourtSessionString(
     @Param('caseId') caseId: string,

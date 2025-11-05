@@ -16,7 +16,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import DelegationModal from './components/DelegationModal'
-import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
+import {
+  useDeleteMedicineDelegationMutation,
+  useGetMedicineDelegationsQuery,
+} from './MedicineDelegation.generated'
 
 const MedicineDelegationDetail = () => {
   const { formatMessage, lang } = useLocale()
@@ -29,18 +32,49 @@ const MedicineDelegationDetail = () => {
       locale: lang,
       input: {
         active: false,
+        status: [
+          'active',
+          'expired',
+          'inactive',
+          'unknown',
+          'awaitingApproval',
+        ],
       },
     },
   })
+
+  const [deleteMedicineDelegation, { loading: deleteLoading }] =
+    useDeleteMedicineDelegationMutation({
+      refetchQueries: ['GetMedicineDelegations'],
+    })
 
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
   )
 
   const onSubmit = () => {
-    toast.success(formatMessage(messages.permitDeleted))
-    setModalVisible(false)
-    navigate(HealthPaths.HealthMedicineDelegation, { replace: true })
+    deleteMedicineDelegation({
+      variables: {
+        input: {
+          nationalId: filteredData?.nationalId || '',
+          lookup: filteredData?.lookup,
+          from: filteredData?.dates?.from,
+          to: filteredData?.dates?.to,
+        },
+      },
+    })
+      .then((response) => {
+        if (response.data?.healthDirectorateMedicineDelegationDelete.success) {
+          toast.success(formatMessage(messages.permitDeleted))
+          setModalVisible(false)
+          navigate(HealthPaths.HealthMedicineDelegation, { replace: true })
+        } else {
+          toast.error(formatMessage(messages.permitDeletedError))
+        }
+      })
+      .catch(() => {
+        toast.error(formatMessage(messages.permitDeletedError))
+      })
   }
 
   return (
@@ -114,6 +148,7 @@ const MedicineDelegationDetail = () => {
           onSubmit={onSubmit}
           id={filteredData?.nationalId}
           activeDelegation={filteredData}
+          loading={deleteLoading}
         />
       )}
     </IntroWrapper>
