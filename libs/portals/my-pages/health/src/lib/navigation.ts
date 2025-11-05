@@ -86,6 +86,26 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: m.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
+          searchTags: [s.medicineDelegationOther],
+          children: [
+            {
+              name: m.medicineDelegation,
+              path: HealthPaths.HealthMedicineDelegationDetail,
+              navHide: true,
+              breadcrumbHide: true,
+              searchHide: true,
+            },
+            {
+              name: messages.addDelegation,
+              path: HealthPaths.HealthMedicineDelegationAdd,
+              navHide: true,
+              breadcrumbHide: true,
+              searchTags: [
+                s.medicineDelegationOther,
+                s.medicineDelegationOtherNew,
+              ],
+            },
+          ],
         },
         {
           name: m.medicinePaymentParticipation,
@@ -179,6 +199,30 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.singleWaitlist,
           path: HealthPaths.HealthWaitlistsDetail,
           navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.patientData,
+      path: HealthPaths.HealthPatientData,
+      searchTags: [s.healthPatientData],
+      children: [
+        {
+          name: messages.patientDataPermit,
+          path: HealthPaths.HealthPatientDataPermits,
+          children: [
+            {
+              name: messages.addPermit,
+              path: HealthPaths.HealthPatientDataPermitsAdd,
+              navHide: true,
+            },
+            {
+              name: messages.permit,
+              path: HealthPaths.HealthPatientDataPermitsDetail,
+              navHide: true,
+              searchHide: true,
+            },
+          ],
         },
       ],
     },

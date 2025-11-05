@@ -18,6 +18,7 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CourtSessionRulingType,
   DefendantEventType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
@@ -272,6 +273,12 @@ export class VerdictService {
       defendant.nationalId &&
       normalizeAndFormatNationalId(defendant.nationalId)[0]
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
+    const ruling = theCase.courtSessions?.find(
+      (courtSession) =>
+        // there should only be one judgement over all court sessions
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
+        courtSession.ruling,
+    )?.ruling
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
@@ -292,11 +299,11 @@ export class VerdictService {
             },
           ]
         : []),
-      ...(theCase.ruling
+      ...(ruling
         ? [
             {
               code: 'RULING',
-              value: theCase.ruling,
+              value: ruling,
             },
           ]
         : []),
@@ -371,6 +378,10 @@ export class VerdictService {
 
     const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
+    const orderByDate = new Date(verdictFile.created)
+    // add two months because we don't want the order by date to be in the past when delivered to the police
+    orderByDate.setMonth(orderByDate.getMonth() + 2)
+
     // deliver the verdict by creating the document at the police
     const createdDocument = await this.policeService.createDocument({
       caseId: theCase.id,
@@ -384,7 +395,7 @@ export class VerdictService {
         },
       ],
       documentDates: [
-        { code: 'ORDER_BY_DATE', value: verdictFile.created },
+        { code: 'ORDER_BY_DATE', value: orderByDate },
         ...(theCase.rulingDate
           ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
           : []),

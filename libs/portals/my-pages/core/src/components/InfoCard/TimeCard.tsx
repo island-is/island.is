@@ -40,11 +40,11 @@ interface AppointmentCardProps {
 //   },
 // },
 
-const TimeCard: React.FC<AppointmentCardProps> = ({
+export const TimeCard = ({
   title,
   description,
   data,
-}) => {
+}: AppointmentCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   if (!data) {

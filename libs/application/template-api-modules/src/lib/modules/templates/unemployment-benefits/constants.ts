@@ -9,8 +9,3 @@ export enum FileTypeIds {
   PAYMENT_PLAN = '80518E0E-14DA-4AF3-F380-08DDFF9C3833', //Staðfesting á greiðsluáætlun frá TR
   CV = 'B1595806-8F7F-450C-B999-08D681E727D5', //Ferilskrá
 }
-
-export enum LanguageIds {
-  ICELANDIC = 'a18e3090-6afb-4afb-a055-1f83bbe498e3',
-  ENGLISH = '6d3edede-8951-4621-a835-e04323300fa0',
-}

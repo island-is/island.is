@@ -22,6 +22,7 @@ import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import {
   appliedForNextSemester,
   didYouFinishLastSemester,
+  isCurrentlyStudying,
   showAppliedForNextSemester,
   showCurrentEducationFields,
   wasStudyingInTheLastYear,
@@ -36,6 +37,7 @@ export const educationSection = buildSection({
   title: educationMessages.general.sectionTitle,
   children: [
     buildMultiField({
+      id: 'educationSection',
       title: educationMessages.general.pageTitle,
       description: educationMessages.general.pageDescription,
       children: [
@@ -226,6 +228,7 @@ export const educationSection = buildSection({
           id: 'education.currentEducation.courseOfStudy',
           title: educationMessages.labels.courseOfStudyLabel,
           width: 'half',
+          required: true,
           options: (application) => {
             const education = getValueViaPath<
               GaldurDomainModelsEducationProgramDTO[]
@@ -274,6 +277,14 @@ export const educationSection = buildSection({
           },
           width: 'half',
           required: true,
+          minDate: (application: Application) => {
+            const onlyInFuture = isCurrentlyStudying(application.answers)
+            return onlyInFuture ? new Date() : undefined
+          },
+          maxDate: (application: Application) => {
+            const onlyInPast = !isCurrentlyStudying(application.answers)
+            return onlyInPast ? new Date() : undefined
+          },
           condition: showCurrentEducationFields,
         }),
         buildAlertMessageField({

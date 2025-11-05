@@ -1,12 +1,8 @@
+import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ApplicationType,
-  LanguageEnvironmentOptions,
-  ReasonForApplicationOptions,
-} from '../utils/constants'
-import { NO, YES } from '@island.is/application/core'
+import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -20,6 +16,13 @@ const phoneNumberSchema = z
     params: errorMessages.phoneNumber,
   })
 
+const nationalIdWithNameSchema = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((nationalId) => kennitala.isValid(nationalId), {
+    params: errorMessages.nationalId,
+  }),
+})
+
 export const dataSchema = z.object({
   applicationType: z.enum([
     ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -32,13 +35,6 @@ export const dataSchema = z.object({
       usePronounAndPreferredName: z.array(z.string()),
       preferredName: z.string().optional(),
       pronouns: z.array(z.string()).optional().nullable(),
-      differentPlaceOfResidence: z.enum([YES, NO]),
-      placeOfResidence: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
     })
     .refine(
       ({ usePronounAndPreferredName, preferredName, pronouns }) =>
@@ -53,20 +49,6 @@ export const dataSchema = z.object({
           ? (!!pronouns && pronouns.length > 0) || !!preferredName
           : true,
       { path: ['pronouns'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.streetAddress.length > 0
-          : true,
-      { path: ['placeOfResidence', 'streetAddress'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.postalCode.length > 0
-          : true,
-      { path: ['placeOfResidence', 'postalCode'] },
     ),
   guardians: z.array(
     z
@@ -88,11 +70,8 @@ export const dataSchema = z.object({
   relatives: z
     .array(
       z.object({
-        fullName: z.string().min(1),
+        nationalIdWithName: nationalIdWithNameSchema,
         phoneNumber: phoneNumberSchema,
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
         relation: z.string(),
       }),
     )
@@ -103,36 +82,9 @@ export const dataSchema = z.object({
     municipality: z.string(),
     nursery: z.string(),
   }),
-  reasonForApplication: z
-    .object({
-      reason: z.string(),
-      transferOfLegalDomicile: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
-    })
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.streetAddress.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'streetAddress'],
-      },
-    )
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.postalCode.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'postalCode'],
-      },
-    ),
+  reasonForApplication: z.object({
+    reason: z.string(),
+  }),
   currentSchool: z
     .object({
       municipality: z.string().optional().nullable(),
@@ -156,10 +108,7 @@ export const dataSchema = z.object({
   siblings: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
+        nationalIdWithName: nationalIdWithNameSchema,
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {

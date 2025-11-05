@@ -110,15 +110,17 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
-  const showGeneratedCourtRecord =
-    !hasRuling &&
-    hasGeneratedCourtRecordPdf(
-      workingCase.state,
-      workingCase.indictmentRulingDecision,
-      workingCase.courtSessions,
-      user,
-    )
-
+  // We show a court record pdf button if the case does not have a ruling
+  // and it should have court sessions (not an uploaded court record)
+  const showGeneratedCourtRecord = !hasRuling && workingCase.withCourtSessions
+  // We disable the court record pdf button if the court record pdf does not exist (should not happen)
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
+    workingCase.courtSessions,
+    user,
+  )
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {
       isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
@@ -240,6 +242,7 @@ const IndictmentOverview = () => {
               pdfType="courtRecord"
               renderAs="row"
               elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
             />
           )}
           <RenderFiles
@@ -251,19 +254,24 @@ const IndictmentOverview = () => {
             }
           />
           {features?.includes(Feature.VERDICT_DELIVERY) &&
-            workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict?.serviceDate && (
-                  <PdfButton
-                    key={defendant.id}
-                    caseId={workingCase.id}
-                    title={`Birtingarvottorð ${defendant.name}.pdf`}
-                    pdfType="verdictServiceCertificate"
-                    elementId={[defendant.id]}
-                    renderAs="row"
-                  />
-                ),
-            )}
+            workingCase.defendants?.map((defendant) => {
+              if (!defendant.verdict?.serviceDate) {
+                return null
+              }
+
+              const serviceCertificateFileName = `Birtingarvottorð ${defendant.name}.pdf`
+
+              return (
+                <PdfButton
+                  key={defendant.id}
+                  caseId={workingCase.id}
+                  title={serviceCertificateFileName}
+                  pdfType="verdictServiceCertificate"
+                  elementId={[defendant.id, serviceCertificateFileName]}
+                  renderAs="row"
+                />
+              )
+            })}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
@@ -282,7 +290,7 @@ const IndictmentOverview = () => {
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={pdfElementId}
+                elementId={[pdfElementId, pdfTitle]}
                 renderAs="row"
               />
             )}

@@ -7,12 +7,12 @@ import {
   review,
   conclusion,
 } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

@@ -85,7 +85,12 @@ export class UpdatePoliceDocumentDeliveryDto {
   deliveredToLawyer?: boolean
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  deliveryMethod?: string
+
+  @IsOptional()
   @IsArray()
   @ApiPropertyOptional({ type: () => Supplement, isArray: true })
-  deliverySupplements?: Supplement[]
+  supplements?: Supplement[]
 }

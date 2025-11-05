@@ -221,6 +221,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
     }
+    withCourtSessions
     courtSessions {
       id
       startDate
@@ -238,6 +239,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         caseFileId
         generatedPdfUri
       }
+      mergedFiledDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        mergedCourtSessionId
+        mergedDocumentOrder
+        name
+        caseFileId
+        generatedPdfUri
+      }
     }
     mergedCases {
       id
@@ -245,6 +260,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      withCourtSessions
       courtSessions {
         id
         startDate
@@ -259,6 +275,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          name
+          caseFileId
+          generatedPdfUri
+        }
+        mergedFiledDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          mergedCourtSessionId
+          mergedDocumentOrder
           name
           caseFileId
           generatedPdfUri

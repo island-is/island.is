@@ -10,8 +10,12 @@ import {
   RadioButton,
   Select,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_COURT_RECORD_ROUTE,
+  INDICTMENTS_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
@@ -126,36 +130,15 @@ const Conclusion: FC = () => {
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
   const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
-    useState<SelectableItem[]>(
-      workingCase.defendants
-        ? workingCase.defendants?.map((defendant) => ({
-            id: defendant.id,
-            name: defendant.name ?? 'Nafn ekki skráð',
-            checked: defendant.verdict?.isDefaultJudgement ?? false,
-          }))
-        : [],
-    )
+    useState<SelectableItem[]>([])
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )
-
-  const handleVerdicts = useCallback(async () => {
-    const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
-      (item) => ({
-        defendantId: item.id,
-        isDefaultJudgement: item.checked,
-      }),
-    )
-
-    return createVerdicts({
-      caseId: workingCase.id,
-      verdicts: defendantVerdictsToCreate,
-    })
-  }, [createVerdicts, defendantsWithDefaultJudgments, workingCase])
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -217,8 +200,19 @@ const Conclusion: FC = () => {
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
         update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ) {
-        const success = await handleVerdicts()
-        if (!success) {
+        const defendantVerdictsToCreate = defendantsWithDefaultJudgments?.map(
+          (item) => ({
+            defendantId: item.id,
+            isDefaultJudgement: item.checked,
+          }),
+        )
+
+        const createSuccess = await createVerdicts({
+          caseId: workingCase.id,
+          verdicts: defendantVerdictsToCreate,
+        })
+
+        if (!createSuccess) {
           return
         }
       }
@@ -232,7 +226,8 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
-      handleVerdicts,
+      createVerdicts,
+      defendantsWithDefaultJudgments,
       mergeCaseNumber,
       postponementReason,
       selectedAction,
@@ -318,15 +313,12 @@ const Conclusion: FC = () => {
     }
 
     const isCourtRecordValid = (): boolean =>
-      hasGeneratedCourtRecord
-        ? Boolean(
-            workingCase.courtSessions?.every((session) => session.endDate),
-          )
-        : uploadFiles.some(
-            (file) =>
-              file.category === CaseFileCategory.COURT_RECORD &&
-              file.status === FileUploadStatus.done,
-          )
+      hasGeneratedCourtRecord ||
+      uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.COURT_RECORD &&
+          file.status === FileUploadStatus.done,
+      )
 
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
@@ -630,7 +622,7 @@ const Conclusion: FC = () => {
             )}
           </>
         )}
-        {selectedAction && !hasGeneratedCourtRecord && (
+        {selectedAction && !workingCase.withCourtSessions && (
           <Box
             component="section"
             marginBottom={selectedDecision === 'RULING' ? 5 : 10}
@@ -707,7 +699,7 @@ const Conclusion: FC = () => {
           workingCase.defendants?.length > 0 && (
             <Box
               component="section"
-              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+              marginBottom={workingCase.withCourtSessions ? 5 : 10}
             >
               <SelectableList
                 selectAllText="Útivistardómur"
@@ -719,13 +711,14 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-        {selectedAction && hasGeneratedCourtRecord && (
+        {selectedAction && workingCase.withCourtSessions && (
           <Box component="section" marginBottom={10}>
             <PdfButton
               caseId={workingCase.id}
               title="Þingbók - PDF"
               pdfType="courtRecord"
               elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
             />
           </Box>
         )}
@@ -733,14 +726,14 @@ const Conclusion: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
-                ? constants.INDICTMENTS_SUMMARY_ROUTE
+                ? INDICTMENTS_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
                 ? getStandardUserDashboardRoute(user)
-                : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+                : INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }
           nextButtonText={
