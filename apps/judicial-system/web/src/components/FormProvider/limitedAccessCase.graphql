@@ -240,6 +240,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         generatedPdfUri
         submittedBy
       }
+      mergedFiledDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        mergedCourtSessionId
+        mergedDocumentOrder
+        name
+        caseFileId
+        generatedPdfUri
+      }
     }
     mergedCases {
       id
@@ -266,6 +280,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           caseFileId
           generatedPdfUri
           submittedBy
+        }
+        mergedFiledDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          mergedCourtSessionId
+          mergedDocumentOrder
+          name
+          caseFileId
+          generatedPdfUri
         }
       }
       caseFiles {

@@ -16,6 +16,12 @@ export class UpdateCourtDocumentDto {
   readonly documentOrder?: number
 
   @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @ApiPropertyOptional({ type: Number })
+  readonly mergedDocumentOrder?: number
+
+  @IsOptional()
   @IsString()
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
