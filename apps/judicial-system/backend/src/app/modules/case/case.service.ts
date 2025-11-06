@@ -41,6 +41,7 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
+  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -79,6 +80,7 @@ import {
   CivilClaimant,
   CourtDocument,
   CourtSession,
+  CourtSessionString,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -266,6 +268,20 @@ export const include: Includeable[] = [
         order: [['documentOrder', 'ASC']],
         separate: true,
       },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -369,6 +385,20 @@ export const include: Includeable[] = [
             as: 'filedDocuments',
             required: false,
             order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
             separate: true,
           },
         ],
@@ -2298,6 +2328,66 @@ export class CaseService {
                 this.fileService.deleteCaseFile(theCase, caseFile, transaction),
               ),
           )
+        }
+
+        if (
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.MERGE &&
+          theCase.mergeCaseId
+        ) {
+          const parentCaseId = theCase.mergeCaseId
+          const parentCase = await this.findById(
+            parentCaseId,
+            false,
+            transaction,
+          )
+
+          const parentCaseCourtSessions = parentCase.courtSessions
+          const latestCourtSession =
+            parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+              ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+              : undefined
+
+          // ensure there exists at least one court session in the parent case
+          if (parentCase.withCourtSessions && latestCourtSession) {
+            const isCourtSessionActive =
+              latestCourtSession && !latestCourtSession.isConfirmed
+            const courtSessionId = isCourtSessionActive
+              ? latestCourtSession.id
+              : (await this.courtSessionService.create(parentCase, transaction))
+                  .id
+
+            await this.courtDocumentService.updateMergedCourtDocuments({
+              parentCaseId,
+              parentCaseCourtSessionId: courtSessionId,
+              caseId: theCase.id,
+              transaction,
+            })
+            const caseSentToCourt = EventLog.getEventLogDateByEventType(
+              [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+              theCase.eventLogs,
+            )
+            await this.courtSessionService.createOrUpdateCourtSessionString({
+              caseId: parentCaseId,
+              courtSessionId,
+              mergedCaseId: theCase.id,
+              update: {
+                stringType: CourtSessionStringType.ENTRIES,
+                value: `Mál nr. ${
+                  theCase.courtCaseNumber
+                } sem var höfðað á hendur ákærða${
+                  caseSentToCourt
+                    ? ` með ákæru útgefinni ${formatDate(
+                        caseSentToCourt,
+                        'PPP',
+                      )}`
+                    : ''
+                }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+              },
+              transaction,
+            })
+          }
         }
 
         const updatedCase = await this.findById(theCase.id, true, transaction)

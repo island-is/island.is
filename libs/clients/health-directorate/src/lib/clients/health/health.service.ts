@@ -23,8 +23,7 @@ import {
   mePatientConcentEuControllerGetCountriesV1,
   mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetEuPatientConsentV1,
-  mePrescriptionCommissionControllerCreatePrescriptionCommissionV1,
-  mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1,
+  mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
@@ -37,8 +36,7 @@ import {
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
-  CreatePrescriptionCommissionDto,
-  DeactivatePrescriptionCommissionDto,
+  CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
@@ -274,11 +272,13 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: Locale,
     active: boolean,
+    status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
       data(
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
+            status: status,
             active: active,
           },
         }),
@@ -292,32 +292,19 @@ export class HealthDirectorateHealthService {
     return medicineDelegations
   }
 
-  public async postMedicineDelegation(
+  public async putMedicineDelegation(
     auth: Auth,
-    input: CreatePrescriptionCommissionDto,
+    input: CreateOrUpdatePrescriptionCommissionDto,
   ) {
     return await withAuthContext(auth, () =>
       data(
-        mePrescriptionCommissionControllerCreatePrescriptionCommissionV1({
-          body: input,
-        }),
+        mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1(
+          {
+            body: input,
+          },
+        ),
       ),
     )
-  }
-
-  public async deleteMedicineDelegation(auth: Auth, toNationalId: string) {
-    const input: DeactivatePrescriptionCommissionDto = {
-      toNationalId:
-        toNationalId.length === 9 ? `0${toNationalId}` : toNationalId,
-    }
-    const result = await withAuthContext(auth, () =>
-      data(
-        mePrescriptionCommissionControllerDeactivatePrescriptionCommissionV1({
-          body: input,
-        }),
-      ),
-    )
-    return result
   }
 
   public async getPermits(
