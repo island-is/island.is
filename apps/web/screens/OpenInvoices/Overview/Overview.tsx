@@ -379,7 +379,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           </Box>
         </SidebarLayout>
       </Box>
-
     </CustomPageLayoutWrapper>
   )
 }
