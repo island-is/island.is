@@ -46,6 +46,8 @@ import {
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
+  CourtSessionString,
+  CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -60,6 +62,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -115,7 +118,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     caseId: workingCase.id,
   })
   const { courtDocument } = useCourtDocuments()
-  const { updateCourtSession, deleteCourtSession } = useCourtSessions()
+  const { updateCourtSession, updateCourtSessionString, deleteCourtSession } =
+    useCourtSessions()
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
@@ -148,14 +152,75 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       }))
 
       if (persist) {
+        const { courtSessionStrings, ...courtSessionUpdate } = updates
         updateCourtSession({
-          ...updates,
+          ...courtSessionUpdate,
           courtSessionId,
           caseId: workingCase.id,
         })
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
+  )
+
+  const patchCourtSessionStrings = useCallback(
+    (
+      courtSessionId: string,
+      mergedCaseId: string,
+      updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
+      { persist = false } = {},
+    ) => {
+      const targetCourtSessionString = courtSession.courtSessionStrings?.find(
+        (courtSessionString) =>
+          courtSessionString.courtSessionId === courtSessionId &&
+          courtSessionString.mergedCaseId === mergedCaseId &&
+          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+      )
+
+      const updatedCourtSessionsStrings = targetCourtSessionString
+        ? courtSession.courtSessionStrings?.map((courtSessionString) =>
+            courtSessionString.id === targetCourtSessionString?.id
+              ? {
+                  ...courtSessionString,
+                  value: updatedCourtSessionString.value,
+                }
+              : courtSessionString,
+          )
+        : [
+            ...(courtSession.courtSessionStrings ?? []),
+            {
+              caseId: workingCase.id,
+              courtSessionId,
+              mergedCaseId,
+              stringType: CourtSessionStringType.ENTRIES,
+              value: updatedCourtSessionString.value,
+            } as CourtSessionString,
+          ]
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
+          session.id === courtSessionId
+            ? { ...session, courtSessionStrings: updatedCourtSessionsStrings }
+            : session,
+        ),
+      }))
+
+      if (persist) {
+        updateCourtSessionString({
+          caseId: workingCase.id,
+          courtSessionId,
+          mergedCaseId,
+          stringType: CourtSessionStringType.ENTRIES,
+          value: updatedCourtSessionString.value,
+        })
+      }
+    },
+    [
+      courtSession.courtSessionStrings,
+      setWorkingCase,
+      updateCourtSessionString,
+      workingCase.id,
+    ],
   )
 
   const getInitialAttendees = useCallback(() => {
@@ -571,6 +636,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         (document) => document.caseId === caseId,
       )
       const courtCaseNumberPerMergedDocuments = {
+        caseId,
         courtCaseNumber: workingCase.mergedCases?.find((c) => c.id === caseId)
           ?.courtCaseNumber,
         mergedFileDocuments: mergedFileDocumentsPerCase,
@@ -1040,9 +1106,22 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 mergeDocumentsPerCase.mergedFileDocuments
               const previousMergedCaseDocumentCount =
                 mergeDocumentsPerCase.previousMergedCaseDocumentCount
+              const courtSessionString = courtSession.courtSessionStrings?.find(
+                (string) =>
+                  string.stringType === CourtSessionStringType.ENTRIES &&
+                  string.mergedCaseId === mergeDocumentsPerCase.caseId,
+              )
 
               return (
                 <Box key={`merged-case-${courtCaseNumber}`}>
+                  <CourtSessionMergedCaseEntries
+                    courtSessionId={courtSession.id}
+                    courtCaseNumber={courtCaseNumber ?? ''}
+                    courtSessionString={courtSessionString}
+                    mergedCaseId={mergeDocumentsPerCase.caseId}
+                    disabled={courtSession.isConfirmed || false}
+                    patchCourtSessionStrings={patchCourtSessionStrings}
+                  />
                   <SectionHeading
                     title={`Dómskjöl úr sameinuðu máli ${courtCaseNumber}`}
                   />
