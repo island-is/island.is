@@ -47,7 +47,7 @@ export const getVideoEmbedProperties = (
     if (youtubeId) {
       return {
         id: youtubeId,
-        embedUrl: `https://www.youtube.com/embed/${youtubeId}?autoplay=1`,
+        embedUrl: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`,
         termsUrl: 'https://www.youtube.com/t/terms',
         type: 'YOUTUBE',
       }
