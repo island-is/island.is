@@ -640,8 +640,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         (document) => document.caseId === caseId,
       )
       return {
-        courtCaseNumber: workingCase.mergedCases?.find((c) => c.id === caseId)
-          ?.courtCaseNumber,
+        caseId,
+        courtCaseNumber:
+          workingCase.mergedCases?.find((c) => c.id === caseId)
+            ?.courtCaseNumber ?? '',
         mergedFileDocuments: mergedFileDocumentsPerCase,
       }
     })
@@ -1105,6 +1107,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               const courtCaseNumber = mergeDocumentsPerCase.courtCaseNumber
               const mergedFiledDocuments =
                 mergeDocumentsPerCase.mergedFileDocuments
+              const courtSessionString = courtSession.courtSessionStrings?.find(
+                (string) =>
+                  string.stringType === CourtSessionStringType.ENTRIES &&
+                  string.mergedCaseId === mergeDocumentsPerCase.caseId,
+              )
 
               return (
                 <Box key={`merged-case-${courtCaseNumber}`}>
