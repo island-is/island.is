@@ -25,6 +25,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
@@ -56,7 +57,7 @@ const Completed: FC = () => {
   const { deliverCaseVerdict } = useVerdict()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
@@ -146,6 +147,10 @@ const Completed: FC = () => {
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
+  const hasCourtSessions =
+    workingCase.withCourtSessions &&
+    workingCase.courtSessions &&
+    workingCase.courtSessions.length > 0
 
   return (
     <PageLayout
@@ -224,6 +229,21 @@ const Completed: FC = () => {
             />
           </Box>
         )}
+        {features?.includes(Feature.VERDICT_DELIVERY) &&
+          !hasCourtSessions &&
+          isRuling && (
+            <Box>
+              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
+              <RulingInput
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                rows={8}
+                label="Dómsorð"
+                placeholder="Hvert er dómsorðið?"
+                required
+              />
+            </Box>
+          )}
         {isRuling && (
           <Box marginBottom={5} component="section">
             <SectionHeading
