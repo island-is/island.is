@@ -103,8 +103,8 @@ const Questionnaires = lazy(() =>
   import('./screens/Questionnaires/Questionnaires'),
 )
 
-const QuestionnairesInfo = lazy(() =>
-  import('./screens/Questionnaires/QuestionnaireInfo'),
+const QuestionnairesDetail = lazy(() =>
+  import('./screens/Questionnaires/QuestionnaireDetail'),
 )
 
 const QuestionnairesAnswer = lazy(() =>
@@ -412,7 +412,7 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthQuestionnairesDetail,
       key: undefined, //TODO
       enabled: true, // TODO
-      element: <QuestionnairesInfo />,
+      element: <QuestionnairesDetail />,
     },
     {
       name: hm.questionnaire,

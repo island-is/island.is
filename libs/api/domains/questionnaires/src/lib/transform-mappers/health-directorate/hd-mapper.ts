@@ -28,7 +28,10 @@ import {
   Questionnaire,
   QuestionnaireSection,
 } from '../../../models/questionnaire.model'
-import { QuestionnairesStatusEnum } from '../../../models/questionnaires.model'
+import {
+  QuestionnairesOrganizationEnum,
+  QuestionnairesStatusEnum,
+} from '../../../models/questionnaires.model'
 
 type HealthDirectorateQuestionDto =
   | BooleanQuestionDto
@@ -293,7 +296,7 @@ export function mapExternalQuestionnaireToGraphQL(
         : QuestionnairesStatusEnum.notAnswered,
       description: isDetailed ? q.message : q.message || undefined,
       formId: q.questionnaireId,
-      organization: 'Landlæknir', // TODO: ask if this is correct
+      organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
     sections: isDetailed
       ? q.groups.map((g) =>

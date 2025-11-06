@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { BloodApi, Questionnaire, QuestionnaireApi } from '../../gen/fetch'
+import {
+  BloodApi,
+  Questionnaire,
+  QuestionnaireApi,
+  QuestionnaireBody,
+} from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { BloodTypeDto, mapBloodTypeDto } from './dtos/bloodTypes.dto'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -40,6 +45,16 @@ export class LshClientService {
   ): Promise<Questionnaire[] | null> => {
     return await this.questionnaireWithAuth(user)
       .apiQuestionnaireGet({ locale: locale })
+      .catch(handle404)
+  }
+
+  getQuestionnaire = async (
+    user: User,
+    locale: string,
+    id: string,
+  ): Promise<QuestionnaireBody | null> => {
+    return await this.questionnaireWithAuth(user)
+      .apiQuestionnaireGuidBodyGet({ locale: locale, guid: id })
       .catch(handle404)
   }
 }

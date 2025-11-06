@@ -16,19 +16,30 @@ import {
   useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
+import { QuestionnaireQuestionnairesOrganizationEnum } from '@island.is/api/schema'
 
 const QuestionnaireAnswer: React.FC = () => {
-  const { id } = useParams<{ id?: string }>()
+  const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire] = useSubmitQuestionnaireMutation()
 
+  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+    org === 'EL'
+      ? QuestionnaireQuestionnairesOrganizationEnum.EL
+      : org === 'LSH'
+      ? QuestionnaireQuestionnairesOrganizationEnum.LSH
+      : undefined
+
   const { data, loading, error } = useGetQuestionnaireWithQuestionsQuery({
     variables: {
-      id: id || '',
+      input: {
+        id: id || '',
+        organization: organization,
+        includeQuestions: true,
+      },
       locale: lang,
-      includeQuestions: true,
     },
     skip: !id,
   })
@@ -51,12 +62,19 @@ const QuestionnaireAnswer: React.FC = () => {
       }),
     )
 
+    if (!organization || !id) {
+      toast.error(
+        formatMessage(messages.errorSendingAnswers, {
+          title: data?.questionnairesDetail?.baseInformation.title || '',
+        }),
+      )
+      return
+    }
     submitQuestionnaire({
       variables: {
         input: {
           id,
-          organization:
-            data?.questionnairesDetail?.baseInformation.organization || '',
+          organization: organization,
           entries: formattedAnswers.map((answer) => ({
             entryID: answer.EntryID,
             type: answer.Type,

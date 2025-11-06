@@ -1,4 +1,7 @@
-import { QuestionnaireQuestionnairesStatusEnum } from '@island.is/api/schema'
+import {
+  QuestionnaireQuestionnairesOrganizationEnum,
+  QuestionnaireQuestionnairesStatusEnum,
+} from '@island.is/api/schema'
 import { Box, LoadingDots, Tag, TagVariant } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -15,13 +18,19 @@ import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
-const QuestionnaireInfo: React.FC = () => {
-  const { id } = useParams<{ id?: string }>()
+const QuestionnaireDetail: React.FC = () => {
+  const { id, org } = useParams<{ id?: string; org?: string }>()
   const { formatMessage, lang } = useLocale()
+  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+    org === 'el'
+      ? QuestionnaireQuestionnairesOrganizationEnum.EL
+      : org === 'lsh'
+      ? QuestionnaireQuestionnairesOrganizationEnum.LSH
+      : undefined
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
-      id: id || '',
+      input: { id: id || '', organization: organization },
       locale: lang,
     },
     skip: !id,
@@ -165,4 +174,4 @@ const QuestionnaireInfo: React.FC = () => {
   )
 }
 
-export default QuestionnaireInfo
+export default QuestionnaireDetail

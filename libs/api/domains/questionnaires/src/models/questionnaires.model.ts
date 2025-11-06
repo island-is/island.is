@@ -1,5 +1,13 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
+export enum QuestionnairesOrganizationEnum {
+  LSH = 'LSH',
+  EL = 'EL',
+}
+registerEnumType(QuestionnairesOrganizationEnum, {
+  name: 'QuestionnaireQuestionnairesOrganizationEnum',
+})
+
 export enum QuestionnairesStatusEnum {
   answered = 'answered',
   notAnswered = 'notAnswered',
@@ -32,8 +40,11 @@ export class QuestionnairesBaseItem {
   @Field(() => Date, { nullable: true })
   lastSubmitted?: Date
 
-  @Field({ nullable: true })
-  organization?: string
+  @Field(() => QuestionnairesOrganizationEnum, { nullable: true })
+  organization?: QuestionnairesOrganizationEnum
+
+  @Field(() => String, { nullable: true })
+  department?: string
 }
 
 @ObjectType('QuestionnairesList')

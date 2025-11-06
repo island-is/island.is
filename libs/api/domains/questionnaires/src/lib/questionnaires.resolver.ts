@@ -14,6 +14,7 @@ import { Questionnaire } from '../models/questionnaire.model'
 import { QuestionnairesList } from '../models/questionnaires.model'
 import { QuestionnaireSubmission } from '../models/submission.model'
 import {
+  GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
 } from './dto/questionnaire.input'
@@ -45,20 +46,9 @@ export class QuestionnairesResolver {
   async getQuestionnaire(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
-    @Args('id') id: string,
-    @Args('includeQuestions', {
-      type: () => Boolean,
-      nullable: true,
-      defaultValue: false,
-    })
-    includeQuestions = false,
+    @Args('input') input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
-    return this.questionnairesService.getQuestionnaire(
-      user,
-      locale,
-      id,
-      includeQuestions,
-    )
+    return this.questionnairesService.getQuestionnaire(user, locale, input)
   }
 
   @Query(() => QuestionnaireSubmission, {

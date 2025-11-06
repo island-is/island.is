@@ -64,9 +64,9 @@ export enum HealthPaths {
   HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
 
   HealthQuestionnaires = '/heilsa/spurningalistar',
-  HealthQuestionnairesDetail = '/heilsa/spurningalistar/:id',
-  HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:id/svara',
-  HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:id/svarad',
+  HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
+  HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',
+  HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:org/:id/svarad',
 
   HealthPatientData = '/heilsa/sjukraskra',
   HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',

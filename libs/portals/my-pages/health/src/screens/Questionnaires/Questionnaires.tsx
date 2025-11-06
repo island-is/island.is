@@ -1,4 +1,7 @@
-import { QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum } from '@island.is/api/schema'
+import {
+  QuestionnaireQuestionnairesStatusEnum,
+  QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
+} from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -33,7 +36,7 @@ const defaultFilterValues = {
 
 type FilterValues = {
   searchQuery: string
-  status: string[] // TODO: switch to enum from graphql
+  status: QuestionnaireQuestionnairesStatusEnum[] // TODO: switch to enum from graphql
   organization: string[] // TODO: switch to enum from graphql
   treatment: string[] // TODO: switch to enum from graphql
 }
@@ -51,7 +54,7 @@ const Questionnaires: React.FC = () => {
   })
 
   const toggleStatus = (
-    status: any, // TODO: switch to enum from graphql
+    status: QuestionnaireQuestionnairesStatusEnum, // TODO: switch to enum from graphql
   ) => {
     setFilterValues((prev) => ({
       ...prev,
@@ -75,6 +78,7 @@ const Questionnaires: React.FC = () => {
   const handleSearchChange = (value: string) => {
     debouncedSetSearchQuery(value)
   }
+
   return (
     <IntroWrapper
       title={formatMessage(messages.questionnaires)}
@@ -154,48 +158,60 @@ const Questionnaires: React.FC = () => {
       <Box marginTop={5}>
         <Stack space={3}>
           {loading && <CardLoader />}
-          {data?.questionnairesList?.questionnaires?.map((questionnaire) => (
-            <ActionCard
-              key={questionnaire.id}
-              heading={questionnaire.title}
-              text={`Sent dags: ${formatDate(questionnaire.sentDate)}`}
-              eyebrow={questionnaire.organization ?? undefined}
-              tag={{
-                label:
-                  questionnaire.status === QuestionnairesStatusEnum.answered
-                    ? formatMessage(messages.answeredQuestionnaire)
-                    : questionnaire.status ===
-                      QuestionnairesStatusEnum.notAnswered
-                    ? formatMessage(messages.unAnsweredQuestionnaire)
-                    : formatMessage(messages.expiredQuestionnaire),
+          {data?.questionnairesList?.questionnaires
+            ?.filter(
+              (item) =>
+                item.organization
+                  ?.toLowerCase()
+                  .includes(filterValues.searchQuery.toLowerCase()) ||
+                item.title
+                  ?.toLowerCase()
+                  .includes(filterValues.searchQuery.toLowerCase()),
+            )
 
-                outlined: false,
-                variant:
-                  questionnaire.status === QuestionnairesStatusEnum.answered
-                    ? 'blue'
-                    : questionnaire.status ===
-                      QuestionnairesStatusEnum.notAnswered
-                    ? 'purple'
-                    : 'red',
-              }}
-              cta={{
-                internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
-                  ':id',
-                  questionnaire.id,
-                ),
-                label: formatMessage(messages.answer), //TODO: if status is unanswered the label should be "svara" else "sjá nánar"
-                variant: 'text',
-                icon: 'arrowForward',
-                onClick: () =>
-                  navigate(
-                    HealthPaths.HealthQuestionnairesDetail.replace(
-                      ':id',
-                      questionnaire.id,
+            .map((questionnaire) => (
+              <ActionCard
+                key={questionnaire.id}
+                heading={questionnaire.title}
+                text={questionnaire.description ?? ''}
+                eyebrow={questionnaire.organization ?? undefined}
+                date={formatDate(questionnaire.sentDate)}
+                tag={{
+                  label:
+                    questionnaire.status === QuestionnairesStatusEnum.answered
+                      ? formatMessage(messages.answeredQuestionnaire)
+                      : questionnaire.status ===
+                        QuestionnairesStatusEnum.notAnswered
+                      ? formatMessage(messages.unAnsweredQuestionnaire)
+                      : formatMessage(messages.expiredQuestionnaire),
+
+                  outlined: false,
+                  variant:
+                    questionnaire.status === QuestionnairesStatusEnum.answered
+                      ? 'blue'
+                      : questionnaire.status ===
+                        QuestionnairesStatusEnum.notAnswered
+                      ? 'purple'
+                      : 'red',
+                }}
+                cta={{
+                  internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
+                    ':org',
+                    questionnaire.organization?.toLocaleLowerCase() ?? '',
+                  ).replace(':id', questionnaire.id),
+                  label: formatMessage(messages.answer), //TODO: if status is unanswered the label should be "svara" else "sjá nánar"
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () =>
+                    navigate(
+                      HealthPaths.HealthQuestionnairesDetail.replace(
+                        ':org',
+                        questionnaire.organization?.toLocaleLowerCase() ?? '',
+                      ).replace(':id', questionnaire.id),
                     ),
-                  ),
-              }}
-            />
-          ))}
+                }}
+              />
+            ))}
         </Stack>
       </Box>
     </IntroWrapper>

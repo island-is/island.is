@@ -2,6 +2,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import {
+  GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
 } from './dto/questionnaire.input'
@@ -16,6 +17,7 @@ import {
 import { Questionnaire } from '../models/questionnaire.model'
 import {
   QuestionnairesList,
+  QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
 import { QuestionnaireSubmission } from '../models/submission.model'
@@ -23,7 +25,9 @@ import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-di
 import {
   LshClientService,
   Questionnaire as LSHQuestionnaireType,
+  QuestionnaireBody,
 } from '@island.is/clients/lsh'
+import { mapLSHQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
 
 @Injectable()
 export class QuestionnairesService {
@@ -36,39 +40,69 @@ export class QuestionnairesService {
   async getQuestionnaire(
     _user: User,
     _locale: Locale,
-    id: string,
-    includeQuestions = false,
+    input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
-    // // Handle error for each client so the other can still succeed
-    // const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
-    // const lshTemp = mapFormsToQuestionnairesList(lshDev)
+    let LSHdata: LSHQuestionnaireType | null = null
+    let LSHdataWithQuestions: QuestionnaireBody | null = null
+    let ElData: QuestionnaireDetailDto | null = null
+    console.log('get questionnaire for org ', input.organization)
 
-    // const lshAnswered: Form[] = await this.lshDevApi.getAnsweredForms(_user)
-    // const lshAnsweredTransformed = mapFormsToQuestionnairesList(lshAnswered)
+    try {
+      if (input.organization === QuestionnairesOrganizationEnum.LSH) {
+        input.includeQuestions
+          ? (LSHdataWithQuestions = await this.lshApi.getQuestionnaire(
+              _user,
+              _locale,
+              input.id,
+            ))
+          : (LSHdata = await this.lshApi
+              .getQuestionnaires(_user, _locale)
+              .then(
+                (response) =>
+                  response?.find((q) => q.gUID === input.id) || null,
+              ))
+      }
+    } catch (e) {
+      console.error('Error fetching LSH questionnaire', e)
+    }
 
-    // const lshFound = lshTemp.questionnaires?.find((q) => q.id === id)
-    // const answeredLshFound = lshAnsweredTransformed.questionnaires?.find(
-    //   (q) => q.id === id,
-    // )
+    try {
+      if (input.organization === QuestionnairesOrganizationEnum.EL) {
+        console.log('Fetching EL questionnaire')
+        ElData = await this.api.getQuestionnaire(_user, 'is', input.id)
+      }
+    } catch (e) {
+      console.error('Error fetching EL questionnaire', e)
+    }
 
-    // Prefer answered questionnaire if it exists
-    // if (answeredLshFound) {
-    //   return answeredLshFound
-    // }
-
-    // If neither found, return null
-
-    const data = await this.api.getQuestionnaire(_user, 'is', id)
-
-    if (!data) {
+    if (!LSHdata && !ElData) {
       return null
     }
-    return includeQuestions
-      ? this.getQuestionnaireWithQuestions(data, _locale)
+
+    return input.organization === QuestionnairesOrganizationEnum.EL
+      ? this.getELQuestionnaire(_locale, input.includeQuestions, ElData)
+      : input.includeQuestions
+      ? mapLSHQuestionnaire(LSHdataWithQuestions, LSHdata, _locale)
+      : this.getLSHQuestionnaire(_locale, LSHdata)
+  }
+
+  private getELQuestionnaire(
+    _locale: Locale,
+    withQuestions?: boolean,
+    data?: QuestionnaireDetailDto | null,
+  ): Questionnaire | null {
+    console.log('EL DATA get questionnaire ', data)
+    if (!data) return null
+    return withQuestions
+      ? mapExternalQuestionnaireToGraphQL(data, _locale)
       : {
           baseInformation: {
-            id: data?.questionnaireId ?? id,
-            title: data?.title || 'Untitled Questionnaire',
+            id: data?.questionnaireId,
+            title: data?.title
+              ? data.title
+              : _locale === 'is'
+              ? 'Ónefnd spurningalisti'
+              : 'Untitled Questionnaire',
             status:
               (data?.numSubmissions ?? 0) > 0
                 ? QuestionnairesStatusEnum.answered
@@ -76,16 +110,36 @@ export class QuestionnairesService {
             sentDate:
               data?.createdDate?.toISOString() || new Date().toISOString(),
             description: data?.message,
-            organization: 'Landlæknir',
+            organization: QuestionnairesOrganizationEnum.EL,
           },
         }
   }
 
-  private getQuestionnaireWithQuestions(
-    data: QuestionnaireDetailDto,
+  private getLSHQuestionnaire(
     _locale: Locale,
-  ): Questionnaire {
-    return mapExternalQuestionnaireToGraphQL(data, _locale)
+    data?: LSHQuestionnaireType | null | undefined,
+  ): Questionnaire | null {
+    console.log('LSH DATA get questionnaire ', data)
+
+    if (!data) return null
+    return {
+      baseInformation: {
+        id: data.gUID || 'undefined-id',
+        title: data.caption
+          ? data.caption
+          : _locale === 'is'
+          ? 'Ónefndur spurningalisti'
+          : 'Untitled questionnaire',
+        status: data.answerDateTime
+          ? QuestionnairesStatusEnum.answered
+          : new Date(data.validToDateTime) < new Date()
+          ? QuestionnairesStatusEnum.expired
+          : QuestionnairesStatusEnum.notAnswered,
+        sentDate: data.validFromDateTime?.toISOString() || '',
+        description: data.description || undefined,
+        organization: QuestionnairesOrganizationEnum.LSH,
+      },
+    }
   }
 
   async getAnsweredQuestionnaire(
@@ -147,8 +201,9 @@ export class QuestionnairesService {
                   ? 'Spurningalisti'
                   : 'Questionnaire',
               description: q.message,
-              sentDate: new Date().toISOString(),
-              organization: 'Landlæknir',
+              sentDate: '',
+              organization: QuestionnairesOrganizationEnum.EL,
+              department: undefined,
               status:
                 q.numSubmissions > 0
                   ? QuestionnairesStatusEnum.answered
@@ -171,13 +226,11 @@ export class QuestionnairesService {
             .map((item: LSHQuestionnaireType) => {
               return {
                 id: item.gUID!,
-                title:
-                  item.caption ?? _locale === 'is'
-                    ? 'Spurningalisti'
-                    : 'Questionnaire',
+                title: item.caption ? item.caption : 'Spurningalisti',
                 description: item.description ?? undefined,
                 sentDate: item.validFromDateTime.toISOString(),
-                organization: item.department || 'Landspítali',
+                organization: QuestionnairesOrganizationEnum.LSH,
+                department: item.department ?? undefined,
                 status: item.answerDateTime
                   ? QuestionnairesStatusEnum.answered
                   : new Date(item.validToDateTime) < new Date()

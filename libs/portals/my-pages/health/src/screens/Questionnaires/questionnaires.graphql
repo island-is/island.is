@@ -8,12 +8,13 @@ query GetQuestionnaires($locale: String!) {
       status
       lastSubmitted
       organization
+      department
     }
   }
 }
 
-query GetQuestionnaire($id: String!, $locale: String!) {
-  questionnairesDetail(id: $id, locale: $locale) {
+query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
+  questionnairesDetail(locale: $locale, input: $input) {
     baseInformation {
       __typename
       id
@@ -23,6 +24,7 @@ query GetQuestionnaire($id: String!, $locale: String!) {
       status
       lastSubmitted
       organization
+      department
     }
     expirationDate
     canSubmit
@@ -36,20 +38,16 @@ query GetQuestionnaire($id: String!, $locale: String!) {
 }
 
 query GetQuestionnaireWithQuestions(
-  $id: String!
   $locale: String!
-  $includeQuestions: Boolean!
+  $input: GetQuestionnaireInput!
 ) {
-  questionnairesDetail(
-    id: $id
-    locale: $locale
-    includeQuestions: $includeQuestions
-  ) {
+  questionnairesDetail(id: $id, locale: $locale, input: $input) {
     baseInformation {
       __typename
       id
       title
       organization
+      department
       sentDate
     }
     canSubmit
