@@ -980,6 +980,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             CourtDocumentType.EXTERNAL_DOCUMENT
                           ) {
                             const split = item.submittedBy?.split('|')
+                            console.log('split', item)
                             const enabled = (
                               <Box marginTop={1}>
                                 <SelectRepresentative
