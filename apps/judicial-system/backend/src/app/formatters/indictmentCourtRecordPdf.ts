@@ -164,9 +164,11 @@ export const createIndictmentCourtRecordPdf = (
           )?.value ?? 'Engar bókanir um sameinað mál voru skráðar.',
         )
 
-        const mergedCaseFiledDocuments =
-          courtSession.mergedFiledDocuments.filter(
-            (document) => document.caseId === caseId,
+        const mergedCaseFiledDocuments = courtSession.mergedFiledDocuments
+          .filter((document) => document.caseId === caseId)
+          .sort(
+            (a, b) =>
+              (a.mergedDocumentOrder ?? 0) - (b.mergedDocumentOrder ?? 0),
           )
         addEmptyLines(doc, 2)
         addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
@@ -174,7 +176,7 @@ export const createIndictmentCourtRecordPdf = (
         addNumberedList(
           doc,
           mergedCaseFiledDocuments.map((d) => d.name.normalize()),
-          mergedCaseFiledDocuments[0].mergedDocumentOrder,
+          mergedCaseFiledDocuments[0].mergedDocumentOrder ?? 1,
         )
       }
       nrOfFiledDocuments =
