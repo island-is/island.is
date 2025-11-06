@@ -1108,17 +1108,17 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           rowGap={2}
                         >
                           <AnimatePresence>
-                            {mergedFiledDocuments.map((_item, i) => {
+                            {mergedFiledDocuments.map((item, i) => {
                               // we have to keep track of the previous merged case files within the same court session
                               // to calculate the document order indexes correctly in the client for reordering purposes
                               const previousMergedCaseDocumentCountInSession = (
                                 courtSession.mergedFiledDocuments?.filter(
                                   (document) =>
-                                    _item.mergedDocumentOrder &&
+                                    item.mergedDocumentOrder &&
                                     document.mergedDocumentOrder &&
-                                    _item.mergedDocumentOrder >
+                                    item.mergedDocumentOrder >
                                       document.mergedDocumentOrder &&
-                                    _item.caseId !== document.caseId,
+                                    item.caseId !== document.caseId,
                                 ) ?? []
                               ).length
 
