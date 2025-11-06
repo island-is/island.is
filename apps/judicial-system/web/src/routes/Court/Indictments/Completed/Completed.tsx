@@ -131,6 +131,11 @@ const Completed: FC = () => {
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   const isRulingOrFine = isRuling || isFine
 
+  const includeRulingText =
+    !workingCase.withCourtSessions ||
+    !workingCase.courtSessions ||
+    workingCase.courtSessions.length === 0
+
   const stepIsValid = () => {
     const isValidDefendants = isRuling
       ? workingCase.defendants?.every((defendant) =>
@@ -140,18 +145,22 @@ const Completed: FC = () => {
             : Boolean(defendant.verdict?.serviceRequirement),
         )
       : true
+    const isValidRuling =
+      features?.includes(Feature.VERDICT_DELIVERY) &&
+      includeRulingText &&
+      workingCase.defendants?.some(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+        ? workingCase.ruling
+        : true
 
-    return isValidDefendants
+    return isValidDefendants && isValidRuling
   }
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
-
-  const includeRulingText =
-    !workingCase.withCourtSessions ||
-    !workingCase.courtSessions ||
-    workingCase.courtSessions.length === 0
 
   return (
     <PageLayout
