@@ -481,14 +481,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/utils.keyvadapter@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@apollo/utils.keyvadapter@npm:3.0.0"
+"@apollo/utils.keyvadapter@npm:4.0.1":
+  version: 4.0.1
+  resolution: "@apollo/utils.keyvadapter@npm:4.0.1"
   dependencies:
-    "@apollo/utils.keyvaluecache": "npm:^3.0.0"
+    "@apollo/utils.keyvaluecache": "npm:^4.0.0"
     dataloader: "npm:^2.1.0"
-    keyv: "npm:^4.4.0"
-  checksum: 10/e79dac39436680179a31976a7afeb573fb0a134fcd97f167d64a4bbffd22fa9a252795a60a63133bd1a22f288c81055f9705fadd82326f883a667c650b72310b
+    keyv: "npm:^5.1.0"
+  checksum: 10/d06eea4369aa2964443e6fa8f286b5b206348b92e042c3d82ba8e45b8a09c3c7c3f4138cbb6028a6be81528d5b0fb4b58017a724984e26d5e4a0c3100af189c7
   languageName: node
   linkType: hard
 
@@ -512,13 +512,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/utils.keyvaluecache@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "@apollo/utils.keyvaluecache@npm:3.1.0"
+"@apollo/utils.keyvaluecache@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@apollo/utils.keyvaluecache@npm:4.0.0"
   dependencies:
     "@apollo/utils.logger": "npm:^3.0.0"
-    lru-cache: "npm:^10.0.0"
-  checksum: 10/a0e1a84f76374480c4cdfdd16bca8ebe4e2b26f6152ef593b1e4ace40336803e17bed1f1723133d87d1408258d63f2cd528ce775859f2abace05af5ef13ffee8
+    lru-cache: "npm:^11.0.0"
+  checksum: 10/e18d48d0de490bec0ae1d0849409dcd9415ef8b64de963df9955f21bb0852f058149a1862c585abd9d4d64c0b75f2d532b7c504695605177dfa74463b135498b
   languageName: node
   linkType: hard
 
@@ -11271,6 +11271,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ioredis/commands@npm:1.4.0":
+  version: 1.4.0
+  resolution: "@ioredis/commands@npm:1.4.0"
+  checksum: 10/ea299f22057139261ebd7dbc7fc85615e90c254e667620a276d3cf771b9d9190ffbdf25af6586c3f52598a2c830d64bee17f32c3ce734db403e93f73548d54d4
+  languageName: node
+  linkType: hard
+
 "@ioredis/commands@npm:^1.1.1":
   version: 1.2.0
   resolution: "@ioredis/commands@npm:1.2.0"
@@ -11883,12 +11890,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keyv/redis@npm:2.6.1":
-  version: 2.6.1
-  resolution: "@keyv/redis@npm:2.6.1"
+"@keyv/redis@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@keyv/redis@npm:3.0.1"
   dependencies:
-    ioredis: "npm:^5.3.2"
-  checksum: 10/c0c0aa7d0b449ef295ab65bcc38d42a2f6f606f49bf1d9bc95cd0276d60854c4d579d6dfce9e070f350a07987dfde9d452884ee05e8f87215c49c304b27a68ab
+    ioredis: "npm:^5.4.1"
+  checksum: 10/ec0770f54e988a11780a9f04944b54ab6f3bdd7ad0f97ce7644baa4c8a99d9ec400281be462ca504e03984bebfc57ecf4566e678a6afe012e344562263f79d12
+  languageName: node
+  linkType: hard
+
+"@keyv/serialize@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@keyv/serialize@npm:1.1.1"
+  checksum: 10/e3b2cb1377863342acedd5ff785af3e69269bee9b44707c617d1c8bc14eeb5ac763159d6455903ffe92f143c2238e1e783c4f113f9c8910eacccf172894472da
   languageName: node
   linkType: hard
 
@@ -34976,7 +34990,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:5.6.1, ioredis@npm:^5.0.0, ioredis@npm:^5.2.3, ioredis@npm:^5.3.2":
+"ioredis@npm:5.6.1, ioredis@npm:^5.0.0, ioredis@npm:^5.2.3":
   version: 5.6.1
   resolution: "ioredis@npm:5.6.1"
   dependencies:
@@ -34990,6 +35004,23 @@ __metadata:
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
   checksum: 10/632186e21f2d8b94a12918b5feef0f5df70315e303988989adb0d190377759ffa601660be7536489c0768803a0fb6eb94f861b33c1fcfc673d518fdd31c541e2
+  languageName: node
+  linkType: hard
+
+"ioredis@npm:^5.4.1":
+  version: 5.8.2
+  resolution: "ioredis@npm:5.8.2"
+  dependencies:
+    "@ioredis/commands": "npm:1.4.0"
+    cluster-key-slot: "npm:^1.1.0"
+    debug: "npm:^4.3.4"
+    denque: "npm:^2.1.0"
+    lodash.defaults: "npm:^4.2.0"
+    lodash.isarguments: "npm:^3.1.0"
+    redis-errors: "npm:^1.2.0"
+    redis-parser: "npm:^3.0.0"
+    standard-as-callback: "npm:^2.1.0"
+  checksum: 10/550cbe7bba409b5bc38fa290fd2de7f569548603892904680db0f5e74f7163e52e067428be766d9e4d1a7f1220f93abe8e1687804aab951a96a6dafc289947eb
   languageName: node
   linkType: hard
 
@@ -35873,7 +35904,7 @@ __metadata:
     "@apollo/client": "npm:3.7.15"
     "@apollo/gateway": "npm:2.1.1"
     "@apollo/subgraph": "npm:2.1.1"
-    "@apollo/utils.keyvadapter": "npm:3.0.0"
+    "@apollo/utils.keyvadapter": "npm:4.0.1"
     "@ariakit/react": "npm:0.4.17"
     "@aws-sdk/client-s3": "npm:3.662.0"
     "@aws-sdk/client-ses": "npm:3.145.0"
@@ -35932,7 +35963,7 @@ __metadata:
     "@hookform/resolvers": "npm:5.0.1"
     "@ibm-cloud/cloudant": "npm:0.11.0"
     "@island.is/regulations-tools": "npm:0.9.2"
-    "@keyv/redis": "npm:2.6.1"
+    "@keyv/redis": "npm:3.0.1"
     "@livechat/widget-core": "npm:1.3.2"
     "@mockoon/cli": "npm:8.4.0"
     "@nestjs/apollo": "npm:10.1.0"
@@ -36175,7 +36206,7 @@ __metadata:
     jwks-rsa: "npm:3.0.1"
     jwt-decode: "npm:4.0.0"
     kennitala: "npm:@island.is/kennitala@3.1.2"
-    keyv: "npm:4.5.2"
+    keyv: "npm:5.5.3"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
     lodash: "npm:4.17.21"
@@ -38015,16 +38046,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keyv@npm:4.5.2":
-  version: 4.5.2
-  resolution: "keyv@npm:4.5.2"
+"keyv@npm:5.5.3, keyv@npm:^5.1.0":
+  version: 5.5.3
+  resolution: "keyv@npm:5.5.3"
   dependencies:
-    json-buffer: "npm:3.0.1"
-  checksum: 10/fbe6068cb46cfbf37b46f4a80e484a5e9c48c9a1eb09d9cb89382db6e12b801b60f07268ec8d7fa8d49f1f1e77badc5820c3135d478022df42691890a4c37038
+    "@keyv/serialize": "npm:^1.1.1"
+  checksum: 10/b8d2c354dade07cb4cb6ccffe6495c1a32a67cf9f066a9660eeaea974ab9d8b94dd568b4e71b23f217f587d3e07b558fa6e48158baea1a0bc9514bb15c1de555
   languageName: node
   linkType: hard
 
-"keyv@npm:^4.0.0, keyv@npm:^4.4.0, keyv@npm:^4.5.3":
+"keyv@npm:^4.0.0, keyv@npm:^4.5.3":
   version: 4.5.4
   resolution: "keyv@npm:4.5.4"
   dependencies:
@@ -39210,10 +39241,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.0, lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.2.2, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.2.2, lru-cache@npm:^10.4.3":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10/e6e90267360476720fa8e83cc168aa2bf0311f3f2eea20a6ba78b90a885ae72071d9db132f40fda4129c803e7dcec3a6b6a6fbb44ca90b081630b810b5d6a41a
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^11.0.0":
+  version: 11.2.2
+  resolution: "lru-cache@npm:11.2.2"
+  checksum: 10/fa7919fbf068a739f79a1ad461eb273514da7246cebb9dca68e3cd7ba19e3839e7e2aaecd9b72867e08038561eeb96941189e89b3d4091c75ced4f56c71c80db
   languageName: node
   linkType: hard
 
