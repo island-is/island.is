@@ -5,6 +5,7 @@ import { pipe } from 'fp-ts/lib/function'
 
 import {
   capitalize,
+  formatCaseType,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -18,7 +19,6 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
 import {
   IndictmentCaseEventType,
@@ -52,7 +52,7 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   if (caseType === CaseType.INDICTMENT) {
     return 'Ákæra'
   }
-  const subtypes = courtSubtypes[caseType]
+  const subtypes = formatCaseType(caseType)
   return Array.isArray(subtypes) ? subtypes[0] : subtypes
 }
 

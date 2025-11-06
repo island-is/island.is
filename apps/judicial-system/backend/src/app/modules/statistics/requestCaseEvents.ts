@@ -1,3 +1,4 @@
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -7,7 +8,6 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 
@@ -33,7 +33,7 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   if (caseType === CaseType.INDICTMENT) {
     return 'Ákæra'
   }
-  const subtypes = courtSubtypes[caseType]
+  const subtypes = formatCaseType(caseType)
   return Array.isArray(subtypes) ? subtypes[0] : subtypes
 }
 
