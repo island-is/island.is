@@ -160,13 +160,25 @@ export const OverviewFormField = ({
       ) : (
         <>
           {filteredItems &&
-            filteredItems?.map((item, i) =>
-              RenderItems(item, i, title, description, application),
-            )}
+            filteredItems?.map((item, i) => (
+              <RenderItems
+                item={item}
+                i={i}
+                title={title}
+                description={description}
+                application={application}
+              />
+            ))}
           {loadedItems &&
-            loadedItems?.map((item, i) =>
-              RenderItems(item, i, title, description, application),
-            )}
+            loadedItems?.map((item, i) => (
+              <RenderItems
+                item={item}
+                i={i}
+                title={title}
+                description={description}
+                application={application}
+              />
+            ))}
           {attachments &&
             attachments?.map((attachment, i) => {
               return (
@@ -205,15 +217,16 @@ export const OverviewFormField = ({
                 </GridColumn>
               )
             })}
-          {tableDataToRender &&
-            RenderTableData(
-              tableDataToRender,
-              application,
-              title,
-              description,
-              filteredItems,
-              loadedItems,
-            )}
+          {tableDataToRender && (
+            <RenderTableData
+              data={tableDataToRender}
+              application={application}
+              title={title}
+              description={description}
+              filteredItems={filteredItems}
+              loadedItems={loadedItems}
+            />
+          )}
         </>
       )}
     </GridRow>

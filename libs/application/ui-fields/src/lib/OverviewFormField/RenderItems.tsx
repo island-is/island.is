@@ -10,13 +10,21 @@ import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { evaluateValueText } from './overviewUtils'
 
-export const RenderItems = (
-  item: KeyValueItem,
-  i: number,
-  title: FormTextWithLocale | undefined,
-  description: FormTextWithLocale | undefined,
-  application: Application,
-) => {
+type Props = {
+  item: KeyValueItem
+  i: number
+  title: FormTextWithLocale | undefined
+  description: FormTextWithLocale | undefined
+  application: Application
+}
+
+export const RenderItems = ({
+  item,
+  i,
+  title,
+  description,
+  application,
+}: Props) => {
   const { formatMessage, lang: locale } = useLocale()
 
   const span: SpanType | undefined =
