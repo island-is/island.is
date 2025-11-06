@@ -1,8 +1,9 @@
+// ATTENTION -> When adding or changing paths, please always make sure to redirect old paths. The app is using links to navigate
 const basicInformation = '/heilsa/grunnupplysingar'
-
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
+  HealthBasicOld = '/heilsa/yfirlit',
   HealthBasicInformation = `${basicInformation}`,
   HealthOverview = `${basicInformation}/yfirlit`,
 

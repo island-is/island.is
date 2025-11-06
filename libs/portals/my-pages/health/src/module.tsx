@@ -136,6 +136,11 @@ export const healthModule: PortalModule = {
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
     {
+      name: hm.basicInformation,
+      path: HealthPaths.HealthBasicOld,
+      element: <Navigate to={HealthPaths.HealthOverview} replace />,
+    },
+    {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
