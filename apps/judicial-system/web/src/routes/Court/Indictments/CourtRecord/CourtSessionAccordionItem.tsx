@@ -851,7 +851,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           } else {
                             const node = (
                               <Text variant="small" color="currentColor">
-                                Liggur frammi
+                                Lagt er fram
                               </Text>
                             )
                             supplement = { enabled: node, disabled: node }
