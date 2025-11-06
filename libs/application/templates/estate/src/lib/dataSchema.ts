@@ -707,6 +707,8 @@ export const estateSchema = z.object({
     }),
   }),
 
+  additionalComments: z.string().optional(),
+
   // is: Eignalaust bú
   estateWithoutAssets: z
     .object({
