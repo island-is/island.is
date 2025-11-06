@@ -45,7 +45,6 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   restrictionCases,
