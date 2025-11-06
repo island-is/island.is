@@ -361,15 +361,19 @@ const Conclusion: FC = () => {
     }
   }
 
-  const missingRuling =
+  const hasJudgementRuling =
+    workingCase.courtSessions?.some(
+      (courtSession) =>
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
+        Boolean(courtSession.ruling),
+    ) ?? false
+
+  const missingRulingInCourtSessions =
     !!workingCase.withCourtSessions &&
     selectedAction === IndictmentDecision.COMPLETING &&
     selectedDecision === CaseIndictmentRulingDecision.RULING &&
-    !workingCase.courtSessions?.find(
-      (courtSession) =>
-        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
-        courtSession.ruling,
-    )
+    !hasJudgementRuling
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -753,9 +757,9 @@ const Conclusion: FC = () => {
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
-          hideNextButton={missingRuling}
+          hideNextButton={missingRulingInCourtSessions}
           infoBoxText={
-            missingRuling
+            missingRulingInCourtSessions
               ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
               : ''
           }
