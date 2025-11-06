@@ -30,7 +30,7 @@ export class PermitsInput {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  statuses!: string[]
+  status!: string[]
 }
 
 @InputType('HealthDirectoratePatientDataInvalidatePermitInput')

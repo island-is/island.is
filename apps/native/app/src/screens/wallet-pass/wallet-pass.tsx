@@ -17,12 +17,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '../../ui'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -34,11 +28,18 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
+import { useOfflineStore } from '../../stores/offline-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
+import {
+  dynamicColor,
+  Alert as InfoAlert,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
-import { useOfflineStore } from '../../stores/offline-store'
-import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
@@ -138,6 +139,12 @@ const getInfoAlertMessageIds = (
     licenseType === GenericLicenseType.IdentityDocument &&
     licenseNumber?.startsWith('ID')
   switch (licenseType) {
+    case GenericLicenseType.DriversLicense:
+      return {
+        title: 'licenseDetail.driversLicense.alert.title',
+        description: 'licenseDetail.driversLicense.alert.description',
+        dismissible: true,
+      }
     case GenericLicenseType.PCard:
       return {
         title: 'licenseDetail.pcard.alert.title',
@@ -176,6 +183,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
+  const walletPassDismissedInfoAlerts = usePreferencesStore(
+    (state) => state.walletPassDismissedInfoAlerts,
+  )
+  const setWalletPassInfoAlertDismissed = usePreferencesStore(
+    (state) => state.setWalletPassInfoAlertDismissed,
+  )
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isAddToWalletButtonEnabled = useFeatureFlag(
     'isAddToWalletButtonEnabled',
@@ -214,12 +227,16 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+  const markInfoAlertAsDismissed = useCallback(async () => {
+    setWalletPassInfoAlertDismissed(type)
+  }, [type, setWalletPassInfoAlertDismissed])
 
   const shouldShowExpireDate = !!(
     (licenseType === GenericLicenseType.IdentityDocument ||
       licenseType === GenericLicenseType.Passport) &&
     expireDate
   )
+
   const showInfoAlert =
     licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
 
@@ -229,6 +246,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         data?.payload?.metadata?.licenseNumber ?? undefined,
       )
     : undefined
+
+  const isInfoAlertDismissed = useCallback(
+    (alertType?: string) => {
+      if (!alertMessageIds?.dismissible || !alertType) {
+        return false
+      }
+
+      return walletPassDismissedInfoAlerts?.[alertType] ? true : false
+    },
+    [walletPassDismissedInfoAlerts, alertMessageIds?.dismissible],
+  )
 
   const { loading } = res
 
@@ -504,7 +532,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }}
         >
           {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
-          {showInfoAlert && (
+          {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
             <View
               style={{
                 paddingTop: theme.spacing[3],
@@ -516,6 +544,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                 })}
                 message={intl.formatMessage({
                   id: alertMessageIds?.description,
+                })}
+                {...(alertMessageIds?.dismissible && {
+                  onClose: () => {
+                    markInfoAlertAsDismissed()
+                  },
                 })}
                 type="info"
                 hasBorder
