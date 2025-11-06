@@ -389,13 +389,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       // But courtSession.mergedFiledDocuments can contain merged filed documents for many cases that are linked to the same court session.
       // Thus we have to create a new merged documents array to persist the order state for other merged case filed documents.
       const currentMergedDocuments = courtSession.mergedFiledDocuments ?? []
-      const firstIndex = currentMergedDocuments.findIndex(
-        (document) => mergedDocument.caseId === document.caseId,
-      )
-      if (firstIndex === -1) {
-        return
-      }
-
       let newOrderIndex = 0
       const newMergedDocumentsOrder: CourtDocumentResponse[] =
         currentMergedDocuments.map((document) => {
