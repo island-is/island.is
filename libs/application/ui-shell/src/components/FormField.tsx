@@ -9,6 +9,7 @@ import {
   SetBeforeSubmitCallback,
   SetSubmitButtonDisabled,
   FormValue,
+  SetBeforeValidationCallback,
 } from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
@@ -18,6 +19,7 @@ const FormField: FC<
   React.PropsWithChildren<{
     application: Application
     setBeforeSubmitCallback?: SetBeforeSubmitCallback
+    setBeforeValidationCallback: SetBeforeValidationCallback
     setFieldLoadingState?: SetFieldLoadingState
     setSubmitButtonDisabled?: SetSubmitButtonDisabled
     answerQuestions?: (answers: FormValue) => void
@@ -31,6 +33,7 @@ const FormField: FC<
 > = ({
   application,
   setBeforeSubmitCallback,
+  setBeforeValidationCallback,
   setFieldLoadingState,
   setSubmitButtonDisabled,
   answerQuestions,
@@ -52,6 +55,7 @@ const FormField: FC<
   const fieldProps: FieldBaseProps = {
     application,
     setBeforeSubmitCallback,
+    setBeforeValidationCallback,
     setFieldLoadingState,
     setSubmitButtonDisabled,
     answerQuestions,

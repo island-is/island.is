@@ -10,6 +10,7 @@ import {
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
+  SetBeforeValidationCallback,
 } from '@island.is/application/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -29,6 +30,7 @@ const FormMultiField: FC<
     goToScreen: (id: string) => void
     refetch: () => void
     setBeforeSubmitCallback?: SetBeforeSubmitCallback
+    setBeforeValidationCallback: SetBeforeValidationCallback
     setFieldLoadingState?: SetFieldLoadingState
     setSubmitButtonDisabled?: SetSubmitButtonDisabled
   }>
@@ -40,6 +42,7 @@ const FormMultiField: FC<
   multiField,
   refetch,
   setBeforeSubmitCallback,
+  setBeforeValidationCallback,
   setFieldLoadingState,
   setSubmitButtonDisabled,
 }) => {
@@ -108,6 +111,7 @@ const FormMultiField: FC<
                 goToScreen={goToScreen}
                 refetch={refetch}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setBeforeValidationCallback={setBeforeValidationCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
                 answerQuestions={answerQuestions}

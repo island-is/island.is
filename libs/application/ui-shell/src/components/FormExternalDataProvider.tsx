@@ -28,6 +28,7 @@ import {
   FormValue,
   RecordObject,
   SetBeforeSubmitCallback,
+  SetBeforeValidationCallback,
 } from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'

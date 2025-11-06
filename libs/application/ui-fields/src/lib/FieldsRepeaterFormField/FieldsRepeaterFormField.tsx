@@ -41,6 +41,7 @@ type FieldRepeaterForm = Record<string, FieldRepeaterItem[]>
 export const FieldsRepeaterFormField = ({
   application,
   setBeforeSubmitCallback,
+  setBeforeValidationCallback,
   field: data,
   showFieldName,
   error,
@@ -84,8 +85,8 @@ export const FieldsRepeaterFormField = ({
   )
 
   const answers = methods.getValues()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
     answers,
     id,
@@ -107,10 +108,10 @@ export const FieldsRepeaterFormField = ({
       ? maxRows(answers, application.externalData)
       : maxRows
 
-  const [showRemoveButton, setShowRemoveButton] = useState(
-    !hideRemoveButton &&
-      fields.filter((x) => !x.isRemoved).length > Math.max(minRowsValue, 0),
-  )
+  // const [showRemoveButton, setShowRemoveButton] = useState(
+  //   !hideRemoveButton &&
+  //     fields.filter((x) => !x.isRemoved).length > Math.max(minRowsValue, 0),
+  // )
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
@@ -136,46 +137,61 @@ export const FieldsRepeaterFormField = ({
 
   const values = useWatch({ name: data.id, control: methods.control })
 
-  const handleNewItem = () => {
-    console.log('handling new item')
-    const fieldLengthBeforeAppend = fields.filter((x) => !x.isRemoved).length
-    append({ isRemoved: false })
-    setActiveIndex(fieldLengthBeforeAppend + 1)
-    methods.clearErrors()
-    setShowRemoveButton(
-      !hideRemoveButton &&
-        fieldLengthBeforeAppend + 1 > Math.max(minRowsValue, 0),
-    )
-  }
+  const [numberOfItems, setNumberOfItems] = useState(
+    Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
+  )
+
+  // const handleNewItem = () => {
+  //   console.log('minRowsValue', minRowsValue)
+  //   const fieldLengthBeforeAppend = fields.filter((x) => !x.isRemoved).length
+  //   console.log('fieldLengthBeforeAppend', fieldLengthBeforeAppend)
+  //   append({ isRemoved: false })
+  //   setActiveIndex(fieldLengthBeforeAppend + 1)
+  //   methods.clearErrors()
+  //   // setShowRemoveButton(
+  //   //   !hideRemoveButton &&
+  //   //     fieldLengthBeforeAppend + 1 > Math.max(minRowsValue, 0),
+  //   // )
+  // }
 
   // useEffect(() => {
   //   console.log('fields', fields)
   // }, [fields])
 
-  useEffect(() => {
-    console.log('numberOfItemsInAnswers', numberOfItemsInAnswers)
-    console.log('minRowsValue', minRowsValue)
-    console.log('fields', fields)
-    console.log('values', values)
-    if (
-      minRowsValue > 0 &&
-      (numberOfItemsInAnswers === undefined || numberOfItemsInAnswers === 0) &&
-      fields.length < minRowsValue
-    ) {
-      Array.from({ length: minRowsValue - 1 }).forEach(() => {
-        handleNewItem()
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // const handleRemoveItem = () => {
+  //   const indexOfLastNonRemovedItem = fields
+  //     .map((i) => i.isRemoved)
+  //     .lastIndexOf(false)
+  //   console.log('fields.length', fields.length)
+  //   safeUpdate(indexOfLastNonRemovedItem, { isRemoved: true })
+  //   // setShowRemoveButton(
+  //   //   !hideRemoveButton &&
+  //   //     fieldLengthBeforeUpdate - 1 > Math.max(minRowsValue, 0),
+  //   // )
+  // }
+
+  const handleNewItem = () => {
+    setNumberOfItems(numberOfItems + 1)
+  }
 
   const handleRemoveItem = () => {
-    const fieldLengthBeforeUpdate = fields.filter((x) => !x.isRemoved).length
-    safeUpdate(fieldLengthBeforeUpdate - 1, { isRemoved: true })
-    setShowRemoveButton(
-      !hideRemoveButton &&
-        fieldLengthBeforeUpdate - 1 > Math.max(minRowsValue, 0),
-    )
+    const items = getValueViaPath<Array<unknown>>(answers, id)
+
+    if (numberOfItems > (numberOfItemsInAnswers || 0)) {
+      setNumberOfItems(numberOfItems - 1)
+    } else if (numberOfItems === numberOfItemsInAnswers) {
+      // setValue(id, items?.slice(0, -1))
+      setNumberOfItems(numberOfItems - 1)
+    } else if (
+      numberOfItemsInAnswers &&
+      numberOfItems < numberOfItemsInAnswers
+    ) {
+      const difference = numberOfItems - numberOfItemsInAnswers
+      // setValue(id, items?.slice(0, difference))
+      setNumberOfItems(numberOfItems)
+    }
+
+    remove(numberOfItems - 1)
   }
 
   const repeaterFields = (index: number, displayIndex: number) => (
@@ -206,27 +222,22 @@ export const FieldsRepeaterFormField = ({
       : itemCondition
   }
 
-  const showAddButton = !hideAddButton
-
-  // Keep activeIndex in a ref so setBeforeSubmit callback always has latest value
+  // Keep activeIndex in a ref so setBeforeValidation callback always has latest value
   const activeIndexRef = useRef(activeIndex)
   useEffect(() => {
     activeIndexRef.current = activeIndex
   }, [activeIndex])
 
-  // Register a beforeSubmit callback that blocks form submission until the active registration is completed
-  // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
+  // Register a beforeValidation callback that blocks form submission until the active registration is completed
+  // Persist a unique callback ID across renders to avoid re-registering in setBeforeValidationCallback
   const callbackIdRef = useRef(`FieldRepeaterFormField-${uuid()}`)
   useEffect(() => {
-    console.log('running this??')
     setBeforeSubmitCallback?.(
       async () => {
-        console.log('not this??')
         // Remove deleted rows
         // Iterate in reverse so removing doesn't break indices
         for (let i = fields.length - 1; i >= 0; i--) {
           const row = fields[i]
-          console.log('row', row)
           if (row.isRemoved) {
             remove(i)
           }
@@ -237,6 +248,33 @@ export const FieldsRepeaterFormField = ({
       { allowMultiple: true, customCallbackId: callbackIdRef.current },
     )
   }, [fields, remove, setBeforeSubmitCallback])
+
+  // useEffect(() => {
+  //   setBeforeValidationCallback?.(
+  //     async () => {
+  //       // Remove deleted rows
+  //       // Iterate in reverse so removing doesn't break indices
+  //       for (let i = fields.length - 1; i >= 0; i--) {
+  //         const row = fields[i]
+  //         if (row.isRemoved) {
+  //           remove(i)
+  //         }
+  //       }
+
+  //       return [true, null]
+  //     },
+  //     { allowMultiple: true, customCallbackId: callbackIdRef.current },
+  //   )
+  // }, [fields, remove, setBeforeValidationCallback])
+
+  const showRemoveButton =
+    fields.filter((x) => !x.isRemoved).length > Math.max(minRowsValue, 0) &&
+    !hideRemoveButton
+
+  const showAddButton =
+    maxRowsValue &&
+    fields.filter((x) => !x.isRemoved).length <= Math.max(maxRowsValue, 0) &&
+    !hideAddButton
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -271,17 +309,22 @@ export const FieldsRepeaterFormField = ({
         >
           {showFormTitle && displayTitleAsAccordion && (
             <Accordion singleExpand={false}>
-              {fields.map((field, i) => {
+              {Array.from({
+                length: Math.max(fields.length, minRowsValue),
+              }).map((_i, i) => {
                 if (!shouldShowItem(i)) return null
 
-                if (field?.isRemoved) {
+                if (fields[i]?.isRemoved) {
                   return null
                 }
 
                 // Compute display index (based only on visible rows)
-                const displayIndex = fields
-                  .filter((f) => !f.isRemoved)
-                  .findIndex((f) => f.id === field.id)
+                const displayIndex = Math.max(
+                  fields
+                    .filter((f) => !f.isRemoved)
+                    .findIndex((f) => f.id === fields[i]?.id),
+                  0,
+                )
 
                 return (
                   <AccordionItem
@@ -317,16 +360,21 @@ export const FieldsRepeaterFormField = ({
 
           {showFormTitle && !displayTitleAsAccordion && (
             <GridRow rowGap={[2, 2, 2, 3]}>
-              {fields.map((field, i) => {
+              {Array.from({
+                length: Math.max(fields.length, minRowsValue),
+              }).map((_i, i) => {
                 if (!shouldShowItem(i)) return null
-                if (field?.isRemoved) {
+                if (fields[i]?.isRemoved) {
                   return null
                 }
 
                 // Compute display index (based only on visible rows)
-                const displayIndex = fields
-                  .filter((f) => !f.isRemoved)
-                  .findIndex((f) => f.id === field.id)
+                const displayIndex = Math.max(
+                  fields
+                    .filter((f) => !f.isRemoved)
+                    .findIndex((f) => f.id === fields[i]?.id),
+                  0,
+                )
 
                 return (
                   <Fragment key={i}>
@@ -361,15 +409,20 @@ export const FieldsRepeaterFormField = ({
           )}
 
           {!showFormTitle &&
-            fields.map((field, i) => {
+            Array.from({
+              length: Math.max(fields.length, minRowsValue),
+            }).map((_i, i) => {
               if (!shouldShowItem(i)) return null
-              if (field?.isRemoved) {
+              if (fields[i]?.isRemoved) {
                 return null
               }
               // Compute display index (based only on visible rows)
-              const displayIndex = fields
-                .filter((f) => !f.isRemoved)
-                .findIndex((f) => f.id === field.id)
+              const displayIndex = Math.max(
+                fields
+                  .filter((f) => !f.isRemoved)
+                  .findIndex((f) => f.id === fields[i]?.id),
+                0,
+              )
 
               return (
                 <Fragment key={i}>{repeaterFields(i, displayIndex)}</Fragment>

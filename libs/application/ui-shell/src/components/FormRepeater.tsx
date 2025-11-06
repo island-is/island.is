@@ -6,6 +6,7 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
+  SetBeforeValidationCallback,
 } from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
@@ -20,6 +21,7 @@ const FormRepeater: FC<
     repeater: RepeaterScreen
     errors: RecordObject
     setBeforeSubmitCallback: SetBeforeSubmitCallback
+    setBeforeValidationCallback: SetBeforeValidationCallback
     setFieldLoadingState: SetFieldLoadingState
     expandRepeater: () => void
     onUpdateRepeater: (
@@ -30,6 +32,7 @@ const FormRepeater: FC<
   application,
   errors,
   setBeforeSubmitCallback,
+  setBeforeValidationCallback,
   setFieldLoadingState,
   expandRepeater,
   onUpdateRepeater,
@@ -72,6 +75,7 @@ const FormRepeater: FC<
     removeRepeaterItem,
     setRepeaterItems,
     setBeforeSubmitCallback,
+    setBeforeValidationCallback,
     setFieldLoadingState,
   }
   const Component = allFields[repeater.component] as

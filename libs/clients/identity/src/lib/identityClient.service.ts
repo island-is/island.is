@@ -109,6 +109,7 @@ export class IdentityClientService {
     const person = await this.nationalRegistryService.getAllDataIndividual(
       nationalId,
     )
+    console.log('person', person)
 
     if (!person) {
       return null

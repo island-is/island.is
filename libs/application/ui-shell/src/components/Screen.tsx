@@ -23,6 +23,8 @@ import {
   BeforeSubmitCallback,
   Section,
   SetBeforeSubmitCallbackOptions,
+  BeforeValidationCallback,
+  SetBeforeValidationCallbackOptions,
 } from '@island.is/application/types'
 import {
   Box,
@@ -117,8 +119,14 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
-    resolver: (formValue, context) =>
-      resolver({ formValue, context, formatMessage }),
+    resolver: async (formValue, context) => {
+      console.log('formValue in resolver', formValue)
+      console.log('context in resolver', context)
+      if (typeof beforeValidationCallback.current === 'function') {
+        await beforeValidationCallback.current()
+      }
+      return resolver({ formValue, context, formatMessage })
+    },
     context: { dataSchema, formNode: screen },
   })
 
@@ -181,6 +189,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     new Map(),
   )
 
+  const beforeValidationCallback = useRef<BeforeValidationCallback | null>(null)
+  const beforeValidationCallbacksMap = useRef<
+    Map<string, BeforeValidationCallback>
+  >(new Map())
+
   const setBeforeSubmitCallback = useCallback(
     (
       callback: BeforeSubmitCallback | null,
@@ -214,6 +227,44 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       }
     },
     [beforeSubmitCallback], // Only re-create this function if the ref changes
+  )
+
+  const setBeforeValidationCallback = useCallback(
+    (
+      callback: BeforeValidationCallback | null,
+      options?: SetBeforeValidationCallbackOptions,
+    ) => {
+      // Unique ID for this callback to prevent registering the same callback when using multiple
+      const id = options?.customCallbackId ?? uuid()
+
+      // If null is passed, clear the current beforeSubmit callback
+      if (callback === null) {
+        beforeValidationCallbacksMap.current.clear()
+        beforeValidationCallback.current = null
+        return
+      }
+
+      if (!options?.allowMultiple) {
+        // Replace all existing callbacks with just this one
+        beforeValidationCallbacksMap.current = new Map([[id, callback]])
+      } else {
+        // Deduplicate by id
+        beforeValidationCallbacksMap.current.set(id, callback)
+      }
+
+      // Rebuild a single composed callback from all callbacks in the map
+      beforeValidationCallback.current = async () => {
+        for (const [
+          _id,
+          cb,
+        ] of beforeValidationCallbacksMap.current.entries()) {
+          const [ok, message] = await cb()
+          if (!ok) return [ok, message]
+        }
+        return [true, null]
+      }
+    },
+    [beforeValidationCallback], // Only re-create this function if the ref changes
   )
 
   const parsedUpdateApplicationError = getServerValidationErrors(
@@ -423,6 +474,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setBeforeValidationCallback={setBeforeValidationCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
                 onUpdateRepeater={onUpdateRepeater}
@@ -431,6 +483,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
               <FormMultiField
                 answerQuestions={answerQuestions}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setBeforeValidationCallback={setBeforeValidationCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 errors={dataSchemaOrApiErrors}
                 multiField={screen}
@@ -455,6 +508,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 <FormField
                   autoFocus
                   setBeforeSubmitCallback={setBeforeSubmitCallback}
+                  setBeforeValidationCallback={setBeforeValidationCallback}
                   setFieldLoadingState={setFieldLoadingState}
                   errors={dataSchemaOrApiErrors}
                   field={screen}

@@ -9,6 +9,35 @@ import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
 
+export type BeforeValidationCallback = () => Promise<
+  [true, null] | [false, string]
+>
+
+export type SetBeforeValidationCallback = (
+  callback: BeforeValidationCallback | null,
+  options?: SetBeforeValidationCallbackOptions,
+) => void
+
+export type SetBeforeValidationCallbackOptions = {
+  /**
+   * Allows multiple callbacks to be composed together.
+   *
+   * Must be explicitly set to `true` if you want multiple callbacks.
+   * When `true`, a `customCallbackId` must also be provided to avoid
+   * registering the same callback multiple times.
+   */
+  allowMultiple: boolean
+
+  /**
+   * A custom identifier for this callback.
+   *
+   * Required when `allowMultiple` is `true`. This ID should remain
+   * consistent for the component instance to prevent duplicate
+   * registrations of the same callback.
+   */
+  customCallbackId: string
+}
+
 export type BeforeSubmitCallback = (
   event?: string,
 ) => Promise<[true, null] | [false, string]>
@@ -213,6 +242,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setBeforeValidationCallback?: SetBeforeValidationCallback
   setFieldLoadingState?: SetFieldLoadingState
   setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
@@ -227,6 +257,7 @@ export type RepeaterProps = {
     items: unknown[],
   ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setBeforeValidationCallback?: SetBeforeValidationCallback
   setFieldLoadingState?: SetFieldLoadingState
 }
 

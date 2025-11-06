@@ -19,6 +19,7 @@ export class IdentityResolver {
     @Args('input', { nullable: true }) input: IdentityInput,
   ): Promise<Identity | null> {
     const nationalId = input?.nationalId || user.nationalId
+    console.log('calling this??')
     return this.identityService.getIdentity(nationalId)
   }
 }

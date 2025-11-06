@@ -47,11 +47,11 @@ export class NationalRegistryV3ClientService {
       )
     }
 
-    const result = await handle204(
-      this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
-        nationalId,
-      }),
-    )
+    const a = this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
+      nationalId,
+    })
+    console.log('a', a)
+    const result = await handle204(a)
 
     if (!result && alsoTryFakeApiWhenNotFound) {
       return handle204(
