@@ -22,6 +22,8 @@ import * as styles from './SitemapTreeFieldDialog.css'
 interface CategoryState {
   label: string
   labelEN?: string
+  shortLabel?: string
+  shortLabelEN?: string
   slug: string
   slugEN?: string
   description: string
@@ -69,6 +71,30 @@ const CategoryForm = ({
             }}
           />
         </div>
+      </div>
+      <div>
+        <FormControl.Label>Short title (Icelandic)</FormControl.Label>
+        <TextInput
+          value={state.shortLabel}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabel: ev.target.value,
+            }))
+          }}
+        />
+      </div>
+      <div>
+        <FormControl.Label>Short title (English)</FormControl.Label>
+        <TextInput
+          value={state.shortLabelEN}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabelEN: ev.target.value,
+            }))
+          }}
+        />
       </div>
       <div>
         <FormControl.Label>Slug (Icelandic)</FormControl.Label>
@@ -138,15 +164,10 @@ const CategoryForm = ({
           if (!stateToSubmit.slugEN) {
             stateToSubmit.slugEN = slugify(stateToSubmit.labelEN ?? '')
           }
-
           if (!stateToSubmit.status) {
             stateToSubmit.status = 'draft'
-          } else if (
-            stateToSubmit.status === 'published' &&
-            initialState.status === 'published'
-          ) {
-            stateToSubmit.status = 'changed'
           }
+
           onSubmit(stateToSubmit)
         }}
       >
