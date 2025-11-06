@@ -164,7 +164,7 @@ describe('showPreferredLanguageFields', () => {
 describe('getApplicationType', () => {
   const currentDate = new Date()
 
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has enrolled before (data is found in Frigg)', () => {
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has not enrolled before (no data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
     const answers = {
