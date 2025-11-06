@@ -53,7 +53,7 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
     return 'Ákæra'
   }
   const subtypes = formatCaseType(caseType)
-  return Array.isArray(subtypes) ? subtypes[0] : subtypes
+  return capitalize(Array.isArray(subtypes) ? subtypes[0] : subtypes)
 }
 
 const commonFields = (c: Case) => {
