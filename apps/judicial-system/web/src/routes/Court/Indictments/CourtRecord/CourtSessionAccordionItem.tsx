@@ -455,12 +455,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const handleUpdateFile = (
     courtSessionId: string,
     fileId: string,
-    update: { name?: string; submittedBy?: string },
+    update: { name?: string; submittedBy?: string | null },
   ) => {
-    if (!update.name?.trim() && !update.submittedBy) {
-      return
-    }
-
     courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId,
@@ -980,7 +976,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             CourtDocumentType.EXTERNAL_DOCUMENT
                           ) {
                             const split = item.submittedBy?.split('|')
-                            console.log('split', item)
                             const enabled = (
                               <Box marginTop={1}>
                                 <SelectRepresentative
@@ -995,7 +990,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     caseFileCategory,
                                   ) => {
                                     handleUpdateFile(courtSession.id, item.id, {
-                                      submittedBy: `${submitterName}|${caseFileCategory}`,
+                                      submittedBy:
+                                        submitterName && caseFileCategory
+                                          ? `${submitterName}|${caseFileCategory}`
+                                          : null,
                                     })
                                   }}
                                 />
