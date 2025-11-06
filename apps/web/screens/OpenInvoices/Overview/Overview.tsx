@@ -26,6 +26,7 @@ import { formatCurrency } from '@island.is/shared/utils'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutWrapper,
+  Footer,
   SortableTable,
 } from '@island.is/web/components'
 import { Query } from '@island.is/web/graphql/schema'
@@ -114,7 +115,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         }
       />
 
-      <Box background="blue100">
+      <Box marginTop={12} background="blue100">
         <SidebarLayout
           fullWidthContent={true}
           sidebarContent={
@@ -378,6 +379,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           </Box>
         </SidebarLayout>
       </Box>
+
     </CustomPageLayoutWrapper>
   )
 }
