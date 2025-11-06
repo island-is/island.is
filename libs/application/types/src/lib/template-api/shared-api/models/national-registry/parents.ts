@@ -1,6 +1,7 @@
 export interface NationalRegistryParent {
   nationalId: string
-  fullName: string
+  givenName: string | null
+  familyName: string | null
   legalDomicile?: {
     streetAddress: string
     postalCode: string | null
