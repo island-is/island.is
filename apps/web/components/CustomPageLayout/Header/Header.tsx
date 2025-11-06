@@ -40,29 +40,21 @@ type Shortcuts = {
     }
 )
 
-export type HeaderProps = {
+export type CustomPageLayoutHeaderProps = {
   title: string
   description?: string
   breadcrumbs: ReactNode
+  featuredImage?: {
+    src: string
+    alt: string
+  }
   shortcuts?: Shortcuts
   searchUrl?: string
   searchPlaceholder?: string
   offset?: boolean
 }
 
-export type ImageProps = HeaderProps & {
-  featuredImage: string
-  featuredImageAlt: string
-}
-
-export type NoImageProps = HeaderProps & {
-  featuredImage?: never
-  featuredImageAlt?: never
-}
-
-export type HeaderWithImageProps = ImageProps | NoImageProps
-
-export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
+export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
   const renderSearchSection = () => {
     if (!props.searchUrl) {
       return
@@ -136,9 +128,9 @@ export const CustomPageLayoutHeader = (props: HeaderWithImageProps) => {
         alignItems="center"
       >
         <img
-          src={props.featuredImage}
+          src={props.featuredImage.src}
           className={styles.image}
-          alt={props.featuredImageAlt}
+          alt={props.featuredImage.alt}
         />
       </Box>
     )

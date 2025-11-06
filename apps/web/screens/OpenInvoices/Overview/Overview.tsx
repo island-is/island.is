@@ -26,7 +26,6 @@ import { formatCurrency } from '@island.is/shared/utils'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutWrapper,
-  Footer,
   SortableTable,
 } from '@island.is/web/components'
 import { Query } from '@island.is/web/graphql/schema'
@@ -38,7 +37,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { m } from '../messages'
-import { getPaginatedMockData, MOCK_TABLE_DATA } from '../mocks/table'
+import { getPaginatedMockData } from '../mocks/table'
 import * as styles from './Overview.css'
 
 const PAGE_SIZE = 12
@@ -95,8 +94,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       <CustomPageLayoutHeader
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
-        featuredImage={formatMessage(m.home.featuredImage)}
-        featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
+        featuredImage={{
+          src:formatMessage(m.home.featuredImage),
+          alt: formatMessage(m.home.featuredImageAlt),
+        }}
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs

@@ -23,6 +23,7 @@ import {
 import {
   CustomPageUniqueIdentifier,
   Query,
+  QueryGetOrganizationArgs
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -30,11 +31,15 @@ import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResol
 import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
+import { GET_ORGANIZATION_QUERY } from '../../queries'
+import { OpenInvoicesWrapper } from '../components/wrapper'
+import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
 import { CHART_MOCK_DATA } from '../mocks/chart'
 import * as styles from './Home.css'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
+  organization,
   locale,
   customPageData,
 }) => {
@@ -58,18 +63,17 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
   ]
 
   return (
-    <CustomPageLayoutWrapper
-      pageTitle={formatMessage(m.home.title)}
-      pageDescription={formatMessage(m.home.description)}
-      pageFeaturedImage={formatMessage(m.home.featuredImage)}
-    >
-      <CustomPageLayoutHeader
-        title={formatMessage(m.home.title)}
-        description={formatMessage(m.home.description)}
-        featuredImage={formatMessage(m.home.featuredImage)}
-        featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-        offset
-        shortcuts={{
+    <OpenInvoicesWrapper
+      title={formatMessage(m.home.title)}
+      description={formatMessage(m.home.description)}
+      featuredImage={{
+        src: formatMessage(m.home.featuredImage),
+        alt: formatMessage(m.home.featuredImageAlt)
+      }}
+      header={{
+        offset: true,
+        breadcrumbs: breadcrumbItems,
+        shortcuts: {
           variant: 'tags',
           items: [
             {
@@ -81,24 +85,12 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
               href: 'island.is',
             },
           ],
-        }}
-        breadcrumbs={
-          breadcrumbItems && (
-            <Breadcrumbs
-              items={breadcrumbItems ?? []}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href} legacyBehavior>
-                    {link}
-                  </NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          )
-        }
-      />
+        },
+      }}
+      footer={organization ? {
+        organization,
+      } : undefined}
+    >
       <Box marginTop="containerGutter">
         <GridContainer>
           <GridRow marginTop={9} marginBottom={13}>
@@ -334,7 +326,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
         </GridContainer>
       </Box>
       <Footer heading="Opinberir reikningar" columns={[]} />
-    </CustomPageLayoutWrapper>
+    </OpenInvoicesWrapper>
   )
 }
 
@@ -357,13 +349,20 @@ const OpenInvoicesHome: CustomScreen<OpenInvoicesHomeProps> = ({
   )
 }
 
-OpenInvoicesHome.getProps = async ({ locale }) => {
+OpenInvoicesHome.getProps = async ({ apolloClient, locale }) => {
+  const { data: { getOrganization } } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: ORGANIZATION_SLUG,
+        lang: locale,
+      },
+    },
+  });
+
   return {
     locale: locale as Locale,
-    showSearchInHeader: false,
-    themeConfig: {
-      footerVersion: 'organization',
-    },
+    organization: getOrganization
   }
 }
 

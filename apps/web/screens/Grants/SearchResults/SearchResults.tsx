@@ -273,10 +273,10 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
       <CustomPageLayoutHeader
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
-        featuredImage={
-          customSubpage?.ogImage?.url ?? formatMessage(m.home.featuredImage)
-        }
-        featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
+        featuredImage={{
+          src:customSubpage?.ogImage?.url ?? formatMessage(m.home.featuredImage),
+          alt: formatMessage(m.home.featuredImageAlt)
+        }}
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs
