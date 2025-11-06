@@ -20,6 +20,7 @@ export {
   mapPoliceVerdictDeliveryStatus,
 } from './lib/verdict'
 
+export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
