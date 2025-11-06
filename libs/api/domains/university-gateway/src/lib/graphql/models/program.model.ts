@@ -1,5 +1,5 @@
 import { CacheField } from '@island.is/nest/graphql'
-import {Field, GraphQLISODateTime, ObjectType} from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { Document } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 

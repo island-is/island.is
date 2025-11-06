@@ -180,7 +180,7 @@ export class ProgramBase extends Model<
     example: new Date('2023-08-01'),
     type: String,
     format: 'date-time',
-    nullable: true
+    nullable: true,
   })
   @Column({
     type: DataType.DATE,
