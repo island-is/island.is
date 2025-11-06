@@ -19,8 +19,10 @@ export class InvoicesResolver {
     nullable: true,
   })
   @BypassAuth()
-  async getInvoices( @Args('input', { type: () => InvoiceListInput })
-  input: InvoiceListInput,): Promise<InvoiceList | null> {
+  async getInvoices(
+    @Args('input', { type: () => InvoiceListInput })
+    input: InvoiceListInput,
+  ): Promise<InvoiceList | null> {
     return this.invoiceService.getOpenInvoices(input)
   }
 }

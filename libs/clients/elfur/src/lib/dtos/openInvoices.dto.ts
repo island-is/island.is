@@ -1,4 +1,4 @@
-import { InvoiceDto } from "./invoice.dto"
+import { InvoiceDto } from './invoice.dto'
 
 export interface OpenInvoicesDto {
   invoices: Array<InvoiceDto> | null
