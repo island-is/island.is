@@ -20,12 +20,17 @@ import {
 } from '../models/questionnaires.model'
 import { QuestionnaireSubmission } from '../models/submission.model'
 import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
+import {
+  LshClientService,
+  Questionnaire as LSHQuestionnaireType,
+} from '@island.is/clients/lsh'
 
 @Injectable()
 export class QuestionnairesService {
   constructor(
     private readonly lshDevApi: LshDevService,
     private readonly api: HealthDirectorateHealthService,
+    private readonly lshApi: LshClientService,
   ) {}
 
   async getQuestionnaire(
@@ -127,42 +132,71 @@ export class QuestionnairesService {
     const data: QuestionnaireBaseDto[] | null =
       await this.api.getQuestionnaires(_user, _locale)
 
-    // const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
-    // // Transform each LSH Dev questionnaire
-    // const lshTransformed = mapFormsToQuestionnairesList(lshDev)
+    const lshData: LSHQuestionnaireType[] | null =
+      await this.lshApi.getQuestionnaires(_user, 'is')
 
-    // const lshAnswered: Form[] = await this.lshDevApi.getAnsweredForms(_user)
-    // const lshAnsweredTransformed = mapFormsToQuestionnairesList(lshAnswered)
-
-    // Transform EL questionnaire using the health directorate mapper
-    //const elList = createMockElDistressThermometerQuestionnaire()
-
-    // // Combine all questionnaires
-    // const allQuestionnaires: Questionnaire[] = [
-    //   ...(elListTransformed.questionnaires || []),
-    //   ...(elList2Transformed.questionnaires || []),
-    //   // ...(lshTransformed.questionnaires || []),
-    //   // ...(lshAnsweredTransformed.questionnaires || []),
-    // ]
-
-    const allQuestionnaires: QuestionnairesList = {
-      questionnaires:
-        data?.map((q) => {
-          return {
-            id: q.questionnaireId,
-            title: q.title ?? 'Untitled Questionnaire',
-            description: q.message,
-            sentDate: new Date().toISOString(),
-            organization: 'Landlæknir',
-            status:
-              q.numSubmissions > 0
-                ? QuestionnairesStatusEnum.answered
-                : QuestionnairesStatusEnum.notAnswered,
-            lastSubmitted: q.lastSubmitted,
-          }
-        }) || [],
+    let ELquestionnaires: QuestionnairesList = { questionnaires: [] }
+    try {
+      ELquestionnaires = {
+        questionnaires:
+          data?.map((q) => {
+            return {
+              id: q.questionnaireId,
+              title:
+                q.title ?? _locale === 'is'
+                  ? 'Spurningalisti'
+                  : 'Questionnaire',
+              description: q.message,
+              sentDate: new Date().toISOString(),
+              organization: 'Landlæknir',
+              status:
+                q.numSubmissions > 0
+                  ? QuestionnairesStatusEnum.answered
+                  : QuestionnairesStatusEnum.notAnswered,
+              lastSubmitted: q.lastSubmitted,
+            }
+          }) || [],
+      }
+    } catch (e) {
+      console.error('Error fetching questionnaires', e)
+      return null
     }
 
-    return { questionnaires: allQuestionnaires.questionnaires }
+    let LSHquestionnaires: QuestionnairesList = { questionnaires: [] }
+    try {
+      LSHquestionnaires = {
+        questionnaires:
+          lshData
+            ?.filter((item: LSHQuestionnaireType) => item.gUID != null)
+            .map((item: LSHQuestionnaireType) => {
+              return {
+                id: item.gUID!,
+                title:
+                  item.caption ?? _locale === 'is'
+                    ? 'Spurningalisti'
+                    : 'Questionnaire',
+                description: item.description ?? undefined,
+                sentDate: item.validFromDateTime.toISOString(),
+                organization: item.department || 'Landspítali',
+                status: item.answerDateTime
+                  ? QuestionnairesStatusEnum.answered
+                  : new Date(item.validToDateTime) < new Date()
+                  ? QuestionnairesStatusEnum.expired
+                  : QuestionnairesStatusEnum.notAnswered,
+              }
+            }) || [],
+      }
+    } catch (e) {
+      console.error('Error fetching questionnaires', e)
+      return null
+    }
+
+    const allLists = [ELquestionnaires, LSHquestionnaires]
+
+    return {
+      questionnaires: allLists
+        .flatMap((list) => list.questionnaires)
+        .filter((q) => q !== undefined),
+    }
   }
 }
