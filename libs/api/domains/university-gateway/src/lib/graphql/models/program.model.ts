@@ -1,5 +1,5 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, ObjectType } from '@nestjs/graphql'
+import {Field, GraphQLISODateTime, ObjectType} from '@nestjs/graphql'
 import { Document } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 
@@ -49,10 +49,10 @@ export class UniversityGatewayProgram {
   @Field()
   startingSemesterSeason!: string
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   declare applicationStartDate: Date | null
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   declare applicationEndDate: Date | null
 
   @Field({ nullable: true })
