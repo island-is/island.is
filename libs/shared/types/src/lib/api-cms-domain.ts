@@ -12,6 +12,7 @@ export enum CustomPageUniqueIdentifier {
   Verdicts = 'Verdicts',
   BloodDonationRestrictions = 'BloodDonationRestrictions',
   CourtAgendas = 'CourtAgendas',
+  LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
 }
 
 export interface StatisticSourceValue {
@@ -61,6 +62,8 @@ export type SitemapTreeNode = SitemapTree &
         url: string
         urlEN?: string
         urlType?: SitemapUrlType
+        description?: string
+        descriptionEN?: string
         status?: 'draft' | 'published'
       }
   )
@@ -68,4 +71,9 @@ export type SitemapTreeNode = SitemapTree &
 export type SitemapTree = {
   id: number
   childNodes: SitemapTreeNode[]
+}
+
+export enum WebLandspitaliCreateMemorialCardPaymentUrlInputSendType {
+  PostalMail = 'PostalMail',
+  Email = 'Email',
 }

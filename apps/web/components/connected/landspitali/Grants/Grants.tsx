@@ -8,7 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -152,8 +151,6 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
     WebLandspitaliCatalogQueryVariables
   >(GET_LANDSPITALI_CATALOG)
 
-  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
-
   const grantOptions = useMemo(() => {
     const options = (
       (slice.json?.grantOptions as typeof DEFAULT_GRANT_OPTIONS) ??
@@ -238,6 +235,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             payerPlace: data.senderPlace,
             amountISK: parseInt(amountISK.replace(/\./g, '')),
             locale: activeLocale,
+            cancelUrl: window.location.href,
           },
         },
       })
@@ -416,20 +414,13 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                       id="senderNationalId"
                       label={formatMessage(m.info.senderNationalIdLabel)}
                       size="xs"
-                      error={
-                        nationalIdSkipped
-                          ? undefined
-                          : errors.senderNationalId?.message
-                      }
+                      error={errors.senderNationalId?.message}
                       type="text"
                       inputMode="numeric"
                       format="######-####"
-                      disabled={nationalIdSkipped}
                       rules={{
                         validate: (value) => {
-                          if (nationalIdSkipped) {
-                            return true
-                          }
+                          if (!value) return true
                           if (!isValidKennitala(value)) {
                             return formatMessage(
                               m.validation.invalidNationalIdFormat,
@@ -439,19 +430,6 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                         },
                       }}
                       control={control}
-                    />
-                    <Checkbox
-                      id="senderNationalIdSkipped"
-                      label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                      checked={nationalIdSkipped}
-                      onChange={() => {
-                        const newValue = !nationalIdSkipped
-                        setNationalIdSkipped(newValue)
-                        if (newValue) {
-                          setValue('senderNationalId', '')
-                        }
-                      }}
-                      labelVariant="small"
                     />
                   </Stack>
                 </GridColumn>

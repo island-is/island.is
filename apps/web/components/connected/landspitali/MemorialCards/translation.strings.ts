@@ -2,6 +2,21 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    sendTypePostalMailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypePostalMailLabel',
+      defaultMessage: 'Senda kort með bréfpósti',
+      description: 'Senda kort með bréfpósti',
+    },
+    sendTypeEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypeEmailLabel',
+      defaultMessage: 'Senda kort með tölvupósti',
+      description: 'Senda kort með tölvupósti',
+    },
+    recipientEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.recipientEmailLabel',
+      defaultMessage: 'Netfang viðtakanda',
+      description: 'Netfang viðtakanda',
+    },
     senderNationalIdDescription: {
       id: 'web.landspitali.memorialCard:info.senderNationalIdDescription',
       defaultMessage:
@@ -90,11 +105,6 @@ export const m = {
       defaultMessage: 'Kennitala',
       description: 'Kennitala',
     },
-    senderNationalIdSkippedLabel: {
-      id: 'web.landspitali.memorialCard:info.senderNationalIdSkippedLabel',
-      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-    },
     senderAddressLabel: {
       id: 'web.landspitali.memorialCard:info.senderAddressLabel',
       defaultMessage: 'Heimilisfang',
@@ -132,6 +142,11 @@ export const m = {
     },
   }),
   overview: defineMessages({
+    recipientEmail: {
+      id: 'web.landspitali.memorialCard:overview.recipientEmail',
+      defaultMessage: 'Netfang:',
+      description: 'Netfang',
+    },
     errorTitle: {
       id: 'web.landspitali.memorialCard:overview.errorTitle',
       defaultMessage: 'Villa',

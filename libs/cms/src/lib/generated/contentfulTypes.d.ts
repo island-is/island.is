@@ -1303,6 +1303,15 @@ export interface IFeaturedGenericListItemsFields {
   /** Items */
   items?: IGenericListItem[] | undefined
 
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+
   /** Automatically fetch items */
   automaticallyFetchItems?: boolean | undefined
 
@@ -1311,12 +1320,6 @@ export interface IFeaturedGenericListItemsFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
-
-  /** Organization Page */
-  organizationPage: IOrganizationPage
-
-  /** Organization Subpage */
-  organizationSubpage: IOrganizationSubpage
 }
 
 export interface IFeaturedGenericListItems
@@ -1722,6 +1725,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */

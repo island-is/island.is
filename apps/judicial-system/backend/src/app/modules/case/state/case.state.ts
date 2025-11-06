@@ -187,7 +187,8 @@ const indictmentCaseStateMachine: Map<
 
 const requestCaseCompletionSideEffect =
   (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime = update.courtEndTime ?? theCase.courtEndTime
+    const currentCourtEndTime =
+      update.courtEndTime ?? theCase.courtEndTime ?? nowFactory()
     const newUpdate: UpdateCase = {
       ...update,
       state,

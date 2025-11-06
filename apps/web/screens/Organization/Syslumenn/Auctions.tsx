@@ -1066,6 +1066,7 @@ Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
         input: {
           slug: slug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [subSlug],
         },
       },
     }),

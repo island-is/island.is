@@ -319,6 +319,12 @@ export const serviceSetup = (services: {
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
       ),
+      WEB_DOMAIN: {
+        dev: 'beta.dev01.devland.is',
+        staging: 'beta.staging01.devland.is',
+        prod: 'island.is',
+      },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -351,6 +357,16 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENTID',
+      DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL',
+      DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH',
+      DOCUMENT_PROVIDER_DASHBOARD_SCOPE:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_SCOPE',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
@@ -437,6 +453,8 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      LANDSPITALI_PAYMENT_ORGANISATION_ID:
+        '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
     })
     .xroad(
       AdrAndMachine,
@@ -514,15 +532,20 @@ export const serviceSetup = (services: {
       },
     })
     .readiness('/health')
-    .liveness('/liveness')
+    .liveness({
+      path: '/liveness',
+      initialDelaySeconds: 10,
+      timeoutSeconds: 5,
+    })
     .resources({
-      limits: { cpu: '1200m', memory: '3200Mi' },
-      requests: { cpu: '400m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '2500Mi' },
+      requests: { cpu: '800m', memory: '1500Mi' },
     })
     .replicaCount({
-      default: 2,
+      default: 3,
       max: 50,
-      min: 2,
+      min: 3,
+      cpuAverageUtilization: 75,
     })
     .grantNamespaces(
       'nginx-ingress-external',

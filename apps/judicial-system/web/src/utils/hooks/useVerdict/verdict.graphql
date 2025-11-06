@@ -11,7 +11,8 @@ query Verdict($input: VerdictQueryInput!) {
     externalPoliceDocumentId
     legalPaperRequestDate
     comment
-    defenderNationalId
+    deliveredToDefenderNationalId
     servedBy
+    isDefaultJudgement
   }
 }

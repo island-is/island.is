@@ -1,11 +1,12 @@
 import {
-  Dispatch,
   FC,
-  SetStateAction,
+  useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
+import _uniqBy from 'lodash/uniqBy'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -15,6 +16,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Icon,
   Input,
   RadioButton,
   Select,
@@ -24,29 +26,43 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  applyDativeCaseToCourtName,
+  formatDOB,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   BlueBox,
   DateTime,
+  FileNotFoundModal,
+  FormContext,
+  Modal,
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
-  Case,
+  CourtDocumentResponse,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
-  UpdateCourtSessionInput,
+  CourtSessionString,
+  CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useFileList,
+  useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -54,19 +70,6 @@ interface Props {
   courtSession: CourtSessionResponse
   isExpanded: boolean
   onToggle: () => void
-  onConfirmClick: () => void
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
-}
-
-interface FiledDocuments {
-  courtSessionId: string
-  files: ReorderableFile[]
-}
-
-interface ReorderableFile {
-  id: string
-  name: string
 }
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
@@ -107,107 +110,203 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   ],
 ]
 
-const useCourtSessionUpdater = (
-  workingCase: Case,
-  setWorkingCase: Dispatch<SetStateAction<Case>>,
-  updateFn: (updateCourtSession: UpdateCourtSessionInput) => Promise<boolean>,
-) => {
-  return (sessionId: string, updates: Partial<CourtSessionResponse>) => {
-    setWorkingCase((prev) => {
-      if (!prev.courtSessions) return prev
-
-      return {
-        ...prev,
-        courtSessions: prev.courtSessions?.map((item) =>
-          item.id === sessionId ? { ...item, ...updates } : item,
-        ),
-      }
-    })
-
-    updateFn({
-      ...updates,
-      courtSessionId: sessionId,
-      caseId: workingCase.id,
-    })
-  }
-}
-
 const CourtSessionAccordionItem: FC<Props> = (props) => {
-  const {
-    index,
-    courtSession,
-    isExpanded,
-    onToggle,
-    onConfirmClick,
-    workingCase,
-    setWorkingCase,
-  } = props
+  const { index, courtSession, isExpanded, onToggle } = props
+  const { workingCase, setWorkingCase, isCaseUpToDate } =
+    useContext(FormContext)
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
+    caseId: workingCase.id,
+  })
   const { courtDocument } = useCourtDocuments()
-  const { updateCourtSession } = useCourtSessions()
+  const { updateCourtSession, updateCourtSessionString, deleteCourtSession } =
+    useCourtSessions()
+  const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
-  const [unfiledFiles, setUnfiledFiles] = useState<ReorderableFile[]>([])
-  const [reorderableFiles, setReorderableFiles] = useState<FiledDocuments[]>([])
+  const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
+    null,
+  )
+
+  const [modalVisible, setModalVisible] = useState<'DELETE'>()
 
   const {
     judges,
+    districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
-  const updateSession = useCourtSessionUpdater(
-    workingCase,
-    setWorkingCase,
-    updateCourtSession,
+  const patchSession = useCallback(
+    (
+      courtSessionId: string,
+      updates: Partial<CourtSessionResponse>,
+      { persist = false } = {},
+    ) => {
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
+          session.id === courtSessionId ? { ...session, ...updates } : session,
+        ),
+      }))
+
+      if (persist) {
+        const { courtSessionStrings, ...courtSessionUpdate } = updates
+        updateCourtSession({
+          ...courtSessionUpdate,
+          courtSessionId,
+          caseId: workingCase.id,
+        })
+      }
+    },
+    [setWorkingCase, updateCourtSession, workingCase.id],
   )
 
-  useEffect(() => {
-    if (!workingCase.courtSessions) {
+  const patchCourtSessionStrings = useCallback(
+    (
+      courtSessionId: string,
+      mergedCaseId: string,
+      updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
+      { persist = false } = {},
+    ) => {
+      const targetCourtSessionString = courtSession.courtSessionStrings?.find(
+        (courtSessionString) =>
+          courtSessionString.courtSessionId === courtSessionId &&
+          courtSessionString.mergedCaseId === mergedCaseId &&
+          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+      )
+
+      const updatedCourtSessionsStrings = targetCourtSessionString
+        ? courtSession.courtSessionStrings?.map((courtSessionString) =>
+            courtSessionString.id === targetCourtSessionString?.id
+              ? {
+                  ...courtSessionString,
+                  value: updatedCourtSessionString.value,
+                }
+              : courtSessionString,
+          )
+        : [
+            ...(courtSession.courtSessionStrings ?? []),
+            {
+              caseId: workingCase.id,
+              courtSessionId,
+              mergedCaseId,
+              stringType: CourtSessionStringType.ENTRIES,
+              value: updatedCourtSessionString.value,
+            } as CourtSessionString,
+          ]
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
+          session.id === courtSessionId
+            ? { ...session, courtSessionStrings: updatedCourtSessionsStrings }
+            : session,
+        ),
+      }))
+
+      if (persist) {
+        updateCourtSessionString({
+          caseId: workingCase.id,
+          courtSessionId,
+          mergedCaseId,
+          stringType: CourtSessionStringType.ENTRIES,
+          value: updatedCourtSessionString.value,
+        })
+      }
+    },
+    [
+      courtSession.courtSessionStrings,
+      setWorkingCase,
+      updateCourtSessionString,
+      workingCase.id,
+    ],
+  )
+
+  const getInitialAttendees = useCallback(() => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
+    }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        const dob = formatDOB(defendant.nationalId, defendant.noNationalId, '')
+        attendees.push(
+          `\n${defendant.name} ákærði${dob ? ', ' : ''}${dob}, ${
+            defendant.address
+          }`,
+        )
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
+  }, [workingCase.prosecutor, workingCase.defendants])
+
+  const initialize = useCallback(() => {
+    if (courtSession.startDate) {
       return
     }
 
-    const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
-      (courtSession) => ({
-        courtSessionId: courtSession.id,
-        files:
-          courtSession.filedDocuments?.filter(
-            (filedDocument) => filedDocument.courtSessionId === courtSession.id,
-          ) || [],
-      }),
-    )
+    const now = formatDateForServer(new Date())
+    const startDate =
+      courtSession.startDate ??
+      workingCase.courtDate?.date ??
+      workingCase.arraignmentDate?.date ??
+      now
+    const judgeId = courtSession.judgeId ?? workingCase.judge?.id
+    const location =
+      courtSession.location ??
+      (workingCase.court?.name
+        ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+        : '')
+    const attendees = courtSession.attendees ?? getInitialAttendees()
+    const endDate = courtSession.endDate ?? (now > startDate ? now : startDate)
 
-    setReorderableFiles(filedDocuments)
-  }, [workingCase.courtSessions])
+    const update = { startDate, judgeId, location, attendees, endDate }
 
-  useEffect(() => {
-    if (!workingCase.unfiledCourtDocuments) {
+    patchSession(courtSession.id, update, { persist: true })
+  }, [
+    courtSession,
+    workingCase.judge?.id,
+    workingCase.courtDate?.date,
+    workingCase.arraignmentDate?.date,
+    workingCase.court?.name,
+    getInitialAttendees,
+    patchSession,
+  ])
+
+  // Initialize when the case is up to date and the accordion item is expanded
+  useOnceOn(isCaseUpToDate, () => setReadyForInitialization(true))
+  useOnceOn(readyForInitialization && isExpanded, initialize)
+
+  const defaultJudge = judges?.find(
+    (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
+  )
+
+  const handleOnOpen = (id: string) => {
+    const filedDocument =
+      courtSession.filedDocuments?.find((doc) => doc.id === id) ??
+      workingCase.unfiledCourtDocuments?.find((doc) => doc.id === id)
+
+    if (!filedDocument) {
       return
     }
 
-    setUnfiledFiles(
-      workingCase.unfiledCourtDocuments.map((doc) => ({
-        id: doc.id,
-        name: doc.name,
-      })),
-    )
-  }, [workingCase.unfiledCourtDocuments])
+    if (filedDocument.documentType === CourtDocumentType.UPLOADED_DOCUMENT) {
+      return onOpen(filedDocument.caseFileId ?? '')
+    }
 
-  const patchSession = (
-    id: string,
-    updates: Partial<CourtSessionResponse>,
-    { persist = false } = {},
-  ) => {
-    setWorkingCase((prev) => ({
-      ...prev,
-      courtSessions: prev.courtSessions?.map((session) =>
-        session.id === id ? { ...session, ...updates } : session,
-      ),
-    }))
-
-    if (persist) {
-      updateSession(id, updates)
+    if (filedDocument.documentType === CourtDocumentType.GENERATED_DOCUMENT) {
+      window.open(`${api.apiUrl}${filedDocument.generatedPdfUri}`, '_blank')
     }
   }
 
@@ -215,7 +314,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     if (!file.id) {
       return
     }
+
     const id = file.id
+    const fileInSession = courtSession.filedDocuments?.find(
+      (doc) => doc.id === file.id,
+    )
+
+    if (!fileInSession) {
+      return
+    }
 
     const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
@@ -227,42 +334,115 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
+    if (fileInSession.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+      setWorkingCase((prev) => ({
+        ...prev,
+        unfiledCourtDocuments: [
+          fileInSession,
+          ...(prev.unfiledCourtDocuments || []),
+        ],
+      }))
+    }
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: session.files.filter((i) => i.id !== file.id) }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: courtSession.filedDocuments?.filter(
+        (i) => i.id !== file.id,
       ),
-    )
-  }
-
-  const handleReorder = (newOrder: ReorderableFile[]) => {
-    if (courtSession.isConfirmed) {
-      return
-    }
-
-    const newIndex = newOrder.findIndex((f) => f.id === draggedFileId)
-    if (!draggedFileId || newIndex === -1) {
-      return
-    }
-
-    courtDocument.update.action({
-      caseId: workingCase.id,
-      courtSessionId: courtSession.id,
-      courtDocumentId: draggedFileId,
-      documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
     })
+  }
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: newOrder }
-          : session,
-      ),
+  const getMergedDocumentIndex = (
+    fileIndex: number,
+    previousMergedCaseDocumentCount: number,
+  ) => {
+    const previousCourtSessionDocumentCount = countDocumentsBeforeSession(index)
+
+    const currentCourtSessionFiledDocumentCount = filedDocuments?.length || 0
+    return (
+      previousCourtSessionDocumentCount +
+      currentCourtSessionFiledDocumentCount +
+      previousMergedCaseDocumentCount +
+      fileIndex
     )
   }
+
+  const getFiledDocumentIndex = (fileIndex: number) =>
+    countDocumentsBeforeSession(index) + fileIndex || 0
+
+  // NOTE: Properties in newOrder documents will not contain the correct state when it comes to document order.
+  // In the court record, we always re-compute the file orders and merged filed orders in the client file ordering component,
+  // and we additionally calculate it when posting the order changes for a given document to the server.
+  // Thus when updating the state, the main thing we are updating here is the new order of the docs and we technically disregard
+  // all the state related document properties that represent the document order.
+  const handleReorder =
+    (previousMergedCaseDocumentCount?: number) =>
+    (newOrder: CourtDocumentResponse[]) => {
+      if (courtSession.isConfirmed) {
+        return
+      }
+
+      const mergedDocument = courtSession.mergedFiledDocuments?.find(
+        (d) =>
+          courtSession.id === d.mergedCourtSessionId &&
+          d.id === draggedMergeFileId,
+      )
+
+      const fileId = mergedDocument ? draggedMergeFileId : draggedFileId
+      const targetFileIndex = newOrder.findIndex((f) => f.id === fileId)
+      if (targetFileIndex === -1 || !fileId) {
+        return
+      }
+      const newIndex = mergedDocument
+        ? getMergedDocumentIndex(
+            targetFileIndex,
+            previousMergedCaseDocumentCount ?? 0,
+          )
+        : getFiledDocumentIndex(targetFileIndex)
+
+      courtDocument.update.action({
+        caseId: workingCase.id,
+        courtSessionId: courtSession.id,
+        courtDocumentId: fileId,
+        ...(mergedDocument
+          ? { mergedDocumentOrder: newIndex + 1 }
+          : { documentOrder: newIndex + 1 }),
+      })
+
+      if (mergedDocument) {
+        // For merged filed documents reordering, the newOrder will only contain the new order for merged documents for a single merged case id.
+        // But courtSession.mergedFiledDocuments can contain merged filed documents for many cases that are linked to the same court session.
+        // Thus we have to create a new merged documents array to persist the order state for other merged case filed documents.
+        const currentMergedDocuments = courtSession.mergedFiledDocuments ?? []
+        const firstIndex = currentMergedDocuments.findIndex(
+          (document) => mergedDocument.caseId === document.caseId,
+        )
+        if (firstIndex === -1) {
+          return
+        }
+
+        let newOrderIndex = 0
+        const newMergedDocumentsOrder: CourtDocumentResponse[] =
+          currentMergedDocuments.map((document) => {
+            if (document.caseId !== mergedDocument.caseId) {
+              return document
+            }
+
+            const reorderedDocument = newOrder[newOrderIndex]
+            newOrderIndex += 1
+            return reorderedDocument
+          })
+
+        if (newOrderIndex !== newOrder.length) {
+          return
+        }
+
+        patchSession(courtSession.id, {
+          mergedFiledDocuments: newMergedDocumentsOrder,
+        })
+      } else {
+        patchSession(courtSession.id, { filedDocuments: newOrder })
+      }
+    }
 
   const handleRename = (
     courtSessionId: string,
@@ -280,21 +460,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       name: newName,
     })
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSessionId
-          ? {
-              ...session,
-              files: session.files.map((file) =>
-                file.id === fileId ? { ...file, name: newName } : file,
-              ),
-            }
-          : session,
-      ),
+    const isMergedDocument = courtSession.mergedFiledDocuments?.find(
+      (d) => courtSession.id === d.mergedCourtSessionId && d.id === fileId,
     )
+    const update = isMergedDocument
+      ? {
+          mergedFiledDocuments: courtSession.mergedFiledDocuments?.map((file) =>
+            file.id === fileId ? { ...file, name: newName } : file,
+          ),
+        }
+      : {
+          filedDocuments: courtSession.filedDocuments?.map((file) =>
+            file.id === fileId ? { ...file, name: newName } : file,
+          ),
+        }
+    patchSession(courtSession.id, update)
   }
 
-  const handleFileCourtDocument = async (file: ReorderableFile) => {
+  const handleFileCourtDocument = async (file: CourtDocumentResponse) => {
     const res = await courtDocument.fileInCourtSession.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
@@ -303,25 +486,20 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
-
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [
-                ...session.files,
-                { id: res.fileCourtDocumentInCourtSession.id, name: file.name },
-              ],
-            }
-          : session,
+    setWorkingCase((prev) => ({
+      ...prev,
+      unfiledCourtDocuments: prev.unfiledCourtDocuments?.filter(
+        (item) => item.id !== file.id,
       ),
-    )
+    }))
+
+    patchSession(courtSession.id, {
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
   }
 
   const handleChangeWitness = (value?: string | null) => {
-    const selectedUser = [...judges, ...registrars].find(
+    const selectedUser = [...districtCourtAssistants, ...registrars].find(
       (u) => u.value === value,
     )
 
@@ -362,9 +540,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     patchSession(
       courtSession.id,
-      {
-        endDate: formatDateForServer(merged),
-      },
+      { endDate: formatDateForServer(merged) },
       { persist: true },
     )
   }
@@ -381,29 +557,35 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [...session.files, { id: res.id, name: value }],
-            }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
+  }
+
+  const handleDeleteCourtSession = async (courtSessionId: string) => {
+    const deleted = await deleteCourtSession({
+      caseId: workingCase.id,
+      courtSessionId,
+    })
+
+    if (!deleted) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      courtSessions: prev.courtSessions?.filter(
+        (session) => session.id !== courtSessionId,
       ),
-    )
+    }))
+
+    setModalVisible(undefined)
   }
 
   const containerVariants = {
-    hidden: {
-      height: 0,
-    },
-    visible: {
-      height: 'auto',
-    },
-    exit: {
-      height: 0,
-      transition: { duration: 0.6 },
-    },
+    hidden: { height: 0 },
+    visible: { height: 'auto' },
+    exit: { height: 0, transition: { duration: 0.6 } },
   }
 
   const titleVariants = {
@@ -424,24 +606,69 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const itemVariants = {
-    hidden: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-      transition: { delay: 0.3 },
-    },
-    exit: {
-      opacity: 0,
-    },
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { delay: 0.3 } },
+    exit: { opacity: 0 },
   }
 
   const filedDocuments = useMemo(
     () =>
-      reorderableFiles.find((d) => d.courtSessionId === courtSession.id)
-        ?.files || [],
-    [courtSession.id, reorderableFiles],
+      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
+        ?.filedDocuments || [],
+    [courtSession.id, workingCase.courtSessions],
   )
+
+  const mergedCaseDocumentsInCourtSession = useMemo(() => {
+    const mergedFileDocuments =
+      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
+        ?.mergedFiledDocuments || []
+
+    const mergedCaseIds = _uniqBy(
+      mergedFileDocuments ?? [],
+      (d: CourtDocumentResponse) => d.caseId,
+    ).map((document) => document.caseId)
+
+    // we have to keep track of the previous merged case files within the same court session
+    // to calculate the document order indexes correctly in the client for reordering purposes
+    let previousMergedCaseDocumentCount = 0
+    return mergedCaseIds.map((caseId) => {
+      const mergedFileDocumentsPerCase = mergedFileDocuments.filter(
+        (document) => document.caseId === caseId,
+      )
+      const courtCaseNumberPerMergedDocuments = {
+        caseId,
+        courtCaseNumber: workingCase.mergedCases?.find((c) => c.id === caseId)
+          ?.courtCaseNumber,
+        mergedFileDocuments: mergedFileDocumentsPerCase,
+        previousMergedCaseDocumentCount,
+      }
+      previousMergedCaseDocumentCount += mergedFileDocumentsPerCase.length
+      return courtCaseNumberPerMergedDocuments
+    })
+  }, [courtSession.id, workingCase.courtSessions, workingCase.mergedCases])
+
+  const countDocumentsBeforeSession = (index: number) => {
+    const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
+
+    return sessionsBefore.reduce(
+      (acc, session) =>
+        (acc =
+          acc +
+          (session.filedDocuments?.length || 0) +
+          (session.mergedFiledDocuments?.length || 0)),
+      0,
+    )
+  }
+
+  const isLastCourtSession =
+    index >= 1 && index + 1 === workingCase.courtSessions?.length
+  const hasMergedCourtDocuments = courtSession.mergedFiledDocuments?.length
+
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
 
   return (
     <AccordionItem
@@ -452,600 +679,862 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       expanded={isExpanded}
       onToggle={onToggle}
     >
-      <LayoutGroup>
-        <Box className={styles.containerGrid}>
-          <BlueBox>
-            <div className={styles.grid}>
-              <DateTime
-                name="courtStartDate"
-                datepickerLabel="Dagsetning þingfestingar"
-                timeLabel="Þinghald hófst (kk:mm)"
-                maxDate={new Date()}
-                selectedDate={courtSession.startDate}
-                onChange={(date: Date | undefined, valid: boolean) => {
-                  if (date && valid) {
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+        rowGap={5}
+        paddingY={3}
+      >
+        {/* Note: Disable the option to delete a court session when it contains merged documents. 
+        Currently we don't have the option to assign merged documents to a dedicated court session, they are automatically assigned
+        to a court session on merge */}
+        {isLastCourtSession && !hasMergedCourtDocuments && (
+          <Button
+            variant="text"
+            colorScheme="destructive"
+            size="small"
+            icon="trash"
+            onClick={() => setModalVisible('DELETE')}
+          >
+            Eyða
+          </Button>
+        )}
+        <LayoutGroup>
+          <Box
+            id={`courtRecordAccordionItemFirstSection-${courtSession.id}`}
+            className={styles.containerGrid}
+          >
+            <BlueBox>
+              <div className={styles.grid}>
+                <DateTime
+                  name="courtStartDate"
+                  datepickerLabel="Dagsetning þingfestingar"
+                  timeLabel="Þinghald hófst (kk:mm)"
+                  maxDate={new Date()}
+                  selectedDate={
+                    courtSession.startDate ??
+                    workingCase.courtDate?.date ??
+                    workingCase.arraignmentDate?.date
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    if (date && valid) {
+                      patchSession(
+                        courtSession.id,
+                        { startDate: formatDateForServer(date) },
+                        { persist: true },
+                      )
+                    }
+                  }}
+                  disabled={courtSession.isConfirmed || false}
+                  blueBox={false}
+                  required
+                />
+                <Select
+                  name="judge"
+                  label="Veldu dómara/aðstoðarmann"
+                  placeholder="Veldu héraðsdómara"
+                  value={defaultJudge}
+                  options={judges}
+                  onChange={(selectedOption) => {
+                    const selectedUser = judges.find(
+                      (u) => u.value === selectedOption?.value,
+                    )
+                    if (!selectedUser) {
+                      return
+                    }
+                    patchSession(courtSession.id, {
+                      judge: {
+                        id: selectedUser.value || '',
+                        name: selectedUser.label,
+                      },
+                    })
+
                     patchSession(
                       courtSession.id,
-                      { startDate: formatDateForServer(date) },
+                      { judgeId: selectedUser.value },
+                      { persist: true },
+                    )
+                  }}
+                  required
+                  isDisabled={usersLoading || courtSession.isConfirmed || false}
+                />
+                <Input
+                  data-testid="courtLocation"
+                  name="courtLocation"
+                  tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
+                  label="Hvar var dómþing haldið?"
+                  value={
+                    courtSession.location ??
+                    (workingCase.court?.name
+                      ? `í ${applyDativeCaseToCourtName(
+                          workingCase.court?.name,
+                        )}`
+                      : '')
+                  }
+                  placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
+                  onChange={(event) => {
+                    setLocationErrorMessage('')
+                    patchSession(courtSession.id, {
+                      location: event.target.value,
+                    })
+                  }}
+                  onBlur={(event) => {
+                    const location = event.target.value
+
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      location,
+                      setLocationErrorMessage,
+                    )
+
+                    patchSession(
+                      courtSession.id,
+                      { location },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={locationErrorMessage}
+                  hasError={locationErrorMessage !== ''}
+                  autoComplete="off"
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                />
+                <Checkbox
+                  name={`isClosedProceeding-${courtSession.id}`}
+                  label="Þinghaldið er lokað"
+                  onChange={(evt) =>
+                    patchSession(
+                      courtSession.id,
+                      {
+                        isClosed: evt.target.checked,
+                        closedLegalProvisions: [],
+                      },
                       { persist: true },
                     )
                   }
-                }}
-                disabled={courtSession.isConfirmed || false}
-                blueBox={false}
-                required
-              />
-              <Input
-                data-testid="courtLocation"
-                name="courtLocation"
-                tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
-                label="Hvar var dómþing haldið?"
-                value={courtSession.location || ''}
-                placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
-                onChange={(event) => {
-                  setLocationErrorMessage('')
-                  patchSession(courtSession.id, {
-                    location: event.target.value,
-                  })
-                }}
-                onBlur={(event) => {
-                  const location = event.target.value
-
-                  validateAndSetErrorMessage(
-                    ['empty'],
-                    location,
-                    setLocationErrorMessage,
-                  )
-
-                  patchSession(courtSession.id, { location }, { persist: true })
-                }}
-                errorMessage={locationErrorMessage}
-                hasError={locationErrorMessage !== ''}
-                autoComplete="off"
-                disabled={courtSession.isConfirmed || false}
-                required
-              />
-              <Checkbox
-                name={`isClosedProceeding-${courtSession.id}`}
-                label="Þinghaldið er lokað"
-                onChange={(evt) =>
-                  patchSession(
-                    courtSession.id,
-                    {
-                      isClosed: evt.target.checked,
-                      closedLegalProvisions: [],
-                    },
-                    { persist: true },
-                  )
-                }
-                checked={Boolean(courtSession.isClosed)}
-                disabled={courtSession.isConfirmed || false}
-                filled
-                large
-              />
-            </div>
-            <AnimatePresence>
-              {courtSession.isClosed && (
-                <>
-                  <motion.div
-                    variants={titleVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                  >
-                    <SectionHeading
-                      title="Lagaákvæði sem lokun þinghalds byggir á"
-                      marginBottom={0}
-                      variant="h4"
-                      required
-                    />
-                  </motion.div>
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className={styles.twoColGrid}
-                    key="grid"
-                  >
-                    {CLOSURE_GROUNDS.map(([label, tooltip, legalProvision]) => (
-                      <motion.div
-                        variants={itemVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        key={label}
-                      >
-                        <Checkbox
-                          label={label}
-                          name={`${label}-${courtSession.id}`}
-                          tooltip={tooltip}
-                          checked={courtSession.closedLegalProvisions?.includes(
-                            legalProvision,
-                          )}
-                          onChange={(evt) => {
-                            const initialValue =
-                              courtSession.closedLegalProvisions || []
-
-                            const closedLegalProvisions = evt.target.checked
-                              ? [...initialValue, legalProvision]
-                              : initialValue.filter((v) => v !== legalProvision)
-
-                            patchSession(
-                              courtSession.id,
-                              {
-                                closedLegalProvisions,
-                              },
-                              { persist: true },
-                            )
-                          }}
-                          disabled={courtSession.isConfirmed || false}
-                          large
-                          filled
-                        />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </BlueBox>
-          <Input
-            data-testid="courtAttendees"
-            name="courtAttendees"
-            label="Mættir eru"
-            value={courtSession.attendees || ''}
-            placeholder="Skrifa hér..."
-            onChange={(event) => {
-              patchSession(courtSession.id, {
-                attendees: event.target.value,
-              })
-            }}
-            onBlur={(event) => {
-              patchSession(
-                courtSession.id,
-                {
-                  attendees: event.target.value,
-                },
-                { persist: true },
-              )
-            }}
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-            disabled={courtSession.isConfirmed || false}
-          />
-          <MultipleValueList
-            onAddValue={(val) => handleAddCourtDocument(val, courtSession.id)}
-            inputLabel="Heiti dómskjals"
-            inputPlaceholder="Skrá inn heiti á skjali hér"
-            buttonText="Bæta við skjali"
-            name="indictmentCourtDocuments"
-            isDisabled={() =>
-              courtDocument.create.loading || courtSession.isConfirmed || false
-            }
-            isLoading={courtDocument.create.loading}
-          >
-            <Box display="flex" flexDirection="column" rowGap={2}>
-              <Box
-                display="flex"
-                rowGap={2}
-                justifyContent="spaceBetween"
-                className={styles.reorderGroup}
-              >
-                <Reorder.Group
-                  axis="y"
-                  values={filedDocuments}
-                  onReorder={handleReorder}
-                  className={styles.grid}
-                >
-                  <AnimatePresence>
-                    {filedDocuments.map((item) => (
-                      <Reorder.Item
-                        key={item.id}
-                        value={item}
-                        data-reorder-item
-                        onDragStart={() => {
-                          setDraggedFileId(item.id)
-                        }}
-                        onDragEnd={() => {
-                          setDraggedFileId(null)
-                        }}
-                        initial={{ opacity: 0, y: -10, height: 'auto' }}
-                        animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: 10, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <EditableCaseFile
-                          enableDrag
-                          caseFile={{
-                            id: item.id,
-                            displayText: item.name,
-                            name: item.name,
-                            canEdit: ['fileName'],
-                          }}
-                          backgroundColor="white"
-                          onRename={(id: string, newName: string) => {
-                            handleRename(courtSession.id, id, newName)
-                          }}
-                          onDelete={handleDeleteFile}
-                          disabled={courtSession.isConfirmed || false}
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </AnimatePresence>
-                </Reorder.Group>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceAround"
-                  rowGap={2}
-                >
-                  <AnimatePresence>
-                    {filedDocuments.map((_item, i) => {
-                      const currentIndex =
-                        reorderableFiles.slice(0, index).flatMap((a) => a.files)
-                          .length + i
-
-                      return (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10, height: 'auto' }}
-                          animate={{ opacity: 1, y: 0, height: 'auto' }}
-                          exit={{ opacity: 0, y: 10, height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          key={`þingmerkt_nr_${currentIndex + 1}`}
-                        >
-                          <Tag variant="darkerBlue" outlined disabled>
-                            Þingmerkt nr. {currentIndex + 1}
-                          </Tag>
-                        </motion.div>
-                      )
-                    })}
-                  </AnimatePresence>
-                </Box>
-              </Box>
-              <Box borderRadius="large" background="white" paddingX={2}>
-                <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                  <AccordionItem
-                    id={`unfiled-files-${courtSession.id}`}
-                    label={`Önnur skjöl (${unfiledFiles.length})`}
-                    labelVariant="h5"
-                  >
-                    {unfiledFiles.length === 0 ? (
-                      <AlertMessage
-                        title="Engin óþingmerkt skjöl"
-                        message="Öll skjöl málsins hafa verið lögð fram"
-                        type="success"
+                  checked={Boolean(courtSession.isClosed)}
+                  disabled={courtSession.isConfirmed || false}
+                  filled
+                  large
+                />
+              </div>
+              <AnimatePresence>
+                {courtSession.isClosed && (
+                  <>
+                    <motion.div
+                      variants={titleVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                    >
+                      <SectionHeading
+                        title="Lagaákvæði sem lokun þinghalds byggir á"
+                        marginBottom={0}
+                        variant="h4"
+                        required
                       />
-                    ) : (
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        columnGap={2}
-                        rowGap={2}
-                      >
-                        {unfiledFiles.map((file) => (
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            columnGap={2}
-                            key={file.id}
+                    </motion.div>
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className={styles.twoColGrid}
+                      key="grid"
+                    >
+                      {CLOSURE_GROUNDS.map(
+                        ([label, tooltip, legalProvision]) => (
+                          <motion.div
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            key={label}
                           >
-                            <Box
-                              flexGrow={1}
-                              background="white"
-                              borderRadius="large"
-                              border="standard"
-                              borderColor="blue200"
-                            >
-                              <Box paddingX={2} paddingY={2}>
-                                <Text variant="h5">{file.name}</Text>
-                              </Box>
-                            </Box>
-                            <Tag
-                              outlined
-                              variant="darkerBlue"
-                              onClick={() => handleFileCourtDocument(file)}
-                              disabled={
-                                courtDocument.isLoading ||
-                                courtSession.isConfirmed ||
-                                false
-                              }
-                            >
-                              Leggja fram
-                            </Tag>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-                  </AccordionItem>
-                </Accordion>
-              </Box>
-            </Box>
-          </MultipleValueList>
-          <Box>
-            <SectionHeading title="Bókanir" />
-            <Input
-              data-testid="entries"
-              name="entries"
-              label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
-              value={courtSession.entries || ''}
-              placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-              onChange={(event) => {
-                setEntriesErrorMessage('')
+                            <Checkbox
+                              label={label}
+                              name={`${label}-${courtSession.id}`}
+                              tooltip={tooltip}
+                              checked={courtSession.closedLegalProvisions?.includes(
+                                legalProvision,
+                              )}
+                              onChange={(evt) => {
+                                const initialValue =
+                                  courtSession.closedLegalProvisions || []
 
-                patchSession(courtSession.id, {
-                  entries: event.target.value,
-                })
+                                const closedLegalProvisions = evt.target.checked
+                                  ? [...initialValue, legalProvision]
+                                  : initialValue.filter(
+                                      (v) => v !== legalProvision,
+                                    )
+
+                                patchSession(
+                                  courtSession.id,
+                                  { closedLegalProvisions },
+                                  { persist: true },
+                                )
+                              }}
+                              disabled={courtSession.isConfirmed || false}
+                              large
+                              filled
+                            />
+                          </motion.div>
+                        ),
+                      )}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </BlueBox>
+            <Input
+              data-testid="courtAttendees"
+              name="courtAttendees"
+              label="Mættir eru"
+              value={courtSession.attendees ?? getInitialAttendees()}
+              placeholder="Skrifa hér..."
+              onChange={(event) => {
+                patchSession(courtSession.id, { attendees: event.target.value })
               }}
               onBlur={(event) => {
-                validateAndSetErrorMessage(
-                  ['empty'],
-                  event.target.value,
-                  setEntriesErrorMessage,
-                )
-
                 patchSession(
                   courtSession.id,
-                  {
-                    entries: event.target.value,
-                  },
+                  { attendees: event.target.value },
                   { persist: true },
                 )
               }}
-              hasError={entriesErrorMessage !== ''}
-              errorMessage={entriesErrorMessage}
-              rows={15}
+              textarea
+              rows={7}
               autoExpand={{ on: true, maxHeight: 300 }}
               disabled={courtSession.isConfirmed || false}
-              textarea
-              required
             />
-          </Box>
-          <Box>
-            <SectionHeading
-              title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
-              required
-            />
-            <BlueBox className={styles.grid}>
-              <RadioButton
-                name={`result_no-${courtSession.id}`}
-                label="Nei"
-                backgroundColor="white"
-                checked={
-                  courtSession.rulingType === CourtSessionRulingType.NONE
-                }
-                onChange={() =>
-                  patchSession(
-                    courtSession.id,
-                    {
-                      rulingType: CourtSessionRulingType.NONE,
-                      ruling: '',
-                      closingEntries: '',
-                    },
-                    { persist: true },
-                  )
-                }
-                disabled={courtSession.isConfirmed || false}
-                large
-              />
-              <RadioButton
-                name={`result_verdict-${courtSession.id}`}
-                label="Dómur kveðinn upp"
-                backgroundColor="white"
-                checked={
-                  courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
-                }
-                onChange={() =>
-                  patchSession(
-                    courtSession.id,
-                    {
-                      rulingType: CourtSessionRulingType.JUDGEMENT,
-                    },
-                    { persist: true },
-                  )
-                }
-                disabled={courtSession.isConfirmed || false}
-                large
-              />
-              <RadioButton
-                name={`result_ruling-${courtSession.id}`}
-                label="Úrskurður kveðinn upp"
-                backgroundColor="white"
-                checked={
-                  courtSession.rulingType === CourtSessionRulingType.ORDER
-                }
-                onChange={() =>
-                  patchSession(
-                    courtSession.id,
-                    {
-                      rulingType: CourtSessionRulingType.ORDER,
-                    },
-                    { persist: true },
-                  )
-                }
-                disabled={courtSession.isConfirmed || false}
-                large
-              />
-            </BlueBox>
-          </Box>
-          {(courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
-            courtSession.rulingType === CourtSessionRulingType.ORDER) && (
-            <>
-              <Box>
-                <SectionHeading
-                  title={
-                    courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
-                      ? 'Dómsorð'
-                      : 'Úrskurðarorð'
-                  }
-                />
-                <Input
-                  data-testid="ruling"
-                  name="ruling"
-                  label={
-                    courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
-                      ? 'Dómsorð'
-                      : 'Úrskurðarorð'
-                  }
-                  value={courtSession.ruling || ''}
-                  placeholder={`Hvert er ${
-                    courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
-                      ? 'dómsorðið'
-                      : 'úrskurðarorðið'
-                  }?`}
-                  onChange={(event) => {
-                    setRulingErrorMessage('')
+            <MultipleValueList
+              onAddValue={(val) => handleAddCourtDocument(val, courtSession.id)}
+              inputLabel="Heiti dómskjals"
+              inputPlaceholder={
+                !courtSession.isConfirmed ? 'Skrá inn heiti á skjali hér' : ''
+              }
+              buttonText="Bæta við skjali"
+              name="indictmentCourtDocuments"
+              isButtonDisabled={() =>
+                courtDocument.create.loading ||
+                courtSession.isConfirmed ||
+                false
+              }
+              isDisabled={courtSession.isConfirmed || false}
+              isLoading={courtDocument.create.loading}
+            >
+              <Box
+                display="flex"
+                flexDirection="column"
+                rowGap={2}
+                marginTop={2}
+              >
+                {index > 0 && (
+                  <Box
+                    background="white"
+                    paddingX={3}
+                    paddingY={2}
+                    borderRadius="large"
+                  >
+                    <Text variant="h5">{`Skjöl málsins nr. 1-${countDocumentsBeforeSession(
+                      index,
+                    )} liggja frammi`}</Text>
+                  </Box>
+                )}
+                {filedDocuments && filedDocuments.length > 0 && (
+                  <Box
+                    display="flex"
+                    columnGap={2}
+                    justifyContent="spaceBetween"
+                  >
+                    <Reorder.Group
+                      axis="y"
+                      values={filedDocuments}
+                      onReorder={handleReorder()}
+                      className={styles.grid}
+                    >
+                      <AnimatePresence>
+                        {filedDocuments.map((item) => (
+                          <Reorder.Item
+                            key={item.id}
+                            value={item}
+                            data-reorder-item
+                            drag={!courtSession.isConfirmed}
+                            onDragStart={() => {
+                              setDraggedFileId(item.id)
+                            }}
+                            onDragEnd={() => {
+                              setDraggedFileId(null)
+                            }}
+                            initial={{ opacity: 0, y: -10, height: 'auto' }}
+                            animate={{ opacity: 1, y: 0, height: 'auto' }}
+                            exit={{ opacity: 0, y: 10, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <EditableCaseFile
+                              enableDrag
+                              caseFile={{
+                                id: item.id,
+                                displayText: item.name,
+                                name: item.name,
+                                canOpen:
+                                  item.documentType !==
+                                  CourtDocumentType.EXTERNAL_DOCUMENT,
+                                canEdit: ['fileName'],
+                              }}
+                              backgroundColor="white"
+                              onOpen={handleOnOpen}
+                              onRename={(id: string, newName: string) => {
+                                handleRename(courtSession.id, id, newName)
+                              }}
+                              onDelete={handleDeleteFile}
+                              disabled={courtSession.isConfirmed || false}
+                            />
+                          </Reorder.Item>
+                        ))}
+                      </AnimatePresence>
+                    </Reorder.Group>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="spaceAround"
+                      rowGap={2}
+                    >
+                      <AnimatePresence>
+                        {filedDocuments.map((_item, i) => {
+                          const currentIndex = getFiledDocumentIndex(i)
 
-                    patchSession(courtSession.id, {
-                      ruling: event.target.value,
-                    })
-                  }}
-                  onBlur={(event) => {
-                    validateAndSetErrorMessage(
-                      ['empty'],
-                      event.target.value,
-                      setRulingErrorMessage,
-                    )
-
-                    patchSession(
-                      courtSession.id,
-                      {
-                        ruling: event.target.value,
-                      },
-                      { persist: true },
-                    )
-                  }}
-                  hasError={rulingErrorMessage !== ''}
-                  errorMessage={rulingErrorMessage}
-                  rows={15}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                  disabled={courtSession.isConfirmed || false}
-                  textarea
-                  required
-                />
+                          return (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10, height: 'auto' }}
+                              animate={{ opacity: 1, y: 0, height: 'auto' }}
+                              exit={{ opacity: 0, y: 10, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              key={`þingmerkt_nr_${currentIndex + 1}`}
+                            >
+                              <Tag variant="darkerBlue" outlined disabled>
+                                Þingmerkt nr. {currentIndex + 1}
+                              </Tag>
+                            </motion.div>
+                          )
+                        })}
+                      </AnimatePresence>
+                    </Box>
+                  </Box>
+                )}
+                <Box borderRadius="large" background="white" paddingX={2}>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    <AccordionItem
+                      id={`unfiled-files-${courtSession.id}`}
+                      label={`Önnur skjöl ${
+                        workingCase.unfiledCourtDocuments
+                          ? `(${workingCase.unfiledCourtDocuments.length})`
+                          : ''
+                      }`}
+                      labelVariant="h5"
+                    >
+                      {workingCase.unfiledCourtDocuments?.length === 0 ? (
+                        <AlertMessage
+                          title="Engin óþingmerkt skjöl"
+                          message="Öll skjöl málsins hafa verið lögð fram"
+                          type="success"
+                        />
+                      ) : (
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          columnGap={2}
+                          rowGap={2}
+                        >
+                          {workingCase.unfiledCourtDocuments?.map((item) => (
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              columnGap={2}
+                              key={item.id}
+                            >
+                              <Box
+                                flexGrow={1}
+                                background="white"
+                                borderRadius="large"
+                                border="standard"
+                                borderColor="blue200"
+                              >
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  component="button"
+                                  onClick={() => handleOnOpen(item.id)}
+                                  paddingX={2}
+                                  paddingY={2}
+                                >
+                                  <Text variant="h5">{item.name}</Text>
+                                  <Box marginLeft={1}>
+                                    <Icon
+                                      icon="open"
+                                      type="outline"
+                                      size="small"
+                                    />
+                                  </Box>
+                                </Box>
+                              </Box>
+                              <Tag
+                                outlined
+                                variant="darkerBlue"
+                                onClick={() => handleFileCourtDocument(item)}
+                                disabled={
+                                  courtDocument.isLoading ||
+                                  courtSession.isConfirmed ||
+                                  false
+                                }
+                              >
+                                Leggja fram
+                              </Tag>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </AccordionItem>
+                  </Accordion>
+                </Box>
               </Box>
-              <Box>
-                <SectionHeading title="Bókanir í lok þinghalds" />
-                <Input
-                  data-testid="closingEntries"
-                  name="closingEntries"
-                  label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
-                  value={courtSession.closingEntries || ''}
-                  placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
-                  onChange={(event) => {
-                    patchSession(courtSession.id, {
-                      closingEntries: event.target.value,
-                    })
-                  }}
-                  onBlur={(event) => {
-                    patchSession(
-                      courtSession.id,
-                      {
-                        closingEntries: event.target.value,
-                      },
-                      { persist: true },
-                    )
-                  }}
-                  rows={15}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                  disabled={courtSession.isConfirmed || false}
-                  textarea
-                />
-              </Box>
-            </>
-          )}
-          <Box>
-            <SectionHeading title="Vottur" />
-            <BlueBox className={styles.grid}>
-              <Checkbox
-                label="Skrá vott að þinghaldi"
-                name={`isAttestingWitness-${courtSession.id}`}
-                checked={courtSession.isAttestingWitness || false}
-                onChange={(evt) => {
-                  patchSession(courtSession.id, {
-                    attestingWitness: evt.target.checked
-                      ? courtSession.attestingWitness ?? null
-                      : null,
-                  })
+            </MultipleValueList>
+            {mergedCaseDocumentsInCourtSession.map((mergeDocumentsPerCase) => {
+              const courtCaseNumber = mergeDocumentsPerCase.courtCaseNumber
+              const mergedFiledDocuments =
+                mergeDocumentsPerCase.mergedFileDocuments
+              const previousMergedCaseDocumentCount =
+                mergeDocumentsPerCase.previousMergedCaseDocumentCount
+              const courtSessionString = courtSession.courtSessionStrings?.find(
+                (string) =>
+                  string.stringType === CourtSessionStringType.ENTRIES &&
+                  string.mergedCaseId === mergeDocumentsPerCase.caseId,
+              )
+
+              return (
+                <Box key={`merged-case-${courtCaseNumber}`}>
+                  <CourtSessionMergedCaseEntries
+                    courtSessionId={courtSession.id}
+                    courtCaseNumber={courtCaseNumber ?? ''}
+                    courtSessionString={courtSessionString}
+                    mergedCaseId={mergeDocumentsPerCase.caseId}
+                    disabled={courtSession.isConfirmed || false}
+                    patchCourtSessionStrings={patchCourtSessionStrings}
+                  />
+                  <SectionHeading
+                    title={`Dómskjöl úr sameinuðu máli ${courtCaseNumber}`}
+                  />
+                  <BlueBox>
+                    {mergedFiledDocuments && mergedFiledDocuments.length > 0 && (
+                      <Box
+                        display="flex"
+                        columnGap={2}
+                        justifyContent="spaceBetween"
+                      >
+                        <Reorder.Group
+                          axis="y"
+                          values={mergedFiledDocuments}
+                          onReorder={handleReorder(
+                            previousMergedCaseDocumentCount,
+                          )}
+                          className={styles.grid}
+                        >
+                          <AnimatePresence>
+                            {mergedFiledDocuments.map((item) => (
+                              <Reorder.Item
+                                key={item.id}
+                                value={item}
+                                data-reorder-item
+                                onDragStart={() => {
+                                  setDraggedMergeFileId(item.id)
+                                }}
+                                onDragEnd={() => {
+                                  setDraggedMergeFileId(null)
+                                }}
+                                initial={{
+                                  opacity: 0,
+                                  y: -10,
+                                  height: 'auto',
+                                }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: 10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <EditableCaseFile
+                                  enableDrag
+                                  caseFile={{
+                                    id: item.id,
+                                    displayText: item.name,
+                                    name: item.name,
+                                    canEdit: ['fileName'],
+                                  }}
+                                  backgroundColor="white"
+                                  onRename={(id: string, newName: string) => {
+                                    handleRename(courtSession.id, id, newName)
+                                  }}
+                                  disabled={courtSession.isConfirmed || false}
+                                />
+                              </Reorder.Item>
+                            ))}
+                          </AnimatePresence>
+                        </Reorder.Group>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="spaceAround"
+                          rowGap={2}
+                        >
+                          <AnimatePresence>
+                            {mergedFiledDocuments.map((_item, i) => {
+                              const currentIndex = getMergedDocumentIndex(
+                                i,
+                                previousMergedCaseDocumentCount,
+                              )
+
+                              return (
+                                <motion.div
+                                  initial={{
+                                    opacity: 0,
+                                    y: -10,
+                                    height: 'auto',
+                                  }}
+                                  animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                    height: 'auto',
+                                  }}
+                                  exit={{ opacity: 0, y: 10, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  key={`þingmerkt_nr_${currentIndex + 1}`}
+                                >
+                                  <Tag variant="darkerBlue" outlined disabled>
+                                    Þingmerkt nr. {currentIndex + 1}
+                                  </Tag>
+                                </motion.div>
+                              )
+                            })}
+                          </AnimatePresence>
+                        </Box>
+                      </Box>
+                    )}
+                  </BlueBox>
+                </Box>
+              )
+            })}
+            <Box>
+              <SectionHeading title="Bókanir" />
+              <Input
+                data-testid="entries"
+                name="entries"
+                label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
+                value={courtSession.entries || ''}
+                placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                onChange={(event) => {
+                  setEntriesErrorMessage('')
+
+                  patchSession(courtSession.id, { entries: event.target.value })
+                }}
+                onBlur={(event) => {
+                  validateAndSetErrorMessage(
+                    ['empty'],
+                    event.target.value,
+                    setEntriesErrorMessage,
+                  )
 
                   patchSession(
                     courtSession.id,
-                    {
-                      isAttestingWitness: evt.target.checked,
-                      attestingWitnessId: evt.target.checked
-                        ? courtSession.attestingWitnessId ?? null
-                        : null,
-                    },
+                    { entries: event.target.value },
                     { persist: true },
                   )
                 }}
+                hasError={entriesErrorMessage !== ''}
+                errorMessage={entriesErrorMessage}
+                rows={15}
+                autoExpand={{ on: true, maxHeight: 300 }}
                 disabled={courtSession.isConfirmed || false}
-                large
-                filled
-              />
-              <Select
-                name="courtUsers"
-                options={[...judges, ...registrars].sort((a, b) =>
-                  a.label.localeCompare(b.label),
-                )}
-                value={
-                  courtSession.attestingWitness
-                    ? {
-                        label: courtSession.attestingWitness.name || '',
-                        value: courtSession.attestingWitnessId,
-                      }
-                    : null
-                }
-                onChange={(evt) => handleChangeWitness(evt?.value)}
-                size="md"
-                label="Veldu vott"
-                placeholder="Veldu vott að þinghaldi"
-                isDisabled={
-                  !courtSession.isAttestingWitness ||
-                  courtSession.isConfirmed ||
-                  false
-                }
-                isLoading={usersLoading}
+                textarea
                 required
               />
-            </BlueBox>
-          </Box>
-          <Box>
-            <SectionHeading title="Þinghaldi slitið" />
-            <BlueBox className={styles.courtEndTimeContainer}>
-              <div className={styles.fullWidth}>
-                <DateTime
-                  name="courtEndTime"
-                  onChange={handleEndTimeChange}
-                  blueBox={false}
-                  selectedDate={
-                    courtSession.endDate
-                      ? new Date(courtSession.endDate)
-                      : courtSession.startDate
-                      ? new Date(courtSession.startDate)
-                      : new Date()
+            </Box>
+            <Box>
+              <SectionHeading
+                title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
+                required
+              />
+              <BlueBox className={styles.grid}>
+                <RadioButton
+                  name={`result_no-${courtSession.id}`}
+                  label="Nei"
+                  backgroundColor="white"
+                  checked={
+                    courtSession.rulingType === CourtSessionRulingType.NONE
+                  }
+                  onChange={() =>
+                    patchSession(
+                      courtSession.id,
+                      {
+                        rulingType: CourtSessionRulingType.NONE,
+                        ruling: '',
+                        closingEntries: '',
+                      },
+                      { persist: true },
+                    )
                   }
                   disabled={courtSession.isConfirmed || false}
-                  timeOnly
+                  large
                 />
-              </div>
-              <Box className={styles.button}>
-                <Button
-                  icon={courtSession.isConfirmed ? 'pencil' : 'checkmark'}
-                  onClick={onConfirmClick}
-                  size="small"
-                  disabled={!isCourtSessionValid(courtSession)}
-                >
-                  {`${
-                    courtSession.isConfirmed ? 'Leiðrétta' : 'Staðfesta'
-                  } þingbók`}
-                </Button>
-              </Box>
-            </BlueBox>
+                <RadioButton
+                  name={`result_verdict-${courtSession.id}`}
+                  label="Dómur kveðinn upp"
+                  backgroundColor="white"
+                  checked={
+                    courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
+                  }
+                  onChange={() =>
+                    patchSession(
+                      courtSession.id,
+                      { rulingType: CourtSessionRulingType.JUDGEMENT },
+                      { persist: true },
+                    )
+                  }
+                  disabled={courtSession.isConfirmed || false}
+                  large
+                />
+                <RadioButton
+                  name={`result_ruling-${courtSession.id}`}
+                  label="Úrskurður kveðinn upp"
+                  backgroundColor="white"
+                  checked={
+                    courtSession.rulingType === CourtSessionRulingType.ORDER
+                  }
+                  onChange={() =>
+                    patchSession(
+                      courtSession.id,
+                      { rulingType: CourtSessionRulingType.ORDER },
+                      { persist: true },
+                    )
+                  }
+                  disabled={courtSession.isConfirmed || false}
+                  large
+                />
+              </BlueBox>
+            </Box>
+            {(courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+              courtSession.rulingType === CourtSessionRulingType.ORDER) && (
+              <>
+                <Box>
+                  <SectionHeading
+                    title={
+                      courtSession.rulingType ===
+                      CourtSessionRulingType.JUDGEMENT
+                        ? 'Dómsorð'
+                        : 'Úrskurðarorð'
+                    }
+                  />
+                  <Input
+                    data-testid="ruling"
+                    name="ruling"
+                    label={
+                      courtSession.rulingType ===
+                      CourtSessionRulingType.JUDGEMENT
+                        ? 'Dómsorð'
+                        : 'Úrskurðarorð'
+                    }
+                    value={courtSession.ruling || ''}
+                    placeholder={`Hvert er ${
+                      courtSession.rulingType ===
+                      CourtSessionRulingType.JUDGEMENT
+                        ? 'dómsorðið'
+                        : 'úrskurðarorðið'
+                    }?`}
+                    onChange={(event) => {
+                      setRulingErrorMessage('')
+
+                      patchSession(courtSession.id, {
+                        ruling: event.target.value,
+                      })
+                    }}
+                    onBlur={(event) => {
+                      validateAndSetErrorMessage(
+                        ['empty'],
+                        event.target.value,
+                        setRulingErrorMessage,
+                      )
+
+                      patchSession(
+                        courtSession.id,
+                        { ruling: event.target.value },
+                        { persist: true },
+                      )
+                    }}
+                    hasError={rulingErrorMessage !== ''}
+                    errorMessage={rulingErrorMessage}
+                    rows={15}
+                    autoExpand={{ on: true, maxHeight: 300 }}
+                    disabled={courtSession.isConfirmed || false}
+                    textarea
+                    required
+                  />
+                </Box>
+                <Box>
+                  <SectionHeading title="Bókanir í lok þinghalds" />
+                  <Input
+                    data-testid="closingEntries"
+                    name="closingEntries"
+                    label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
+                    value={courtSession.closingEntries || ''}
+                    placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
+                    onChange={(event) =>
+                      patchSession(courtSession.id, {
+                        closingEntries: event.target.value,
+                      })
+                    }
+                    onBlur={(event) =>
+                      patchSession(
+                        courtSession.id,
+                        { closingEntries: event.target.value },
+                        { persist: true },
+                      )
+                    }
+                    rows={15}
+                    autoExpand={{ on: true, maxHeight: 300 }}
+                    disabled={courtSession.isConfirmed || false}
+                    textarea
+                  />
+                </Box>
+              </>
+            )}
+            <Box>
+              <SectionHeading title="Vottur" />
+              <BlueBox className={styles.grid}>
+                <Checkbox
+                  label="Skrá vott að þinghaldi"
+                  name={`isAttestingWitness-${courtSession.id}`}
+                  checked={courtSession.isAttestingWitness || false}
+                  onChange={(evt) => {
+                    patchSession(courtSession.id, {
+                      attestingWitness: evt.target.checked
+                        ? courtSession.attestingWitness ?? null
+                        : null,
+                    })
+
+                    patchSession(
+                      courtSession.id,
+                      {
+                        isAttestingWitness: evt.target.checked,
+                        attestingWitnessId: evt.target.checked
+                          ? courtSession.attestingWitnessId ?? null
+                          : null,
+                      },
+                      { persist: true },
+                    )
+                  }}
+                  disabled={courtSession.isConfirmed || false}
+                  large
+                  filled
+                />
+                <Select
+                  name="courtUsers"
+                  options={[...districtCourtAssistants, ...registrars].sort(
+                    (a, b) => a.label.localeCompare(b.label),
+                  )}
+                  value={
+                    courtSession.attestingWitness
+                      ? {
+                          label: courtSession.attestingWitness.name || '',
+                          value: courtSession.attestingWitnessId,
+                        }
+                      : null
+                  }
+                  onChange={(evt) => handleChangeWitness(evt?.value)}
+                  size="md"
+                  label="Veldu vott"
+                  placeholder="Veldu vott að þinghaldi"
+                  isDisabled={
+                    !courtSession.isAttestingWitness ||
+                    courtSession.isConfirmed ||
+                    false
+                  }
+                  isLoading={usersLoading}
+                  required
+                />
+              </BlueBox>
+            </Box>
+            <Box>
+              <SectionHeading title="Þinghaldi slitið" />
+              <BlueBox className={styles.courtEndTimeContainer}>
+                <div className={styles.fullWidth}>
+                  <DateTime
+                    name="courtEndTime"
+                    onChange={handleEndTimeChange}
+                    blueBox={false}
+                    selectedDate={
+                      courtSession.endDate
+                        ? new Date(courtSession.endDate)
+                        : courtSession.startDate
+                        ? new Date(courtSession.startDate)
+                        : new Date()
+                    }
+                    disabled={courtSession.isConfirmed || false}
+                    timeOnly
+                  />
+                </div>
+                <Box className={styles.button}>
+                  {courtSession.isConfirmed ? (
+                    <Button
+                      icon="pencil"
+                      onClick={() =>
+                        patchSession(
+                          courtSession.id,
+                          { isConfirmed: false },
+                          { persist: true },
+                        )
+                      }
+                      size="small"
+                    >
+                      Leiðrétta þingbók
+                    </Button>
+                  ) : (
+                    <Button
+                      icon="checkmark"
+                      onClick={() =>
+                        patchSession(
+                          courtSession.id,
+                          { isConfirmed: true },
+                          { persist: true },
+                        )
+                      }
+                      size="small"
+                      disabled={!isCourtSessionValid(courtSession)}
+                    >
+                      Staðfesta þingbók
+                    </Button>
+                  )}
+                </Box>
+              </BlueBox>
+            </Box>
           </Box>
-        </Box>
-      </LayoutGroup>
+        </LayoutGroup>
+        {modalVisible === 'DELETE' && (
+          <Modal
+            title="Ertu viss?"
+            text={`Ertu viss um að þú viljir eyða þinghaldi ${index + 1}?`}
+            primaryButton={{
+              text: 'Já, eyða',
+              colorScheme: 'destructive',
+              onClick: () => handleDeleteCourtSession(courtSession.id),
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+          />
+        )}
+      </Box>
+      <AnimatePresence>
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
+      </AnimatePresence>
     </AccordionItem>
   )
 }

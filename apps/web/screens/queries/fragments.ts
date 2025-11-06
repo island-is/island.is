@@ -973,6 +973,7 @@ export const slices = gql`
     searchInputPlaceholder
     itemType
     defaultOrder
+    textSearchOrder
     showSearchInput
     filterTags {
       id
@@ -1040,6 +1041,7 @@ export const slices = gql`
         }
         slug
         assetUrl
+        externalUrl
         image {
           url
           title
@@ -1088,6 +1090,8 @@ export const slices = gql`
     __typename
     id
     baseUrl
+    filterUrl
+    seeMoreLinkTextString
     items {
       id
       date
@@ -1105,6 +1109,7 @@ export const slices = gql`
       }
       slug
       assetUrl
+      externalUrl
       image {
         url
         title

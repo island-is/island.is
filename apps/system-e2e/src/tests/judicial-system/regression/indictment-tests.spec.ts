@@ -233,12 +233,17 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
+    // Court record
+    await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
+    await page.getByTestId('continueButton').click() // TODO: Support the new court record screen
+
     // Conclusion
     await expect(page).toHaveURL(`domur/akaera/stada-og-lyktir/${caseId}`)
 
     await page.locator('label').filter({ hasText: 'Lokið' }).click()
     await page.locator('label').filter({ hasText: 'Dómur' }).click()
 
+    // TODO: Remove when we deploy the new court record screen
     await chooseDocument(
       page,
       async () => {
@@ -265,12 +270,18 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
-    // Summary
+    // Case overview
     await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
-
     await page.getByTestId('continueButton').click()
-    await page.getByTestId('footerCheckbox').check()
-    await page.getByTestId('modalPrimaryButton').click()
+
+    await page.waitForSelector('input[type="checkbox"]', { state: 'visible' })
+    await page
+      .getByRole('checkbox', { name: 'Ég hef rýnt þetta dómskjal' })
+      .check()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Completed case overview
     await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)
@@ -279,8 +290,6 @@ test.describe.serial('Indictment tests', () => {
       .locator('label')
       .filter({ hasText: 'Birta skal dómfellda dóminn' })
       .click()
-
-    await page.locator('label').filter({ hasText: 'Dómsorð' }).fill('Dómsorð')
 
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()

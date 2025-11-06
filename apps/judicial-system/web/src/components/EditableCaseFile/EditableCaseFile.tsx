@@ -16,6 +16,7 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -50,7 +51,7 @@ interface Props {
   disabled?: boolean
   onOpen?: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (file: TUploadFile) => void
+  onDelete?: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
   onStartEditing?: () => void
   onStopEditing?: () => void
@@ -155,6 +156,7 @@ const EditableCaseFile: FC<Props> = (props) => {
         [styles.done]: !backgroundColor && styleIndex === FileUploadStatus.done,
         [styles.uploading]:
           !backgroundColor && styleIndex === FileUploadStatus.uploading,
+        [styles.disabled]: disabled,
       })}
     >
       {enableDrag && (
@@ -224,23 +226,26 @@ const EditableCaseFile: FC<Props> = (props) => {
                   >
                     <Icon icon="checkmark" color={color} />
                   </button>
-                  <Box marginLeft={1}>
-                    <button
-                      onClick={() => {
-                        onDelete(caseFile as TUploadFile)
-                        onStopEditing?.()
-                      }}
-                      className={cn(styles.editCaseFileButton, {
-                        [styles.background.primary]:
-                          caseFile.status !== FileUploadStatus.error,
-                        [styles.background.secondary]:
-                          caseFile.status === FileUploadStatus.error || isEmpty,
-                      })}
-                      aria-label="Eyða skrá"
-                    >
-                      <Icon icon="trash" color={color} type="outline" />
-                    </button>
-                  </Box>
+                  {onDelete && (
+                    <Box marginLeft={1}>
+                      <button
+                        onClick={() => {
+                          onDelete(caseFile as TUploadFile)
+                          onStopEditing?.()
+                        }}
+                        className={cn(styles.editCaseFileButton, {
+                          [styles.background.primary]:
+                            caseFile.status !== FileUploadStatus.error,
+                          [styles.background.secondary]:
+                            caseFile.status === FileUploadStatus.error ||
+                            isEmpty,
+                        })}
+                        aria-label="Eyða skrá"
+                      >
+                        <Icon icon="trash" color={color} type="outline" />
+                      </button>
+                    </Box>
+                  )}
                 </Box>
               </Box>
             </motion.div>
@@ -276,6 +281,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      ...(disabled ? { color: theme.color.dark300 } : {}),
                     }}
                   >
                     {displayName}
@@ -315,11 +321,14 @@ const EditableCaseFile: FC<Props> = (props) => {
                       onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
+                      [styles.background.disabled]: disabled,
                       [styles.background.primary]:
+                        !disabled &&
                         !!caseFile.canEdit?.length &&
                         caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === FileUploadStatus.error || isEmpty,
+                        !disabled &&
+                        (caseFile.status === FileUploadStatus.error || isEmpty),
                     })}
                     disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"

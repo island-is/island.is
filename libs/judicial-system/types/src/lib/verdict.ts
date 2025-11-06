@@ -25,19 +25,32 @@ export enum InformationForDefendant {
   ITEM_CONFISCATION = 'ITEM_CONFISCATION',
 }
 
+export const DELIVERY_METHOD_LEGAL_PAPER = 'LOGBIRTING_BIRT' as const
+
 export const mapPoliceVerdictDeliveryStatus = ({
   delivered,
   deliveredOnPaper,
   deliveredOnIslandis,
   deliveredToLawyer,
+  legalPaperRequestDate,
+  deliveredToDefendant,
+  deliveryMethod,
 }: {
   delivered?: boolean
   deliveredOnPaper?: boolean
   deliveredOnIslandis?: boolean
   deliveredToLawyer?: boolean
+  legalPaperRequestDate?: string
+  deliveredToDefendant?: boolean
+  deliveryMethod?: string
 }) => {
   if (delivered) {
-    if (deliveredOnPaper) {
+    // TODO: More sophisticated mapping later when we have moved all delivery types
+    // to delivery methods instead of boolean flags
+    if (deliveryMethod === DELIVERY_METHOD_LEGAL_PAPER) {
+      return VerdictServiceStatus.LEGAL_PAPER
+    }
+    if (deliveredOnPaper || deliveredToDefendant) {
       return VerdictServiceStatus.IN_PERSON
     }
     if (deliveredOnIslandis) {
@@ -46,9 +59,12 @@ export const mapPoliceVerdictDeliveryStatus = ({
     if (deliveredToLawyer) {
       return VerdictServiceStatus.DEFENDER
     }
+    return VerdictServiceStatus.FAILED
   }
-  // doesn't mean it has been served in legal paper, but probably requested on failure
-  return VerdictServiceStatus.LEGAL_PAPER
+  if (legalPaperRequestDate) {
+    return VerdictServiceStatus.LEGAL_PAPER
+  }
+  return undefined
 }
 
 // information html descriptions

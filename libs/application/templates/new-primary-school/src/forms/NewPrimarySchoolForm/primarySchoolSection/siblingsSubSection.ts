@@ -35,22 +35,12 @@ export const siblingsSubSection = buildSubSection({
           removeButtonTooltipText:
             newPrimarySchoolMessages.primarySchool.siblingsDeleteRelative,
           marginTop: 0,
+          editField: true,
           fields: {
-            fullName: {
-              component: 'input',
-              label: newPrimarySchoolMessages.shared.fullName,
-              width: 'half',
-              type: 'text',
-              dataTestId: 'sibling-full-name',
-            },
-            nationalId: {
-              component: 'input',
-              label: newPrimarySchoolMessages.shared.nationalId,
-              width: 'half',
-              type: 'text',
-              format: '######-####',
-              placeholder: '000000-0000',
-              dataTestId: 'sibling-national-id',
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              searchPersons: true,
+              dataTestId: 'sibling-national-id-with-name',
             },
           },
           table: {

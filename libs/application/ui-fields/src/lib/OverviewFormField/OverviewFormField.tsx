@@ -26,6 +26,7 @@ import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect, useState } from 'react'
 import { FileItem } from './FileItem'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: OverviewField
@@ -146,7 +147,7 @@ export const OverviewFormField = ({
 
     if (!item.keyText && !item.valueText) {
       return (
-        <GridColumn span={span}>
+        <GridColumn key={`renderItems-${i}`} span={span}>
           {item.lineAboveKeyText && (
             <Box paddingBottom={3}>
               <Divider weight="black" thickness="thick" />
@@ -156,6 +157,69 @@ export const OverviewFormField = ({
       )
     }
 
+    const createFormattedKeyTextWithIndex = (
+      item: KeyValueItem,
+      index?: number,
+      useMarkdownFormatting = true,
+    ): string => {
+      const keyText =
+        Array.isArray(item?.keyText) && index !== undefined
+          ? item?.keyText?.[index] ?? ''
+          : item?.keyText ?? ''
+
+      const formattedKey = formatTextWithLocale(
+        keyText,
+        application,
+        locale,
+        formatMessage,
+      )
+
+      if (useMarkdownFormatting) {
+        return `${item?.boldValueText ? '**' : ''}${formattedKey}: ${
+          item?.boldValueText ? '**' : ''
+        }`
+      }
+      return `${formattedKey}: `
+    }
+
+    type MdDescriptor = { id: string }
+
+    const isMdDescriptor = (m: unknown): m is MdDescriptor =>
+      typeof m === 'object' &&
+      m !== null &&
+      'id' in m &&
+      typeof (m as { id?: unknown }).id === 'string' &&
+      (m as MdDescriptor).id.endsWith('#markdown')
+
+    const resolveDescriptor = (t: unknown) => {
+      if (typeof t === 'function') {
+        const fn = t as { length: number } & ((
+          a: typeof application,
+          b?: typeof locale,
+        ) => unknown)
+        try {
+          return fn.length >= 2 ? fn(application, locale) : fn(application)
+        } catch {
+          return t
+        }
+      }
+      return t
+    }
+
+    const isMarkdownDescriptor = (text: unknown): boolean => {
+      if (Array.isArray(text)) {
+        return text.some((x) => isMdDescriptor(resolveDescriptor(x)))
+      }
+      return isMdDescriptor(resolveDescriptor(text))
+    }
+
+    const keyTextValue = formatTextWithLocale(
+      item?.keyText ?? '',
+      application,
+      locale,
+      formatMessage,
+    )
+
     return (
       <GridColumn key={i} span={span}>
         {item.lineAboveKeyText && (
@@ -164,30 +228,27 @@ export const OverviewFormField = ({
           </Box>
         )}
         {!item.inlineKeyText && (
-          <Text variant="h5">
-            {formatTextWithLocale(
-              item?.keyText ?? '',
-              application,
-              locale,
-              formatMessage,
-            )}
-          </Text>
+          <Markdown>
+            {`#### **${
+              Array.isArray(keyTextValue) //H4 markdown and bold
+                ? keyTextValue.join(', ')
+                : keyTextValue
+            }**`}
+          </Markdown>
         )}
-        {Array.isArray(item?.valueText) ? (
-          item?.valueText.map((value, index) => (
-            <Text
-              key={`${value}-${index}`}
-              fontWeight={item.boldValueText ? 'semiBold' : 'light'}
-            >
-              {item.inlineKeyText &&
-                Array.isArray(item?.keyText) &&
-                `${formatTextWithLocale(
-                  item?.keyText?.[index] ?? '',
-                  application,
-                  locale,
-                  formatMessage,
-                )}: `}
-              {Array.isArray(value)
+        {Array.isArray(item?.valueText)
+          ? item.valueText.map((value, index) => {
+              const valueIsMarkdown = isMarkdownDescriptor(value)
+              const prefix =
+                item.inlineKeyText && Array.isArray(item?.keyText)
+                  ? createFormattedKeyTextWithIndex(
+                      item,
+                      index,
+                      valueIsMarkdown,
+                    )
+                  : ''
+
+              const valueStr = Array.isArray(value)
                 ? formatTextWithLocale(
                     value,
                     application,
@@ -199,27 +260,67 @@ export const OverviewFormField = ({
                     application,
                     locale,
                     formatMessage,
-                  )}
-            </Text>
-          ))
-        ) : (
-          <Text fontWeight={item.boldValueText ? 'semiBold' : 'light'}>
-            {item.inlineKeyText &&
-              !Array.isArray(item?.keyText) &&
-              `${formatTextWithLocale(
-                item?.keyText ?? '',
+                  )
+
+              if (valueIsMarkdown) {
+                const renderedValue = item.boldValueText
+                  ? `**${valueStr}**`
+                  : valueStr
+                return (
+                  <Markdown key={`${value}-${index}`}>
+                    {`${prefix}${renderedValue}`}
+                  </Markdown>
+                )
+              }
+
+              return (
+                <Text
+                  key={`${value}-${index}`}
+                  as="p"
+                  fontWeight={item.boldValueText ? 'semiBold' : undefined}
+                >
+                  {`${prefix}${valueStr}`}
+                </Text>
+              )
+            })
+          : (() => {
+              const valueIsMarkdown = isMarkdownDescriptor(item?.valueText)
+              const formattedValue = formatTextWithLocale(
+                item?.valueText ?? '',
                 application,
                 locale,
                 formatMessage,
-              )}: `}
-            {formatTextWithLocale(
-              item?.valueText ?? '',
-              application,
-              locale,
-              formatMessage,
-            )}
-          </Text>
-        )}
+              )
+              if (valueIsMarkdown) {
+                const prefixMd =
+                  item.inlineKeyText &&
+                  !Array.isArray(item?.keyText) &&
+                  keyTextValue
+                    ? `${item?.boldValueText ? '**' : ''}${keyTextValue}: ${
+                        item?.boldValueText ? '**' : ''
+                      }`
+                    : ''
+                const renderedValue = item.boldValueText
+                  ? `**${formattedValue}**`
+                  : formattedValue
+                return <Markdown>{`${prefixMd}${renderedValue}`}</Markdown>
+              }
+
+              const prefixPlain =
+                item.inlineKeyText &&
+                !Array.isArray(item?.keyText) &&
+                keyTextValue
+                  ? `${keyTextValue}: `
+                  : ''
+              return (
+                <Text
+                  as="p"
+                  fontWeight={item.boldValueText ? 'semiBold' : undefined}
+                >
+                  {`${prefixPlain}${formattedValue}`}
+                </Text>
+              )
+            })()}
       </GridColumn>
     )
   }

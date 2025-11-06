@@ -64,3 +64,4 @@ export const missingHeirUndividedEstateValidation =
   'missingHeirUndividedEstateValidation'
 export const missingSpouseUndividedEstateValidation =
   'missingSpouseUndividedEstateValidation'
+export const multipleSpousesValidation = 'multipleSpousesValidation'

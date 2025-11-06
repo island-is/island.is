@@ -5,6 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
@@ -16,6 +17,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -28,7 +30,10 @@ import {
   CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFiledCourtDocuments,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -44,6 +49,7 @@ interface Props {
 interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
+  showFiledDocumentNumber?: boolean
 }
 
 interface FileSectionProps {
@@ -56,13 +62,25 @@ interface FileSectionProps {
 export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
+  showFiledDocumentNumber = false,
 }) => {
+  const { prefixUploadedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
+
+  const getFileName = (file: CaseFile) => {
+    if (!showFiledDocumentNumber) {
+      return file.name
+    }
+
+    return prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? '')
+  }
+
   return (
     <>
       {caseFiles.map((file) => (
         <Box key={file.id} marginBottom={2}>
           <PdfButton
-            title={file.name}
+            title={getFileName(file)}
             renderAs="row"
             disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
@@ -88,7 +106,11 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
         heading="h4"
         variant="h4"
       />
-      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
+      <RenderFiles
+        caseFiles={files}
+        onOpenFile={onOpenFile}
+        showFiledDocumentNumber
+      />
       {children}
     </Box>
   )
@@ -204,10 +226,14 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
+
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
+  const { prefixGeneratedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -221,6 +247,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
     workingCase.courtSessions,
     user,
   )
@@ -252,7 +279,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.indictmentTitle)}
+              title={prefixGeneratedDocumentNameWithDocumentOrder(
+                'indictment',
+                formatMessage(caseFiles.indictmentTitle),
+                workingCase.id,
+              )}
               pdfType="indictment"
               renderAs="row"
               elementId="Ákæra"
@@ -288,20 +319,30 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-              <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-                <PdfButton
-                  caseId={workingCase.id}
-                  connectedCaseParentId={connectedCaseParentId}
-                  title={formatMessage(strings.caseFileButtonText, {
-                    policeCaseNumber,
-                  })}
-                  pdfType="caseFilesRecord"
-                  elementId={policeCaseNumber}
-                  renderAs="row"
-                />
-              </Box>
-            ))}
+            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+              const caseFilesRecordFileName = formatMessage(
+                strings.caseFileButtonText,
+                {
+                  policeCaseNumber,
+                },
+              )
+              return (
+                <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    connectedCaseParentId={connectedCaseParentId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `caseFilesRecord/${policeCaseNumber}`,
+                      caseFilesRecordFileName,
+                      workingCase.id,
+                    )}
+                    pdfType="caseFilesRecord"
+                    elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                    renderAs="row"
+                  />
+                </Box>
+              )
+            })}
           </Box>
           {showSubpoenaPdf && (
             <Box marginBottom={5}>
@@ -320,12 +361,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
                       date: formatDate(subpoena.created),
                     },
                   )
+                  const serviceCertificateFileName = formatMessage(
+                    strings.serviceCertificateButtonText,
+                    { name: defendant.name },
+                  )
 
                   return (
                     <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
                       <PdfButton
                         caseId={workingCase.id}
-                        title={subpoenaFileName}
+                        title={prefixGeneratedDocumentNameWithDocumentOrder(
+                          `subpoena/${defendant.id}/${subpoena.id}`,
+                          subpoenaFileName,
+                          workingCase.id,
+                        )}
                         pdfType="subpoena"
                         elementId={[
                           defendant.id,
@@ -338,12 +387,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
                         isSuccessfulServiceStatus(subpoena.serviceStatus) && (
                           <PdfButton
                             caseId={workingCase.id}
-                            title={formatMessage(
-                              strings.serviceCertificateButtonText,
-                              { name: defendant.name },
+                            title={prefixGeneratedDocumentNameWithDocumentOrder(
+                              `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+                              serviceCertificateFileName,
+                              workingCase.id,
                             )}
                             pdfType="subpoenaServiceCertificate"
-                            elementId={[defendant.id, subpoena.id]}
+                            elementId={[
+                              defendant.id,
+                              subpoena.id,
+                              serviceCertificateFileName,
+                            ]}
                             renderAs="row"
                           />
                         )}
@@ -394,19 +448,31 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   onOpenFile={onOpen}
                 />
               )}
-              {permissions.canViewVerdictServiceCertificate &&
-                workingCase.defendants?.map((defendant) => (
-                  <PdfButton
-                    key={defendant.id}
-                    caseId={workingCase.id}
-                    title={formatMessage(strings.serviceCertificateButtonText, {
+              {features?.includes(Feature.VERDICT_DELIVERY) &&
+                permissions.canViewVerdictServiceCertificate &&
+                workingCase.defendants?.map((defendant) => {
+                  if (!defendant.verdict?.serviceDate) {
+                    return null
+                  }
+
+                  const serviceCertificateFileName = formatMessage(
+                    strings.serviceCertificateButtonText,
+                    {
                       name: defendant.name,
-                    })}
-                    pdfType="verdictServiceCertificate"
-                    elementId={[defendant.id]}
-                    renderAs="row"
-                  />
-                ))}
+                    },
+                  )
+
+                  return (
+                    <PdfButton
+                      key={defendant.id}
+                      caseId={workingCase.id}
+                      title={serviceCertificateFileName}
+                      pdfType="verdictServiceCertificate"
+                      elementId={[defendant.id, serviceCertificateFileName]}
+                      renderAs="row"
+                    />
+                  )
+                })}
             </Box>
           )}
           <FileSection
@@ -426,7 +492,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={pdfElementId}
+                elementId={[pdfElementId, pdfTitle]}
                 renderAs="row"
               />
             )}

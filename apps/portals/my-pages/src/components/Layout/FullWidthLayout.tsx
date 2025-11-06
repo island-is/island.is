@@ -82,7 +82,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
       }}
     >
-      <Box>
+      <Box className={styles.fullWidthInner} marginX={'auto'}>
         {!isDashboard && !isDocuments && !isSearch && (
           <>
             <Box paddingBottom={[3, 4]} paddingTop={[4, 4, 0]}>

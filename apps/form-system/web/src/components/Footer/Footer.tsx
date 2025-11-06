@@ -120,16 +120,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {!isCompletedSection && (
-              <Button
-                icon="arrowForward"
-                onClick={handleIncrement}
-                disabled={!enableContinueButton || submitLoading}
-                loading={submitLoading}
-              >
-                {continueButtonText}
-              </Button>
-            )}
+            {/* {isCompletedSection && ( */}
+            <Button
+              icon="arrowForward"
+              onClick={handleIncrement}
+              disabled={!enableContinueButton || submitLoading}
+              loading={submitLoading}
+            >
+              {continueButtonText}
+            </Button>
+            {/* )} */}
           </Box>
           {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">

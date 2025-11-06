@@ -24,12 +24,6 @@ export const ManagedBy = ({ serviceProvider }: ManagedByProps) => {
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
-            {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
-          </Label>
-          <Text>{serviceProvider?.coordinatorName}</Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.shared
                 .serviceProvider,

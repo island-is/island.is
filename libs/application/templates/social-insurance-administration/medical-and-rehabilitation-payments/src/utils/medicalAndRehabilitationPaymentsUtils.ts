@@ -541,14 +541,21 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
+    case EligibleReasonCodes.BASE_CERT_DISABILITY_DATE_EMPTY:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertDisabilityDateEmptyDescription
     case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .latestMedicalDocumentNotFoundDescription
     case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .errorProcessingClientDescription
+    case EligibleReasonCodes.UNEXPECTED_ERROR:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .unexpectedErrorDescription
     default:
-      return undefined
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .unexpectedErrorDescription
   }
 }
 

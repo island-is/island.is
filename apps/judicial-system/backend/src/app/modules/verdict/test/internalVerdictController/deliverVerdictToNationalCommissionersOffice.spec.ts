@@ -5,12 +5,13 @@ import {
   PoliceFileTypeCode,
 } from '@island.is/judicial-system/types'
 
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
 import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: DeliverResponse
@@ -105,7 +106,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
             documentBase64: 'RMOzbXVy',
           },
         ],
-        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 1, 1) }],
+        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 3, 1) }],
         fileTypeCode: PoliceFileTypeCode.VERDICT,
         caseSupplements: [
           { code: 'RVG_CASE_ID', value: caseId },
