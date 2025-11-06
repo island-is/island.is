@@ -147,10 +147,11 @@ const Completed: FC = () => {
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
-  const hasCourtSessions =
-    workingCase.withCourtSessions &&
-    workingCase.courtSessions &&
-    workingCase.courtSessions.length > 0
+
+  const includeRulingText =
+    !workingCase.withCourtSessions ||
+    !workingCase.courtSessions ||
+    workingCase.courtSessions.length === 0
 
   return (
     <PageLayout
@@ -229,10 +230,11 @@ const Completed: FC = () => {
             />
           </Box>
         )}
+        {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
         {features?.includes(Feature.VERDICT_DELIVERY) &&
-          !hasCourtSessions &&
+          includeRulingText &&
           isRuling && (
-            <Box>
+            <Box marginBottom={5}>
               <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
               <RulingInput
                 workingCase={workingCase}
