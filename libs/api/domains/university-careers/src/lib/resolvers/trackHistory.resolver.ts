@@ -15,7 +15,7 @@ import { StudentInfoInput } from '../dto/studentInfo.input'
 import { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.education)
 @Resolver(() => StudentTrackHistory)
 @Audit({ namespace: '@island.is/api/university-careers' })
 export class TrackHistoryResolver {

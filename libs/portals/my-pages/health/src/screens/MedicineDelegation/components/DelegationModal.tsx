@@ -5,13 +5,11 @@ import {
   Button,
   ModalBase,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../../lib/messages'
-import { useDeleteMedicineDelegationMutation } from '../MedicineDelegation.generated'
 import * as styles from './DelegationModal.css'
 
 interface Props {
@@ -20,6 +18,7 @@ interface Props {
   onClose?: () => void
   onSubmit?: () => void
   visible?: boolean
+  loading?: boolean
 }
 
 const DelegationModal: React.FC<Props> = ({
@@ -28,39 +27,12 @@ const DelegationModal: React.FC<Props> = ({
   visible,
   onClose,
   onSubmit,
+  loading,
 }) => {
   const { formatMessage } = useLocale()
 
-  const [deleteDelegation, { loading: deleting }] =
-    useDeleteMedicineDelegationMutation()
-
   const closeModal = () => {
     onClose && onClose()
-  }
-
-  const submitForm = async () => {
-    if (activeDelegation?.nationalId) {
-      await deleteDelegation({
-        variables: {
-          input: {
-            nationalId: activeDelegation?.nationalId,
-          },
-        },
-      })
-        .then((response) => {
-          if (
-            response.data?.healthDirectorateMedicineDelegationDelete.success
-          ) {
-            toast.success(formatMessage(messages.permitDeleted))
-            onSubmit && onSubmit()
-          } else {
-            toast.error(formatMessage(messages.permitDeletedError))
-          }
-        })
-        .catch(() => {
-          toast.error(formatMessage(messages.permitDeletedError))
-        })
-    }
   }
 
   return (
@@ -113,9 +85,9 @@ const DelegationModal: React.FC<Props> = ({
           <Box>
             <Button
               size="small"
-              onClick={submitForm}
+              onClick={onSubmit}
               colorScheme="destructive"
-              loading={deleting}
+              loading={loading}
             >
               {formatMessage(messages.deleteDelegation)}
             </Button>
