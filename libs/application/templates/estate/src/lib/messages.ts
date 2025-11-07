@@ -870,6 +870,23 @@ export const m = defineMessages({
       'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
     description: '',
   },
+  additionalCommentsTitle: {
+    id: 'es.application:additionalCommentsTitle',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalCommentsDescription: {
+    id: 'es.application:additionalCommentsDescription',
+    defaultMessage:
+      'Hér er hægt að skrá viðbótarupplýsingar um dánarbúið, umsóknina eða önnur atriði sem gætu verið gagnleg fyrir sýslumanninn við afgreiðslu málsins.',
+    description: '',
+  },
+  additionalCommentsPlaceholder: {
+    id: 'es.application:additionalCommentsPlaceholder',
+    defaultMessage:
+      'T.d. upplýsingar um sérstök skilyrði, samkomulag erfingja eða aðrar skýringar',
+    description: '',
+  },
 
   // No assets
   doAssetsExist: {
