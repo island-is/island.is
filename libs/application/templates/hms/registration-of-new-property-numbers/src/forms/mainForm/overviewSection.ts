@@ -17,7 +17,6 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overviewMultifield',
       title: overview.title,
-      description: overview.description,
       children: [
         buildOverviewField({
           id: 'overview.applicant',
