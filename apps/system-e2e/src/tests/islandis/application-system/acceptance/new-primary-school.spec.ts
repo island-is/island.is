@@ -3,7 +3,6 @@ import { conclusionMessages } from '@island.is/application/ui-forms'
 import { test as base, expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import {
-  disableDelegations,
   disableI18n,
   disablePreviousApplications,
 } from '../../../../support/disablers'
@@ -25,7 +24,6 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 
     const applicationPage = await applicationContext.newPage()
     await disablePreviousApplications(applicationPage)
-    await disableDelegations(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication('grunnskoli')
@@ -43,6 +41,8 @@ applicationTest.describe('New primary school', () => {
     async ({ applicationPage }) => {
       const page = applicationPage
       const { proceed } = helpers(page)
+
+      page.goto(`${homeUrl}?delegationChecked=true`)
 
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
