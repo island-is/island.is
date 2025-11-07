@@ -985,7 +985,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     caseFileCategory,
                                   ) => {
                                     handleUpdateFile(courtSession.id, item.id, {
-                                      submittedBy: `${submitterName}|${caseFileCategory}`,
+                                      submittedBy:
+                                        submitterName && caseFileCategory
+                                          ? `${submitterName}|${caseFileCategory}`
+                                          : null,
                                     })
                                   }}
                                 />
