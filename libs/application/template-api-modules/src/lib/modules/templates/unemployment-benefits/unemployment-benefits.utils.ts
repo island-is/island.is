@@ -183,8 +183,6 @@ export const getLicenseInformation = (answers: FormValue) => {
     YesOrNoEnum.YES,
   )
 
-  console.log('hasHeavyMachineryLicense', hasHeavyMachineryLicense)
-
   return {
     hasHeavyMachineryLicense: hasHeavyMachineryLicense,
     drivingLicenses: hasDrivingLicenses
