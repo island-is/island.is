@@ -1,10 +1,14 @@
+import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CourtSessionRulingType } from '@island.is/judicial-system/types'
+import {
+  CourtSessionRulingType,
+  CourtSessionStringType,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
-import { Case } from '../modules/repository'
+import { Case, CourtDocument } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -137,6 +141,48 @@ export const createIndictmentCourtRecordPdf = (
       nrOfFiledDocuments =
         courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
           .documentOrder
+    }
+
+    if (
+      courtSession.mergedFiledDocuments &&
+      courtSession.mergedFiledDocuments.length > 0
+    ) {
+      const uniqueCaseIds = _uniqBy(
+        courtSession.mergedFiledDocuments ?? [],
+        (c: CourtDocument) => c.caseId,
+      ).map((doc) => doc.caseId)
+
+      for (const caseId of uniqueCaseIds) {
+        addEmptyLines(doc, 2)
+        addNormalText(
+          doc,
+          courtSession.courtSessionStrings?.find(
+            (courtSessionString) =>
+              courtSessionString.stringType ===
+                CourtSessionStringType.ENTRIES &&
+              courtSessionString.mergedCaseId === caseId,
+          )?.value ?? 'Engar bókanir um sameinað mál voru skráðar.',
+        )
+
+        const mergedCaseFiledDocuments = courtSession.mergedFiledDocuments
+          .filter((document) => document.caseId === caseId)
+          .sort(
+            (a, b) =>
+              (a.mergedDocumentOrder ?? 0) - (b.mergedDocumentOrder ?? 0),
+          )
+        addEmptyLines(doc, 2)
+        addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
+        addNormalText(doc, 'Nr.', 'Times-Roman')
+        addNumberedList(
+          doc,
+          mergedCaseFiledDocuments.map((d) => d.name.normalize()),
+          mergedCaseFiledDocuments[0].mergedDocumentOrder ?? 1,
+        )
+      }
+      nrOfFiledDocuments =
+        courtSession.mergedFiledDocuments[
+          courtSession.mergedFiledDocuments.length - 1
+        ].mergedDocumentOrder ?? nrOfFiledDocuments
     }
 
     addEmptyLines(doc, 2)
