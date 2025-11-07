@@ -2,6 +2,7 @@ import {
   buildSection,
   buildMultiField,
   buildFileUploadField,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -29,6 +30,15 @@ export const attachments = buildSection({
           : m.attachmentsDescriptionDivisionOfEstateByHeirs
       },
       children: [
+        buildTextField({
+          id: 'additionalComments',
+          title: m.additionalCommentsTitle,
+          description: m.additionalCommentsDescription,
+          placeholder: m.additionalCommentsPlaceholder,
+          variant: 'textarea',
+          rows: 4,
+          maxLength: 1800,
+        }),
         buildFileUploadField({
           id: 'estateAttachments.attached.file',
           title: m.attachmentsTitle,

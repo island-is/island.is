@@ -708,6 +708,8 @@ export const estateSchema = z.object({
     }),
   }),
 
+  additionalComments: z.string().max(1800).optional(),
+
   // is: Eignalaust bú
   estateWithoutAssets: z
     .object({

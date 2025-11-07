@@ -144,4 +144,5 @@ export type UploadData = {
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
   estateWithoutAssetsInfo: EstateWithoutAssetsInfo
+  additionalComments?: string
 }

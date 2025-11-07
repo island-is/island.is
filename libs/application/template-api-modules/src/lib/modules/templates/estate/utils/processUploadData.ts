@@ -151,6 +151,7 @@ export const generateRawUploadData = (
             selection: 'false',
           },
         }),
+    additionalComments: answers.additionalComments ?? '',
   }
 
   return uploadData
