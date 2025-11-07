@@ -160,8 +160,9 @@ export const OverviewFormField = ({
       ) : (
         <>
           {filteredItems &&
-            filteredItems?.map((item, i) => (
+            filteredItems.map((item, i) => (
               <RenderItems
+                key={`filtered-${i}`}
                 item={item}
                 i={i}
                 title={title}
@@ -170,8 +171,9 @@ export const OverviewFormField = ({
               />
             ))}
           {loadedItems &&
-            loadedItems?.map((item, i) => (
+            loadedItems.map((item, i) => (
               <RenderItems
+                key={`loaded-${i}`}
                 item={item}
                 i={i}
                 title={title}
