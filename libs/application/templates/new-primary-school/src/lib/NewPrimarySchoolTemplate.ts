@@ -128,11 +128,13 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+            actions: 'setApplicationType',
+          },
         },
       },
       [States.DRAFT]: {
-        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearLanguages',
