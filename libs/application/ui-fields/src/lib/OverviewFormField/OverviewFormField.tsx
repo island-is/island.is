@@ -14,19 +14,18 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Divider,
   GridColumn,
   GridRow,
   SkeletonLoader,
-  Table,
   Text,
 } from '@island.is/island-ui/core'
-import { SpanType } from '@island.is/island-ui/core/types'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect, useState } from 'react'
 import { FileItem } from './FileItem'
-import { Markdown } from '@island.is/shared/components'
+import { RenderItems } from './RenderItems'
+import { changeScreens, isEmpty, tableDataToShow } from './overviewUtils'
+import { RenderTableData } from './RenderTableData'
 
 interface Props extends FieldBaseProps {
   field: OverviewField
@@ -65,18 +64,16 @@ export const OverviewFormField = ({
     userInfo?.profile?.nationalId,
     locale,
   )
+
   const filteredItems = items?.filter(
-    (item) =>
-      !(
-        item.hideIfEmpty &&
-        (!item.valueText ||
-          (Array.isArray(item.valueText) && item.valueText.length === 0))
-      ),
+    (item) => !item.hideIfEmpty || !isEmpty(item.valueText),
   )
+
   const attachments = rawAttachments?.(
     application.answers,
     application.externalData,
   )
+
   const tableData = rawTableData?.(
     application.answers,
     application.externalData,
@@ -87,10 +84,6 @@ export const OverviewFormField = ({
     backIdVal = backId(application.answers, application.externalData)
   } else {
     backIdVal = backId
-  }
-
-  const changeScreens = (screen: string) => {
-    if (goToScreen) goToScreen(screen)
   }
 
   const load = async () => {
@@ -133,243 +126,6 @@ export const OverviewFormField = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const renderItems = (item: KeyValueItem, i: number) => {
-    const span: SpanType | undefined =
-      item.width === 'full'
-        ? title || description
-          ? ['12/12', '12/12', '12/12', '12/12']
-          : i === 0
-          ? ['10/12', '10/12', '10/12', '10/12']
-          : ['12/12', '12/12', '12/12', '12/12']
-        : item.width === 'half'
-        ? ['9/12', '9/12', '9/12', '5/12']
-        : undefined
-
-    if (!item.keyText && !item.valueText) {
-      return (
-        <GridColumn key={`renderItems-${i}`} span={span}>
-          {item.lineAboveKeyText && (
-            <Box paddingBottom={3}>
-              <Divider weight="black" thickness="thick" />
-            </Box>
-          )}
-        </GridColumn>
-      )
-    }
-
-    const createFormattedKeyTextWithIndex = (
-      item: KeyValueItem,
-      index?: number,
-      useMarkdownFormatting = true,
-    ): string => {
-      const keyText =
-        Array.isArray(item?.keyText) && index !== undefined
-          ? item?.keyText?.[index] ?? ''
-          : item?.keyText ?? ''
-
-      const formattedKey = formatTextWithLocale(
-        keyText,
-        application,
-        locale,
-        formatMessage,
-      )
-
-      if (useMarkdownFormatting) {
-        return `${item?.boldValueText ? '**' : ''}${formattedKey}: ${
-          item?.boldValueText ? '**' : ''
-        }`
-      }
-      return `${formattedKey}: `
-    }
-
-    type MdDescriptor = { id: string }
-
-    const isMdDescriptor = (m: unknown): m is MdDescriptor =>
-      typeof m === 'object' &&
-      m !== null &&
-      'id' in m &&
-      typeof (m as { id?: unknown }).id === 'string' &&
-      (m as MdDescriptor).id.endsWith('#markdown')
-
-    const resolveDescriptor = (t: unknown) => {
-      if (typeof t === 'function') {
-        const fn = t as { length: number } & ((
-          a: typeof application,
-          b?: typeof locale,
-        ) => unknown)
-        try {
-          return fn.length >= 2 ? fn(application, locale) : fn(application)
-        } catch {
-          return t
-        }
-      }
-      return t
-    }
-
-    const isMarkdownDescriptor = (text: unknown): boolean => {
-      if (Array.isArray(text)) {
-        return text.some((x) => isMdDescriptor(resolveDescriptor(x)))
-      }
-      return isMdDescriptor(resolveDescriptor(text))
-    }
-
-    const keyTextValue = formatTextWithLocale(
-      item?.keyText ?? '',
-      application,
-      locale,
-      formatMessage,
-    )
-
-    return (
-      <GridColumn key={i} span={span}>
-        {item.lineAboveKeyText && (
-          <Box paddingBottom={2}>
-            <Divider weight="black" thickness="thick" />
-          </Box>
-        )}
-        {!item.inlineKeyText && (
-          <Markdown>
-            {`#### **${
-              Array.isArray(keyTextValue) //H4 markdown and bold
-                ? keyTextValue.join(', ')
-                : keyTextValue
-            }**`}
-          </Markdown>
-        )}
-        {Array.isArray(item?.valueText)
-          ? item.valueText.map((value, index) => {
-              const valueIsMarkdown = isMarkdownDescriptor(value)
-              const prefix =
-                item.inlineKeyText && Array.isArray(item?.keyText)
-                  ? createFormattedKeyTextWithIndex(
-                      item,
-                      index,
-                      valueIsMarkdown,
-                    )
-                  : ''
-
-              const valueStr = Array.isArray(value)
-                ? formatTextWithLocale(
-                    value,
-                    application,
-                    locale,
-                    formatMessage,
-                  ).join(', ')
-                : formatTextWithLocale(
-                    value,
-                    application,
-                    locale,
-                    formatMessage,
-                  )
-
-              if (valueIsMarkdown) {
-                const renderedValue = item.boldValueText
-                  ? `**${valueStr}**`
-                  : valueStr
-                return (
-                  <Markdown key={`${value}-${index}`}>
-                    {`${prefix}${renderedValue}`}
-                  </Markdown>
-                )
-              }
-
-              return (
-                <Text
-                  key={`${value}-${index}`}
-                  as="p"
-                  fontWeight={item.boldValueText ? 'semiBold' : undefined}
-                >
-                  {`${prefix}${valueStr}`}
-                </Text>
-              )
-            })
-          : (() => {
-              const valueIsMarkdown = isMarkdownDescriptor(item?.valueText)
-              const formattedValue = formatTextWithLocale(
-                item?.valueText ?? '',
-                application,
-                locale,
-                formatMessage,
-              )
-              if (valueIsMarkdown) {
-                const prefixMd =
-                  item.inlineKeyText &&
-                  !Array.isArray(item?.keyText) &&
-                  keyTextValue
-                    ? `${item?.boldValueText ? '**' : ''}${keyTextValue}: ${
-                        item?.boldValueText ? '**' : ''
-                      }`
-                    : ''
-                const renderedValue = item.boldValueText
-                  ? `**${formattedValue}**`
-                  : formattedValue
-                return <Markdown>{`${prefixMd}${renderedValue}`}</Markdown>
-              }
-
-              const prefixPlain =
-                item.inlineKeyText &&
-                !Array.isArray(item?.keyText) &&
-                keyTextValue
-                  ? `${keyTextValue}: `
-                  : ''
-              return (
-                <Text
-                  as="p"
-                  fontWeight={item.boldValueText ? 'semiBold' : undefined}
-                >
-                  {`${prefixPlain}${formattedValue}`}
-                </Text>
-              )
-            })()}
-      </GridColumn>
-    )
-  }
-
-  const renderTableData = (data: TableData) => {
-    return (
-      <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-        <Box
-          marginTop={
-            filteredItems || loadedItems || description || title ? 0 : 8
-          }
-        >
-          <Table.Table>
-            <Table.Head>
-              <Table.Row>
-                {data.header.map((cell, index) => (
-                  <Table.HeadData key={`${cell}-${index}`}>
-                    {formatTextWithLocale(
-                      cell,
-                      application,
-                      locale,
-                      formatMessage,
-                    )}
-                  </Table.HeadData>
-                ))}
-              </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {data.rows.map((row, rowIndex) => (
-                <Table.Row key={`row-${rowIndex}`}>
-                  {row.map((cell, cellIndex) => (
-                    <Table.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
-                      {formatTextWithLocale(
-                        cell,
-                        application,
-                        locale,
-                        formatMessage,
-                      )}
-                    </Table.Data>
-                  ))}
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Table>
-        </Box>
-      </GridColumn>
-    )
-  }
-
   if (
     field.hideIfEmpty &&
     !filteredItems?.length &&
@@ -378,6 +134,8 @@ export const OverviewFormField = ({
   ) {
     return null
   }
+
+  const tableDataToRender = tableDataToShow(tableData, loadedTableData)
 
   const rowData = (
     <GridRow rowGap={3}>
@@ -401,8 +159,27 @@ export const OverviewFormField = ({
       ) : (
         <>
           {filteredItems &&
-            filteredItems?.map((item, i) => renderItems(item, i))}
-          {loadedItems && loadedItems?.map((item, i) => renderItems(item, i))}
+            filteredItems.map((item, i) => (
+              <RenderItems
+                key={`filtered-${i}`}
+                item={item}
+                i={i}
+                title={title}
+                description={description}
+                application={application}
+              />
+            ))}
+          {loadedItems &&
+            loadedItems.map((item, i) => (
+              <RenderItems
+                key={`loaded-${i}`}
+                item={item}
+                i={i}
+                title={title}
+                description={description}
+                application={application}
+              />
+            ))}
           {attachments &&
             attachments?.map((attachment, i) => {
               return (
@@ -441,12 +218,16 @@ export const OverviewFormField = ({
                 </GridColumn>
               )
             })}
-          {tableData &&
-            tableData.header.length > 0 &&
-            renderTableData(tableData)}
-          {loadedTableData &&
-            loadedTableData.header.length > 0 &&
-            renderTableData(loadedTableData)}
+          {tableDataToRender && (
+            <RenderTableData
+              data={tableDataToRender}
+              application={application}
+              title={title}
+              description={description}
+              filteredItems={filteredItems}
+              loadedItems={loadedItems}
+            />
+          )}
         </>
       )}
     </GridRow>
@@ -491,7 +272,7 @@ export const OverviewFormField = ({
           <ReviewGroup
             isLast={!bottomLine}
             hideTopDivider={true}
-            editAction={() => changeScreens(backIdVal ?? '')}
+            editAction={() => changeScreens(backIdVal ?? '', goToScreen)}
             isEditable={backIdVal !== undefined}
           >
             {rowData}
@@ -503,7 +284,7 @@ export const OverviewFormField = ({
     return (
       <ReviewGroup
         isLast={!bottomLine}
-        editAction={() => changeScreens(backIdVal ?? '')}
+        editAction={() => changeScreens(backIdVal ?? '', goToScreen)}
         isEditable={backIdVal !== undefined}
       >
         <Box marginRight={12}>
