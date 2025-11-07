@@ -109,8 +109,8 @@ const VerdictStatusAlertMessage = ({
       return (
         <AlertMessage
           type="info"
-          title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
-          message={`Dómur sendur ${formatDate(
+          title={`Dómur birtur í Lögbirtingarblaðinu - ${defendantName}`}
+          message={`Dómur birtur ${formatDate(
             verdict.serviceDate,
           )} kl. ${formatDate(verdict.serviceDate, TIME_FORMAT)}`}
         />
