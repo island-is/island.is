@@ -1,7 +1,12 @@
 import { S3Service } from '@island.is/nest/aws'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { FileResponse } from './types'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  NO,
+  YES,
+  YesOrNoEnum,
+} from '@island.is/application/core'
 import {
   ApplicantInAnswers,
   CurrentEducationInAnswers,
@@ -171,11 +176,21 @@ export const getJobCareer = (
 export const getLicenseInformation = (answers: FormValue) => {
   const licenses = getValueViaPath<LicensesInAnswers>(answers, 'licenses')
 
+  const hasHeavyMachineryLicense = licenses?.hasHeavyMachineryLicense?.includes(
+    YesOrNoEnum.YES,
+  )
+  const hasDrivingLicenses = licenses?.hasDrivingLicense?.includes(
+    YesOrNoEnum.YES,
+  )
+
   return {
-    hasHeavyMachineryLicense:
-      licenses?.hasHeavyMachineryLicense?.includes('YES'),
-    drivingLicenses: licenses?.drivingLicenseTypes,
-    heavyMachineryLicenses: licenses?.heavyMachineryLicensesTypes,
+    hasHeavyMachineryLicense: hasHeavyMachineryLicense,
+    drivingLicenses: hasDrivingLicenses
+      ? licenses?.drivingLicenseTypes || []
+      : [],
+    heavyMachineryLicenses: hasHeavyMachineryLicense
+      ? licenses?.heavyMachineryLicensesTypes || []
+      : [],
   }
 }
 
@@ -525,8 +540,6 @@ export const getPensionAndOtherPayments = (
           .map((payment) => {
             return {
               incomeTypeId: payment.typeOfPayment,
-              estimatedIncome: parseInt(payment.paymentAmount || ''),
-              realIncome: parseInt(payment.paymentAmount || ''),
               unionId: payment.union,
             }
           }),

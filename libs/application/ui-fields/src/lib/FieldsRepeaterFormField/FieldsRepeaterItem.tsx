@@ -540,7 +540,7 @@ export const Item = ({
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'
-              ? { maxDate: maxDateVal, minDate: minDateVal }
+              ? { maxDate: maxDateVal, minDate: minDateVal, locale: lang }
               : {})}
             {...(component === 'nationalIdWithName'
               ? {
