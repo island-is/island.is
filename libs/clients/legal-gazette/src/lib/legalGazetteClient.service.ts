@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   LegalGazetteCommonApplicationApi,
-  SubmitCommonApplicationDto,
+  IslandIsSubmitCommonApplicationDto,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -36,26 +36,13 @@ export class LegalGazetteClientService {
       throw error
     }
   }
-
-  async deleteApplication(id: string, auth: Auth): Promise<void> {
-    try {
-      await this.legalGazetteApiWithAuth(auth).deleteApplication({ id: id })
-    } catch (error) {
-      this.logger.error('Failed to delete application', {
-        error,
-        category: LOGGING_CATEGORY,
-      })
-
-      throw error
-    }
-  }
   async submitApplication(
-    body: SubmitCommonApplicationDto,
+    body: IslandIsSubmitCommonApplicationDto,
     auth: Auth,
   ): Promise<void> {
     try {
-      await this.legalGazetteApiWithAuth(auth).submitApplication({
-        submitCommonApplicationDto: body,
+      await this.legalGazetteApiWithAuth(auth).submitIslandIsApplication({
+        islandIsSubmitCommonApplicationDto: body,
       })
     } catch (error) {
       this.logger.error('Failed to submit application', {
