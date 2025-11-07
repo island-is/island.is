@@ -167,9 +167,15 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         },
       })
-      setFiles((prev) => prev.filter((f) => f.id !== file.id))
+      const newFiles = files.filter((f) => f.id !== file.id)
+      setFiles(newFiles)
+      dispatch &&
+        dispatch({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: newFiles },
+        })
     },
-    [deleteFile, item.values],
+    [deleteFile, dispatch, files, item.id, item.values],
   )
 
   return (
