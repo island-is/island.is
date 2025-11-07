@@ -602,6 +602,11 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við bankareikning',
     description: '',
   },
+  bankAccountForeign: {
+    id: 'es.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
 
   // Claims
   claimsTitle: {
