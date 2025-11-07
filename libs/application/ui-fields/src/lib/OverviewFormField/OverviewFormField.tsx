@@ -17,7 +17,6 @@ import {
   GridColumn,
   GridRow,
   SkeletonLoader,
-  Table,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
