@@ -1,7 +1,4 @@
-import {
-  coreDefaultFieldMessages,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   PaymentChargeOverviewField,
@@ -52,56 +49,32 @@ export const PaymentChargeOverviewFormField: FC<
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box>
-        <Text variant="h3" as="h4" marginY={2}>
+        <Text variant="h5">
           {formatText(field.forPaymentLabel, application, formatMessage)}
         </Text>
-        {selectedChargeWithInfoList.map((charge, index) => (
-          <Box key={charge?.chargeItemCode}>
-            <Text variant="h5">
-              {`${charge?.chargeItemName}` + charge.extraLabel
-                ? `- ${charge.extraLabel}`
+        {selectedChargeWithInfoList.map((charge) => (
+          <Box
+            paddingTop={1}
+            display="flex"
+            justifyContent="spaceBetween"
+            key={charge?.chargeItemCode}
+          >
+            <Text>
+              {charge?.chargeItemName}
+              {charge?.extraLabel
+                ? ` - ${formatText(
+                    charge.extraLabel,
+                    application,
+                    formatMessage,
+                  )}`
+                : ''}
+              {charge?.quantity && charge?.quantity > 1
+                ? ` - x${charge.quantity}`
                 : ''}
             </Text>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.quantityLabel
-                  ? formatMessage(field.quantityLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultQuantityTitle,
-                    )}
-              </Text>
-              <Text>{charge?.quantity}</Text>
-            </Box>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.unitPriceLabel
-                  ? formatMessage(field.unitPriceLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultUnitPriceTitle,
-                    )}
-              </Text>
-              <Text> {formatIsk(charge?.priceAmount || 0)}</Text>
-            </Box>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.totalPerUnitLabel
-                  ? formatMessage(field.totalPerUnitLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultTotalPerUnitTitle,
-                    )}
-              </Text>
-              <Text>
-                {' '}
-                {formatIsk(
-                  (charge?.priceAmount || 0) * (charge?.quantity || 1),
-                )}
-              </Text>
-            </Box>
-            {index < selectedChargeWithInfoList.length - 1 && (
-              <Box paddingY={3}>
-                <Divider />
-              </Box>
-            )}
+            <Text>
+              {formatIsk((charge?.priceAmount || 0) * (charge?.quantity || 1))}
+            </Text>
           </Box>
         ))}
       </Box>
