@@ -47,9 +47,9 @@ export const RealEstateRepeater: FC<
   const handleAddProperty = () =>
     append({
       share: 100,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })

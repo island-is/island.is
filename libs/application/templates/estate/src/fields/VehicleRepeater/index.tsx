@@ -49,9 +49,9 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })
