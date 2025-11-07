@@ -24,6 +24,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import * as styles from './Layout.css'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -183,7 +184,7 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
   const isSpecialView = !!isDashboard || !!isDocuments
 
   const isQuestionnaireDetail =
-    matchPath('/heilsa/spurningalistar/:id/svara', props.pathname) !== null
+    matchPath(HealthPaths.HealthQuestionnairesAnswer, props.pathname) !== null
   return (
     <FullWidthLayout
       isDashboard={!!isDashboard}

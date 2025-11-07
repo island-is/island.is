@@ -2,35 +2,13 @@ import {
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionType,
-  NumberTriggerDto,
-  ListTriggerDto,
-  BooleanTriggerDto,
-  AttachmentQuestionDto,
-  BooleanQuestionDto,
-  DateQuestionDto,
-  ListQuestionDto,
-  NumberQuestionDto,
-  StringQuestionDto,
-  TableQuestionDto,
 } from '@island.is/clients/health-directorate'
-import { QuestionnairesStatusEnum } from '../../../models/questionnaires.model'
-import { Questionnaire } from '../../../models/questionnaire.model'
 import { AnswerOptionType } from '../../../models/question.model'
-import { Trigger } from 'aws-sdk/clients/elasticbeanstalk'
-
-type HealthDirectorateQuestionDto =
-  | BooleanQuestionDto
-  | StringQuestionDto
-  | DateQuestionDto
-  | NumberQuestionDto
-  | ListQuestionDto
-  | AttachmentQuestionDto
-  | TableQuestionDto
-
-type HealthDirectorateQuestionTriggers =
-  | NumberTriggerDto
-  | ListTriggerDto
-  | BooleanTriggerDto
+import { Questionnaire } from '../../../models/questionnaire.model'
+import {
+  QuestionnairesOrganizationEnum,
+  QuestionnairesStatusEnum,
+} from '../../../models/questionnaires.model'
 
 export const mapQuestionnaire = (
   questionnaire: QuestionnaireBaseDto,
@@ -47,7 +25,7 @@ export const mapQuestionnaire = (
           : QuestionnairesStatusEnum.notAnswered,
       lastSubmitted: questionnaire.lastSubmitted,
       formId: questionnaire.title ?? 'undefined-form-id',
-      organization: 'Landlæknir', // TODO: ask if this is correct
+      organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
   }
 }
@@ -67,7 +45,7 @@ export const mapQuestionnaireDetail = (
           : QuestionnairesStatusEnum.notAnswered,
       lastSubmitted: questionnaire.lastSubmitted,
       formId: questionnaire.title ?? 'undefined-form-id',
-      organization: 'Landlæknir', // TODO: ask if this is correct
+      organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
     canSubmit: questionnaire.canSubmit,
     expirationDate: questionnaire.expiryDate,
@@ -95,7 +73,7 @@ export const mapQuestionnaireDetailWithQuestions = (
           : QuestionnairesStatusEnum.notAnswered,
       lastSubmitted: questionnaire.lastSubmitted,
       formId: questionnaire.title ?? 'undefined-form-id',
-      organization: 'Landlæknir', // TODO: ask if this is correct
+      organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
     canSubmit: questionnaire.canSubmit,
     expirationDate: questionnaire.expiryDate,

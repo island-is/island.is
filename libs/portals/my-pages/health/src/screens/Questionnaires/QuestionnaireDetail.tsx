@@ -51,7 +51,10 @@ const QuestionnaireDetail: React.FC = () => {
     status === QuestionnaireQuestionnairesStatusEnum.notAnswered
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
 
-  const link = HealthPaths.HealthQuestionnairesAnswer.replace(':id', id)
+  const link = HealthPaths.HealthQuestionnairesAnswer.replace(
+    ':org',
+    organization?.toLocaleLowerCase() ?? '',
+  ).replace(':id', id)
   //  isAnswered
   //   ? HealthPaths.HealthQuestionnairesAnswered.replace(':id', id)
   //   : notAnswered
@@ -142,8 +145,10 @@ const QuestionnaireDetail: React.FC = () => {
               key="questionnaire-organization"
               label={formatMessage(messages.organization)}
               content={
-                questionnaire?.baseInformation.organization ??
-                formatMessage(messages.unknown)
+                questionnaire?.baseInformation.organization ===
+                QuestionnaireQuestionnairesOrganizationEnum.EL
+                  ? 'Embætti Landlæknis'
+                  : 'Landspítali'
               }
             />,
 

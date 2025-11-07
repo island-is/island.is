@@ -17,6 +17,7 @@ import Header from '../Header/Header'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
@@ -32,7 +33,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   // TODO: Fix and find better solution
   const isQuestionnaireDetail =
-    matchPath('/heilsa/spurningalistar/:id/svara', pathname) !== null
+    matchPath(HealthPaths.HealthQuestionnairesAnswer, pathname) !== null
 
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()

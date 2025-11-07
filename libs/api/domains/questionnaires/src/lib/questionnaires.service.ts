@@ -14,6 +14,11 @@ import {
   QuestionnaireDetailDto,
 } from '@island.is/clients/health-directorate'
 
+import {
+  LshClientService,
+  Questionnaire as LSHQuestionnaireType,
+  QuestionnaireBody,
+} from '@island.is/clients/lsh'
 import { Questionnaire } from '../models/questionnaire.model'
 import {
   QuestionnairesList,
@@ -22,12 +27,8 @@ import {
 } from '../models/questionnaires.model'
 import { QuestionnaireSubmission } from '../models/submission.model'
 import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
-import {
-  LshClientService,
-  Questionnaire as LSHQuestionnaireType,
-  QuestionnaireBody,
-} from '@island.is/clients/lsh'
-import { mapLSHQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
+import { mapLshQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
+// import { mapTriggerSourceToGraphQL } from './transform-mappers/health-directorate/hd-gpt-mapper'
 
 @Injectable()
 export class QuestionnairesService {
@@ -45,7 +46,6 @@ export class QuestionnairesService {
     let LSHdata: LSHQuestionnaireType | null = null
     let LSHdataWithQuestions: QuestionnaireBody | null = null
     let ElData: QuestionnaireDetailDto | null = null
-    console.log('get questionnaire for org ', input.organization)
 
     try {
       if (input.organization === QuestionnairesOrganizationEnum.LSH) {
@@ -61,6 +61,10 @@ export class QuestionnairesService {
                 (response) =>
                   response?.find((q) => q.gUID === input.id) || null,
               ))
+
+        return LSHdataWithQuestions
+          ? mapLshQuestionnaire(LSHdataWithQuestions)
+          : this.getLSHQuestionnaire(_locale, LSHdata)
       }
     } catch (e) {
       console.error('Error fetching LSH questionnaire', e)
@@ -68,8 +72,8 @@ export class QuestionnairesService {
 
     try {
       if (input.organization === QuestionnairesOrganizationEnum.EL) {
-        console.log('Fetching EL questionnaire')
         ElData = await this.api.getQuestionnaire(_user, 'is', input.id)
+        return this.getELQuestionnaire(_locale, input.includeQuestions, ElData)
       }
     } catch (e) {
       console.error('Error fetching EL questionnaire', e)
@@ -78,12 +82,7 @@ export class QuestionnairesService {
     if (!LSHdata && !ElData) {
       return null
     }
-
-    return input.organization === QuestionnairesOrganizationEnum.EL
-      ? this.getELQuestionnaire(_locale, input.includeQuestions, ElData)
-      : input.includeQuestions
-      ? mapLSHQuestionnaire(LSHdataWithQuestions, LSHdata, _locale)
-      : this.getLSHQuestionnaire(_locale, LSHdata)
+    return null
   }
 
   private getELQuestionnaire(
@@ -91,25 +90,20 @@ export class QuestionnairesService {
     withQuestions?: boolean,
     data?: QuestionnaireDetailDto | null,
   ): Questionnaire | null {
-    console.log('EL DATA get questionnaire ', data)
     if (!data) return null
     return withQuestions
       ? mapExternalQuestionnaireToGraphQL(data, _locale)
       : {
           baseInformation: {
-            id: data?.questionnaireId,
-            title: data?.title
+            id: data.questionnaireId,
+            title: data.title
               ? data.title
               : _locale === 'is'
-              ? 'Ónefnd spurningalisti'
-              : 'Untitled Questionnaire',
-            status:
-              (data?.numSubmissions ?? 0) > 0
-                ? QuestionnairesStatusEnum.answered
-                : QuestionnairesStatusEnum.notAnswered,
-            sentDate:
-              data?.createdDate?.toISOString() || new Date().toISOString(),
-            description: data?.message,
+              ? 'Ónefndur spurningalisti'
+              : 'Untitled questionnaire',
+            sentDate: data.lastSubmitted?.toDateString() || '',
+            status: QuestionnairesStatusEnum.notAnswered,
+            description: data.message || undefined,
             organization: QuestionnairesOrganizationEnum.EL,
           },
         }
@@ -119,8 +113,6 @@ export class QuestionnairesService {
     _locale: Locale,
     data?: LSHQuestionnaireType | null | undefined,
   ): Questionnaire | null {
-    console.log('LSH DATA get questionnaire ', data)
-
     if (!data) return null
     return {
       baseInformation: {
@@ -196,12 +188,13 @@ export class QuestionnairesService {
           data?.map((q) => {
             return {
               id: q.questionnaireId,
-              title:
-                q.title ?? _locale === 'is'
-                  ? 'Spurningalisti'
-                  : 'Questionnaire',
+              title: q.title
+                ? q.title
+                : _locale === 'is'
+                ? 'Ónefndur spurningalisti'
+                : 'Untitled questionnaire',
               description: q.message,
-              sentDate: '',
+              sentDate: q.lastSubmitted?.toDateString() || '',
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,
               status:
@@ -225,7 +218,7 @@ export class QuestionnairesService {
             ?.filter((item: LSHQuestionnaireType) => item.gUID != null)
             .map((item: LSHQuestionnaireType) => {
               return {
-                id: item.gUID!,
+                id: item.gUID || 'undefined-id',
                 title: item.caption ? item.caption : 'Spurningalisti',
                 description: item.description ?? undefined,
                 sentDate: item.validFromDateTime.toISOString(),

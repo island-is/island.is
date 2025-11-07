@@ -1,4 +1,5 @@
 import {
+  QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
 } from '@island.is/api/schema'
@@ -37,7 +38,7 @@ const defaultFilterValues = {
 type FilterValues = {
   searchQuery: string
   status: QuestionnaireQuestionnairesStatusEnum[] // TODO: switch to enum from graphql
-  organization: string[] // TODO: switch to enum from graphql
+  organization: QuestionnaireQuestionnairesOrganizationEnum[] // TODO: switch to enum from graphql
   treatment: string[] // TODO: switch to enum from graphql
 }
 
@@ -53,14 +54,23 @@ const Questionnaires: React.FC = () => {
     },
   })
 
-  const toggleStatus = (
-    status: QuestionnaireQuestionnairesStatusEnum, // TODO: switch to enum from graphql
-  ) => {
+  const toggleStatus = (status: QuestionnaireQuestionnairesStatusEnum) => {
     setFilterValues((prev) => ({
       ...prev,
       status: prev.status.includes(status)
         ? prev.status.filter((s) => s !== status)
         : [...prev.status, status],
+    }))
+  }
+
+  const toggleOrganization = (
+    organization: QuestionnaireQuestionnairesOrganizationEnum,
+  ) => {
+    setFilterValues((prev) => ({
+      ...prev,
+      organization: prev.organization.includes(organization)
+        ? prev.organization.filter((o) => o !== organization)
+        : [...prev.organization, organization],
     }))
   }
 
@@ -108,7 +118,7 @@ const Questionnaires: React.FC = () => {
           />
         }
       >
-        <Box padding={4}>
+        <Box paddingX={4} paddingY={2}>
           <Text
             variant="default"
             as="p"
@@ -149,6 +159,42 @@ const Questionnaires: React.FC = () => {
             ))}
           </Stack>
         </Box>
+        <Box paddingX={4} paddingBottom={2}>
+          <Text
+            variant="default"
+            as="p"
+            fontWeight="semiBold"
+            paddingBottom={2}
+          >
+            {formatMessage(messages.organization)}
+          </Text>
+
+          <Stack space={2}>
+            {[
+              {
+                name: 'lsh',
+                label: 'Landspítali',
+                organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
+              },
+              {
+                name: 'el',
+                label: 'Embætti Landlæknis',
+                organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
+              },
+            ].map(({ name, label, organization }) => (
+              <Checkbox
+                key={name}
+                name={name}
+                label={label}
+                value={name}
+                checked={filterValues.organization.includes(organization)}
+                onChange={() => {
+                  toggleOrganization(organization)
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
       </Filter>
       {!loading && data?.questionnairesList === null && (
         <Box marginTop={3}>
@@ -159,22 +205,38 @@ const Questionnaires: React.FC = () => {
         <Stack space={3}>
           {loading && <CardLoader />}
           {data?.questionnairesList?.questionnaires
-            ?.filter(
-              (item) =>
-                item.organization
-                  ?.toLowerCase()
-                  .includes(filterValues.searchQuery.toLowerCase()) ||
-                item.title
-                  ?.toLowerCase()
-                  .includes(filterValues.searchQuery.toLowerCase()),
-            )
+            ?.filter((item) => {
+              // Search filter
+              const searchLower = filterValues.searchQuery.toLowerCase()
+              const matchesSearch =
+                !searchLower ||
+                item.organization?.toLowerCase().includes(searchLower) ||
+                item.title?.toLowerCase().includes(searchLower)
 
-            .map((questionnaire) => (
+              // Status filter
+              const matchesStatus =
+                filterValues.status.length === 0 ||
+                (item.status && filterValues.status.includes(item.status))
+
+              // Organization filter
+              const matchesOrganization =
+                filterValues.organization.length === 0 ||
+                (item.organization &&
+                  filterValues.organization.includes(item.organization))
+
+              return matchesSearch && matchesStatus && matchesOrganization
+            })
+            ?.map((questionnaire) => (
               <ActionCard
                 key={questionnaire.id}
                 heading={questionnaire.title}
                 text={questionnaire.description ?? ''}
-                eyebrow={questionnaire.organization ?? undefined}
+                eyebrow={
+                  questionnaire.organization ===
+                  QuestionnaireQuestionnairesOrganizationEnum.EL
+                    ? 'Embætti Landlæknis'
+                    : 'Landspítali'
+                }
                 date={formatDate(questionnaire.sentDate)}
                 tag={{
                   label:
@@ -199,7 +261,7 @@ const Questionnaires: React.FC = () => {
                     ':org',
                     questionnaire.organization?.toLocaleLowerCase() ?? '',
                   ).replace(':id', questionnaire.id),
-                  label: formatMessage(messages.answer), //TODO: if status is unanswered the label should be "svara" else "sjá nánar"
+                  label: formatMessage(messages.answer),
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () =>

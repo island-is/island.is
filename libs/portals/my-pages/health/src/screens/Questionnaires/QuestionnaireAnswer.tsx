@@ -26,9 +26,9 @@ const QuestionnaireAnswer: React.FC = () => {
   const [submitQuestionnaire] = useSubmitQuestionnaireMutation()
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
-    org === 'EL'
+    org === 'el'
       ? QuestionnaireQuestionnairesOrganizationEnum.EL
-      : org === 'LSH'
+      : org === 'lsh'
       ? QuestionnaireQuestionnairesOrganizationEnum.LSH
       : undefined
 

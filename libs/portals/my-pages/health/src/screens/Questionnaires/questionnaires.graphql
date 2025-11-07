@@ -41,7 +41,7 @@ query GetQuestionnaireWithQuestions(
   $locale: String!
   $input: GetQuestionnaireInput!
 ) {
-  questionnairesDetail(id: $id, locale: $locale, input: $input) {
+  questionnairesDetail(locale: $locale, input: $input) {
     baseInformation {
       __typename
       id

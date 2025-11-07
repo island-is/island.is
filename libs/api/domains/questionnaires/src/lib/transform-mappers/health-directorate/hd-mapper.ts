@@ -49,10 +49,10 @@ type HealthDirectorateQuestionTriggers =
 
 /* -------------------- Helper Functions -------------------- */
 
-function mapAnswerType(
+const mapAnswerType = (
   type: string,
   item: HealthDirectorateQuestionDto,
-): AnswerOptionType {
+): AnswerOptionType => {
   switch (type) {
     case 'text':
       return AnswerOptionType.label
@@ -87,11 +87,11 @@ function mapAnswerType(
   }
 }
 
-function mapTriggers(
+const mapTriggers = (
   allQuestions: HealthDirectorateQuestionDto[],
   triggers: Record<string, HealthDirectorateQuestionTriggers[]> | undefined,
   itemId: string,
-): { dependsOn?: string[]; visibilityConditions?: VisibilityCondition[] } {
+): { dependsOn?: string[]; visibilityConditions?: VisibilityCondition[] } => {
   if (!triggers) return {}
 
   // Find all triggers where this itemId is the targetId
@@ -193,12 +193,12 @@ function mapTriggers(
   }
 }
 
-function mapItemToQuestion(
+const mapItemToQuestion = (
   item: HealthDirectorateQuestionDto,
   allQuestions: HealthDirectorateQuestionDto[],
   locale: 'is' | 'en',
   triggers?: Record<string, HealthDirectorateQuestionTriggers[]>,
-): Question {
+): Question => {
   const answerType = mapAnswerType(item.type, item)
   const triggerDeps = mapTriggers(allQuestions, triggers, item.id)
 
@@ -256,12 +256,12 @@ function mapItemToQuestion(
   }
 }
 
-function mapGroupToSection(
+const mapGroupToSection = (
   group: QuestionGroupDto,
   allQuestions: HealthDirectorateQuestionDto[],
   locale: 'is' | 'en',
   triggers?: Record<string, HealthDirectorateQuestionTriggers[]>,
-): QuestionnaireSection {
+): QuestionnaireSection => {
   return {
     title: group.title,
     questions: group.items.map((item) =>
@@ -272,10 +272,10 @@ function mapGroupToSection(
 
 /* -------------------- Core Mapper -------------------- */
 
-export function mapExternalQuestionnaireToGraphQL(
+export const mapExternalQuestionnaireToGraphQL = (
   q: QuestionnaireDetailDto | QuestionnaireBaseDto,
   locale: 'is' | 'en',
-): Questionnaire {
+): Questionnaire => {
   const isDetailed = 'groups' in q && 'triggers' in q
   let allQuestions: HealthDirectorateQuestionDto[] = []
   if (isDetailed) {

@@ -10,10 +10,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
-import {
-  calculateFormula,
-  isQuestionVisibleWithStructuredConditions,
-} from './utils/visibilityUtils'
+import { isQuestionVisibleWithStructuredConditions } from './utils/visibilityUtils'
 
 import {
   Questionnaire,
@@ -23,6 +20,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
+import { calculateFormula } from './utils/calculations'
 
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire

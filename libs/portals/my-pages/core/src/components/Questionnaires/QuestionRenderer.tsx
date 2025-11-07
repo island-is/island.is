@@ -218,6 +218,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.datetime: {
         return (
           <DatePicker
+            locale="is"
             id={question.id}
             label={question.label}
             placeholderText={
@@ -229,7 +230,13 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
                 : undefined
             }
             handleChange={(date: Date) =>
-              handleValueChange(date ? date.toISOString().split('T')[0] : '')
+              handleValueChange(
+                date
+                  ? QuestionnaireAnswerOptionType.datetime
+                    ? date.toISOString()
+                    : date.toISOString().split('T')[0]
+                  : '',
+              )
             }
             backgroundColor="blue"
             disabled={disabled}
