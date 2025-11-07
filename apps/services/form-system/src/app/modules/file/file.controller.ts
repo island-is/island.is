@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiBody, ApiTags } from '@nestjs/swagger'
 import { FileService } from './file.service'
+import { DeleteFileDto } from './models/deleteFile.dto'
 import { StoreFileDto } from './models/storeFile.dto'
 
 @UseGuards(IdsUserGuard)
@@ -19,7 +20,16 @@ export class FileController {
   @ApiBody({ type: StoreFileDto })
   @Post('upload')
   async storeFileToS3(@Body() input: StoreFileDto) {
-    console.log('backend controller', input)
-    return this.fileService.uploadFile(input.fieldId, input.sourceKey)
+    return this.fileService.uploadFile(
+      input.fieldId,
+      input.sourceKey,
+      input.valueId,
+    )
+  }
+
+  @ApiBody({ type: DeleteFileDto })
+  @Post('delete')
+  async deleteFile(@Body() input: DeleteFileDto) {
+    return this.fileService.deleteFile(input.key, input.valueId)
   }
 }

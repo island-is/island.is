@@ -1,16 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString } from 'class-validator'
 
-export class StoreFileDto {
+export class DeleteFileDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
-  fieldId!: string
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  sourceKey!: string
+  key!: string
 
   @IsNotEmpty()
   @ApiProperty()

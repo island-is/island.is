@@ -5,25 +5,23 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { Process, Processor } from '@nestjs/bull'
 import { Inject } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+import { InjectModel } from '@nestjs/sequelize'
 import { Job } from 'bull'
-import { FieldsService } from '../fields/fields.service'
+import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 
 interface JobData {
   fieldId: string
   key: string
-}
-
-interface JobResult {
-  key: string
-  url: string
+  valueId: string
 }
 
 @Processor('upload')
 @CodeOwner(CodeOwners.Advania)
 export class UploadProcessor {
   constructor(
-    private readonly fieldsService: FieldsService,
+    @InjectModel(Value)
+    private readonly valueModel: typeof Value,
     private readonly fileStorageService: FileStorageService,
     @Inject(FileConfig.KEY)
     private config: ConfigType<typeof FileConfig>,
@@ -32,7 +30,7 @@ export class UploadProcessor {
 
   @Process('upload')
   async handleUpload(job: Job<JobData>) {
-    const { fieldId, key } = job.data
+    const { fieldId, key, valueId } = job.data
     const destinationBucket = this.config.bucket
 
     this.logger.info(`🟢 UploadProcessor started for ${key}`)
@@ -59,12 +57,35 @@ export class UploadProcessor {
           `Copying ${key} → ${destinationBucket}/${fieldId}/${key}`,
         )
         try {
+          const newKey = `${fieldId}/${key}`
           await this.fileStorageService.copyObjectFromUploadBucket(
             key,
             destinationBucket,
-            `${fieldId}/${key}`,
+            newKey,
           )
           this.logger.info(`✅ Successfully copied ${key}`)
+
+          // Update the field with the new S3 key
+          const value = await this.valueModel.findByPk(valueId)
+
+          if (!value) {
+            this.logger.warn(`Value with PK: ${valueId} not found`)
+            return
+          }
+
+          const currentKeys = value.json?.s3Key || []
+          const updatedKeys = [...currentKeys, newKey]
+
+          value.json = {
+            ...value.json,
+            s3Key: updatedKeys,
+          }
+
+          await value.save()
+
+          this.logger.info(
+            `✅ Updated field ${fieldId} with new S3 key ${newKey}`,
+          )
           return
         } catch (error) {
           this.logger.error(`❌ Copy failed: ${error}`)

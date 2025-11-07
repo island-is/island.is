@@ -1,12 +1,13 @@
 import { Logger } from '@azure/msal-node'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  FileControllerDeleteFileRequest,
   FileControllerStoreFileToS3Request,
   FilesApi,
 } from '@island.is/clients/form-system'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { StoreFileInput } from '../../dto/files.input'
+import { DeleteFileInput, StoreFileInput } from '../../dto/files.input'
 
 @Injectable()
 export class FilesService {
@@ -21,10 +22,14 @@ export class FilesService {
   }
 
   async storeFile(auth: User, input: StoreFileInput): Promise<void> {
-    console.log('input controller', input)
-
     await this.filesApiWithAuth(auth).fileControllerStoreFileToS3(
       input as FileControllerStoreFileToS3Request,
+    )
+  }
+
+  async deleteFile(auth: User, input: DeleteFileInput): Promise<void> {
+    await this.filesApiWithAuth(auth).fileControllerDeleteFile(
+      input as FileControllerDeleteFileRequest,
     )
   }
 }

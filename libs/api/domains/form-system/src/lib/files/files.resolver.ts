@@ -7,7 +7,7 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { StoreFileInput } from '../../dto/files.input'
+import { DeleteFileInput, StoreFileInput } from '../../dto/files.input'
 import { FilesService } from './files.service'
 
 @Resolver()
@@ -26,5 +26,17 @@ export class FilesResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.filesService.storeFile(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'deleteFormSystemFile',
+    nullable: true,
+  })
+  async deleteFile(
+    @Args('input', { type: () => DeleteFileInput })
+    input: DeleteFileInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.filesService.deleteFile(user, input)
   }
 }

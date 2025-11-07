@@ -3,7 +3,9 @@ import { S3Service } from '@island.is/nest/aws'
 import { InjectQueue } from '@nestjs/bull'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+import { InjectModel } from '@nestjs/sequelize'
 import { Queue } from 'bull'
+import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 
 const TEMP_BUCKET = 'island-is-dev-upload-api'
@@ -16,6 +18,8 @@ export class FileService {
     private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @InjectQueue('upload') private readonly uploadQueue: Queue,
+    @InjectModel(Value)
+    private readonly valueModel: typeof Value,
   ) {}
 
   async fileExists(key: string): Promise<boolean> {
@@ -28,11 +32,11 @@ export class FileService {
     }
   }
 
-  /**
-   * Queues a background job to copy a file from the temp bucket to the permanent bucket.
-   * The UploadProcessor will handle retries and S3 copy when the upload finishes.
-   */
-  async uploadFile(fieldId: string, sourceKey: string): Promise<void> {
+  async uploadFile(
+    fieldId: string,
+    sourceKey: string,
+    valueId: string,
+  ): Promise<void> {
     const targetBucket = this.config.bucket
     if (!targetBucket) {
       throw new Error('Target S3 bucket not configured')
@@ -45,8 +49,41 @@ export class FileService {
     await this.uploadQueue.add('upload', {
       fieldId,
       key: sourceKey,
+      valueId,
     })
 
     this.logger.info(`Upload job added to queue for key ${sourceKey}`)
+  }
+
+  async deleteFile(key: string, valueId: string): Promise<void> {
+    const bucket = this.config.bucket
+    if (!bucket) {
+      throw new Error('S3 bucket not configured')
+    }
+
+    const s3Uri = `s3://${bucket}/${key}`
+
+    this.logger.info(`Deleting file ${s3Uri} for valueId ${valueId}`)
+
+    try {
+      await this.s3Service.deleteObject({ bucket, key })
+      this.logger.info(`Successfully deleted file ${s3Uri}`)
+
+      // Update the Value to remove the S3 key reference
+      const value = await this.valueModel.findByPk(valueId)
+      if (value) {
+        value.json = {
+          ...value.json,
+          s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
+        }
+        await value.save()
+        this.logger.info(`Cleared s3Key for valueId ${valueId} after deletion`)
+      } else {
+        this.logger.warn(`Value with id ${valueId} not found`)
+      }
+    } catch (error) {
+      this.logger.error(`Error deleting file ${s3Uri}`, error)
+      throw error
+    }
   }
 }

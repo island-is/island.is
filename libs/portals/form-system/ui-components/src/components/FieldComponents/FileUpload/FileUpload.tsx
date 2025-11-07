@@ -4,31 +4,46 @@ import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import { FormSystemField } from '@island.is/api/schema'
-import { CREATE_UPLOAD_URL, STORE_FILE } from '@island.is/form-system/graphql'
+import {
+  CREATE_UPLOAD_URL,
+  DELETE_FILE,
+  STORE_FILE,
+} from '@island.is/form-system/graphql'
 import {
   FileUploadStatus,
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Action } from '../../../lib'
+import { Action, getValue, uploadToS3 } from '../../../lib'
 import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
-  applicationId?: string
 }
 
-export const FileUpload = ({ item, hasError }: Props) => {
+const initializeFiles = (item: FormSystemField): UploadFile[] => {
+  const s3Keys = getValue(item, 's3Key') as string[] | undefined
+  if (!s3Keys) {
+    return []
+  }
+  return s3Keys.map((key) => ({
+    name: key.split('_').pop() as string,
+    status: FileUploadStatus.done,
+    key,
+  }))
+}
+
+export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const { formatMessage } = useIntl()
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [uploadFile] = useMutation(STORE_FILE)
+  const [deleteFile] = useMutation(DELETE_FILE)
 
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
 
@@ -38,35 +53,49 @@ export const FileUpload = ({ item, hasError }: Props) => {
     )
   }, [])
 
-  const uploadToS3 = useCallback(
-    async (file: File, id: string) => {
+  const handleUpload = useCallback(
+    async (file: UploadFile, id: string) => {
       try {
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
         })
         const presigned = data?.createUploadUrl
-        console.log(presigned)
+
         if (!presigned?.url || !presigned?.fields) {
           throw new Error('Invalid presigned upload response')
         }
 
-        const res = await uploadFile({
+        const progress = (percent: number) => {
+          updateFile(id, { percent })
+        }
+
+        // Upload to temp bucket
+        await uploadToS3(presigned, file, progress)
+        // Move from temp to permanent bucket
+        await uploadFile({
           variables: {
             input: {
               storeFileDto: {
                 fieldId: item.id,
                 sourceKey: presigned.fields.key,
+                valueId: item.values?.[0]?.id || '',
               },
             },
           },
         })
 
-        console.log(res)
+        const currentKeys = getValue(item, 's3Key') ?? []
+        const newKeys = [...currentKeys, `${item.id}/${presigned.fields.key}`]
+        dispatch &&
+          dispatch({
+            type: 'SET_FILES',
+            payload: { id: item.id, value: newKeys },
+          })
 
         updateFile(id, {
           status: FileUploadStatus.done,
           percent: 100,
-          key: presigned.fields.key,
+          key: `${item.id}/${presigned.fields.key}`,
         })
       } catch (err) {
         updateFile(id, {
@@ -75,7 +104,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
         })
       }
     },
-    [createUploadUrl, updateFile, formatMessage],
+    [createUploadUrl, uploadFile, item, dispatch, updateFile, formatMessage],
   )
 
   const onChange = useCallback(
@@ -94,7 +123,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
 
       setError(undefined)
 
-      const uploadFiles = selectedFiles.map((file) => ({
+      const uploadFiles: UploadFile[] = selectedFiles.map((file) => ({
         id: `${file.name}-${uuid()}`,
         name: file.name,
         size: file.size,
@@ -107,10 +136,10 @@ export const FileUpload = ({ item, hasError }: Props) => {
       setFiles((prev) => [...prev, ...uploadFiles])
 
       uploadFiles.forEach((f) => {
-        uploadToS3(f.originalFileObj as File, f.id)
+        handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, uploadToS3],
+    [files, item, formatMessage, handleUpload],
   )
 
   const onRetry = useCallback(
@@ -120,16 +149,28 @@ export const FileUpload = ({ item, hasError }: Props) => {
           status: FileUploadStatus.uploading,
           percent: 0,
         })
-        uploadToS3(file.originalFileObj as File, file.id)
+        handleUpload(file, file.id)
       }
     },
-    [uploadToS3, updateFile],
+    [handleUpload, updateFile],
   )
 
-  const onRemove = useCallback((file: UploadFile) => {
-    console.log('removing', file)
-    setFiles((prev) => prev.filter((f) => f.id !== file.id))
-  }, [])
+  const onRemove = useCallback(
+    (file: UploadFile) => {
+      deleteFile({
+        variables: {
+          input: {
+            deleteFileDto: {
+              key: file.key,
+              valueId: item.values?.[0]?.id,
+            },
+          },
+        },
+      })
+      setFiles((prev) => prev.filter((f) => f.id !== file.id))
+    },
+    [deleteFile, item.values],
+  )
 
   return (
     <InputFileUpload
