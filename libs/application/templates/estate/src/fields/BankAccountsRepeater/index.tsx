@@ -1,8 +1,11 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  CheckboxController,
+} from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -14,7 +17,8 @@ import {
 
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
-import { ErrorValue } from '../../types'
+import { ErrorValue, BankAccount } from '../../types'
+import { YES } from '../../lib/constants'
 
 interface BankAccountFormField {
   id: string
@@ -22,6 +26,7 @@ interface BankAccountFormField {
   balance?: string
   accruedInterest?: string
   accountTotal?: string
+  foreignBankAccount?: string[]
   initial?: boolean
   enabled?: boolean
 }
@@ -46,10 +51,22 @@ export const BankAccountsRepeater: FC<
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
+  const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
+    number[]
+  >([])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
       replace(estateData.estate.bankAccounts)
+
+      // Initialize foreignBankAccountIndexes from existing data
+      const bankAccounts = estateData.estate.bankAccounts as BankAccount[]
+      const foreignIndexes = bankAccounts
+        .map((account, index) =>
+          account.foreignBankAccount?.length ? index : -1,
+        )
+        .filter((index) => index !== -1)
+      setForeignBankAccountIndexes(foreignIndexes)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -79,6 +96,7 @@ export const BankAccountsRepeater: FC<
       balance: '',
       accruedInterest: '0',
       accountTotal: '',
+      foreignBankAccount: [],
       initial: false,
       enabled: true,
     })
@@ -104,9 +122,11 @@ export const BankAccountsRepeater: FC<
         const balanceField = `${fieldIndex}.balance`
         const accruedInterestField = `${fieldIndex}.accruedInterest`
         const accountTotalField = `${fieldIndex}.accountTotal`
+        const foreignBankAccountField = `${fieldIndex}.foreignBankAccount`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const fieldError = error && error[index] ? error[index] : null
+        const isForeignAccount = foreignBankAccountIndexes.includes(index)
 
         return (
           <Box position="relative" key={field.id} marginTop={2}>
@@ -163,6 +183,36 @@ export const BankAccountsRepeater: FC<
             </Box>
             <GridRow>
               <GridColumn
+                span={['1/1', '1/1']}
+                paddingBottom={2}
+                paddingTop={2}
+              >
+                <CheckboxController
+                  id={foreignBankAccountField}
+                  name={foreignBankAccountField}
+                  defaultValue={field.foreignBankAccount || []}
+                  spacing={0}
+                  disabled={field.initial && !field.enabled}
+                  options={[
+                    {
+                      label: formatMessage(m.bankAccountForeign),
+                      value: YES,
+                    },
+                  ]}
+                  onSelect={(val) => {
+                    setValue(foreignBankAccountField, val)
+                    setForeignBankAccountIndexes(
+                      val.length
+                        ? [...foreignBankAccountIndexes, index]
+                        : foreignBankAccountIndexes.filter((i) => i !== index),
+                    )
+                    // Clear account number when toggling to prevent invalid format
+                    setValue(accountNumberField, '')
+                    clearErrors(accountNumberField)
+                  }}
+                />
+              </GridColumn>
+              <GridColumn
                 span={['1/1', '1/2']}
                 paddingBottom={2}
                 paddingTop={2}
@@ -173,11 +223,26 @@ export const BankAccountsRepeater: FC<
                   label={formatMessage(m.bankAccount)}
                   backgroundColor="blue"
                   defaultValue={field.accountNumber}
+                  type="text"
+                  {...(!isForeignAccount && {
+                    format: '####-##-######',
+                    placeholder: '0000-00-000000',
+                  })}
+                  {...(isForeignAccount && {
+                    placeholder: '',
+                  })}
                   required
                   error={fieldError?.accountNumber}
                   size="sm"
                   disabled={field.initial && !field.enabled}
-                  onChange={() => updateBankAccountValue(fieldIndex)}
+                  onChange={(e) => {
+                    if (isForeignAccount) {
+                      // Convert to uppercase for foreign bank accounts (IBAN format)
+                      const upperValue = e.target.value.toUpperCase()
+                      setValue(accountNumberField, upperValue)
+                    }
+                    updateBankAccountValue(fieldIndex)
+                  }}
                 />
               </GridColumn>
               <GridColumn

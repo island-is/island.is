@@ -221,6 +221,7 @@ export const estateSchema = z.object({
         accountNumber: z.string(),
         accruedInterest: z.string(),
         balance: z.string(),
+        foreignBankAccount: z.array(z.enum([YES])).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
       })
