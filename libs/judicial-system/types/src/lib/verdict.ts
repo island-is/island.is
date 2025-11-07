@@ -89,6 +89,27 @@ const INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION = `
   </div>
 `
 
+const INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION_EN = `
+  <div>
+    <p>
+      If you did not appear in court when the case was registered and 
+      the case was concluded with a judgment in your absence (so-called 
+      “absent-attendance judgment”), you can request that the case be 
+      heard again within four weeks of the judgment being served on you 
+      or being delivered if no service was required. A case cannot be 
+      reopened if the deadline has passed except by a ruling of the 
+      Reopening Court.
+    </p>
+    <p>
+      A request for reopening of an absenteeism case must be directed 
+      to the court where the absenteeism judgment was delivered. The 
+      case for which reopening is requested must be described, what 
+      changes from the previous case decisions are requested, and what 
+      evidence, arguments, and law the request is based on.
+    </p>
+  </div>
+`
+
 const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION = `
   <div>
     <p>
@@ -265,13 +286,16 @@ const ITEM_CONFISCATION_DESCRIPTION = `
 
 export const informationForDefendantMap: Map<
   InformationForDefendant,
-  { label: string; description: string; detail?: string }
+  { label: string; description: { is: string; en: string }; detail?: string }
 > = new Map([
   [
     InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
     {
       label: 'Leiðbeiningar um endurupptöku útivistarmála',
-      description: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION,
+      description: {
+        is: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION,
+        en: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION_EN,
+      },
     },
   ],
   [

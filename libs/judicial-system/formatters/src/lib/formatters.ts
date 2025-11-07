@@ -534,6 +534,7 @@ export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
 
 export const getRulingInstructionItems = (
   serviceInformationForDefendant: InformationForDefendant[],
+  lang?: string,
 ) =>
   pipe(
     serviceInformationForDefendant ?? [],
@@ -542,10 +543,12 @@ export const getRulingInstructionItems = (
       if (!value) {
         return option.none
       }
+      const language = lang === 'en' ? 'en' : 'is'
+      const description = value.description[language]
 
       return option.some({
         label: value.label,
-        value: value.description.replace(/\n/g, ''),
+        value: description.replace(/\n/g, ''),
         type: 'accordion',
       })
     }),
