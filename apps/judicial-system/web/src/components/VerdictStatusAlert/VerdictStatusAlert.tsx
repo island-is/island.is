@@ -110,9 +110,7 @@ const VerdictStatusAlertMessage = ({
         <AlertMessage
           type="info"
           title={`Dómur birtur í Lögbirtingablaðinu - ${defendantName}`}
-          message={`Dómur birtur ${formatDate(
-            verdict.serviceDate,
-          )} kl. ${formatDate(verdict.serviceDate, TIME_FORMAT)}`}
+          message={`Dómur birtur ${formatDate(verdict.serviceDate)}`}
         />
       )
     }
