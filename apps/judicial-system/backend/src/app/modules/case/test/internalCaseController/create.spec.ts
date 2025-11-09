@@ -267,6 +267,7 @@ describe('InternalCaseController - Create', () => {
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
           prosecutorsOfficeId,
+          withCourtSessions: true,
         },
         {
           transaction,

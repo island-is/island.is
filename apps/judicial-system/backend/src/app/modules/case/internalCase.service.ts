@@ -415,16 +415,20 @@ export class InternalCaseService {
       const newCase = await this.caseRepositoryService.create(
         {
           ...caseToCreate,
-          state: isRequestCase(caseToCreate.type)
-            ? CaseState.NEW
-            : CaseState.DRAFT,
+          ...(isRequestCase(caseToCreate.type)
+            ? {
+                state: CaseState.NEW,
+                courtId: creator.institution?.defaultCourtId,
+              }
+            : {
+                state: CaseState.DRAFT,
+                courtId: undefined,
+                withCourtSessions: true,
+              }),
           origin: CaseOrigin.LOKE,
           creatingProsecutorId: creator.id,
           prosecutorId:
             creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-          courtId: isRequestCase(caseToCreate.type)
-            ? creator.institution?.defaultCourtId
-            : undefined,
           prosecutorsOfficeId: creator.institution?.id,
         },
         { transaction },
