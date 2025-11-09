@@ -291,6 +291,7 @@ query Case($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
       mergedFiledDocuments {
         id
@@ -305,6 +306,7 @@ query Case($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
       courtSessionStrings {
         id
@@ -418,6 +420,7 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
         mergedFiledDocuments {
           id
@@ -432,6 +435,7 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
         courtSessionStrings {
           id

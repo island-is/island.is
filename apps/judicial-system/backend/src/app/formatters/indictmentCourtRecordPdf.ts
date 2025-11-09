@@ -1,14 +1,19 @@
 import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  getRoleTitleFromCaseFileCategory,
+} from '@island.is/judicial-system/formatters'
+import {
+  CaseFileCategory,
+  CourtDocumentType,
   CourtSessionRulingType,
   CourtSessionStringType,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
-import { Case, CourtDocument } from '../modules/repository'
+import { Case, CaseFile, CourtDocument } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -23,6 +28,47 @@ import {
   setLineGap,
   setTitle,
 } from './pdfHelpers'
+
+const getFiledBy = (document: CourtDocument, files: CaseFile[]): string => {
+  if (document.documentType === CourtDocumentType.EXTERNAL_DOCUMENT) {
+    const split = document.submittedBy?.split('|')
+
+    if (split?.length === 2) {
+      const submitterText = getRoleTitleFromCaseFileCategory(split[1], {
+        prosecutor: 'Sækjandi',
+        notRegistered: '',
+      })
+      return `${submitterText}${submitterText ? ' ' : ''}${
+        split[0]
+      } lagði fram:`
+    }
+  } else if (document.documentType === CourtDocumentType.UPLOADED_DOCUMENT) {
+    const file = files?.find((file) => file.id === document.caseFileId)
+
+    if (
+      file &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      const submitterText = getRoleTitleFromCaseFileCategory(file.category, {
+        prosecutor: 'Sækjandi',
+        notRegistered: '',
+      })
+
+      return `${submitterText}${submitterText ? ' ' : ''}${
+        file.fileRepresentative ?? file.submittedBy
+      } lagði fram:`
+    }
+  }
+
+  return 'Lagt er fram:'
+}
 
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
@@ -58,6 +104,7 @@ export const createIndictmentCourtRecordPdf = (
   addMediumHeading(doc, 'Þingbók')
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
 
+  const caseFiles = theCase.caseFiles ?? []
   let nrOfFiledDocuments = 0
 
   for (const courtSession of theCase.courtSessions ?? []) {
@@ -129,14 +176,35 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     if (courtSession.filedDocuments && courtSession.filedDocuments.length > 0) {
-      addEmptyLines(doc)
-      addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
-      addNormalText(doc, 'Nr.', 'Times-Roman')
-      addNumberedList(
-        doc,
-        courtSession.filedDocuments.map((d) => d.name.normalize()),
-        courtSession.filedDocuments[0].documentOrder,
-      )
+      const filedDocuments: {
+        filedBy: string
+        docs: CourtDocument[]
+      }[] = []
+
+      for (const d of courtSession.filedDocuments) {
+        const filedBy = getFiledBy(d, caseFiles)
+
+        if (
+          filedDocuments.length === 0 ||
+          filedDocuments[filedDocuments.length - 1].filedBy !== filedBy
+        ) {
+          filedDocuments.push({ filedBy, docs: [d] })
+        } else {
+          filedDocuments[filedDocuments.length - 1].docs.push(d)
+        }
+      }
+
+      for (const { filedBy, docs } of filedDocuments) {
+        addEmptyLines(doc)
+        addNormalText(doc, filedBy, 'Times-Bold')
+        addNormalText(doc, 'Nr.', 'Times-Roman')
+
+        addNumberedList(
+          doc,
+          docs.map((d) => d.name.normalize()),
+          docs[0].documentOrder,
+        )
+      }
 
       nrOfFiledDocuments =
         courtSession.filedDocuments[courtSession.filedDocuments.length - 1]

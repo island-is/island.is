@@ -1,6 +1,5 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus } from '@island.is/island-ui/core'
@@ -44,10 +43,7 @@ import {
   isCaseDefendantDefender,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import {
-  RepresentativeSelectOption,
-  SelectCaseFileRepresentative,
-} from './SelectCaseFileRepresentative'
+import { SelectCaseFileRepresentative } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
 const getUserProps = (user: User | undefined, workingCase: Case) => {
@@ -105,10 +101,11 @@ const AddFiles: FC = () => {
   const previousRoute = `${previousRouteType}/${workingCase.id}`
 
   // states used when a user submits files on behalf of a case file representative
-  const [fileRepresentative, setFileRepresentative] = useState(
-    {} as RepresentativeSelectOption,
-  )
-  const [submissionDate, setSubmissionDate] = useState(new Date())
+  const [submissionInfo, setSubmissionInfo] = useState<{
+    submitterName?: string
+    caseFileCategory?: CaseFileCategory
+    submissionDate: Date
+  }>({ submissionDate: new Date() })
 
   const {
     uploadFiles,
@@ -122,39 +119,42 @@ const AddFiles: FC = () => {
   const { sendNotification } = useCase()
 
   const addFiles = (files: FileWithPreviewURL[]) => {
-    const { selectedCaseRepresentative } = fileRepresentative
-
     addUploadFiles(
       files,
       {
         status: FileUploadStatus.done,
-        submissionDate: formatDateForServer(submissionDate),
-        fileRepresentative: selectedCaseRepresentative?.name,
-        category: !isEmpty(selectedCaseRepresentative)
-          ? selectedCaseRepresentative.caseFileCategory
-          : caseFileCategory,
+        submissionDate: formatDateForServer(submissionInfo.submissionDate),
+        fileRepresentative: submissionInfo.submitterName,
+        category: submissionInfo.caseFileCategory ?? caseFileCategory,
       },
       true,
     )
   }
 
-  const handleCaseFileRepresentativeUpdate = (
-    updatedFileRepresentative?: RepresentativeSelectOption,
-    updatedSubmissionDate?: Date,
-  ) => {
-    const currentRepresentativeSelection =
-      updatedFileRepresentative || fileRepresentative
-    const { selectedCaseRepresentative } = currentRepresentativeSelection
-    const date = updatedSubmissionDate || submissionDate
+  const handleCaseFileRepresentativeUpdate = (update: {
+    submitterName?: string | null
+    caseFileCategory?: CaseFileCategory | null
+    submissionDate?: Date
+  }) => {
+    const currentSubmitterName =
+      update.submitterName ?? submissionInfo.submitterName
+    const currentSubmissionDate =
+      update.submissionDate ?? submissionInfo.submissionDate
+    const currentCaseFileCategory =
+      update.caseFileCategory ?? submissionInfo.caseFileCategory
+
+    setSubmissionInfo({
+      submitterName: currentSubmitterName,
+      caseFileCategory: currentCaseFileCategory,
+      submissionDate: currentSubmissionDate,
+    })
 
     uploadFiles.forEach((file) => {
       updateUploadFile({
         ...file,
-        fileRepresentative: selectedCaseRepresentative?.name,
-        submissionDate: formatDateForServer(date),
-        category: !isEmpty(selectedCaseRepresentative)
-          ? selectedCaseRepresentative.caseFileCategory
-          : caseFileCategory,
+        fileRepresentative: currentSubmitterName,
+        submissionDate: formatDateForServer(currentSubmissionDate),
+        category: currentCaseFileCategory ?? caseFileCategory,
       })
     })
   }
@@ -203,12 +203,13 @@ const AddFiles: FC = () => {
   ])
 
   const CaseInfo = getCaseInfoNode(workingCase)
-  const hasValidFileRepresentativeSelection = () => {
-    if (!hasFileRepresentativeSelection) {
-      return true
-    }
-    return !isEmpty(fileRepresentative) && !!submissionDate
-  }
+  const hasValidFileRepresentativeSelection =
+    !hasFileRepresentativeSelection ||
+    Boolean(
+      submissionInfo.submitterName &&
+        submissionInfo.caseFileCategory &&
+        submissionInfo.submissionDate,
+    )
 
   return (
     <PageLayout
@@ -236,10 +237,9 @@ const AddFiles: FC = () => {
         />
         {hasFileRepresentativeSelection && (
           <SelectCaseFileRepresentative
-            fileRepresentative={fileRepresentative}
-            setFileRepresentative={setFileRepresentative}
-            submissionDate={submissionDate}
-            setSubmissionDate={setSubmissionDate}
+            submitterName={submissionInfo.submitterName}
+            caseFileCategory={submissionInfo.caseFileCategory}
+            submissionDate={submissionInfo.submissionDate}
             handleCaseFileRepresentativeUpdate={
               handleCaseFileRepresentativeUpdate
             }
@@ -259,7 +259,7 @@ const AddFiles: FC = () => {
             uploadFiles.length === 0 ||
             !allFilesDoneOrError ||
             editCount > 0 ||
-            !hasValidFileRepresentativeSelection()
+            !hasValidFileRepresentativeSelection
           }
           onNextButtonClick={() => setVisibleModal('confirmation')}
         />

@@ -26,4 +26,10 @@ export class UpdateCourtDocumentDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly name?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly submittedBy?: string
 }

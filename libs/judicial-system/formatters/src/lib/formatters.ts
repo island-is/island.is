@@ -150,21 +150,29 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
 }
 
 export const getRoleTitleFromCaseFileCategory = (
-  category?: CaseFileCategory | null,
+  category?: string | null,
+  overrides?: {
+    prosecutor?: string
+    defendant?: string
+    independentDefendant?: string
+    civilClaimantSpokesperson?: string
+    civilClaimantLegalSpokesperson?: string
+    notRegistered?: string
+  },
 ) => {
   switch (category) {
     case CaseFileCategory.PROSECUTOR_CASE_FILE:
-      return 'Ákæruvald'
+      return overrides?.prosecutor ?? 'Ákæruvald'
     case CaseFileCategory.DEFENDANT_CASE_FILE:
-      return 'Verjandi'
+      return overrides?.defendant ?? 'Verjandi'
     case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
-      return 'Ákærði'
+      return overrides?.independentDefendant ?? 'Ákærði'
     case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
-      return 'Réttargæslumaður'
+      return overrides?.civilClaimantSpokesperson ?? 'Réttargæslumaður'
     case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
-      return 'Lögmaður'
+      return overrides?.civilClaimantLegalSpokesperson ?? 'Lögmaður'
     default:
-      return 'Ekki skráð'
+      return overrides?.notRegistered ?? 'Ekki skráð'
   }
 }
 

@@ -238,6 +238,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
       mergedFiledDocuments {
         id
@@ -285,6 +286,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
         mergedFiledDocuments {
           id

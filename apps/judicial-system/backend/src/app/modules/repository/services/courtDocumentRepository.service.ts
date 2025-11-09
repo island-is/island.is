@@ -41,6 +41,7 @@ interface UpdateCourtDocument {
   documentOrder?: number
   mergedDocumentOrder?: number
   name?: string
+  submittedBy?: string
 }
 
 interface FileCourtDocumentInCourtSessionOptions {
