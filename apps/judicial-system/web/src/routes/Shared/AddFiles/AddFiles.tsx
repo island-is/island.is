@@ -132,8 +132,8 @@ const AddFiles: FC = () => {
   }
 
   const handleCaseFileRepresentativeUpdate = (update: {
-    submitterName?: string
-    caseFileCategory?: CaseFileCategory
+    submitterName?: string | null
+    caseFileCategory?: CaseFileCategory | null
     submissionDate?: Date
   }) => {
     const currentSubmitterName =
