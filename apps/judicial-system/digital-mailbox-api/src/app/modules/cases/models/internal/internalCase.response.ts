@@ -24,6 +24,7 @@ export class InternalCaseResponse {
   prosecutor!: User
   dateLogs?: DateLog[]
   rulingDate?: Date
+  ruling?: string
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   state?: CaseState
   courtSessions?: CourtSession[]

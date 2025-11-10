@@ -135,6 +135,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           'state',
           'indictmentRulingDecision',
           'rulingDate',
+          'ruling',
         ],
         where: {
           type: CaseType.INDICTMENT,
