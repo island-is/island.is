@@ -5,16 +5,12 @@ import router from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  Feature,
-  isRulingOrDismissalCase,
-} from '@island.is/judicial-system/types'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -50,7 +46,6 @@ import strings from './Completed.strings'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const { formatMessage } = useIntl()
   const { deliverCaseVerdict } = useVerdict()
@@ -82,17 +77,16 @@ const Completed: FC = () => {
       setIsLoading(false)
       return
     }
-    if (features?.includes(Feature.VERDICT_DELIVERY)) {
-      const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
-        ({ verdict }) =>
-          verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-      )
-      if (requiresVerdictDeliveryToDefendants) {
-        const results = await deliverCaseVerdict(workingCase.id)
-        if (!results) {
-          setIsLoading(false)
-          return
-        }
+
+    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+      ({ verdict }) =>
+        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+    )
+    if (requiresVerdictDeliveryToDefendants) {
+      const results = await deliverCaseVerdict(workingCase.id)
+      if (!results) {
+        setIsLoading(false)
+        return
       }
     }
 
@@ -116,7 +110,6 @@ const Completed: FC = () => {
     workingCase.defendants,
     user,
     setIsLoading,
-    features,
   ])
 
   const handleNavigationTo = useCallback(
@@ -160,7 +153,6 @@ const Completed: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map(
           (defendant) =>
-            features?.includes(Feature.VERDICT_DELIVERY) &&
             defendant.verdict && (
               <Box
                 key={`${defendant.id}${defendant.verdict.id}`}
@@ -247,11 +239,10 @@ const Completed: FC = () => {
                       defendant={defendant}
                       defendantIndex={index}
                     />
-                    {features?.includes(Feature.VERDICT_DELIVERY) &&
-                      verdict.serviceRequirement ===
-                        ServiceRequirement.REQUIRED && (
-                        <InformationForDefendant defendant={defendant} />
-                      )}
+                    {verdict.serviceRequirement ===
+                      ServiceRequirement.REQUIRED && (
+                      <InformationForDefendant defendant={defendant} />
+                    )}
                   </React.Fragment>
                 </Box>
               )
