@@ -1,11 +1,10 @@
-import { Logger } from '@azure/msal-node'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   FileControllerDeleteFileRequest,
   FileControllerStoreFileToS3Request,
   FilesApi,
 } from '@island.is/clients/form-system'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { DeleteFileInput, StoreFileInput } from '../../dto/files.input'
 

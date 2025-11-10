@@ -8,8 +8,6 @@ import { Queue } from 'bull'
 import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 
-const TEMP_BUCKET = 'island-is-dev-upload-api'
-
 @Injectable()
 export class FileService {
   constructor(
@@ -24,7 +22,7 @@ export class FileService {
 
   async fileExists(key: string): Promise<boolean> {
     try {
-      const s3Uri = `s3://${TEMP_BUCKET}/${key}`
+      const s3Uri = `s3://${this.config.tempBucket}/${key}`
       return await this.s3Service.fileExists(s3Uri)
     } catch (error) {
       this.logger.error(`Error checking existence for ${key}`, error)
@@ -43,7 +41,7 @@ export class FileService {
     }
 
     this.logger.info(
-      `Queueing copy job for file ${sourceKey} from ${TEMP_BUCKET} to ${targetBucket}`,
+      `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
     )
 
     await this.uploadQueue.add('upload', {
@@ -56,6 +54,10 @@ export class FileService {
   }
 
   async deleteFile(key: string, valueId: string): Promise<void> {
+    if (!key || !valueId) {
+      throw new Error('Key and valueId must be provided for deletion')
+    }
+
     const bucket = this.config.bucket
     if (!bucket) {
       throw new Error('S3 bucket not configured')

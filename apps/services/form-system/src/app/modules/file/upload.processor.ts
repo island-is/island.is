@@ -98,6 +98,6 @@ export class UploadProcessor {
       attempt++
     }
 
-    this.logger.error(`❌ Failed to copy ${key} after ${maxRetries} attempts`)
+    throw new Error(`Failed to copy ${key} after ${maxRetries} attempts`)
   }
 }

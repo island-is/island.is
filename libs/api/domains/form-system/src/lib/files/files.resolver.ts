@@ -18,7 +18,6 @@ export class FilesResolver {
 
   @Mutation(() => Boolean, {
     name: 'storeFormSystemFile',
-    nullable: true,
   })
   async storeFile(
     @Args('input', { type: () => StoreFileInput })
