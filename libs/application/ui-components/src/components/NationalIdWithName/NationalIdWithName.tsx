@@ -91,10 +91,8 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
-  const [nationalIdInput, setNationalIdInput] = useState(
-    getValues(nationalIdField) || '',
-  )
+  const { setValue } = useFormContext()
+  const [nationalIdInput, setNationalIdInput] = useState('')
 
   const getFieldErrorString = (
     error: unknown,
