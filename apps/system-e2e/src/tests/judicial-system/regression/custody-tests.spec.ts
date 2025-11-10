@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test'
-import { expect } from '@playwright/test'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
