@@ -36,6 +36,22 @@ export class LegalGazetteClientService {
       throw error
     }
   }
+
+  async getTypes(auth: Auth) {
+    try {
+      return this.legalGazetteApiWithAuth(auth).getTypes({
+        excludeUnassignable: true,
+      })
+    } catch (error) {
+      this.logger.error('Failed to get types', {
+        error,
+        category: LOGGING_CATEGORY,
+      })
+
+      throw error
+    }
+  }
+
   async submitApplication(
     body: IslandIsSubmitCommonApplicationDto,
     auth: Auth,
