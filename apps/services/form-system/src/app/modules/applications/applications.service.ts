@@ -77,11 +77,11 @@ export class ApplicationsService {
 
     // Check if at least one of the user's delegationTypes is allowed for this form
     if (
-      form.allowedDelegationTypes.length > 0 &&
+      form.allowedLoginTypes.length > 0 &&
       (!user.delegationType || user.delegationType.length === 0
-        ? !form.allowedDelegationTypes.includes('Individual')
+        ? !form.allowedLoginTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
+            form.allowedLoginTypes.includes(type),
           ))
     ) {
       throw new BadRequestException(
@@ -377,11 +377,11 @@ export class ApplicationsService {
 
     // Check if at least one of the user's delegationTypes is allowed for this form
     if (
-      form.allowedDelegationTypes.length > 0 &&
+      form.allowedLoginTypes.length > 0 &&
       (!user.delegationType || user.delegationType.length === 0
-        ? !form.allowedDelegationTypes.includes('Individual')
+        ? !form.allowedLoginTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
+            form.allowedLoginTypes.includes(type),
           ))
     ) {
       throw new BadRequestException(
