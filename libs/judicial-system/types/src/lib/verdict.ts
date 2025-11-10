@@ -143,6 +143,46 @@ const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION = `
   </div>
 `
 
+const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN = `
+  <div>
+    <p>
+      An appeal is a request for a higher court to review a judgment.
+      Individuals who have been sentenced to <b>a)</b> imprisonment or
+      <b>b)</b> to pay a fine or to have their property confiscated 
+      amounting to at least 1,420,488 ISK may appeal a judgment of a 
+      district court to the Landsréttur Court.
+    </p>
+    <p>
+      An appeal must be declared in a written notice that must be 
+      received by the berast <b>State Prosecutor</b> within 
+      <b>four weeks</b> of the judgment being served on you or 
+      delivered if service was not required. If neither you nor the 
+      State Prosecutor has appealed the judgment within that time, 
+      it is considered that the District Court is satisfied by both 
+      parties, in other words that both parties accept the judgment. 
+      However, it is possible to apply for leave to appeal to the 
+      <b>State Prosecutor</b> up to <b>three months</b> after the 
+      end of the appeal period, provided that further conditions 
+      are met.
+    </p>
+    <p>
+      Permission to appeal lesser sentences (which are generally not 
+      appealable) may be applied for in a written notice which must 
+      be received by the <b>Attorney General</b> within <b>four weeks</b> 
+      of the date of the judgment.
+    </p>
+    <p>
+      <a
+        href="https://island.is/en/process-of-criminal-cases-in-the-icelandic-justice-system"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Further information on appeals to the Supreme Court of Iceland
+      </a>
+    </p>
+  </div>
+`
+
 const CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION = `
   <div>
     <p>
@@ -299,7 +339,10 @@ export const informationForDefendantMap: Map<
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
       detail:
         'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
-      description: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION,
+      description: {
+        is: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION,
+        en: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN,
+      },
     },
   ],
   [
