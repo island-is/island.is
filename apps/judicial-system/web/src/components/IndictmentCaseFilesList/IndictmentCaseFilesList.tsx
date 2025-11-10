@@ -29,6 +29,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   User,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
@@ -173,7 +174,11 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewVerdictServiceCertificate:
-        workingCase.defendants?.some(({ verdict }) => !!verdict?.serviceDate) &&
+        workingCase.defendants?.some(
+          ({ verdict }) =>
+            !!verdict?.serviceDate &&
+            verdict?.serviceStatus !== VerdictServiceStatus.NOT_APPLICABLE,
+        ) &&
         (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user)),
     }),
     [
