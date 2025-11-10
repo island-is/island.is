@@ -30,7 +30,7 @@ export const NationalRegistryUserApi =
 
 export const NationalRegistryV3UserApi =
   defineTemplateApi<NationalRegistryParameters>({
-    action: 'nationalRegistryV3',
-    namespace: 'NationalRegistry',
-    externalDataId: 'nationalRegistryV3',
+    action: 'nationalRegistry',
+    namespace: 'NationalRegistryV3',
+    externalDataId: 'nationalRegistry',
   })

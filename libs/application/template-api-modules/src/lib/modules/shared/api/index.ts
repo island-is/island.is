@@ -25,6 +25,7 @@ import { InnaService } from './education/inna.service'
 import { InnaModule } from './education/inna.module'
 import { UserNotificationModule } from './user-notification/user-notification.module'
 import { UserNotificationService } from './user-notification/user-notification.service'
+import { NationalRegistryV3Service } from './national-registry-v3/national-registry.service'
 
 export const dynamicModules = [UserProfileModule]
 
@@ -46,6 +47,7 @@ export const modules = [
 
 export const services = [
   NationalRegistryService,
+  NationalRegistryV3Service,
   PaymentService,
   UserProfileService,
   IdentityService,
