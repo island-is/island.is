@@ -233,8 +233,10 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
-    // Court record
+    // Indictment court record
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
+    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókunBókun')
+
     await page.getByTestId('continueButton').click() // TODO: Support the new court record screen
 
     // Conclusion
