@@ -16,9 +16,11 @@ import {
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication } from '../../lib/utils'
-import { ErrorValue, BankAccount } from '../../types'
+import { ErrorValue } from '../../types'
 import { YES } from '../../lib/constants'
+import { getEstateDataFromApplication } from '../../lib/utils'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface BankAccountFormField {
   id: string
@@ -55,15 +57,23 @@ export const BankAccountsRepeater: FC<
     number[]
   >([])
 
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: BankAccountFormField) => field.accountTotal,
+  )
+
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
       replace(estateData.estate.bankAccounts)
+    }
 
-      // Initialize foreignBankAccountIndexes from existing data
-      const bankAccounts = estateData.estate.bankAccounts as BankAccount[]
-      const foreignIndexes = bankAccounts
-        .map((account, index) =>
-          account.foreignBankAccount?.length ? index : -1,
+    // Always sync foreignBankAccountIndexes from form data on mount
+    if (fields.length > 0) {
+      const foreignIndexes = fields
+        .map((field: BankAccountFormField, index) =>
+          field.foreignBankAccount?.length ? index : -1,
         )
         .filter((index) => index !== -1)
       setForeignBankAccountIndexes(foreignIndexes)
@@ -72,7 +82,10 @@ export const BankAccountsRepeater: FC<
   }, [])
 
   // Calculate bank account total from balance + accruedInterest
-  const updateBankAccountValue = (fieldIndex: string) => {
+  const updateBankAccountValue = (
+    fieldIndex: string,
+    skipTotalCalc = false,
+  ) => {
     const bankAccountValues = getValues(fieldIndex)
     const balance =
       bankAccountValues?.balance?.replace(',', '.').replace(/[^\d.]/g, '') ||
@@ -87,6 +100,11 @@ export const BankAccountsRepeater: FC<
 
     if (accountTotal > 0) {
       clearErrors(`${fieldIndex}.balance`)
+    }
+
+    // Only recalculate total when called from onChange handlers, not during init loop
+    if (!skipTotalCalc) {
+      calculateTotal()
     }
   }
 
@@ -108,11 +126,16 @@ export const BankAccountsRepeater: FC<
     if (fields.length > 0) {
       fields.forEach((_, index) => {
         const fieldIndex = `${id}[${index}]`
-        updateBankAccountValue(fieldIndex)
+        // Skip calculateTotal in loop; it will run once via the next useEffect
+        updateBankAccountValue(fieldIndex, true)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields.length, fields])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [fields, calculateTotal])
 
   return (
     <Box marginTop={2}>
@@ -311,6 +334,7 @@ export const BankAccountsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }
