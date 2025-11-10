@@ -1607,6 +1607,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     </Button>
                   ) : (
                     <Button
+                      dataTestId="confirm-court-record"
                       icon="checkmark"
                       onClick={() =>
                         patchSession(

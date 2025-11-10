@@ -235,9 +235,12 @@ test.describe.serial('Indictment tests', () => {
 
     // Indictment court record
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
-    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókunBókun')
+    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
 
-    await page.getByTestId('continueButton').click() // TODO: Support the new court record screen
+    await page.locator('label').filter({ hasText: 'Nei' }).click()
+
+    await page.getByTestId('confirm-court-record').click()
+    await page.getByTestId('continueButton').click()
 
     // Conclusion
     await expect(page).toHaveURL(`domur/akaera/stada-og-lyktir/${caseId}`)
@@ -245,23 +248,12 @@ test.describe.serial('Indictment tests', () => {
     await page.locator('label').filter({ hasText: 'Lokið' }).click()
     await page.locator('label').filter({ hasText: 'Dómur' }).click()
 
-    // TODO: Remove when we deploy the new court record screen
     await chooseDocument(
       page,
       async () => {
         await page
           .getByRole('button', { name: 'Velja gögn til að hlaða upp' })
           .nth(1)
-          .click()
-      },
-      'TestThingbok.pdf',
-    )
-    await chooseDocument(
-      page,
-      async () => {
-        await page
-          .getByRole('button', { name: 'Velja gögn til að hlaða upp' })
-          .nth(2)
           .click()
       },
       'TestDomur.pdf',
