@@ -57,9 +57,6 @@ export class Verdict {
   externalPoliceDocumentId?: string
 
   @Field(() => String, { nullable: true })
-  legalPaperRequestDate?: string
-
-  @Field(() => String, { nullable: true })
   comment?: string
 
   @Field(() => String, { nullable: true })

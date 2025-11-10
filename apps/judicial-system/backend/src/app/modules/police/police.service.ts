@@ -170,8 +170,6 @@ export class PoliceService {
     defenderNationalId: z.string().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
     deliveredToDefendant: z.boolean().nullish(),
-    // TODO: this is not supported atm
-    legalPaperRequestDate: z.string().nullish(),
     deliveryMethod: z.string().nullish(),
   })
 
@@ -731,8 +729,6 @@ export class PoliceService {
               deliveredOnPaper: response.deliveredOnPaper ?? false,
               deliveredOnIslandis: response.deliveredOnIslandis ?? false,
               deliveredToLawyer: response.deliveredToLawyer ?? false,
-              legalPaperRequestDate:
-                response.legalPaperRequestDate ?? undefined,
               deliveredToDefendant: response.deliveredToDefendant ?? false,
               deliveryMethod: response.deliveryMethod ?? undefined,
             }),

@@ -126,13 +126,6 @@ export class Verdict extends Model {
   serviceInformationForDefendant?: InformationForDefendant[]
 
   @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiPropertyOptional({ type: Date })
-  legalPaperRequestDate?: Date
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
