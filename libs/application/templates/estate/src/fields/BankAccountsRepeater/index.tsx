@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { ErrorValue, BankAccount } from '../../types'
+import { ErrorValue } from '../../types'
 import { YES } from '../../lib/constants'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { RepeaterTotal } from '../RepeaterTotal'
@@ -67,12 +67,13 @@ export const BankAccountsRepeater: FC<
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
       replace(estateData.estate.bankAccounts)
+    }
 
-      // Initialize foreignBankAccountIndexes from existing data
-      const bankAccounts = estateData.estate.bankAccounts as BankAccount[]
-      const foreignIndexes = bankAccounts
-        .map((account, index) =>
-          account.foreignBankAccount?.length ? index : -1,
+    // Always sync foreignBankAccountIndexes from form data on mount
+    if (fields.length > 0) {
+      const foreignIndexes = fields
+        .map((field: BankAccountFormField, index) =>
+          field.foreignBankAccount?.length ? index : -1,
         )
         .filter((index) => index !== -1)
       setForeignBankAccountIndexes(foreignIndexes)
