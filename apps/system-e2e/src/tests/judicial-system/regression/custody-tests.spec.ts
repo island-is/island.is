@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { expect } from '@playwright/test'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
@@ -124,7 +125,7 @@ test.describe.serial('Custody tests', () => {
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
     await expect(
-      page.getByRole('button', { name: 'Rannsóknargögn' }),
+      page.locator('button:has-text("Rannsóknargögn")'),
     ).toBeVisible()
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram' }).click(),
