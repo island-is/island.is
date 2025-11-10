@@ -15,6 +15,8 @@ import {
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface OtherAssetFormField {
   id: string
@@ -47,6 +49,13 @@ export const OtherAssetsRepeater: FC<
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: OtherAssetFormField) => field.value,
+  )
+
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.otherAssets) {
       replace(estateData.estate.otherAssets)
@@ -68,6 +77,7 @@ export const OtherAssetsRepeater: FC<
     }
 
     forceUpdate()
+    calculateTotal()
   }
 
   const handleAddOtherAsset = () =>
@@ -206,6 +216,7 @@ export const OtherAssetsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }
