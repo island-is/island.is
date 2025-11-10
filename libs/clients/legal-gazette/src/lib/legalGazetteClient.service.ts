@@ -2,14 +2,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   LegalGazetteCommonApplicationApi,
   IslandIsSubmitCommonApplicationDto,
+  GetCategoriesRequest
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
 const LOGGING_CATEGORY = 'legal-gazette-client-service'
-
-const COMMON_APPLICATION_TYPE_ID = 'a58fe2a8-b0a9-47bd-b424-4b9cece0e622'
 
 @Injectable()
 export class LegalGazetteClientService {
@@ -22,11 +21,9 @@ export class LegalGazetteClientService {
     return this.legalGazetteApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getCategories(auth: Auth) {
+  async getCategories(input: GetCategoriesRequest, auth: Auth) {
     try {
-      return this.legalGazetteApiWithAuth(auth).getCategories({
-        type: COMMON_APPLICATION_TYPE_ID,
-      })
+      return this.legalGazetteApiWithAuth(auth).getCategories(input)
     } catch (error) {
       this.logger.error('Failed to get categories', {
         error,
