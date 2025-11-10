@@ -1018,7 +1018,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               file.category &&
                               [
                                 CaseFileCategory.PROSECUTOR_CASE_FILE,
-
                                 CaseFileCategory.DEFENDANT_CASE_FILE,
                                 CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
                                 CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
