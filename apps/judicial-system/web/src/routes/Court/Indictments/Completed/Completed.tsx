@@ -139,7 +139,6 @@ const Completed: FC = () => {
         )
       : true
     const isValidRuling =
-      features?.includes(Feature.VERDICT_DELIVERY) &&
       includeRulingText &&
       workingCase.defendants?.some(
         (defendant) =>
@@ -232,21 +231,19 @@ const Completed: FC = () => {
           </Box>
         )}
         {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
-        {features?.includes(Feature.VERDICT_DELIVERY) &&
-          includeRulingText &&
-          isRuling && (
-            <Box marginBottom={5}>
-              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-              <RulingInput
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                rows={8}
-                label="Dómsorð"
-                placeholder="Hvert er dómsorðið?"
-                required
-              />
-            </Box>
-          )}
+        {includeRulingText && isRuling && (
+          <Box marginBottom={5}>
+            <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
+            <RulingInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              rows={8}
+              label="Dómsorð"
+              placeholder="Hvert er dómsorðið?"
+              required
+            />
+          </Box>
+        )}
         {isRuling && (
           <Box marginBottom={5} component="section">
             <SectionHeading
