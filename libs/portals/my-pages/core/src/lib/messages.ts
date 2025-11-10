@@ -2213,7 +2213,7 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:judgement-of-case',
     defaultMessage: 'Niðurstaða dóms',
   },
-  verjandi: {
+  defender: {
     id: 'sp.search.tags:verjandi',
     defaultMessage: 'Verjandi',
   },
