@@ -7,6 +7,7 @@ import {
   buildTextField,
   buildCustomField,
   buildDateField,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
@@ -25,18 +26,39 @@ export const draftSection = buildSection({
           marginBottom: [2, 3, 4],
         }),
         buildSelectField({
+          id: 'application.typeId',
+          title: m.draft.sections.advert.typeInput,
+          width: 'half',
+          required: true,
+          options: ({ externalData }) => {
+            const types =
+              getValueViaPath<LGBaseEntity[]>(externalData, 'types.data', []) ??
+              []
+
+            return types.map((c) => ({ label: c.title, value: c.id }))
+          },
+        }),
+        buildAsyncSelectField({
           id: 'application.categoryId',
           title: m.draft.sections.advert.categoryInput,
-          options: ({ externalData }) => {
-            const categories =
-              getValueViaPath<LGBaseEntity[]>(
-                externalData,
-                'categories.data',
-                [],
-              ) ?? []
+          width: 'half',
+          updateOnSelect: ['application.typeId'],
+          required: true,
+          loadOptions: async ({ apolloClient, selectedValues }) => {
+            const { data } = await apolloClient.query({ query: '' })
 
-            return categories.map((c) => ({ label: c.title, value: c.id }))
+            return data.categorie.map((c) => ({ label: c.title, value: c.id }))
           },
+          // options: ({ externalData }) => {
+          //   const categories =
+          //     getValueViaPath<LGBaseEntity[]>(
+          //       externalData,
+          //       'categories.data',
+          //       [],
+          //     ) ?? []
+
+          //   return categories.map((c) => ({ label: c.title, value: c.id }))
+          // },
         }),
         buildTextField({
           id: 'application.caption',

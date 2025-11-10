@@ -271,12 +271,17 @@ export const m = {
         captionInput: {
           id: 'lg.application:draft.advert.captionInput',
           defaultMessage: 'Yfirskrift',
-          description: 'Titill á textaheiti auglýsingar',
+          description: 'Yfirskrift auglýsingar',
+        },
+        typeInput: {
+          id: 'lg.application:draft.advert.typeInput',
+          defaultMessage: 'Tegund auglýsingar',
+          description: 'Tegund auglýsingar',
         },
         categoryInput: {
           id: 'lg.application:draft.advert.categoryInput',
-          defaultMessage: 'Tegund auglýsingar',
-          description: 'Titill á textaheiti auglýsingar',
+          defaultMessage: 'Flokkur auglýsingar',
+          description: 'Flokkur auglýsingar',
         },
       }),
       signature: defineMessages({
