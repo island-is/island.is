@@ -43,7 +43,7 @@ export const isVerdictInfoChanged = (
 ) => isDocumentInfoChanged<VerdictServiceStatus>(newInfo, oldInfo)
 
 export const getServiceDateFromSupplements = (
-  supplements?: Array<{ code?: string; value?: string }>,
+  supplements?: Array<{ code?: string | null; value?: string | null }> | null,
 ): Date | undefined => {
   if (!supplements) return undefined
 
@@ -56,7 +56,6 @@ export const getServiceDateFromSupplements = (
 
   const date = new Date(publishDateSupplement.value + 'T00:00:00.000Z')
 
-  // Just in case the date string is invalid. Shouldn't happen.
   if (isNaN(date.getTime())) {
     return undefined
   }
