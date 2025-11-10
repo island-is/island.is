@@ -633,10 +633,20 @@ export const addNumberedList = (
   const itemX = x + labelBoxWidth + gap
   const wrapWidth = doc.page.width - rightMargin - itemX
 
+  const pageBottomY = doc.page.height - doc.page.margins.bottom
+
   for (const [i, item] of items.entries()) {
     const label = `${start + i}.`
+    const textHeight = doc.heightOfString(label, {
+      width: wrapWidth,
+      height: 1.2,
+    })
     const labelWidth = doc.widthOfString(label)
     const labelX = x + (labelBoxWidth - labelWidth)
+
+    if (doc.y + textHeight > pageBottomY) {
+      doc.addPage()
+    }
     const y = doc.y
 
     doc.text(label, labelX, y)
