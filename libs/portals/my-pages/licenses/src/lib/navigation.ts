@@ -18,6 +18,7 @@ export const licenseNavigation: PortalNavigationItem = {
     m.drivingLicense,
     m.ehic,
     m.huntingLicense,
+    s.travel,
   ],
   path: LicensePaths.LicensesRoot,
   icon: {

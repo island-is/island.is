@@ -2106,7 +2106,7 @@ export const searchTagsMessages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
   },
   healthInsuranceEhicCardLong: {
-    id: 'sp.search.tags:health-insurance-ehic-card',
+    id: 'sp.search.tags:health-insurance-ehic-card-long',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   healthPaymentParticipation: {
@@ -2144,5 +2144,105 @@ export const searchTagsMessages = defineMessages({
   medicineDelegationOtherNew: {
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
+  },
+  financeDebtStatus: {
+    id: 'sp.search.tags:finance-debt-status',
+    defaultMessage: 'Skuldastaða',
+  },
+  hearingAid: {
+    id: 'sp.search.tags:hearing-aid',
+    defaultMessage: 'Heyrnatæki',
+  },
+  assetsPropertyValue: {
+    id: 'sp.search.tags:assets-property-value',
+    defaultMessage: 'Fasteignamat',
+  },
+  financeTaxReturn: {
+    id: 'sp.search.tags:finance-tax-return',
+    defaultMessage: 'Skattframtal',
+  },
+  financeTaxStatus: {
+    id: 'sp.search.tags:finance-tax-status',
+    defaultMessage: 'Álagning',
+  },
+  payment: {
+    id: 'sp.search.tags:payment',
+    defaultMessage: 'Útborgun',
+  },
+  travel: {
+    id: 'sp.search.tags:travel',
+    defaultMessage: 'Ferðalög',
+  },
+  police: {
+    id: 'sp.search.tags:police',
+    defaultMessage: 'Lögreglan',
+  },
+  court: {
+    id: 'sp.search.tags:court',
+    defaultMessage: 'Dómstóll',
+  },
+  districtCourt: {
+    id: 'sp.search.tags:district-court',
+    defaultMessage: 'Héraðsdómur',
+  },
+  supremeCourt: {
+    id: 'sp.search.tags:supreme-court',
+    defaultMessage: 'Hæstiréttur',
+  },
+  courtOfAppeal: {
+    id: 'sp.search.tags:court-of-appeal',
+    defaultMessage: 'Landsréttur',
+  },
+  policeShort: {
+    id: 'sp.search.tags:police-short',
+    defaultMessage: 'Löggan',
+  },
+  judgement: {
+    id: 'sp.search.tags:judgement',
+    defaultMessage: 'Dómur',
+  },
+  subpoena: {
+    id: 'sp.search.tags:subpoena',
+    defaultMessage: 'Fyrirkall',
+  },
+  indictment: {
+    id: 'sp.search.tags:indictment',
+    defaultMessage: 'Ákæra',
+  },
+  judgementOfCase: {
+    id: 'sp.search.tags:judgement-of-case',
+    defaultMessage: 'Niðurstaða dóms',
+  },
+  verjandi: {
+    id: 'sp.search.tags:verjandi',
+    defaultMessage: 'Verjandi',
+  },
+  lawyer: {
+    id: 'sp.search.tags:lawyer',
+    defaultMessage: 'Lögmaður',
+  },
+  appeal: {
+    id: 'sp.search.tags:appeal',
+    defaultMessage: 'Áfrýja',
+  },
+  plenarySession: {
+    id: 'sp.search.tags:plenary-session',
+    defaultMessage: 'Þingfesting',
+  },
+  ruling: {
+    id: 'sp.search.tags:ruling',
+    defaultMessage: 'Úrskurður',
+  },
+  fine: {
+    id: 'sp.search.tags:fine',
+    defaultMessage: 'Sekt',
+  },
+  probation: {
+    id: 'sp.search.tags:probation',
+    defaultMessage: 'Skilorð',
+  },
+  reopening: {
+    id: 'sp.search.tags:reopening',
+    defaultMessage: 'Endurupptaka',
   },
 })

@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as sm } from '@island.is/portals/my-pages/core'
 import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
@@ -15,6 +15,12 @@ export const financeNavigation: PortalNavigationItem = {
       serviceProviderTooltip: m.financeTooltip,
       displayServiceProviderLogo: true,
       path: FinancePaths.FinanceStatus,
+      searchTags: [
+        sm.payment,
+        sm.financeTaxReturn,
+        sm.financeTaxStatus,
+        sm.financeDebtStatus,
+      ],
     },
     {
       name: m.financeTransactions,
@@ -46,6 +52,7 @@ export const financeNavigation: PortalNavigationItem = {
       serviceProviderTooltip: m.financeTooltip,
       displayServiceProviderLogo: true,
       path: FinancePaths.FinancePayments,
+      searchTags: [sm.payment],
       children: [
         {
           name: m.financeBills,
@@ -82,6 +89,7 @@ export const financeNavigation: PortalNavigationItem = {
       serviceProviderTooltip: m.financeTooltip,
       displayServiceProviderLogo: true,
       path: FinancePaths.FinanceLocalTax,
+      searchTags: [sm.financeTaxReturn, sm.financeTaxStatus],
     },
     {
       name: m.financeLoans,

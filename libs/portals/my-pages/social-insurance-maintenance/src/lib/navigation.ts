@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as sm } from '@island.is/portals/my-pages/core'
 import { SocialInsuranceMaintenancePaths } from './paths'
 
 export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
@@ -13,6 +13,7 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
     {
       name: m.paymentPlan,
       description: m.socialInsuranceMaintenanceDescription,
+      searchTags: [sm.payment],
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
       children: [
         {

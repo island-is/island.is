@@ -53,6 +53,7 @@ export const healthNavigation: PortalNavigationItem = {
         s.healthInsuranceEhicCardLong,
         s.healthPaymentParticipation,
         s.healthPaymentOverview,
+        s.travel,
       ],
       children: [
         {
@@ -156,6 +157,7 @@ export const healthNavigation: PortalNavigationItem = {
       name: m.aidsAndNutrition,
       description: m.aidsAndNutritionIntro,
       path: HealthPaths.HealthAidsAndNutrition,
+      searchTags: [s.hearingAid],
     },
     {
       name: m.therapies,
