@@ -47,7 +47,10 @@ export const draftSection = buildSection({
           required: true,
           loadOptions: async ({ apolloClient, selectedValues }) => {
             console.log('selectedValues', selectedValues)
-            const { data } = await apolloClient.query({ query: LEGAL_GAZETTE_CATEGORIES_QUERY, variables: { input: { typeId: selectedValues}} })
+            const { data } = await apolloClient.query({
+              query: LEGAL_GAZETTE_CATEGORIES_QUERY,
+              variables: { input: { typeId: selectedValues } },
+            })
 
             return []
           },

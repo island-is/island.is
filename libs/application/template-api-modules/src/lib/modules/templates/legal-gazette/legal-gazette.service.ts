@@ -20,7 +20,6 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.LEGAL_GAZETTE)
   }
 
-
   async getTypes({ auth }: TemplateApiModuleActionProps) {
     try {
       this.logger.debug('Fetching types from Legal Gazette API', {

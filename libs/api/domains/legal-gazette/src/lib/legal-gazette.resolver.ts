@@ -16,8 +16,10 @@ export class LegalGazetteResolver {
   @Query(() => LegalGazetteCategoriesResponse, {
     name: 'legalGazetteCategories',
   })
-  getCategories(@Args('input') input: LegalGazetteCategoriesInput,  @CurrentUser() user: User,
-) {
+  getCategories(
+    @Args('input') input: LegalGazetteCategoriesInput,
+    @CurrentUser() user: User,
+  ) {
     return this.legalGazetteService.getCategories(input, user)
   }
 }
