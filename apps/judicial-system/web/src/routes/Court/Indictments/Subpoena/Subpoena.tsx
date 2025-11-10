@@ -296,8 +296,8 @@ const Subpoena: FC = () => {
       setModalContent({
         title: formatMessage(strings.modalTitle),
         text: hasCivilClaimants
-          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is'
-          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is',
+          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu'
+          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu',
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
     }
