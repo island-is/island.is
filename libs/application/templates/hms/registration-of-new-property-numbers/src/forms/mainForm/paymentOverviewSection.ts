@@ -31,7 +31,6 @@ export const paymentOverviewSection = buildSection({
                   'realEstate.realEstateAmount',
                 ) || '0',
               ),
-              extraLabel: 'fasteignarnúmer',
             },
           ],
         }),
