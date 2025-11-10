@@ -12,6 +12,7 @@ import {
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import { LGBaseEntity } from '../../utils/types'
+import { LEGAL_GAZETTE_CATEGORIES_QUERY } from '../../graphql'
 
 export const draftSection = buildSection({
   id: 'draft.section',
@@ -45,20 +46,11 @@ export const draftSection = buildSection({
           updateOnSelect: ['application.typeId'],
           required: true,
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            const { data } = await apolloClient.query({ query: '' })
+            console.log('selectedValues', selectedValues)
+            const { data } = await apolloClient.query({ query: LEGAL_GAZETTE_CATEGORIES_QUERY, variables: { input: { typeId: selectedValues}} })
 
-            return data.categorie.map((c) => ({ label: c.title, value: c.id }))
+            return []
           },
-          // options: ({ externalData }) => {
-          //   const categories =
-          //     getValueViaPath<LGBaseEntity[]>(
-          //       externalData,
-          //       'categories.data',
-          //       [],
-          //     ) ?? []
-
-          //   return categories.map((c) => ({ label: c.title, value: c.id }))
-          // },
         }),
         buildTextField({
           id: 'application.caption',

@@ -153,11 +153,6 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               shouldPersistToExternalData: true,
               externalDataId: 'types',
             }),
-            defineTemplateApi({
-              action: LegalGazetteAPIActions.getCategories,
-              shouldPersistToExternalData: true,
-              externalDataId: 'categories',
-            }),
           ],
           onExit: defineTemplateApi({
             action: LegalGazetteAPIActions.submitApplication,

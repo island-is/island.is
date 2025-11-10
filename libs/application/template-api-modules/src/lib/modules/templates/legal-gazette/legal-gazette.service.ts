@@ -20,20 +20,6 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.LEGAL_GAZETTE)
   }
 
-  async getCategories({ auth }: TemplateApiModuleActionProps) {
-    try {
-      const { categories } = await this.legalGazetteClient.getCategories(auth)
-
-      return categories.map((c) => ({ id: c.id, title: c.title, slug: c.slug }))
-    } catch (error) {
-      this.logger.error('Failed to get categories', {
-        error,
-        category: LOGGING_CATEGORY,
-      })
-
-      throw error
-    }
-  }
 
   async getTypes({ auth }: TemplateApiModuleActionProps) {
     try {
