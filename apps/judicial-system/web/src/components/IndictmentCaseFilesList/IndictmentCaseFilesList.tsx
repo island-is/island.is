@@ -27,6 +27,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   User,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,

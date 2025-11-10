@@ -1501,6 +1501,7 @@ export class InternalCaseService {
         'state',
         'indictmentRulingDecision',
         'rulingDate',
+        'ruling',
       ],
       where: {
         type: CaseType.INDICTMENT,

@@ -21,6 +21,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
@@ -51,7 +52,7 @@ const Completed: FC = () => {
   const { deliverCaseVerdict } = useVerdict()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
@@ -123,6 +124,11 @@ const Completed: FC = () => {
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   const isRulingOrFine = isRuling || isFine
 
+  const includeRulingText =
+    !workingCase.withCourtSessions ||
+    !workingCase.courtSessions ||
+    workingCase.courtSessions.length === 0
+
   const stepIsValid = () => {
     const isValidDefendants = isRuling
       ? workingCase.defendants?.every((defendant) =>
@@ -132,8 +138,17 @@ const Completed: FC = () => {
             : Boolean(defendant.verdict?.serviceRequirement),
         )
       : true
+    const isValidRuling =
+      features?.includes(Feature.VERDICT_DELIVERY) &&
+      includeRulingText &&
+      workingCase.defendants?.some(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+        ? workingCase.ruling
+        : true
 
-    return isValidDefendants
+    return isValidDefendants && isValidRuling
   }
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -216,6 +231,22 @@ const Completed: FC = () => {
             />
           </Box>
         )}
+        {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
+        {features?.includes(Feature.VERDICT_DELIVERY) &&
+          includeRulingText &&
+          isRuling && (
+            <Box marginBottom={5}>
+              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
+              <RulingInput
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                rows={8}
+                label="Dómsorð"
+                placeholder="Hvert er dómsorðið?"
+                required
+              />
+            </Box>
+          )}
         {isRuling && (
           <Box marginBottom={5} component="section">
             <SectionHeading

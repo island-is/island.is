@@ -63,7 +63,6 @@ query Case($input: CaseQueryInput!) {
         serviceDate
         serviceInformationForDefendant
         externalPoliceDocumentId
-        legalPaperRequestDate
         comment
         deliveredToDefenderNationalId
         servedBy
