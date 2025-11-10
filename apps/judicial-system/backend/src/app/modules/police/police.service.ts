@@ -30,9 +30,11 @@ import type {
 import {
   CaseState,
   CaseType,
+  getServiceDateFromSupplements,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -171,6 +173,14 @@ export class PoliceService {
     deliveredOnIslandis: z.boolean().nullish(),
     deliveredToDefendant: z.boolean().nullish(),
     deliveryMethod: z.string().nullish(),
+    supplements: z
+      .array(
+        z.object({
+          code: z.string().nullish(),
+          value: z.string().nullish(),
+        }),
+      )
+      .nullish(),
   })
 
   constructor(
@@ -718,25 +728,32 @@ export class PoliceService {
           const response: z.infer<typeof this.documentStructure> =
             await res.json()
           this.documentStructure.parse(response)
+          const serviceStatus = mapPoliceVerdictDeliveryStatus({
+            delivered: response.delivered ?? false,
+            deliveredOnPaper: response.deliveredOnPaper ?? false,
+            deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+            deliveredToLawyer: response.deliveredToLawyer ?? false,
+            deliveredToDefendant: response.deliveredToDefendant ?? false,
+            deliveryMethod: response.deliveryMethod ?? undefined,
+          })
+
+          const legalPaperServiceDate =
+            serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+              ? getServiceDateFromSupplements(response.supplements ?? undefined)
+              : undefined
+
           const servedAt =
             response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
               ? new Date(response.servedAt)
               : undefined
 
           return {
-            serviceStatus: mapPoliceVerdictDeliveryStatus({
-              delivered: response.delivered ?? false,
-              deliveredOnPaper: response.deliveredOnPaper ?? false,
-              deliveredOnIslandis: response.deliveredOnIslandis ?? false,
-              deliveredToLawyer: response.deliveredToLawyer ?? false,
-              deliveredToDefendant: response.deliveredToDefendant ?? false,
-              deliveryMethod: response.deliveryMethod ?? undefined,
-            }),
+            serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
               response.defenderNationalId ?? undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
-            serviceDate: servedAt,
+            serviceDate: legalPaperServiceDate ?? servedAt,
           }
         }
         const reason = await res.text()
