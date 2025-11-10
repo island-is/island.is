@@ -15,6 +15,8 @@ import { m } from '../../lib/messages'
 import { AdditionalVehicle } from './AdditionalVehicle'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -28,9 +30,15 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
-
+  const { clearErrors, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.vehicles) {
@@ -107,6 +115,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     currency
                     size="sm"
                     required
+                    onChange={() => calculateTotal()}
                   />
                 </Box>
               </GridColumn>
@@ -121,6 +130,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             remove={handleRemoveProperty}
             index={index}
             error={error && error[index] ? error[index] : null}
+            calculateTotal={calculateTotal}
           />
         </Box>
       ))}
@@ -135,6 +145,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           {formatMessage(m.addVehicle)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }
