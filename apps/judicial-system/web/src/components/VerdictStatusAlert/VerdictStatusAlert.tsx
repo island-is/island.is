@@ -51,12 +51,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
     case VerdictServiceStatus.LEGAL_PAPER:
       return [
         `Dómur birtur í Lögbirtingarblaðinu - ${
-          verdict.serviceDate
-            ? `${formatDate(verdict.serviceDate)} kl. ${formatDate(
-                verdict.serviceDate,
-                TIME_FORMAT,
-              )}`
-            : ''
+          verdict.serviceDate ? `${formatDate(verdict.serviceDate)}` : ''
         }`,
       ]
     case VerdictServiceStatus.NOT_APPLICABLE:
@@ -97,20 +92,21 @@ const VerdictStatusAlertMessage = ({
   lawyer?: Lawyer
 }) => {
   const messages = verdict ? mapServiceStatusMessages(verdict, lawyer) : []
-
   const isDeprecatedVerdict =
     verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
     !verdict.serviceDate
+
   if (isDeprecatedVerdict) return null
 
   const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
+
   if (isServed) {
     if (verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER) {
       return (
         <AlertMessage
           type="info"
           title={`Dómur birtur í Lögbirtingablaðinu - ${defendantName}`}
-          message={`Dómur birtur ${formatDate(verdict.serviceDate)}`}
+          message={messages[0]}
         />
       )
     }
@@ -196,8 +192,8 @@ const VerdictStatusAlert = (props: {
     <Box marginBottom={2}>
       <AlertMessage
         type="error"
-        title={'Ekki tókst að sækja stöðu birtingar'}
-        message={'Vinsamlegast reyndu aftur síðar'}
+        title="Ekki tókst að sækja stöðu birtingar"
+        message="Vinsamlegast reyndu aftur síðar"
       />
     </Box>
   ) : (
