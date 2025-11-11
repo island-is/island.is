@@ -243,6 +243,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/legal-gazette/                                                                                   @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/                                @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                                              @island-is/hugsmidjan
+/libs/api/domains/legal-gazette                                                                                              @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
 /libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
