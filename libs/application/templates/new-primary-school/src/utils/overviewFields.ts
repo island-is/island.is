@@ -59,7 +59,7 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.currentSchool',
       title:
         newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
-      backId: (answers, externalData) => {
+      backId: (_, externalData) => {
         const { primaryOrgId } = getApplicationExternalData(externalData)
 
         // If the primaryOrgId doesn't exists it means Frigg doesn't have the data

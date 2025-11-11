@@ -1,5 +1,5 @@
-import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { style } from '@vanilla-extract/css'
 
 export const modal = style({
   position: 'relative',

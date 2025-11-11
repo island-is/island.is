@@ -19,9 +19,13 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
   displayGeneratedPDFs = true,
 }) => {
   const { formatMessage } = useIntl()
-  const { caseFiles, courtCaseNumber } = connectedCase
+  const { courtCaseNumber, courtSessions } = connectedCase
 
-  if (!courtCaseNumber || !caseFiles || caseFiles.length < 1) {
+  const hasCaseFiles = courtSessions?.some(
+    (courtSession) =>
+      courtSession.filedDocuments && courtSession.filedDocuments.length > 0,
+  )
+  if (!courtCaseNumber || !hasCaseFiles) {
     return null
   }
 

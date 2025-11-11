@@ -38,6 +38,12 @@ export interface DataState<T> {
   error?: boolean
 }
 
+export interface DelegationState {
+  dateFrom?: Date
+  dateTo?: Date
+  nationalId?: string
+  lookup?: boolean
+}
 export type DrugRowDrug = {
   name?: string | null
   strength?: string | null
@@ -53,4 +59,14 @@ export type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 export type HealthCenterDoctorOption = {
   label: string
   value: number
+}
+export interface PermitInput {
+  dates: {
+    validFrom: Date | null
+    validTo: Date | null
+  }
+  countries: {
+    code: string
+    name: string
+  }[]
 }

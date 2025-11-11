@@ -36,7 +36,7 @@ describe('CourtSessionController - Create', () => {
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockCreate = mockCourtSessionRepositoryService.create as jest.Mock
-    mockCreate.mockRejectedValue(new Error('Faild to create court session'))
+    mockCreate.mockRejectedValue(new Error('Failed to create court session'))
 
     givenWhenThen = async (caseId: string) => {
       const then = {} as Then
@@ -86,7 +86,7 @@ describe('CourtSessionController - Create', () => {
 
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Faild to create court session')
+      expect(then.error.message).toBe('Failed to create court session')
     })
   })
 })
