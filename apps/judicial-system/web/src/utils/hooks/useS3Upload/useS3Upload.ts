@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
@@ -446,7 +447,10 @@ const useS3Upload = (
   ) => {
     const promises = defendants.map(
       async ({ id, name: defendantName, nationalId, noNationalId }) => {
-        const name = `Sakavottord${nationalId ? `_${nationalId}` : ''}.pdf`
+        const currentDate = formatDate(new Date())
+        const name = `Sakavottord${
+          nationalId ? `_${nationalId}_${currentDate}` : ''
+        }.pdf`
         const commonFileProps = {
           // add a temp name for error handling
           id: `${name}-${uuid()}`,

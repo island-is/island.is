@@ -17,8 +17,10 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { Defendant } from '../repository'
@@ -90,8 +92,9 @@ export class CriminalRecordService {
         if (res.ok) {
           const contentArrayBuffer = await res.arrayBuffer()
           const buffer = Buffer.from(contentArrayBuffer)
+          const currentDate = formatDate(nowFactory())
           return {
-            fileName: `Sakavottord_${defendant.nationalId}.pdf`,
+            fileName: `Sakavottord_${defendant.nationalId}_${currentDate}.pdf`,
             buffer,
           }
         }
