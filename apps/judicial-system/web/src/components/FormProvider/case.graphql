@@ -63,7 +63,6 @@ query Case($input: CaseQueryInput!) {
         serviceDate
         serviceInformationForDefendant
         externalPoliceDocumentId
-        legalPaperRequestDate
         comment
         deliveredToDefenderNationalId
         servedBy
@@ -291,6 +290,7 @@ query Case($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
       mergedFiledDocuments {
         id
@@ -305,6 +305,14 @@ query Case($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
+      }
+      courtSessionStrings {
+        id
+        courtSessionId
+        mergedCaseId
+        stringType
+        value
       }
     }
     unfiledCourtDocuments {
@@ -411,6 +419,7 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
         mergedFiledDocuments {
           id
@@ -425,6 +434,14 @@ query Case($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
+        }
+        courtSessionStrings {
+          id
+          courtSessionId
+          mergedCaseId
+          stringType
+          value
         }
       }
       court {

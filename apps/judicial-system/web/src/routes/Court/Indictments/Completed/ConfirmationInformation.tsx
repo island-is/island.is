@@ -8,13 +8,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
-  Feature,
   informationForDefendantMap,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
-  FeatureContext,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -26,8 +24,6 @@ export const ConfirmationInformation = ({
 }: {
   uploadFiles: TUploadFile[]
 }) => {
-  const { features } = useContext(FeatureContext)
-
   const { workingCase } = useContext(FormContext)
   const criminalRecordUploadFileNames = uploadFiles
     .filter((file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE)
@@ -50,9 +46,7 @@ export const ConfirmationInformation = ({
     <Box display="flex" rowGap={3} flexDirection="column">
       <Box>
         <Text>Gögn verða send til Ríkissaksóknara til yfirlesturs. </Text>
-        {features?.includes(Feature.VERDICT_DELIVERY) && (
-          <Text>Ef birta þarf dóm verður hann sendur í rafræna birtingu.</Text>
-        )}
+        <Text>Ef birta þarf dóm verður hann sendur í rafræna birtingu.</Text>
       </Box>
       <Box>
         <Text>Staðfestið eftirfarandi upplýsingar:</Text>
@@ -67,7 +61,7 @@ export const ConfirmationInformation = ({
             : 'Engu skjali hefur verið hlaðið upp'}
         </Text>
       </Box>
-      {isRuling && features?.includes(Feature.VERDICT_DELIVERY) && (
+      {isRuling && (
         <>
           {requiresVerdictDeliveryToDefendant && (
             <Box>

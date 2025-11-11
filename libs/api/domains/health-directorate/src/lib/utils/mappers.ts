@@ -6,6 +6,7 @@ import {
   PrescribedItemCategory,
   PrescriptionRenewalBlockedReason,
   PrescriptionRenewalStatus,
+  PrescriptionCommissionStatus,
 } from '@island.is/clients/health-directorate'
 import {
   PermitStatusEnum,
@@ -107,6 +108,23 @@ export const mapPermitStatus = (
     case EuPatientConsentStatus.INACTIVE:
       return PermitStatusEnum.inactive
     case EuPatientConsentStatus.PENDING:
+      return PermitStatusEnum.awaitingApproval
+    default:
+      return PermitStatusEnum.unknown
+  }
+}
+
+export const mapDelegationStatus = (
+  status: PrescriptionCommissionStatus,
+): PermitStatusEnum => {
+  switch (status) {
+    case PrescriptionCommissionStatus.ACTIVE:
+      return PermitStatusEnum.active
+    case PrescriptionCommissionStatus.EXPIRED:
+      return PermitStatusEnum.expired
+    case PrescriptionCommissionStatus.INACTIVE:
+      return PermitStatusEnum.inactive
+    case PrescriptionCommissionStatus.PENDING:
       return PermitStatusEnum.awaitingApproval
     default:
       return PermitStatusEnum.unknown
