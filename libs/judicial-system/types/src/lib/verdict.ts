@@ -1,6 +1,11 @@
 import { VerdictServiceStatus } from './defendant'
 import { DocumentDeliveryMethod } from './policeDocument'
 
+interface Lang {
+  is: string
+  en: string
+}
+
 export enum ServiceRequirement {
   REQUIRED = 'REQUIRED', // Ruling must be served
   NOT_REQUIRED = 'NOT_REQUIRED', // Ruling does not need to be served
@@ -197,6 +202,25 @@ const CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION = `
   </div>
 `
 
+const CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION_EN = `
+  <div>
+    <p>
+      A probation sentence means that the decision on punishment or the 
+      execution of a punishment is postponed for a certain period of 
+      time in exchange for your not committing any crime during that 
+      period. This means that if you do not commit any crime during 
+      the probation period, the punishment will be cancelled after that 
+      period.
+    </p>
+    <p>
+      However, if you are convicted of the same crime during the probation 
+      period, the punishment will be added to your next sentence. It is 
+      also permissible to set further conditions, such as that you do not 
+      consume alcohol, other intoxicants, etc. during the probation period.
+    </p>
+  </div>
+`
+
 const COMMUNITY_SERVICE_DESCRIPTION = `
   <div>
       <p>
@@ -216,6 +240,27 @@ const COMMUNITY_SERVICE_DESCRIPTION = `
         </a>
       </p>
     </div>
+`
+
+const COMMUNITY_SERVICE_DESCRIPTION_EN = `
+  <div>
+    <p>
+      Community service involves temporary and unpaid work that can 
+      replace imprisonment, both for non-suspended sentences and also 
+      for the alternative punishment of fines. The decision on 
+      community service and its implementation is in the hands of the 
+      Icelandic Prison and Probation Administration.
+    </p>
+    <p>
+      <a
+        href="https://island.is/samfelagsthjonusta"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Conditions for serving sentences in community service
+      </a>
+    </p>
+  </div>
 `
 
 const DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION = `
@@ -238,6 +283,32 @@ const DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION = `
         rel="noopener noreferrer"
       >
         Skilyrði fyrir endurveitingu ökuréttar
+      </a>
+    </p>
+  </div>
+`
+
+const DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION_EN = `
+  <div>
+    <p>
+      Driving license is suspended during the period of suspension and 
+      therefore you may not drive during that period regardless of 
+      whether the judgment is appealed. Please note that if you are 
+      suspended for twelve months or more, you will need to retake the 
+      course and pass the academic and practical training to reactivate 
+      your driving license when the period of suspension has expired. 
+      If you are suspended for more than three years, the Chief of 
+      Police may grant you permission to regain your driving license 
+      after three years. If you have lost your driving license for life, 
+      you can apply to get it reinstated after five years.
+    </p>
+    <p>
+      <a
+        href="https://island.is/en/driving-licence-disqualification"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Conditions for reinstatement of driving license
       </a>
     </p>
   </div>
@@ -273,6 +344,37 @@ const FINES_AND_COSTS_DESCRIPTION = `
   </div>
 `
 
+const FINES_AND_COSTS_DESCRIPTION_EN = `
+  <div>
+    <p>
+      The District Commissioner of North-West Iceland is responsible 
+      for collecting fines, legal costs and compensation claims. The 
+      website of the District Commissioner's Office contains various 
+      practical information, such as how to apply for payment 
+      distribution, what remedies the District Commissioner has to 
+      enforce payment of fines (debt settlement, seizure, forced 
+      sale, etc.), about serving alternative sentences and more. 
+    </p>
+    <p>
+      <a
+        href="https://island.is/en/sektir-og-sakarkostnadur"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Fines and legal costs
+      </a>
+      <br />
+      <a
+        href="https://island.is/en/compensation-claims-for-criminal-offenses"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Recovering damages
+      </a>
+    </p>
+  </div>
+`
+
 const ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION = `
   <div>
     <p>
@@ -299,6 +401,34 @@ const ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION = `
     </p>
   </div>
 `
+
+const ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION_EN = `
+  <div>
+    <p>
+      Penalties are of two types: 1) imprisonment and 2) fines.
+      Alternative punishment is a prison sentence that must be 
+      served if a fine is not paid. If the fine amount is 100,000 
+      ISK or more, 
+      <a
+        href="https://island.is/samfelagsthjonusta"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        you can apply for community service
+      </a>
+      from the District Commissioner of North-West Iceland.
+    </p>
+    <p>
+      <a
+        href="https://www.domstolasyslan.is/default.aspx?pageid=dca5ad09-3b95-11ea-944c-005056bc0bdb"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Rules for alternative punishment for fines
+      </a>
+    </p>
+  </div>
+`
 const ITEM_CONFISCATION_DESCRIPTION = `
   <div>
     <p>
@@ -316,14 +446,34 @@ const ITEM_CONFISCATION_DESCRIPTION = `
   </div>
 `
 
+const ITEM_CONFISCATION_DESCRIPTION_EN = `
+  <div>
+    <p>
+      Profits and items related to an offense may be confiscated by 
+      court order, such as money, phones, computers, cars or other 
+      items that are generally prohibited, such as drugs or illegal 
+      weapons, etc. What is confiscated becomes the property of the 
+      state treasury unless otherwise specifically provided for by 
+      law or when the proceeds are used to pay compensation claims 
+      for victims of offenses. 
+    </p>
+    <p>
+      In other words, the fact that money or items are confiscated 
+      means that you cannot get them back.
+    </p>
+  </div>
+`
 export const informationForDefendantMap: Map<
   InformationForDefendant,
-  { label: string; description: { is: string; en: string }; detail?: string }
+  { label: Lang; description: Lang }
 > = new Map([
   [
     InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
     {
-      label: 'Leiðbeiningar um endurupptöku útivistarmála',
+      label: {
+        is: 'Leiðbeiningar um endurupptöku útivistarmála',
+        en: 'Instructions for reopening of absenteeism cases',
+      },
       description: {
         is: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION,
         en: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION_EN,
@@ -333,9 +483,10 @@ export const informationForDefendantMap: Map<
   [
     InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
     {
-      label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
-      detail:
-        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
+      label: {
+        is: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
+        en: 'Information about appeals to the Landsréttur Court and appeal deadlines',
+      },
       description: {
         is: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION,
         en: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN,
@@ -345,44 +496,79 @@ export const informationForDefendantMap: Map<
   [
     InformationForDefendant.CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION,
     {
-      label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
-      description:
-        CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION,
+      label: {
+        is: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
+        en: 'Meaning of probation and probation violation',
+      },
+      description: {
+        is: CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION,
+        en: CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION_DESCRIPTION_EN,
+      },
     },
   ],
   [
     InformationForDefendant.DRIVING_RIGHTS_REVOKED_TRANSLATION,
     {
-      label: 'Þýðing sviptingar ökuréttinda',
-      description: DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION,
+      label: {
+        is: 'Þýðing sviptingar ökuréttinda',
+        en: 'Meaning of driving license suspension',
+      },
+      description: {
+        is: DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION,
+        en: DRIVING_RIGHTS_REVOKED_TRANSLATION_DESCRIPTION_EN,
+      },
     },
   ],
   [
     InformationForDefendant.ALTERNATIVE_FINES_TRANSLATION,
     {
-      label: 'Þýðing vararefsingar fésekta',
-      description: ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION,
+      label: {
+        is: 'Þýðing vararefsingar fésekta',
+        en: 'Meaning of alternative punishment for fines',
+      },
+      description: {
+        is: ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION,
+        en: ALTERNATIVE_FINES_TRANSLATION_DESCRIPTION_EN,
+      },
     },
   ],
   [
     InformationForDefendant.COMMUNITY_SERVICE,
     {
-      label: 'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
-      description: COMMUNITY_SERVICE_DESCRIPTION,
+      label: {
+        is: 'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
+        en: 'Information on the conditions and application for community service',
+      },
+      description: {
+        is: COMMUNITY_SERVICE_DESCRIPTION,
+        en: COMMUNITY_SERVICE_DESCRIPTION_EN,
+      },
     },
   ],
   [
     InformationForDefendant.FINES_AND_COSTS,
     {
-      label: 'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
-      description: FINES_AND_COSTS_DESCRIPTION,
+      label: {
+        is: 'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
+        en: 'Information on payment of fines, legal costs and compensation',
+      },
+      description: {
+        is: FINES_AND_COSTS_DESCRIPTION,
+        en: FINES_AND_COSTS_DESCRIPTION_EN,
+      },
     },
   ],
   [
     InformationForDefendant.ITEM_CONFISCATION,
     {
-      label: 'Upplýsingar um upptöku peninga og muna',
-      description: ITEM_CONFISCATION_DESCRIPTION,
+      label: {
+        is: 'Upplýsingar um upptöku peninga og muna',
+        en: 'Information on confiscation of money and items',
+      },
+      description: {
+        is: ITEM_CONFISCATION_DESCRIPTION,
+        en: ITEM_CONFISCATION_DESCRIPTION_EN,
+      },
     },
   ],
 ])
