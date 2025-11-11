@@ -5,7 +5,6 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
@@ -17,7 +16,6 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -29,7 +27,6 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   User,
-  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
@@ -174,19 +171,9 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewVerdictServiceCertificate:
-        workingCase.defendants?.some(
-          ({ verdict }) =>
-            !!verdict?.serviceDate &&
-            verdict?.serviceStatus !== VerdictServiceStatus.NOT_APPLICABLE,
-        ) &&
-        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user)),
+        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [
-      user,
-      workingCase.hasCivilClaims,
-      workingCase.state,
-      workingCase.defendants,
-    ],
+    [user, workingCase.hasCivilClaims, workingCase.state],
   )
 }
 
@@ -231,7 +218,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
@@ -453,10 +439,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   onOpenFile={onOpen}
                 />
               )}
-              {features?.includes(Feature.VERDICT_DELIVERY) &&
-                permissions.canViewVerdictServiceCertificate &&
+              {permissions.canViewVerdictServiceCertificate &&
                 workingCase.defendants?.map((defendant) => {
-                  if (!defendant.verdict?.serviceDate) {
+                  if (
+                    !defendant.verdict?.serviceDate ||
+                    defendant.verdict?.externalPoliceDocumentId
+                  ) {
                     return null
                   }
 

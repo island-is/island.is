@@ -5,16 +5,12 @@ import router from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  Feature,
-  isRulingOrDismissalCase,
-} from '@island.is/judicial-system/types'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -51,7 +47,6 @@ import strings from './Completed.strings'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const { formatMessage } = useIntl()
   const { deliverCaseVerdict } = useVerdict()
@@ -83,17 +78,16 @@ const Completed: FC = () => {
       setIsLoading(false)
       return
     }
-    if (features?.includes(Feature.VERDICT_DELIVERY)) {
-      const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
-        ({ verdict }) =>
-          verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-      )
-      if (requiresVerdictDeliveryToDefendants) {
-        const results = await deliverCaseVerdict(workingCase.id)
-        if (!results) {
-          setIsLoading(false)
-          return
-        }
+
+    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+      ({ verdict }) =>
+        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+    )
+    if (requiresVerdictDeliveryToDefendants) {
+      const results = await deliverCaseVerdict(workingCase.id)
+      if (!results) {
+        setIsLoading(false)
+        return
       }
     }
 
@@ -117,7 +111,6 @@ const Completed: FC = () => {
     workingCase.defendants,
     user,
     setIsLoading,
-    features,
   ])
 
   const handleNavigationTo = useCallback(
@@ -146,7 +139,6 @@ const Completed: FC = () => {
         )
       : true
     const isValidRuling =
-      features?.includes(Feature.VERDICT_DELIVERY) &&
       includeRulingText &&
       workingCase.defendants?.some(
         (defendant) =>
@@ -175,7 +167,6 @@ const Completed: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map(
           (defendant) =>
-            features?.includes(Feature.VERDICT_DELIVERY) &&
             defendant.verdict && (
               <Box
                 key={`${defendant.id}${defendant.verdict.id}`}
@@ -240,21 +231,19 @@ const Completed: FC = () => {
           </Box>
         )}
         {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
-        {features?.includes(Feature.VERDICT_DELIVERY) &&
-          includeRulingText &&
-          isRuling && (
-            <Box marginBottom={5}>
-              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-              <RulingInput
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                rows={8}
-                label="Dómsorð"
-                placeholder="Hvert er dómsorðið?"
-                required
-              />
-            </Box>
-          )}
+        {includeRulingText && isRuling && (
+          <Box marginBottom={5}>
+            <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
+            <RulingInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              rows={8}
+              label="Dómsorð"
+              placeholder="Hvert er dómsorðið?"
+              required
+            />
+          </Box>
+        )}
         {isRuling && (
           <Box marginBottom={5} component="section">
             <SectionHeading
@@ -278,11 +267,10 @@ const Completed: FC = () => {
                       defendant={defendant}
                       defendantIndex={index}
                     />
-                    {features?.includes(Feature.VERDICT_DELIVERY) &&
-                      verdict.serviceRequirement ===
-                        ServiceRequirement.REQUIRED && (
-                        <InformationForDefendant defendant={defendant} />
-                      )}
+                    {verdict.serviceRequirement ===
+                      ServiceRequirement.REQUIRED && (
+                      <InformationForDefendant defendant={defendant} />
+                    )}
                   </React.Fragment>
                 </Box>
               )
