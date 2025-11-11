@@ -26,8 +26,7 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
       (courtSession) =>
         courtSession.filedDocuments && courtSession.filedDocuments.length > 0,
     ) ||
-    !caseFiles ||
-    caseFiles.length > 0
+    (caseFiles && caseFiles.length > 0)
 
   if (!courtCaseNumber || !hasCaseFiles) {
     return null
