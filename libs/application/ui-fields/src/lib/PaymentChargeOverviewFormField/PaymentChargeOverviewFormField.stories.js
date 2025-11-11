@@ -15,12 +15,12 @@ const createMockApplication = (data = {}) => ({
       data: [
         {
           priceAmount: 100,
-          chargeItemName: 'lorem',
+          chargeItemName: 'Payment code description',
           chargeItemCode: 'ipsum',
         },
                 {
           priceAmount: 200,
-          chargeItemName: 'merol',
+          chargeItemName: 'Payment code description two',
           chargeItemCode: 'muspi',
         },
       ],
