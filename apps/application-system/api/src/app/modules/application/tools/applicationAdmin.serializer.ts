@@ -46,7 +46,7 @@ import {
   ApplicationTypeAdminInstitution,
 } from '../dto/applicationAdmin.response.dto'
 import { IdentityClientService } from '@island.is/clients/identity'
-import { type Logger, LOGGER_PROVIDER } from "@island.is/logging";
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -123,7 +123,10 @@ export class ApplicationAdminSerializer
         application.typeId as ApplicationTypes,
       )
     } catch (error) {
-      this.logger.warn(`Could not serialize application with id ${application.id}`, error)
+      this.logger.warn(
+        `Could not serialize application with id ${application.id}`,
+        error,
+      )
       return undefined
     }
     const helper = new ApplicationTemplateHelper(application, template)
@@ -242,7 +245,7 @@ export class ApplicationAdminSerializer
           showHistory,
         ),
       ),
-    ).then(results => results.filter(result => result !== undefined));
+    ).then((results) => results.filter((result) => result !== undefined))
   }
 }
 
