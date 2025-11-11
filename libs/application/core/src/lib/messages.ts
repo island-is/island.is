@@ -343,6 +343,21 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Hlaða niður skjali',
     description: 'Button label to download file',
   },
+  defaultQuantityTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultQuantityTitle',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity label for payment overview field',
+  },
+  defaultUnitPriceTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
+    defaultMessage: 'Verð',
+    description: 'Unit price label for payment overview field',
+  },
+  defaultTotalPerUnitTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
+    defaultMessage: 'Samtals verð',
+    description: 'Total per unit label for payment overview field',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
