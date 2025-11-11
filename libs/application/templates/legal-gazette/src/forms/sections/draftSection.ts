@@ -46,7 +46,7 @@ export const draftSection = buildSection({
           updateOnSelect: ['application.typeId'],
           required: true,
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            if (!selectedValues) return []
+            if (!selectedValues || selectedValues.length === 0) return []
 
             const { data } = await apolloClient.query({
               query: LEGAL_GAZETTE_CATEGORIES_QUERY,

@@ -5,7 +5,7 @@ import { YesOrNoEnum } from '@island.is/application/core'
 export const legalGazetteDataSchema = z.object({
   application: z.object({
     typeId: z.string().refine((val) => val && val.length > 0, {
-      params: m.errors.emptyCategory,
+      params: m.errors.emptyType,
     }),
     categoryId: z.string().refine((val) => val && val.length > 0, {
       params: m.errors.emptyCategory,
