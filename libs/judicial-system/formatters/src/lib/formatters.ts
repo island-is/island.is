@@ -22,6 +22,7 @@ import {
   ServiceRequirement,
   ServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -537,6 +538,22 @@ export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
     ? 'Árangurslaus birting'
     : serviceStatus === ServiceStatus.EXPIRED
     ? 'Rann út á tíma'
+    : 'Í birtingarferli' // This should never happen
+}
+
+export const getVerdictServiceStatusText = (
+  serviceStatus: VerdictServiceStatus,
+) => {
+  return serviceStatus === VerdictServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === VerdictServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === VerdictServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === VerdictServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+    ? 'Birt í Lögbirtingarblaðinu'
     : 'Í birtingarferli' // This should never happen
 }
 
