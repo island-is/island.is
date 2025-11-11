@@ -237,7 +237,8 @@ test.describe.serial('Indictment tests', () => {
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
     await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
 
-    await page.locator('label').filter({ hasText: 'Nei' }).click()
+    await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
+    await page.getByTestId('ruling').fill('Dómsorð')
 
     await page.getByTestId('confirm-court-record').click()
     await page.getByTestId('continueButton').click()
