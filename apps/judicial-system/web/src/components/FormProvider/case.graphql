@@ -401,6 +401,7 @@ query Case($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      hasCivilClaims
       withCourtSessions
       courtSessions {
         id
