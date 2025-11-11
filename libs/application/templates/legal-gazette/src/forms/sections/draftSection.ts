@@ -46,8 +46,6 @@ export const draftSection = buildSection({
           updateOnSelect: ['application.typeId'],
           required: true,
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            console.log('selectedValues', selectedValues)
-
             if (!selectedValues) return []
 
             const { data } = await apolloClient.query({

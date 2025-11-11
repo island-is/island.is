@@ -77,7 +77,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
       signatureDate: signature.date,
       signatureName: signature.name,
       signatureLocation: signature.location,
-      signatureOnBehalfOf: undefined,
+      signatureOnBehalfOf: signature.onBehalfOf,
       additionalText: undefined,
       publishingDates: dates,
       communicationChannels: communication.channels.map((ch) => ({
@@ -85,8 +85,6 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         phone: ch.phone ?? '',
       })),
     }
-
-    console.log('submitApplicationDto', submitApplicationDto)
 
     try {
       await this.legalGazetteClient.submitApplication(
