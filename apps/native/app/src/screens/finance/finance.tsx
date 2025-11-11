@@ -14,6 +14,7 @@ import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useBrowser } from '../../lib/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -97,6 +98,10 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const externalLinks = [
     {
+      link: myPagesLinks.statusOverview,
+      title: intl.formatMessage({ id: 'finance.links.status' }),
+    },
+    {
       link: myPagesLinks.transactions,
       title: intl.formatMessage({ id: 'finance.links.transactions' }),
     },
@@ -156,34 +161,36 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           )
         }
       />
-      <SafeAreaView
-        style={{
-          marginHorizontal: 16,
-          marginBottom: 24,
-          alignItems: 'flex-start',
-        }}
-      >
-        <Button
-          title={intl.formatMessage({
-            id: 'finance.statusCard.schedulePaymentPlan',
-          })}
-          isOutlined
-          isUtilityButton
-          icon={externalLinkIcon}
-          disabled={!scheduleButtonVisible}
-          iconStyle={{ tintColor: theme.color.dark300 }}
-          style={{ flex: 1 }}
-          onPress={() =>
-            openBrowser(
-              `${getConfig().apiUrl.replace(
-                /\/api/,
-                '',
-              )}/umsoknir/greidsluaaetlun`,
-              componentId,
-            )
-          }
-        />
-      </SafeAreaView>
+      {scheduleButtonVisible && (
+        <SafeAreaView
+          style={{
+            marginHorizontal: 16,
+            marginBottom: 24,
+            alignItems: 'flex-start',
+          }}
+        >
+          <Button
+            title={intl.formatMessage({
+              id: 'finance.statusCard.schedulePaymentPlan',
+            })}
+            isOutlined
+            isUtilityButton
+            icon={externalLinkIcon}
+            disabled={!scheduleButtonVisible}
+            iconStyle={{ tintColor: theme.color.dark300 }}
+            style={{ flex: 1 }}
+            onPress={() =>
+              openBrowser(
+                `${getConfig().apiUrl.replace(
+                  /\/api/,
+                  '',
+                )}/umsoknir/greidsluaaetlun`,
+                componentId,
+              )
+            }
+          />
+        </SafeAreaView>
+      )}
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         {showLoading
           ? skeletonItems
@@ -200,17 +207,17 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
             )
           : null}
       </SafeAreaView>
-      <SafeAreaView style={{ marginHorizontal: 16 }}>
-        <View style={{ marginHorizontal: -16 }}>
-          {externalLinks.map((link) => (
-            <ExternalLink
-              links={link}
-              key={link.title}
-              componentId={componentId}
-            />
-          ))}
-        </View>
-      </SafeAreaView>
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+        }}
+      >
+        <MoreInfoContiner
+          externalLinks={externalLinks}
+          componentId={componentId}
+        />
+      </View>
     </ScrollView>
   )
 }
