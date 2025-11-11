@@ -23,6 +23,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { getVerdictServiceStatusText } from '@island.is/judicial-system/formatters'
 import { indictmentCases } from '@island.is/judicial-system/types'
 import { type User } from '@island.is/judicial-system/types'
 
@@ -42,6 +43,7 @@ import {
   PdfService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { EventService } from '../event'
 import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { Case, Defendant, Verdict } from '../repository'
 import { CreateVerdictDto } from './dto/createVerdict.dto'
@@ -63,6 +65,7 @@ export class VerdictController {
     private readonly verdictService: VerdictService,
     private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly pdfService: PdfService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -172,14 +175,28 @@ export class VerdictController {
   async getVerdict(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
     @CurrentVerdict() verdict: Verdict,
     @CurrentHttpUser() user: User,
   ): Promise<Verdict> {
     this.logger.debug(
       `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
+    const currentVerdict = await this.verdictService.getAndSyncVerdict(
+      verdict,
+      user,
+    )
 
-    return this.verdictService.getAndSyncVerdict(verdict, user)
+    if (
+      currentVerdict.serviceStatus &&
+      currentVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(currentVerdict.serviceStatus),
+      })
+    }
+
+    return currentVerdict
   }
 
   @UseGuards(CaseCompletedGuard)

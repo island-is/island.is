@@ -19,6 +19,7 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { getVerdictServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -169,13 +170,26 @@ export class InternalVerdictController {
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
+    @CurrentCase() theCase: Case,
     @CurrentVerdict() verdict: Verdict,
     @Body() update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
     this.logger.debug(
       `Updating verdict by external police document id ${policeDocumentId}`,
     )
-    return await this.verdictService.updatePoliceDelivery(verdict, update)
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+    )
+    if (
+      updatedVerdict.serviceStatus &&
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
+      })
+    }
+    return updatedVerdict
   }
 
   @UseGuards(
