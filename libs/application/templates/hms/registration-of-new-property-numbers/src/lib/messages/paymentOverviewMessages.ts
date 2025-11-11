@@ -18,7 +18,7 @@ export const paymentOverview = defineMessages({
   },
   total: {
     id: 'ronp.application:paymentOverview.total',
-    defaultMessage: 'Samtals',
+    defaultMessage: 'Samtals til greiðslu',
     description: 'payment overview total label',
   },
   toPay: {

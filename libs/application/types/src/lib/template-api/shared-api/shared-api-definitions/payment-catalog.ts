@@ -10,6 +10,7 @@ export interface PaymentCatalogParameters {
 
 export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
   action: 'paymentCatalog',
+  externalDataId: 'payment',
   namespace: 'Payment',
   params: {
     organizationId: InstitutionNationalIds.SYSLUMENN,
@@ -19,7 +20,7 @@ export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
 
 export const MockablePaymentCatalogApi =
   defineTemplateApi<PaymentCatalogParameters>({
-    externalDataId: 'paymentCatalog',
+    externalDataId: 'payment',
     action: 'mockPaymentCatalog',
     namespace: 'Payment',
     params: {
