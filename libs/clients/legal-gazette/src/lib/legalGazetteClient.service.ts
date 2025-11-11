@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   LegalGazetteCommonApplicationApi,
   IslandIsSubmitCommonApplicationDto,
-  GetCategoriesRequest
+  GetCategoriesRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'

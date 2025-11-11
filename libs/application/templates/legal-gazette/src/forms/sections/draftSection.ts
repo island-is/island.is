@@ -47,9 +47,22 @@ export const draftSection = buildSection({
           required: true,
           loadOptions: async ({ apolloClient, selectedValues }) => {
             console.log('selectedValues', selectedValues)
-            const { data } = await apolloClient.query({ query: LEGAL_GAZETTE_CATEGORIES_QUERY, variables: { input: { typeId: selectedValues}} })
 
-            return []
+            if (!selectedValues) return []
+
+            const { data } = await apolloClient.query({
+              query: LEGAL_GAZETTE_CATEGORIES_QUERY,
+              variables: { input: { typeId: selectedValues[0] } },
+            })
+
+            const options = data.legalGazetteCategories.categories.map(
+              (c: LGBaseEntity) => ({
+                label: c.title,
+                value: c.id,
+              }),
+            )
+
+            return options
           },
         }),
         buildTextField({
@@ -67,18 +80,26 @@ export const draftSection = buildSection({
         buildDescriptionField({
           id: 'draft.signature',
           title: m.draft.sections.signature.formTitle,
+          description: m.errors.emptySignature,
           titleVariant: 'h4',
           marginTop: [2, 3, 4],
         }),
+
         buildTextField({
-          required: true,
+          id: 'signature.name',
+          title: m.draft.sections.signature.name,
+          placeholder: m.draft.sections.signature.namePlaceholder,
+          width: 'half',
+          backgroundColor: 'blue',
+        }),
+        buildTextField({
           id: 'signature.location',
           title: m.draft.sections.signature.location,
+          placeholder: m.draft.sections.signature.locationPlaceholder,
           width: 'half',
           backgroundColor: 'blue',
         }),
         buildDateField({
-          required: true,
           id: 'signature.date',
           title: m.draft.sections.signature.date,
           width: 'half',
@@ -90,9 +111,9 @@ export const draftSection = buildSection({
           },
         }),
         buildTextField({
-          required: true,
-          id: 'signature.name',
-          title: m.draft.sections.signature.name,
+          id: 'signature.onBehalfOf',
+          title: m.draft.sections.signature.onBehalfOf,
+          placeholder: m.draft.sections.signature.onBehalfOfPlaceholder,
           width: 'half',
           backgroundColor: 'blue',
         }),

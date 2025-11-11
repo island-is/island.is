@@ -20,7 +20,6 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.LEGAL_GAZETTE)
   }
 
-
   async getTypes({ auth }: TemplateApiModuleActionProps) {
     try {
       this.logger.debug('Fetching types from Legal Gazette API', {
@@ -71,7 +70,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
 
     const submitApplicationDto = {
       islandIsApplicationId: application.id,
-      typeId: application.typeId,
+      typeId: fields.typeId,
       categoryId: fields.categoryId,
       caption: fields.caption,
       htmlBase64: fields.html,
@@ -86,6 +85,8 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         phone: ch.phone ?? '',
       })),
     }
+
+    console.log('submitApplicationDto', submitApplicationDto)
 
     try {
       await this.legalGazetteClient.submitApplication(
