@@ -350,12 +350,12 @@ export const coreDefaultFieldMessages = defineMessages({
   },
   defaultUnitPriceTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
-    defaultMessage: 'Einingaverð',
+    defaultMessage: 'Verð',
     description: 'Unit price label for payment overview field',
   },
   defaultTotalPerUnitTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
-    defaultMessage: 'Samtals',
+    defaultMessage: 'Samtals verð',
     description: 'Total per unit label for payment overview field',
   },
 })

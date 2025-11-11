@@ -58,20 +58,9 @@ export const PaymentChargeOverviewFormField: FC<
         {selectedChargeWithInfoList.map((charge, index) => (
           <Box key={charge?.chargeItemCode}>
             <Text variant="h5">
-              {`${charge?.chargeItemName}` + charge.extraLabel
-                ? `- ${charge.extraLabel}`
-                : ''}
+              {charge?.chargeItemName}
+              {charge?.extraLabel ? ` - ${charge.extraLabel}` : ''}
             </Text>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.quantityLabel
-                  ? formatMessage(field.quantityLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultQuantityTitle,
-                    )}
-              </Text>
-              <Text>{charge?.quantity}</Text>
-            </Box>
             <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
               <Text>
                 {field.unitPriceLabel
@@ -84,19 +73,36 @@ export const PaymentChargeOverviewFormField: FC<
             </Box>
             <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
               <Text>
-                {field.totalPerUnitLabel
-                  ? formatMessage(field.totalPerUnitLabel)
+                {field.quantityLabel
+                  ? formatMessage(field.quantityLabel)
                   : formatMessage(
-                      coreDefaultFieldMessages.defaultTotalPerUnitTitle,
+                      coreDefaultFieldMessages.defaultQuantityTitle,
                     )}
               </Text>
               <Text>
-                {' '}
-                {formatIsk(
-                  (charge?.priceAmount || 0) * (charge?.quantity || 1),
-                )}
+                {charge?.quantity || 1}
+                {field.quantityUnitLabel
+                  ? ` ${formatMessage(field.quantityUnitLabel)}`
+                  : ''}
               </Text>
             </Box>
+            {selectedChargeWithInfoList.length > 1 && (
+              <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+                <Text variant="h5">
+                  {field.totalPerUnitLabel
+                    ? formatMessage(field.totalPerUnitLabel)
+                    : formatMessage(
+                        coreDefaultFieldMessages.defaultTotalPerUnitTitle,
+                      )}
+                </Text>
+                <Text variant="h5">
+                  {' '}
+                  {formatIsk(
+                    (charge?.priceAmount || 0) * (charge?.quantity || 1),
+                  )}
+                </Text>
+              </Box>
+            )}
             {index < selectedChargeWithInfoList.length - 1 && (
               <Box paddingY={3}>
                 <Divider />
@@ -109,9 +115,7 @@ export const PaymentChargeOverviewFormField: FC<
         <Divider />
       </Box>
       <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
-        <Text variant="h5">
-          {formatText(field.totalLabel, application, formatMessage)}
-        </Text>
+        <Text variant="h5">{formatMessage(field.totalLabel)}</Text>
         <Text color="blue400" variant="h3">
           {formatIsk(totalPrice)}
         </Text>
