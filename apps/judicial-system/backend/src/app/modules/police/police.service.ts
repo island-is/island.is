@@ -311,6 +311,7 @@ export class PoliceService {
     return { key, size: pdf.length }
   }
 
+  // Based off calculator on https://sektir.logreglan.is/
   private calculateOffset(recordedSpeed: number): number {
     let offsetSpeed = recordedSpeed
 
