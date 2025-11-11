@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/legal-gazette/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:api", "scope:api"],
   "// targets": "to see all targets run: nx show project legal-gazette --web",
   "targets": {}
 }
