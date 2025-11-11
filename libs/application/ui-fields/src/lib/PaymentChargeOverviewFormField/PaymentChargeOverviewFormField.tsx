@@ -59,7 +59,9 @@ export const PaymentChargeOverviewFormField: FC<
           <Box key={charge?.chargeItemCode}>
             <Text variant="h5">
               {charge?.chargeItemName}
-              {charge?.extraLabel ? ` - ${charge.extraLabel}` : ''}
+              {charge?.extraLabel
+                ? ` - ${formatMessage(charge.extraLabel)}`
+                : ''}
             </Text>
             <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
               <Text>
