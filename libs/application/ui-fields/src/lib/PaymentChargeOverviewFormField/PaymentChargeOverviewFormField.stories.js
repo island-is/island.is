@@ -18,7 +18,7 @@ const createMockApplication = (data = {}) => ({
           chargeItemName: 'Payment code description',
           chargeItemCode: 'ipsum',
         },
-                {
+        {
           priceAmount: 200,
           chargeItemName: 'Payment code description two',
           chargeItemCode: 'muspi',
@@ -65,12 +65,12 @@ export const Multiple = {
         getSelectedChargeItems: (_) => [
           {
             chargeItemCode: 'ipsum',
-            extraLabel: 'ExtraLabel'
+            extraLabel: 'ExtraLabel',
           },
           {
             chargeItemCode: 'muspi',
             chargeItemQuantity: 3,
-          }
+          },
         ],
       }}
     />
@@ -93,12 +93,12 @@ export const WithCustomStrings = {
         getSelectedChargeItems: (_) => [
           {
             chargeItemCode: 'ipsum',
-            extraLabel: 'ExtraLabel'
+            extraLabel: 'ExtraLabel',
           },
           {
             chargeItemCode: 'muspi',
             chargeItemQuantity: 3,
-          }
+          },
         ],
       }}
     />
