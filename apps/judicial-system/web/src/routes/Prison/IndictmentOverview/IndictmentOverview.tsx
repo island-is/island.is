@@ -91,7 +91,7 @@ const IndictmentOverview = () => {
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+  const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision ?? undefined,
       sentToPrisonAdminDate,
@@ -290,7 +290,7 @@ const IndictmentOverview = () => {
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={[pdfElementId, pdfTitle]}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}
