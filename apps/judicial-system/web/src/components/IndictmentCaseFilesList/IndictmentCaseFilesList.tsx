@@ -203,7 +203,6 @@ export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
 
   return {
     pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
-    pdfElementId: baseTitle,
     isCompletedWithRulingOrFine:
       indictmentRulingDecision === CaseIndictmentRulingDecision.RULING ||
       indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
@@ -245,7 +244,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+  const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision,
       sentToPrisonAdminDate,
@@ -485,7 +484,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={[pdfElementId, pdfTitle]}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}
