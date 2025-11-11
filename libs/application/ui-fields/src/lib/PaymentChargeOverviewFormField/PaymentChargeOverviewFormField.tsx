@@ -1,6 +1,7 @@
 import {
   coreDefaultFieldMessages,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -17,6 +18,12 @@ interface Props extends FieldBaseProps {
   field: PaymentChargeOverviewField
 }
 
+type PaymentData = {
+  priceAmount: number
+  chargeItemName: string
+  chargeItemCode: string
+}
+
 export const PaymentChargeOverviewFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
@@ -24,13 +31,10 @@ export const PaymentChargeOverviewFormField: FC<
 
   // get list of selected charge items with info
   const selectedChargeList = field.getSelectedChargeItems(application)
-  const allChargeWithInfoList = application?.externalData?.payment?.data as [
-    {
-      priceAmount: number
-      chargeItemName: string
-      chargeItemCode: string
-    },
-  ]
+  // We assume that the payment catalog has the externalID 'payment'
+  const allChargeWithInfoList =
+    getValueViaPath<PaymentData[]>(application.externalData, 'payment.data') ||
+    []
   const selectedChargeWithInfoList = selectedChargeList.map((charge) => {
     const chargeWithInfo = allChargeWithInfoList.find(
       (chargeWithInfo) =>
