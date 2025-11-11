@@ -156,16 +156,14 @@ const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN = `
     </p>
     <p>
       An appeal must be declared in a written notice that must be 
-      received by the berast <b>State Prosecutor</b> within 
-      <b>four weeks</b> of the judgment being served on you or 
-      delivered if service was not required. If neither you nor the 
-      State Prosecutor has appealed the judgment within that time, 
-      it is considered that the District Court is satisfied by both 
-      parties, in other words that both parties accept the judgment. 
-      However, it is possible to apply for leave to appeal to the 
-      <b>State Prosecutor</b> up to <b>three months</b> after the 
-      end of the appeal period, provided that further conditions 
-      are met.
+      received by the <b>State Prosecutor</b> within <b>four weeks</b> 
+      of the judgment being served on you or delivered if service was 
+      not required. If neither you nor the State Prosecutor has appealed 
+      the judgment within that time, it is considered that the District 
+      Court is satisfied by both parties, in other words that both parties 
+      accept the judgment. However, it is possible to apply for leave to 
+      appeal to the <b>State Prosecutor</b> up to <b>three months</b> after 
+      the end of the appeal period, provided that further conditions are met.
     </p>
     <p>
       Permission to appeal lesser sentences (which are generally not 
