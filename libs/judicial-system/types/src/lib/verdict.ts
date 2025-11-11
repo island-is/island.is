@@ -1,4 +1,5 @@
 import { VerdictServiceStatus } from './defendant'
+import { DocumentDeliveryMethod } from './policeDocument'
 
 export enum ServiceRequirement {
   REQUIRED = 'REQUIRED', // Ruling must be served
@@ -25,14 +26,11 @@ export enum InformationForDefendant {
   ITEM_CONFISCATION = 'ITEM_CONFISCATION',
 }
 
-export const DELIVERY_METHOD_LEGAL_PAPER = 'LOGBIRTING_BIRT' as const
-
 export const mapPoliceVerdictDeliveryStatus = ({
   delivered,
   deliveredOnPaper,
   deliveredOnIslandis,
   deliveredToLawyer,
-  legalPaperRequestDate,
   deliveredToDefendant,
   deliveryMethod,
 }: {
@@ -40,14 +38,11 @@ export const mapPoliceVerdictDeliveryStatus = ({
   deliveredOnPaper?: boolean
   deliveredOnIslandis?: boolean
   deliveredToLawyer?: boolean
-  legalPaperRequestDate?: string
   deliveredToDefendant?: boolean
   deliveryMethod?: string
 }) => {
   if (delivered) {
-    // TODO: More sophisticated mapping later when we have moved all delivery types
-    // to delivery methods instead of boolean flags
-    if (deliveryMethod === DELIVERY_METHOD_LEGAL_PAPER) {
+    if (deliveryMethod === DocumentDeliveryMethod.LEGAL_PAPER) {
       return VerdictServiceStatus.LEGAL_PAPER
     }
     if (deliveredOnPaper || deliveredToDefendant) {
@@ -60,9 +55,6 @@ export const mapPoliceVerdictDeliveryStatus = ({
       return VerdictServiceStatus.DEFENDER
     }
     return VerdictServiceStatus.FAILED
-  }
-  if (legalPaperRequestDate) {
-    return VerdictServiceStatus.LEGAL_PAPER
   }
   return undefined
 }

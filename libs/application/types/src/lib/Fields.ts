@@ -547,6 +547,7 @@ export interface TextField extends InputField {
   showMaxLength?: boolean
   max?: number
   min?: number
+  allowNegative?: boolean
   step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
