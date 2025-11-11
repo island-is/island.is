@@ -463,7 +463,7 @@ const ITEM_CONFISCATION_DESCRIPTION_EN = `
 `
 export const informationForDefendantMap: Map<
   InformationForDefendant,
-  { label: Lang; description: Lang }
+  { label: Lang; description: Lang; detail?: string }
 > = new Map([
   [
     InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
@@ -485,6 +485,8 @@ export const informationForDefendantMap: Map<
         is: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
         en: 'Information about appeals to the Landsréttur Court and appeal deadlines',
       },
+      detail:
+        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
       description: {
         is: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION,
         en: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN,
