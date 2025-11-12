@@ -1,6 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
+import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
@@ -12,6 +13,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -40,7 +42,7 @@ import {
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
-import { Case, DateLog, Defendant } from '../repository'
+import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -143,6 +145,7 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
+    artalNrGreinLidur: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -184,6 +187,9 @@ export class PoliceService {
   })
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
+    @InjectModel(IndictmentSubtype)
+    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -486,8 +492,12 @@ export class PoliceService {
               gotuHeiti?: string | null
               gotuNumer?: string | null
               sveitafelag?: string | null
+              artalNrGreinLidur?: string | null
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
+              const article = info.artalNrGreinLidur
+              const subtype = this.getSubtypeByArticle(article)
+              console.log({ subtype }, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
               const place = formatCrimeScenePlace(
                 info.gotuHeiti,
@@ -920,5 +930,14 @@ export class PoliceService {
 
       return false
     }
+  }
+
+  getSubtypeByArticle(
+    article?: string | null,
+  ): Promise<IndictmentSubtype | null> {
+    console.log({ article })
+    return this.indictmentSubtypeModel.findOne({
+      where: { article },
+    })
   }
 }
