@@ -42,6 +42,7 @@ describe('InternalVerdictController - deliverVerdictToNationalCommissionersOffic
 describe('InternalVerdictController - updateVerdict', () => {
   verifyGuards(InternalVerdictController, 'updateVerdict', [
     ExternalPoliceVerdictExistsGuard,
+    CaseExistsGuard,
   ])
 })
 

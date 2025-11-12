@@ -54,7 +54,7 @@ describe('InternalVerdictController - Update verdict', () => {
       const then = {} as Then
 
       await internalVerdictController
-        .updateVerdict(externalPoliceDocumentId, theCase, verdict, dto)
+        .updateVerdict(externalPoliceDocumentId, verdict, theCase, dto)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
