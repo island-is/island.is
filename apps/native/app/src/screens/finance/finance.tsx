@@ -4,7 +4,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
-import { ExternalLink } from '../../components/external-links/external-links'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
@@ -14,7 +14,6 @@ import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useBrowser } from '../../lib/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
-import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
