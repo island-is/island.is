@@ -26,14 +26,14 @@ import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Loader } from '@island.is/nest/dataloader'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { DocumentsScope, notificationScopes } from '@island.is/auth/scopes'
 
 const LOG_CATEGORY = 'notification-list-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationsResponse)
 @Audit({ namespace: AUDIT_NAMESPACE })
-@Scopes(DocumentsScope.main)
+@Scopes(...notificationScopes)
 export class NotificationsListResolver {
   constructor(
     private readonly service: NotificationsService,

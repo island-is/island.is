@@ -12,10 +12,12 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
+import { ActorNotification } from './actor-notification.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
@@ -30,6 +32,8 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -52,6 +56,8 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    @InjectModel(ActorNotification)
+    private readonly actorNotificationModel: typeof ActorNotification,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -162,15 +168,19 @@ export class NotificationsService {
    */
   validate(template: HnippTemplate, args: ArgumentDto[]): void {
     const providedKeys = args.map((arg) => arg.key)
+    console.log('providedKeys', providedKeys)
 
-    const missingArgs = template.args.filter(
+    // Filter out 'subject' from template args since it's optional and not used in template replacement
+    const requiredArgs = template.args.filter((arg) => arg !== 'subject')
+
+    const missingArgs = requiredArgs.filter(
       (requiredKey) => !providedKeys.includes(requiredKey),
     )
     if (missingArgs.length > 0) {
       throw new BadRequestException(
         `Missing required arguments for template '${
           template.templateId
-        }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
+        }': ${missingArgs.join(', ')}. Required args are: ${requiredArgs.join(
           ', ',
         )}`,
       )
@@ -271,6 +281,7 @@ export class NotificationsService {
   findMany(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     return paginate({
       Model: this.notificationModel,
@@ -279,7 +290,12 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
       attributes: ['id', 'messageId', 'senderId', 'created', 'updated'],
     })
   }
@@ -287,9 +303,11 @@ export class NotificationsService {
   async findManyWithTemplate(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     const locale = mapToLocale(query.locale as Locale)
     const templates = await this.getTemplates(locale)
+
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -297,7 +315,12 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
     })
 
     const formattedNotifications = await Promise.all(
@@ -416,5 +439,39 @@ export class NotificationsService {
         'Error marking all notifications as read',
       )
     }
+  }
+
+  /**
+   * Finds actor notifications for a specific recipient and optionally onBehalfOf national ID
+   */
+  findActorNotifications(
+    recipient: string,
+    onBehalfOfNationalId?: string,
+    query?: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    const whereClause: any = { recipient }
+
+    if (onBehalfOfNationalId) {
+      whereClause.onBehalfOfNationalId = onBehalfOfNationalId
+    }
+
+    return paginate({
+      Model: this.actorNotificationModel,
+      limit: query?.limit || 10,
+      after: query?.after || '',
+      before: query?.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      where: whereClause,
+      attributes: [
+        'id',
+        'messageId',
+        'rootMessageId',
+        'recipient',
+        'onBehalfOfNationalId',
+        'created',
+        'updated',
+      ],
+    })
   }
 }

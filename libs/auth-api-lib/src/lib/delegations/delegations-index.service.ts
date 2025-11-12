@@ -239,41 +239,36 @@ export class DelegationsIndexService {
     return new Set(types?.split(',').map((type) => type.trim()))
   }
 
-  /* Lookup delegations in index for user for specific scope */
+  /* Lookup delegations in index for user for specific scope(s) */
   async getDelegationRecords({
-    scope,
+    scopes,
     nationalId,
     direction = DelegationDirection.OUTGOING,
   }: {
-    scope: string
+    scopes: string[]
     nationalId: string
     direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
-    const apiScope = await this.apiScopeModel.findOne({
+    // Validate that all scopes exist
+    const apiScopes = await this.apiScopeModel.findAll({
       where: {
-        name: scope,
+        name: { [Op.in]: scopes },
       },
     })
-    if (!apiScope) {
-      throw new BadRequestException('Invalid scope')
-    }
 
-    const delegationTypesSupportedByScope =
-      await this.apiScopeDelegationTypeModel
-        .findAll({
-          where: {
-            apiScopeName: apiScope.name,
-          },
-        })
-        .then((x) => x.map((d) => d.delegationType))
+    console.log('Magneaðir scopes', scopes)
+
+    if (apiScopes.length !== scopes.length) {
+      const foundScopes = apiScopes.map((s) => s.name)
+      const invalidScopes = scopes.filter((s) => !foundScopes.includes(s))
+      throw new BadRequestException(
+        `Invalid scope(s): ${invalidScopes.join(', ')}`,
+      )
+    }
 
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('Invalid national id')
     }
-
-    const supportsCustom = delegationTypesSupportedByScope.includes(
-      AuthDelegationType.Custom,
-    )
 
     const where = {
       ...(direction === DelegationDirection.INCOMING
@@ -282,38 +277,79 @@ export class DelegationsIndexService {
       validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
     }
 
-    const delegations = await this.delegationIndexModel
-      .findAll({
-        where: {
-          [Op.or]: [
-            {
-              ...where,
-              type: {
-                [Op.in]: delegationTypesSupportedByScope.filter(
-                  (d) => d !== AuthDelegationType.Custom,
-                ),
-              },
+    try {
+      // Process each scope individually since different scopes might support different delegation types
+      // Use Promise.all to run all scope queries in parallel for better performance
+      const scopePromises = apiScopes.map(async (scope) => {
+        // Get delegation types supported by this specific scope
+        const scopeDelegationTypes = await this.apiScopeDelegationTypeModel
+          .findAll({
+            where: {
+              apiScopeName: scope.name,
             },
-            supportsCustom
-              ? {
-                  ...where,
-                  type: AuthDelegationType.Custom,
-                  customDelegationScopes: { [Op.contains]: [apiScope.name] },
-                }
-              : {},
-          ],
-        },
-      })
-      .then((d) => d.flat().map((d) => d.toDTO()))
-      .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+          })
+          .then((x) => x.map((d) => d.delegationType))
 
-    // For now, we don't implement pagination but still return the paginated response
-    return {
-      data: delegations,
-      totalCount: delegations.length,
-      pageInfo: {
-        hasNextPage: false,
-      },
+        console.log(
+          `Scope ${scope.name} supports delegation types:`,
+          scopeDelegationTypes,
+        )
+
+        // Check if this scope supports Custom delegations
+        const scopeSupportsCustom = scopeDelegationTypes.includes(
+          AuthDelegationType.Custom,
+        )
+
+        console.log('MAGENA scopeSupportsCustom', scope.name, {
+          scopeSupportsCustom,
+        })
+
+        const delegations = await this.delegationIndexModel
+          .findAll({
+            where: {
+              [Op.or]: [
+                {
+                  ...where,
+                  type: {
+                    [Op.in]: scopeDelegationTypes.filter(
+                      (d) => d !== AuthDelegationType.Custom,
+                    ),
+                  },
+                },
+                scopeSupportsCustom
+                  ? {
+                      ...where,
+                      type: AuthDelegationType.Custom,
+                      customDelegationScopes: { [Op.contains]: [scope.name] },
+                    }
+                  : {},
+              ],
+            },
+          })
+          .then((d) => d.flat().map((d) => d.toDTO()))
+          .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+
+        console.log('MAGENA delegations', scope.name, delegations)
+
+        return delegations
+      })
+
+      // Wait for all scope queries to complete
+      const delegations = (await Promise.all(scopePromises)).flat()
+
+      console.log('MAGENA ALL', delegations)
+
+      // For now, we don't implement pagination but still return the paginated response
+      return {
+        data: delegations,
+        totalCount: delegations.length,
+        pageInfo: {
+          hasNextPage: false,
+        },
+      }
+    } catch (error) {
+      console.error('MAGENA getDelegationRecords error', error)
+      throw error
     }
   }
 

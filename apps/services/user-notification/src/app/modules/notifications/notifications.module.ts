@@ -21,6 +21,7 @@ import { NotificationsController } from './notifications.controller'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
+import { ActorNotification } from './actor-notification.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { MessageProcessorService } from './messageProcessor.service'
@@ -28,7 +29,7 @@ import { MessageProcessorService } from './messageProcessor.service'
 @Module({
   exports: [NotificationsService],
   imports: [
-    SequelizeModule.forFeature([Notification]),
+    SequelizeModule.forFeature([Notification, ActorNotification]),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

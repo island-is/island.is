@@ -7,7 +7,6 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { msg } from '../../lib/messages'
-import { NotificationSettings } from '../../components/NotificationSettings/NotificationSettings/NotificationSettings'
 
 const CompanySettings = () => {
   const { formatMessage } = useLocale()
@@ -23,7 +22,6 @@ const CompanySettings = () => {
         serviceProviderSlug={ISLANDIS_SLUG}
       />
       <ProfileForm showIntroText={false} title={profile.name || ''} />
-      <NotificationSettings />
     </>
   )
 }

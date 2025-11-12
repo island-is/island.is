@@ -6,6 +6,7 @@ query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
       externalBody: notificationBody
       internalBody: notificationDataCopy
       clickActionUrl
+      scope
       args
     }
   }
@@ -19,6 +20,7 @@ query GetTemplates($locale: String!) {
       externalBody: notificationBody
       internalBody: notificationDataCopy
       clickActionUrl
+      scope
       args
     }
   }

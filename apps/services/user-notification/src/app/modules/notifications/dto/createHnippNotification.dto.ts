@@ -43,6 +43,15 @@ export class CreateHnippNotificationDto {
   @ApiPropertyOptional()
   onBehalfOf?: HnippNotificationOriginalRecipientDto
 
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    description:
+      'Root message ID to track the original notification when creating delegation messages',
+  })
+  rootMessageId?: string
+
   @IsString()
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
   templateId!: string
@@ -58,4 +67,13 @@ export class CreateHnippNotificationDto {
     ],
   })
   args!: ArgumentDto[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    example: 'Email subject line',
+    description:
+      'Optional subject line for email notifications. If not provided, the template title will be used.',
+  })
+  subject?: string
 }

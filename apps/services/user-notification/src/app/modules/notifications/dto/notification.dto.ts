@@ -190,3 +190,64 @@ export class UnseenNotificationsCountDto {
   @IsInt()
   unseenCount!: number
 }
+
+export class ActorNotificationDto {
+  @ApiProperty({ example: 123 })
+  @IsInt()
+  id!: number
+
+  @ApiProperty({ example: 'uuid-message-id' })
+  @IsString()
+  @IsUUID()
+  messageId!: string
+
+  @ApiProperty({ example: 'uuid-root-message-id' })
+  @IsString()
+  @IsUUID()
+  @IsOptional()
+  rootMessageId?: string
+
+  @ApiProperty({ example: '1234567890' })
+  @IsString()
+  recipient!: string
+
+  @ApiProperty({ example: '0987654321' })
+  @IsString()
+  onBehalfOfNationalId!: string
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @IsDate()
+  created!: Date
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @IsDate()
+  updated!: Date
+}
+
+export class PaginatedActorNotificationDto {
+  @ApiProperty({ example: 100 })
+  @IsInt()
+  totalCount!: number
+
+  @ApiProperty({
+    type: [ActorNotificationDto],
+    example: [
+      {
+        /* ... */
+      },
+    ],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ActorNotificationDto)
+  data!: ActorNotificationDto[]
+
+  @ApiProperty({
+    example: {
+      /* ... */
+    },
+  })
+  @ValidateNested()
+  @Type(() => PageInfoDto)
+  pageInfo!: PageInfoDto
+}

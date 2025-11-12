@@ -68,6 +68,13 @@ export class Notification extends Model<
   templateId!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'scope',
+  })
+  scope!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     field: 'args',

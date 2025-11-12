@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { notificationScopes } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
+  CurrentActor,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -33,8 +34,8 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(DocumentsScope.main)
-@ApiSecurity('oauth2', [DocumentsScope.main])
+@Scopes(...notificationScopes)
+@ApiSecurity('oauth2', notificationScopes)
 @ApiTags('user-notification')
 @Controller({
   path: 'me/notifications',
@@ -50,9 +51,16 @@ export class MeNotificationsController {
   })
   findMany(
     @CurrentUser() user: User,
+    @CurrentActor() actor: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationService.findManyWithTemplate(user.nationalId, query)
+    console.log('actor.scope', actor.scope)
+    console.log('user.scope', user.scope)
+    return this.notificationService.findManyWithTemplate(
+      user.nationalId,
+      query,
+      user.scope,
+    )
   }
 
   @Get('/unread-count')

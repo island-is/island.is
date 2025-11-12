@@ -27,7 +27,7 @@ import {
   PaginatedNotificationDto,
 } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -105,7 +105,11 @@ export class NotificationsController {
     @Headers('X-Query-National-Id') nationalId: string,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationsService.findMany(nationalId, query)
+    return this.notificationsService.findMany(
+      nationalId,
+      query,
+      notificationScopes,
+    )
   }
 
   @Documentation({

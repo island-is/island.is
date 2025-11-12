@@ -14,7 +14,9 @@ export const UserProfileInfo = ({
 }: UserProfileInfoProps) => {
   const { formatMessage } = useLocale()
   const origin = window.location.origin
-  const baseUrl = `${origin}/minarsidur/stillingar`
+  const settingsPath = isCompany
+    ? '/minarsidur/fyrirtaeki/stillingar/'
+    : '/minarsidur/min-gogn/stillingar/'
 
   return (
     <UserDropdownItem
@@ -23,7 +25,7 @@ export const UserProfileInfo = ({
           ? userMessages.companyInformation
           : userMessages.personalInformation,
       )}
-      link={`${baseUrl}/minar-stillingar`}
+      link={`${origin}${settingsPath}`}
       icon={{ type: 'outline', icon: 'settings' }}
       onClick={() => onClick()}
     />

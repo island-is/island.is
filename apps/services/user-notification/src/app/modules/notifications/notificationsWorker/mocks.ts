@@ -138,6 +138,7 @@ export const getMockHnippTemplate = ({
   internalBody = 'Demo data copy',
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
+  scope = '@island.is/documents',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -145,6 +146,7 @@ export const getMockHnippTemplate = ({
   internalBody,
   clickActionUrl,
   args,
+  scope,
 })
 
 export const userProfiles = [

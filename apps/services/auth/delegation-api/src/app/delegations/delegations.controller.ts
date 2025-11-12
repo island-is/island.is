@@ -1,4 +1,11 @@
-import { Controller, Get, Headers, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Headers,
+  ParseArrayPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -47,10 +54,11 @@ export class DelegationsController {
         },
       },
       query: {
-        scope: {
+        scopes: {
           required: true,
           type: 'string',
-          description: 'fetch delegations that have access to this scope',
+          description:
+            'fetch delegations that have access to these scopes (comma-separated for multiple scopes)',
         },
         direction: {
           description:
@@ -67,22 +75,33 @@ export class DelegationsController {
   async getDelegationRecords(
     @CurrentAuth() auth: Auth,
     @Headers('X-Query-National-Id') nationalId: string,
-    @Query('scope') scope: string,
+    @Query('scopes', new ParseArrayPipe({ items: String, separator: ',' }))
+    scopes: string[],
     @Query('direction') direction = DelegationDirection.OUTGOING,
   ): Promise<PaginatedDelegationRecordDTO> {
+    console.log('🔧 Delegation API - Request received:', {
+      nationalId,
+      scopes,
+      direction,
+      auth: {
+        nationalId: auth.nationalId,
+        scope: auth.scope,
+        client: auth.client,
+      },
+    })
     return this.auditService.auditPromise(
       {
         auth,
         action: 'getDelegationRecords',
         resources: (delegations) => delegations.data.map((d) => d.toNationalId),
         meta: {
-          scope,
+          scopes,
           nationalId,
           direction,
         },
       },
       this.delegationIndexService.getDelegationRecords({
-        scope,
+        scopes,
         nationalId,
         direction,
       }),

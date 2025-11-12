@@ -335,7 +335,7 @@ describe('UserProfileController', () => {
           delegationsApi.delegationsControllerGetDelegationRecords,
         ).toHaveBeenCalledWith({
           xQueryNationalId: testUserProfile.nationalId,
-          scope: '@island.is/documents',
+          scopes: '@island.is/documents',
           direction: 'incoming',
         })
       })

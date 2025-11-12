@@ -8,10 +8,18 @@ import {
   GridRow,
   PhoneInput,
   SkeletonLoader,
+  ToggleSwitchButton,
+  Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Link } from 'react-router-dom'
-import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
+import {
+  LoadModal,
+  m,
+  parseNumber,
+  isCompany,
+} from '@island.is/portals/my-pages/core'
 import {
   useDeleteEmailOrPhoneValue,
   useUserProfile,
@@ -22,7 +30,9 @@ import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
 import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTypeFeatureFlag'
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
-import { emailsMsg, msg } from '../../../../lib/messages'
+import { emailsMsg, msg, mNotifications } from '../../../../lib/messages'
+import { usePaperMail } from '../../../../hooks/usePaperMail'
+import { safeAwait } from '@island.is/shared/utils'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { EmailsList } from '../../../emails/EmailsList/EmailsList'
@@ -94,7 +104,42 @@ export const ProfileForm = ({
   }, [userProfile?.emails])
 
   const [confirmNudge] = useConfirmNudgeMutation()
-  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
+  const isCompanyUser = isCompany(userInfo)
+
+  const {
+    wantsPaper,
+    postPaperMailMutation,
+    loading: paperMailLoading,
+  } = usePaperMail()
+  const [isPaperMailEnabled, setIsPaperMailEnabled] = useState<boolean>(
+    wantsPaper ?? false,
+  )
+
+  useEffect(() => {
+    if (wantsPaper !== null && wantsPaper !== undefined) {
+      setIsPaperMailEnabled(wantsPaper)
+    }
+  }, [wantsPaper])
+
+  const onPaperMailChange = async (active: boolean) => {
+    setIsPaperMailEnabled(active)
+
+    const { data, error } = await safeAwait(
+      postPaperMailMutation({
+        variables: {
+          input: { wantsPaper: active },
+        },
+      }),
+    )
+
+    if (error) {
+      setIsPaperMailEnabled(!active)
+      toast.error(formatMessage(mNotifications.updateError))
+      return
+    }
+
+    setIsPaperMailEnabled(data?.data?.postPaperMailInfo?.wantsPaper ?? active)
+  }
 
   /**
    * Creates a link to the IDS user profile page.
@@ -194,7 +239,7 @@ export const ProfileForm = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
-          {!isCompany && (
+          {!isCompanyUser && (
             <>
               {!isCheckingFeatureFlag &&
                 (isDelegationTypeEnabled ? (
@@ -269,7 +314,7 @@ export const ProfileForm = ({
                 loading={userLoading}
               >
                 {!userLoading &&
-                  (!isCompany ? (
+                  (!isCompanyUser ? (
                     <WithLinkWrapper
                       input={
                         <PhoneInput
@@ -307,7 +352,7 @@ export const ProfileForm = ({
                 title={formatMessage(m.bankAccountInfo)}
                 text={formatMessage(msg.editBankInfoText)}
                 loading={userLoading}
-                divider={false}
+                divider={isDelegationTypeEnabled && isCompanyUser}
               >
                 {!userLoading && !userProfile?.bankInfoError && (
                   <BankInfoForm
@@ -318,6 +363,37 @@ export const ProfileForm = ({
                   <Problem size="small" />
                 )}
               </InputSection>
+              {isDelegationTypeEnabled && isCompanyUser && (
+                <Box paddingTop={4}>
+                  {paperMailLoading ? (
+                    <Box paddingBottom={3}>
+                      <SkeletonLoader />
+                    </Box>
+                  ) : (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="spaceBetween"
+                      columnGap={3}
+                    >
+                      <Box>
+                        <Text variant="h5" as="h2" marginBottom={1}>
+                          {formatMessage(mNotifications.paperMailTitle)}
+                        </Text>
+                        <Text variant="medium">
+                          {formatMessage(msg.editPaperMailText)}
+                        </Text>
+                      </Box>
+                      <ToggleSwitchButton
+                        label={formatMessage(mNotifications.paperMailAriaLabel)}
+                        checked={isPaperMailEnabled}
+                        onChange={onPaperMailChange}
+                        hiddenLabel
+                      />
+                    </Box>
+                  )}
+                </Box>
+              )}
             </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (

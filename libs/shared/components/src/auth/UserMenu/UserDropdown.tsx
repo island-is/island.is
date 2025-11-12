@@ -11,6 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
+import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
+import {
+  hasNotificationScopes,
+  isCompany,
+} from '@island.is/portals/my-pages/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -53,10 +58,11 @@ export const UserDropdown = ({
   const isDelegation = checkDelegation(user)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-  const hasAccessToUserProfileInfo = user?.scopes?.includes(
-    '@island.is/documents',
-  )
+  const isDelegationCompany = isCompany(user)
+  const userHasNotificationScopes = hasNotificationScopes(user?.scopes)
+  const hasAccessToUserProfileInfo = isDelegationCompany
+    ? userHasNotificationScopes || user?.scopes?.includes(ApiScope.company)
+    : userHasNotificationScopes
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
