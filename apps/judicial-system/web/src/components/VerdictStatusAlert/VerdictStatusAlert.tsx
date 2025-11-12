@@ -114,7 +114,7 @@ const VerdictStatusAlertMessage = ({
     return (
       <AlertMessage
         type="success"
-        title={`Birting tókst - ${defendantName}`}
+        title={`Dómur birtur - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (
