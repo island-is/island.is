@@ -20,8 +20,7 @@ const filterSections = (
       (section): section is FormSystemSection =>
         section !== null &&
         section !== undefined &&
-        (section.sectionType === SectionTypes.INPUT ||
-          section.sectionType === SectionTypes.PARTIES),
+        section.sectionType === SectionTypes.INPUT,
     )
     .sort((a, b) => {
       const ao = a.displayOrder ?? Number.MAX_SAFE_INTEGER

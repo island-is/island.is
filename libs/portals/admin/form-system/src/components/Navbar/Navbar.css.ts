@@ -21,3 +21,17 @@ export const minimalScrollbar = style({
     },
   },
 })
+
+export const addSectionButton = style({
+  position: 'sticky',
+  bottom: 0,
+  background: 'white',
+  flexShrink: 0,
+  padding: '1rem',
+})
+
+export const navbarContainer = style({
+  flex: 1,
+  overflowY: 'auto',
+  paddingBottom: '1rem',
+})
