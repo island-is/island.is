@@ -8,13 +8,12 @@ import { ApplicationType } from '../../utils/constants'
 
 export const applicationTypeSection = buildSection({
   id: 'applicationTypeSection',
-  title: newPrimarySchoolMessages.applicationType.applicationTypeSectionTitle,
+  title: newPrimarySchoolMessages.applicationType.sectionTitle,
   condition: (answers) => !answers.applicationType,
   children: [
     buildMultiField({
       id: 'applicationTypeMultiField',
-      title:
-        newPrimarySchoolMessages.applicationType.applicationTypeSectionTitle,
+      title: newPrimarySchoolMessages.applicationType.sectionTitle,
       children: [
         buildRadioField({
           id: 'applicationType',
@@ -25,8 +24,8 @@ export const applicationTypeSection = buildSection({
               label:
                 newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName,
               subLabel:
-                newPrimarySchoolMessages.applicationType
-                  .applicationTypeSchoolTransferSubLabel,
+                newPrimarySchoolMessages.applicationType.schoolTransferSubLabel,
+              dataTestId: 'new-primary-school',
             },
             {
               value: ApplicationType.CONTINUING_ENROLLMENT,
@@ -35,7 +34,8 @@ export const applicationTypeSection = buildSection({
                   .continuingEnrollmentApplicationName,
               subLabel:
                 newPrimarySchoolMessages.applicationType
-                  .applicationTypeContinuingEnrollmentSubLabel,
+                  .continuingEnrollmentSubLabel,
+              dataTestId: 'continuing-enrollment',
             },
           ],
         }),
