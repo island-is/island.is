@@ -96,10 +96,10 @@ export enum CaseWorkerInputTypeEnum {
 }
 
 export enum OrganizationSubType {
-  SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT = 'specialEducationBehaviorDepartment',
-  SPECIAL_EDUCATION_BEHAVIOR_SCHOOL = 'specialEducationBehaviorSchool',
-  SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment',
-  SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool',
+  SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT = 'specialEducationBehaviorDepartment', // Sérdeild - Hegðun
+  SPECIAL_EDUCATION_BEHAVIOR_SCHOOL = 'specialEducationBehaviorSchool', // Sérskóli - Hegðun
+  SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment', // Sérdeild - Fötlun
+  SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool', // Sérskóli - Fötlun
   INTERNATIONAL_SCHOOL = 'internationalSchool',
   GENERAL_SCHOOL = 'generalSchool',
 }

@@ -7,21 +7,14 @@ import {
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getSelectedSchoolSubType } from '../../../utils/newPrimarySchoolUtils'
 import { OrganizationSubType } from '../../../utils/constants'
+import { hasSpecialEducationSubType } from '../../../utils/conditionUtils'
 
 export const childCircumstancesSubSection = buildSubSection({
   id: 'childCircumstancesSubSection',
   title:
     newPrimarySchoolMessages.differentNeeds.childCircumstancesSubSectionTitle,
-  condition: (answers, externalData) => {
-    const subType = getSelectedSchoolSubType(answers, externalData)
-
-    return (
-      subType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-      subType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
-      subType === OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
-      subType === OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
-    )
-  },
+  condition: (answers, externalData) =>
+    hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'childCircumstances',
