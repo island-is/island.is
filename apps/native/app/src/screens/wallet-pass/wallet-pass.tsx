@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -29,6 +29,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { useLicensesQuery } from '../../hooks/use-license-list'
 import { useOfflineStore } from '../../stores/offline-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import {
@@ -182,6 +183,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
+  const locale = useLocale()
   const [addingToWallet, setAddingToWallet] = useState(false)
   const walletPassDismissedInfoAlerts = usePreferencesStore(
     (state) => state.walletPassDismissedInfoAlerts,
@@ -194,6 +196,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     'isAddToWalletButtonEnabled',
     true,
   )
+
+  // Fallback value for no network connection
+  const listLicensesRes = useLicensesQuery({
+    fetchPolicy: 'cache-only',
+    locale,
+  })
   const fadeInAnim = useRef(new Animated.Value(0)).current
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
@@ -205,15 +213,37 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         licenseType: type,
         licenseId: id,
       },
-      locale: useLocale(),
+      locale,
     },
   })
 
-  const data = res.data?.genericLicense ?? item
+  const cachedLicense = useMemo<GenericUserLicense | undefined>(() => {
+    if (!type) {
+      return undefined
+    }
+
+    const byId = listLicensesRes.licenses.find(
+      (license) =>
+        license.payload?.metadata?.licenseId === id &&
+        license.license?.type === type,
+    )
+
+    if (byId) {
+      return byId
+    }
+
+    return listLicensesRes.licenses.find(
+      (license) => license.license?.type === type,
+    )
+  }, [listLicensesRes.licenses, type, id])
+
+  // First check the network, then input item, then cached license
+  const data = res.data?.genericLicense ?? item ?? cachedLicense
+
   const isExpired = data?.payload?.metadata?.expired
-  const expireDate = item?.payload?.metadata?.expireDate
+  const expireDate = data?.payload?.metadata?.expireDate
   const expireWarning =
-    item?.payload?.metadata?.expiryStatus ===
+    data?.payload?.metadata?.expiryStatus ===
     GenericUserLicenseExpiryStatus.Expiring
   const fields = data?.payload?.data ?? []
   const isTablet = screenWidth > 760
@@ -312,14 +342,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     if (canAddPass || isAndroid) {
       try {
         setAddingToWallet(true)
-        const { data } = await generatePkPass({
+        const { data: generatedPkPass } = await generatePkPass({
           variables: {
             input: {
-              licenseType: item?.license?.type ?? '',
+              licenseType: data?.license?.type ?? '',
             },
           },
         })
-        if (!data?.generatePkPass.pkpassUrl) {
+        if (!generatedPkPass?.generatePkPass.pkpassUrl) {
           throw Error('Failed to generate pkpass')
         }
         if (isAndroid) {
@@ -328,7 +358,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
 
           await FileSystem.downloadAsync(
-            data.generatePkPass.pkpassUrl,
+            generatedPkPass.generatePkPass.pkpassUrl,
             pkPassUri,
             {
               headers: {
@@ -365,7 +395,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           setAddingToWallet(false)
           return
         }
-        const res = await fetch(data.generatePkPass.pkpassUrl, {
+        const res = await fetch(generatedPkPass.generatePkPass.pkpassUrl, {
           headers: {
             'User-Agent':
               'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
@@ -399,14 +429,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             intl.formatMessage({
               id: 'walletPass.errorTitle',
             }),
-            item?.license?.type === 'DriversLicense'
+            data?.license?.type === GenericLicenseType.DriversLicense
               ? intl.formatMessage({
                   id: 'walletPass.errorNotPossibleToAddDriverLicense',
                 })
               : intl.formatMessage({
                   id: 'walletPass.errorAddingOrFetching',
                 }),
-            item?.license?.type === 'DriversLicense'
+            data?.license?.type === GenericLicenseType.DriversLicense
               ? [
                   {
                     text: intl.formatMessage({
@@ -464,7 +494,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   }
 
   // If we don't have an item we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
-  if (loading && !item) {
+  if (loading && !data) {
     return (
       <ActivityIndicator
         size="large"

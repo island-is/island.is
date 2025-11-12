@@ -46,24 +46,15 @@ import {
   useListDocumentsQuery,
   validateInboxInitialData,
 } from './inbox-module'
-import {
-  LicensesModule,
-  useListLicensesQuery,
-  validateLicensesInitialData,
-} from './licenses-module'
+import { LicensesModule, validateLicensesInitialData } from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
 import {
   useListVehiclesV2Query,
   validateVehiclesInitialData,
   VehiclesModule,
 } from './vehicles-module'
-import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
-import {
-  GenericLicenseType,
-  useGetProfileQuery,
-} from '../../graphql/types/schema'
-import { useLocale } from '../../hooks/use-locale'
+import { useGetProfileQuery } from '../../graphql/types/schema'
+import { useLicensesQuery } from '../../hooks/use-license-list'
 
 interface ListItem {
   id: string
@@ -127,10 +118,6 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
   const setLocale = usePreferencesStore(({ setLocale }) => setLocale)
-  const isIdentityDocumentEnabled = useFeatureFlag(
-    'isIdentityDocumentEnabled',
-    false,
-  )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
 
@@ -166,18 +153,7 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     skip: !inboxWidgetEnabled,
   })
 
-  const licensesRes = useListLicensesQuery({
-    variables: {
-      input: {
-        includedTypes: [
-          ...INCLUDED_LICENSE_TYPES,
-          ...(isIdentityDocumentEnabled
-            ? [GenericLicenseType.IdentityDocument]
-            : []),
-        ],
-      },
-      locale: useLocale(),
-    },
+  const licensesRes = useLicensesQuery({
     fetchPolicy: 'cache-first',
     skip: !licensesWidgetEnabled,
   })
