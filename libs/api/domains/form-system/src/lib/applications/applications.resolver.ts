@@ -29,14 +29,14 @@ import { Screen } from '../../models/screen.model'
 export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @Query(() => Application, {
+  @Query(() => ApplicationResponse, {
     name: 'formSystemApplication',
   })
   async getApplication(
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
   }
 
@@ -62,14 +62,14 @@ export class ApplicationsResolver {
     return this.applicationsService.getAllApplications(user, input)
   }
 
-  @Mutation(() => Application, {
+  @Mutation(() => ApplicationResponse, {
     name: 'createFormSystemApplication',
   })
   async createApplication(
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     return this.applicationsService.createApplication(user, input)
   }
 

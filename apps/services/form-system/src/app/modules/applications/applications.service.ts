@@ -23,6 +23,7 @@ import {
   ApplicationStatus,
   ApplicationEvents,
   FieldTypesEnum,
+  ApplicantTypesEnum,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -39,6 +40,8 @@ import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.r
 import { Dependency } from '../../dataTypes/dependency.model'
 import { SectionTypes } from '@island.is/form-system/shared'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
+import { AuthDelegationType } from '@island.is/shared/types'
+import * as kennitala from 'kennitala'
 
 @Injectable()
 export class ApplicationsService {
@@ -61,11 +64,21 @@ export class ApplicationsService {
     @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
+  private isLoginTypeAllowed(
+    loginTypes: string[],
+    allowedLoginTypes: string[],
+  ): boolean {
+    return (
+      loginTypes.length > 0 &&
+      loginTypes.every((type) => allowedLoginTypes.includes(type))
+    )
+  }
+
   async create(
     slug: string,
     createApplicationDto: CreateApplicationDto,
     user: User,
-  ): Promise<ApplicationDto> {
+  ): Promise<ApplicationResponseDto> {
     // TODO: Check if user is allowed to create application for this form
     // TODO: Check if form is published
 
@@ -75,21 +88,37 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    // Check if at least one of the user's delegationTypes is allowed for this form
-    if (
-      form.allowedLoginTypes.length > 0 &&
-      (!user.delegationType || user.delegationType.length === 0
-        ? !form.allowedLoginTypes.includes('Individual')
-        : !user.delegationType.some((type) =>
-            form.allowedLoginTypes.includes(type),
-          ))
-    ) {
-      throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
-        }' are not allowed for this form`,
-      )
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
+
+    // if (
+    //   loginTypes.length > 0 &&
+    //   loginTypes.every((type) => form.allowedLoginTypes.includes(type))
+    // ) {
+    //   console.log('þetta má', loginTypes)
+    // } else {
+    //   console.log('þetta má ekki', loginTypes)
+    // }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    // if (
+    //   form.allowedLoginTypes.length > 0 &&
+    //   (!user.delegationType || user.delegationType.length === 0
+    //     ? !form.allowedLoginTypes.includes('Individual')
+    //     : !user.delegationType.some((type) =>
+    //         form.allowedLoginTypes.includes(type),
+    //       ))
+    // ) {
+    //   throw new BadRequestException(
+    //     `User delegationTypes '${
+    //       user.delegationType ? user.delegationType.join(', ') : 'none'
+    //     }' are not allowed for this form`,
+    //   )
+    // }
 
     let newApplicationId = ''
 
@@ -128,15 +157,48 @@ export class ApplicationsService {
             section.screens?.map((screen) =>
               Promise.all(
                 screen.fields?.map(async (field) => {
+                  if (
+                    field.fieldType === FieldTypesEnum.APPLICANT &&
+                    field.fieldSettings?.applicantType &&
+                    !loginTypes.includes(field.fieldSettings.applicantType)
+                  ) {
+                    return
+                  }
+                  const valueJson =
+                    ValueTypeFactory.getClass(
+                      field.fieldType,
+                      new ValueType(),
+                    ) ?? {}
+                  if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                    const type = field.fieldSettings?.applicantType
+                    if (type === ApplicantTypesEnum.INDIVIDUAL) {
+                      valueJson['nationalId'] = nationalId
+                      valueJson['isLoggedInUser'] = true
+                    } else if (
+                      type ===
+                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+                      type ===
+                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
+                      type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+                    ) {
+                      valueJson['nationalId'] = user.actor?.nationalId || ''
+                      valueJson['isLoggedInUser'] = true
+                    } else if (
+                      type === ApplicantTypesEnum.LEGAL_ENTITY ||
+                      type ===
+                        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
+                      type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
+                    ) {
+                      valueJson['nationalId'] = user.nationalId
+                    }
+                  }
+                  console.log('valueJson', valueJson)
                   return this.valueModel.create(
                     {
                       fieldId: field.id,
                       fieldType: field.fieldType,
                       applicationId: newApplication.id,
-                      json: ValueTypeFactory.getClass(
-                        field.fieldType,
-                        new ValueType(),
-                      ),
+                      json: valueJson,
                     } as Value,
                     { transaction },
                   )
@@ -149,7 +211,7 @@ export class ApplicationsService {
 
       newApplicationId = newApplication.id
     })
-    const applicationDto = await this.getApplication(newApplicationId)
+    const applicationDto = await this.getApplication(newApplicationId, null)
     return applicationDto
   }
 
@@ -236,7 +298,11 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const applicationDto = await this.getApplication(id)
+    const applicationResponseDto = await this.getApplication(id, null)
+    if (!applicationResponseDto.application) {
+      throw new NotFoundException(`Application DTO with id '${id}' not found.`)
+    }
+    const applicationDto = applicationResponseDto.application
     applicationDto.submittedAt = new Date()
 
     const success: boolean = await this.serviceManager.send(applicationDto)
@@ -328,7 +394,10 @@ export class ApplicationsService {
     return applicationResponseDto
   }
 
-  async getApplication(applicationId: string): Promise<ApplicationDto> {
+  async getApplication(
+    applicationId: string,
+    user: User | null,
+  ): Promise<ApplicationResponseDto> {
     const application = await this.applicationModel.findOne({
       where: { id: applicationId },
       include: [
@@ -352,14 +421,26 @@ export class ApplicationsService {
       applicationId,
     )
 
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
+    }
+
     const applicationDto = this.applicationMapper.mapFormToApplicationDto(
       form,
       application,
     )
 
     applicationDto.organizationName = form.organizationDisplayName
+    const responseDto = new ApplicationResponseDto()
+    responseDto.application = applicationDto
+    responseDto.isLoginTypeAllowed = true
 
-    return applicationDto
+    return responseDto
   }
 
   async findAllBySlugAndUser(
@@ -375,21 +456,28 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    // Check if at least one of the user's delegationTypes is allowed for this form
-    if (
-      form.allowedLoginTypes.length > 0 &&
-      (!user.delegationType || user.delegationType.length === 0
-        ? !form.allowedLoginTypes.includes('Individual')
-        : !user.delegationType.some((type) =>
-            form.allowedLoginTypes.includes(type),
-          ))
-    ) {
-      throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
-        }' are not allowed for this form`,
-      )
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    // if (
+    //   form.allowedLoginTypes.length > 0 &&
+    //   (!user.delegationType || user.delegationType.length === 0
+    //     ? !form.allowedLoginTypes.includes('Individual')
+    //     : !user.delegationType.some((type) =>
+    //         form.allowedLoginTypes.includes(type),
+    //       ))
+    // ) {
+    //   throw new BadRequestException(
+    //     `User delegationTypes '${
+    //       user.delegationType ? user.delegationType.join(', ') : 'none'
+    //     }' are not allowed for this form`,
+    //   )
+    // }
 
     // Check if the user has applications for this form
     const existingApplications = await this.findAllByUserAndForm(
@@ -468,6 +556,8 @@ export class ApplicationsService {
   ): Promise<ApplicationDto[]> {
     // TODO: Check if form is published
 
+    // check loginTypes
+
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
@@ -493,7 +583,16 @@ export class ApplicationsService {
     const applicationDtos: ApplicationDto[] = []
 
     for (const application of applicationsByUser) {
-      const applicationDto = await this.getApplication(application.id)
+      const applicationResponseDto = await this.getApplication(
+        application.id,
+        null,
+      )
+      if (!applicationResponseDto.application) {
+        throw new NotFoundException(
+          `Application DTO with id '${application.id}' not found.`,
+        )
+      }
+      const applicationDto = applicationResponseDto.application
       applicationDtos.push(applicationDto)
     }
 
@@ -853,5 +952,32 @@ export class ApplicationsService {
       .filter((id) => sections.some((section) => section.id === id))
 
     return totalSteps - hiddenSteps.length
+  }
+
+  private async getLoginTypes(user: User): Promise<string[]> {
+    const loginTypes: string[] = []
+
+    if (user.delegationType && user.delegationType.length > 0) {
+      if (user.delegationType.includes(AuthDelegationType.ProcurationHolder)) {
+        loginTypes.push(ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION)
+        loginTypes.push(ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER)
+      } else if (user.delegationType.includes(AuthDelegationType.Custom)) {
+        if (kennitala.isCompany(user.nationalId)) {
+          loginTypes.push(
+            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+          )
+          loginTypes.push(ApplicantTypesEnum.LEGAL_ENTITY)
+        } else {
+          loginTypes.push(
+            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
+          )
+          loginTypes.push(ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION)
+        }
+      }
+    } else {
+      loginTypes.push(ApplicantTypesEnum.INDIVIDUAL)
+    }
+
+    return loginTypes
   }
 }

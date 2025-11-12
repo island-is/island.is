@@ -41,20 +41,23 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
     description: 'Get an application by id',
-    type: ApplicationDto,
+    type: ApplicationResponseDto,
   })
   @ApiParam({ name: 'id', type: String })
   @Get(
     'form/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})',
   )
-  async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
-    return await this.applicationsService.getApplication(id)
+  async getApplication(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.getApplication(id, user)
   }
 
   @ApiOperation({ summary: 'Create new application' })
   @ApiCreatedResponse({
     description: 'Create new application',
-    type: ApplicationDto,
+    type: ApplicationResponseDto,
   })
   @ApiParam({ name: 'slug', type: String })
   @ApiBody({ type: CreateApplicationDto })
@@ -64,7 +67,7 @@ export class ApplicationsController {
     @Body() createApplicationDto: CreateApplicationDto,
     @CurrentUser()
     user: User,
-  ): Promise<ApplicationDto> {
+  ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.create(
       slug,
       createApplicationDto,

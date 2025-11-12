@@ -55,8 +55,11 @@ export const Applications = () => {
           },
         },
       })
-      if (app.data?.createFormSystemApplication?.id) {
-        navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
+      console.log('apppppppp', app.data)
+      if (app.data?.createFormSystemApplication?.application?.id) {
+        navigate(
+          `../${slug}/${app.data.createFormSystemApplication.application.id}`,
+        )
       }
       return app
     } catch (error) {
@@ -85,6 +88,7 @@ export const Applications = () => {
   useEffect(() => {
     const fetchData = async () => {
       const apps = await fetchApplications()
+      console.log(`apps: ${apps}`)
       if (apps && apps.length > 0) {
         setApplications(apps)
         setLoading(false)

@@ -56,24 +56,24 @@ export class ApplicationsService {
   async createApplication(
     auth: User,
     input: CreateApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     const response = await this.applicationsApiWithAuth(
       auth,
     ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
-    return response as Application
+    return response as ApplicationResponse
   }
 
   async getApplication(
     auth: User,
     input: GetApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerGetApplication(
         input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
-    return response as Application
+    return response as ApplicationResponse
   }
 
   async getApplications(

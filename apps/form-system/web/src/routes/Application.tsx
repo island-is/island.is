@@ -32,7 +32,7 @@ export const Application = () => {
 
   return (
     <ApplicationProvider
-      application={removeTypename(data?.formSystemApplication)}
+      application={removeTypename(data?.formSystemApplication.application)}
     />
   )
 }
