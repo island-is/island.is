@@ -20,6 +20,7 @@ import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
+import { GenericUserLicense } from './types/schema'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -167,6 +168,23 @@ const cache = new InMemoryCache({
             return archivedCache.get(id)
           },
         },
+      },
+    },
+    GenericUserLicense: {
+      keyFields: (object) => {
+        const licenseType = (object as GenericUserLicense).license?.type
+        const licenseId = (object as GenericUserLicense).payload?.metadata
+          ?.licenseId
+
+        if (licenseType && licenseId) {
+          return `${licenseType}:${licenseId}`
+        }
+
+        if (licenseId) {
+          return licenseId
+        }
+
+        return defaultDataIdFromObject(object) ?? undefined
       },
     },
   },
