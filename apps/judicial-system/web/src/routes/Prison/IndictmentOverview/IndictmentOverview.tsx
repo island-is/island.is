@@ -16,12 +16,10 @@ import {
   isCompletedCase,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
-import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   Conclusion,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -55,7 +53,6 @@ const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const { updateCase, isUpdatingCase } = useCase()
 
@@ -91,7 +88,7 @@ const IndictmentOverview = () => {
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+  const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision ?? undefined,
       sentToPrisonAdminDate,
@@ -253,20 +250,27 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
-          {features?.includes(Feature.VERDICT_DELIVERY) &&
-            workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict?.serviceDate && (
-                  <PdfButton
-                    key={defendant.id}
-                    caseId={workingCase.id}
-                    title={`Birtingarvottorð ${defendant.name}.pdf`}
-                    pdfType="verdictServiceCertificate"
-                    elementId={[defendant.id]}
-                    renderAs="row"
-                  />
-                ),
-            )}
+          {workingCase.defendants?.map((defendant) => {
+            if (
+              !defendant.verdict?.serviceDate ||
+              !defendant.verdict?.externalPoliceDocumentId
+            ) {
+              return null
+            }
+
+            const serviceCertificateFileName = `Birtingarvottorð ${defendant.name}.pdf`
+
+            return (
+              <PdfButton
+                key={defendant.id}
+                caseId={workingCase.id}
+                title={serviceCertificateFileName}
+                pdfType="verdictServiceCertificate"
+                elementId={[defendant.id, serviceCertificateFileName]}
+                renderAs="row"
+              />
+            )
+          })}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
@@ -285,7 +289,7 @@ const IndictmentOverview = () => {
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={pdfElementId}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}

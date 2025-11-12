@@ -143,6 +143,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           prosecutorsOfficeId,
+          withCourtSessions: true,
         },
         { transaction },
       )

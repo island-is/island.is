@@ -602,6 +602,11 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við bankareikning',
     description: '',
   },
+  bankAccountForeign: {
+    id: 'es.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
 
   // Claims
   claimsTitle: {
@@ -863,6 +868,23 @@ export const m = defineMessages({
     id: 'es.application:uploadDescription',
     defaultMessage:
       'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
+    description: '',
+  },
+  additionalCommentsTitle: {
+    id: 'es.application:additionalCommentsTitle',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalCommentsDescription: {
+    id: 'es.application:additionalCommentsDescription',
+    defaultMessage:
+      'Hér er hægt að skrá viðbótarupplýsingar um dánarbúið, umsóknina eða önnur atriði sem gætu verið gagnleg fyrir sýslumanninn við afgreiðslu málsins.',
+    description: '',
+  },
+  additionalCommentsPlaceholder: {
+    id: 'es.application:additionalCommentsPlaceholder',
+    defaultMessage:
+      'T.d. upplýsingar um sérstök skilyrði, samkomulag erfingja eða aðrar skýringar',
     description: '',
   },
 

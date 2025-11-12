@@ -60,6 +60,7 @@ type BankAccount = {
   balance?: string | number
   accruedInterest?: string | number
   accountTotal?: string | number
+  foreignBankAccount?: string[]
 }
 
 type Stock = {
@@ -143,4 +144,5 @@ export type UploadData = {
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
   estateWithoutAssetsInfo: EstateWithoutAssetsInfo
+  additionalComments?: string
 }

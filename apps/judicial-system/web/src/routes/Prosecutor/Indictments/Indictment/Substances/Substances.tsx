@@ -74,6 +74,7 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
           })}
           onChange={(selectedOption) => {
             const substance = (selectedOption as ReactSelectOption).value
+            if (!substance) return
 
             const updatedSubstances = {
               ...substances,
