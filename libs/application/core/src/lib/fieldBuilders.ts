@@ -725,13 +725,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
