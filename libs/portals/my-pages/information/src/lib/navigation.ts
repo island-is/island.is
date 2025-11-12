@@ -89,18 +89,6 @@ export const informationNavigation: PortalNavigationItem = {
               navHide: true,
               path: SignatureCollectionPaths.ViewParliamentaryList,
             },
-            {
-              name: m.signatureCollectionLists,
-              navHide: true,
-              path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
-              children: [
-                {
-                  name: m.viewSignatureList,
-                  navHide: true,
-                  path: SignatureCollectionPaths.CompanyViewParliamentaryList,
-                },
-              ],
-            },
           ],
         },
         // Presidential
@@ -154,7 +142,7 @@ export const companyInformationNavigation: PortalNavigationItem = {
   ],
   path: InformationPaths.Company,
   icon: {
-    icon: 'person',
+    icon: 'business',
   },
   children: [
     {
@@ -169,6 +157,24 @@ export const companyInformationNavigation: PortalNavigationItem = {
     {
       name: m.notifications,
       path: InformationPaths.CompanyNotifications,
+    },
+    {
+      name: m.lists,
+      path: InformationPaths.CompanyLists,
+      children: [
+        {
+          name: m.signatureCollectionLists,
+          navHide: true,
+          path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+            },
+          ],
+        },
+      ],
     },
   ],
 }

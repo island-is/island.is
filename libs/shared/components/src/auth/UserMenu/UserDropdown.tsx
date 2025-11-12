@@ -11,7 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
+import {
+  ApiScope,
+  DocumentsScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
 import {
   hasNotificationScopes,
   isCompany,
@@ -61,7 +65,7 @@ export const UserDropdown = ({
   const isDelegationCompany = isCompany(user)
   const userHasNotificationScopes = hasNotificationScopes(user?.scopes)
   const hasAccessToUserProfileInfo = isDelegationCompany
-    ? userHasNotificationScopes || user?.scopes?.includes(ApiScope.company)
+    ? user?.scopes?.includes(UserProfileScope.write)
     : userHasNotificationScopes
 
   const { width } = useWindowSize()

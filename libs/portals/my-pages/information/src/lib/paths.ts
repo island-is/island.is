@@ -14,4 +14,5 @@ export enum InformationPaths {
   Notifications = '/min-gogn/tilkynningar',
   NotificationDetail = '/min-gogn/tilkynningar/:id',
   Lists = '/min-gogn/listar',
+  CompanyLists = '/fyrirtaeki/listar',
 }

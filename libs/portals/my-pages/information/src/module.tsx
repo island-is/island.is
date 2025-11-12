@@ -1,6 +1,10 @@
 import { lazy } from 'react'
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { m, hasNotificationScopes } from '@island.is/portals/my-pages/core'
+import {
+  m,
+  hasNotificationScopes,
+  isCompany,
+} from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
@@ -32,6 +36,7 @@ const UserNotificationsSettings = lazy(() =>
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
+  enabled: ({ userInfo, isCompany: isCompanyUser }) => !isCompanyUser,
   routes: async (routesProps) => {
     const { scopes } = routesProps.userInfo
     const hasUserDetailsAccess = scopes.includes(ApiScope.meDetails)
@@ -97,23 +102,31 @@ export const informationModule: PortalModule = {
         name: m.userInfo,
         path: InformationPaths.Company,
         enabled: true,
-        element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
+        navHide: true,
+        element: <Navigate to={InformationPaths.MyInfoRoot} replace />,
       },
       {
-        name: m.mySettings,
+        name: m.userInfo,
         path: InformationPaths.CompanySettings,
         enabled: true,
+        navHide: true,
         element: <Navigate to={InformationPaths.Settings} replace />,
       },
       {
-        name: m.notifications,
+        name: m.userInfo,
         path: InformationPaths.CompanyNotifications,
         enabled: true,
+        navHide: true,
         element: <Navigate to={InformationPaths.Notifications} replace />,
       },
     ]
   },
-  companyRoutes: async (routesProps) => {
+}
+
+export const companyInformationModule: PortalModule = {
+  name: m.companyTitle,
+  enabled: ({ isCompany: isCompanyUser }) => isCompanyUser,
+  routes: async (routesProps) => {
     const { scopes } = routesProps.userInfo
 
     const hasCompanyAccess = scopes.includes(ApiScope.company)
@@ -143,24 +156,35 @@ export const informationModule: PortalModule = {
         name: m.companyTitle,
         path: InformationPaths.MyInfoRoot,
         enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.Company} replace />,
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.MyInfoRootOverview,
+        enabled: true,
+        navHide: true,
         element: <Navigate to={InformationPaths.Company} replace />,
       },
       {
         name: m.companyTitle,
         path: InformationPaths.Settings,
         enabled: true,
+        navHide: true,
         element: <Navigate to={InformationPaths.CompanySettings} replace />,
       },
       {
         name: m.companyTitle,
         path: InformationPaths.SettingsNotifications,
         enabled: true,
+        navHide: true,
         element: <Navigate to={InformationPaths.CompanySettings} replace />,
       },
       {
         name: m.companyTitle,
         path: InformationPaths.Notifications,
         enabled: true,
+        navHide: true,
         element: (
           <Navigate to={InformationPaths.CompanyNotifications} replace />
         ),
