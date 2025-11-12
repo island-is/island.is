@@ -1,7 +1,3 @@
-import { Application } from '@island.is/application/types'
+import { MyPagesApplication } from '@island.is/shared/types'
 
-export interface FormSystemApplication extends Application {
-  formSlug: string
-  orgSlug: string
-  orgContentfulId: string
-}
+// export interface FormSystemApplication extends MyPagesApplication {}

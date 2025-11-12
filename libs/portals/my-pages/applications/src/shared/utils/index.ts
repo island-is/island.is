@@ -7,18 +7,19 @@ import {
   FilterValues,
   InstitutionOption,
 } from '../types'
+import { MyPagesApplication } from '@island.is/shared/types'
 interface SortedApplication {
-  incomplete: Application[]
-  inProgress: Application[]
-  finished: Application[]
+  incomplete: MyPagesApplication[]
+  inProgress: MyPagesApplication[]
+  finished: MyPagesApplication[]
 }
 
 export const sortApplicationsStatus = (
-  applications: Application[],
+  applications: MyPagesApplication[],
 ): SortedApplication => {
-  const incomplete: Application[] = []
-  const inProgress: Application[] = []
-  const finished: Application[] = []
+  const incomplete: MyPagesApplication[] = []
+  const inProgress: MyPagesApplication[] = []
+  const finished: MyPagesApplication[] = []
 
   applications.forEach((application) => {
     if (
@@ -41,7 +42,7 @@ export const sortApplicationsStatus = (
 }
 
 export const sortApplicationsOrganizations = (
-  applications: Application[],
+  applications: MyPagesApplication[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
   let institutions: InstitutionOption[] = []
@@ -94,7 +95,7 @@ export const getBaseUrlForm = () => {
 
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
-  applications: Application[] = [],
+  applications: MyPagesApplication[] = [],
   filteredOutApplication?: string,
 ) => {
   if (!filterValue) {
@@ -130,7 +131,7 @@ export const getFilteredApplicationsByStatus = (
 
 export const getInstitutions = (
   defaultInstitution: InstitutionOption,
-  applications: Application[],
+  applications: MyPagesApplication[],
   organizations: any,
 ): InstitutionOption[] => {
   if (!applications || !organizations) {
