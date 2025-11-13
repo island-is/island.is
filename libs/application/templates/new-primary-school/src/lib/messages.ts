@@ -944,16 +944,19 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     paperAttachmentOption: {
       id: 'nps.application:attachments.options.paper',
-      defaultMessage: 'Öllum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, með öðrum leiðum.',
-      description: 'All documents will be submitted to the municipality’s school service by other means.',
+      defaultMessage:
+        'Öllum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, með öðrum leiðum.',
+      description:
+        'All documents will be submitted to the municipality’s school service by other means.',
     },
     electronicAndPaperAttachmentOption: {
       id: 'nps.application:attachments.options.electronic.and.paper',
-      defaultMessage: 'Hluti gagnanna eru hengd við þessa umsókn sem fylgiskjöl. Öðrum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, eftir öðrum leiðum.',
+      defaultMessage:
+        'Hluti gagnanna eru hengd við þessa umsókn sem fylgiskjöl. Öðrum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, eftir öðrum leiðum.',
       description:
         'Some documents will be attached and sent with the application. Other documents will be submitted to the municipality’s school service by other means.',
     },
-    
+
     // Terms
     termsSubSectionTitle: {
       id: 'nps.application:different.needs.terms.sub.section.title',
