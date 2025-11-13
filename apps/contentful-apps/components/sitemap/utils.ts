@@ -24,7 +24,7 @@ export const optionMap = {
 }
 
 export const URL_DIALOG_MIN_HEIGHT = 730
-export const CATEGORY_DIALOG_MIN_HEIGHT = 700
+export const CATEGORY_DIALOG_MIN_HEIGHT = 830
 
 const getHighestId = (tree: Tree) => {
   let highestId = tree.id

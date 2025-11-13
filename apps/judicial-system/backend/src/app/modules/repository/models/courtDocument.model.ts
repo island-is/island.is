@@ -81,4 +81,8 @@ export class CourtDocument extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   generatedPdfUri?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  submittedBy?: string
 }
