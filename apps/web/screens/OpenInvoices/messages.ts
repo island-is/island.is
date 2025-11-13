@@ -31,6 +31,15 @@ export const m = {
       defaultMessage:
         'Hér má skoða þá reikninga sem greiddir hafa verið á völdu tímabili. Hver seljandi birtist í eigin línu og með því að opna staka línu sjást einstakir reikningar. Nota má leit og síun til að þrengja listann.',
     },
+    featuredImage: {
+      id: 'web.openinvoices:overview.featuredImage',
+      defaultMessage:
+        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
+    featuredImageAlt: {
+      id: 'web.openinvoices:overview.featuredImageAlt',
+      defaultMessage: 'Mynd af konu við tölvu',
+    },
     supplier: {
       id: 'web.openinvoices:overview.supplier',
       defaultMessage: 'Seljandi',

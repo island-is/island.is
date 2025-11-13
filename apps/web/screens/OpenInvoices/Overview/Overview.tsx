@@ -281,11 +281,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       pageFeaturedImage={formatMessage(m.overview.featuredImage)}
     >
       <CustomPageLayoutHeader
-        title={formatMessage(m.home.title)}
-        description={formatMessage(m.home.description)}
+        title={formatMessage(m.overview.title)}
+        description={formatMessage(m.overview.description)}
         featuredImage={{
-          src: formatMessage(m.home.featuredImage),
-          alt: formatMessage(m.home.featuredImageAlt),
+          src: formatMessage(m.overview.featuredImage),
+          alt: formatMessage(m.overview.featuredImageAlt),
         }}
         breadcrumbs={
           breadcrumbItems && (

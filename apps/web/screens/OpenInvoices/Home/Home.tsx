@@ -1,9 +1,7 @@
 import { useIntl } from 'react-intl'
-import NextLink from 'next/link'
 
 import {
   Box,
-  Breadcrumbs,
   CategoryCard,
   GridColumn,
   GridContainer,
@@ -16,8 +14,6 @@ import {
 import { Locale } from '@island.is/shared/types'
 import {
   ChartsCard,
-  CustomPageLayoutHeader,
-  CustomPageLayoutWrapper,
   Footer,
 } from '@island.is/web/components'
 import {
