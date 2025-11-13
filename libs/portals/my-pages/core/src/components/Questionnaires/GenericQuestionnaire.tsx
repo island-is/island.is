@@ -352,18 +352,53 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                 marginX={enableStepper ? 10 : 4}
                 marginY={6}
               >
-                <Stack space={4}>
-                  {currentQuestions.map((question: QuestionnaireQuestion) => (
-                    <QuestionRenderer
-                      key={question.id}
-                      question={question}
-                      answer={answers[question.id]}
-                      onAnswerChange={handleAnswerChange}
-                      error={errors[question.id]}
-                      disabled={question.answerOptions.formula ? true : false}
-                    />
-                  ))}
-                </Stack>
+                {enableStepper ? (
+                  <Stack space={4}>
+                    {currentQuestions.map((question: QuestionnaireQuestion) => (
+                      <QuestionRenderer
+                        key={question.id}
+                        question={question}
+                        answer={answers[question.id]}
+                        onAnswerChange={handleAnswerChange}
+                        error={errors[question.id]}
+                        disabled={question.answerOptions.formula ? true : false}
+                      />
+                    ))}
+                  </Stack>
+                ) : (
+                  <Stack space={6}>
+                    {processedSections.map((section, sectionIndex) => (
+                      <Box key={`section-${sectionIndex}`}>
+                        {section.title && (
+                          <Box marginBottom={3}>
+                            <Text variant="h4" as="h2">
+                              {section.title}
+                            </Text>
+                            {section.description && (
+                              <Text marginTop={1}>{section.description}</Text>
+                            )}
+                          </Box>
+                        )}
+                        <Stack space={4}>
+                          {section.questions?.map(
+                            (question: QuestionnaireQuestion) => (
+                              <QuestionRenderer
+                                key={question.id}
+                                question={question}
+                                answer={answers[question.id]}
+                                onAnswerChange={handleAnswerChange}
+                                error={errors[question.id]}
+                                disabled={
+                                  question.answerOptions.formula ? true : false
+                                }
+                              />
+                            ),
+                          )}
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Stack>
+                )}
               </Box>
 
               {/* Navigation/Submit buttons */}

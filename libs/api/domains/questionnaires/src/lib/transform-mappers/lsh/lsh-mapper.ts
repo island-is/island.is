@@ -327,7 +327,7 @@ const mapQuestion = (q: QuestionType): Question => {
 
   return {
     id: (q.entryID as string) || 'undefined-id',
-    label: (q.question as string) || 'Untitled Question',
+    label: (q.question as string) || '',
     sublabel: (q.description as string)?.trim() || undefined,
     answerOptions: answerOption,
     visibilityConditions,
@@ -337,7 +337,7 @@ const mapQuestion = (q: QuestionType): Question => {
 
 const mapSection = (section: Section): QuestionnaireSection => {
   return {
-    title: section.caption || 'Untitled Section',
+    title: section.caption || '',
     questions: Array.isArray(section.questions)
       ? section.questions.map(mapQuestion)
       : [],
@@ -349,7 +349,7 @@ export const mapLshQuestionnaire = (form: QuestionnaireBody): Questionnaire => {
     baseInformation: {
       id: form.gUID || 'undefined-id',
       formId: form.formID || 'undefined-form-id',
-      title: form.header || 'Untitled Form',
+      title: form.header || '',
       description: form.description || undefined,
       organization: QuestionnairesOrganizationEnum.LSH,
       sentDate: '',

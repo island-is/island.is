@@ -251,32 +251,34 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.datetime: {
         const dateValue = answer?.answers?.[0]?.values
         return (
-          <DatePicker
-            locale="is"
-            id={question.id}
-            label={question.label}
-            placeholderText={
-              question.answerOptions.placeholder || 'Veldu dagsetningu'
-            }
-            selected={dateValue ? new Date(dateValue) : undefined}
-            handleChange={(date: Date) =>
-              handleValueChange(
-                date
-                  ? QuestionnaireAnswerOptionType.datetime
-                    ? date.toISOString()
-                    : date.toISOString().split('T')[0]
-                  : '',
-              )
-            }
-            backgroundColor="blue"
-            disabled={disabled}
-            hasError={!!error}
-            showTimeInput={
-              question.answerOptions.type ===
-              QuestionnaireAnswerOptionType.datetime
-            }
-            size="xs"
-          />
+          <Box width="half">
+            <DatePicker
+              locale="is"
+              id={question.id}
+              label={question.label}
+              placeholderText={
+                question.answerOptions.placeholder || 'Veldu dagsetningu'
+              }
+              selected={dateValue ? new Date(dateValue) : undefined}
+              handleChange={(date: Date) =>
+                handleValueChange(
+                  date
+                    ? QuestionnaireAnswerOptionType.datetime
+                      ? date.toISOString()
+                      : date.toISOString().split('T')[0]
+                    : '',
+                )
+              }
+              backgroundColor="blue"
+              disabled={disabled}
+              hasError={!!error}
+              showTimeInput={
+                question.answerOptions.type ===
+                QuestionnaireAnswerOptionType.datetime
+              }
+              size="xs"
+            />
+          </Box>
         )
       }
 
