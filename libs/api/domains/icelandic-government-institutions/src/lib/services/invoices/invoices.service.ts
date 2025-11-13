@@ -14,7 +14,6 @@ import { mapCustomers } from '../../mappers/customerMapper'
 import { mapInvoiceTypes } from '../../mappers/invoiceTypeMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
 
-
 @Injectable()
 export class InvoicesService implements IInvoicesService {
   constructor(private elfurService: ElfurClientService) {}
@@ -32,7 +31,6 @@ export class InvoicesService implements IInvoicesService {
   async getCustomers(input?: CustomersInput): Promise<Customers | null> {
     const data = await this.elfurService.getCustomers(input)
 
-
     if (!data) {
       return null
     }
@@ -40,7 +38,9 @@ export class InvoicesService implements IInvoicesService {
     return mapCustomers(data)
   }
 
-  async getInvoiceTypes(input?: InvoiceTypesInput): Promise<InvoiceTypes | null> {
+  async getInvoiceTypes(
+    input?: InvoiceTypesInput,
+  ): Promise<InvoiceTypes | null> {
     const data = await this.elfurService.getInvoiceTypes(input)
 
     if (!data) {
@@ -59,6 +59,4 @@ export class InvoicesService implements IInvoicesService {
 
     return mapSuppliers(data)
   }
-
-
 }

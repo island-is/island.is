@@ -1,9 +1,7 @@
 import { EmployeeDto } from '@island.is/clients/elfur'
 import { Employee } from '../models/employee.model'
 
-export const mapEmployee = (
-  employee: EmployeeDto,
-): Employee | undefined => {
+export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {
   if (!employee.employeeName) {
     return undefined
   }

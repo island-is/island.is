@@ -34,9 +34,9 @@ export class InvoicesResolver {
   @BypassAuth()
   async getInvoicesFilters(): Promise<InvoicesFilters | null> {
     const [customers, suppliers, invoiceTypes] = await Promise.all([
-      this.invoiceService.getCustomers({limit: 1000}),
-      this.invoiceService.getSuppliers({limit: 1000}),
-      this.invoiceService.getInvoiceTypes({limit: 1000}),
+      this.invoiceService.getCustomers({ limit: 1000 }),
+      this.invoiceService.getSuppliers({ limit: 1000 }),
+      this.invoiceService.getInvoiceTypes({ limit: 1000 }),
     ])
 
     return {

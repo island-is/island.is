@@ -5,10 +5,20 @@ import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
-import { parseAsArrayOf, parseAsInteger, parseAsIsoDateTime, useQueryState } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsIsoDateTime,
+  useQueryState,
+} from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import { IcelandicGovernmentInstitutionsInvoiceGroup, IcelandicGovernmentInstitutionsInvoices, Query, QueryIcelandicGovernmentInstitutionsInvoicesArgs } from '@island.is/api/schema'
+import {
+  IcelandicGovernmentInstitutionsInvoiceGroup,
+  IcelandicGovernmentInstitutionsInvoices,
+  Query,
+  QueryIcelandicGovernmentInstitutionsInvoicesArgs,
+} from '@island.is/api/schema'
 import {
   Box,
   Breadcrumbs,
@@ -19,7 +29,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
-import { CustomPageUniqueIdentifier,Locale } from '@island.is/shared/types'
+import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutWrapper,
@@ -33,7 +43,10 @@ import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { m } from '../messages'
 import { OverviewFilters } from '../types'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES, GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS } from './Overview.graphql'
+import {
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
+} from './Overview.graphql'
 import { OverviewContent } from './OverviewContent'
 import { OverviewFilter } from './OverviewFilter'
 
@@ -53,8 +66,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const { width } = useWindowSize()
   const isTablet = width <= theme.breakpoints.lg
 
-  const [ getInvoices ] = useLazyQuery<
-    { icelandicGovernmentInstitutionsInvoices: IcelandicGovernmentInstitutionsInvoices },
+  const [getInvoices] = useLazyQuery<
+    {
+      icelandicGovernmentInstitutionsInvoices: IcelandicGovernmentInstitutionsInvoices
+    },
     QueryIcelandicGovernmentInstitutionsInvoicesArgs
   >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES)
 
@@ -84,16 +99,31 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
-  const [dateRangeStart, setDateRangeStart] = useQueryState('dateRangeStart', parseAsIsoDateTime.withDefault(initialDates.dateFrom))
-  const [dateRangeEnd, setDateRangeEnd] = useQueryState('dateRangeEnd', parseAsIsoDateTime.withDefault(initialDates.dateTo))
-  const [invoiceTypes, setInvoiceTypes] = useQueryState('invoiceTypes', parseAsArrayOf(parseAsInteger))
-  const [suppliers, setSuppliers] = useQueryState('suppliers', parseAsArrayOf(parseAsInteger))
-  const [customers, setCustomers] = useQueryState('customers', parseAsArrayOf(parseAsInteger))
+  const [dateRangeStart, setDateRangeStart] = useQueryState(
+    'dateRangeStart',
+    parseAsIsoDateTime.withDefault(initialDates.dateFrom),
+  )
+  const [dateRangeEnd, setDateRangeEnd] = useQueryState(
+    'dateRangeEnd',
+    parseAsIsoDateTime.withDefault(initialDates.dateTo),
+  )
+  const [invoiceTypes, setInvoiceTypes] = useQueryState(
+    'invoiceTypes',
+    parseAsArrayOf(parseAsInteger),
+  )
+  const [suppliers, setSuppliers] = useQueryState(
+    'suppliers',
+    parseAsArrayOf(parseAsInteger),
+  )
+  const [customers, setCustomers] = useQueryState(
+    'customers',
+    parseAsArrayOf(parseAsInteger),
+  )
   const [searchString, setSearchString] = useState<string | null>()
 
-  const [invoiceGroups, setInvoiceGroups] = useState<Array<IcelandicGovernmentInstitutionsInvoiceGroup>>(
-    initialInvoices?.data ?? [],
-  )
+  const [invoiceGroups, setInvoiceGroups] = useState<
+    Array<IcelandicGovernmentInstitutionsInvoiceGroup>
+  >(initialInvoices?.data ?? [])
 
   const [totalHits, setTotalHits] = useState<number | undefined>(
     initialInvoices?.totalCount ?? 0,
@@ -123,26 +153,46 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           dateFrom: dateRangeStart ?? addMonths(today, -1),
           dateTo: dateRangeEnd ?? today,
           limit: PAGE_SIZE,
+        },
+      },
+    })
+      .then((res) => {
+        if (res.data) {
+          setInvoiceGroups(
+            res.data.icelandicGovernmentInstitutionsInvoices.data,
+          )
+          setTotalHits(
+            res.data.icelandicGovernmentInstitutionsInvoices.totalCount,
+          )
+        } else if (res.error) {
+          setInvoiceGroups([])
         }
-      }
-    })
-    .then((res) => {
-      if (res.data) {
-        setInvoiceGroups(res.data.icelandicGovernmentInstitutionsInvoices.data)
-        setTotalHits(res.data.icelandicGovernmentInstitutionsInvoices.totalCount)
-      } else if (res.error) {
+      })
+      .catch(() => {
         setInvoiceGroups([])
-      }
-    })
-    .catch(() => {
-      setInvoiceGroups([])
-    })
-  }, [initialRender, getInvoices, customers, suppliers, invoiceTypes, dateRangeStart, dateRangeEnd])
+      })
+  }, [
+    initialRender,
+    getInvoices,
+    customers,
+    suppliers,
+    invoiceTypes,
+    dateRangeStart,
+    dateRangeEnd,
+  ])
 
   useEffect(() => {
     fetchInvoices()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customers, locale, suppliers, searchString, invoiceTypes, dateRangeStart, dateRangeEnd])
+  }, [
+    customers,
+    locale,
+    suppliers,
+    searchString,
+    invoiceTypes,
+    dateRangeStart,
+    dateRangeEnd,
+  ])
 
   //SEARCH STATE UPDATES
   const debouncedSearchUpdate = useMemo(() => {
@@ -175,7 +225,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     if (!totalHits) {
       return
     }
-    const dateRangeStartArg= format(dateRangeStart, dateFormat.is)
+    const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
     //const sumArg = formatCurrency(67418961)
     const sumArg = 'PLACEHOLDER'
@@ -184,38 +234,40 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       return formatMessage(m.search.resultFound, {
         dateRangeStart: dateRangeStartArg,
         dateRangeEnd: dateRangeEndArg,
-        sum: sumArg
+        sum: sumArg,
       })
     }
     return formatMessage(m.search.resultsFound, {
-        records: totalHits,
-        dateRangeStart: dateRangeStartArg,
-        dateRangeEnd: dateRangeEndArg,
-        sum: sumArg
-      })
+      records: totalHits,
+      dateRangeStart: dateRangeStartArg,
+      dateRangeEnd: dateRangeEndArg,
+      sum: sumArg,
+    })
   }, [dateRangeEnd, dateRangeStart, formatMessage, totalHits])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
     switch (categoryId) {
       case 'dateRange': {
-        const dateStart = filteredValues?.[0] ? new Date(filteredValues[0]) : null
-        const dateEnd= filteredValues?.[1] ? new Date(filteredValues[1]) : null
+        const dateStart = filteredValues?.[0]
+          ? new Date(filteredValues[0])
+          : null
+        const dateEnd = filteredValues?.[1] ? new Date(filteredValues[1]) : null
 
         setDateRangeStart(dateStart)
         setDateRangeEnd(dateEnd)
         break
       }
       case 'invoiceTypes': {
-        setInvoiceTypes(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        setInvoiceTypes(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
         break
       }
       case 'suppliers': {
-        setSuppliers(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        setSuppliers(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
         break
       }
       case 'customers': {
-        setCustomers(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        setCustomers(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
         break
       }
     }
@@ -232,7 +284,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
         featuredImage={{
-          src:formatMessage(m.home.featuredImage),
+          src: formatMessage(m.home.featuredImage),
           alt: formatMessage(m.home.featuredImageAlt),
         }}
         breadcrumbs={
@@ -274,50 +326,67 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 hits={totalHits}
                 locale={locale}
                 searchState={{
-                  invoiceTypes: invoiceTypes?.map(i => i.toString()) ?? undefined,
-                  suppliers: suppliers?.map(s => s.toString()) ?? undefined,
-                  customers: customers?.map(c => c.toString()) ?? undefined,
-                  dateRange: [dateRangeStart.toISOString(), dateRangeEnd.toISOString()]
+                  invoiceTypes:
+                    invoiceTypes?.map((i) => i.toString()) ?? undefined,
+                  suppliers: suppliers?.map((s) => s.toString()) ?? undefined,
+                  customers: customers?.map((c) => c.toString()) ?? undefined,
+                  dateRange: [
+                    dateRangeStart.toISOString(),
+                    dateRangeEnd.toISOString(),
+                  ],
                 }}
-                categories={[{
-                  type: 'date',
-                  id: 'dateRange',
-                  label: formatMessage(m.search.range),
-                  placeholder: `${format(dateRangeStart, dateFormat.is)}-${format(dateRangeEnd, dateFormat.is)}`,
-                  valueFrom: dateRangeStart,
-                  valueTo: dateRangeEnd,
-                },{
-                  type: 'multi',
-                  sections: [{
-                    id: 'invoiceTypes',
-                    label: formatMessage(m.search.type),
-                    items: filters?.invoiceTypes.map(filter => ({
-                      value: filter.value,
-                      label: filter.name
-                    })) ?? [],
-                  }, {
-                    id: 'suppliers',
-                    label: formatMessage(m.search.suppliers),
-                    items: filters?.suppliers.map(filter => ({
-                      value: filter.value,
-                      label: filter.name
-                    })) ?? [],
-                  }, {
-                    id: 'customers',
-                    label: formatMessage(m.search.customers),
-                    items: filters?.customers.map(filter => ({
-                      value: filter.value,
-                      label: filter.name
-                    })) ?? [],
-                  }]
-                }]}
+                categories={[
+                  {
+                    type: 'date',
+                    id: 'dateRange',
+                    label: formatMessage(m.search.range),
+                    placeholder: `${format(
+                      dateRangeStart,
+                      dateFormat.is,
+                    )}-${format(dateRangeEnd, dateFormat.is)}`,
+                    valueFrom: dateRangeStart,
+                    valueTo: dateRangeEnd,
+                  },
+                  {
+                    type: 'multi',
+                    sections: [
+                      {
+                        id: 'invoiceTypes',
+                        label: formatMessage(m.search.type),
+                        items:
+                          filters?.invoiceTypes.map((filter) => ({
+                            value: filter.value,
+                            label: filter.name,
+                          })) ?? [],
+                      },
+                      {
+                        id: 'suppliers',
+                        label: formatMessage(m.search.suppliers),
+                        items:
+                          filters?.suppliers.map((filter) => ({
+                            value: filter.value,
+                            label: filter.name,
+                          })) ?? [],
+                      },
+                      {
+                        id: 'customers',
+                        label: formatMessage(m.search.customers),
+                        items:
+                          filters?.customers.map((filter) => ({
+                            value: filter.value,
+                            label: filter.name,
+                          })) ?? [],
+                      },
+                    ],
+                  },
+                ]}
               />
             </Stack>
           }
         >
           {hitsMessage}
           <Box marginLeft={2} background="white">
-            <OverviewContent invoiceGroups={invoiceGroups}/>
+            <OverviewContent invoiceGroups={invoiceGroups} />
           </Box>
 
           <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
@@ -375,38 +444,58 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
   const today = new Date()
   const oneMonthBack = addMonths(today, -1)
   const [
-    { data: { icelandicGovernmentInstitutionsInvoicesFilters } },
-    { data: { icelandicGovernmentInstitutionsInvoices }}] = await Promise.all([
-    apolloClient.query<Query>({query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS}),
+    {
+      data: { icelandicGovernmentInstitutionsInvoicesFilters },
+    },
+    {
+      data: { icelandicGovernmentInstitutionsInvoices },
+    },
+  ] = await Promise.all([
     apolloClient.query<Query>({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES, variables: {
+      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
+    }),
+    apolloClient.query<Query>({
+      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES,
+      variables: {
         input: {
           dateFrom: oneMonthBack,
-          dateTo: today
-        }
-      }
-    })
+          dateTo: today,
+        },
+      },
+    }),
   ])
 
-  const filters: OverviewFilters | undefined = icelandicGovernmentInstitutionsInvoicesFilters ? {
-    suppliers: icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map((supplier) => ({
-      name: supplier.name,
-      value: supplier.id,
-    })) ?? [],
-    customers: icelandicGovernmentInstitutionsInvoicesFilters.customers?.data?.map((customer) => ({
-      name: customer.name,
-      value: customer.id,
-    })) ?? [],
-    invoiceTypes: icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.map((invoiceType) => ({
-      name: invoiceType.name,
-      value: invoiceType.id,
-    })) ?? []
-  } : undefined
+  const filters: OverviewFilters | undefined =
+    icelandicGovernmentInstitutionsInvoicesFilters
+      ? {
+          suppliers:
+            icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
+              (supplier) => ({
+                name: supplier.name,
+                value: supplier.id,
+              }),
+            ) ?? [],
+          customers:
+            icelandicGovernmentInstitutionsInvoicesFilters.customers?.data?.map(
+              (customer) => ({
+                name: customer.name,
+                value: customer.id,
+              }),
+            ) ?? [],
+          invoiceTypes:
+            icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.map(
+              (invoiceType) => ({
+                name: invoiceType.name,
+                value: invoiceType.id,
+              }),
+            ) ?? [],
+        }
+      : undefined
 
   return {
     locale: locale as Locale,
     filters,
-    initialInvoices: icelandicGovernmentInstitutionsInvoices ?? undefined
+    initialInvoices: icelandicGovernmentInstitutionsInvoices ?? undefined,
   }
 }
 

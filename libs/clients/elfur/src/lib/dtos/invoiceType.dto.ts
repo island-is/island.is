@@ -1,4 +1,4 @@
-import { InvoiceTypeResponseDto } from "../../../gen/fetch";
+import { InvoiceTypeResponseDto } from '../../../gen/fetch'
 
 export interface InvoiceTypeDto {
   id: number
@@ -7,8 +7,15 @@ export interface InvoiceTypeDto {
   description: string
 }
 
-export const mapInvoiceTypeDto = (invoiceType: InvoiceTypeResponseDto): InvoiceTypeDto | null => {
-  if (!invoiceType.id || !invoiceType.code || !invoiceType.name || !invoiceType.description) {
+export const mapInvoiceTypeDto = (
+  invoiceType: InvoiceTypeResponseDto,
+): InvoiceTypeDto | null => {
+  if (
+    !invoiceType.id ||
+    !invoiceType.code ||
+    !invoiceType.name ||
+    !invoiceType.description
+  ) {
     return null
   }
 
@@ -17,5 +24,5 @@ export const mapInvoiceTypeDto = (invoiceType: InvoiceTypeResponseDto): InvoiceT
     code: invoiceType.code,
     name: invoiceType.name,
     description: invoiceType.description,
-  };
-};
+  }
+}

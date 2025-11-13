@@ -1,6 +1,4 @@
-import {
-  OpenInvoicesDto,
-} from '@island.is/clients/elfur'
+import { OpenInvoicesDto } from '@island.is/clients/elfur'
 import { Invoices } from '../models/invoices.model'
 import { InvoiceGroup } from '../models/invoiceGroup.model'
 import { Invoice } from '../models/invoice.model'
@@ -9,14 +7,17 @@ import { generateMockItemization } from '../mocks/INVOICE_ITEMS'
 
 export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
   // Group invoices by buyer-seller relationship
-  const groupedInvoices = new Map<string, {
-    seller: Entity,
-    buyer: Entity,
-    invoices: Invoice[],
-    totalAmount: number
-  }>()
+  const groupedInvoices = new Map<
+    string,
+    {
+      seller: Entity
+      buyer: Entity
+      invoices: Invoice[]
+      totalAmount: number
+    }
+  >()
 
-  data.invoices?.forEach(invoice => {
+  data.invoices?.forEach((invoice) => {
     const groupKey = invoice.groupId
 
     if (!groupedInvoices.has(groupKey)) {
@@ -24,15 +25,15 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
         seller: {
           id: invoice.supplierId,
           name: invoice.supplierName,
-          legalId: invoice.supplierNationalid
+          legalId: invoice.supplierNationalid,
         },
         buyer: {
           id: invoice.customerId,
           name: invoice.customerName,
-          legalId: invoice.customerNationalId
+          legalId: invoice.customerNationalId,
         },
         invoices: [],
-        totalAmount: 0
+        totalAmount: 0,
       })
     }
 
@@ -48,12 +49,14 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
     group.totalAmount += invoice.amount
   })
 
-  const invoiceGroups: InvoiceGroup[] = Array.from(groupedInvoices.entries()).map(([key, group]) => ({
+  const invoiceGroups: InvoiceGroup[] = Array.from(
+    groupedInvoices.entries(),
+  ).map(([key, group]) => ({
     id: key,
     supplier: group.seller,
     customer: group.buyer,
     totalAmount: group.totalAmount,
-    invoices: group.invoices
+    invoices: group.invoices,
   }))
 
   return {

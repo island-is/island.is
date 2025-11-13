@@ -1,7 +1,16 @@
 import NextLink from 'next/link'
 
-import { BreadCrumbItem, Breadcrumbs, TextProps } from "@island.is/island-ui/core"
-import { CustomPageLayoutHeader, CustomPageLayoutHeaderProps, CustomPageLayoutWrapper, Footer } from "@island.is/web/components"
+import {
+  BreadCrumbItem,
+  Breadcrumbs,
+  TextProps,
+} from '@island.is/island-ui/core'
+import {
+  CustomPageLayoutHeader,
+  CustomPageLayoutHeaderProps,
+  CustomPageLayoutWrapper,
+  Footer,
+} from '@island.is/web/components'
 import { Organization } from '@island.is/web/graphql/schema'
 
 interface Props {
@@ -11,23 +20,26 @@ interface Props {
     src: string
     alt: string
   }
-  header?: Omit<Partial<CustomPageLayoutHeaderProps>, 'breadcrumbs' | 'featuredImageAlt' | 'featuredImage'> & {breadcrumbs?: BreadCrumbItem[] }
+  header?: Omit<
+    Partial<CustomPageLayoutHeaderProps>,
+    'breadcrumbs' | 'featuredImageAlt' | 'featuredImage'
+  > & { breadcrumbs?: BreadCrumbItem[] }
   footer?: {
     organization: Organization
     color?: TextProps['color']
     background?: string
-    titleVariant?: TextProps['variant'],
+    titleVariant?: TextProps['variant']
   }
   children?: React.ReactNode
 }
 
 export const OpenInvoicesWrapper = (props: Props) => {
   return (
-  <CustomPageLayoutWrapper
-    pageTitle={props.title}
-    pageDescription={props.description}
-    pageFeaturedImage={props.featuredImage?.src}
-  >
+    <CustomPageLayoutWrapper
+      pageTitle={props.title}
+      pageDescription={props.description}
+      pageFeaturedImage={props.featuredImage?.src}
+    >
       <CustomPageLayoutHeader
         title={props.header?.title ?? props.title}
         description={props.header?.description ?? props.description}
@@ -52,10 +64,9 @@ export const OpenInvoicesWrapper = (props: Props) => {
             />
           )
         }
-    />
-    {props.children}
-    {
-      props.footer && (
+      />
+      {props.children}
+      {props.footer && (
         <Footer
           imageUrl={props.footer.organization.logo?.url}
           heading={props.footer.organization.title}
@@ -64,7 +75,7 @@ export const OpenInvoicesWrapper = (props: Props) => {
           background={props.footer.background}
           titleVariant={props.footer.titleVariant ?? 'h2'}
         />
-      )
-    }
-  </CustomPageLayoutWrapper>)
+      )}
+    </CustomPageLayoutWrapper>
+  )
 }

@@ -26,7 +26,9 @@ export class MockInvoicesService implements IInvoicesService {
     return MOCK_CUSTOMERS
   }
 
-  async getInvoiceTypes(_input: InvoiceTypesInput): Promise<InvoiceTypes | null> {
+  async getInvoiceTypes(
+    _input: InvoiceTypesInput,
+  ): Promise<InvoiceTypes | null> {
     return MOCK_INVOICE_TYPES
   }
 

@@ -1,4 +1,4 @@
-import { CustomerResponseDto } from "../../../gen/fetch";
+import { CustomerResponseDto } from '../../../gen/fetch'
 
 export interface CustomerDto {
   id: number
@@ -6,7 +6,9 @@ export interface CustomerDto {
   legalId: string
 }
 
-export const mapCustomerDto = (customer: CustomerResponseDto): CustomerDto | null => {
+export const mapCustomerDto = (
+  customer: CustomerResponseDto,
+): CustomerDto | null => {
   if (!customer.id || !customer.name || !customer.legalId) {
     return null
   }
@@ -15,5 +17,5 @@ export const mapCustomerDto = (customer: CustomerResponseDto): CustomerDto | nul
     id: customer.id,
     name: customer.name,
     legalId: customer.legalId,
-  };
-};
+  }
+}
