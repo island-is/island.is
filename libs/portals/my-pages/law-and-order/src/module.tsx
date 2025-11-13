@@ -9,7 +9,8 @@ import { LawAndOrderPaths } from './lib/paths'
 import Verdict from './screens/Verdict/Verdict'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
-const CourtCaseDetail = lazy(() => import('./screens/CourtCaseDetail/CourtCaseDetail'),
+const CourtCaseDetail = lazy(() =>
+  import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
 export const lawAndOrderModule: PortalModule = {

@@ -269,5 +269,5 @@ export const messages = defineMessages({
   close: {
     id: 'sp.law-and-order:close',
     defaultMessage: 'Loka',
-  }
+  },
 })
