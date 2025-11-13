@@ -104,7 +104,7 @@ const VerdictStatusAlertMessage = ({
     if (verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER) {
       return (
         <AlertMessage
-          type="info"
+          type="success"
           title={`Dómur birtur í Lögbirtingablaðinu - ${defendantName}`}
           message={messages[0]}
         />
