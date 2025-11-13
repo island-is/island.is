@@ -39,6 +39,7 @@ import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.r
 import { Dependency } from '../../dataTypes/dependency.model'
 import { SectionTypes } from '@island.is/form-system/shared'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class ApplicationsService {
@@ -403,12 +404,12 @@ export class ApplicationsService {
   }
 
   async findAllByNationalId(
-    nationalId: string,
-    locale: string,
+    locale: Locale,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
     const delegatorNationalId = hasDelegation ? user.nationalId : null
 
     const applications = await this.applicationModel.findAll({

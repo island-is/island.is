@@ -43,7 +43,6 @@ export class MyPagesApplicationService {
     const formSystemApplications = await this.formSystemApplicationsApiWithAuth(
       user,
     ).applicationsControllerFindAllByUser({
-      nationalId: user.nationalId,
       locale,
     })
 
