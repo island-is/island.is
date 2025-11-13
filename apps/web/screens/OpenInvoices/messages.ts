@@ -111,7 +111,8 @@ export const m = {
     },
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
-      defaultMessage: '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum} kr.**',
+      defaultMessage:
+        '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum} kr.**',
     },
     noResultsFound: {
       id: 'web.openinvoices:search.noResultsFound',

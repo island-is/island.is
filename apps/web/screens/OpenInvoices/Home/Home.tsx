@@ -12,10 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import {
-  ChartsCard,
-  Footer,
-} from '@island.is/web/components'
+import { ChartsCard, Footer } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   Query,
