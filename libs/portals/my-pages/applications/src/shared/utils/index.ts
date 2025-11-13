@@ -1,4 +1,8 @@
-import { Application, ApplicationStatus } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationStatus,
+  InstitutionTypes,
+} from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationsPaths } from '../../lib/paths'
@@ -11,6 +15,12 @@ interface SortedApplication {
   incomplete: Application[]
   inProgress: Application[]
   finished: Application[]
+}
+
+interface ApplicationWithInstitution extends Application {
+  formSystemFormSlug?: string
+  formSystemOrgSlug?: InstitutionTypes
+  formSystemOrgContentfulId?: string
 }
 
 export const sortApplicationsStatus = (
@@ -41,7 +51,7 @@ export const sortApplicationsStatus = (
 }
 
 export const sortApplicationsOrganizations = (
-  applications: Application[],
+  applications: ApplicationWithInstitution[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
   let institutions: InstitutionOption[] = []
@@ -94,7 +104,7 @@ export const getBaseUrlForm = () => {
 
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
-  applications: Application[] = [],
+  applications: ApplicationWithInstitution[] = [],
   filteredOutApplication?: string,
 ) => {
   if (!filterValue) {

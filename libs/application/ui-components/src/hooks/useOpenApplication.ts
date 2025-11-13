@@ -1,5 +1,5 @@
 import { getSlugFromType } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { ApplicationCardFields } from '../components/ApplicationCard/types'
 
 const getBaseUrl = () => {
   const path = window.location.origin
@@ -14,7 +14,10 @@ const getFormSystemBaseUrl = () => {
 }
 
 export const useOpenApplication = (
-  application: Pick<Application, 'id' | 'typeId' | 'formSystemFormSlug'>,
+  application: Pick<
+    ApplicationCardFields,
+    'id' | 'typeId' | 'formSystemFormSlug'
+  >,
 ) => {
   const baseUrl = application.formSystemFormSlug
     ? getFormSystemBaseUrl()
