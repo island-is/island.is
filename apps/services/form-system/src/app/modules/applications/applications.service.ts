@@ -76,7 +76,7 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    // Check if at least one of the user's delegationTypes is allowed for this form
+    // Check if at least one of the user's delegationTypes is allowed for this form.
     if (
       form.allowedDelegationTypes.length > 0 &&
       (!user.delegationType || user.delegationType.length === 0
