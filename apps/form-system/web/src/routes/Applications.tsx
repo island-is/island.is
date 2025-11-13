@@ -18,26 +18,24 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AlertMessage } from '@island.is/island-ui/core'
+
 interface Params {
   slug?: string
 }
 
 export const Applications = () => {
+  console.log('Applications component rendered')
   useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const [createApplicationMutation] = useMutation(CREATE_APPLICATION, {
-    onCompleted({ createApplication }) {
-      if (slug) {
-        console.log(createApplication)
-      }
-    },
-  })
+  const [loginAllowed, setLoginAllowed] = useState(true)
+  const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const { formatMessage } = useIntl()
 
@@ -55,13 +53,14 @@ export const Applications = () => {
           },
         },
       })
-      console.log('apppppppp', app.data)
-      if (app.data?.createFormSystemApplication?.application?.id) {
+
+      if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
+        setLoginAllowed(false)
+      } else if (app.data?.createFormSystemApplication?.application?.id) {
         navigate(
           `../${slug}/${app.data.createFormSystemApplication.application.id}`,
         )
       }
-      return app
     } catch (error) {
       console.error('Error creating application:', error)
       return null
@@ -78,26 +77,42 @@ export const Applications = () => {
           },
         },
       })
-      return app.data?.formSystemGetApplications?.applications
+
+      const dto = app.data?.formSystemGetApplications
+      if (dto?.isLoginTypeAllowed === false) {
+        setLoginAllowed(false)
+        return null
+      }
+      return dto
     } catch (error) {
       console.error('Error fetching applications:', error)
       return null
     }
   }, [getApplications, slug])
 
+  const hasInitializedRef = useRef(false)
+
   useEffect(() => {
-    const fetchData = async () => {
-      const apps = await fetchApplications()
-      console.log(`apps: ${apps}`)
-      if (apps && apps.length > 0) {
+    if (hasInitializedRef.current) return
+    hasInitializedRef.current = true
+
+    const run = async () => {
+      const responseDto = await fetchApplications()
+      if (!responseDto) {
+        setLoading(false)
+        return
+      }
+      const apps = responseDto.applications || []
+      if (apps.length > 0) {
         setApplications(apps)
         setLoading(false)
-      } else {
-        createApplication()
+      } else if (loginAllowed) {
+        await createApplication()
+        setLoading(false)
       }
     }
-    fetchData()
-  }, [slug, createApplication, fetchApplications])
+    run()
+  }, [slug, createApplication, fetchApplications, loginAllowed])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
@@ -120,6 +135,24 @@ export const Applications = () => {
   )
 
   if (loading) return <ApplicationLoading />
+
+  if (!loginAllowed) {
+    return (
+      <Page>
+        <GridContainer>
+          <Box marginTop={4}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.switchLoginToCreateApplication)}
+              message={`${formatMessage(
+                m.loginNotAllowedToCreateApplication,
+              )} "${slug}".`}
+            />
+          </Box>
+        </GridContainer>
+      </Page>
+    )
+  }
 
   return (
     <>

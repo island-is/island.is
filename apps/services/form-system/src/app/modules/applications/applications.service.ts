@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Op } from 'sequelize'
@@ -64,24 +60,11 @@ export class ApplicationsService {
     @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
-  private isLoginTypeAllowed(
-    loginTypes: string[],
-    allowedLoginTypes: string[],
-  ): boolean {
-    return (
-      loginTypes.length > 0 &&
-      loginTypes.every((type) => allowedLoginTypes.includes(type))
-    )
-  }
-
   async create(
     slug: string,
     createApplicationDto: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationResponseDto> {
-    // TODO: Check if user is allowed to create application for this form
-    // TODO: Check if form is published
-
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -89,36 +72,11 @@ export class ApplicationsService {
     }
 
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
     }
-
-    // if (
-    //   loginTypes.length > 0 &&
-    //   loginTypes.every((type) => form.allowedLoginTypes.includes(type))
-    // ) {
-    //   console.log('þetta má', loginTypes)
-    // } else {
-    //   console.log('þetta má ekki', loginTypes)
-    // }
-
-    // Check if at least one of the user's delegationTypes is allowed for this form
-    // if (
-    //   form.allowedLoginTypes.length > 0 &&
-    //   (!user.delegationType || user.delegationType.length === 0
-    //     ? !form.allowedLoginTypes.includes('Individual')
-    //     : !user.delegationType.some((type) =>
-    //         form.allowedLoginTypes.includes(type),
-    //       ))
-    // ) {
-    //   throw new BadRequestException(
-    //     `User delegationTypes '${
-    //       user.delegationType ? user.delegationType.join(', ') : 'none'
-    //     }' are not allowed for this form`,
-    //   )
-    // }
 
     let newApplicationId = ''
 
@@ -148,9 +106,6 @@ export class ApplicationsService {
         { transaction },
       )
 
-      // TODO: finna út aðilana með því að skoða tókenið frá usernum.
-      // búa bara til aðila screens og fields fyrir þá aðila sem eru hlutaðeigandi þessarar umsóknar
-
       await Promise.all(
         form.sections.map((section) =>
           Promise.all(
@@ -174,6 +129,7 @@ export class ApplicationsService {
                     if (type === ApplicantTypesEnum.INDIVIDUAL) {
                       valueJson['nationalId'] = nationalId
                       valueJson['isLoggedInUser'] = true
+                      valueJson['applicantType'] = type
                     } else if (
                       type ===
                         ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
@@ -183,6 +139,7 @@ export class ApplicationsService {
                     ) {
                       valueJson['nationalId'] = user.actor?.nationalId || ''
                       valueJson['isLoggedInUser'] = true
+                      valueJson['applicantType'] = type
                     } else if (
                       type === ApplicantTypesEnum.LEGAL_ENTITY ||
                       type ===
@@ -190,9 +147,9 @@ export class ApplicationsService {
                       type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
                     ) {
                       valueJson['nationalId'] = user.nationalId
+                      valueJson['applicantType'] = type
                     }
                   }
-                  console.log('valueJson', valueJson)
                   return this.valueModel.create(
                     {
                       fieldId: field.id,
@@ -406,6 +363,10 @@ export class ApplicationsService {
           as: 'events',
           where: { isFileEvent: false },
         },
+        {
+          model: Value,
+          as: 'values',
+        },
       ],
       order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
     })
@@ -423,7 +384,10 @@ export class ApplicationsService {
 
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
-      if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+      if (
+        !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
+        !this.doesUserMatchApplication(application, user!, loginTypes)
+      ) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isLoginTypeAllowed = false
         return responseDto
@@ -448,8 +412,6 @@ export class ApplicationsService {
     user: User,
     isTest: boolean,
   ): Promise<ApplicationResponseDto> {
-    // TODO: Check if form is published
-
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -457,29 +419,12 @@ export class ApplicationsService {
     }
 
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginTypeAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
     }
 
-    // Check if at least one of the user's delegationTypes is allowed for this form
-    // if (
-    //   form.allowedLoginTypes.length > 0 &&
-    //   (!user.delegationType || user.delegationType.length === 0
-    //     ? !form.allowedLoginTypes.includes('Individual')
-    //     : !user.delegationType.some((type) =>
-    //         form.allowedLoginTypes.includes(type),
-    //       ))
-    // ) {
-    //   throw new BadRequestException(
-    //     `User delegationTypes '${
-    //       user.delegationType ? user.delegationType.join(', ') : 'none'
-    //     }' are not allowed for this form`,
-    //   )
-    // }
-
-    // Check if the user has applications for this form
     const existingApplications = await this.findAllByUserAndForm(
       user,
       form.id,
@@ -508,10 +453,11 @@ export class ApplicationsService {
       include: [{ model: Value, as: 'values' }],
     })
 
+    const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
-      nationalId,
-      delegatorNationalId,
+      user,
+      loginTypes,
     )
 
     for (const app of applicationsByUser) {
@@ -554,10 +500,6 @@ export class ApplicationsService {
     formId: string,
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
-    // TODO: Check if form is published
-
-    // check loginTypes
-
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
@@ -573,11 +515,11 @@ export class ApplicationsService {
       },
       include: [{ model: Value, as: 'values' }],
     })
-
+    const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
-      nationalId,
-      delegatorNationalId,
+      user,
+      loginTypes,
     )
 
     const applicationDtos: ApplicationDto[] = []
@@ -599,32 +541,64 @@ export class ApplicationsService {
     return applicationDtos
   }
 
+  private isLoginAllowed(
+    loginTypes: string[],
+    allowedLoginTypes: string[],
+  ): boolean {
+    return (
+      loginTypes.length > 0 &&
+      loginTypes.every((type) => allowedLoginTypes.includes(type))
+    )
+  }
+
+  private doesUserMatchApplication(
+    application: Application,
+    user: User,
+    loginTypes: string[],
+  ): boolean {
+    const hasDelegation =
+      Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = hasDelegation ? user.nationalId : null
+
+    const loggedInUser = application.values?.find(
+      (value) =>
+        value.fieldType === FieldTypesEnum.APPLICANT &&
+        value.json?.nationalId === nationalId &&
+        loginTypes.includes(value.json?.applicantType ?? ''),
+    )
+
+    const delegator = delegatorNationalId
+      ? application.values?.find(
+          (value) =>
+            value.fieldType === FieldTypesEnum.APPLICANT &&
+            value.json?.nationalId === delegatorNationalId &&
+            loginTypes.includes(value.json?.applicantType ?? ''),
+        )
+      : null
+
+    if (hasDelegation === true) {
+      if (loggedInUser && delegator) {
+        return true
+      }
+    } else {
+      if (loggedInUser) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   private async getApplicationsByUser(
     applications: Application[],
-    nationalId: string | undefined,
-    delegatorNationalId: string | null,
+    user: User,
+    loginTypes: string[],
   ): Promise<Application[]> {
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
-      const loggedInUser = application.values?.find(
-        (value) =>
-          value.fieldType === FieldTypesEnum.APPLICANT &&
-          value.json?.nationalId === nationalId,
-      )
-
-      const delegator = delegatorNationalId
-        ? application.values?.find(
-            (value) =>
-              value.fieldType === FieldTypesEnum.APPLICANT &&
-              value.json?.nationalId === delegatorNationalId,
-          )
-        : null
-
-      if (
-        loggedInUser &&
-        (!delegatorNationalId || (delegatorNationalId && delegator))
-      ) {
+      if (this.doesUserMatchApplication(application, user, loginTypes)) {
         filteredApplications.push(application)
       }
     }

@@ -1021,4 +1021,40 @@ export const m = defineMessages({
     defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
     description: 'Are you sure you want to delete the form: {formName}?',
   },
+  switchLoginToCreateApplication: {
+    id: 'form.system:switch-login-to-create-application',
+    defaultMessage:
+      'Skipta þarf um innskráningu til að stofna umsókn af þessu tagi.',
+    description:
+      'You must change your login to create an application of this type.',
+  },
+  loginNotAllowedToCreateApplication: {
+    id: 'form.system:login-not-allowed-to-create-application',
+    defaultMessage:
+      'Núverandi innskráning hefur ekki réttindi til að stofna umsókn af tegund',
+    description:
+      'The current login does not have permissions to create an application of type',
+  },
+  switchLoginToOpenApplication: {
+    id: 'form.system:switch-login-to-open-application',
+    defaultMessage: 'Skipta þarf um innskráningu til að opna þessa umsókn.',
+    description: 'You must change your login to open this application.',
+  },
+  loginNotAllowedToOpenApplication: {
+    id: 'form.system:login-not-allowed-to-open-application',
+    defaultMessage:
+      'Núverandi innskráning hefur ekki réttindi til að skoða eða vinna í umsókn nr.',
+    description:
+      'The current login does not have permission to view or work on application no.',
+  },
+  errorFetchingApplication: {
+    id: 'form.system:error-fetching-application',
+    defaultMessage: 'Villa kom upp við að sækja umsóknina.',
+    description: 'An error occurred while fetching the application.',
+  },
+  createApplication: {
+    id: 'form.system:create-application',
+    defaultMessage: 'Stofna nýja umsókn',
+    description: 'Create new application',
+  },
 })
