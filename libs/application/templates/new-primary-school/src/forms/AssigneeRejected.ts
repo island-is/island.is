@@ -78,7 +78,6 @@ export const AssigneeRejected: Form = buildForm({
               },
             }),
             buildTextField({
-              // TODO: MMS needs to decide whether we should display this to both the other guardian and the payer or just the other guardian
               id: 'assigneeRejected.selectedSchool',
               title: newPrimarySchoolMessages.overview.selectedSchool,
               width: 'full',
