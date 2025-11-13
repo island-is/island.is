@@ -97,7 +97,8 @@ export const m = {
     },
     resultFound: {
       id: 'web.openinvoices:search.resultFound#markdown',
-      defaultMessage: '1 færsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
+      defaultMessage:
+        '1 færsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
     },
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
@@ -107,6 +108,5 @@ export const m = {
       id: 'web.openinvoices:search.noResultsFound',
       defaultMessage: 'Engar færslur fundust',
     },
-
   }),
 }

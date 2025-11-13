@@ -6,7 +6,7 @@ import {
   FilterMultiChoice,
   FilterProps,
 } from '@island.is/island-ui/core'
-import { Locale } from "@island.is/shared/types";
+import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
@@ -20,7 +20,7 @@ interface MultiSelectProps {
     id: string
     label: string
     items: Array<{
-      value: string,
+      value: string
       label: string
     }>
   }>
@@ -43,8 +43,8 @@ interface Props {
   onReset: () => void
   searchState?: SearchState
   url: string
-  locale: Locale,
-  categories: Array<MultiSelectProps | DateSelectProps>,
+  locale: Locale
+  categories: Array<MultiSelectProps | DateSelectProps>
   variant?: FilterProps['variant']
   hits?: number
 }
@@ -59,7 +59,7 @@ export const OverviewFilter = ({
   variant = 'default',
   hits,
 }: Props) => {
-  const { formatMessage} = useIntl()
+  const { formatMessage } = useIntl()
   return (
     <Box
       component="form"
@@ -82,21 +82,30 @@ export const OverviewFilter = ({
         align={'right'}
       >
         <Box background="white" borderRadius="large">
-          {categories.map(category => {
+          {categories.map((category) => {
             if (category.type === 'date') {
-              return <FilterDateAccordion
-                title={formatMessage(m.search.range)}
-                id={category.id}
-                locale={locale}
-                valueFrom={category.valueFrom}
-                valueTo={category.valueTo}
-                placeholder={category.placeholder}
-                onChange={(valueFrom, valueTo) => {
-                  const valueFromString = valueFrom ? valueFrom.toISOString() : undefined
-                  const valueToString = valueTo ? valueTo.toISOString() : undefined
-                  onSearchUpdate(category.id as keyof SearchState, [valueFromString, valueToString].filter(isDefined));
-                }}
-              />
+              return (
+                <FilterDateAccordion
+                  title={formatMessage(m.search.range)}
+                  id={category.id}
+                  locale={locale}
+                  valueFrom={category.valueFrom}
+                  valueTo={category.valueTo}
+                  placeholder={category.placeholder}
+                  onChange={(valueFrom, valueTo) => {
+                    const valueFromString = valueFrom
+                      ? valueFrom.toISOString()
+                      : undefined
+                    const valueToString = valueTo
+                      ? valueTo.toISOString()
+                      : undefined
+                    onSearchUpdate(
+                      category.id as keyof SearchState,
+                      [valueFromString, valueToString].filter(isDefined),
+                    )
+                  }}
+                />
+              )
             }
 
             return (
@@ -111,17 +120,17 @@ export const OverviewFilter = ({
                 onClear={(categoryId) => {
                   onSearchUpdate(categoryId as keyof SearchState, undefined)
                 }}
-                categories={category.sections.map(section => ({
+                categories={category.sections.map((section) => ({
                   id: section.id,
                   label: section.label,
                   selected: searchState?.[section.id] ?? [],
-                  filters: section.items.map(item => ({
+                  filters: section.items.map((item) => ({
                     value: item.value,
                     label: item.label,
-                  }))
+                  })),
                 }))}
               />
-            );
+            )
           })}
         </Box>
       </Filter>

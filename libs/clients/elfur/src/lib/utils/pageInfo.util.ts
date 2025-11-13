@@ -1,5 +1,5 @@
-import { PageInfoDto } from "@island.is/nest/pagination";
-import { PageInfo } from "../../../gen/fetch";
+import { PageInfoDto } from '@island.is/nest/pagination'
+import { PageInfo } from '../../../gen/fetch'
 
 export const mapPageInfo = (pageInfo: PageInfo): PageInfoDto => {
   return {
@@ -7,5 +7,5 @@ export const mapPageInfo = (pageInfo: PageInfo): PageInfoDto => {
     hasNextPage: pageInfo.hasNextPage ?? false,
     startCursor: pageInfo.startCursor ?? undefined,
     endCursor: pageInfo.endCursor ?? undefined,
-  };
-};
+  }
+}

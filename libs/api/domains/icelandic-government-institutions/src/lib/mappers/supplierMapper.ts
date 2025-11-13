@@ -1,8 +1,8 @@
 import { SuppliersDto } from '@island.is/clients/elfur'
-import { Suppliers} from '../models/suppliers.model'
+import { Suppliers } from '../models/suppliers.model'
 import { Entity } from '../models/entity.model'
 
-export const mapSuppliers= (data: SuppliersDto): Suppliers=> {
+export const mapSuppliers = (data: SuppliersDto): Suppliers => {
   const suppliers: Entity[] = data.suppliers.map((supplier) => ({
     id: supplier.id,
     name: supplier.name,

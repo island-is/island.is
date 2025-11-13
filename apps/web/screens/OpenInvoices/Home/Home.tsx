@@ -23,7 +23,7 @@ import {
 import {
   CustomPageUniqueIdentifier,
   Query,
-  QueryGetOrganizationArgs
+  QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -68,7 +68,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
       description={formatMessage(m.home.description)}
       featuredImage={{
         src: formatMessage(m.home.featuredImage),
-        alt: formatMessage(m.home.featuredImageAlt)
+        alt: formatMessage(m.home.featuredImageAlt),
       }}
       header={{
         offset: true,
@@ -87,9 +87,13 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           ],
         },
       }}
-      footer={organization ? {
-        organization,
-      } : undefined}
+      footer={
+        organization
+          ? {
+              organization,
+            }
+          : undefined
+      }
     >
       <Box marginTop="containerGutter">
         <GridContainer>
@@ -350,7 +354,9 @@ const OpenInvoicesHome: CustomScreen<OpenInvoicesHomeProps> = ({
 }
 
 OpenInvoicesHome.getProps = async ({ apolloClient, locale }) => {
-  const { data: { getOrganization } } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
     query: GET_ORGANIZATION_QUERY,
     variables: {
       input: {
@@ -358,11 +364,11 @@ OpenInvoicesHome.getProps = async ({ apolloClient, locale }) => {
         lang: locale,
       },
     },
-  });
+  })
 
   return {
     locale: locale as Locale,
-    organization: getOrganization
+    organization: getOrganization,
   }
 }
 
