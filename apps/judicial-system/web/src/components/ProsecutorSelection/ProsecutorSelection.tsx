@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useMemo } from 'react'
+import { FC, useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
@@ -23,6 +23,7 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
   const { user: currentUser } = useContext(UserContext)
+  const [caseLoaded, setCaseLoaded] = useState(false)
 
   const selectedProsecutor = useMemo(() => {
     if (!workingCase.prosecutor && currentUser?.role !== UserRole.PROSECUTOR) {
@@ -86,7 +87,10 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
     [data?.users, onChange, setWorkingCase, workingCase.id],
   )
 
-  useOnceOn(isCaseUpToDate, () => {
+  // Before we can set the default prosecutor we need to make sure
+  // that the case has been loaded and that we have the list of users
+  useOnceOn(isCaseUpToDate, () => setCaseLoaded(true))
+  useOnceOn(caseLoaded && Boolean(data?.users), () => {
     if (!workingCase.prosecutor && selectedProsecutor?.value) {
       handleUpdate(selectedProsecutor.value)
     }
