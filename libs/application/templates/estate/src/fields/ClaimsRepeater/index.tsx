@@ -45,7 +45,6 @@ export const ClaimsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
 
   const { total, calculateTotal } = useRepeaterTotal(
     id,
@@ -55,11 +54,11 @@ export const ClaimsRepeater: FC<
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.claims) {
       replace(estateData.estate.claims)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {

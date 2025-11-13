@@ -31,7 +31,6 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   })
 
   const { clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
 
   const { total, calculateTotal } = useRepeaterTotal(
     id,
@@ -41,18 +40,18 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.vehicles) {
       replace(estateData.estate.vehicles)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })

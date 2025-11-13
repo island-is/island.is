@@ -15,7 +15,6 @@ export const MoneyAndDepositFields: FC<
   const { id } = field
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [hasInitialized, setHasInitialized] = useState(false)
 
   const infoFieldId = `${id}.info`
@@ -24,6 +23,7 @@ export const MoneyAndDepositFields: FC<
   useEffect(() => {
     if (hasInitialized) return
 
+    const estateData = getEstateDataFromApplication(application)
     const prefill = estateData?.estate?.moneyAndDeposit as any | undefined
     const currentInfo = getValues(infoFieldId)
     const currentValue = getValues(valueFieldId)
@@ -35,7 +35,7 @@ export const MoneyAndDepositFields: FC<
 
     setHasInitialized(true)
   }, [
-    estateData,
+    application,
     setValue,
     getValues,
     infoFieldId,

@@ -161,10 +161,10 @@ export const EstateMembersRepeater: FC<
 
   const handleAddMember = () =>
     append({
-      nationalId: undefined,
+      nationalId: '',
       initial: false,
       enabled: true,
-      name: undefined,
+      name: '',
     })
 
   useEffect(() => {
