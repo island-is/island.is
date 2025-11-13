@@ -741,18 +741,17 @@ export class ApplicationsService {
       lastScreen.id === screenId &&
       !application.completed?.includes(screen.sectionId)
     ) {
+      const nextCompleted = [...(application.completed ?? []), screen.sectionId]
+      const nextDraftFinished = (application.draftFinishedSteps ?? 0) + 1
+      const nextDraftTotal = await this.calculateDraftTotalSteps(
+        application.formId,
+        application.dependencies || [],
+      )
       await application.update({
         ...application,
-        completed: [...(application.completed ?? []), screen.sectionId],
-        draftFinishedSteps: application.draftFinishedSteps + 1,
-      })
-      await application.update({
-        ...application,
-
-        draftTotalSteps: await this.calculateDraftTotalSteps(
-          application.formId,
-          application.dependencies || [],
-        ),
+        completed: nextCompleted,
+        draftFinishedSteps: nextDraftFinished,
+        draftTotalSteps: nextDraftTotal,
       })
     }
 
