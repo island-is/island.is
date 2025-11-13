@@ -100,7 +100,7 @@ export const m = {
       defaultMessage: '1 færsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
     },
     resultsFound: {
-      id: 'web.openinvoices:search.resultsFound',
+      id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage: '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum} kr.**',
     },
     noResultsFound: {
