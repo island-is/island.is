@@ -100,11 +100,7 @@ export const AssigneeApproval: Form = buildForm({
               ? assigneeMessages.otherGuardian.title
               : assigneeMessages.payer.title
           },
-          description: (application) => {
-            return application.state === States.OTHER_GUARDIAN_APPROVAL
-              ? assigneeMessages.otherGuardian.thanksDescription
-              : assigneeMessages.payer.thanksDescription
-          },
+          description: assigneeMessages.shared.thanksDescription,
         }),
       ],
     }),

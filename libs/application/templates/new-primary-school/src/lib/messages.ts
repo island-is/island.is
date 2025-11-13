@@ -1158,6 +1158,11 @@ export const assigneeMessages: MessageDir = {
       defaultMessage: 'Hafna',
       description: 'Reject',
     },
+    thanksDescription: {
+      id: 'nps.application:assignee.shared.thanks.description',
+      defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
+      description: 'Thank you! Your position has been registered.',
+    },
     editApplication: {
       id: 'nps.application:assignee.shared.edit.application',
       defaultMessage: 'Breyta umsókn',
@@ -1174,14 +1179,9 @@ export const assigneeMessages: MessageDir = {
     approvalDescription: {
       id: 'nps.application:assignee.other.guardian.approval.description',
       defaultMessage:
-        'Óskað hefur verið eftir undirritun þinni á umsókn fyrir barnið þitt í eftirfarandi skóla',
+        'Óskað hefur verið eftir undirritun þinni vegna umsóknar fyrir barnið þitt í eftirfarandi skóla',
       description:
         'Your signature has been requested on an application for your child’s enrolment in the following school',
-    },
-    thanksDescription: {
-      id: 'nps.application:assignee.other.guardian.thanks.description',
-      defaultMessage: 'Takk fyrir! Undirritun þín hefur verið skráð.',
-      description: 'Thank you! Your signature has been registered',
     },
     rejectedDescription: {
       id: 'nps.application:assignee.other.guardian.rejected.description',
@@ -1215,12 +1215,6 @@ export const assigneeMessages: MessageDir = {
       // TODO: MMS needs to update the text
       id: 'nps.application:assignee.payer.approval.description',
       defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
-      description: 'english description',
-    },
-    thanksDescription: {
-      // TODO: MMS needs to update the text
-      id: 'nps.application:assignee.payer.thanks.description',
-      defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
       description: 'english description',
     },
     rejectedDescription: {
@@ -1340,7 +1334,7 @@ export const pendingActionMessages = defineMessages({
   otherGuardianApprovalAssigneeDescription: {
     id: 'nps.application:pending.action.other.guardian.approval.assignee.description',
     defaultMessage:
-      'Óskað hefur verið eftir undirritun þinni á umsókn fyrir barnið þitt í skóla.',
+      'Óskað hefur verið eftir undirritun þinni vegna umsóknar fyrir barnið þitt í skóla.',
     description:
       'Your signature has been requested on an application for your child’s enrolment in school.',
   },
