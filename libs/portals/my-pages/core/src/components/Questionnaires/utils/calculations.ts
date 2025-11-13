@@ -1,4 +1,4 @@
-export type QuestionAnswer = { value: unknown }
+import { QuestionAnswer } from '../../../types/questionnaire'
 
 const asNumber = (v: unknown): number => {
   if (typeof v === 'number' && Number.isFinite(v)) return v
@@ -46,7 +46,7 @@ const resolveRef = (
   // token is either "@@@id" or a literal
   if (token.startsWith('@@@')) {
     const id = token.slice(3)
-    return answers[id]?.value ?? null
+    return answers[id]?.answers?.[0]?.values ?? null
   }
   return token
 }
@@ -85,15 +85,11 @@ const substitutePlainRefs = (
     const ans = answers[id]
     let value = 0
 
-    if (ans && ans.value !== undefined && ans.value !== null) {
-      if (Array.isArray(ans.value)) {
-        value = ans.value.reduce((sum, v) => sum + asNumber(v), 0)
-      } else if (ans.value instanceof Date) {
-        const ms = ans.value.getTime()
-        value = Number.isNaN(ms) ? 0 : ms
-      } else {
-        value = asNumber(ans.value)
-      }
+    if (ans && ans.answers && ans.answers.length > 0) {
+      // Sum all values in the answers array
+      value = ans.answers.reduce((sum: number, item) => {
+        return sum + asNumber(item.values)
+      }, 0)
     }
 
     return String(value)

@@ -2,7 +2,7 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
 } from '@island.is/api/schema'
-import { Box, LoadingDots, Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -46,20 +46,28 @@ const QuestionnaireDetail: React.FC = () => {
 
   const questionnaire = data?.questionnairesDetail
   const status = questionnaire?.baseInformation.status
-  const isAnswered = status === QuestionnaireQuestionnairesStatusEnum.answered
+  const isAnswered =
+    status == QuestionnaireQuestionnairesStatusEnum.answered ||
+    (questionnaire?.submissions?.length ?? 0) > 0
   const notAnswered =
     status === QuestionnaireQuestionnairesStatusEnum.notAnswered
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
 
-  const link = HealthPaths.HealthQuestionnairesAnswer.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  ).replace(':id', id)
-  //  isAnswered
-  //   ? HealthPaths.HealthQuestionnairesAnswered.replace(':id', id)
-  //   : notAnswered
-  //   ? HealthPaths.HealthQuestionnairesAnswer.replace(':id', id)
-  //   : undefined
+  const link = isAnswered
+    ? HealthPaths.HealthQuestionnairesAnswered.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      ).replace(':id', id)
+    : notAnswered
+    ? HealthPaths.HealthQuestionnairesAnswer.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      ).replace(':id', id)
+    : undefined
+  // HealthPaths.HealthQuestionnairesAnswer.replace(
+  //   ':org',
+  //   organization?.toLocaleLowerCase() ?? '',
+  // ).replace(':id', id)
 
   const statusLabel = isAnswered
     ? formatMessage(messages.answeredQuestionnaire)
@@ -72,7 +80,7 @@ const QuestionnaireDetail: React.FC = () => {
   const statusTagVariant: TagVariant = isAnswered
     ? 'blue'
     : notAnswered
-    ? 'red'
+    ? 'purple'
     : isExpired
     ? 'red'
     : 'mint'
@@ -93,39 +101,29 @@ const QuestionnaireDetail: React.FC = () => {
           : questionnaire?.baseInformation.title ??
             formatMessage(messages.questionnaire)
       }
-      intro={formatMessage(messages.questionnairesIntro)}
-      loading={loading}
-      buttonGroup={
-        link
-          ? [
-              <LinkButton
-                key={'bloodtype-link'}
-                variant="utility"
-                colorScheme="primary"
-                size="small"
-                icon="open"
-                to={link}
-                text={
-                  status &&
-                  status === QuestionnaireQuestionnairesStatusEnum.answered
-                    ? formatMessage(messages.seeAnswers)
-                    : formatMessage(messages.answer)
-                }
-              />,
-            ]
-          : undefined
+      intro={
+        questionnaire?.baseInformation.description ??
+        formatMessage(messages.questionnairesIntro)
       }
+      loading={loading}
+      buttonGroup={[
+        link ? (
+          <LinkButton
+            key={'bloodtype-link'}
+            variant="utility"
+            colorScheme="primary"
+            size="small"
+            icon="open"
+            to={link}
+            text={
+              isAnswered && !isExpired
+                ? formatMessage(messages.seeAnswers)
+                : formatMessage(messages.answer)
+            }
+          />
+        ) : null,
+      ]}
     >
-      {loading && !error && (
-        <Box
-          display={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}
-          height="full"
-        >
-          <LoadingDots />
-        </Box>
-      )}
       {
         <InfoLineStack
           children={[

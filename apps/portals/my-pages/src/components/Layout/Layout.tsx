@@ -40,7 +40,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const globalBanners = banners.filter((banner) =>
     banner.servicePortalPaths?.includes('*'),
   )
-  const isFullwidth = activeModule?.layout === 'full' || isQuestionnaireDetail
+  const isFullwidth = activeModule?.layout === 'full'
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
 

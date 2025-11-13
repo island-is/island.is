@@ -1,6 +1,6 @@
 import type { User } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
@@ -19,15 +19,20 @@ import {
   Questionnaire as LSHQuestionnaireType,
   QuestionnaireBody,
 } from '@island.is/clients/lsh'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
 import {
   QuestionnairesList,
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
-import { QuestionnaireSubmission } from '../models/submission.model'
+import { mapToElAnswer } from './transform-mappers/health-directorate/hd-input-mapper'
 import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
+import { mapToLshAnswer } from './transform-mappers/lsh/lsh-input-mapper'
 import { mapLshQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
+import { QuestionnairesResponse } from './dto/response.dto'
+import { title } from 'process'
 // import { mapTriggerSourceToGraphQL } from './transform-mappers/health-directorate/hd-gpt-mapper'
 
 @Injectable()
@@ -36,7 +41,25 @@ export class QuestionnairesService {
     private readonly lshDevApi: LshDevService,
     private readonly api: HealthDirectorateHealthService,
     private readonly lshApi: LshClientService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
+
+  /**
+   * Helper method to normalize organization string to enum
+   */
+  private normalizeOrganization(
+    org: string,
+  ): QuestionnairesOrganizationEnum | null {
+    const normalized = org.toUpperCase()
+    if (normalized === QuestionnairesOrganizationEnum.LSH) {
+      return QuestionnairesOrganizationEnum.LSH
+    }
+    if (normalized === QuestionnairesOrganizationEnum.EL) {
+      return QuestionnairesOrganizationEnum.EL
+    }
+    return null
+  }
 
   async getQuestionnaire(
     _user: User,
@@ -106,6 +129,13 @@ export class QuestionnairesService {
             description: data.message || undefined,
             organization: QuestionnairesOrganizationEnum.EL,
           },
+          submissions: data.submissions?.map((submission) => ({
+            id: submission.id,
+            date:
+              submission.submittedDate?.toDateString() ||
+              submission.lastUpdatedDate?.toDateString() ||
+              undefined,
+          })),
         }
   }
 
@@ -135,23 +165,118 @@ export class QuestionnairesService {
   }
 
   async getAnsweredQuestionnaire(
-    user: User,
+    _user: User,
     _locale: Locale,
     input: QuestionnaireAnsweredInput,
-  ): Promise<QuestionnaireSubmission | null> {
-    // const lshDevQuestionnaires: QuestionnairesList[] = []
+  ): Promise<AnsweredQuestionnaires | null> {
+    const organization = this.normalizeOrganization(input.organization)
 
-    // // TODO Handle error for each client so the other can still succeed
-    // const lshDev: Form[] = await this.lshDevApi.getAnsweredForms(user)
-    // const lshTemp = mapFormsToQuestionnairesList(lshDev)
+    if (!organization) {
+      return null
+    }
 
-    // const data = lshTemp.questionnaires
-    //   ?.map((q) => (q.formId === input.formId ? q : null))
-    //   .filter((q) => q !== null)
+    if (organization === QuestionnairesOrganizationEnum.EL) {
+      try {
+        const ELdata = await this.api.getQuestionnaireAnswered(
+          _user,
+          _locale,
+          input.id,
+          input.submissionId,
+        )
 
-    // if (!data || data.length === 0) {
-    //   return null
-    // }
+        if (ELdata) {
+          const repliesMap = new Map(
+            ELdata.replies?.map((reply) => [reply.questionId, reply]) || [],
+          )
+
+          const submission = {
+            id: input.id,
+            title: ELdata.title || 'Spurningalisti',
+            description: ELdata.message || undefined,
+            date:
+              ELdata.submission?.submittedDate?.toDateString() ||
+              ELdata.submission?.lastUpdatedDate?.toDateString() ||
+              undefined,
+
+            answers:
+              ELdata.groups
+                ?.flatMap(
+                  (group) =>
+                    group.items?.map((item) => {
+                      const reply = repliesMap.get(item.id)
+
+                      // Extract values based on reply type
+                      let values: string[] = []
+                      if (reply) {
+                        if ('values' in reply) {
+                          // ListReplyDto
+                          values = reply.values.map((v) => v.answer)
+                        } else if ('answer' in reply) {
+                          // StringReplyDto, NumberReplyDto, BooleanReplyDto, DateReplyDto
+                          values = [String(reply.answer)]
+                        }
+                      }
+
+                      return {
+                        id: item.id || 'undefined-id',
+                        label: item.label || 'LABEL',
+                        values,
+                      }
+                    }) || [],
+                )
+                .filter((answer) => answer !== undefined) || [],
+          }
+
+          return { data: [submission] }
+        }
+      } catch (error) {
+        console.error('Error fetching EL answered questionnaire:', error)
+        return null
+      }
+    }
+
+    if (organization === QuestionnairesOrganizationEnum.LSH) {
+      const LSHdata = await this.lshApi.getAnsweredQuestionnaire(
+        _user,
+        _locale,
+        input.id,
+      )
+
+      const LSHquestionnaire = await this.lshApi.getQuestionnaire(
+        _user,
+        _locale,
+        input.id,
+      )
+      if (LSHdata && LSHdata.answers) {
+        const data = {
+          id: LSHdata.gUID || 'undefined-id',
+          title: LSHquestionnaire?.header || 'Spurningalisti',
+          description: LSHquestionnaire?.description || undefined,
+          answers: LSHdata.answers?.map((answer) => {
+            // Search through all sections to find the matching question
+            const question = LSHquestionnaire?.sections
+              ?.flatMap((section) => section.questions || [])
+              .find((q) => q.entryID === answer.entryID)
+
+            // Map values to their labels from the question options
+            const valueLabels =
+              answer.values?.map((value) => {
+                const option = question?.options?.find(
+                  (opt) => opt.value === value,
+                )
+                return option?.label || value
+              }) || []
+
+            return {
+              id: answer.entryID || 'undefined-id',
+              label: question?.question || 'LABEL',
+              values: valueLabels,
+            }
+          }),
+        }
+        return { data: [data] }
+      }
+    }
 
     return null
   }
@@ -159,30 +284,76 @@ export class QuestionnairesService {
   async submitQuestionnaire(
     user: User,
     input: QuestionnaireInput,
-  ): Promise<boolean> {
-    // const lshAnswer = mapToLshAnswer(input)
-    // const response = await this.lshDevApi.postPatientForm(
-    //   user,
-    //   lshAnswer,
-    //   lshAnswer.GUID,
-    // )
-    // // TODO: Fix based on real response, needs typing in client
-    // \"{\\\"Status\\\":\\\"0\\\",\\\"Message\\\":\\\"Success\\\"}\""
-    return true
+  ): Promise<QuestionnairesResponse> {
+    const organization = this.normalizeOrganization(input.organization)
+
+    if (!organization) {
+      return {
+        success: false,
+        message: 'Unknown organization',
+      }
+    }
+
+    // Submit to LSH
+    if (organization === QuestionnairesOrganizationEnum.LSH) {
+      try {
+        const lshAnswer = mapToLshAnswer(input)
+        const response = await this.lshDevApi.postPatientForm(
+          user,
+          lshAnswer,
+          lshAnswer.GUID,
+        )
+        return {
+          success: true,
+          message: 'Questionnaire submitted successfully to LSH',
+        }
+      } catch (e) {
+        this.logger.warn('Error submitting questionnaire to LSH', e)
+        return {
+          success: false,
+          message: 'Error submitting questionnaire to LSH',
+        }
+      }
+    }
+
+    // Submit to EL (Health Directorate)
+    if (organization === QuestionnairesOrganizationEnum.EL) {
+      try {
+        const elAnswer = mapToElAnswer(input)
+        const response = await this.api.submitQuestionnaire(
+          user,
+          'is', // locale
+          input.id, // questionnaire ID
+          elAnswer, // SubmitQuestionnaireDto
+        )
+        return {
+          success: true,
+          message:
+            'Questionnaire submitted successfully to EL with id: ' + response,
+        }
+      } catch (e) {
+        this.logger.warn('Error submitting questionnaire to EL', e)
+        return {
+          success: false,
+          message: 'Error submitting questionnaire to EL',
+        }
+      }
+    }
+
+    return {
+      success: false,
+      message: 'Unknown organization',
+    }
   }
 
   async getQuestionnaires(
     _user: User,
     _locale: Locale,
   ): Promise<QuestionnairesList | null> {
-    const data: QuestionnaireBaseDto[] | null =
-      await this.api.getQuestionnaires(_user, _locale)
-
-    const lshData: LSHQuestionnaireType[] | null =
-      await this.lshApi.getQuestionnaires(_user, 'is')
-
     let ELquestionnaires: QuestionnairesList = { questionnaires: [] }
     try {
+      const data: QuestionnaireBaseDto[] | null =
+        await this.api.getQuestionnaires(_user, _locale)
       ELquestionnaires = {
         questionnaires:
           data?.map((q) => {
@@ -198,7 +369,7 @@ export class QuestionnairesService {
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,
               status:
-                q.numSubmissions > 0
+                q.numSubmissions > 0 || q.lastSubmitted
                   ? QuestionnairesStatusEnum.answered
                   : QuestionnairesStatusEnum.notAnswered,
               lastSubmitted: q.lastSubmitted,
@@ -207,11 +378,13 @@ export class QuestionnairesService {
       }
     } catch (e) {
       console.error('Error fetching questionnaires', e)
-      return null
+      this.logger.debug('EL questionnaires fetch failed', e)
     }
 
     let LSHquestionnaires: QuestionnairesList = { questionnaires: [] }
     try {
+      const lshData: LSHQuestionnaireType[] | null =
+        await this.lshApi.getQuestionnaires(_user, 'is')
       LSHquestionnaires = {
         questionnaires:
           lshData
@@ -234,7 +407,7 @@ export class QuestionnairesService {
       }
     } catch (e) {
       console.error('Error fetching questionnaires', e)
-      return null
+      this.logger.debug('LSH questionnaires fetch failed', e)
     }
 
     const allLists = [ELquestionnaires, LSHquestionnaires]

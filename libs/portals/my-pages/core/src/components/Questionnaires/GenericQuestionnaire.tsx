@@ -76,7 +76,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         )
         calculatedAnswers[question.id] = {
           questionId: question.id,
-          value: calculatedValue ?? '',
+          answers: [
+            {
+              values: calculatedValue?.toString() || '',
+            },
+          ],
           type: question.answerOptions.type,
         }
       }
@@ -174,7 +178,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
             )
             newAnswers[question.id] = {
               questionId: question.id,
-              value: calculatedValue ?? '',
+              answers: [
+                {
+                  values: String(calculatedValue ?? ''),
+                },
+              ],
               type: question.answerOptions.type,
             }
           }
@@ -188,7 +196,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         return newErrors
       })
     },
-    [questionnaire.sections, calculateFormula],
+    [questionnaire.sections, calculateFormulaCallback],
   )
 
   const validateCurrentStep = (): boolean => {
@@ -205,12 +213,14 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         !question.required
       )
         return
-      if (
-        (question.required && answer == null) ||
-        answer.value == null ||
-        (typeof answer.value === 'string' && !answer.value.trim()) ||
-        (Array.isArray(answer.value) && answer.value.length === 0)
-      ) {
+
+      const isEmpty =
+        !answer ||
+        !answer.answers ||
+        answer.answers.length === 0 ||
+        answer.answers.every((a) => !a.values || a.values.trim() === '')
+
+      if (question.required && isEmpty) {
         newErrors[question.id] = formatMessage(m.requiredQuestion)
         isValid = false
       }
@@ -251,12 +261,14 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         !question.required
       )
         return
-      if (
-        (question.required && !answer) ||
-        (typeof answer.value === 'string' && !answer.value.trim()) ||
-        (Array.isArray(answer.value) && answer.value.length === 0) ||
-        answer.value === undefined
-      ) {
+
+      const isEmpty =
+        !answer ||
+        !answer.answers ||
+        answer.answers.length === 0 ||
+        answer.answers.every((a) => !a.values || a.values.trim() === '')
+
+      if (question.required && isEmpty) {
         allErrors[question.id] = formatMessage(m.requiredQuestion)
         allValid = false
       }
@@ -275,14 +287,17 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const canGoPrevious = currentStep > 0
 
   return (
-    <Box marginTop={[8, 8, 8, 4]}>
+    <Box marginTop={enableStepper ? [8, 8, 8, 4] : 0}>
       {/* Header */}
       {/* Stepper (if enabled and multiple steps) */}
       <GridContainer>
         <GridRow>
           {enableStepper && questionSteps && (
             <GridColumn span={['12/12', '12/12', '3/12']}>
-              <Box background={'blue100'} paddingBottom={3}>
+              <Box
+                background={enableStepper ? 'blue100' : 'white'}
+                paddingBottom={3}
+              >
                 <Stepper
                   steps={stepperSteps}
                   currentStepIndex={currentStep}
@@ -315,7 +330,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    background={'blue100'}
+                    background={enableStepper ? 'blue100' : 'white'}
                     borderRadius="full"
                     padding={1}
                     style={{ maxWidth: 48, maxHeight: 48 }}
@@ -332,7 +347,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               </Box>
 
               {/* Questions */}
-              <Box style={{ minHeight: '400px' }} marginX={10} marginY={6}>
+              <Box
+                style={{ minHeight: '400px' }}
+                marginX={enableStepper ? 10 : 4}
+                marginY={6}
+              >
                 <Stack space={4}>
                   {currentQuestions.map((question: QuestionnaireQuestion) => (
                     <QuestionRenderer

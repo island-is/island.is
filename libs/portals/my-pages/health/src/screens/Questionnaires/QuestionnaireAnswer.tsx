@@ -53,15 +53,6 @@ const QuestionnaireAnswer: React.FC = () => {
   }
 
   const handleSubmit = (answers: { [key: string]: QuestionAnswer }) => {
-    // Transform answers back to LSH format
-    const formattedAnswers = Object.entries(answers).map(
-      ([questionId, answer]) => ({
-        EntryID: questionId,
-        Value: answer.value,
-        Type: answer.type,
-      }),
-    )
-
     if (!organization || !id) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
@@ -70,37 +61,54 @@ const QuestionnaireAnswer: React.FC = () => {
       )
       return
     }
+
+    const entries = Object.entries(answers).map(([questionId, answer]) => ({
+      entryID: questionId,
+      type: answer.type,
+      answers: answer.answers.map((a) => ({
+        label: a.label,
+        values: a.values,
+      })),
+    }))
+
     submitQuestionnaire({
       variables: {
         input: {
           id,
           organization: organization,
-          entries: formattedAnswers.map((answer) => ({
-            entryID: answer.EntryID,
-            type: answer.Type,
-            values: Array.isArray(answer.Value)
-              ? answer.Value
-              : [String(answer.Value)],
-          })),
+          entries: entries,
           formId: data?.questionnairesDetail?.baseInformation.id || '',
         },
       },
     })
-      .catch((e) => {
-        console.error('Error submitting questionnaire:', e)
+      .then((response) => {
+        if (response.data?.submitQuestionnaire.success) {
+          toast.success(
+            formatMessage(messages.yourAnswersForHasBeenSent, {
+              title: data?.questionnairesDetail?.baseInformation.title || '',
+            }),
+          )
+          navigate(
+            HealthPaths.HealthQuestionnairesAnswered.replace(
+              ':org',
+              organization?.toLocaleLowerCase() ?? '',
+            ).replace(':id', id),
+          )
+        } else {
+          toast.error(
+            formatMessage(messages.errorSendingAnswers, {
+              title: data?.questionnairesDetail?.baseInformation.title || '',
+            }),
+          )
+          return
+        }
+      })
+      .catch(() => {
         toast.error(
           formatMessage(messages.errorSendingAnswers, {
             title: data?.questionnairesDetail?.baseInformation.title || '',
           }),
         )
-      })
-      .then(() => {
-        toast.success(
-          formatMessage(messages.yourAnswersForHasBeenSent, {
-            title: data?.questionnairesDetail?.baseInformation.title || '',
-          }),
-        )
-        navigate(-1)
       })
   }
 
@@ -112,10 +120,11 @@ const QuestionnaireAnswer: React.FC = () => {
   }
 
   return (
-    <Box display={'flex'} justifyContent={'center'} background={'blue100'}>
+    // If the stepper should be enabled, set the backgroun to blue100
+    <Box display={'flex'} justifyContent={'center'}>
       <Box
         style={{ maxWidth: theme.breakpoints.xl }}
-        background={'blue100'}
+        background={'white'}
         width="full"
       >
         {loading && !error && (
@@ -136,7 +145,7 @@ const QuestionnaireAnswer: React.FC = () => {
             questionnaire={data.questionnairesDetail}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-            enableStepper={true}
+            enableStepper={false}
             backLink={HealthPaths.HealthQuestionnaires}
             img={getOrganizationLogoUrl(
               data.questionnairesDetail?.baseInformation?.organization ?? '',

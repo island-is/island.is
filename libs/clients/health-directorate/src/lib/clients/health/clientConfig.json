@@ -1440,14 +1440,11 @@
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "Returns the submission ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "type": "string"
                 }
               }
             }
@@ -1539,7 +1536,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
+                  "type": "object",
                   "items": {
                     "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
                   }
@@ -2350,6 +2347,7 @@
           "pendingRequest",
           "rejectedRequest",
           "dismissedRequest",
+          "alreadyRequested",
           "notFullyDispensed",
           "isRegiment",
           "noMedCard",

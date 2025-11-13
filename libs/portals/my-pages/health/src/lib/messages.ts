@@ -1795,6 +1795,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
   },
+  answeredQuestionnaireAnswered: {
+    defaultMessage: 'Hér má finna svör þín við spurningalistanum.',
+    id: 'sp.health:answered-questionnaire-answered',
+  },
   unAnsweredQuestionnaire: {
     defaultMessage: 'Ósvarað',
     id: 'sp.health:unanswered-questionnaire',

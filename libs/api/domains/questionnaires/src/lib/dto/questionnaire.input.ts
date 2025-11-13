@@ -3,12 +3,21 @@ import { AnswerOptionType } from '../../models/question.model'
 import { QuestionnairesOrganizationEnum } from '../../models/questionnaires.model'
 
 @InputType()
+export class QuestionnaireLabelValues {
+  @Field({ nullable: true })
+  label?: string
+
+  @Field()
+  values!: string
+}
+
+@InputType()
 export class QuestionnaireEntryInput {
   @Field()
   entryID!: string
 
-  @Field(() => [String])
-  values!: string[]
+  @Field(() => [QuestionnaireLabelValues])
+  answers!: QuestionnaireLabelValues[]
 
   @Field(() => AnswerOptionType)
   type!: AnswerOptionType

@@ -100,7 +100,6 @@ export class AnswerOption {
   decimal?: boolean
 }
 
-// Main question type
 @ObjectType('QuestionnaireQuestion')
 export class Question {
   @Field()

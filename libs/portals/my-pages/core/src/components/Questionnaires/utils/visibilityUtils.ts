@@ -26,14 +26,16 @@ const checkIsSelected = (
   answers: { [key: string]: QuestionAnswer },
 ): boolean => {
   const answer = answers[questionId]
-  if (!answer || answer.value === undefined || answer.value === null)
+  if (!answer || answer.answers === undefined || answer.answers === null)
     return false
 
-  const value = answer.value
+  const value = answer.answers
 
-  if (Array.isArray(value)) return value.includes(expectedValue)
-  if (typeof value === 'string') return value === expectedValue
-  if (typeof value === 'number') return value.toString() === expectedValue
+  for (const item of value) {
+    if (item.values === expectedValue) return true
+    if (typeof value === 'string') return value === expectedValue
+    if (typeof value === 'number') return value === expectedValue
+  }
 
   return false
 }
@@ -46,14 +48,14 @@ const checkMathematicalComparison = (
   answers: { [key: string]: QuestionAnswer },
 ): boolean => {
   const answer = answers[questionId]
-  if (!answer || answer.value === undefined || answer.value === null)
-    return false
+  if (!answer || !answer.answers || answer.answers.length === 0) return false
 
+  const firstValue = answer.answers[0].values
   let actualValue: number
-  if (typeof answer.value === 'number') {
-    actualValue = answer.value
-  } else if (typeof answer.value === 'string') {
-    actualValue = parseFloat(answer.value)
+  if (typeof firstValue === 'number') {
+    actualValue = firstValue
+  } else if (typeof firstValue === 'string') {
+    actualValue = parseFloat(firstValue)
     if (isNaN(actualValue)) return false
   } else {
     return false
@@ -82,15 +84,14 @@ const checkQuestionHasAnswer = (
   answers: { [key: string]: QuestionAnswer },
 ): boolean => {
   const answer = answers[questionId]
-  if (!answer || answer.value === undefined || answer.value === null)
-    return false
+  if (!answer || !answer.answers || answer.answers.length === 0) return false
 
-  const value = answer.value
-  if (Array.isArray(value)) return value.length > 0
-  if (typeof value === 'string') return value.trim() !== ''
-  if (typeof value === 'number') return true
-
-  return false
+  // Check if any answer has a non-empty value
+  return answer.answers.some((item) => {
+    const value = item.values
+    if (typeof value === 'string') return value.trim() !== ''
+    return true
+  })
 }
 
 /* -------------------- Evaluate a Single Condition -------------------- */
@@ -239,19 +240,15 @@ export const calculateFormula = (
       const answer = answers[questionId]
       let value = 0
 
-      if (answer && answer.value !== undefined && answer.value !== null) {
-        if (typeof answer.value === 'number') {
-          value = answer.value
-        } else if (typeof answer.value === 'string') {
-          const parsed = parseFloat(answer.value)
-          value = isNaN(parsed) ? 0 : parsed
-        } else if (Array.isArray(answer.value)) {
-          // For arrays, sum all numeric values
-          value = answer.value.reduce((sum, val) => {
-            const num = typeof val === 'number' ? val : parseFloat(String(val))
-            return sum + (isNaN(num) ? 0 : num)
-          }, 0)
-        }
+      if (answer && answer.answers && answer.answers.length > 0) {
+        // Sum all values in the answers array
+        value = answer.answers.reduce((sum: number, item) => {
+          const num =
+            typeof item.values === 'number'
+              ? item.values
+              : parseFloat(item.values)
+          return sum + (isNaN(num) ? 0 : num)
+        }, 0)
       }
 
       expression = expression.replace(ref, value.toString())

@@ -96,32 +96,28 @@ query GetAnsweredQuestionnaire(
   $locale: String!
 ) {
   getAnsweredQuestionnaire(input: $input, locale: $locale) {
-    __typename
-    questionId
-    label
-    answer {
-      ... on QuestionnaireSubmissionValues {
-        __typename
-        valueId
+    data {
+      id
+      formId
+      submissionId
+      date
+      title
+      description
+      answers {
+        id
         label
-        answer
-      }
-      ... on QuestionnaireSubmissionBooleanAnswer {
-        __typename
-        valueId
-        label
-        answer
-      }
-      ... on QuestionnaireSubmissionDateAnswer {
-        __typename
-        valueId
-        label
-        answer
+        htmlLabel
+        sublabel
+        values
       }
     }
   }
 }
 
 mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
-  submitQuestionnaire(input: $input)
+  submitQuestionnaire(input: $input) {
+    __typename
+    success
+    message
+  }
 }

@@ -31,12 +31,48 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 }) => {
   const handleValueChange = (
     value: string | string[] | number,
-    extraAnswers?: { [key: string]: QuestionAnswer },
+    _extraAnswers?: { [key: string]: QuestionAnswer },
   ) => {
+    const questionType = question.answerOptions.type
+
+    // Helper function to get option label for a value
+    const getOptionLabel = (val: string): string | undefined => {
+      const options = question.answerOptions.options
+      if (!options) return undefined
+      const option = options.find((opt) => opt.value === val)
+      return option?.label || undefined
+    }
+
+    // For types that need option labels: radio, checkbox, thermometer, slider
+    const needsOptionLabel = [
+      QuestionnaireAnswerOptionType.radio,
+      QuestionnaireAnswerOptionType.checkbox,
+      QuestionnaireAnswerOptionType.thermometer,
+      QuestionnaireAnswerOptionType.slider,
+    ].includes(questionType)
+
+    let answers: Array<{ label?: string; values: string }>
+
+    if (Array.isArray(value)) {
+      // For checkboxes (multiple values)
+      answers = value.map((val) => ({
+        label: needsOptionLabel ? getOptionLabel(String(val)) : undefined,
+        values: String(val),
+      }))
+    } else {
+      // For single values
+      answers = [
+        {
+          label: needsOptionLabel ? getOptionLabel(String(value)) : undefined,
+          values: String(value),
+        },
+      ]
+    }
+
     onAnswerChange({
       questionId: question.id,
-      value,
-      type: question.answerOptions.type,
+      answers,
+      type: questionType,
     })
   }
 
@@ -52,7 +88,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             id={question.id}
             label={question.label}
             placeholder={question.answerOptions.placeholder ?? undefined}
-            value={typeof answer?.value === 'string' ? answer.value : undefined}
+            value={answer?.answers?.[0]?.values ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
@@ -67,7 +103,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             id={question.id}
             label={question.label}
             placeholder={question.answerOptions.placeholder ?? undefined}
-            value={typeof answer?.value === 'string' ? answer.value : undefined}
+            value={answer?.answers?.[0]?.values ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
@@ -79,18 +115,13 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       }
 
       case QuestionnaireAnswerOptionType.number: {
+        const firstValue = answer?.answers?.[0]?.values
         return (
           <TextInput
             id={question.id}
             label={question.label}
             placeholder={question.answerOptions.placeholder || ''}
-            value={
-              typeof answer?.value === 'string'
-                ? answer.value
-                : typeof answer?.value === 'number'
-                ? answer.value.toString()
-                : ''
-            }
+            value={firstValue ?? ''}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
@@ -112,7 +143,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               value: option.value || '',
               label: option.label || '',
             }))}
-            value={typeof answer?.value === 'string' ? answer.value : ''}
+            value={answer?.answers?.[0]?.values ?? ''}
             onChange={(value: string) => {
               handleValueChange(value, {})
             }}
@@ -126,6 +157,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.checkbox: {
         const options = question.answerOptions.options
         if (!options) return null
+        const selectedValues = answer?.answers?.map((a) => a.values) ?? []
         return (
           <Multiple
             id={question.id}
@@ -134,7 +166,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               value: option.value || '',
               label: option.label || '',
             }))}
-            value={Array.isArray(answer?.value) ? answer.value : []}
+            value={selectedValues}
             onChange={(values: string[]) => handleValueChange(values)}
             disabled={disabled}
             error={error}
@@ -152,7 +184,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             label={question.label}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
-            value={typeof answer?.value === 'string' ? answer.value : undefined}
+            value={answer?.answers?.[0]?.values ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
@@ -171,7 +203,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             label={question.label}
             min={answerOptions.min || '0'}
             max={answerOptions.max || '10'}
-            value={typeof answer?.value === 'string' ? answer.value : null}
+            value={answer?.answers?.[0]?.values ?? null}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
@@ -183,10 +215,11 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
       case QuestionnaireAnswerOptionType.slider: {
         const options = question.answerOptions.options || []
+        const firstValue = answer?.answers?.[0]?.values
         const selectedValue: QuestionnaireOptionsLabelValue | undefined = {
           id: question.id,
           label: question.label,
-          value: answer?.value ? String(answer.value) : '',
+          value: firstValue ? String(firstValue) : '',
         }
         const selectedIndex = options.findIndex(
           (option) => option === selectedValue,
@@ -216,6 +249,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
       case QuestionnaireAnswerOptionType.date:
       case QuestionnaireAnswerOptionType.datetime: {
+        const dateValue = answer?.answers?.[0]?.values
         return (
           <DatePicker
             locale="is"
@@ -224,11 +258,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             placeholderText={
               question.answerOptions.placeholder || 'Veldu dagsetningu'
             }
-            selected={
-              typeof answer?.value === 'string' && answer.value
-                ? new Date(answer.value)
-                : undefined
-            }
+            selected={dateValue ? new Date(dateValue) : undefined}
             handleChange={(date: Date) =>
               handleValueChange(
                 date

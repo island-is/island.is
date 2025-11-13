@@ -95,107 +95,109 @@ const Questionnaires: React.FC = () => {
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
     >
-      <Filter
-        variant="popover"
-        align="left"
-        reverse
-        labelClearAll={formatMessage(m.clearAllFilters)}
-        labelClear={formatMessage(m.clearFilter)}
-        labelOpen={formatMessage(m.openFilter)}
-        onFilterClear={() => {
-          debouncedSetSearchQuery.cancel()
-          setFilterValues(defaultFilterValues)
-        }}
-        filterInput={
-          <Input
-            placeholder={formatMessage(m.searchPlaceholder)}
-            name="rafraen-skjol-input"
-            size="xs"
-            label={formatMessage(m.searchLabel)}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            backgroundColor="blue"
-            icon={{ name: 'search' }}
-          />
-        }
-      >
-        <Box paddingX={4} paddingY={2}>
-          <Text
-            variant="default"
-            as="p"
-            fontWeight="semiBold"
-            paddingBottom={2}
-          >
-            {formatMessage(m.status)}
-          </Text>
+      {!loading && !error && (
+        <Filter
+          variant="popover"
+          align="left"
+          reverse
+          labelClearAll={formatMessage(m.clearAllFilters)}
+          labelClear={formatMessage(m.clearFilter)}
+          labelOpen={formatMessage(m.openFilter)}
+          onFilterClear={() => {
+            debouncedSetSearchQuery.cancel()
+            setFilterValues(defaultFilterValues)
+          }}
+          filterInput={
+            <Input
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="rafraen-skjol-input"
+              size="xs"
+              label={formatMessage(m.searchLabel)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              backgroundColor="blue"
+              icon={{ name: 'search' }}
+            />
+          }
+        >
+          <Box paddingX={4} paddingY={2}>
+            <Text
+              variant="default"
+              as="p"
+              fontWeight="semiBold"
+              paddingBottom={2}
+            >
+              {formatMessage(m.status)}
+            </Text>
 
-          <Stack space={2}>
-            {[
-              {
-                name: 'expired',
-                label: formatMessage(messages.expiredQuestionnaire),
-                status: QuestionnairesStatusEnum.expired,
-              },
-              {
-                name: 'unanswered',
-                label: formatMessage(messages.unAnsweredQuestionnaire),
-                status: QuestionnairesStatusEnum.notAnswered,
-              },
-              {
-                name: 'answered',
-                label: formatMessage(messages.answeredQuestionnaire),
-                status: QuestionnairesStatusEnum.answered,
-              },
-            ].map(({ name, label, status }) => (
-              <Checkbox
-                key={name}
-                name={name}
-                label={label}
-                value={name}
-                checked={filterValues.status.includes(status)}
-                onChange={() => {
-                  toggleStatus(status)
-                }}
-              />
-            ))}
-          </Stack>
-        </Box>
-        <Box paddingX={4} paddingBottom={2}>
-          <Text
-            variant="default"
-            as="p"
-            fontWeight="semiBold"
-            paddingBottom={2}
-          >
-            {formatMessage(messages.organization)}
-          </Text>
+            <Stack space={2}>
+              {[
+                {
+                  name: 'expired',
+                  label: formatMessage(messages.expiredQuestionnaire),
+                  status: QuestionnairesStatusEnum.expired,
+                },
+                {
+                  name: 'unanswered',
+                  label: formatMessage(messages.unAnsweredQuestionnaire),
+                  status: QuestionnairesStatusEnum.notAnswered,
+                },
+                {
+                  name: 'answered',
+                  label: formatMessage(messages.answeredQuestionnaire),
+                  status: QuestionnairesStatusEnum.answered,
+                },
+              ].map(({ name, label, status }) => (
+                <Checkbox
+                  key={name}
+                  name={name}
+                  label={label}
+                  value={name}
+                  checked={filterValues.status.includes(status)}
+                  onChange={() => {
+                    toggleStatus(status)
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+          <Box paddingX={4} paddingBottom={2}>
+            <Text
+              variant="default"
+              as="p"
+              fontWeight="semiBold"
+              paddingBottom={2}
+            >
+              {formatMessage(messages.organization)}
+            </Text>
 
-          <Stack space={2}>
-            {[
-              {
-                name: 'lsh',
-                label: 'Landspítali',
-                organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
-              },
-              {
-                name: 'el',
-                label: 'Embætti Landlæknis',
-                organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
-              },
-            ].map(({ name, label, organization }) => (
-              <Checkbox
-                key={name}
-                name={name}
-                label={label}
-                value={name}
-                checked={filterValues.organization.includes(organization)}
-                onChange={() => {
-                  toggleOrganization(organization)
-                }}
-              />
-            ))}
-          </Stack>
-        </Box>
-      </Filter>
+            <Stack space={2}>
+              {[
+                {
+                  name: 'lsh',
+                  label: 'Landspítali',
+                  organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
+                },
+                {
+                  name: 'el',
+                  label: 'Embætti Landlæknis',
+                  organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
+                },
+              ].map(({ name, label, organization }) => (
+                <Checkbox
+                  key={name}
+                  name={name}
+                  label={label}
+                  value={name}
+                  checked={filterValues.organization.includes(organization)}
+                  onChange={() => {
+                    toggleOrganization(organization)
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </Filter>
+      )}
       {!loading && data?.questionnairesList === null && (
         <Box marginTop={3}>
           <Problem type="no_data" noBorder={false} />
@@ -261,7 +263,7 @@ const Questionnaires: React.FC = () => {
                     ':org',
                     questionnaire.organization?.toLocaleLowerCase() ?? '',
                   ).replace(':id', questionnaire.id),
-                  label: formatMessage(messages.answer),
+                  label: formatMessage(messages.seeMore),
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () =>

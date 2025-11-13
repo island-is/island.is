@@ -35,6 +35,7 @@ import {
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
   questionnaireControllerSubmitQuestionnaireV1,
+  questionnaireControllerGetQuestionnaireSubmissionV1,
 } from './gen/fetch'
 
 import {
@@ -49,6 +50,7 @@ import {
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
+  QuestionnaireControllerGetQuestionnaireSubmissionV1Data,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -312,6 +314,73 @@ export class HealthDirectorateHealthService {
     }
 
     return questionnaire
+  }
+
+  public async getQuestionnaireAnswered(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    submissionId: string,
+  ): Promise<QuestionnaireSubmissionDetailDto | null> {
+    try {
+      const questionnaires = await withAuthContext(auth, () =>
+        data(
+          questionnaireControllerGetQuestionnaireSubmissionV1({
+            path: {
+              id,
+              submissionId,
+            },
+          }),
+        ),
+      )
+
+      if (!questionnaires) {
+        this.logger.debug(
+          'No answered questionnaire data returned for id: ' +
+            id +
+            ' and submissionId: ' +
+            submissionId,
+        )
+        return null
+      }
+
+      // Ensure the response is an array
+      if (!Array.isArray(questionnaires)) {
+        this.logger.warn(
+          'Unexpected response format for getQuestionnaireAnswered',
+        )
+      }
+
+      return JSON.parse(JSON.stringify(questionnaires))
+    } catch (error) {
+      this.logger.error('Error fetching questionnaire answered data', error)
+      return null
+    }
+  }
+
+  public async submitQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    input: SubmitQuestionnaireDto,
+  ): Promise<string | null> {
+    const submission = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerSubmitQuestionnaireV1({
+          path: {
+            id: id,
+          },
+          body: input,
+        }),
+      ),
+    )
+
+    if (!submission) {
+      this.logger.debug('No questionnaire submission data returned')
+      return null
+    }
+
+    return submission
   }
 
   /** Medicine Delegation */

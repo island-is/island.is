@@ -191,7 +191,7 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
       isDocuments={!!isDocuments}
       isFinance={!!isFinance}
       isSearch={!!isSearch}
-      isQuestionnaireDetail={isQuestionnaireDetail}
+      isQuestionnaireDetail={false}
       {...props}
     >
       <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />

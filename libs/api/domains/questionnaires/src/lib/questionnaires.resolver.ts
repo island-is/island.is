@@ -10,15 +10,16 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
 import { QuestionnairesList } from '../models/questionnaires.model'
-import { QuestionnaireSubmission } from '../models/submission.model'
 import {
   GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
 } from './dto/questionnaire.input'
 import { QuestionnairesService } from './questionnaires.service'
+import { QuestionnairesResponse } from './dto/response.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -51,7 +52,7 @@ export class QuestionnairesResolver {
     return this.questionnairesService.getQuestionnaire(user, locale, input)
   }
 
-  @Query(() => QuestionnaireSubmission, {
+  @Query(() => AnsweredQuestionnaires, {
     name: 'getAnsweredQuestionnaire',
     nullable: true,
   })
@@ -59,7 +60,7 @@ export class QuestionnairesResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
     @Args('input') input: QuestionnaireAnsweredInput,
-  ): Promise<QuestionnaireSubmission | null> {
+  ): Promise<AnsweredQuestionnaires | null> {
     return this.questionnairesService.getAnsweredQuestionnaire(
       user,
       locale,
@@ -67,11 +68,11 @@ export class QuestionnairesResolver {
     )
   }
 
-  @Mutation(() => Boolean, { name: 'submitQuestionnaire' })
+  @Mutation(() => QuestionnairesResponse, { name: 'submitQuestionnaire' })
   async submitQuestionnaire(
     @CurrentUser() user: User,
     @Args('input') input: QuestionnaireInput,
-  ): Promise<boolean> {
+  ): Promise<QuestionnairesResponse> {
     return this.questionnairesService.submitQuestionnaire(user, input)
   }
 }

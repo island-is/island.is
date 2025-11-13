@@ -52,7 +52,7 @@ export const mapToLshAnswer = (input: QuestionnaireInput): LSHAnswer => {
     Answers: input.entries.map((entry) => ({
       EntryID: entry.entryID,
       Type: typeMapper(entry.type as AnswerOptionType),
-      Values: entry.values as [string],
+      Values: entry.answers.map((a) => a.values) as [string],
     })),
     FormID: input.formId,
     GUID: input.id,
