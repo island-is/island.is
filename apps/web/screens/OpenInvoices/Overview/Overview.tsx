@@ -1,34 +1,29 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
+import addMonths from 'date-fns/addMonths'
+import format from 'date-fns/format'
+import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
-import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import { parseAsArrayOf, parseAsInteger, parseAsIsoDateTime, useQueryState } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
 
+import { IcelandicGovernmentInstitutionsInvoiceGroup, IcelandicGovernmentInstitutionsInvoices, Query, QueryIcelandicGovernmentInstitutionsInvoicesArgs } from '@island.is/api/schema'
 import {
-  Accordion,
-  AccordionItem,
   Box,
   Breadcrumbs,
-  DatePicker,
-  Divider,
-  Filter,
   FilterInput,
-  FilterMultiChoice,
   Pagination,
   Stack,
-  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
-import { Locale } from '@island.is/shared/types'
-import { formatCurrency } from '@island.is/shared/utils'
+import { dateFormat, debounceTime } from '@island.is/shared/constants'
+import { CustomPageUniqueIdentifier,Locale } from '@island.is/shared/types'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutWrapper,
-  SortableTable,
 } from '@island.is/web/components'
-import { Query } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
@@ -37,13 +32,17 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { m } from '../messages'
-import { getPaginatedMockData } from '../mocks/table'
-import * as styles from './Overview.css'
+import { OverviewFilters } from '../types'
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES, GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS } from './Overview.graphql'
+import { OverviewContent } from './OverviewContent'
+import { OverviewFilter } from './OverviewFilter'
 
 const PAGE_SIZE = 12
 
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
+  filters,
+  initialInvoices,
   customPageData,
 }) => {
   useLocalLinkTypeResolver()
@@ -53,6 +52,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const { width } = useWindowSize()
   const isTablet = width <= theme.breakpoints.lg
+
+  const [ getInvoices ] = useLazyQuery<
+    { icelandicGovernmentInstitutionsInvoices: IcelandicGovernmentInstitutionsInvoices },
+    QueryIcelandicGovernmentInstitutionsInvoicesArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES)
 
   const baseUrl = linkResolver('openinvoicesoverview', [], locale).href
 
@@ -68,22 +72,155 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     },
   ]
 
+  const initialDates = useMemo(() => {
+    const today = new Date()
+    return {
+      dateFrom: addMonths(today, -1),
+      dateTo: today,
+    }
+  }, [])
+
+  const [initialRender, setInitialRender] = useState<boolean>(true)
+
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
+  const [dateRangeStart, setDateRangeStart] = useQueryState('dateRangeStart', parseAsIsoDateTime.withDefault(initialDates.dateFrom))
+  const [dateRangeEnd, setDateRangeEnd] = useQueryState('dateRangeEnd', parseAsIsoDateTime.withDefault(initialDates.dateTo))
+  const [invoiceTypes, setInvoiceTypes] = useQueryState('invoiceTypes', parseAsArrayOf(parseAsInteger))
+  const [suppliers, setSuppliers] = useQueryState('suppliers', parseAsArrayOf(parseAsInteger))
+  const [customers, setCustomers] = useQueryState('customers', parseAsArrayOf(parseAsInteger))
+  const [searchString, setSearchString] = useState<string | null>()
 
-  const invoiceData = useMemo(
-    () => getPaginatedMockData(page, PAGE_SIZE),
-    [page],
+  const [invoiceGroups, setInvoiceGroups] = useState<Array<IcelandicGovernmentInstitutionsInvoiceGroup>>(
+    initialInvoices?.data ?? [],
   )
 
-  const totalHits = useMemo(
-    () => invoiceData?.pagination?.totalItems ?? 0,
-    [invoiceData.pagination?.totalItems],
+  const [totalHits, setTotalHits] = useState<number | undefined>(
+    initialInvoices?.totalCount ?? 0,
   )
-  const totalPages = useMemo(
-    () => invoiceData?.pagination?.totalPages ?? 0,
-    [invoiceData.pagination?.totalPages],
-  )
+
+  const totalPages = useMemo(() => {
+    if (!totalHits) {
+      return
+    }
+    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
+  }, [totalHits])
+
+  const fetchInvoices = useCallback(() => {
+    if (initialRender) {
+      setInitialRender(false)
+      return
+    }
+
+    const today = new Date()
+
+    getInvoices({
+      variables: {
+        input: {
+          customers,
+          suppliers,
+          types: invoiceTypes,
+          dateFrom: dateRangeStart ?? addMonths(today, -1),
+          dateTo: dateRangeEnd ?? today,
+          limit: PAGE_SIZE,
+        }
+      }
+    })
+    .then((res) => {
+      if (res.data) {
+        setInvoiceGroups(res.data.icelandicGovernmentInstitutionsInvoices.data)
+        setTotalHits(res.data.icelandicGovernmentInstitutionsInvoices.totalCount)
+      } else if (res.error) {
+        setInvoiceGroups([])
+      }
+    })
+    .catch(() => {
+      setInvoiceGroups([])
+    })
+  }, [initialRender, getInvoices, customers, suppliers, invoiceTypes, dateRangeStart, dateRangeEnd])
+
+  useEffect(() => {
+    fetchInvoices()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customers, locale, suppliers, searchString, invoiceTypes, dateRangeStart, dateRangeEnd])
+
+  //SEARCH STATE UPDATES
+  const debouncedSearchUpdate = useMemo(() => {
+    return debounce(() => {
+      setSearchString(query)
+      setPage(null)
+    }, debounceTime.search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
+
+  useEffect(() => {
+    debouncedSearchUpdate()
+    return () => {
+      debouncedSearchUpdate.cancel()
+    }
+  }, [debouncedSearchUpdate])
+
+  const onResetFilter = () => {
+    setPage(null)
+    setQuery(null)
+    setSearchString(null)
+    setDateRangeStart(null)
+    setDateRangeEnd(null)
+    setInvoiceTypes(null)
+    setSuppliers(null)
+    setCustomers(null)
+  }
+
+  const hitsMessage = useMemo(() => {
+    if (!totalHits) {
+      return
+    }
+    const dateRangeStartArg= format(dateRangeStart, dateFormat.is)
+    const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
+    //const sumArg = formatCurrency(67418961)
+    const sumArg = 'PLACEHOLDER'
+
+    if (totalHits === 1) {
+      return formatMessage(m.search.resultFound, {
+        dateRangeStart: dateRangeStartArg,
+        dateRangeEnd: dateRangeEndArg,
+        sum: sumArg
+      })
+    }
+    return formatMessage(m.search.resultsFound, {
+        records: totalHits,
+        dateRangeStart: dateRangeStartArg,
+        dateRangeEnd: dateRangeEndArg,
+        sum: sumArg
+      })
+  }, [dateRangeEnd, dateRangeStart, formatMessage, totalHits])
+
+  const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
+    const filteredValues = values?.length ? [...values] : null
+    switch (categoryId) {
+      case 'dateRange': {
+        const dateStart = filteredValues?.[0] ? new Date(filteredValues[0]) : null
+        const dateEnd= filteredValues?.[1] ? new Date(filteredValues[1]) : null
+
+        setDateRangeStart(dateStart)
+        setDateRangeEnd(dateEnd)
+        break
+      }
+      case 'invoiceTypes': {
+        setInvoiceTypes(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        break
+      }
+      case 'suppliers': {
+        setSuppliers(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        break
+      }
+      case 'customers': {
+        setCustomers(filteredValues?.map(f => Number.parseInt(f)) ?? null)
+        break
+      }
+    }
+    setPage(null)
+  }
 
   return (
     <CustomPageLayoutWrapper
@@ -130,232 +267,57 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 value={query ?? ''}
                 onChange={(option) => setQuery(option)}
               />
-              <Box
-                component="form"
-                borderRadius="large"
-                action={baseUrl}
-                onSubmit={(e) => {
-                  e.preventDefault()
+              <OverviewFilter
+                onSearchUpdate={onSearchFilterUpdate}
+                onReset={onResetFilter}
+                url={baseUrl}
+                hits={totalHits}
+                locale={locale}
+                searchState={{
+                  invoiceTypes: invoiceTypes?.map(i => i.toString()) ?? undefined,
+                  suppliers: suppliers?.map(s => s.toString()) ?? undefined,
+                  customers: customers?.map(c => c.toString()) ?? undefined,
+                  dateRange: [dateRangeStart.toISOString(), dateRangeEnd.toISOString()]
                 }}
-              >
-                <Filter
-                  labelClearAll={'clear all'}
-                  labelOpen={'open'}
-                  labelClose={'close'}
-                  labelClear={'clear'}
-                  labelTitle={'filter title'}
-                  labelResult={'view results'}
-                  resultCount={totalHits}
-                  onFilterClear={() => null}
-                  align={'right'}
-                >
-                  <Box borderRadius="large" background="white">
-                    <Box paddingTop={1} paddingX={3}>
-                      <Accordion
-                        space={3}
-                        dividerOnBottom={false}
-                        dividerOnTop={false}
-                        singleExpand
-                      >
-                        <AccordionItem
-                          key="date-from"
-                          id="date-from"
-                          label="Tímabil"
-                          labelUse="h5"
-                          labelVariant="h5"
-                          iconVariant="small"
-                        >
-                          <Stack space={2}>
-                            <DatePicker
-                              name="test"
-                              backgroundColor="blue"
-                              label="Dagsetning frá"
-                              placeholderText={'fej'}
-                              size="xs"
-                            />
-                            <DatePicker
-                              backgroundColor="blue"
-                              name="test2"
-                              label="Dagsetning til"
-                              placeholderText={'fej'}
-                              size="xs"
-                            />
-                          </Stack>
-                        </AccordionItem>
-                      </Accordion>
-                      <Divider />
-                    </Box>
-                    <FilterMultiChoice
-                      labelClear={'clear'}
-                      onChange={() => null}
-                      onClear={() => null}
-                      categories={[
-                        {
-                          id: 'type',
-                          label: 'Tegund',
-                          singleOption: true,
-                          selected: [],
-                          filters: [
-                            {
-                              value: 'test',
-                              label: 'Test 1',
-                            },
-                            {
-                              value: 'test2',
-                              label: 'Test 2',
-                            },
-                          ],
-                        },
-                        {
-                          id: 'sellers',
-                          label: 'Seljendur',
-                          selected: [],
-                          filters: [
-                            {
-                              value: 'test1',
-                              label: 'test 1',
-                            },
-                            {
-                              value: 'test2',
-                              label: 'test 2',
-                            },
-                          ],
-                        },
-                        {
-                          id: 'buyers',
-                          label: 'Kaupendur',
-                          selected: [],
-                          filters: [
-                            {
-                              value: 'test1',
-                              label: 'test 1',
-                            },
-                            {
-                              value: 'test2',
-                              label: 'test 2',
-                            },
-                          ],
-                        },
-                      ]}
-                    />
-                  </Box>
-                </Filter>
-              </Box>
+                categories={[{
+                  type: 'date',
+                  id: 'dateRange',
+                  label: formatMessage(m.search.range),
+                  placeholder: `${format(dateRangeStart, dateFormat.is)}-${format(dateRangeEnd, dateFormat.is)}`,
+                  valueFrom: dateRangeStart,
+                  valueTo: dateRangeEnd,
+                },{
+                  type: 'multi',
+                  sections: [{
+                    id: 'invoiceTypes',
+                    label: formatMessage(m.search.type),
+                    items: filters?.invoiceTypes.map(filter => ({
+                      value: filter.value,
+                      label: filter.name
+                    })) ?? [],
+                  }, {
+                    id: 'suppliers',
+                    label: formatMessage(m.search.suppliers),
+                    items: filters?.suppliers.map(filter => ({
+                      value: filter.value,
+                      label: filter.name
+                    })) ?? [],
+                  }, {
+                    id: 'customers',
+                    label: formatMessage(m.search.customers),
+                    items: filters?.customers.map(filter => ({
+                      value: filter.value,
+                      label: filter.name
+                    })) ?? [],
+                  }]
+                }]}
+              />
             </Stack>
           }
         >
-          <Box display="flex">
-            <Text fontWeight="semiBold">{totalHits + ' '}</Text>
-            <Text> færslur fundust</Text>
-          </Box>
-          <Box background="white">
-            <SortableTable
-              labels={{
-                seller: invoiceData.headers.seller,
-                buyer: invoiceData.headers.buyer,
-                amount: invoiceData.headers.amount,
-              }}
-              expandable
-              align="left"
-              defaultSortByKey="amount"
-              items={invoiceData.rows.map((row, i) => {
-                return {
-                  id: `${row.buyer}-${i}`,
-                  seller: row.seller,
-                  buyer: row.buyer,
-                  amount: formatCurrency(row.amount),
-                  children:
-                    row.subrows && row.subrows.length > 0 ? (
-                      <Box>
-                        {row?.subrows?.map((item, j) => (
-                          <Box
-                            paddingY={2}
-                            paddingLeft={2}
-                            key={item.id}
-                            background="blue100"
-                          >
-                            <Box marginBottom={2} display="flex">
-                              <Box marginRight={2}>
-                                <Text variant="small" fontWeight="semiBold">
-                                  {item.date.toLocaleDateString('IS')}
-                                </Text>
-                              </Box>
-                              <Text variant="small">{item.id}</Text>
-                            </Box>
-                            <T.Table>
-                              <T.Body>
-                                {item.items?.map((invoiceItem, jj) => {
-                                  const background =
-                                    jj % 2 === 0 ? 'white' : undefined
-                                  const isLastRow = jj === item.items.length - 1
-                                  return (
-                                    <>
-                                      <T.Row key={jj}>
-                                        <T.Data
-                                          box={{
-                                            textAlign: 'left',
-                                            background,
-                                            className: styles.noBorder,
-                                          }}
-                                        >
-                                          <Text variant="small">
-                                            {invoiceItem.label}
-                                          </Text>
-                                        </T.Data>
-                                        <T.Data
-                                          box={{
-                                            textAlign: 'right',
-                                            background,
-                                            className: styles.noBorder,
-                                          }}
-                                        >
-                                          <Text variant="small">
-                                            {formatCurrency(invoiceItem.value)}
-                                          </Text>
-                                        </T.Data>
-                                      </T.Row>
-                                      {isLastRow && (
-                                        <T.Row>
-                                          <T.Data
-                                            box={{
-                                              background:
-                                                background === 'white'
-                                                  ? undefined
-                                                  : 'white',
-                                              className: styles.noBorder,
-                                            }}
-                                          />
-                                          <T.Data
-                                            box={{
-                                              textAlign: 'right',
-                                              background:
-                                                background === 'white'
-                                                  ? undefined
-                                                  : 'white',
-                                              className: styles.noBorder,
-                                            }}
-                                          >
-                                            <Text
-                                              fontWeight="semiBold"
-                                              variant="small"
-                                            >
-                                              {formatCurrency(item.total)}
-                                            </Text>
-                                          </T.Data>
-                                        </T.Row>
-                                      )}
-                                    </>
-                                  )
-                                })}
-                              </T.Body>
-                            </T.Table>
-                          </Box>
-                        ))}
-                      </Box>
-                    ) : undefined,
-                }
-              })}
-            />
+          {hitsMessage}
+          <Box marginLeft={2} background="white">
+            <OverviewContent invoiceGroups={invoiceGroups}/>
           </Box>
 
           <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
@@ -387,11 +349,15 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 interface OpenInvoicesOverviewProps {
   organization?: Query['getOrganization']
   locale: Locale
+  filters?: OverviewFilters
+  initialInvoices?: IcelandicGovernmentInstitutionsInvoices
 }
 
 const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
   organization,
   locale,
+  filters,
+  initialInvoices,
   customPageData,
 }) => {
   return (
@@ -399,17 +365,48 @@ const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
       organization={organization}
       locale={locale}
       customPageData={customPageData}
+      filters={filters}
+      initialInvoices={initialInvoices}
     />
   )
 }
 
-OpenInvoicesOverview.getProps = async ({ locale }) => {
+OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
+  const today = new Date()
+  const oneMonthBack = addMonths(today, -1)
+  const [
+    { data: { icelandicGovernmentInstitutionsInvoicesFilters } },
+    { data: { icelandicGovernmentInstitutionsInvoices }}] = await Promise.all([
+    apolloClient.query<Query>({query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS}),
+    apolloClient.query<Query>({
+      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES, variables: {
+        input: {
+          dateFrom: oneMonthBack,
+          dateTo: today
+        }
+      }
+    })
+  ])
+
+  const filters: OverviewFilters | undefined = icelandicGovernmentInstitutionsInvoicesFilters ? {
+    suppliers: icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map((supplier) => ({
+      name: supplier.name,
+      value: supplier.id,
+    })) ?? [],
+    customers: icelandicGovernmentInstitutionsInvoicesFilters.customers?.data?.map((customer) => ({
+      name: customer.name,
+      value: customer.id,
+    })) ?? [],
+    invoiceTypes: icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.map((invoiceType) => ({
+      name: invoiceType.name,
+      value: invoiceType.id,
+    })) ?? []
+  } : undefined
+
   return {
     locale: locale as Locale,
-    showSearchInHeader: false,
-    themeConfig: {
-      footerVersion: 'organization',
-    },
+    filters,
+    initialInvoices: icelandicGovernmentInstitutionsInvoices ?? undefined
   }
 }
 

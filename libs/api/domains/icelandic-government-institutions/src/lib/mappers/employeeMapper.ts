@@ -1,8 +1,8 @@
-import { EmployeeBasicResponseDto } from '@island.is/clients/elfur'
+import { EmployeeDto } from '@island.is/clients/elfur'
 import { Employee } from '../models/employee.model'
 
 export const mapEmployee = (
-  employee: EmployeeBasicResponseDto,
+  employee: EmployeeDto,
 ): Employee | undefined => {
   if (!employee.employeeName) {
     return undefined

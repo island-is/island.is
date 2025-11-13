@@ -16,8 +16,6 @@ export const apiConfigFactory = (
         ? {
             mode: 'token',
             issuer: 'https://identity-server.staging01.devland.is',
-            tokenEndpoint:
-              'https://identity-server.staging01.devland.is/connect/token',
             clientId: config.clientId,
             clientSecret: config.clientSecret,
             scope: scopes,

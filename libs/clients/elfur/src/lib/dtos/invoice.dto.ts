@@ -2,6 +2,7 @@ import { OpenInvoiceDetailResponseDto } from '../../../gen/fetch'
 
 export interface InvoiceDto {
   id: number
+  groupId: string
   number: string
   currency: string
   amount: number
@@ -19,6 +20,7 @@ export const mapInvoiceDto = (
 ): InvoiceDto | null => {
   if (
     !invoice.erpInvoiceId ||
+    !invoice.customerSupplierRelationshipId ||
     !invoice.invoiceNum ||
     !invoice.erpInvoiceAmountISK ||
     !invoice.invoiceCurrencyCode ||
@@ -35,6 +37,7 @@ export const mapInvoiceDto = (
 
   return {
     id: invoice.erpInvoiceId,
+    groupId: invoice.customerSupplierRelationshipId,
     number: invoice.invoiceNum,
     currency: invoice.invoiceCurrencyCode,
     amount: invoice.erpInvoiceAmountISK,

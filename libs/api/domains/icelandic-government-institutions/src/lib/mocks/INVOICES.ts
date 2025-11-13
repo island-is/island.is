@@ -1,11 +1,19 @@
-import { InvoiceList } from '../models/invoiceList.model'
+import { Invoices } from '../models/invoices.model'
 
-export const MOCK_INVOICES: InvoiceList = {
+export const MOCK_INVOICES: Invoices = {
   data: [
     {
       id: 'group-1',
-      seller: 'Reykjavík Ráðgjöf ehf.',
-      buyer: 'Íslenska Byggingafélagið hf.',
+      supplier: {
+        id: 1001,
+        name: 'Reykjavík Ráðgjöf ehf.',
+        legalId: 'MOCK-SUPPLIER-001'
+      },
+      customer: {
+        id: 2001,
+        name: 'Íslenska Byggingafélagið hf.',
+        legalId: 'MOCK-CUSTOMER-001'
+      },
       totalAmount: 2450000,
       invoices: [
         {
@@ -34,8 +42,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-2',
-      seller: 'Norðurorka ehf.',
-      buyer: 'Landspítali',
+      supplier: {
+        id: 1002,
+        name: 'Norðurorka ehf.',
+        legalId: 'MOCK-SUPPLIER-002'
+      },
+      customer: {
+        id: 2002,
+        name: 'Landspítali',
+        legalId: 'MOCK-CUSTOMER-002'
+      },
       totalAmount: 890000,
       invoices: [
         {
@@ -76,8 +92,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-3',
-      seller: 'Bláa lónið ehf.',
-      buyer: 'Ferðamálastofa',
+      supplier: {
+        id: 1003,
+        name: 'Bláa lónið ehf.',
+        legalId: 'MOCK-SUPPLIER-003'
+      },
+      customer: {
+        id: 2003,
+        name: 'Ferðamálastofa',
+        legalId: 'MOCK-CUSTOMER-003'
+      },
       totalAmount: 1250000,
       invoices: [
         {
@@ -106,8 +130,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-4',
-      seller: 'Icelandair Group hf.',
-      buyer: 'Keflavíkurflugvöllur',
+      supplier: {
+        id: 1004,
+        name: 'Icelandair Group hf.',
+        legalId: 'MOCK-SUPPLIER-004'
+      },
+      customer: {
+        id: 2004,
+        name: 'Keflavíkurflugvöllur',
+        legalId: 'MOCK-CUSTOMER-004'
+      },
       totalAmount: 5675000,
       invoices: [
         {
@@ -136,8 +168,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-5',
-      seller: 'Eimskip hf.',
-      buyer: 'Samskip hf.',
+      supplier: {
+        id: 1005,
+        name: 'Eimskip hf.',
+        legalId: 'MOCK-SUPPLIER-005'
+      },
+      customer: {
+        id: 2005,
+        name: 'Samskip hf.',
+        legalId: 'MOCK-CUSTOMER-005'
+      },
       totalAmount: 3200000,
       invoices: [
         {
@@ -188,8 +228,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-6',
-      seller: 'Orkuveita Reykjavíkur',
-      buyer: 'Álftanes sveitarfélag',
+      supplier: {
+        id: 1006,
+        name: 'Orkuveita Reykjavíkur',
+        legalId: 'MOCK-SUPPLIER-006'
+      },
+      customer: {
+        id: 2006,
+        name: 'Álftanes sveitarfélag',
+        legalId: 'MOCK-CUSTOMER-006'
+      },
       totalAmount: 780000,
       invoices: [
         {
@@ -218,8 +266,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-7',
-      seller: 'Marel hf.',
-      buyer: 'Fiskifélag Íslands',
+      supplier: {
+        id: 1007,
+        name: 'Marel hf.',
+        legalId: 'MOCK-SUPPLIER-007'
+      },
+      customer: {
+        id: 2007,
+        name: 'Fiskifélag Íslands',
+        legalId: 'MOCK-CUSTOMER-007'
+      },
       totalAmount: 4500000,
       invoices: [
         {
@@ -248,8 +304,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-8',
-      seller: 'CCP Games ehf.',
-      buyer: 'Tæknigarður',
+      supplier: {
+        id: 1008,
+        name: 'CCP Games ehf.',
+        legalId: 'MOCK-SUPPLIER-008'
+      },
+      customer: {
+        id: 2008,
+        name: 'Tæknigarður',
+        legalId: 'MOCK-CUSTOMER-008'
+      },
       totalAmount: 650000,
       invoices: [
         {
@@ -278,8 +342,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-9',
-      seller: 'Lífeyrissjóður Verslunarmanna',
-      buyer: 'Fasteignafélag Reykjavíkur',
+      supplier: {
+        id: 1009,
+        name: 'Lífeyrissjóður Verslunarmanna',
+        legalId: 'MOCK-SUPPLIER-009'
+      },
+      customer: {
+        id: 2009,
+        name: 'Fasteignafélag Reykjavíkur',
+        legalId: 'MOCK-CUSTOMER-009'
+      },
       totalAmount: 8900000,
       invoices: [
         {
@@ -308,8 +380,16 @@ export const MOCK_INVOICES: InvoiceList = {
     },
     {
       id: 'group-10',
-      seller: 'Vífilfell hf.',
-      buyer: 'Hagkaup hf.',
+      supplier: {
+        id: 1010,
+        name: 'Vífilfell hf.',
+        legalId: 'MOCK-SUPPLIER-010'
+      },
+      customer: {
+        id: 2010,
+        name: 'Hagkaup hf.',
+        legalId: 'MOCK-CUSTOMER-010'
+      },
       totalAmount: 420000,
       invoices: [
         {
