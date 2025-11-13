@@ -121,6 +121,16 @@ export const needsPayerApproval = (application: Application) => {
   )
 }
 
+export const needsOtherGuardianApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ADDITIONAL_REQUESTORS,
+    ) && hasOtherGuardian(application.answers, application.externalData)
+  )
+}
+
 export const shouldShowExpectedEndDate = (
   answers: FormValue,
   externalData: ExternalData,

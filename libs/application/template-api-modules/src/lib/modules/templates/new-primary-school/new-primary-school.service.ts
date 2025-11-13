@@ -3,6 +3,7 @@ import {
   errorMessages,
   FIRST_GRADE_AGE,
   getApplicationAnswers,
+  needsOtherGuardianApproval,
   needsPayerApproval,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
@@ -21,7 +22,10 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { SharedTemplateApiService } from '../../shared'
 import {
+  generateAssignOtherGuardianEmail,
   generateAssignPayerEmail,
+  generateOtherGuardianApprovedApplicationEmail,
+  generateOtherGuardianRejectedApplicationEmail,
   generatePayerApprovedApplicationEmail,
   generatePayerRejectedApplicationEmail,
 } from './emailGenerators'
@@ -124,6 +128,17 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       newPrimarySchoolDTO,
     )
 
+    if (needsOtherGuardianApproval(application)) {
+      await this.sharedTemplateAPIService
+        .sendEmail(generateOtherGuardianApprovedApplicationEmail, application)
+        .catch((e) => {
+          this.logger.error('Failed to send other guardian approved email', {
+            e,
+            applicationId: application.id,
+          })
+        })
+    }
+
     if (needsPayerApproval(application)) {
       await this.sharedTemplateAPIService
         .sendEmail(generatePayerApprovedApplicationEmail, application)
@@ -136,6 +151,30 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     }
 
     return response
+  }
+
+  async assignOtherGuardian({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignOtherGuardianEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send assign other guardian email', {
+          e,
+          applicationId: application.id,
+        })
+      })
+  }
+
+  async notifyApplicantOfRejectionFromOtherGuardian({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generateOtherGuardianRejectedApplicationEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send other guardian rejected email', {
+          e,
+          applicationId: application.id,
+        })
+      })
   }
 
   async assignPayer({ application }: TemplateApiModuleActionProps) {

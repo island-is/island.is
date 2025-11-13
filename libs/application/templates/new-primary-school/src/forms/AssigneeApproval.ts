@@ -7,30 +7,40 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents, Form } from '@island.is/application/types'
-import {
-  newPrimarySchoolMessages,
-  payerApprovalMessages,
-} from '../lib/messages'
+import { newPrimarySchoolMessages, assigneeMessages } from '../lib/messages'
+import { States } from '../utils/constants'
 import {
   getApplicationAnswers,
   getSchoolName,
 } from '../utils/newPrimarySchoolUtils'
 
-export const PayerApproval: Form = buildForm({
-  id: 'newPrimarySchoolPayerApproval',
+export const AssigneeApproval: Form = buildForm({
+  id: 'newPrimarySchoolAssigneeApproval',
   children: [
     buildSection({
-      id: 'payerApproval',
-      tabTitle: payerApprovalMessages.tabTitle,
+      id: 'assigneeApproval',
+      tabTitle: (application) => {
+        return application.state === States.OTHER_GUARDIAN_APPROVAL
+          ? assigneeMessages.otherGuardian.title
+          : assigneeMessages.payer.title
+      },
       children: [
         buildMultiField({
-          id: 'payerApproval',
-          title: payerApprovalMessages.title,
-          description: payerApprovalMessages.description,
+          id: 'assigneeApproval',
+          title: (application) => {
+            return application.state === States.OTHER_GUARDIAN_APPROVAL
+              ? assigneeMessages.otherGuardian.title
+              : assigneeMessages.payer.title
+          },
+          description: (application) => {
+            return application.state === States.OTHER_GUARDIAN_APPROVAL
+              ? assigneeMessages.otherGuardian.approvalDescription
+              : assigneeMessages.payer.approvalDescription
+          },
           children: [
             buildTextField({
-              id: 'payerApproval.name',
-              title: payerApprovalMessages.childName,
+              id: 'assigneeApproval.name',
+              title: assigneeMessages.shared.childName,
               width: 'full',
               disabled: true,
               defaultValue: (application: Application) => {
@@ -39,7 +49,7 @@ export const PayerApproval: Form = buildForm({
               },
             }),
             buildTextField({
-              id: 'payerApproval.nationalId',
+              id: 'assigneeApproval.nationalId',
               title: newPrimarySchoolMessages.shared.nationalId,
               width: 'full',
               format: '######-####',
@@ -50,7 +60,7 @@ export const PayerApproval: Form = buildForm({
               },
             }),
             buildTextField({
-              id: 'payerApproval.selectedSchool',
+              id: 'assigneeApproval.selectedSchool',
               title: newPrimarySchoolMessages.overview.selectedSchool,
               width: 'full',
               disabled: true,
@@ -71,12 +81,12 @@ export const PayerApproval: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: payerApprovalMessages.reject,
+                  name: assigneeMessages.shared.reject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: payerApprovalMessages.confirm,
+                  name: assigneeMessages.shared.approve,
                   type: 'primary',
                 },
               ],
@@ -84,9 +94,13 @@ export const PayerApproval: Form = buildForm({
           ],
         }),
         buildDescriptionField({
-          id: 'payerApproval.thanks',
-          title: payerApprovalMessages.title,
-          description: payerApprovalMessages.thanksDescription,
+          id: 'assigneeApproval.thanks',
+          title: (application) => {
+            return application.state === States.OTHER_GUARDIAN_APPROVAL
+              ? assigneeMessages.otherGuardian.title
+              : assigneeMessages.payer.title
+          },
+          description: assigneeMessages.shared.thanksDescription,
         }),
       ],
     }),

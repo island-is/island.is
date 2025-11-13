@@ -11,6 +11,8 @@ export enum Actions {
 export const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  OTHER_GUARDIAN_APPROVAL = 'otherGuardianApproval',
+  OTHER_GUARDIAN_REJECTED = 'otherGuardianRejected',
   PAYER_APPROVAL = 'payerApproval',
   PAYER_REJECTED = 'payerRejected',
   SUBMITTED = 'submitted',
@@ -28,6 +30,8 @@ export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
   getPreferredSchool = 'getPreferredSchool',
   sendApplication = 'sendApplication',
+  assignOtherGuardian = 'assignOtherGuardian',
+  notifyApplicantOfRejectionFromOtherGuardian = 'notifyApplicantOfRejectionFromOtherGuardian',
   assignPayer = 'assignPayer',
   notifyApplicantOfRejectionFromPayer = 'notifyApplicantOfRejectionFromPayer',
 }

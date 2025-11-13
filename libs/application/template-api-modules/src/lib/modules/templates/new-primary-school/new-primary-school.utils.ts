@@ -3,7 +3,9 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  getOtherGuardian,
   LanguageEnvironmentOptions,
+  needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
   shouldShowExpectedEndDate,
@@ -103,8 +105,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
       applicant: {
         nationalId: childInfo?.nationalId || '',
