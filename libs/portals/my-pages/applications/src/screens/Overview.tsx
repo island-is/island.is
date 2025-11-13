@@ -34,7 +34,6 @@ import {
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
 import { Problem } from '@island.is/react-spa/shared'
-import { MyPagesApplication } from '@island.is/shared/types'
 
 const defaultInstitution: InstitutionOption = {
   label: '',
@@ -57,7 +56,7 @@ const Overview = () => {
   } = useCombinedApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
-  let focusedApplication: MyPagesApplication | undefined
+  let focusedApplication: Application | undefined
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
     variables: {
@@ -96,7 +95,7 @@ const Overview = () => {
 
   if (applications && location.hash) {
     focusedApplication = applications.find(
-      (item: MyPagesApplication) => item.id === location.hash.slice(1),
+      (item: Application) => item.id === location.hash.slice(1),
     )
   }
 

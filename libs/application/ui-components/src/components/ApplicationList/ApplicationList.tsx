@@ -13,12 +13,11 @@ import {
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
-import { MyPagesApplication } from '@island.is/shared/types'
 
 const pageSize = 5
 
 type ApplicationFields = Pick<
-  Application | MyPagesApplication,
+  Application,
   'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
 >
 
