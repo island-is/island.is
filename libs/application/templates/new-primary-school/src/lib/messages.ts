@@ -883,9 +883,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     attachmentsPageDescription: {
       id: 'nps.application:attachments.page.description#markdown',
       defaultMessage:
-        'Til þess að skólinn geti metið hvort að úrræðið sem sótt er um henti barni og sé líklegt til að skila tilætluðum árangri, þarf forsjáraðili að skila nauðsynlegum gögnum með umsókn. \n\nFrá viðurkenndum greiningaraðilum: \n\n* Staðfest greining á fötlun barns eða staðfesting á að barnið sé í greiningarferli \n\n* Staðlað mat á stuðningsþörf barns (SIS) eða staðfesting á að barnið sé í greiningarferli \n\nFrá núverandi skóla barns: \n\n* Þjónustuáætlun eða eftir atvikum stuðningsáætlun barns \n\n* Einstaklinsnámskrá barns \n\n* Skýrsla frá núverandi skóla sem felur í sér: \n\n * Mat á náms- og félagslegri stöðu barns og líðan þess \n\n * Ástæður þess af hverju hann telji sig ekki geta mætt þörfum barnsins \n\n * Hvaða stuðningur hafi verið veittur eða aðgerðum hafi verið beitt \n\n * Hvernig unnið hafi verið með barn að öðru leiti og hvaða árangri það hafi skilað \n\n * Óskir foreldra og barns að teknu tilliti til aldurs og þroska þess',
+        'Til þess að skólinn geti metið hvort að úrræðið sem sótt er um henti barni og sé líklegt til að skila tilætluðum árangri, þarf forsjáraðili að skila nauðsynlegum gögnum með umsókn. \n\nFrá viðurkenndum greiningaraðilum: \n\n* Staðfest greining á fötlun barns eða staðfesting á að barnið sé í greiningarferli \n\n* Staðlað mat á stuðningsþörf barns (s.s. SIS-mat) eða staðfesting á að barnið sé í greiningarferli \n\nFrá núverandi skóla barns: \n\n* Þjónustuáætlun eða eftir atvikum stuðningsáætlun barns \n\n* Einstaklingsnámskrá barns \n\n* Skýrsla frá núverandi skóla sem felur í sér: \n\n * Mat á náms- og félagslegri stöðu barns og líðan þess \n\n * Lýsing á styrkleikum barns og verndandi þáttum \n\n * Ástæður þess af hverju skólinn telji sig ekki geta mætt þörfum barnsins \n\n * Hvaða stuðningur hafi verið veittur eða aðgerðum hafi verið beitt \n\n * Hvernig unnið hafi verið með barn að öðru leiti og hvaða árangri það hafi skilað \n\n * Óskir foreldra og barns að teknu tilliti til aldurs og þroska þess',
       description:
-        'In order for the school to be able to assess whether the resource applied for is suitable for a child and is likely to deliver the desired results, the guardian must submit the necessary documentation with the application. \n\nFrom an accredited diagnostician: \n\n* Confirmation of the diagnosis of the child’s disability or confirmation that the child is in the process of diagnosis \n\n* A standardised assessment of a child’s support needs (SIS) or confirmation that the child is in the diagnostic process \n\nFrom the child’s current school: \n\n* A service plan or, if needed, the child’s support plan \n\n* A report from the current school that includes: \n\n * Assessment of a child’s academic and social status and well-being \n\n * The reasons why the school does not believe they can meet the child’s needs \n\n * What support has been provided or actions taken \n\n * What other measures have been tried with the child and what results have been achieved \n\n * The wishes of the parents and the child, taking into account the child’s age and development',
+        'In order for the school to be able to assess whether the resource applied for is suitable for a child and is likely to deliver the desired results, the guardian must submit the necessary documentation with the application. \n\nFrom an accredited diagnostician: \n\n* Confirmation of the diagnosis of the child’s disability or confirmation that the child is in the process of diagnosis \n\n* A standardised assessment of a child’s support needs (a SIS evaluation) or confirmation that the child is in the diagnostic process \n\nFrom the child’s current school: \n\n* A service plan or, if needed, the child’s support plan \n\n* A report from the current school that includes: \n\n * Assessment of a child’s academic and social status and well-being \n\n * A description of the child’s strength and protective factors \n\n * The reasons why the school does not believe they can meet the child’s needs \n\n * What support has been provided or actions taken \n\n * What other measures have been tried with the child and what results have been achieved \n\n * The wishes of the parents and the child, taking into account the child’s age and development',
     },
     attachmentButton: {
       id: 'nps.application:attachments.button',
@@ -911,20 +911,20 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     electronicAttachmentOption: {
       id: 'nps.application:attachments.options.electronic',
-      defaultMessage: 'Öll gögn berast rafrænt með umsókn',
+      defaultMessage: 'Öll gögn eru hengd við þessa umsókn sem fylgiskjöl.',
       description:
-        'All documents will be submitted electronically with the application',
+        'All documents will be attached and sent with the application.',
     },
     paperAttachmentOption: {
       id: 'nps.application:attachments.options.paper',
-      defaultMessage: 'Öll gögn berast á pappírsformi til skólastjóra',
-      description: 'All documents will be submitted on paper to the school',
+      defaultMessage: 'Öllum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, með öðrum leiðum.',
+      description: 'All documents will be submitted to the municipality’s school service by other means.',
     },
     electronicAndPaperAttachmentOption: {
       id: 'nps.application:attachments.options.electronic.and.paper',
-      defaultMessage: 'Hluti gagna berast rafrænt og hluti á pappírsformi',
+      defaultMessage: 'Hluti gagnanna eru hengd við þessa umsókn sem fylgiskjöl. Öðrum gögnum verður skilað til skólaþjónustu þess sveitarfélags sem rekur úrræðið, eftir öðrum leiðum.',
       description:
-        'Some documents will be submitted electronically and some submitted on paper to the school',
+        'Some documents will be attached and sent with the application. Other documents will be submitted to the municipality’s school service by other means.',
     },
 
     // Child's circumstances
