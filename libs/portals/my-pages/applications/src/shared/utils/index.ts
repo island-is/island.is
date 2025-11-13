@@ -17,7 +17,7 @@ interface SortedApplication {
   finished: Application[]
 }
 
-export interface ApplicationWithInstitution extends Application {
+interface ApplicationWithInstitution extends Application {
   formSystemFormSlug?: string
   formSystemOrgSlug?: InstitutionTypes
   formSystemOrgContentfulId?: string
