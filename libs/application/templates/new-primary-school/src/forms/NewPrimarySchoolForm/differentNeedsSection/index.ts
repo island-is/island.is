@@ -5,6 +5,7 @@ import { healthProtectionSubSection } from './healthProtectionSubSection'
 import { languageSubSection } from './languageSubSection'
 import { payerSubSection } from './payerSubSection'
 import { supportSubSection } from './supportSubSection'
+import { termsSubSection } from './termsSubSection'
 import { attachmentSubSection } from './attachmentSubSection'
 
 export const differentNeedsSection = buildSection({
@@ -14,8 +15,9 @@ export const differentNeedsSection = buildSection({
     languageSubSection,
     healthProtectionSubSection,
     supportSubSection,
-    attachmentSubSection,
     childCircumstancesSubSection,
     payerSubSection,
+    termsSubSection,
+    attachmentSubSection,
   ],
 })

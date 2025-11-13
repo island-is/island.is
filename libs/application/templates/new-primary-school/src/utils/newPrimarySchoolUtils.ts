@@ -492,6 +492,8 @@ export const determineNameFromApplicationAnswers = (
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+    ? newPrimarySchoolMessages.shared.continuingEnrollmentApplicationName
     : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
@@ -529,26 +531,27 @@ export const getApplicationType = (
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
-
-  if (!isValid(nationalId)) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
-  if (!yearOfBirth) {
+  if (!isValid(nationalId) || !yearOfBirth) {
+    return undefined
+  }
+
+  // if the child is a first grader and not currently enrolled in a primary
+  // school, set the application type to enrollment in primary school
+  if (yearOfBirth === firstGradeYear && !childInformation?.primaryOrgId) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  // if the child is not a first grader and not currently enrolled in a primary
+  // school (no data in Frigg), set the application type to new primary school
+  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  if (!childInformation?.primaryOrgId) {
-    return yearOfBirth === firstGradeYear
-      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      : ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
-  return ApplicationType.NEW_PRIMARY_SCHOOL
+  // else the application type should be determined by the applicant
+  return undefined
 }
 
 export const getGuardianByNationalId = (
@@ -702,6 +705,25 @@ export const payerApprovalStatePendingAction = (
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const otherGuardianApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.otherGuardianApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.otherGuardianApprovalApplicantDescription,
       displayStatus: 'info',
     }
   }

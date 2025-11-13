@@ -3,11 +3,12 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedSchoolSubType,
+  getOtherGuardian,
   LanguageEnvironmentOptions,
+  needsOtherGuardianApproval,
   needsPayerApproval,
-  OrganizationSubType,
   ReasonForApplicationOptions,
+  shouldShowExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -104,8 +105,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
       applicant: {
         nationalId: childInfo?.nationalId || '',
@@ -147,10 +157,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(getSelectedSchoolSubType(
+            ...(shouldShowExpectedEndDate(
               application.answers,
               application.externalData,
-            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+            ) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)

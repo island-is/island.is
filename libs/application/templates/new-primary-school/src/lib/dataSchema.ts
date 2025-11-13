@@ -29,12 +29,9 @@ const nationalIdWithNameSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  applicationType: z.enum([
-    ApplicationType.NEW_PRIMARY_SCHOOL,
-    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  applicationType: z.nativeEnum(ApplicationType),
   childInfo: z
     .object({
       usePronounAndPreferredName: z.array(z.string()),
@@ -350,6 +347,58 @@ export const dataSchema = z.object({
       AttachmentOptions.ELECTRONIC_AND_PAPER,
     ]),
   }),
+  acceptTerms: z.array(z.enum([YES])).nonempty(),
+  childCircumstances: z
+    .object({
+      onSiteObservation: z.array(z.enum([YES])).length(1),
+      onSiteObservationAdditionalInfo: z.array(z.enum([YES])).length(1),
+      callInExpert: z
+        .array(z.enum([YES]))
+        .length(1)
+        .optional(),
+      childViews: z.array(z.enum([YES])).length(1),
+    })
+    .refine(
+      (data) => {
+        return (
+          data.callInExpert === undefined ||
+          (Array.isArray(data.callInExpert) &&
+            data.callInExpert.length === 1 &&
+            data.callInExpert[0] === 'yes')
+        )
+      },
+      {
+        path: ['callInExpert'],
+      },
+    ),
+  payer: z
+    .object({
+      option: z.nativeEnum(PayerOption),
+      other: z
+        .object({
+          name: z.string(),
+          nationalId: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.name?.trim() : true,
+      { path: ['other', 'name'] },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER
+          ? other && kennitala.isValid(other.nationalId)
+          : true,
+      { path: ['other', 'nationalId'], params: errorMessages.nationalId },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
+      { path: ['other', 'email'] },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

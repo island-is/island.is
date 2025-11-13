@@ -7,6 +7,7 @@ import {
 import {
   ApplicationFeatureKey,
   LanguageEnvironmentOptions,
+  OrganizationSubType,
   PayerOption,
 } from './constants'
 import {
@@ -14,6 +15,7 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   getSelectedSchoolData,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -116,5 +118,52 @@ export const needsPayerApproval = (application: Application) => {
       application.externalData,
       ApplicationFeatureKey.PAYMENT_INFO,
     ) && hasOtherPayer(application.answers)
+  )
+}
+
+export const needsOtherGuardianApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ADDITIONAL_REQUESTORS,
+    ) && hasOtherGuardian(application.answers, application.externalData)
+  )
+}
+
+export const shouldShowExpectedEndDate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+  )
+}
+
+export const hasSpecialEducationSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
   )
 }

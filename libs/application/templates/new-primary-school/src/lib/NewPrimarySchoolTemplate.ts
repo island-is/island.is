@@ -30,12 +30,13 @@ import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
+  needsOtherGuardianApproval,
   needsPayerApproval,
+  shouldShowExpectedEndDate,
 } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
-  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
   States,
@@ -44,15 +45,15 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
-  getSelectedSchoolSubType,
+  getOtherGuardian,
+  otherGuardianApprovalStatePendingAction,
   payerApprovalStatePendingAction,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
 import {
+  assigneeMessages,
   historyMessages,
   newPrimarySchoolMessages,
-  payerApprovalMessages,
-  payerRejectedMessages,
   pendingActionMessages,
   statesMessages,
 } from './messages'
@@ -129,11 +130,13 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+            actions: 'setApplicationType',
+          },
         },
       },
       [States.DRAFT]: {
-        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearLanguages',
@@ -177,6 +180,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
+              target: States.OTHER_GUARDIAN_APPROVAL,
+              cond: (context) =>
+                needsOtherGuardianApproval(context?.application),
+            },
+            {
               target: States.PAYER_APPROVAL,
               cond: (context) => needsPayerApproval(context?.application),
             },
@@ -184,6 +192,122 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               target: States.SUBMITTED,
             },
           ],
+        },
+      },
+      [States.OTHER_GUARDIAN_APPROVAL]: {
+        entry: ['assignOtherGuardian'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.OTHER_GUARDIAN_APPROVAL,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: otherGuardianApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: historyMessages.otherGuardianApprovalApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: historyMessages.otherGuardianApprovalRejected,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignOtherGuardian,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeApproval').then((val) =>
+                  Promise.resolve(val.AssigneeApproval),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: assigneeMessages.shared.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: assigneeMessages.shared.approve,
+                  type: 'primary',
+                },
+              ],
+              read: {
+                answers: ['childInfo', 'newSchool'],
+                externalData: ['schools'],
+              },
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.PAYER_APPROVAL,
+              cond: (context) => needsPayerApproval(context?.application),
+            },
+            {
+              target: States.SUBMITTED,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.OTHER_GUARDIAN_REJECTED },
+        },
+      },
+      [States.OTHER_GUARDIAN_REJECTED]: {
+        meta: {
+          name: States.OTHER_GUARDIAN_REJECTED,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: pendingActionMessages.otherGuardianRejectedTitle,
+              content: pendingActionMessages.otherGuardianRejectedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: historyMessages.applicationEdited,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action:
+              ApiModuleActions.notifyApplicantOfRejectionFromOtherGuardian,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AssigneeRejected').then((val) =>
+                  Promise.resolve(val.AssigneeRejected),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: assigneeMessages.shared.editApplication,
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.PAYER_APPROVAL]: {
@@ -222,18 +346,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/PayerApproval').then((val) =>
-                  Promise.resolve(val.PayerApproval),
+                import('../forms/AssigneeApproval').then((val) =>
+                  Promise.resolve(val.AssigneeApproval),
                 ),
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: payerApprovalMessages.reject,
+                  name: assigneeMessages.shared.reject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: payerApprovalMessages.confirm,
+                  name: assigneeMessages.shared.approve,
                   type: 'primary',
                 },
               ],
@@ -263,7 +387,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: historyMessages.payerRejectedEdit,
+                logMessage: historyMessages.applicationEdited,
               },
             ],
           },
@@ -275,13 +399,13 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PayerRejected').then((val) =>
-                  Promise.resolve(val.PayerRejected),
+                import('../forms/AssigneeRejected').then((val) =>
+                  Promise.resolve(val.AssigneeRejected),
                 ),
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: payerRejectedMessages.edit,
+                  name: assigneeMessages.shared.editApplication,
                   type: 'primary',
                 },
               ],
@@ -485,19 +609,20 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
         const { temporaryStay } = getApplicationAnswers(application.answers)
 
-        const selectedSchoolSubType = getSelectedSchoolSubType(
-          application.answers,
-          application.externalData,
-        )
-
         if (
-          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+          !shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          )
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+          shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          ) &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
@@ -526,6 +651,23 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           } else {
             set(application, 'assignees', [MMS_ID])
           }
+        }
+
+        return context
+      }),
+      assignOtherGuardian: assign((context) => {
+        const { application } = context
+        const otherGuardian = getOtherGuardian(
+          application.answers,
+          application.externalData,
+        )
+
+        if (
+          otherGuardian &&
+          otherGuardian.nationalId !== undefined &&
+          otherGuardian.nationalId !== ''
+        ) {
+          set(application, 'assignees', [otherGuardian.nationalId])
         }
 
         return context
