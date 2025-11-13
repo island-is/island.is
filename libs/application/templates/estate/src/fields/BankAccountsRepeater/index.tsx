@@ -78,6 +78,7 @@ export const BankAccountsRepeater: FC<
         .filter((index) => index !== -1)
       setForeignBankAccountIndexes(foreignIndexes)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [application, fields.length, replace])
 
   // Calculate bank account total from balance + accruedInterest
