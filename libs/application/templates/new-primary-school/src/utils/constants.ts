@@ -89,8 +89,9 @@ export enum LanguageEnvironmentOptions {
 }
 
 export enum ApplicationType {
-  NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
-  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+  NEW_PRIMARY_SCHOOL = 'newPrimarySchool', // Umsókn um skólaskipti
+  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool', // Innritun í 1. bekk
+  CONTINUING_ENROLLMENT = 'continuingEnrollment', // Umsókn um áframhaldandi skólavist
 }
 
 export enum CaseWorkerInputTypeEnum {
@@ -99,10 +100,10 @@ export enum CaseWorkerInputTypeEnum {
 }
 
 export enum OrganizationSubType {
-  SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT = 'specialEducationBehaviorDepartment',
-  SPECIAL_EDUCATION_BEHAVIOR_SCHOOL = 'specialEducationBehaviorSchool',
-  SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment',
-  SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool',
+  SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT = 'specialEducationBehaviorDepartment', // Sérdeild - Hegðun
+  SPECIAL_EDUCATION_BEHAVIOR_SCHOOL = 'specialEducationBehaviorSchool', // Sérskóli - Hegðun
+  SPECIAL_EDUCATION_DISABILITY_DEPARTMENT = 'specialEducationDisabilityDepartment', // Sérdeild - Fötlun
+  SPECIAL_EDUCATION_DISABILITY_SCHOOL = 'specialEducationDisabilitySchool', // Sérskóli - Fötlun
   INTERNATIONAL_SCHOOL = 'internationalSchool',
   GENERAL_SCHOOL = 'generalSchool',
 }

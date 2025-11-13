@@ -28,12 +28,9 @@ const nationalIdWithNameSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  applicationType: z.enum([
-    ApplicationType.NEW_PRIMARY_SCHOOL,
-    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  applicationType: z.nativeEnum(ApplicationType),
   childInfo: z
     .object({
       usePronounAndPreferredName: z.array(z.string()),
@@ -342,7 +339,7 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
-
+  acceptTerms: z.array(z.enum([YES])).nonempty(),
   childCircumstances: z
     .object({
       onSiteObservation: z.array(z.enum([YES])).length(1),

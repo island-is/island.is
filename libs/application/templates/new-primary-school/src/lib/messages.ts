@@ -20,6 +20,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Umsókn um skólaskipti',
       description: 'Application for school transfer',
     },
+    continuingEnrollmentApplicationName: {
+      id: 'nps.application:continuing.enrollment.application.name',
+      defaultMessage: 'Umsókn um áframhaldandi skólavist',
+      description: 'Application for continuing enrollment',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -226,6 +231,28 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:prerequisites.childrenRadioTitle',
       defaultMessage: 'Veldu barn fyrir umsóknina',
       description: 'Select child for the application',
+    },
+  }),
+
+  applicationType: defineMessages({
+    sectionTitle: {
+      id: 'nps.application:application.type.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    schoolTransferSubLabel: {
+      id: 'nps.application:application.type.school.transfer.sub.label',
+      defaultMessage:
+        'Sé barnið þitt skráð í skóla getur þú óskað eftir að það verði skráð í annan skóla í því sveitarfélagi þar sem þú býrð. Þú getur einnig sótt um að barnið þitt fari í skóla í öðru sveitarfélagi eða í sjálfstætt starfandi skóla. Almennt gildir að í sveitarfélögum er val um grunnskóla en ef takmarka þarf fjölda nemenda í einstaka skólum eiga nemendur áfram rétt á skólavist í þeim skóla sem þeir þegar eru skráðir í.',
+      description:
+        'If your child is already registered in a school, you can request a transfer to another school within your municipality. You can also apply for your child to attend a school in another municipality or an independent school. In general, families can choose between primary schools within the municipality. In general, municipalities offer a choice of primary schools. However, if it becomes necessary to limit the number of students in certain schools, students still retain the right to continue their schooling at the school where they are already enrolled.',
+    },
+    continuingEnrollmentSubLabel: {
+      id: 'nps.application:application.type.continuing.enrollment.sub.label',
+      defaultMessage:
+        'Sé barnið þitt þegar skráð í skóla utan þess sveitarfélags þar sem það á lögheimili eða í sjálfstætt starfandi skóla, þá þarf foreldri að óska eftir áframhaldandi skólavist á hverju ári, með endurnýjun umsóknar.',
+      description:
+        'If your child is already enrolled in a school outside the municipality where they are legally registered, or in an independent school, the parent must request continuing enrollment each year by submitting a renewed application.',
     },
   }),
 
@@ -874,6 +901,27 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Request meeting with the school',
     },
 
+    // Terms
+    termsSubSectionTitle: {
+      id: 'nps.application:different.needs.terms.sub.section.title',
+      defaultMessage: 'Skilmálar',
+      description: 'Terms',
+    },
+    termsSubSectionDescription: {
+      id: 'nps.application:different.needs.terms.description#markdown',
+      defaultMessage:
+        'Í umsókninni felst þríhliða samkomulag milli forsjáraðila, heimaskóla barns og þess skóla sem tekur tímabundið við barni. \n\nAllir aðilar skuldbinda sig til að vinna saman að velferð barns með það að markmiði að tryggja farsæla endurkomu þess í heimaskóla. Í því felst meðal annars að taka þátt í samstarfi um úrlausnir fyrir barnið, viðhalda virkum samskiptum milli allra aðila, fara eftir markmiðum og áætlun eftir bestu getu, og taka þátt í endurmati á stöðu mála.',
+      description:
+        'The application includes a tripartite agreement between the custodians, the child’s home school and the school that temporarily accepts the child. \n\nAll parties commit to working together on the welfare of the child, with the aim of ensuring a successful return to their home school. This includes participating in collaborative solutions for the child, maintaining active communication between all parties, following objectives and plans to the best of their ability, and participating in the reassessment of the situation.',
+    },
+    termsCheckbox: {
+      id: 'nps.application:different.needs.terms.checkbox',
+      defaultMessage:
+        'Með því að haka hér við staðfesta forsjáraðilar sinn hluta samkomulagsins.',
+      description:
+        'By checking this box custodians confirm their part in the above agreement.',
+    },
+
     // Child's circumstances
     childCircumstancesSubSectionTitle: {
       id: 'nps.application:different.needs.child.circumstances.sub.section.title',
@@ -1072,16 +1120,23 @@ export const newPrimarySchoolMessages: MessageDir = {
     expandableDescription: {
       id: 'nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
-        'Sveitarfélagið og skólinn munu taka afstöðu til umsóknarinnar og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barns og/eða forsjáraðila. Mun þá sveitarfélagið eða skólinn setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, verður forsjáraðili og barn boðað til móttökuviðtals.',
+        'Skólinn fær núna umsóknina til sín til umfjöllunar og mun svara þér um ákvörðun sína eins fljótt og auðið er með bréfi sem sent verður í stafræna pósthólfið þitt á [Ísland.is](https://island.is).\n\nÁður en ákvörðun er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barnsins þíns eða ástæður umsóknar. Mun þá sveitarfélagið þar sem þú ert með skráð lögheimili eða skólinn sem þú ert að sækja um skólavist í, setja sig í samband við þig.\n\nEf þú sóttir um sjálfstætt starfandi skóla, og skráðir annan aðila sem greiðanda gjalda fyrir skólavist, þá verður greiðandi beðinn um að staðfesta þátttöku sína áður en umsókn er send til skóla til úrvinnslu.\n\nAthugið að ekki er víst að hægt sé að verða við ósk forsjáraðila en það fer eftir fjölda lausra plássa, fjölda umsókna og aðstæðum í skólanum á hverjum tíma.\n\nEf umsókn um skólaskipti er samþykkt, verður þú og barnið þitt boðað til móttökuviðtals.',
       description:
-        "The municipality and the school will make a decision on the application and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information in order to provide better information about the child's and/or guardian's circumstances. The municipality or the school will then contact you.\n\nIf the application for a new school is approved, the guardian and child will be invited to an admission interview.",
+        'The school will now receive your application for consideration and will reply to you as soon as possible with a message sent to your digital mailbox at [Ísland.is](https://island.is). \n\nBefore a decision is made, additional information may be needed to better understand your child’s situation or the reasons for the application. You will be contacted by the municipality where you are registered or by the school where you applied, if need be. \n\nIf you applied for an independent school, and you register another party as the payer for the school fees, the payer will be asked to confirm before the application is sent to the school for processing. \n\nPlease note that it may not be possible to comply with the guardian’s request, it will depend on the number of places available, the number of applications and the circumstances at the school at any given time. \n\nIf your application for a school transfer is accepted, you and your child will be invited to a reception interview.',
     },
-    privateSchoolExpandableDescription: {
-      id: 'nps.application:conclusion.private.school.expandable.description#markdown',
+    enrollmentExpandableDescription: {
+      id: 'nps.application:conclusion.enrollment.expandable.description#markdown',
       defaultMessage:
-        'Takk fyrir að senda inn umsókn.\n\nEf annar greiðandi hefur verið valinn fyrir skólavist barns en umsækjandi sjálfur, verður nýr greiðandi beðinn um að staðfesta með rafrænum skilríkjum áður en umsóknin er send.\n\nÍ kjölfarið fer umsóknin fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
+        'Takk fyrir að staðfesta skólavistina.\n\nSkólinn mun senda þér upplýsingar um fyrsta skóladag þegar nær dregur. Fram að því hvetjum við þig til að skoða heimasíðu skólans.',
       description:
-        "Thank you for submitting your application.\n\nIf a different payer has been selected for your child's school fees than the applicant, the new payer will be asked to confirm with electronic ID before the application is sent.\n\nThe application will then be reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nOnce a decision on payment participation has been made, the school itself will review the application. The principal's decision will be sent to parents as soon as possible.",
+        'Thank you for confirming the school enrolment.\n\nThe school will send you information about the first day of school as it gets closer. Until then, we encourage you to look at the school’s website.',
+    },
+    specialEducationExpandableDescription: {
+      id: 'nps.application:conclusion.special.education.expandable.description#markdown',
+      defaultMessage:
+        'Forsjáraðili hefur 14 daga til að skila nauðsynlegum fylgiskjölum með umsókn til skóla ef þau voru ekki send rafrænt með þessari umsókn, en án þeirra verður umsókn ekki tekin til umfjöllunar.\n\nSkólinn tekur ákvörðun um skólavist byggða á grundvelli tillagna fagráðs sem fjallar um allar umsóknir. Tilkynnir skólinn þér um ákvörðunina eins fljótt og auðið er með bréfi sem sent verður í stafræna pósthólfið þitt á [Ísland.is](https://island.is).\n\nÁður en afstaða er tekin kann þó að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barnsins þíns eða ástæður umsóknar. Mun þá sveitarfélagið þar sem þú ert með skráð lögheimili eða skólinn sem þú ert að sækja um skólavist í, setja sig í samband við þig.\n\nÍ þeim tilvikum sem aðilar deila forsjá er nauðsynlegt að samþykki beggja aðila fyrir umsókn liggi fyrir. Sé forsjá deilt verður þessi umsókn send fyrst til undirritunar hjá þeim aðila sem ekki er skráður fyrir umsókninni. Samþykki hans er forsenda þess að umsókn sé send áfram til úrvinnslu.\n\nEf þú sóttir um sjálfstætt starfandi skóla, og skráðir annan aðila sem greiðanda gjalda fyrir skólavist, þá verður greiðandi einnig beðinn um að staðfesta þátttöku sína áður en umsókn er send til skóla til úrvinnslu.\n\nAthugið að ekki er víst að hægt sé að verða við ósk þinni en það fer meðal annars eftir fjölda umsókna, fjölda lausra plássa og aðstæðum í hverjum skóla á hverjum tíma. Ef umsókn er synjað vegna þessa er foreldrum gefinn kostur á að halda umsókn sinni í skólanum virkri til umfjöllun síðar.\n\nEf umsókn um skólavist er samþykkt, verður þú og barnið þitt boðað til móttökuviðtals.',
+      description:
+        'The guardian has 14 days to return the necessary documents with the application to the school if they were not sent electronically with the application, without them the application will not be considered.\n\nThe school makes a decision regarding school enrolment based on the proposal of a professional council, which considers all applications. The school will notify you of their decision as soon as possible with a message sent to your digital mailbox at Ísland.is.\n\nBefore a decision is made, additional information may be needed to better understand your child’s situation or the reasons for the application. You will be contacted by the municipality where you are registered or by the school where you applied, if need be.\n\nIn cases where the parties share custody, it is necessary that both parties consent to the application. If custody is shared, this application will first be sent to be signed by the person who is not registered for the application. Their approval is a prerequisite for the application to be forwarded for processing.\n\nIf you applied for an independent school, and you register another party as the payer for the school fees, the payer will be asked to confirm before the application is sent to the school for processing.\n\nPlease note that it may not be possible to comply with your request, it will depend on the number of places available, the number of applications and the circumstances at the school at any given time. If the application is rejected due to these reasons, the parents are given the option to keep their application active at the school for later consideration.\n\nIf your application for school enrolment is accepted, you and your child will be invited to a reception interview.',
     },
   }),
 }

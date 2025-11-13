@@ -10,6 +10,7 @@ import { uuid } from 'uuidv4'
 import {
   hasOtherGuardian,
   hasOtherPayer,
+  hasSpecialEducationSubType,
   needsOtherGuardianApproval,
   needsPayerApproval,
   shouldShowPage,
@@ -20,6 +21,8 @@ import {
   ApplicationType,
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
+  OrganizationSector,
+  OrganizationSubType,
   PayerOption,
   States,
 } from './constants'
@@ -170,43 +173,7 @@ describe('showPreferredLanguageFields', () => {
 describe('getApplicationType', () => {
   const currentDate = new Date()
 
-  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
-
-    const answers = {
-      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
-    }
-    const externalData = {
-      childInformation: {
-        data: {
-          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
-        },
-      },
-    } as unknown as ExternalData
-
-    expect(getApplicationType(answers, externalData)).toBe(
-      ApplicationType.NEW_PRIMARY_SCHOOL,
-    )
-  })
-
-  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
-
-    const answers = {
-      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
-    }
-    const externalData = {
-      childInformation: {
-        data: {},
-      },
-    } as unknown as ExternalData
-
-    expect(getApplicationType(answers, externalData)).toBe(
-      ApplicationType.NEW_PRIMARY_SCHOOL,
-    )
-  })
-
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has not enrolled before (no data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
     const answers = {
@@ -224,7 +191,7 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
+  it('should return undefined for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
     const answers = {
@@ -235,6 +202,38 @@ describe('getApplicationType', () => {
         data: {
           primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
         },
+      },
+    } as unknown as ExternalData
+
+    expect(getApplicationType(answers, externalData)).toBe(undefined)
+  })
+
+  it('should return undefined for child in 2. grade, and data is found in Frigg', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
+    }
+    const externalData = {
+      childInformation: {
+        data: {
+          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
+        },
+      },
+    } as unknown as ExternalData
+
+    expect(getApplicationType(answers, externalData)).toBe(undefined)
+  })
+
+  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
+    }
+    const externalData = {
+      childInformation: {
+        data: {},
       },
     } as unknown as ExternalData
 
@@ -601,5 +600,127 @@ describe('needsOtherGuardianApproval', () => {
     })
 
     expect(needsOtherGuardianApproval(application2)).toBe(false)
+  })
+})
+
+describe('hasSpecialEducationSubType', () => {
+  let application: Application
+
+  const specialEducationBehaviorDepartmentSchoolId = uuid()
+  const specialEducationBehaviorSchoolSchoolId = uuid()
+  const specialEducationDisabilityDepartmentSchoolId = uuid()
+  const specialEducationDisabilitySchoolSchoolId = uuid()
+  const internationalSchoolSchoolId = uuid()
+  const generalSchoolSchoolId = uuid()
+
+  beforeEach(() => {
+    application = buildApplication({
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: specialEducationBehaviorDepartmentSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+            },
+            {
+              id: specialEducationBehaviorSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL,
+            },
+            {
+              id: specialEducationDisabilityDepartmentSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+            },
+            {
+              id: specialEducationDisabilitySchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL,
+            },
+            {
+              id: internationalSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.INTERNATIONAL_SCHOOL,
+            },
+            {
+              id: generalSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.GENERAL_SCHOOL,
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationBehaviorDepartmentSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_BEHAVIOR_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationBehaviorSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_DISABILITY_DEPARTMENT', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationDisabilityDepartmentSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if the selected school has subType SPECIAL_EDUCATION_DISABILITY_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: specialEducationDisabilitySchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(true)
+  })
+
+  it('should return false if the selected school has subType INTERNATIONAL_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: internationalSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(false)
+  })
+
+  it('should return false if the selected school has subType GENERAL_SCHOOL', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: generalSchoolSchoolId,
+    }
+
+    expect(
+      hasSpecialEducationSubType(application.answers, application.externalData),
+    ).toBe(false)
   })
 })
