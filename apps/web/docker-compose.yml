@@ -1,0 +1,66 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.io/elasticsearch:8.8.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:9200 || exit 1']
+      interval: 10s
+      retries: 10
+
+  init-elasticsearch:
+    image: docker.io/curlimages/curl:7.85.0
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+      until curl -s http://elasticsearch:9200; do
+        echo 'Waiting for Elasticsearch...';
+        sleep 5;
+      done;
+      curl -X PUT 'http://elasticsearch:9200/island-is-kstnl' -H 'Content-Type: application/json' -d'
+      {
+        \"settings\": {
+          \"number_of_shards\": 1,
+          \"number_of_replicas\": 1
+        },
+        \"mappings\": {
+          \"properties\": {
+            \"title\": {
+              \"type\": \"text\",
+              \"fields\": {
+                \"sort\": {
+                  \"type\": \"keyword\"
+                }
+              }
+            },
+            \"dateUpdated\": {
+              \"type\": \"date\"
+            },
+            \"dateCreated\": {
+              \"type\": \"date\"
+            },
+            \"releaseDate\": {
+              \"type\": \"date\"
+            },
+            \"tags\": {
+              \"type\": \"nested\",
+              \"properties\": {
+                \"key\": {
+                  \"type\": \"keyword\"
+                },
+                \"type\": {
+                  \"type\": \"keyword\"
+                }
+              }
+            }
+          }
+        }
+      }';
+      "
