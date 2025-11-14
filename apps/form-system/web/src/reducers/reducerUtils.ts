@@ -336,8 +336,6 @@ export const setFieldValue = (
     }
   })
 
-  console.log(`Updating field property ${fieldProperty} to value: ${value} `)
-
   const updatedScreen = {
     ...screen,
     fields: updatedFields,
