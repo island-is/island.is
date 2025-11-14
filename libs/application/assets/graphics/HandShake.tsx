@@ -1,4 +1,4 @@
-export const sectionImage = () => (
+export const HandShake = () => (
   <svg
     width="742"
     height="263"

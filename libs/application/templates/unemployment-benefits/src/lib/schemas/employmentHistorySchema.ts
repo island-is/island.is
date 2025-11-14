@@ -9,7 +9,6 @@ export const lastJobSchema = z.object({
     })
     .optional(),
   nationalIdWithName: z.string().optional(),
-  hiddenNationalIdWithName: z.string().optional(),
   title: z.string().optional(),
   percentage: z.string().optional(),
   startDate: z.string().optional(),
@@ -31,13 +30,14 @@ export const employmentHistorySchema = z
         endDate: z.string().optional(),
       })
       .optional(),
-    lastJobs: z.array(lastJobSchema),
+    lastJobs: z.array(lastJobSchema).optional(),
+    currentJobs: z.array(lastJobSchema).optional(),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
   })
   .superRefine((data, ctx) => {
-    data.lastJobs.forEach((job, index) => {
+    data.lastJobs?.forEach((job, index) => {
       //So nationalId is not a valid job choice
-      if (!job.nationalIdWithName && !job.hiddenNationalIdWithName) {
+      if (!job.nationalIdWithName) {
         ctx.addIssue({
           path: ['lastJobs', index, 'nationalIdWithName'],
           code: z.ZodIssueCode.custom,

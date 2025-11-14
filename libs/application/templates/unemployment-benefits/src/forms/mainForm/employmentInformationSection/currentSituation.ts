@@ -168,6 +168,7 @@ export const currentSituationSubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              max: 100,
               condition: (application) => hasEmployer(application.answers),
             },
             startDate: {

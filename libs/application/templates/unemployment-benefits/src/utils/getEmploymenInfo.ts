@@ -213,3 +213,25 @@ export const getDefaultFromCurrentStatus = (
 
   return repeaterJobs[index][currentStatusFieldItem] || ''
 }
+
+export const getChosenEmployerNationalId = (
+  repeaterJobs: CurrentEmploymentInAnswers[],
+  index: number,
+) => {
+  return repeaterJobs[index]?.nationalIdWithName &&
+    repeaterJobs[index]?.nationalIdWithName !== '-'
+    ? repeaterJobs[index]?.nationalIdWithName
+    : repeaterJobs[index]?.employer?.nationalId ?? ''
+}
+
+export const getChosenEmployerName = (
+  repeaterJobs: CurrentEmploymentInAnswers[],
+  index: number,
+  externalData: ExternalData,
+  nationalIdChosen: string,
+) => {
+  return repeaterJobs[index]?.nationalIdWithName &&
+    repeaterJobs[index]?.nationalIdWithName !== '-'
+    ? getEmployerNameFromSSN(externalData, nationalIdChosen || '')
+    : repeaterJobs[index]?.employer?.name
+}
