@@ -7,7 +7,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import { FeatureFlag, FeatureFlagGuard, Features } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
@@ -19,6 +19,7 @@ import { CaseTimelineStructure } from '../models/police-cases/caseTimelineStruct
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
+@FeatureFlag(Features.servicePortalPoliceCasesPageEnabled)
 @Audit({ namespace: '@island.is/api/police-cases' })
 @Scopes(ApiScope.lawAndOrder)
 export class PoliceCasesResolver {

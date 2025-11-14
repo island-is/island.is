@@ -44,12 +44,14 @@ export const lawAndOrderModule: PortalModule = {
       name: m.policeCases,
       path: LawAndOrderPaths.PoliceCases,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      key: 'PoliceCases',
       element: <PoliceCases />,
     },
     {
       name: m.policeCases,
       path: LawAndOrderPaths.PoliceCasesDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      key: 'PoliceCases',
       element: <PoliceCaseDetail />,
     },
     {
