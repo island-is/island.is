@@ -10,6 +10,7 @@ const additionalPatterns = [
   '**/schema.d.ts',
   '**/schema.tsx',
   '**/schema.ts',
+  '**/*.model.ts',
   '**/gen/graphql.ts',
   '**/*.generated.ts',
   '**/possibleTypes.json',
@@ -179,11 +180,18 @@ async function main() {
   inputs.forEach((file) => console.log(file))
   console.log('::endgroup::')
 
-  if (skipCodegen) {
+  const skipCache = process.env['SKIP_CACHE'] === 'true'
+
+  if (skipCodegen && !skipCache) {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
-    execSync('yarn codegen >> codegen.log', { stdio: 'inherit' })
+    if (skipCache) {
+      console.log('Skipping cache for codegen...')
+    }
+    execSync(`yarn codegen ${skipCache ? '--skip-cache' : ''} >> codegen.log`, {
+      stdio: 'inherit',
+    })
   }
 
   console.log(
