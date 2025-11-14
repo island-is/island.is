@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl'
 export const strings = defineMessages({
   serviceStatusSuccess: {
     id: 'judicial.system.core:service_announcement.service_status_success',
-    defaultMessage: 'Birting tókst',
+    defaultMessage: 'Ákæra birt',
     description: 'Notaður sem texti þegar birting tókst.',
   },
   serviceStatusExpired: {
     id: 'judicial.system.core:service_announcement.service_status_expired',
-    defaultMessage: 'Birting tókst ekki',
+    defaultMessage: 'Ákæra ekki birt',
     description: 'Notaður sem texti þegar birting rann út á tíma.',
   },
   serviceStatusExpiredMessage: {
