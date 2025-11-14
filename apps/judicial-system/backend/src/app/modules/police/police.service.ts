@@ -33,6 +33,7 @@ import {
   CaseState,
   CaseType,
   getServiceDateFromSupplements,
+  IndictmentCaseSubtypes,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -483,42 +484,56 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
-            (info: {
-              upprunalegtMalsnumer: string
-              vettvangur?: string
-              brotFra?: string
-              licencePlate?: string
-              gotuHeiti?: string | null
-              gotuNumer?: string | null
-              sveitafelag?: string | null
-              artalNrGreinLidur?: string | null
-            }) => {
-              const policeCaseNumber = info.upprunalegtMalsnumer
-              const article = info.artalNrGreinLidur
-              const subtype = this.getSubtypeByArticle(article)
-              console.log({ subtype }, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+          await Promise.all(
+            (response.malseinings ?? []).map(
+              async (info: {
+                upprunalegtMalsnumer: string
+                vettvangur?: string
+                brotFra?: string
+                licencePlate?: string
+                gotuHeiti?: string | null
+                gotuNumer?: string | null
+                sveitafelag?: string | null
+                artalNrGreinLidur?: string | null
+              }) => {
+                const policeCaseNumber = info.upprunalegtMalsnumer
+                const article = info.artalNrGreinLidur
+                const subtype = await this.getSubtypeByArticle(article)
+                const key = Object.keys(IndictmentCaseSubtypes).find(
+                  (k) =>
+                    IndictmentCaseSubtypes[
+                      k as keyof typeof IndictmentCaseSubtypes
+                    ] === subtype?.offenseType,
+                ) as keyof typeof IndictmentCaseSubtypes
 
-              const place = formatCrimeScenePlace(
-                info.gotuHeiti,
-                info.gotuNumer,
-                info.sveitafelag,
-              )
-              const date = info.brotFra ? new Date(info.brotFra) : undefined
-              const licencePlate = info.licencePlate
+                const place = formatCrimeScenePlace(
+                  info.gotuHeiti,
+                  info.gotuNumer,
+                  info.sveitafelag,
+                )
+                const date = info.brotFra ? new Date(info.brotFra) : undefined
+                const licencePlate = info.licencePlate
 
-              const foundCase = cases.find(
-                (item) => item.policeCaseNumber === policeCaseNumber,
-              )
+                const foundCase = cases.find(
+                  (item) => item.policeCaseNumber === policeCaseNumber,
+                )
 
-              if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date, licencePlate })
-              } else if (date && (!foundCase.date || date > foundCase.date)) {
-                foundCase.place = place
-                foundCase.date = date
-                foundCase.licencePlate = licencePlate
-              }
-            },
+                if (!foundCase) {
+                  cases.push({
+                    policeCaseNumber,
+                    place,
+                    date,
+                    licencePlate,
+                    subtype: key,
+                  })
+                } else if (date && (!foundCase.date || date > foundCase.date)) {
+                  foundCase.place = place
+                  foundCase.date = date
+                  foundCase.licencePlate = licencePlate
+                  foundCase.subtype = key
+                }
+              },
+            ),
           )
 
           return cases
@@ -935,7 +950,6 @@ export class PoliceService {
   getSubtypeByArticle(
     article?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    console.log({ article })
     return this.indictmentSubtypeModel.findOne({
       where: { article },
     })
