@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const confirmation = defineMessages({
-  tabTitle: {
-    id: 'dp.application:confirmation.tabTitle',
-    defaultMessage: 'Staðfesting',
-    description: 'Confirmation tab title',
-  },
   title: {
     id: 'dp.application:confirmation.title',
     defaultMessage: 'Umsókn um örorku hefur verið send og bíður tekjuáætlunar',
@@ -22,21 +17,11 @@ export const confirmation = defineMessages({
     defaultMessage: 'Umsókn um örorku hefur verið send til Tryggingastofnunar',
     description: 'Confirmation',
   },
-  whatHappensNext: {
-    id: 'dp.application:confirmation.whatHappensNext',
-    defaultMessage: 'Hvað gerist næst?',
-    description: 'What happens next?',
-  },
   whatHappensNextOptions: {
     id: 'dp.application:confirmation.whatHappensNextOptions#markdown',
     defaultMessage:
       '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n*         Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til örorkulífeyris. Vinnslutími umsókna um örorkulífeyris er allt að fjórar vikur.',
     description: 'What happens next options',
-  },
-  warningTitle: {
-    id: 'dp.application:confirmation.warningTitle',
-    defaultMessage: 'Tengdar umsóknir / Réttur til annarra greiðslna',
-    description: 'Warning title',
   },
   warningDescription: {
     id: 'dp.application:confirmation.warningDescription#markdown',
