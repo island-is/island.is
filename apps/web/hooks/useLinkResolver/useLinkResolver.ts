@@ -187,6 +187,14 @@ export const routesTemplate = {
     is: '/styrkjatorg/styrkur/[id]',
     en: '/en/grants-plaza/grant/[id]',
   },
+  openinvoices: {
+    is: '/opnir-reikningar',
+    en: '/en/open-invoices',
+  },
+  openinvoicesoverview: {
+    is: '/opnir-reikningar/yfirlit',
+    en: '/en/open-invoices/overview',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',

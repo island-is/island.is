@@ -78,8 +78,9 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
               key={index}
               dataKey={item.datakey}
               fill={item.color ? item.color : COLORS[index % COLORS.length]}
-              stackId={item.stackId}
+              stackId={index % 2}
               barSize={16}
+              display={index % 2}
               radius={
                 index === parsedDatakeys.bars.length - 1 || !shouldStack
                   ? [20, 20, 0, 0]
