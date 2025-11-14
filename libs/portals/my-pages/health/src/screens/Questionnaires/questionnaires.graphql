@@ -1,0 +1,123 @@
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
+    questionnaires {
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+      department
+    }
+  }
+}
+
+query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+      department
+    }
+    expirationDate
+    canSubmit
+    submissions {
+      __typename
+      id
+      isDraft
+      submittedAt
+    }
+  }
+}
+
+query GetQuestionnaireWithQuestions(
+  $locale: String!
+  $input: GetQuestionnaireInput!
+) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      organization
+      department
+      sentDate
+    }
+    canSubmit
+    sections {
+      __typename
+      title
+      questions {
+        __typename
+        id
+        label
+        sublabel
+        htmlLabel
+        required
+        dependsOn
+        visibilityConditions {
+          questionId
+          operator
+          expectedValues
+          showWhenMatched
+        }
+        answerOptions {
+          __typename
+          type
+          placeholder
+          maxLength
+          min
+          max
+          maxLabel
+          minLabel
+          decimal
+          formula
+          options {
+            __typename
+            id
+            label
+            value
+          }
+        }
+      }
+    }
+  }
+}
+
+query GetAnsweredQuestionnaire(
+  $input: QuestionnaireAnsweredInput!
+  $locale: String!
+) {
+  getAnsweredQuestionnaire(input: $input, locale: $locale) {
+    data {
+      id
+      formId
+      submissionId
+      date
+      title
+      description
+      answers {
+        id
+        label
+        htmlLabel
+        sublabel
+        values
+      }
+    }
+  }
+}
+
+mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
+  submitQuestionnaire(input: $input) {
+    __typename
+    success
+    message
+  }
+}

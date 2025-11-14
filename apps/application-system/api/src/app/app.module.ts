@@ -45,6 +45,7 @@ import {
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
+  LshDevConfig,
 } from '@island.is/clients/health-directorate'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -119,6 +120,7 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
+        LshDevConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         BifrostUniversityCareerClientConfig,
         UniversityOfAkureyriCareerClientConfig,

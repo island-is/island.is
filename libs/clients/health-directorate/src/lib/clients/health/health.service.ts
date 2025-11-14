@@ -15,9 +15,6 @@ import {
   ReferralDto,
   UpdateOrganDonorDto,
   WaitingListEntryDto,
-  donationExceptionControllerGetOrgansV1,
-  meDonorStatusControllerGetOrganDonorStatusV1,
-  meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -32,7 +29,15 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
+  meDonorStatusControllerGetOrganDonorStatusV1,
+  donationExceptionControllerGetOrgansV1,
+  meDonorStatusControllerUpdateOrganDonorStatusV1,
+  questionnaireControllerGetAllQuestionnairesV1,
+  questionnaireControllerGetQuestionnaireDetailV1,
+  questionnaireControllerSubmitQuestionnaireV1,
+  questionnaireControllerGetQuestionnaireSubmissionV1,
 } from './gen/fetch'
+
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
@@ -40,6 +45,12 @@ import {
   EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
+  QuestionnaireControllerSubmitQuestionnaireV1Data,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+  QuestionnaireSubmissionDetailDto,
+  SubmitQuestionnaireDto,
+  QuestionnaireControllerGetQuestionnaireSubmissionV1Data,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -266,6 +277,112 @@ export class HealthDirectorateHealthService {
     return donationExceptions
   }
 
+  public async getQuestionnaires(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(questionnaireControllerGetAllQuestionnairesV1()),
+    )
+
+    if (!questionnaires) {
+      this.logger.debug('No questionnaires data returned')
+      return null
+    }
+
+    return questionnaires
+  }
+
+  public async getQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<QuestionnaireDetailDto | null> {
+    const questionnaire = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerGetQuestionnaireDetailV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    if (!questionnaire) {
+      this.logger.debug('No questionnaire data returned')
+      return null
+    }
+
+    return questionnaire
+  }
+
+  public async getQuestionnaireAnswered(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    submissionId: string,
+  ): Promise<QuestionnaireSubmissionDetailDto | null> {
+    try {
+      const questionnaires = await withAuthContext(auth, () =>
+        data(
+          questionnaireControllerGetQuestionnaireSubmissionV1({
+            path: {
+              id,
+              submissionId,
+            },
+          }),
+        ),
+      )
+
+      if (!questionnaires) {
+        this.logger.debug(
+          'No answered questionnaire data returned for id: ' +
+            id +
+            ' and submissionId: ' +
+            submissionId,
+        )
+        return null
+      }
+
+      // Ensure the response is an array
+      if (!Array.isArray(questionnaires)) {
+        this.logger.warn(
+          'Unexpected response format for getQuestionnaireAnswered',
+        )
+      }
+
+      return JSON.parse(JSON.stringify(questionnaires))
+    } catch (error) {
+      this.logger.error('Error fetching questionnaire answered data', error)
+      return null
+    }
+  }
+
+  public async submitQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    input: SubmitQuestionnaireDto,
+  ): Promise<string | null> {
+    const submission = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerSubmitQuestionnaireV1({
+          path: {
+            id: id,
+          },
+          body: input,
+        }),
+      ),
+    )
+
+    if (!submission) {
+      this.logger.debug('No questionnaire submission data returned')
+      return null
+    }
+
+    return submission
+  }
+
   /** Medicine Delegation */
 
   public async getMedicineDelegations(
@@ -284,7 +401,6 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
-
     if (!medicineDelegations) {
       return null
     }
@@ -306,6 +422,8 @@ export class HealthDirectorateHealthService {
       ),
     )
   }
+
+  /* Patient Data Permits */
 
   public async getPermits(
     auth: Auth,
