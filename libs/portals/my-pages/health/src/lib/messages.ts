@@ -1453,6 +1453,10 @@ export const messages = defineMessages({
     defaultMessage: 'Tegund',
     id: 'sp.health:type',
   },
+  therapyType: {
+    defaultMessage: 'Tegund þjálfunar',
+    id: 'sp.health:therapy-type',
+  },
   typeofService: {
     defaultMessage: 'Tegund þjónustu',
     id: 'sp.health:typeof-service',

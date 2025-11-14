@@ -73,7 +73,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         </Box>
       )}
       <TabNavigation
-        label={formatMessage(messages.payments)}
+        label={formatMessage(messages.paymentsAndRights)}
         pathname={pathname}
         items={
           healthNavigation.children?.find(
