@@ -6,7 +6,7 @@ export const up = compose(
     scopeNames: ['@samgongustofa.is/leyfur'],
   }),
   addScopesToClient({
-    clientId: '@island.is/clients/application-system-api',
+    clientId: '@island.is/clients/application-system',
     scopeNames: ['@samgongustofa.is/leyfur'],
   }),
 )
