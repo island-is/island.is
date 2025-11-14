@@ -149,9 +149,10 @@ export class ValueType {
   time?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  s3Key?: string
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: [String] })
+  s3Key?: string[]
 
   @IsOptional()
   @IsString()
