@@ -1,2 +1,6 @@
 export * from './lib/application.module'
 export * from './lib/application.resolver'
+export * from './lib/application.model'
+export * from './lib/dto/applicationApplications.input'
+export * from '../gen/fetch/apis/ApplicationsApi'
+export * from '../gen/fetch/runtime'
