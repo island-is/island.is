@@ -25,8 +25,8 @@ import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
 import { getAssigneesNationalIdList } from '../utils/getAssigneesNationalIdList'
 import {
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
@@ -89,8 +89,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 UserProfileApi,
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
               ],
             },
           ],
@@ -124,7 +124,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryV3UserApi],
             },
           ],
         },
@@ -166,7 +166,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryV3UserApi],
             },
           ],
         },
