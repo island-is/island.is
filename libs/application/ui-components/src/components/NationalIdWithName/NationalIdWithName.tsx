@@ -156,6 +156,10 @@ export const NationalIdWithName: FC<
     }
 
     if (isCompany && searchCompanies) {
+      //if default, the searchCompanies returns null in the beginning, but if the field is readOnly and has a default value, we don't want to show an error
+      if (readOnly && nameDefaultValue) {
+        return undefined
+      }
       if (companyFailed) return notFoundMessage
       if (nameError && !companyData) return nameError
     }

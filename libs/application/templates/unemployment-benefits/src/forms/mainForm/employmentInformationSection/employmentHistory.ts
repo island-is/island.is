@@ -100,7 +100,22 @@ export const employmentHistorySubSection = buildSubSection({
           condition: (answers) => !isIndependent(answers),
         }),
         buildFieldsRepeaterField({
-          id: 'employmentHistory.lastJobs',
+          id: 'employmentHistory.currentJobs',
+          hideAddButton: true,
+          maxRows: (answers: FormValue) => {
+            const currentSituationRepeater =
+              getValueViaPath<Array<CurrentEmploymentInAnswers>>(
+                answers,
+                'currentSituation.currentSituationRepeater',
+                [],
+              ) ?? []
+
+            const maxRows =
+              isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
+                ? currentSituationRepeater.length
+                : 1
+            return maxRows
+          },
           minRows: (answers: FormValue) => {
             const currentSituationRepeater =
               getValueViaPath<Array<CurrentEmploymentInAnswers>>(
@@ -116,108 +131,17 @@ export const employmentHistorySubSection = buildSubSection({
             return minRows
           },
           marginTop: 0,
+          marginBottom: 0,
           formTitle:
             employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
           fields: {
-            hiddenNationalIdWithName: {
-              component: 'hiddenInput',
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
-                const repeaterJobs =
-                  getValueViaPath<CurrentEmploymentInAnswers[]>(
-                    application.answers,
-                    'currentSituation.currentSituationRepeater',
-                    [],
-                  ) ?? []
-
-                const status =
-                  getValueViaPath<EmploymentStatus>(
-                    application.answers,
-                    'currentSituation.status',
-                    undefined,
-                  ) ?? undefined
-
-                if (
-                  repeaterJobs.length === 0 ||
-                  !repeaterJobs[index] ||
-                  status === EmploymentStatus.UNEMPLOYED
-                ) {
-                  return ''
-                }
-
-                return repeaterJobs[index]?.nationalIdWithName || ''
-              },
-            },
-            nationalIdWithName: {
-              component: 'select',
-              required: true,
-              label:
-                employmentMessages.employmentHistory.labels.lastJobRepeater,
-              condition: (application, activeField, index) => {
-                return !hasDataFromCurrentStatusItem(
-                  application.answers,
-                  index,
-                  'nationalIdWithName',
-                )
-              },
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
-                )
-                return employmentList
-                  .filter((x) => !!x.employerSSN)
-                  .map((job) => ({
-                    value: job.employerSSN ?? '',
-                    label:
-                      job.employerSSN !== '-'
-                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
-                        : job.employer || '',
-                  }))
-              },
-            },
             employer: {
               component: 'nationalIdWithName',
               required: true,
               searchPersons: true,
               searchCompanies: true,
-              readonly: (application, _, index) => {
-                return (
-                  hasDataFromCurrentStatusItem(
-                    application.answers,
-                    index,
-                    'nationalIdWithName',
-                  ) ||
-                  hasDataFromCurrentStatusItem(
-                    application.answers,
-                    index,
-                    'employer',
-                  )
-                )
-              },
-              condition: (application, activeField, index) => {
-                const hasData =
-                  hasDataFromCurrentStatusItem(
-                    application.answers,
-                    index,
-                    'nationalIdWithName',
-                  ) ||
-                  hasDataFromCurrentStatusItem(
-                    application.answers,
-                    index,
-                    'employer',
-                  )
-                if (hasData) return true
-                const nationalIdChosen = activeField?.nationalIdWithName
-                  ? activeField?.nationalIdWithName
-                  : ''
-
-                return nationalIdChosen === '-'
-              },
-
+              readonly: true,
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
@@ -436,6 +360,110 @@ export const employmentHistorySubSection = buildSubSection({
               condition: (application, _activeField, index) => {
                 return !hasDataFromCurrentStatus(application.answers, index)
               },
+            },
+          },
+        }),
+
+        buildFieldsRepeaterField({
+          id: 'employmentHistory.lastJobs',
+          marginTop: 0,
+
+          formTitle: (index, application) => {
+            const repeaterJobs =
+              getValueViaPath<CurrentEmploymentInAnswers[]>(
+                application.answers,
+                'currentSituation.currentSituationRepeater',
+                [],
+              ) ?? []
+            return {
+              ...employmentMessages.employmentHistory.labels.lastJobRepeater,
+              values: {
+                value: repeaterJobs.length + index + 1,
+              },
+            }
+          },
+          formTitleNumbering: 'none',
+          formTitleVariant: 'h5',
+          fields: {
+            nationalIdWithName: {
+              component: 'select',
+              required: true,
+              label:
+                employmentMessages.employmentHistory.labels.lastJobRepeater,
+              options(application) {
+                const employmentList = getEmploymentFromRsk(
+                  application.externalData,
+                )
+                return employmentList
+                  .filter((x) => !!x.employerSSN)
+                  .map((job) => ({
+                    value: job.employerSSN ?? '',
+                    label:
+                      job.employerSSN !== '-'
+                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
+                        : job.employer || '',
+                  }))
+              },
+            },
+            employer: {
+              component: 'nationalIdWithName',
+              required: true,
+              searchPersons: true,
+              searchCompanies: true,
+              condition: (_, activeField) => {
+                const nationalIdChosen = activeField?.nationalIdWithName
+                  ? activeField?.nationalIdWithName
+                  : ''
+
+                return nationalIdChosen === '-' || activeField === undefined
+              },
+            },
+            title: {
+              component: 'select',
+              label: employmentMessages.employmentHistory.labels.lastJobTitle,
+              width: 'half',
+              required: true,
+              options: (application, _, locale) => {
+                const jobList =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.jobCodes',
+                  ) ?? []
+                return jobList.map((job) => ({
+                  value:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
+                  label:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
+                }))
+              },
+            },
+            percentage: {
+              component: 'input',
+              label:
+                employmentMessages.employmentHistory.labels.lastJobPercentage,
+              width: 'half',
+              type: 'number',
+              suffix: '%',
+              required: true,
+            },
+            startDate: {
+              component: 'date',
+              label:
+                employmentMessages.employmentHistory.labels.lastJobStartDate,
+              width: 'half',
+              required: true,
+            },
+            endDate: {
+              component: 'date',
+              required: true,
+              label:
+                employmentMessages.employmentHistory.labels.lastOldJobEndDate,
+              width: 'half',
+              maxDate: new Date(),
             },
           },
         }),
