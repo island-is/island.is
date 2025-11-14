@@ -1,8 +1,8 @@
 import { FieldTypesEnum } from '@island.is/form-system/shared'
-import { FieldSettings } from './fieldSettings.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { FieldSettings } from './fieldSettings.model'
 
 export class FieldSettingsFactory {
   static getClass(type: string, fieldSettings: FieldSettings | undefined) {
@@ -47,6 +47,9 @@ export class FieldSettingsFactory {
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.APPLICANT:
         keys = ['applicantType', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.CHECKBOX:
+        keys = ['isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

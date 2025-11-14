@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { ListItemInput } from './listItem.input'
 import { LanguageTypeInput } from './languageType.input'
+import { ListItemInput } from './listItem.input'
 
 @InputType('FormSystemFieldSettingsInput')
 export class FieldSettingsInput {
@@ -78,4 +78,7 @@ export class FieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   applicantType?: string
+
+  @Field(() => Boolean, { nullable: true })
+  hasDescription?: boolean
 }

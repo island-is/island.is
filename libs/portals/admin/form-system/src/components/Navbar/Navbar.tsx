@@ -14,6 +14,7 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { Fragment, useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
@@ -23,6 +24,7 @@ import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
+import * as styles from './Navbar.css'
 
 export const Navbar = () => {
   const { control, controlDispatch, inSettings } = useContext(
@@ -31,10 +33,8 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
-  const parties = sections?.find((s) => s?.sectionType === SectionTypes.PARTIES)
   const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
   const { hasPayment } = form
-
   const sectionIds = useMemo(
     () =>
       sections
@@ -150,7 +150,7 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.PARTIES &&
+          // s.sectionType !== SectionTypes.PARTIES &&
           s.sectionType !== SectionTypes.SUMMARY &&
           s.sectionType !== SectionTypes.PAYMENT,
       )
@@ -244,50 +244,42 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      {parties && (
-        <>
-          <NavComponent
-            type="Section"
-            data={parties}
-            active={activeItem.data?.id === parties.id}
-            focusComponent={focusComponent}
-          />
-        </>
-      )}
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <SortableContext items={sectionIds ?? []}>
-          {renderInputSections()}
-        </SortableContext>
+      <Box className={cn(styles.navbarContainer)}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <SortableContext items={sectionIds ?? []}>
+            {renderInputSections()}
+          </SortableContext>
 
-        {createPortal(
-          <DragOverlay
-            dropAnimation={{
-              duration: 500,
-              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-            }}
-          >
-            {activeItem && (
-              <NavComponent
-                type={activeItem.type}
-                data={
-                  activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
-                }
-                active
-                focusComponent={focusComponent}
-              />
-            )}
-          </DragOverlay>,
-          document.body,
-        )}
-      </DndContext>
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
+                  }
+                  active
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      </Box>
       {payment && hasPayment && (
         <Fragment>
           <NavComponent
@@ -299,7 +291,12 @@ export const Navbar = () => {
           {renderScreensForSection(payment as FormSystemSection)}
         </Fragment>
       )}
-      <Box display="flex" justifyContent="center" paddingTop={3}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        paddingTop={3}
+        className={cn(styles.addSectionButton)}
+      >
         <Button variant="ghost" size="small" onClick={addSection}>
           {formatMessage(m.addSection)}
         </Button>

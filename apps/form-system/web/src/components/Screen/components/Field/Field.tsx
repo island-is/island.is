@@ -1,3 +1,4 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
   Banknumber,
   Checkbox,
@@ -15,11 +16,9 @@ import {
   TextInput,
   TimeInput,
 } from '@island.is/form-system/ui'
-import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
-import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   field: FormSystemField
@@ -43,7 +42,6 @@ const FIELD_COMPONENT_MAP = {
 } as const
 
 export const Field = ({ field }: Props) => {
-  const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
   const { control } = useFormContext()
 
@@ -51,7 +49,6 @@ export const Field = ({ field }: Props) => {
     item: field,
     control,
     dispatch,
-    lang,
   }
 
   const FieldComponent =

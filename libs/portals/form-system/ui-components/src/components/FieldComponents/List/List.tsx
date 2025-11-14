@@ -1,13 +1,13 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { Dispatch, useEffect } from 'react'
 import { Select } from '@island.is/island-ui/core'
-import { Action } from '../../../lib/reducerTypes'
+import { useLocale } from '@island.is/localization'
+import { Dispatch, useEffect } from 'react'
 import { getValue } from '../../../lib/getValue'
+import { Action } from '../../../lib/reducerTypes'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
@@ -23,7 +23,8 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
+export const List = ({ item, dispatch, hasError }: Props) => {
+  const { lang } = useLocale()
   const mapToListItems = (items: (FormSystemListItem | null)[]): ListItem[] =>
     items
       ?.filter((item): item is FormSystemListItem => item !== null)

@@ -3,7 +3,6 @@ import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
@@ -16,8 +15,7 @@ interface Props {
 export const TextInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
-  const { formatMessage } = useIntl()
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
 
   return (
     <Controller
