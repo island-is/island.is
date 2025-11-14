@@ -1,31 +1,29 @@
+import { YES } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { OrganizationSector, OrganizationSubType } from '../../utils/constants'
-import {
-  getSelectedSchoolSector,
-  getSelectedSchoolSubType,
-} from '../../utils/newPrimarySchoolUtils'
+import { hasSpecialEducationSubType } from '../../utils/conditionUtils'
+import { ApplicationType } from '../../utils/constants'
+import { getApplicationAnswers } from '../../utils/newPrimarySchoolUtils'
 
 export const conclusionSection = buildFormConclusionSection({
   expandableIntro: '',
   expandableDescription: (application) => {
-    const selectedSchoolSubType = getSelectedSchoolSubType(
+    const { applicationType, applyForPreferredSchool } = getApplicationAnswers(
       application.answers,
-      application.externalData,
-    )
-
-    const selectedSchoolSector = getSelectedSchoolSector(
-      application.answers,
-      application.externalData,
     )
 
     if (
-      selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
-      (selectedSchoolSubType === OrganizationSubType.GENERAL_SCHOOL &&
-        selectedSchoolSector === OrganizationSector.PRIVATE)
+      applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      applyForPreferredSchool === YES
+    ) {
+      return newPrimarySchoolMessages.conclusion.enrollmentExpandableDescription
+    }
+
+    if (
+      hasSpecialEducationSubType(application.answers, application.externalData)
     ) {
       return newPrimarySchoolMessages.conclusion
-        .privateSchoolExpandableDescription
+        .specialEducationExpandableDescription
     }
 
     return newPrimarySchoolMessages.conclusion.expandableDescription

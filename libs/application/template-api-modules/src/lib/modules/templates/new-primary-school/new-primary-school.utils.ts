@@ -3,16 +3,20 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedSchoolSubType,
+  getOtherGuardian,
   LanguageEnvironmentOptions,
-  OrganizationSubType,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   ReasonForApplicationOptions,
+  shouldShowExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
 } from '@island.is/clients/mms/frigg'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -93,14 +97,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     currentSchoolId,
     applyForPreferredSchool,
+    payerName,
+    payerNationalId,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
     application.externalData,
   )
 
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
       applicant: {
         nationalId: childInfo?.nationalId || '',
@@ -142,10 +157,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(getSelectedSchoolSubType(
+            ...(shouldShowExpectedEndDate(
               application.answers,
               application.externalData,
-            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+            ) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
@@ -185,8 +200,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               languages: ['is'],
             }),
       },
+      ...(needsPayerApproval(application) && {
+        payer: {
+          name: payerName || '',
+          nationalId: payerNationalId || '',
+        },
+      }),
     },
   }
 
   return newPrimarySchoolDTO
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./new-primary-school-assets/${file}`)
 }
