@@ -81,14 +81,14 @@ const transformCaseRepresentatives = (theCase: Case) => {
   const defendantsAndDefenders = theCase.defendants?.flatMap((defendant) => {
     const defendantAndDefender = [
       {
-        name: defendant.name,
+        name: defendant.name ?? '',
         nationalId: defendant.nationalId,
         caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
       },
     ]
     if (defendant.defenderName) {
       defendantAndDefender.push({
-        name: defendant.defenderName,
+        name: defendant.defenderName ?? '',
         nationalId: defendant.defenderNationalId,
         caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
       })

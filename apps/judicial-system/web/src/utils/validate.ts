@@ -232,7 +232,8 @@ export const isDefendantStepValidIC = (workingCase: Case): boolean => {
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.policeCaseNumbers &&
+    workingCase.prosecutor &&
+      workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
         (n) =>
