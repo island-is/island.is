@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
+  AttachmentItem,
   ExternalData,
   FormValue,
   KeyValueItem,
@@ -39,6 +40,7 @@ import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
+  getAttachmentTitles,
   getCurrentSchoolName,
   getGenderMessage,
   getPreferredSchoolName,
@@ -751,6 +753,23 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...welfareContactItems2,
     ...baseItems2,
   ]
+}
+
+export const fileItems = (answers: FormValue): Array<AttachmentItem> => {
+  const files = getAttachmentTitles(answers)
+
+  return files.map((file) => {
+    const fullName = file.name
+    const nameArray = fullName.split('.')
+    const fileType = nameArray.pop()?.toUpperCase()
+    const fileName = nameArray.join('.')
+
+    return {
+      width: 'full',
+      fileName: fileName,
+      fileType: fileType || undefined,
+    }
+  })
 }
 
 export const payerItems = (answers: FormValue): Array<KeyValueItem> => {

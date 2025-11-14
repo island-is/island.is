@@ -22,6 +22,7 @@ import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -232,6 +233,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const attachments = getValueViaPath(
+    answers,
+    'attachments.files',
+  ) as FileType[]
+
   return {
     applicationType,
     childNationalId,
@@ -277,6 +283,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachments,
   }
 }
 
@@ -610,6 +617,21 @@ export const getDefaultYESNOValue = (
   // If no child information is available (not registered in Frigg), return an empty string
   // else return YES or NO based on the boolean value comming from Frigg
   return value ? YES : value === false ? NO : ''
+}
+
+export const hasAttachment = (attachment: Array<FileType> | undefined) =>
+  attachment && attachment.length > 0
+
+export const getAttachmentTitles = (answers: FormValue): Array<FileType> => {
+  const attachments = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.files',
+  )
+
+  if (Array.isArray(attachments)) {
+    return attachments
+  }
+  return []
 }
 
 export const getCurrentAndNextGrade = (grade: string): string[] => {
