@@ -279,11 +279,15 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         alt: formatMessage(m.overview.featuredImageAlt),
       }}
       header={{
-        breadcrumbs: breadcrumbItems
+        breadcrumbs: breadcrumbItems,
       }}
-      footer={organization ? {
+      footer={
         organization
-      } : undefined}
+          ? {
+              organization,
+            }
+          : undefined
+      }
     >
       <Box marginTop={12} background="blue100">
         <SidebarLayout
