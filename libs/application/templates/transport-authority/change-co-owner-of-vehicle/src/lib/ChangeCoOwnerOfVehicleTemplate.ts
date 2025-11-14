@@ -17,8 +17,6 @@ import {
   corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
-  getHistoryLogApprovedWithSubjectAndActor,
-  getHistoryLogRejectedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import {
@@ -219,11 +217,11 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: coreHistoryMessages.applicationApprovedBy,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
