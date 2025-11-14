@@ -40,6 +40,7 @@ export const SpeedingOffenseFields = ({
     useState<string>('')
   const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
     useState<string>('')
+
   return (
     <Box marginBottom={2}>
       <SectionHeading
@@ -52,9 +53,11 @@ export const SpeedingOffenseFields = ({
           component={Input}
           mask={SPEED}
           replacement={{ _: /\d/ }}
-          value={indictmentCount.recordedSpeed?.toString() ?? ''}
+          value={indictmentCount.recordedSpeed ?? 0}
           onChange={(event) => {
-            const recordedSpeed = parseInt(event.target.value)
+            const recordedSpeed = event.target.value
+              ? parseInt(event.target.value)
+              : 0
 
             removeErrorMessageIfValid(
               ['empty'],
@@ -94,9 +97,11 @@ export const SpeedingOffenseFields = ({
         component={Input}
         mask={SPEED}
         replacement={{ _: /\d/ }}
-        value={indictmentCount.speedLimit?.toString() ?? ''}
+        value={indictmentCount.speedLimit ?? 0}
         onChange={(event) => {
-          const speedLimit = parseInt(event.target.value)
+          const speedLimit = event.target.value
+            ? parseInt(event.target.value)
+            : 0
 
           removeErrorMessageIfValid(
             ['empty'],
