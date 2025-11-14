@@ -1,4 +1,3 @@
-import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Label } from '@island.is/application/ui-components'
 import {
