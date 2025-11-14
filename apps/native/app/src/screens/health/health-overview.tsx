@@ -494,7 +494,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         <HeadingSection
           title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
           onPress={() =>
-            openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
+            openBrowser(
+              `${origin}/minarsidur/heilsa/greidslur/rettindi`,
+              componentId,
+            )
           }
         />
         {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||

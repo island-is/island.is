@@ -88,7 +88,7 @@ initContainer:
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
 namespace: 'regulations-admin'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

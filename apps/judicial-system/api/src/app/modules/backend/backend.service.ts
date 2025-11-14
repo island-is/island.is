@@ -29,6 +29,7 @@ import {
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
+import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
@@ -618,6 +619,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
+    )
+  }
+
+  updateCourtSessionString(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSessionString: unknown,
+  ): Promise<CourtSessionString> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
+      updateCourtSessionString,
     )
   }
 

@@ -47,8 +47,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'VERDICT_DELIVERY',
-        prod: 'VERDICT_DELIVERY',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
