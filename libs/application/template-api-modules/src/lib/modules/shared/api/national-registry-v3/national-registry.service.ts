@@ -293,6 +293,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     auth: User,
     params: NationalRegistryParameters | undefined = undefined,
   ): Promise<NationalRegistryV3Individual | null> {
+    console.log('--------------------------------')
+    console.log('getIndividual')
+    console.log('nationalId')
+    console.log(nationalId)
+    console.log('--------------------------------')
     const person = await this.nationalRegistryV3Api.getIndividual(
       nationalId,
       auth,
@@ -301,10 +306,18 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       nationalId,
       auth,
     )
+    let cohabitationInfo: CohabitationDto | null = null
 
-    // get marital title
-    const cohabitationInfo =
-      await this.nationalRegistryV3Api.getCohabitationInfo(nationalId, auth)
+    console.log('--------------------------------')
+    console.log('marital title getCohabitationInfo')
+    console.log('--------------------------------')
+    if (!params?.skipMaritalTitle) {
+      // get marital title
+      cohabitationInfo = await this.nationalRegistryV3Api.getCohabitationInfo(
+        nationalId,
+        auth,
+      )
+    }
 
     // validate if already has icelandic citizenship
     if (params?.validateAlreadyHasIcelandicCitizenship) {
@@ -449,7 +462,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
           console.log('childNationalId')
           console.log(childNationalId)
           console.log('--------------------------------')
-          const child = await this.getIndividual(childNationalId, auth)
+          const child = await this.getIndividual(childNationalId, auth, {
+            skipMaritalTitle: true,
+          })
           console.log('--------------------------------')
           console.log('child getIndividual')
           console.dir(child, { depth: null })
@@ -546,6 +561,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   async getSpouse({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
+    console.log('--------------------------------')
+    console.log('getSpouse')
+    console.log('--------------------------------')
     const cohabitationInfo =
       await this.nationalRegistryV3Api.getCohabitationInfo(
         auth.nationalId,
@@ -578,6 +596,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   async getMaritalTitle({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {
+    console.log('--------------------------------')
+    console.log('getMaritalTitle')
+    console.log('--------------------------------')
     const cohabitationInfo =
       await this.nationalRegistryV3Api.getCohabitationInfo(
         auth.nationalId,
