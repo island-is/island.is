@@ -4,7 +4,6 @@ import { useWindowSize } from 'react-use'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
-import NextLink from 'next/link'
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -14,14 +13,7 @@ import {
 import { useLazyQuery } from '@apollo/client'
 
 import {
-  IcelandicGovernmentInstitutionsInvoiceGroup,
-  IcelandicGovernmentInstitutionsInvoices,
-  Query,
-  QueryIcelandicGovernmentInstitutionsInvoicesArgs,
-} from '@island.is/api/schema'
-import {
   Box,
-  Breadcrumbs,
   FilterInput,
   Pagination,
   Stack,
@@ -31,9 +23,11 @@ import { theme } from '@island.is/island-ui/theme'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import {
-  CustomPageLayoutHeader,
-  CustomPageLayoutWrapper,
-} from '@island.is/web/components'
+  IcelandicGovernmentInstitutionsInvoiceGroup,
+  IcelandicGovernmentInstitutionsInvoices,
+  Query,
+  QueryIcelandicGovernmentInstitutionsInvoicesArgs,
+} from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
@@ -41,6 +35,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
+import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { m } from '../messages'
 import { OverviewFilters } from '../types'
 import {
@@ -57,6 +52,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   filters,
   initialInvoices,
   customPageData,
+  organization,
 }) => {
   useLocalLinkTypeResolver()
   useContentfulId(customPageData?.id)
@@ -275,36 +271,20 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   return (
-    <CustomPageLayoutWrapper
-      pageTitle={formatMessage(m.overview.title)}
-      pageDescription={formatMessage(m.overview.description)}
-      pageFeaturedImage={formatMessage(m.overview.featuredImage)}
+    <OpenInvoicesWrapper
+      title={formatMessage(m.overview.title)}
+      description={formatMessage(m.overview.description)}
+      featuredImage={{
+        src: formatMessage(m.overview.featuredImage),
+        alt: formatMessage(m.overview.featuredImageAlt),
+      }}
+      header={{
+        breadcrumbs: breadcrumbItems
+      }}
+      footer={organization ? {
+        organization
+      } : undefined}
     >
-      <CustomPageLayoutHeader
-        title={formatMessage(m.overview.title)}
-        description={formatMessage(m.overview.description)}
-        featuredImage={{
-          src: formatMessage(m.overview.featuredImage),
-          alt: formatMessage(m.overview.featuredImageAlt),
-        }}
-        breadcrumbs={
-          breadcrumbItems && (
-            <Breadcrumbs
-              items={breadcrumbItems ?? []}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href} legacyBehavior>
-                    {link}
-                  </NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          )
-        }
-      />
-
       <Box marginTop={12} background="blue100">
         <SidebarLayout
           fullWidthContent={true}
@@ -411,7 +391,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           </Box>
         </SidebarLayout>
       </Box>
-    </CustomPageLayoutWrapper>
+    </OpenInvoicesWrapper>
   )
 }
 
