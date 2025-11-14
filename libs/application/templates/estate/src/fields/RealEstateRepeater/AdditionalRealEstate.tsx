@@ -23,12 +23,14 @@ export const AdditionalRealEstate = ({
   remove,
   fieldName,
   error,
+  calculateTotal,
 }: {
   field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void
   error: ErrorValue
+  calculateTotal?: () => void
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const propertyNumberField = `${fieldIndex}.assetNumber`
@@ -161,6 +163,7 @@ export const AdditionalRealEstate = ({
             error={error?.marketValue}
             currency
             required
+            onChange={() => calculateTotal?.()}
           />
         </GridColumn>
       </GridRow>

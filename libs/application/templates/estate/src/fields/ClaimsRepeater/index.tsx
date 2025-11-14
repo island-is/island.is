@@ -14,6 +14,8 @@ import {
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface ClaimFormField {
   id: string
@@ -43,14 +45,20 @@ export const ClaimsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: ClaimFormField) => field.value,
+  )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.claims) {
       replace(estateData.estate.claims)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {
@@ -66,6 +74,8 @@ export const ClaimsRepeater: FC<
     if (Number.isFinite(numeric) && numeric > 0) {
       clearErrors(`${fieldIndex}.value`)
     }
+
+    calculateTotal()
   }
 
   const handleAddClaim = () =>
@@ -223,6 +233,7 @@ export const ClaimsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

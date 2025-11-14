@@ -5,7 +5,6 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
@@ -17,7 +16,6 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -173,15 +171,9 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewVerdictServiceCertificate:
-        workingCase.defendants?.some(({ verdict }) => !!verdict?.serviceDate) &&
-        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user)),
+        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [
-      user,
-      workingCase.hasCivilClaims,
-      workingCase.state,
-      workingCase.defendants,
-    ],
+    [user, workingCase.hasCivilClaims, workingCase.state],
   )
 }
 
@@ -211,7 +203,6 @@ export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
 
   return {
     pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
-    pdfElementId: baseTitle,
     isCompletedWithRulingOrFine:
       indictmentRulingDecision === CaseIndictmentRulingDecision.RULING ||
       indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
@@ -226,7 +217,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
@@ -254,7 +244,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+  const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision,
       sentToPrisonAdminDate,
@@ -448,10 +438,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   onOpenFile={onOpen}
                 />
               )}
-              {features?.includes(Feature.VERDICT_DELIVERY) &&
-                permissions.canViewVerdictServiceCertificate &&
+              {permissions.canViewVerdictServiceCertificate &&
                 workingCase.defendants?.map((defendant) => {
-                  if (!defendant.verdict?.serviceDate) {
+                  if (
+                    !defendant.verdict?.serviceDate ||
+                    defendant.verdict?.externalPoliceDocumentId
+                  ) {
                     return null
                   }
 
@@ -492,7 +484,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={[pdfElementId, pdfTitle]}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}

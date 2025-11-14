@@ -54,6 +54,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     onChange = () => undefined,
     clearOnChange,
     setOnChange,
+    allowNegative,
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -82,6 +83,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           )}
           disabled={disabled}
           readOnly={buildFieldReadOnly(application, readOnly)}
+          allowNegative={allowNegative}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
