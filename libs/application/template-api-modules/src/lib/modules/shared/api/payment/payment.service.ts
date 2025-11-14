@@ -129,6 +129,13 @@ export class PaymentService extends BaseTemplateApiService {
         application.id,
         organizationId ?? 'string',
       )
+      const requestId = uuid()
+      await this.paymentModelService.addPaymentUrlAndRequestId(
+        application.id,
+        result.id,
+        'https://fakeUrl.fake/' + requestId,
+        requestId,
+      )
 
       await this.paymentModelService.setUser4(
         application.id,
@@ -214,11 +221,16 @@ export class PaymentService extends BaseTemplateApiService {
       ?.paymentUrl as string
 
     try {
-      const url = new URL(paymentUrl)
-      const chargeId = url.pathname.split('/').pop()
+      let requestId = payment.request_id as string
 
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      //if requestId is not set, we need to get it from the paymentUrl
+      if (!requestId && paymentUrl) {
+        const url = new URL(paymentUrl)
+        requestId = url.pathname.split('/').pop() ?? ''
+      }
+
+      if (requestId) {
+        await this.chargeFjsV2ClientService.deleteCharge(requestId)
       }
 
       await this.paymentModelService.delete(application.id, auth)
