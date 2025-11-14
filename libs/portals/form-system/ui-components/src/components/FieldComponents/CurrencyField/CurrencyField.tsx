@@ -19,7 +19,7 @@ interface Props {
 export const CurrencyField = ({ item, dispatch }: Props) => {
   const label = item?.name?.is
   const { control } = useFormContext()
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   return (
     <Row marginTop={2}>

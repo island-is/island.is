@@ -367,15 +367,7 @@ export const setFieldValue = (
       ? currentField?.list?.find((item) => item?.label?.is === value)?.id
       : fieldId
 
-  const isController = isControllerField(
-    currentField,
-    newDependencies,
-    parentId as string,
-  )
-  console.log()
-  console.log('currentField', currentField)
-  console.log('parentId', parentId)
-  console.log('dependencies', newDependencies)
+  const isController = isControllerField(currentField, newDependencies)
 
   if (isController) {
     if (
@@ -491,7 +483,6 @@ export const setFieldValue = (
 const isControllerField = (
   field: Maybe<FormSystemField> | undefined,
   dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
-  parentId: string,
 ): boolean => {
   if (field?.fieldType === FieldTypesEnum.CHECKBOX) {
     return (
