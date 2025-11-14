@@ -15,6 +15,8 @@ import {
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface StockFormField {
   id: string
@@ -46,16 +48,22 @@ export const StocksRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: StockFormField) => field.value,
+  )
+
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.stocks) {
       replace(estateData.estate.stocks)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Calculate stock value from faceValue * rateOfExchange
   const updateStocksValue = (fieldIndex: string) => {
@@ -94,6 +102,7 @@ export const StocksRepeater: FC<
     }
 
     forceUpdate()
+    calculateTotal()
   }
 
   const handleAddStock = () =>
@@ -270,6 +279,7 @@ export const StocksRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

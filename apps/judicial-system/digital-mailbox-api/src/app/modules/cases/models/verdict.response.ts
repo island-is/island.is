@@ -68,6 +68,7 @@ export class VerdictResponse {
 
     const rulingInstructionsItems = getRulingInstructionItems(
       defendant?.verdict?.serviceInformationForDefendant ?? [],
+      lang,
     )
 
     return {
@@ -111,7 +112,10 @@ export class VerdictResponse {
             {
               // there should only be one ruling judgement over all court sessions
               // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
-              value: internalCase.courtSessions?.[0]?.ruling ?? '',
+              value:
+                internalCase.courtSessions?.[0]?.ruling ??
+                internalCase.ruling ??
+                '',
               type: 'text',
             },
           ],

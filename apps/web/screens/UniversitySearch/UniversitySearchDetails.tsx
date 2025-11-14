@@ -485,7 +485,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                                 'd. MMMM yyyy',
                                 { locale: locale === 'en' ? en : is },
                               )}`
-                            : n('Not specified', 'Ótilgreint')
+                            : n('applicationPeriodNotSpecified', 'Ótilgreint')
                         }`}
                       </Text>
                     </Box>
