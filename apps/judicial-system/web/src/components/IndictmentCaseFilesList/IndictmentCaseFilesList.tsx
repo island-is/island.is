@@ -442,7 +442,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 workingCase.defendants?.map((defendant) => {
                   if (
                     !defendant.verdict?.serviceDate ||
-                    defendant.verdict?.externalPoliceDocumentId
+                    !defendant.verdict?.externalPoliceDocumentId
                   ) {
                     return null
                   }
