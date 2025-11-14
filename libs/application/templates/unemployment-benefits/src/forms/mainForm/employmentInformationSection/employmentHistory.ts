@@ -367,7 +367,7 @@ export const employmentHistorySubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-
+          minRows: 0,
           formTitle: (index, application) => {
             const repeaterJobs =
               getValueViaPath<CurrentEmploymentInAnswers[]>(
