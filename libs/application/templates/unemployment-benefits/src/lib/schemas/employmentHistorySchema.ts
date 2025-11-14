@@ -30,12 +30,12 @@ export const employmentHistorySchema = z
         endDate: z.string().optional(),
       })
       .optional(),
-    lastJobs: z.array(lastJobSchema),
+    lastJobs: z.array(lastJobSchema).optional(),
     currentJobs: z.array(lastJobSchema).optional(),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
   })
   .superRefine((data, ctx) => {
-    data.lastJobs.forEach((job, index) => {
+    data.lastJobs?.forEach((job, index) => {
       //So nationalId is not a valid job choice
       if (!job.nationalIdWithName) {
         ctx.addIssue({

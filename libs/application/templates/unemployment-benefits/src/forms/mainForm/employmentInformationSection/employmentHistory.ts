@@ -15,8 +15,6 @@ import { employment as employmentMessages } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
-  getEmployerNameFromSSN,
-  getEmploymentFromRsk,
   isEmployed,
   isOccasionallyEmployed,
   isEmployedPartTime,
@@ -25,9 +23,12 @@ import {
   getDefaultFromCurrentStatus,
   hasEmployer,
   hasDataFromCurrentStatus,
+  getChosenEmployerNationalId,
+  getChosenEmployerName,
 } from '../../../utils'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
+import { getRskOptions } from '../../../utils/getRskOptions'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
@@ -113,7 +114,7 @@ export const employmentHistorySubSection = buildSubSection({
             const maxRows =
               isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
                 ? currentSituationRepeater.length
-                : 1
+                : 0
             return maxRows
           },
           minRows: (answers: FormValue) => {
@@ -127,7 +128,7 @@ export const employmentHistorySubSection = buildSubSection({
             const minRows =
               isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
                 ? currentSituationRepeater.length
-                : 1
+                : 0
             return minRows
           },
           marginTop: 0,
@@ -162,22 +163,17 @@ export const employmentHistorySubSection = buildSubSection({
                   return ''
                 }
 
-                // TODO when currentSituation changes, this returns a wrong value while the cache is active, fix this
+                const nationalIdChosen = getChosenEmployerNationalId(
+                  repeaterJobs,
+                  index,
+                )
 
-                const nationalIdChosen =
-                  repeaterJobs[index]?.nationalIdWithName &&
-                  repeaterJobs[index]?.nationalIdWithName !== '-'
-                    ? repeaterJobs[index]?.nationalIdWithName
-                    : repeaterJobs[index]?.employer?.nationalId ?? ''
-
-                const name =
-                  repeaterJobs[index]?.nationalIdWithName &&
-                  repeaterJobs[index]?.nationalIdWithName !== '-'
-                    ? getEmployerNameFromSSN(
-                        application.externalData,
-                        nationalIdChosen || '',
-                      )
-                    : repeaterJobs[index]?.employer?.name
+                const name = getChosenEmployerName(
+                  repeaterJobs,
+                  index,
+                  application.externalData,
+                  nationalIdChosen,
+                )
 
                 const defaultValue = {
                   nationalId: nationalIdChosen,
@@ -192,23 +188,8 @@ export const employmentHistorySubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
-                const jobList =
-                  getValueViaPath<
-                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
-                  >(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.jobCodes',
-                  ) ?? []
-                return jobList.map((job) => ({
-                  value:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                  label:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                }))
-              },
+              options: (application, _activeField, locale) =>
+                getJobCodeOptions(application, locale),
               readonly: (application, _activeField, index) => {
                 return hasDataFromCurrentStatusItem(
                   application.answers,
@@ -390,20 +371,7 @@ export const employmentHistorySubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.lastJobRepeater,
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
-                )
-                return employmentList
-                  .filter((x) => !!x.employerSSN)
-                  .map((job) => ({
-                    value: job.employerSSN ?? '',
-                    label:
-                      job.employerSSN !== '-'
-                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
-                        : job.employer || '',
-                  }))
-              },
+              options: (application) => getRskOptions(application),
             },
             employer: {
               component: 'nationalIdWithName',
@@ -423,23 +391,8 @@ export const employmentHistorySubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
-                const jobList =
-                  getValueViaPath<
-                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
-                  >(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.jobCodes',
-                  ) ?? []
-                return jobList.map((job) => ({
-                  value:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                  label:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                }))
-              },
+              options: (application, _activeField, locale) =>
+                getJobCodeOptions(application, locale),
             },
             percentage: {
               component: 'input',
@@ -448,6 +401,7 @@ export const employmentHistorySubSection = buildSubSection({
               width: 'half',
               type: 'number',
               suffix: '%',
+              max: 100,
               required: true,
             },
             startDate: {
@@ -467,7 +421,6 @@ export const employmentHistorySubSection = buildSubSection({
             },
           },
         }),
-
         buildRadioField({
           id: 'employmentHistory.hasWorkedEes',
           title: employmentMessages.employmentHistory.labels.radioEesLabel,

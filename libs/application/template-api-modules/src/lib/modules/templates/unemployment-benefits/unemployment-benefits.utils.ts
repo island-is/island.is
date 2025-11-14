@@ -159,7 +159,7 @@ export const getJobCareer = (
       'currentSituation.currentSituationRepeater',
     ) || []
   const previousJobCareer =
-    employmentHistory?.lastJobs.map((job) => {
+    employmentHistory?.lastJobs?.map((job) => {
       const jobId = jobCodes?.find((x) => x.name === job.title)?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'

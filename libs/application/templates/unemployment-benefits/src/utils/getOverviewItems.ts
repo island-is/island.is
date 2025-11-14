@@ -145,7 +145,7 @@ export const useEmploymentInformationOverviewItems = (
 
   const rskEmploymentList = getEmploymentFromRsk(_externalData)
 
-  const previousJobInformation = employmentHistory?.lastJobs.map((job) => {
+  const previousJobInformation = employmentHistory?.lastJobs?.map((job) => {
     const employerName =
       job.nationalIdWithName && job.nationalIdWithName !== '-'
         ? rskEmploymentList.find(

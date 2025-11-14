@@ -2,7 +2,7 @@
 export const getVacationDaysLimit = () => {
   const today = new Date()
   const currentYear = today.getFullYear()
-  const sept15 = new Date(currentYear, 8, 15)
+  const sept16 = new Date(currentYear, 8, 16)
 
-  return today <= sept15
+  return today < sept16
 }
