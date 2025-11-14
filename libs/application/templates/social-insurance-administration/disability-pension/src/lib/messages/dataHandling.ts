@@ -1,7 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const dataHandling = defineMessages({
-
   dataFetchText: {
     id: 'dp.application:prerequisites.dataFetchText#markdown',
     defaultMessage:

@@ -31,9 +31,7 @@ export const CertificateOverview: React.FC<CertificateOverviewProps> = ({
             {formatMessage(m.shared.view)}
           </Button>
         </Box>
-        <Text>
-          {formatMessage(m.certificate.available)}
-        </Text>
+        <Text>{formatMessage(m.certificate.available)}</Text>
       </Box>
       <Divider />
     </Stack>

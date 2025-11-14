@@ -53,9 +53,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.job)}</Label>
-          <Text>
-            MISSING DATA
-          </Text>
+          <Text>MISSING DATA</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.residence)}</Label>
@@ -76,12 +74,12 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
     <Stack space={3}>
       <GridRow rowGap={3}>
         <GridColumn span="1/1">
-          <Text variant="h3">{formatMessage(m.certificate.informationTitle)}</Text>
+          <Text variant="h3">
+            {formatMessage(m.certificate.informationTitle)}
+          </Text>
         </GridColumn>
         <GridColumn span={'1/1'}>
-          <Label>
-            {formatMessage(m.certificate.incapacityDate)}
-          </Label>
+          <Label>{formatMessage(m.certificate.incapacityDate)}</Label>
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
@@ -107,9 +105,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.otherICDAnalysis)}
-          </Label>
+          <Label>{formatMessage(m.certificate.otherICDAnalysis)}</Label>
           <Markdown>
             {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.otherDiagnoses
               ?.map(
@@ -120,9 +116,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.medicalHistory)}
-          </Label>
+          <Label>{formatMessage(m.certificate.medicalHistory)}</Label>
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
@@ -130,9 +124,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.impairmentCause)}
-          </Label>
+          <Label>{formatMessage(m.certificate.impairmentCause)}</Label>
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
@@ -140,9 +132,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.impairmentStability)}
-          </Label>
+          <Label>{formatMessage(m.certificate.impairmentStability)}</Label>
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
@@ -151,19 +141,13 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
-            {formatMessage(
-              m.certificate.impairmentProjectedImprovement,
-            )}
+            {formatMessage(m.certificate.impairmentProjectedImprovement)}
           </Label>
           <Text></Text>
           <Text>MISSING DATA</Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              m.certificate.medicalImplementsUsage,
-            )}
-          </Label>
+          <Label>{formatMessage(m.certificate.medicalImplementsUsage)}</Label>
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
@@ -171,26 +155,14 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              m.certificate.employmentCapability,
-            )}
-          </Label>
+          <Label>{formatMessage(m.certificate.employmentCapability)}</Label>
           <Text></Text>
-          <Text>
-            MISSING DATA
-          </Text>
+          <Text>MISSING DATA</Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              m.certificate.previousTherapies,
-            )}
-          </Label>
+          <Label>{formatMessage(m.certificate.previousTherapies)}</Label>
           <Text></Text>
-          <Text>
-            MISSING DATA
-          </Text>
+          <Text>MISSING DATA</Text>
         </GridColumn>
       </GridRow>
     </Stack>

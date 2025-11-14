@@ -83,7 +83,8 @@ export const certificate = defineMessages({
     id: 'dp.application:certificate.information.impairment.cause',
     defaultMessage:
       'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
-    description: 'Impairment causing impaired capability for work participation',
+    description:
+      'Impairment causing impaired capability for work participation',
   },
   impairmentStability: {
     id: 'dp.application:certificate.information.impairment.stability',
@@ -103,14 +104,12 @@ export const certificate = defineMessages({
   },
   employmentCapability: {
     id: 'dp.application:certificate.information.employment.capability',
-    defaultMessage:
-      'Starfsgeta',
+    defaultMessage: 'Starfsgeta',
     description: 'Employment capability',
   },
   previousTherapies: {
     id: 'dp.application:certificate.information.previous.therapies',
-    defaultMessage:
-      'Hvaða endurhæfing hefur verið reynd?',
+    defaultMessage: 'Hvaða endurhæfing hefur verið reynd?',
     description: 'What therapies have been tried?',
   },
 
