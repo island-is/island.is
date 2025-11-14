@@ -1,11 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import {
-  DefaultApi,
-  VacanciesGetAcceptEnum,
-  VacanciesVacancyIdGetAcceptEnum,
-  VacanciesVacancyIdGetLanguageEnum,
-} from '@island.is/clients/icelandic-government-institution-vacancies'
+  VacancyApi
+} from '@island.is/clients/financial-management-authority'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
@@ -39,7 +36,7 @@ const defaultLang = 'is'
 @Resolver()
 export class IcelandicGovernmentInstitutionVacanciesResolver {
   constructor(
-    private readonly api: DefaultApi,
+    private readonly api: VacancyApi,
     private readonly cmsElasticService: CmsElasticsearchService,
     private readonly cmsContentfulService: CmsContentfulService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -52,10 +49,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     let vacancies: DefaultApiVacanciesListItem[] = []
 
     try {
-      vacancies = (await this.api.vacanciesGet({
-        accept: VacanciesGetAcceptEnum.Json,
-        language: input.language,
-        stofnun: input.institution,
+      vacancies = (await this.api.v1VacancyGetVacancyListGet({
       })) as DefaultApiVacanciesListItem[]
     } catch (error) {
       errorOccurred = true
@@ -192,13 +186,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   }
 
   private async getVacancyFromExternalSystem(
-    id: number,
-    language?: VacanciesVacancyIdGetLanguageEnum,
+    id: string
   ) {
-    const item = (await this.api.vacanciesVacancyIdGet({
-      vacancyId: id,
-      accept: VacanciesVacancyIdGetAcceptEnum.Json,
-      language: language,
+    const item = (await this.api.v1VacancyGetVacancyGet({
+      vacancyId: id
     })) as DefaultApiVacancyDetails
     if (!item?.starfsauglysing) {
       return { vacancy: null }
@@ -246,18 +237,16 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (input.id.startsWith(CMS_ID_PREFIX)) {
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
-      const numericId = Number(input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length))
-      if (isNaN(numericId)) return null
-      return this.getVacancyFromExternalSystem(numericId, input.language)
+      const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
+      if (id === '') return null
+      return this.getVacancyFromExternalSystem(id)
     }
 
-    // If no prefix is present then we determine what service to call depending on if the id is numeric
-    const numericId = Number(input.id)
-
-    if (isNaN(numericId)) {
-      return this.getVacancyFromCms(input.id)
+    // If no prefix is present then we first try the CMS and then the external service.
+    const vacancyFromCms = await this.getVacancyFromCms(input.id)
+    if (vacancyFromCms.vacancy === null) {
+      return this.getVacancyFromExternalSystem(input.id)
     }
-
-    return this.getVacancyFromExternalSystem(numericId)
+    return vacancyFromCms
   }
 }

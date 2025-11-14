@@ -787,6 +787,9 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/clients/financial-management-authority": [
+        "libs/clients/financial-management-authority/src/index.ts"
+      ],
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],
