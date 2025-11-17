@@ -35,10 +35,14 @@ export const generateRawUploadData = (
   externalData: EstateSchema['estate'],
   application: ApplicationWithAttachments,
 ) => {
+  // Use applicant.relation if provided (for permitForUndividedEstate),
+  // otherwise fall back to finding relation in estateMembers
   const relation =
+    answers.applicant.relation ??
     externalData?.estateMembers?.find(
       (member) => member.nationalId === application.applicant,
-    )?.relation ?? 'Óþekkt'
+    )?.relation ??
+    'Óþekkt'
 
   const processedAssets = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['assets']
