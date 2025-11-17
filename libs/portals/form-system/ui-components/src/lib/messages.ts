@@ -1029,7 +1029,7 @@ export const m = defineMessages({
   applicationDoesNotPermitLogin: {
     id: 'form.system:application-does-not-permit-login',
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
-    description: 'TThis application does not support this type of login.',
+    description: 'This application does not support this type of login.',
   },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',

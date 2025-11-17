@@ -16,13 +16,11 @@ import {
   GridContainer,
   Page,
   Text,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertMessage } from '@island.is/island-ui/core'
 import { ErrorShell } from '@island.is/application/ui-shell'
 
 interface Params {
