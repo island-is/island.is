@@ -309,7 +309,7 @@ export class VerdictService {
             },
           ]
         : []),
-      ...(verdict
+      ...(verdict && verdict.isDefaultJudgement
         ? [
             {
               code: 'REQUIRES_APPEAL_DECISION',
