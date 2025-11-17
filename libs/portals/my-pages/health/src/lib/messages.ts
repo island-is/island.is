@@ -1795,6 +1795,22 @@ export const messages = defineMessages({
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
   },
+  draftQuestionnaire: {
+    defaultMessage: 'Drög',
+    id: 'sp.health:draft-questionnaire',
+  },
+  continueDraftQuestionnaire: {
+    defaultMessage: 'Halda áfram með drög',
+    id: 'sp.health:continue-draft-questionnaire',
+  },
+  lastUpdated: {
+    defaultMessage: 'Síðast uppfært',
+    id: 'sp.health:draft-last-updated',
+  },
+  answeredAt: {
+    defaultMessage: 'Svar dags: {arg}',
+    id: 'sp.health:answered-at',
+  },
   answeredQuestionnaireAnswered: {
     defaultMessage: 'Hér má finna svör þín við spurningalistanum.',
     id: 'sp.health:answered-questionnaire-answered',
@@ -1820,6 +1836,7 @@ export const messages = defineMessages({
     defaultMessage: 'Skoða svör',
     id: 'sp.health:see-answers',
   },
+
   treatment: {
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',

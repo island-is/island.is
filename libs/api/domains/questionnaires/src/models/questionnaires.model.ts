@@ -12,6 +12,7 @@ export enum QuestionnairesStatusEnum {
   answered = 'answered',
   notAnswered = 'notAnswered',
   expired = 'expired',
+  draft = 'draft',
 }
 registerEnumType(QuestionnairesStatusEnum, {
   name: 'QuestionnaireQuestionnairesStatusEnum',

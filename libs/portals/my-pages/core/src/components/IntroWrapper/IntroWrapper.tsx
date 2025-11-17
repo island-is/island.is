@@ -1,24 +1,24 @@
 import {
   Box,
   BoxProps,
-  Text,
   GridColumn,
   GridColumnProps,
   GridRow,
+  Inline,
   SkeletonLoader,
   Stack,
-  Inline,
+  Text,
 } from '@island.is/island-ui/core'
-import FootNote from '../FootNote/FootNote'
-import { MessageDescriptor } from 'react-intl'
-import { OrganizationSlugType } from '@island.is/shared/constants'
-import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { useOrganization } from '@island.is/portals/my-pages/graphql'
-import { ISLANDIS_SLUG } from '../../utils/constants'
-import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
+import { OrganizationSlugType } from '@island.is/shared/constants'
+import { MessageDescriptor } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
+import { ISLANDIS_SLUG } from '../../utils/constants'
+import FootNote from '../FootNote/FootNote'
+import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 
 type BaseProps = {
   title: MessageDescriptor | string
@@ -130,7 +130,9 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
         <GridRow marginBottom={marginBottom ?? 4}>
           <GridColumn>
             <Box marginTop={4}>
-              <Inline space={2}>{props.buttonGroup}</Inline>
+              <Inline space={2} alignY={'bottom'}>
+                {props.buttonGroup}
+              </Inline>
             </Box>
           </GridColumn>
         </GridRow>

@@ -146,6 +146,11 @@ const Questionnaires: React.FC = () => {
                   label: formatMessage(messages.answeredQuestionnaire),
                   status: QuestionnairesStatusEnum.answered,
                 },
+                {
+                  name: 'draft',
+                  label: formatMessage(messages.draftQuestionnaire),
+                  status: QuestionnaireQuestionnairesStatusEnum.draft,
+                },
               ].map(({ name, label, status }) => (
                 <Checkbox
                   key={name}
@@ -228,54 +233,54 @@ const Questionnaires: React.FC = () => {
 
               return matchesSearch && matchesStatus && matchesOrganization
             })
-            ?.map((questionnaire) => (
-              <ActionCard
-                key={questionnaire.id}
-                heading={questionnaire.title}
-                text={questionnaire.description ?? ''}
-                eyebrow={
-                  questionnaire.organization ===
-                  QuestionnaireQuestionnairesOrganizationEnum.EL
-                    ? 'Embætti Landlæknis'
-                    : 'Landspítali'
-                }
-                date={formatDate(questionnaire.sentDate)}
-                tag={{
-                  label:
-                    questionnaire.status === QuestionnairesStatusEnum.answered
+            ?.map((questionnaire) => {
+              const status = questionnaire.status
+              const isAnswered = status === QuestionnairesStatusEnum.answered
+              const isDraft = status === QuestionnairesStatusEnum.draft
+              const isExpired = status === QuestionnairesStatusEnum.expired
+              return (
+                <ActionCard
+                  key={questionnaire.id}
+                  heading={questionnaire.title}
+                  text={questionnaire.description ?? ''}
+                  eyebrow={
+                    questionnaire.organization ===
+                    QuestionnaireQuestionnairesOrganizationEnum.EL
+                      ? 'Embætti Landlæknis'
+                      : 'Landspítali'
+                  }
+                  date={formatDate(questionnaire.sentDate)}
+                  tag={{
+                    label: isAnswered
                       ? formatMessage(messages.answeredQuestionnaire)
-                      : questionnaire.status ===
-                        QuestionnairesStatusEnum.notAnswered
-                      ? formatMessage(messages.unAnsweredQuestionnaire)
-                      : formatMessage(messages.expiredQuestionnaire),
+                      : isExpired
+                      ? formatMessage(messages.expiredQuestionnaire)
+                      : isDraft
+                      ? formatMessage(messages.draftQuestionnaire)
+                      : formatMessage(messages.unAnsweredQuestionnaire),
 
-                  outlined: false,
-                  variant:
-                    questionnaire.status === QuestionnairesStatusEnum.answered
-                      ? 'blue'
-                      : questionnaire.status ===
-                        QuestionnairesStatusEnum.notAnswered
-                      ? 'purple'
-                      : 'red',
-                }}
-                cta={{
-                  internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
-                    ':org',
-                    questionnaire.organization?.toLocaleLowerCase() ?? '',
-                  ).replace(':id', questionnaire.id),
-                  label: formatMessage(messages.seeMore),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () =>
-                    navigate(
-                      HealthPaths.HealthQuestionnairesDetail.replace(
-                        ':org',
-                        questionnaire.organization?.toLocaleLowerCase() ?? '',
-                      ).replace(':id', questionnaire.id),
-                    ),
-                }}
-              />
-            ))}
+                    outlined: false,
+                    variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
+                  }}
+                  cta={{
+                    internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
+                      ':org',
+                      questionnaire.organization?.toLocaleLowerCase() ?? '',
+                    ).replace(':id', questionnaire.id),
+                    label: formatMessage(messages.seeMore),
+                    variant: 'text',
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      navigate(
+                        HealthPaths.HealthQuestionnairesDetail.replace(
+                          ':org',
+                          questionnaire.organization?.toLocaleLowerCase() ?? '',
+                        ).replace(':id', questionnaire.id),
+                      ),
+                  }}
+                />
+              )
+            })}
         </Stack>
       </Box>
     </IntroWrapper>

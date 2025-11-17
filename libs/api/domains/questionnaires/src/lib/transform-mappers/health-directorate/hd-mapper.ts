@@ -32,6 +32,7 @@ import {
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../../../models/questionnaires.model'
+import { mapDraftRepliesToAnswers } from './hd-draft-mapper'
 
 type HealthDirectorateQuestionDto =
   | BooleanQuestionDto
@@ -282,6 +283,15 @@ export const mapExternalQuestionnaireToGraphQL = (
     allQuestions = q.groups.flatMap((g) => g.items)
   }
 
+  // Get draft answers if available
+  const draftAnswersMap =
+    isDetailed && q.replies?.length ? mapDraftRepliesToAnswers(q) : undefined
+
+  // Convert draft answers map to array for GraphQL
+  const draftAnswers = draftAnswersMap
+    ? Object.values(draftAnswersMap)
+    : undefined
+
   return {
     baseInformation: {
       id: q.questionnaireId,
@@ -298,10 +308,21 @@ export const mapExternalQuestionnaireToGraphQL = (
       formId: q.questionnaireId,
       organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
+    expirationDate: isDetailed ? q.expiryDate : undefined,
+    canSubmit: isDetailed ? q.canSubmit : undefined,
+    submissions: isDetailed
+      ? q.submissions.map((sub) => ({
+          id: sub.id,
+          createdAt: sub.createdDate ?? undefined,
+          isDraft: sub.isDraft,
+          lastUpdated: sub.lastUpdatedDate ?? undefined,
+        }))
+      : undefined,
     sections: isDetailed
       ? q.groups.map((g) =>
           mapGroupToSection(g, allQuestions, locale, q.triggers),
         )
       : undefined,
+    draftAnswers,
   }
 }

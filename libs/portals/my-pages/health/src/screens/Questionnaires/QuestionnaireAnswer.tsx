@@ -1,3 +1,4 @@
+import { QuestionnaireQuestionnairesOrganizationEnum } from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -8,7 +9,7 @@ import {
 import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
@@ -16,7 +17,6 @@ import {
   useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
-import { QuestionnaireQuestionnairesOrganizationEnum } from '@island.is/api/schema'
 
 const QuestionnaireAnswer: React.FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
@@ -44,6 +44,30 @@ const QuestionnaireAnswer: React.FC = () => {
     skip: !id,
   })
 
+  const questionnaire = data?.questionnairesDetail
+
+  const initialAnswers = useMemo(() => {
+    if (!questionnaire?.draftAnswers?.length) return undefined
+
+    return questionnaire.draftAnswers.reduce(
+      (acc, draft) => ({
+        ...acc,
+        [draft.questionId]: {
+          questionId: draft.questionId,
+          type: draft.type as QuestionAnswer['type'],
+          answers: draft.answers.map((a) => ({
+            label: a.label ?? undefined,
+            value: a.value,
+          })),
+        },
+      }),
+      {} as { [key: string]: QuestionAnswer },
+    )
+  }, [questionnaire?.draftAnswers])
+
+  // Check if this is a draft
+  const isDraft = !!questionnaire?.draftAnswers?.length
+
   if (!id) {
     return (
       <Box background="white">
@@ -67,7 +91,7 @@ const QuestionnaireAnswer: React.FC = () => {
       type: answer.type,
       answers: answer.answers.map((a) => ({
         label: a.label,
-        values: a.values,
+        values: a.value,
       })),
     }))
 
@@ -92,7 +116,12 @@ const QuestionnaireAnswer: React.FC = () => {
             HealthPaths.HealthQuestionnairesAnswered.replace(
               ':org',
               organization?.toLocaleLowerCase() ?? '',
-            ).replace(':id', id),
+            )
+              .replace(':id', id)
+              .replace(
+                ':submissionId',
+                response.data?.submitQuestionnaire.message || '',
+              ),
           )
         } else {
           toast.error(
@@ -143,6 +172,8 @@ const QuestionnaireAnswer: React.FC = () => {
         {data?.questionnairesDetail && !loading && !error && (
           <GenericQuestionnaire
             questionnaire={data.questionnairesDetail}
+            initialAnswers={initialAnswers}
+            isDraft={isDraft}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             enableStepper={false}

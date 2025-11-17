@@ -5,7 +5,7 @@ export interface QuestionAnswer {
   questionId: string
   answers: Array<{
     label?: string | undefined
-    values: string
+    value: string
   }>
   type: QuestionnaireAnswerOptionType
 }

@@ -1,17 +1,17 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum AnswerOptionType {
-  text = 'HealthQuestionnaireAnswerText',
-  textarea = 'HealthQuestionnaireAnswerTextarea',
-  radio = 'HealthQuestionnaireAnswerRadio',
-  checkbox = 'HealthQuestionnaireAnswerCheckbox',
-  thermometer = 'HealthQuestionnaireAnswerThermometer',
-  number = 'HealthQuestionnaireAnswerNumber',
-  scale = 'HealthQuestionnaireAnswerScale',
-  label = 'HealthQuestionnaireAnswerLabel',
-  slider = 'HealthQuestionnaireAnswerSlider',
-  date = 'HealthQuestionnaireAnswerDate',
-  datetime = 'HealthQuestionnaireAnswerDateTime',
+  text = 'text',
+  textarea = 'textarea',
+  radio = 'radio',
+  checkbox = 'checkbox',
+  thermometer = 'thermometer',
+  number = 'number',
+  scale = 'scale',
+  label = 'label',
+  slider = 'slider',
+  date = 'date',
+  datetime = 'datetime',
 }
 
 registerEnumType(AnswerOptionType, {

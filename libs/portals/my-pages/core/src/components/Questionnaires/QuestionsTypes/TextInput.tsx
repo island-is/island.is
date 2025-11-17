@@ -70,7 +70,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         {label}
         {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
       </Text>
-      <Box width={type === 'number' ? 'half' : 'full'}>
+      <Box width={type === 'number' || type === 'decimal' ? 'half' : 'full'}>
         <Input
           size="xs"
           backgroundColor="blue"

@@ -51,7 +51,7 @@ export const mapToElAnswer = (input: QuestionnaireInput): ELAnswer => {
         questionId,
         values: entry.answers.map((ans) => ({
           id: ans.values,
-          answer: ans.label || ans.values,
+          answer: ans.label,
         })),
       } as ListReply
     }

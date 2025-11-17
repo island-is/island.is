@@ -30,6 +30,9 @@ export class AnsweredQuestionnaire {
   submissionId?: string
 
   @Field({ nullable: true })
+  isDraft?: boolean
+
+  @Field({ nullable: true })
   title?: string
 
   @Field({ nullable: true })

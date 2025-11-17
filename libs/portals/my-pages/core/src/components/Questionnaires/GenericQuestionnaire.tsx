@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -30,6 +31,8 @@ interface GenericQuestionnaireProps {
   enableStepper?: boolean
   questionsPerStep?: number
   img?: string
+  initialAnswers?: { [key: string]: QuestionAnswer }
+  isDraft?: boolean
 }
 
 export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
@@ -40,9 +43,14 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   questionsPerStep: _questionsPerStep = 3,
   backLink,
   img,
+  initialAnswers,
+  isDraft = false,
 }) => {
   const { formatMessage } = useLocale()
-  const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>({})
+  const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>(
+    initialAnswers || {},
+  )
+
   const [currentStep, setCurrentStep] = useState(0)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -66,19 +74,19 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     )
     const calculatedAnswers: { [key: string]: QuestionAnswer } = {}
 
-    // Find questions with formulas and calculate their initial values (with empty answers)
+    // Find questions with formulas and calculate their initial values
     for (const question of allQuestions) {
       const extendedAnswerOptions = question.answerOptions
       if (extendedAnswerOptions?.formula) {
         const calculatedValue = calculateFormulaCallback(
           extendedAnswerOptions.formula,
-          {},
+          initialAnswers || {},
         )
         calculatedAnswers[question.id] = {
           questionId: question.id,
           answers: [
             {
-              values: calculatedValue?.toString() || '',
+              value: calculatedValue?.toString() || '',
             },
           ],
           type: question.answerOptions.type,
@@ -86,11 +94,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
       }
     }
 
-    // Set initial calculated answers
-    if (Object.keys(calculatedAnswers).length > 0) {
+    // Set initial calculated answers only if we don't have initial answers already
+    if (Object.keys(calculatedAnswers).length > 0 && !initialAnswers) {
       setAnswers(calculatedAnswers)
     }
-  }, [questionnaire.sections, calculateFormulaCallback])
+  }, [questionnaire.sections, calculateFormulaCallback, initialAnswers])
 
   // Process sections into visible questions with section-aware filtering
   const processedSections = useMemo(() => {
@@ -180,7 +188,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               questionId: question.id,
               answers: [
                 {
-                  values: String(calculatedValue ?? ''),
+                  value: String(calculatedValue ?? ''),
                 },
               ],
               type: question.answerOptions.type,
@@ -218,7 +226,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         !answer ||
         !answer.answers ||
         answer.answers.length === 0 ||
-        answer.answers.every((a) => !a.values || a.values.trim() === '')
+        answer.answers.every((a) => !a.value || a.value.trim() === '')
 
       if (question.required && isEmpty) {
         newErrors[question.id] = formatMessage(m.requiredQuestion)
@@ -266,7 +274,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         !answer ||
         !answer.answers ||
         answer.answers.length === 0 ||
-        answer.answers.every((a) => !a.values || a.values.trim() === '')
+        answer.answers.every((a) => !a.value || a.value.trim() === '')
 
       if (question.required && isEmpty) {
         allErrors[question.id] = formatMessage(m.requiredQuestion)
@@ -320,7 +328,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               <Box
                 borderBottomWidth="standard"
                 borderColor="blue200"
-                padding={3}
+                padding={[0, 0, 0, 3]}
                 display="flex"
                 flexDirection="row"
                 columnGap={3}
@@ -349,8 +357,8 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               {/* Questions */}
               <Box
                 style={{ minHeight: '400px' }}
-                marginX={enableStepper ? 10 : 4}
-                marginY={6}
+                marginX={enableStepper ? 10 : [0, 0, 0, 4]}
+                marginY={[2, 2, 2, 6]}
               >
                 {enableStepper ? (
                   <Stack space={4}>
@@ -395,6 +403,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                             ),
                           )}
                         </Stack>
+                        <Divider />
                       </Box>
                     ))}
                   </Stack>
@@ -432,13 +441,21 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               ) : (
                 <Box
                   display="flex"
-                  justifyContent="flexEnd"
-                  paddingX={10}
+                  justifyContent="spaceBetween"
+                  paddingX={[0, 0, 0, enableStepper ? 10 : 3]}
+                  paddingY={2}
                   paddingBottom={4}
                 >
-                  <Button variant="primary" onClick={handleSubmit}>
-                    {formatMessage(m.submit)}
-                  </Button>
+                  <Box>
+                    <Button variant="ghost" onClick={_onCancel}>
+                      {formatMessage(m.buttonCancel)}
+                    </Button>
+                  </Box>
+                  <Box>
+                    <Button variant="primary" onClick={handleSubmit}>
+                      {formatMessage(m.submit)}
+                    </Button>
+                  </Box>
                 </Box>
               )}
             </Box>

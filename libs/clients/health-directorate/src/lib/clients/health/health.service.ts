@@ -15,6 +15,9 @@ import {
   ReferralDto,
   UpdateOrganDonorDto,
   WaitingListEntryDto,
+  donationExceptionControllerGetOrgansV1,
+  meDonorStatusControllerGetOrganDonorStatusV1,
+  meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -29,13 +32,10 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
-  meDonorStatusControllerGetOrganDonorStatusV1,
-  donationExceptionControllerGetOrgansV1,
-  meDonorStatusControllerUpdateOrganDonorStatusV1,
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
-  questionnaireControllerSubmitQuestionnaireV1,
   questionnaireControllerGetQuestionnaireSubmissionV1,
+  questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
 
 import {
@@ -45,12 +45,10 @@ import {
   EuPatientConsentDto,
   Locale,
   PrescriptionCommissionDto,
-  QuestionnaireControllerSubmitQuestionnaireV1Data,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
-  QuestionnaireControllerGetQuestionnaireSubmissionV1Data,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -323,6 +321,10 @@ export class HealthDirectorateHealthService {
     submissionId: string,
   ): Promise<QuestionnaireSubmissionDetailDto | null> {
     try {
+      this.logger.debug(
+        `Fetching answered questionnaire - id: ${id}, submissionId: ${submissionId}`,
+      )
+
       const questionnaires = await withAuthContext(auth, () =>
         data(
           questionnaireControllerGetQuestionnaireSubmissionV1({
@@ -353,7 +355,10 @@ export class HealthDirectorateHealthService {
 
       return JSON.parse(JSON.stringify(questionnaires))
     } catch (error) {
-      this.logger.error('Error fetching questionnaire answered data', error)
+      this.logger.error(
+        `Error fetching questionnaire answered data for id: ${id}, submissionId: ${submissionId}`,
+        error,
+      )
       return null
     }
   }

@@ -1440,7 +1440,7 @@
         },
         "responses": {
           "200": {
-            "description": "Returns the submission ID",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -1536,10 +1536,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
                 }
               }
             }
@@ -2863,9 +2860,17 @@
           "lastSubmitted": {
             "format": "date-time",
             "type": "string"
+          },
+          "hasDraft": {
+            "type": "boolean"
           }
         },
-        "required": ["questionnaireId", "numRepliesAllowed", "numSubmissions"]
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "hasDraft"
+        ]
       },
       "QuestionType": {
         "type": "string",
@@ -3709,6 +3714,9 @@
             "format": "date-time",
             "type": "string"
           },
+          "hasDraft": {
+            "type": "boolean"
+          },
           "hint": {
             "type": "string"
           },
@@ -3725,9 +3733,6 @@
             "items": {
               "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
             }
-          },
-          "hasDraft": {
-            "type": "boolean"
           },
           "groups": {
             "type": "array",
@@ -3788,10 +3793,10 @@
           "questionnaireId",
           "numRepliesAllowed",
           "numSubmissions",
+          "hasDraft",
           "daysBetweenReplies",
           "canSubmit",
           "submissions",
-          "hasDraft",
           "groups",
           "triggers"
         ]
@@ -4003,6 +4008,32 @@
         },
         "required": ["replies", "isDraft"]
       },
+      "InvalidSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "type": "string"
+              },
+              "rowNum": {
+                "type": "number"
+              },
+              "rowQuestionId": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              }
+            },
+            "required": ["questionId", "errorCode", "errorMessage"]
+          }
+        }
+      },
       "QuestionnaireSubmissionDetailDto": {
         "type": "object",
         "properties": {
@@ -4056,32 +4087,6 @@
           }
         },
         "required": ["canSubmit", "groups", "submission"]
-      },
-      "InvalidSubmissionDto": {
-        "type": "object",
-        "properties": {
-          "errorMessage": {
-            "type": "object",
-            "properties": {
-              "questionId": {
-                "type": "string"
-              },
-              "rowNum": {
-                "type": "number"
-              },
-              "rowQuestionId": {
-                "type": "string"
-              },
-              "errorCode": {
-                "type": "string"
-              },
-              "errorMessage": {
-                "type": "string"
-              }
-            },
-            "required": ["questionId", "errorCode", "errorMessage"]
-          }
-        }
       },
       "AllergyClinicalStatus": {
         "type": "string",

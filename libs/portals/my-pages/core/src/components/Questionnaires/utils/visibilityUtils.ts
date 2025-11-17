@@ -1,6 +1,6 @@
-import { QuestionAnswer } from '../../../types/questionnaire'
 import type { QuestionnaireVisibilityCondition } from '@island.is/api/schema'
 import { QuestionnaireVisibilityOperator } from '@island.is/api/schema'
+import { QuestionAnswer } from '../../../types/questionnaire'
 
 // Extended type to include mathematical operators
 type ExtendedVisibilityOperator =
@@ -32,7 +32,7 @@ const checkIsSelected = (
   const value = answer.answers
 
   for (const item of value) {
-    if (item.values === expectedValue) return true
+    if (item.value === expectedValue) return true
     if (typeof value === 'string') return value === expectedValue
     if (typeof value === 'number') return value === expectedValue
   }
@@ -50,7 +50,7 @@ const checkMathematicalComparison = (
   const answer = answers[questionId]
   if (!answer || !answer.answers || answer.answers.length === 0) return false
 
-  const firstValue = answer.answers[0].values
+  const firstValue = answer.answers[0].value
   let actualValue: number
   if (typeof firstValue === 'number') {
     actualValue = firstValue
@@ -88,7 +88,7 @@ const checkQuestionHasAnswer = (
 
   // Check if any answer has a non-empty value
   return answer.answers.some((item) => {
-    const value = item.values
+    const value = item.value
     if (typeof value === 'string') return value.trim() !== ''
     return true
   })
@@ -244,9 +244,7 @@ export const calculateFormula = (
         // Sum all values in the answers array
         value = answer.answers.reduce((sum: number, item) => {
           const num =
-            typeof item.values === 'number'
-              ? item.values
-              : parseFloat(item.values)
+            typeof item.value === 'number' ? item.value : parseFloat(item.value)
           return sum + (isNaN(num) ? 0 : num)
         }, 0)
       }

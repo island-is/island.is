@@ -27,12 +27,11 @@ import {
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
+import { QuestionnairesResponse } from './dto/response.dto'
 import { mapToElAnswer } from './transform-mappers/health-directorate/hd-input-mapper'
 import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
 import { mapToLshAnswer } from './transform-mappers/lsh/lsh-input-mapper'
 import { mapLshQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
-import { QuestionnairesResponse } from './dto/response.dto'
-import { title } from 'process'
 // import { mapTriggerSourceToGraphQL } from './transform-mappers/health-directorate/hd-gpt-mapper'
 
 @Injectable()
@@ -125,17 +124,24 @@ export class QuestionnairesService {
               ? 'Ónefndur spurningalisti'
               : 'Untitled questionnaire',
             sentDate: data.lastSubmitted?.toDateString() || '',
-            status: QuestionnairesStatusEnum.notAnswered,
+            status: data.hasDraft
+              ? QuestionnairesStatusEnum.draft
+              : data.submissions?.length > 0
+              ? QuestionnairesStatusEnum.answered
+              : !data.canSubmit
+              ? QuestionnairesStatusEnum.expired
+              : QuestionnairesStatusEnum.notAnswered,
             description: data.message || undefined,
             organization: QuestionnairesOrganizationEnum.EL,
           },
-          submissions: data.submissions?.map((submission) => ({
-            id: submission.id,
-            date:
-              submission.submittedDate?.toDateString() ||
-              submission.lastUpdatedDate?.toDateString() ||
-              undefined,
+          submissions: data.submissions?.map((sub) => ({
+            id: sub.id,
+            createdAt: sub.createdDate ?? undefined,
+            isDraft: sub.isDraft,
+            lastUpdated: sub.lastUpdatedDate ?? undefined,
           })),
+          canSubmit: data.canSubmit,
+          expirationDate: data.expiryDate,
         }
   }
 
@@ -171,11 +177,15 @@ export class QuestionnairesService {
   ): Promise<AnsweredQuestionnaires | null> {
     const organization = this.normalizeOrganization(input.organization)
 
-    if (!organization) {
+    if (!organization || !input.id) {
       return null
     }
 
-    if (organization === QuestionnairesOrganizationEnum.EL) {
+    if (
+      organization === QuestionnairesOrganizationEnum.EL &&
+      input.id &&
+      input.submissionId
+    ) {
       try {
         const ELdata = await this.api.getQuestionnaireAnswered(
           _user,
@@ -192,11 +202,11 @@ export class QuestionnairesService {
           const submission = {
             id: input.id,
             title: ELdata.title || 'Spurningalisti',
+            isDraft: ELdata.submission.isDraft || false,
             description: ELdata.message || undefined,
             date:
-              ELdata.submission?.submittedDate?.toDateString() ||
-              ELdata.submission?.lastUpdatedDate?.toDateString() ||
-              undefined,
+              this.formatDate(ELdata.submission?.submittedDate) ||
+              this.formatDate(ELdata.submission?.lastUpdatedDate),
 
             answers:
               ELdata.groups
@@ -328,8 +338,7 @@ export class QuestionnairesService {
         )
         return {
           success: true,
-          message:
-            'Questionnaire submitted successfully to EL with id: ' + response,
+          message: response?.toString(),
         }
       } catch (e) {
         this.logger.warn('Error submitting questionnaire to EL', e)
@@ -371,6 +380,8 @@ export class QuestionnairesService {
               status:
                 q.numSubmissions > 0 || q.lastSubmitted
                   ? QuestionnairesStatusEnum.answered
+                  : q.hasDraft
+                  ? QuestionnairesStatusEnum.draft
                   : QuestionnairesStatusEnum.notAnswered,
               lastSubmitted: q.lastSubmitted,
             }
@@ -417,5 +428,15 @@ export class QuestionnairesService {
         .flatMap((list) => list.questionnaires)
         .filter((q) => q !== undefined),
     }
+  }
+
+  private formatDate(date?: Date | string | null): string | undefined {
+    if (!date) return undefined
+    if (date instanceof Date) return date.toDateString()
+    if (typeof date === 'string') {
+      const parsed = new Date(date)
+      return isNaN(parsed.getTime()) ? date : parsed.toDateString()
+    }
+    return undefined
   }
 }

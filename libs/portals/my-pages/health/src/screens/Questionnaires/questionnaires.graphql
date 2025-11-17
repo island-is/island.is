@@ -32,7 +32,8 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
       __typename
       id
       isDraft
-      submittedAt
+      lastUpdated
+      createdAt
     }
   }
 }
@@ -51,6 +52,14 @@ query GetQuestionnaireWithQuestions(
       sentDate
     }
     canSubmit
+    draftAnswers {
+      questionId
+      answers {
+        label
+        value
+      }
+      type
+    }
     sections {
       __typename
       title
@@ -100,6 +109,7 @@ query GetAnsweredQuestionnaire(
       id
       formId
       submissionId
+      isDraft
       date
       title
       description

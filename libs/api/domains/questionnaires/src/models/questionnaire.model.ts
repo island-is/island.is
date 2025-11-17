@@ -2,13 +2,34 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { Question } from './question.model'
 import { QuestionnairesBaseItem } from './questionnaires.model'
 
+@ObjectType('QuestionnaireAnswerValue')
+export class QuestionnaireAnswerValue {
+  @Field({ nullable: true })
+  label?: string
+
+  @Field()
+  value!: string
+}
+
+@ObjectType('QuestionnaireDraftAnswer')
+export class QuestionnaireDraftAnswer {
+  @Field()
+  questionId!: string
+
+  @Field(() => [QuestionnaireAnswerValue])
+  answers!: QuestionnaireAnswerValue[]
+
+  @Field()
+  type!: string
+}
+
 @ObjectType('QuestionnaireSubmissionDetail')
 export class QuestionnaireSubmissionDetail {
   @Field()
   id!: string
 
   @Field(() => Date, { nullable: true })
-  submittedAt?: Date
+  createdAt?: Date
 
   @Field(() => Boolean, { nullable: true })
   isDraft?: boolean
@@ -45,4 +66,7 @@ export class Questionnaire {
 
   @Field(() => [QuestionnaireSection], { nullable: true })
   sections?: QuestionnaireSection[]
+
+  @Field(() => [QuestionnaireDraftAnswer], { nullable: true })
+  draftAnswers?: QuestionnaireDraftAnswer[]
 }

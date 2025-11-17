@@ -46,7 +46,7 @@ const resolveRef = (
   // token is either "@@@id" or a literal
   if (token.startsWith('@@@')) {
     const id = token.slice(3)
-    return answers[id]?.answers?.[0]?.values ?? null
+    return answers[id]?.answers?.[0]?.value ?? null
   }
   return token
 }
@@ -88,7 +88,7 @@ const substitutePlainRefs = (
     if (ans && ans.answers && ans.answers.length > 0) {
       // Sum all values in the answers array
       value = ans.answers.reduce((sum: number, item) => {
-        return sum + asNumber(item.values)
+        return sum + asNumber(item.value)
       }, 0)
     }
 
