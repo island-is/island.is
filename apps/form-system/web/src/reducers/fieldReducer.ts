@@ -67,6 +67,10 @@ export const fieldReducer = (
 
       return setMultipleFieldValues(state, id, value)
     }
+    case 'SET_FILES': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 's3Key', id, value)
+    }
     default:
       return state
   }
