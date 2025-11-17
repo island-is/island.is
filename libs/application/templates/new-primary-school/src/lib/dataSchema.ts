@@ -339,7 +339,6 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
-  acceptTerms: z.array(z.enum([YES])).nonempty(),
   payer: z
     .object({
       option: z.nativeEnum(PayerOption),
