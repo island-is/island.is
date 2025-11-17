@@ -14,6 +14,7 @@ import { overview } from './Overviews'
 import { estateWithoutAssets } from './Sections/estateWithoutAssets'
 import { applicationDescription } from './Sections/description'
 import { reminderInfoForAssetsAndDebts } from './Sections/reminderInfoForAssetsAndDebts'
+import { registrant } from './Sections/registrant'
 
 /* EINKASKIPTI */
 export const privateDivisionForm: Form = buildForm({
@@ -47,6 +48,7 @@ export const undividedEstateForm: Form = buildForm({
     dataCollection,
     applicationDescription,
     announcerInfo,
+    registrant,
     estateMembers,
     testamentInfo,
     reminderInfoForAssetsAndDebts,
