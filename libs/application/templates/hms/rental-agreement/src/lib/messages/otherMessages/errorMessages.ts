@@ -2,13 +2,13 @@ import { defineMessages } from 'react-intl'
 
 export const errorMessages = defineMessages({
   defaultErrorTitle: {
-    id: 'ra.application:errorMessages.defaultErrorMassage',
+    id: 'ra.application:errorMessages.defaultErrorMessage',
     defaultMessage: 'Villa kom upp',
-    description: 'Default error massage',
+    description: 'Default error message',
   },
   defaultErrorSummary: {
     id: 'ra.application:errorMessages.defaultErrorSummary',
-    defaultMessage: 'Villa kom upp við að senda samninginn til undurritunar',
+    defaultMessage: 'Villa kom upp við að senda samninginn til undirritunar',
     description: 'Default error summary',
   },
   mobileSignatureRequired: {
