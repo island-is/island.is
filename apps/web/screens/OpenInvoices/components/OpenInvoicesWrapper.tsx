@@ -11,6 +11,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutHeaderProps,
@@ -18,7 +19,6 @@ import {
   Footer,
 } from '@island.is/web/components'
 import { Organization } from '@island.is/web/graphql/schema'
-import { theme } from '@island.is/island-ui/theme'
 
 
 interface Props {

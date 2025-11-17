@@ -30,8 +30,8 @@ import { GET_ORGANIZATION_QUERY } from '../../queries'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import * as styles from './Home.css'
 import { CHART_MOCK_DATA } from './mockData'
+import * as styles from './Home.css'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
   organization,
