@@ -3,6 +3,8 @@ import {
   PropertyUnit,
 } from '@island.is/application/templates/hms/rental-agreement'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { messages } from '@island.is/application/templates/hms/rental-agreement'
 
 export const parseToNumber = (value: string): number => {
   const normalizedValue = value.replace(',', '.')
@@ -186,4 +188,34 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
       value: item.values[0],
     }),
   )
+}
+
+export const errorMapper = async (error: { body?: string }) => {
+  const body = error.body ?? ''
+  switch (body) {
+    case 'This contract requires mobile signature authentication. Please ensure the user has mobile signature capabilities.':
+      return new TemplateApiError(
+        {
+          title: messages.errorMessages.mobileSignatureRequired,
+          summary: messages.errorMessages.mobileSignatureRequiredSummary,
+        },
+        400,
+      )
+    case 'Rental agreement already exists':
+      return new TemplateApiError(
+        {
+          title: messages.errorMessages.rentalAgreementAlreadyExists,
+          summary: messages.errorMessages.rentalAgreementAlreadyExistsSummary,
+        },
+        400,
+      )
+    default:
+      return new TemplateApiError(
+        {
+          title: messages.errorMessages.defaultErrorTitle,
+          summary: messages.errorMessages.defaultErrorSummary,
+        },
+        400,
+      )
+  }
 }
