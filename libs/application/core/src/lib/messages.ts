@@ -1013,7 +1013,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   applicationIdNotOwnedByUserDescription: {
     id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserDescription#markdown',
-    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin gæti verið eytt\n* Umsóknin er í eigu annars notanda`,
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsókninni gæti hafa verið eytt\n* Umsóknin er í eigu annars notanda`,
     description:
       'Error screen description when application template exists but the specified application cant be found',
   },

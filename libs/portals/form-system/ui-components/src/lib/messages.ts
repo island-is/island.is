@@ -1023,29 +1023,13 @@ export const m = defineMessages({
   },
   switchLoginToCreateApplication: {
     id: 'form.system:switch-login-to-create-application',
-    defaultMessage:
-      'Skipta þarf um innskráningu til að stofna umsókn af þessu tagi.',
-    description:
-      'You must change your login to create an application of this type.',
+    defaultMessage: 'Skipta þarf um notanda.',
+    description: 'You must change your login.',
   },
-  loginNotAllowedToCreateApplication: {
-    id: 'form.system:login-not-allowed-to-create-application',
-    defaultMessage:
-      'Núverandi innskráning hefur ekki réttindi til að stofna umsókn af tegund',
-    description:
-      'The current login does not have permissions to create an application of type',
-  },
-  switchLoginToOpenApplication: {
-    id: 'form.system:switch-login-to-open-application',
-    defaultMessage: 'Skipta þarf um innskráningu til að opna þessa umsókn.',
-    description: 'You must change your login to open this application.',
-  },
-  loginNotAllowedToOpenApplication: {
-    id: 'form.system:login-not-allowed-to-open-application',
-    defaultMessage:
-      'Núverandi innskráning hefur ekki réttindi til að skoða eða vinna í umsókn nr.',
-    description:
-      'The current login does not have permission to view or work on application no.',
+  applicationDoesNotPermitLogin: {
+    id: 'form.system:application-does-not-permit-login',
+    defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
+    description: 'TThis application does not support this type of login.',
   },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',

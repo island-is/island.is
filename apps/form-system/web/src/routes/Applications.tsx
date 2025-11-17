@@ -16,12 +16,14 @@ import {
   GridContainer,
   Page,
   Text,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AlertMessage } from '@island.is/island-ui/core'
+import { ErrorShell } from '@island.is/application/ui-shell'
 
 interface Params {
   slug?: string
@@ -138,19 +140,11 @@ export const Applications = () => {
 
   if (!loginAllowed) {
     return (
-      <Page>
-        <GridContainer>
-          <Box marginTop={4}>
-            <AlertMessage
-              type="error"
-              title={formatMessage(m.switchLoginToCreateApplication)}
-              message={`${formatMessage(
-                m.loginNotAllowedToCreateApplication,
-              )} "${slug}".`}
-            />
-          </Box>
-        </GridContainer>
-      </Page>
+      <ErrorShell
+        title={formatMessage(m.switchLoginToCreateApplication)}
+        subTitle={formatMessage(m.applicationDoesNotPermitLogin)}
+        description=""
+      />
     )
   }
 
