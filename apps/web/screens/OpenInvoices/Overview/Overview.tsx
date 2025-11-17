@@ -440,7 +440,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
     },
     {
       data: { getOrganization },
-    }
+    },
   ] = await Promise.all([
     apolloClient.query<Query>({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
@@ -505,6 +505,5 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesOverview,
   ),
-  {showFooter: false},
-
+  { showFooter: false },
 )

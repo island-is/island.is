@@ -99,9 +99,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.categoriesEyebrow)}
                 </Text>
                 <Text variant="h1">75.319.753.197 kr.</Text>
-                <Text>
-                  {formatMessage(m.home.categoriesDescription)}
-                </Text>
+                <Text>{formatMessage(m.home.categoriesDescription)}</Text>
               </Stack>
               <Box
                 className={styles.snug}
@@ -115,7 +113,9 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 <Box display="flex" alignItems="center" marginRight={2}>
                   <Icon icon="arrowDown" color="foregroundBrandSecondary" />
                 </Box>
-                <Text variant="eyebrow">{formatMessage(m.home.categoriesTotal, {arg: '7.3%'})}</Text>
+                <Text variant="eyebrow">
+                  {formatMessage(m.home.categoriesTotal, { arg: '7.3%' })}
+                </Text>
               </Box>
             </GridColumn>
             <GridColumn offset="1/12" span="3/12">
@@ -260,7 +260,10 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.cardTwoDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <LinkV2 href={formatMessage(m.home.cardTwoLinkUrl)} color="blue400">
+                  <LinkV2
+                    href={formatMessage(m.home.cardTwoLinkUrl)}
+                    color="blue400"
+                  >
                     {formatMessage(m.home.cardTwoLinkText)}
                   </LinkV2>
                   <Icon icon="arrowForward" color="blue400" />
@@ -298,11 +301,11 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             </GridColumn>
             <GridColumn span="6/12">
               <CategoryCard
-              href={formatMessage(m.home.categoryCardTwoLink)}
-              heading={formatMessage(m.home.categoryCardTwoTitle)}
-              src={formatMessage(m.home.featuredImage)}
-              alt={formatMessage(m.home.featuredImageAlt)}
-              text={formatMessage(m.home.categoryCardTwoDescription)}
+                href={formatMessage(m.home.categoryCardTwoLink)}
+                heading={formatMessage(m.home.categoryCardTwoTitle)}
+                src={formatMessage(m.home.featuredImage)}
+                alt={formatMessage(m.home.featuredImageAlt)}
+                text={formatMessage(m.home.categoryCardTwoDescription)}
               />
             </GridColumn>
           </GridRow>
@@ -346,7 +349,7 @@ OpenInvoicesHome.getProps = async ({ apolloClient, locale }) => {
 
   return {
     locale: locale as Locale,
-    organization: getOrganization ?? undefined
+    organization: getOrganization ?? undefined,
   }
 }
 
@@ -355,5 +358,5 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesHome,
   ),
-  {showFooter: false},
+  { showFooter: false },
 )

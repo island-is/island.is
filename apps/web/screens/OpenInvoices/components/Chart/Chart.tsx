@@ -1,4 +1,4 @@
-import { useMeasure } from "react-use"
+import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import {
   Bar,
@@ -12,20 +12,20 @@ import {
   Text as ChartText,
   Tooltip,
   XAxis,
-  YAxis} from 'recharts'
-import { CartesianViewBox } from "recharts/types/util/types"
+  YAxis,
+} from 'recharts'
+import { CartesianViewBox } from 'recharts/types/util/types'
 
-import { Box, Icon, LinkV2, Text } from "@island.is/island-ui/core"
-import { formatCurrency } from "@island.is/shared/utils"
+import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
+import { formatCurrency } from '@island.is/shared/utils'
 
-import { MOCK_CHART_1 } from "../../Totals/mockData"
+import { MOCK_CHART_1 } from '../../Totals/mockData'
 import * as styles from './Chart.css'
-
 
 interface AxisTickProps {
   x?: number
   y?: number
-  offset?: number,
+  offset?: number
   payload?: { value: string }
 }
 
@@ -45,34 +45,56 @@ const CustomizedYAxisLabel = (data: LabelProps) => {
       dx={viewBox?.width}
       fill="#000000"
       textAnchor="start"
-      width={180}>
+      width={180}
+    >
       m.kr.
     </ChartText>
   )
 }
 
-
-const CustomizedAxisTick = ({x,y ,payload}: AxisTickProps) => {
-  return <ChartText x={x} y={y} style={{fontSize: "14px"}} fill="#000000" textAnchor="middle" width="30" verticalAnchor="start">
-     {payload?.value}
-  </ChartText>
+const CustomizedAxisTick = ({ x, y, payload }: AxisTickProps) => {
+  return (
+    <ChartText
+      x={x}
+      y={y}
+      style={{ fontSize: '14px' }}
+      fill="#000000"
+      textAnchor="middle"
+      width="30"
+      verticalAnchor="start"
+    >
+      {payload?.value}
+    </ChartText>
+  )
 }
 
 export const Chart = () => {
   return (
-    <Box width="full" height="full" padding={4} background="white" border="standard"  borderRadius="large">
-     <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
-       <Text variant="h5">Stærstu kaupendur</Text>
-       <Box display="flex" alignItems="center">
-         <LinkV2 href={"/temp"} color="blue400" underline="normal" underlineVisibility="always">
-           Sjá alla kaupendur
-         </LinkV2>
-         <Icon icon="arrowForward" color="blue400" />
-       </Box>
-     </Box>
+    <Box
+      width="full"
+      height="full"
+      padding={4}
+      background="white"
+      border="standard"
+      borderRadius="large"
+    >
+      <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
+        <Text variant="h5">Stærstu kaupendur</Text>
+        <Box display="flex" alignItems="center">
+          <LinkV2
+            href={'/temp'}
+            color="blue400"
+            underline="normal"
+            underlineVisibility="always"
+          >
+            Sjá alla kaupendur
+          </LinkV2>
+          <Icon icon="arrowForward" color="blue400" />
+        </Box>
+      </Box>
       <ResponsiveContainer aspect={1.5} width="100%" maxHeight={520}>
         <BarChart
-          barGap='20%'
+          barGap="20%"
           barSize={56}
           data={MOCK_CHART_1}
           margin={{
@@ -82,16 +104,27 @@ export const Chart = () => {
             left: 50,
           }}
         >
-          <CartesianGrid
-            vertical={false}
-            stroke="#CCDFFF"
+          <CartesianGrid vertical={false} stroke="#CCDFFF" />
+          <XAxis
+            dataKey="institution"
+            tick={<CustomizedAxisTick />}
+            interval={0}
           />
-          <XAxis dataKey="institution" tick={<CustomizedAxisTick />} interval={0} />
-          <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000'}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />
-          <Bar dataKey="amount" fill="#0061FF" radius={[8, 8, 0, 0]}/>
+          <YAxis
+            label={<CustomizedYAxisLabel />}
+            type="number"
+            tick={{ fill: '#000000' }}
+            domain={['dataMin - 5000', 'auto']}
+            format={'string'}
+            tickFormatter={(value) =>
+              value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+            }
+          />
+          <Bar dataKey="amount" fill="#0061FF" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
-    </Box>);
+    </Box>
+  )
 
   /*  return (
     <Box

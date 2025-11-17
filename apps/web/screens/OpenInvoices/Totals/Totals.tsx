@@ -2,19 +2,30 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import addYears from 'date-fns/addYears'
 import format from 'date-fns/format'
-import { parseAsBoolean, parseAsIsoDateTime, useQueryState } from 'next-usequerystate'
-import { Bar,BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
-
 import {
-  Box,
-  Stack,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+  parseAsBoolean,
+  parseAsIsoDateTime,
+  useQueryState,
+} from 'next-usequerystate'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from 'recharts'
+
+import { Box, Stack, Text, Tooltip } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { ChartsCard } from '@island.is/web/components'
-import { Organization, Query, QueryGetOrganizationArgs } from '@island.is/web/graphql/schema'
+import {
+  Organization,
+  Query,
+  QueryGetOrganizationArgs,
+} from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
@@ -23,7 +34,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
-import { Chart} from '../components/Chart/Chart'
+import { Chart } from '../components/Chart/Chart'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { ORGANIZATION_SLUG } from '../contants'
@@ -73,7 +84,7 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
 
   const [comparison, setComparison] = useQueryState(
     'comparison',
-    parseAsBoolean.withDefault(false)
+    parseAsBoolean.withDefault(false),
   )
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
@@ -140,7 +151,7 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
                     dateRangeStart.toISOString(),
                     dateRangeEnd.toISOString(),
                   ],
-                  comparison: [comparison ? 'true' : 'false']
+                  comparison: [comparison ? 'true' : 'false'],
                 }}
                 categories={[
                   {
@@ -159,19 +170,21 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
                     id: 'comparison',
                     label: 'Samanburður við fyrra ár',
                     checked: comparison,
-                  }
+                  },
                 ]}
               />
             </Stack>
           }
         >
           <Box marginLeft={6}>
-          <Text marginBottom={4}>Greiðslur á tímabilinu bleble 2024 - blabla 2025</Text>
-          <Stack  space={3}>
-            <Chart />
-          </Stack>
+            <Text marginBottom={4}>
+              Greiðslur á tímabilinu bleble 2024 - blabla 2025
+            </Text>
+            <Stack space={3}>
+              <Chart />
+            </Stack>
           </Box>
-      </SidebarLayout>
+        </SidebarLayout>
       </Box>
     </OpenInvoicesWrapper>
   )
@@ -210,7 +223,7 @@ OpenInvoicesTotals.getProps = async ({ apolloClient, locale }) => {
   })
   return {
     locale: locale as Locale,
-    organization: getOrganization ?? undefined
+    organization: getOrganization ?? undefined,
   }
 }
 
@@ -219,5 +232,5 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesTotals,
   ),
-  {showFooter: false},
+  { showFooter: false },
 )

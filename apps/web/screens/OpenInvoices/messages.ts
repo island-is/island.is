@@ -34,7 +34,8 @@ export const m = {
     },
     categoriesDescription: {
       id: 'web.openinvoices:home.categoriesDescription#markdown',
-      defaultMessage: 'Tölur byggja á greiddum reikningum, án innri viðskipta(reikninga senda milli stofnana). ** Ef sú leið verður farin**',
+      defaultMessage:
+        'Tölur byggja á greiddum reikningum, án innri viðskipta(reikninga senda milli stofnana). ** Ef sú leið verður farin**',
     },
     categoriesTotal: {
       id: 'web.openinvoices:home.categoriesTotal',
@@ -62,7 +63,8 @@ export const m = {
     },
     chartDescription: {
       id: 'web.openinvoices:home.currentYearPaymentsDescription',
-      defaultMessage: 'Grafið sýnir greidda reikninga það sem af er árinu, samanborið við sömu mánuði í fyrra. Allar tölur eru á núvirði',
+      defaultMessage:
+        'Grafið sýnir greidda reikninga það sem af er árinu, samanborið við sömu mánuði í fyrra. Allar tölur eru á núvirði',
     },
     cardOneTitle: {
       id: 'web.openinvoices:home.cardOneTitle',
@@ -70,7 +72,8 @@ export const m = {
     },
     cardOneDescription: {
       id: 'web.openinvoices:home.cardOneDescription',
-      defaultMessage: 'Markmið með birtingu reikninga er að auka gagnsæi og aðgengi almennings að fjárhagsupplýsingum ríkisins. Á vefnum er unnt að skoða upplýsingar um greidda reikninga ráðuneyta og stofnana úr bókhaldi ríkisins.',
+      defaultMessage:
+        'Markmið með birtingu reikninga er að auka gagnsæi og aðgengi almennings að fjárhagsupplýsingum ríkisins. Á vefnum er unnt að skoða upplýsingar um greidda reikninga ráðuneyta og stofnana úr bókhaldi ríkisins.',
     },
     cardOneLinkText: {
       id: 'web.openinvoices:home.cardOneLinkText',
@@ -86,7 +89,8 @@ export const m = {
     },
     cardTwoDescription: {
       id: 'web.openinvoices:home.cardTwoDescription#markdown',
-      defaultMessage: 'Vefurinn byggir á greiðslum sem fara í gegnum viðskiptaskuldakerfi stofnana, en þangað fara reikningar fyrir kaup á vörum og þjónustu.  Vegna persónuverndar eru nöfn ekki birt þegar reikningar tengjast kennitölum einstaklinga. Einnig gildir trúnaður um innihald tiltekinna reikninga vegna eðlis þeirra.',
+      defaultMessage:
+        'Vefurinn byggir á greiðslum sem fara í gegnum viðskiptaskuldakerfi stofnana, en þangað fara reikningar fyrir kaup á vörum og þjónustu.  Vegna persónuverndar eru nöfn ekki birt þegar reikningar tengjast kennitölum einstaklinga. Einnig gildir trúnaður um innihald tiltekinna reikninga vegna eðlis þeirra.',
     },
     cardTwoLinkText: {
       id: 'web.openinvoices:home.cardTwoLinkText',
@@ -102,7 +106,8 @@ export const m = {
     },
     categoryCardOneDescription: {
       id: 'web.openinvoices:home.categoryCardOneTitle',
-      defaultMessage: 'Heildarlisti greiddra reikninga á völdu tímabili. Hægt er að velja leitarskilyrði og afmarka þannig hvaða reikningar eru birtir.',
+      defaultMessage:
+        'Heildarlisti greiddra reikninga á völdu tímabili. Hægt er að velja leitarskilyrði og afmarka þannig hvaða reikningar eru birtir.',
     },
     categoryCardOneLink: {
       id: 'web.openinvoices:home.categoryCardOneLink',
@@ -114,7 +119,8 @@ export const m = {
     },
     categoryCardTwoDescription: {
       id: 'web.openinvoices:home.categoryCardTwoTitle',
-      defaultMessage: 'Lykiltölfræði á borð við stærstu kaupendur og seljendur á völdu tímabili. Hægt er að kafa frá samtölum niður í einstaka reikninga.',
+      defaultMessage:
+        'Lykiltölfræði á borð við stærstu kaupendur og seljendur á völdu tímabili. Hægt er að kafa frá samtölum niður í einstaka reikninga.',
     },
     categoryCardTwoLink: {
       id: 'web.openinvoices:home.categoryCardTwoLink',
@@ -181,7 +187,6 @@ export const m = {
       id: 'web.openinvoices:totals.featuredImageAlt',
       defaultMessage: 'Mynd af konu við tölvu',
     },
-
   }),
   search: defineMessages({
     filterTitle: {
