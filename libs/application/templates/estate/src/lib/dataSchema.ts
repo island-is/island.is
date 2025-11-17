@@ -79,7 +79,6 @@ export const estateSchema = z.object({
     }),
     email: customZodError(z.string().email(), m.errorEmail),
     address: z.string(),
-    relation: z.string().optional(),
     relationToDeceased: z.string().optional(),
     autonomous: z
       .enum([YES, NO])
@@ -88,6 +87,20 @@ export const estateSchema = z.object({
         params: m.errorNotAutonmous,
       }),
   }),
+
+  // Registrant (for "Seta í óskiptu búi")
+  registrant: z
+    .object({
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+      address: z.string(),
+      relation: z.string(),
+    })
+    .optional(),
 
   selectedEstate: z.enum([
     EstateTypes.officialDivision,
