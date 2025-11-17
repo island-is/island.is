@@ -195,6 +195,10 @@ export const routesTemplate = {
     is: '/opnir-reikningar/yfirlit',
     en: '/en/open-invoices/overview',
   },
+  openinvoicestotals: {
+    is: '/opnir-reikningar/samtolur',
+    en: '/en/open-invoices/totals',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',

@@ -25,7 +25,9 @@ import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroup,
   IcelandicGovernmentInstitutionsInvoices,
+  Organization,
   Query,
+  QueryGetOrganizationArgs,
   QueryIcelandicGovernmentInstitutionsInvoicesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -35,7 +37,10 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
+import { GET_ORGANIZATION_QUERY } from '../../queries'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
+import { OverviewFilter } from '../components/OverviewFilter'
+import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
 import { OverviewFilters } from '../types'
 import {
@@ -43,7 +48,6 @@ import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
 } from './Overview.graphql'
 import { OverviewContent } from './OverviewContent'
-import { OverviewFilter } from './OverviewFilter'
 
 const PAGE_SIZE = 12
 
@@ -396,7 +400,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 }
 
 interface OpenInvoicesOverviewProps {
-  organization?: Query['getOrganization']
+  organization?: Organization
   locale: Locale
   filters?: OverviewFilters
   initialInvoices?: IcelandicGovernmentInstitutionsInvoices
@@ -430,6 +434,9 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
     {
       data: { icelandicGovernmentInstitutionsInvoices },
     },
+    {
+      data: { getOrganization },
+    }
   ] = await Promise.all([
     apolloClient.query<Query>({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
@@ -440,6 +447,15 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
         input: {
           dateFrom: oneMonthBack,
           dateTo: today,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug: ORGANIZATION_SLUG,
+          lang: locale,
         },
       },
     }),
@@ -476,6 +492,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
     locale: locale as Locale,
     filters,
     initialInvoices: icelandicGovernmentInstitutionsInvoices ?? undefined,
+    organization: getOrganization ?? undefined,
   }
 }
 
@@ -484,4 +501,6 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesOverview,
   ),
+  {showFooter: false},
+
 )

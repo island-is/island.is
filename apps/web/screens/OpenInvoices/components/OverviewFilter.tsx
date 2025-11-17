@@ -2,6 +2,7 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
+  Checkbox,
   Filter,
   FilterMultiChoice,
   FilterProps,
@@ -35,6 +36,13 @@ interface DateSelectProps {
   valueTo: Date
 }
 
+interface CheckboxProps {
+  type: 'checkbox'
+  id: string
+  label: string
+  checked?: boolean
+}
+
 interface Props {
   onSearchUpdate: (
     categoryId: keyof SearchState,
@@ -44,7 +52,7 @@ interface Props {
   searchState?: SearchState
   url: string
   locale: Locale
-  categories: Array<MultiSelectProps | DateSelectProps>
+  categories: Array<MultiSelectProps | DateSelectProps | CheckboxProps>
   variant?: FilterProps['variant']
   hits?: number
 }
@@ -81,8 +89,25 @@ export const OverviewFilter = ({
         variant={variant}
         align={'right'}
       >
-        <Box background="white" borderRadius="large">
+        <Box background="white" borderRadius="large" >
           {categories.map((category) => {
+            if (category.type === 'checkbox') {
+              const searchStateValue = searchState?.[category.id]?.[0];
+              return (
+                <Box paddingX={3} paddingY={3} borderRadius="large" background="white">
+                <Checkbox
+                  key={category.id}
+                  name={category.id}
+                  label={category.label}
+                  checked={searchStateValue === 'true'}
+                  onChange={(event) => onSearchUpdate(
+                    category.id as keyof SearchState,
+                    event.target.checked ? ['true'] : ['false']
+                  )}
+                />
+                </Box>
+              )
+            }
             if (category.type === 'date') {
               return (
                 <FilterDateAccordion

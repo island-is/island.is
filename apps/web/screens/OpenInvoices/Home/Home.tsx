@@ -1,6 +1,7 @@
 import { useIntl } from 'react-intl'
 
 import {
+  ArrowLink,
   Box,
   CategoryCard,
   GridColumn,
@@ -15,6 +16,7 @@ import { Locale } from '@island.is/shared/types'
 import { ChartsCard, Footer } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
+  Organization,
   Query,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
@@ -25,11 +27,11 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
-import { OpenInvoicesWrapper } from '../components/wrapper'
+import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import { CHART_MOCK_DATA } from '../mocks/chart'
 import * as styles from './Home.css'
+import { CHART_MOCK_DATA } from './mockData'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
   organization,
@@ -70,11 +72,11 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           variant: 'tags',
           items: [
             {
-              title: 'Yfirlit reikninga',
+              title: formatMessage(m.home.invoiceOverview),
               href: linkResolver('openinvoicesoverview', [], locale).href,
             },
             {
-              title: 'Reikningar',
+              title: formatMessage(m.home.invoices),
               href: 'island.is',
             },
           ],
@@ -83,7 +85,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
       footer={
         organization
           ? {
-              organization,
+              organization: organization,
             }
           : undefined
       }
@@ -94,13 +96,11 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             <GridColumn offset="1/12" span="4/12">
               <Stack space={2}>
                 <Text variant="eyebrow" color="purple400">
-                  Samtals greitt síðastliðna þrjá mánuði
+                  {formatMessage(m.home.categoriesEyebrow)}
                 </Text>
                 <Text variant="h1">75.319.753.197 kr.</Text>
                 <Text>
-                  Tölur byggja á greiddum reikningum, án innri viðskipta
-                  (reikninga senda milli stofnana). ** Ef sú leið verður farin
-                  **
+                  {formatMessage(m.home.categoriesDescription)}
                 </Text>
               </Stack>
               <Box
@@ -115,13 +115,13 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 <Box display="flex" alignItems="center" marginRight={2}>
                   <Icon icon="arrowDown" color="foregroundBrandSecondary" />
                 </Box>
-                <Text variant="eyebrow">7,3% lækkun</Text>
+                <Text variant="eyebrow">{formatMessage(m.home.categoriesTotal, {arg: '7.3%'})}</Text>
               </Box>
             </GridColumn>
             <GridColumn offset="1/12" span="3/12">
               <Box padding={3} background="backgroundBrandMinimal">
                 <Text marginBottom={1} variant="eyebrow">
-                  Fjöldi skráðra reikninga
+                  {formatMessage(m.home.invoiceCountTitle)}
                 </Text>
                 <Text
                   className={styles.oneline}
@@ -137,7 +137,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 background="backgroundBrandMinimal"
               >
                 <Text marginBottom={1} variant="eyebrow">
-                  Fjöldi kaupenda
+                  {formatMessage(m.home.customerCountTitle)}
                 </Text>
                 <Text
                   className={styles.oneline}
@@ -151,7 +151,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             <GridColumn span="3/12">
               <Box padding={3} background="backgroundBrandMinimal">
                 <Text marginBottom={1} variant="eyebrow">
-                  Fjöldi seljenda
+                  {formatMessage(m.home.supplierCountTitle)}
                 </Text>
                 <Text
                   className={styles.oneline}
@@ -167,7 +167,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 background="backgroundBrandMinimal"
               >
                 <Text marginBottom={1} variant="eyebrow">
-                  Miðgildi reikningsupphæða
+                  {formatMessage(m.home.medianInvoiceAmountTitle)}
                 </Text>
                 <Text
                   className={styles.oneline}
@@ -186,10 +186,9 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           <GridRow>
             <GridColumn offset="1/12" span="10/12">
               <Box>
-                <Text variant="h1">Greiðslur yfirstandandi árs</Text>
+                <Text variant="h1">{formatMessage(m.home.chartTitle)}</Text>
                 <Text marginTop={2} variant="intro">
-                  Grafið sýnir greidda reikninga það sem af er árinu, samanborið
-                  við sömu mánuði í fyrra. Allar tölur eru á núvirði.
+                  {formatMessage(m.home.chartDescription)}
                 </Text>
                 <ChartsCard
                   chart={{
@@ -237,20 +236,14 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             </GridColumn>
             <GridColumn span="5/12">
               <Stack space={2}>
-                <Text variant="h1">Um vefinn</Text>
+                <Text variant="h1">{formatMessage(m.home.cardOneTitle)}</Text>
                 <Text variant="intro">
-                  Markmið með birtingu reikninga er að auka gagnsæi og aðgengi
-                  almennings að fjárhagsupplýsingum ríkisins
-                </Text>
-                <Text>
-                  Á vefnum er unnt að skoða upplýsingar um greidda reikninga
-                  ráðuneyta og stofnana úr bókhaldi ríkisins.
+                  {formatMessage(m.home.cardOneDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <LinkV2 href="/something" color="blue400">
-                    Nánar um opna reikninga
-                  </LinkV2>
-                  <Icon icon="arrowForward" color="blue400" />
+                  <ArrowLink href="/temp" color="blue400">
+                    Sjá alla kaupendur
+                  </ArrowLink>
                 </Box>
               </Stack>
             </GridColumn>
@@ -262,20 +255,13 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           <GridRow>
             <GridColumn offset="1/12" span="5/12">
               <Stack space={2}>
-                <Text variant="h1">Birtingarreglur</Text>
+                <Text variant="h1">{formatMessage(m.home.cardTwoTitle)}</Text>
                 <Text variant="intro">
-                  Vefurinn byggir á greiðslum sem fara í gegnum
-                  viðskiptaskuldakerfi stofnana, en þangað fara reikningar fyrir
-                  kaup á vörum og þjónustu.
-                </Text>
-                <Text variant="intro">
-                  Vegna persónuverndar eru nöfn ekki birt þegar reikningar
-                  tengjast kennitölum einstaklinga. Einnig gildir trúnaður um
-                  innihald tiltekinna reikninga vegna eðlis þeirra.
+                  {formatMessage(m.home.cardTwoDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <LinkV2 href="/something" color="blue400">
-                    Sjá nánar
+                  <LinkV2 href={formatMessage(m.home.cardTwoLinkUrl)} color="blue400">
+                    {formatMessage(m.home.cardTwoLinkText)}
                   </LinkV2>
                   <Icon icon="arrowForward" color="blue400" />
                 </Box>
@@ -303,32 +289,31 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           <GridRow>
             <GridColumn span="6/12">
               <CategoryCard
-                href="/somewhere"
-                heading="Yfirlit reikninga"
+                href={formatMessage(m.home.categoryCardOneLink)}
+                heading={formatMessage(m.home.categoryCardOneTitle)}
                 src={formatMessage(m.home.featuredImage)}
-                alt="temp"
-                text="Heildarlisti greiddra reikninga á völdu tímabili. Hægt er að velja leitarskilyrði og afmarka þannig hvaða reikningar eru birtir."
+                alt={formatMessage(m.home.featuredImageAlt)}
+                text={formatMessage(m.home.categoryCardOneDescription)}
               />
             </GridColumn>
             <GridColumn span="6/12">
               <CategoryCard
-                href="/somewhere"
-                heading="Samtölur reikninga"
-                src={formatMessage(m.home.featuredImage)}
-                alt="temp"
-                text="Lykiltölfræði á borð við stærstu kaupendur og seljendur á völdu tímabili. Hægt er að kafa frá samtölum niður í einstaka reikninga."
+              href={formatMessage(m.home.categoryCardTwoLink)}
+              heading={formatMessage(m.home.categoryCardTwoTitle)}
+              src={formatMessage(m.home.featuredImage)}
+              alt={formatMessage(m.home.featuredImageAlt)}
+              text={formatMessage(m.home.categoryCardTwoDescription)}
               />
             </GridColumn>
           </GridRow>
         </GridContainer>
       </Box>
-      <Footer heading="Opinberir reikningar" columns={[]} />
     </OpenInvoicesWrapper>
   )
 }
 
 interface OpenInvoicesHomeProps {
-  organization?: Query['getOrganization']
+  organization?: Organization
   locale: Locale
 }
 
@@ -361,7 +346,7 @@ OpenInvoicesHome.getProps = async ({ apolloClient, locale }) => {
 
   return {
     locale: locale as Locale,
-    organization: getOrganization,
+    organization: getOrganization ?? undefined
   }
 }
 
@@ -370,4 +355,5 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesHome,
   ),
+  {showFooter: false},
 )
