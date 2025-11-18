@@ -41,8 +41,6 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           provider: IdentityApi,
-          title: m.prerequisites.externalData.nationalRegistryTitle,
-          subTitle: m.prerequisites.externalData.nationalRegistrySubTitle,
         }),
       ],
     }),
