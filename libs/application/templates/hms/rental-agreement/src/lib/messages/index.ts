@@ -23,6 +23,7 @@ export * from './draftFormMessages/overviewMessages/overviewMessages'
 // Other sections and forms
 export * from './otherMessages/dataSchemaMessages'
 export * from './otherMessages/miscMessages'
+export * from './otherMessages/errorMessages'
 export * from './inReviewFormMessages/inReviewMessages'
 export * from './signingFormMessages/signingMessages'
 export * from './completedFormMessages/completedMessages'

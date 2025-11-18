@@ -3,6 +3,8 @@ import {
   PropertyUnit,
 } from '@island.is/application/templates/hms/rental-agreement'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { messages } from '@island.is/application/templates/hms/rental-agreement'
 
 export const parseToNumber = (value: string): number => {
   const normalizedValue = value.replace(',', '.')
@@ -186,4 +188,43 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
       value: item.values[0],
     }),
   )
+}
+
+export const errorMapper = (error: {
+  body: { errorCode: string; details: { phoneNumbers?: string[] } }
+}) => {
+  try {
+    const body = error.body
+    switch (body.errorCode) {
+      case '40001_mobile_signature_capabilities_missing':
+        return new TemplateApiError(
+          {
+            title: messages.errorMessages.mobileSignatureRequired,
+            summary: {
+              ...messages.errorMessages.mobileSignatureRequiredSummary,
+              values: {
+                phoneNumbers: body.details.phoneNumbers?.join(', ') ?? '',
+              },
+            },
+          },
+          400,
+        )
+      default:
+        return new TemplateApiError(
+          {
+            title: messages.errorMessages.defaultErrorTitle,
+            summary: messages.errorMessages.defaultErrorSummary,
+          },
+          400,
+        )
+    }
+  } catch (error) {
+    return new TemplateApiError(
+      {
+        title: messages.errorMessages.defaultErrorTitle,
+        summary: messages.errorMessages.defaultErrorSummary,
+      },
+      400,
+    )
+  }
 }
