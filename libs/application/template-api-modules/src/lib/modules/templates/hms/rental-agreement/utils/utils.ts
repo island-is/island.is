@@ -191,20 +191,19 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
 }
 
 export const errorMapper = (error: {
-  body: { errorCode: string; details: unknown }
+  body: { errorCode: string; details: { phoneNumbers?: string[] } }
 }) => {
   try {
     const body = error.body
     switch (body.errorCode) {
       case '40001_mobile_signature_capabilities_missing':
-        const details = body.details as { phoneNumbers: string[] } // This field only applies here
         return new TemplateApiError(
           {
             title: messages.errorMessages.mobileSignatureRequired,
             summary: {
               ...messages.errorMessages.mobileSignatureRequiredSummary,
               values: {
-                phoneNumbers: details.phoneNumbers.join(', '),
+                phoneNumbers: body.details.phoneNumbers?.join(', ') ?? '',
               },
             },
           },
