@@ -24,10 +24,7 @@ import {
   SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import {
-  Application,
-  ApplicationResponse,
-} from '../../models/applications.model'
+import { ApplicationResponse } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
 
 @Injectable()

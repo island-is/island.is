@@ -8,10 +8,7 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import {
-  Application,
-  ApplicationResponse,
-} from '../../models/applications.model'
+import { ApplicationResponse } from '../../models/applications.model'
 import {
   ApplicationsInput,
   CreateApplicationInput,

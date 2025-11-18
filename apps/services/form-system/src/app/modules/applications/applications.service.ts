@@ -386,7 +386,7 @@ export class ApplicationsService {
       const loginTypes = await this.getLoginTypes(user)
       if (
         !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
-        !this.doesUserMatchApplication(application, user!, loginTypes)
+        !this.doesUserMatchApplication(application, user, loginTypes)
       ) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isLoginTypeAllowed = false
@@ -440,10 +440,6 @@ export class ApplicationsService {
     locale: string,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
-
     const applications = await this.applicationModel.findAll({
       where: {
         nationalId,
@@ -503,7 +499,6 @@ export class ApplicationsService {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
 
     const applications = await this.applicationModel.findAll({
       where: {
