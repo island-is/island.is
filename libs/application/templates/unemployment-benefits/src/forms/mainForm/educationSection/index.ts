@@ -189,6 +189,7 @@ export const educationSection = buildSection({
           width: 'half',
           variant: 'number',
           required: true,
+          allowNegative: false,
           condition: showCurrentEducationFields,
         }),
         buildSelectField({

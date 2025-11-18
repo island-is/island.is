@@ -854,7 +854,7 @@ export type FieldsRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   hideRemoveButton?: boolean
-  hideAddButton?: boolean
+  hideAddButton?: MaybeWithApplication<boolean>
   displayTitleAsAccordion?: boolean
   itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>

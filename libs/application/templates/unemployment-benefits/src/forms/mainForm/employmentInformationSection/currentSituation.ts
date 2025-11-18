@@ -90,6 +90,10 @@ export const currentSituationSubSection = buildSubSection({
               values: { index: index + 1 },
             }
           },
+          hideAddButton: (application) => {
+            const employed = isEmployed(application.answers)
+            return employed
+          },
           formTitleVariant: 'h5',
           formTitleNumbering: 'none',
           width: 'full',
