@@ -29,7 +29,6 @@ export const RealEstateRepeater: FC<
   })
 
   const { clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
 
   const { total, calculateTotal } = useRepeaterTotal(
     id,
@@ -39,18 +38,18 @@ export const RealEstateRepeater: FC<
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.assets) {
       replace(estateData.estate.assets)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   const handleAddProperty = () =>
     append({
       share: 100,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })

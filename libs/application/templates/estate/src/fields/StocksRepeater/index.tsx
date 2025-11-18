@@ -48,7 +48,6 @@ export const StocksRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
@@ -60,11 +59,11 @@ export const StocksRepeater: FC<
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.stocks) {
       replace(estateData.estate.stocks)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Calculate stock value from faceValue * rateOfExchange
   const updateStocksValue = (fieldIndex: string) => {
