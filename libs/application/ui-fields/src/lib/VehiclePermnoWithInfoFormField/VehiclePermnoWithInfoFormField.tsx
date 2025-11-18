@@ -28,7 +28,7 @@ import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
 import { GET_EXEMPTION_VALIDATION_BY_PERMNO } from './graphql/queries'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
-import type { ExemptionValidation } from "../../../../../api/domains/transport-authority/src/lib/graphql/models";
+import type { ExemptionValidation } from '@island.is/api/domains/transport-authority';
 
 interface Props extends FieldBaseProps {
   field: VehiclePermnoWithInfoField
