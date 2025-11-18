@@ -24,7 +24,7 @@ type GivenWhenThen = (
   courtCaseNumber?: string,
 ) => Promise<Then>
 
-describe('LimitedAccessDefendantController - UpdateDefendant', () => {
+describe('LimitedAccessDefendantController - Update', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const defendantId = uuid()
@@ -67,7 +67,7 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
       const then = {} as Then
 
       await limitedAccessDefendantController
-        .updateDefendant(
+        .update(
           caseId,
           defendantId,
           user,
