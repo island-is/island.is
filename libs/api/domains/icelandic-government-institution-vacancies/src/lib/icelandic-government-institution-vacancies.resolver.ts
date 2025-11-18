@@ -1,7 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import {
-  VacancyApi
+  VacancyApi,
+  VacancyResponseDto
 } from '@island.is/clients/financial-management-authority'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
@@ -46,16 +47,16 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     input: IcelandicGovernmentInstitutionVacanciesInput,
   ) {
     let errorOccurred = false
-    let vacancies: DefaultApiVacanciesListItem[] = []
+    let vacancies: VacancyResponseDto[] = []
 
     try {
       vacancies = (await this.api.v1VacancyGetVacancyListGet({
-      })) as DefaultApiVacanciesListItem[]
+      })) as VacancyResponseDto[]
     } catch (error) {
       errorOccurred = true
       if (error instanceof FetchError) {
         this.logger.error(
-          'Fetch error occurred when getting vacancies from xroad',
+          'Fetch error occurred when getting vacancies from the Financial Management Authority',
           {
             message: error.message,
             statusCode: error.status,
@@ -63,7 +64,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         )
       } else {
         this.logger.error(
-          'Error occurred when getting vacancies from xroad',
+          'Error occurred when getting vacancies from the Financial Management Authority',
           error,
         )
       }

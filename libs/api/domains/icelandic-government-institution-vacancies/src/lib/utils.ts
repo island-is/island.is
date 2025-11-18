@@ -6,6 +6,7 @@ import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandic
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import { Html, Vacancy } from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacancyContact } from './models/icelandicGovernmentInstitutionVacancy.model'
+import { VacancyResponseDto } from '@island.is/clients/financial-management-authority'
 
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
@@ -179,29 +180,59 @@ export const sortVacancyList = (
 }
 
 export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
-  async (data: DefaultApiVacanciesListItem[]) => {
+  async (data: VacancyResponseDto[]) => {
+    const formatDate = (date?: Date | null) => {
+      if (!date) {
+        return undefined
+      }
+
+      const day = `${date.getDate()}`.padStart(2, '0')
+      const month = `${date.getMonth() + 1}`.padStart(2, '0')
+      const year = date.getFullYear()
+
+      return `${day}.${month}.${year}`
+    }
+
     const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
       []
 
     const introPromises: Promise<string>[] = []
 
     for (const item of data) {
-      const locations = mapLocations(item)
-      const introHtml = item.inngangur ?? ''
+      const introHtml = item.introduction ?? ''
       introPromises.push(convertHtmlToPlainText(introHtml))
+
+      const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+        []
+
+      const locationTitles =
+        item.locations
+          ?.split(',')
+          .map((location) => location.trim())
+          .filter(Boolean) ?? []
+
+      for (const title of locationTitles) {
+        locations.push({
+          postalCode: item.postCode ?? undefined,
+          title,
+        })
+      }
+
       mappedData.push({
-        id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
-        title: item.fyrirsogn,
-        applicationDeadlineFrom: item.umsoknarfrestur_fra,
-        applicationDeadlineTo: item.umsoknarfrestur_til,
+        id: item.vacancyID
+          ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
+          : undefined,
+        title: item.heading ?? undefined,
+        applicationDeadlineFrom: formatDate(item.publishDate),
+        applicationDeadlineTo: formatDate(item.openTo),
         intro: '',
-        fieldOfWork: item.starfssvid,
-        institutionName: item.stofnunHeiti,
+        fieldOfWork: item.jobTitle ?? undefined,
+        institutionName: item.orgName ?? undefined,
         institutionReferenceIdentifier:
-          typeof item.stofnunNr === 'number'
-            ? String(item.stofnunNr)
-            : item.stofnunNr,
-        logoUrl: item.logoURL,
+          typeof item.orgNr === 'number' && item.orgNr !== null
+            ? String(item.orgNr)
+            : item.orgNr ?? undefined,
+        logoUrl: item.logoUrl ?? undefined,
         locations,
       })
     }
