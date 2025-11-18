@@ -1,7 +1,6 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
-import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
@@ -13,7 +12,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,7 +33,6 @@ import {
   CaseType,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
-  IndictmentSubtype as TTIndictmentSubtype,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -189,7 +187,6 @@ export class PoliceService {
   })
 
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentSubtype)
     private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
