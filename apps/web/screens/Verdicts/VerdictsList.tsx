@@ -78,35 +78,35 @@ const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
 const DISTRICT_COURT_TAGS = [
   {
     label: 'Reykjavík',
-    value: 'Héraðsdómur Reykjavíkur',
+    value: 'hd-reykjavik',
   },
   {
     label: 'Vesturland',
-    value: 'Héraðsdómur Vesturlands',
+    value: 'hd-vesturland',
   },
   {
     label: 'Vestfirðir',
-    value: 'Héraðsdómur Vestfjarða',
+    value: 'hd-vestfirdir',
   },
   {
     label: 'Norðurland vestra',
-    value: 'Héraðsdómur Norðurlands vestra',
+    value: 'hd-nordurland-vestra',
   },
   {
     label: 'Norðurland eystra',
-    value: 'Héraðsdómur Norðurlands eystra',
+    value: 'hd-nordurland-eystra',
   },
   {
     label: 'Austurland',
-    value: 'Héraðsdómur Austurlands',
+    value: 'hd-austurland',
   },
   {
     label: 'Suðurland',
-    value: 'Héraðsdómur Suðurlands',
+    value: 'hd-sudurland',
   },
   {
     label: 'Reykjanes',
-    value: 'Héraðsdómur Reykjaness',
+    value: 'hd-reykjanes',
   },
 ]
 
