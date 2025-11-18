@@ -1,10 +1,17 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { InvoiceItem } from './invoiceItem.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoice')
 export class Invoice {
   @Field(() => ID)
-  cacheId!: number
+  id!: number
 
-  @Field({ description: 'Invoice number' })
-  number!: string
+  @Field({ description: 'ISO8601' })
+  date!: string
+
+  @Field(() => [InvoiceItem])
+  itemization!: InvoiceItem[]
+
+  @Field(() => Int)
+  totalItemizationAmount!: number
 }

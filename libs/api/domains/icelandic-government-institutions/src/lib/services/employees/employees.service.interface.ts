@@ -1,5 +1,5 @@
-import { EmployeeList } from '../../models/employeeList.model'
+import { Employees } from '../../models/employees.model'
 
 export interface IEmployeesService {
-  getEmployees(organizationId: string): Promise<EmployeeList>
+  getEmployees(organizationId: string): Promise<Employees>
 }

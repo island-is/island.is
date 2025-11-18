@@ -1,9 +1,11 @@
 import { Audit } from '@island.is/nest/audit'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
-import { InvoiceList } from '../models/invoiceList.model'
 import { Inject } from '@nestjs/common'
+import { InvoicesInput } from '../dtos/getInvoices.input'
+import { InvoicesFilters } from '../models/invoicesFilters'
+import { Invoices } from '../models/invoices.model'
 
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
@@ -13,12 +15,34 @@ export class InvoicesResolver {
     private readonly invoiceService: IInvoicesService,
   ) {}
 
-  @Query(() => InvoiceList, {
+  @Query(() => Invoices, {
     name: 'icelandicGovernmentInstitutionsInvoices',
     nullable: true,
   })
   @BypassAuth()
-  async getInvoices(): Promise<InvoiceList | null> {
-    return this.invoiceService.getOpenInvoices()
+  async getInvoices(
+    @Args('input', { type: () => InvoicesInput })
+    input: InvoicesInput,
+  ): Promise<Invoices | null> {
+    return this.invoiceService.getOpenInvoices(input)
+  }
+
+  @Query(() => InvoicesFilters, {
+    name: 'icelandicGovernmentInstitutionsInvoicesFilters',
+    nullable: true,
+  })
+  @BypassAuth()
+  async getInvoicesFilters(): Promise<InvoicesFilters | null> {
+    const [customers, suppliers, invoiceTypes] = await Promise.all([
+      this.invoiceService.getCustomers({ limit: 1000 }),
+      this.invoiceService.getSuppliers({ limit: 1000 }),
+      this.invoiceService.getInvoiceTypes({ limit: 1000 }),
+    ])
+
+    return {
+      customers: customers ?? undefined,
+      suppliers: suppliers ?? undefined,
+      invoiceTypes: invoiceTypes ?? undefined,
+    }
   }
 }
