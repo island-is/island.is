@@ -62,7 +62,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
       .contractPost({
         leaseApplication,
       })
-      .catch(async (error) => {
+      .catch((error) => {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
 
