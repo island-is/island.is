@@ -133,7 +133,6 @@ const template: ApplicationTemplate<
         label: information.labels.buyer.title,
       },
       { key: 'buyer.approved', isListed: false },
-      { key: 'buyerOperator.$.nationalId', isListed: false },
     ],
   },
   stateMachineConfig: {
