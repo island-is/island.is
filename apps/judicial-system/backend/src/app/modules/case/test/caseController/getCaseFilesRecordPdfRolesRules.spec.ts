@@ -6,26 +6,16 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../../../guards'
+import { verifyRolesRules } from '../../../../test'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Get case files record pdf rules', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let rules: any[]
-
-  beforeEach(() => {
-    rules = Reflect.getMetadata(
-      'roles-rules',
-      CaseController.prototype.getCaseFilesRecordPdf,
-    )
-  })
-
-  it('should give permission to roles', () => {
-    expect(rules).toHaveLength(6)
-    expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(prosecutorRepresentativeRule)
-    expect(rules).toContain(publicProsecutorStaffRule)
-    expect(rules).toContain(districtCourtJudgeRule)
-    expect(rules).toContain(districtCourtRegistrarRule)
-    expect(rules).toContain(districtCourtAssistantRule)
-  })
+  verifyRolesRules(CaseController, 'getCaseFilesRecordPdf', [
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  ])
 })
