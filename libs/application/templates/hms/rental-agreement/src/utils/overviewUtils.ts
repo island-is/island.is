@@ -94,14 +94,12 @@ const getApplicantsItem = (
     return []
   }
 
-  const fullName = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.fullName',
-  )
-  const nationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
+  const fullName =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName') ??
+    getValueViaPath<string>(externalData, 'identity.data.name')
+  const nationalId =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+    getValueViaPath<string>(externalData, 'identity.data.nationalId')
   const userProfile = getValueViaPath<UserProfile>(
     externalData,
     'userProfile.data',
