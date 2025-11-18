@@ -1,28 +1,28 @@
 export const MOCK_CHART_1 = [
   {
     institution: 'Landsspítali',
-    amount: 124000
+    amount: 124000,
   },
   {
     institution: 'Reykjavíkurborg',
-    amount: 118500
+    amount: 118500,
   },
   {
     institution: 'Háskóli Íslands',
-    amount: 127300
+    amount: 127300,
   },
   {
     institution: 'Sjúkrahúsið á Akureyri',
-    amount: 119800
+    amount: 119800,
   },
   {
     institution: 'Vegagerðin',
-    amount: 122900
+    amount: 122900,
   },
   {
     institution: 'Heilbrigðisstofnun Austurlands',
-    amount: 116400
-  }
+    amount: 116400,
+  },
 ]
 
 export const MOCK_CHART_3 = [

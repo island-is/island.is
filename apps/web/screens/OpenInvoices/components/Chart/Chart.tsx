@@ -8,19 +8,19 @@ import {
   ResponsiveContainer,
   Text as ChartText,
   XAxis,
-  YAxis} from 'recharts'
-import { CartesianViewBox } from "recharts/types/util/types"
+  YAxis,
+} from 'recharts'
+import { CartesianViewBox } from 'recharts/types/util/types'
 
 import { ArrowLink, Box, Inline, Text } from "@island.is/island-ui/core"
 import { theme } from "@island.is/island-ui/theme"
 
 import * as styles from './Chart.css'
 
-
 interface AxisTickProps {
   x?: number
   y?: number
-  offset?: number,
+  offset?: number
   payload?: { value: string }
 }
 
@@ -113,9 +113,11 @@ export const Chart = ({title, link, outlined, chart }: Props) => {
             left: 50,
           }}
         >
-          <CartesianGrid
-            vertical={false}
-            stroke="#CCDFFF"
+          <CartesianGrid vertical={false} stroke="#CCDFFF" />
+          <XAxis
+            dataKey="institution"
+            tick={<CustomizedAxisTick />}
+            interval={0}
           />
           {chart.legend && <ChartLegend content={<Legend />} wrapperStyle={{ left: 100, bottom: 24 }} align="left" verticalAlign="bottom" />}
           <XAxis dataKey={chart.xAxisOptions?.datakey} tick={<CustomizedAxisTick />} interval={0} />
