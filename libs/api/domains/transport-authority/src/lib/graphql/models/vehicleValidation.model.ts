@@ -19,4 +19,16 @@ export class ExemptionValidation {
 
   @Field(() => [ExemptionValidationMessage], { nullable: true })
   errorMessages?: ExemptionValidationMessage[] | null
+
+  @Field(() => Number)
+  numberOfAxles?: number
+
+  @Field(() => String)
+  color?: string
+
+  @Field(() => String)
+  make?: string
+
+  @Field(() => String)
+  permno?: string
 }
