@@ -11,60 +11,16 @@ import { VacancyResponseDto } from '@island.is/clients/financial-management-auth
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
-interface DefaultApiVacancyContact {
-  '@nr'?: number
-  nafn?: string
-  netfang?: string
-  simi?: string | number
-  starfsheiti?: string
-}
+const formatDate = (date?: Date | null) => {
+  if (!date) {
+    return undefined
+  }
 
-interface DefaultApiVacancyLocation {
-  '@kodi'?: number
-  '@text'?: string
-}
+  const day = `${date.getDate()}`.padStart(2, '0')
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const year = date.getFullYear()
 
-export interface DefaultApiVacanciesListItem {
-  birt?: string
-  fyrirsogn?: string
-  haefnikrofur?: string
-  heimilisfang?: string
-  id?: number
-  inngangur?: string
-  language?: string
-  languages?: string
-  launaskilmali?: string
-  launaskilmaliFull?: string
-  logoURL?: string
-  other_languages?: null
-  postfang?: string
-  skipulagseining?: string
-  stadsetningar?:
-    | {
-        stadsetning?: DefaultApiVacancyLocation
-      }
-    | DefaultApiVacancyLocation[]
-  starfshlutfall?: string
-  starfssvid?: string
-  stettarfelagHeiti?: string
-  stofnunHeiti?: string
-  stofnunNr?: string | number
-  tengilidir?:
-    | {
-        tengilidur?: DefaultApiVacancyContact
-      }
-    | DefaultApiVacancyContact[]
-  umsoknarfrestur_fra?: string
-  umsoknarfrestur_til?: string
-  undirtexti?: string | null
-  verkefni?: string
-  vinnutimaskipulag?: string
-  weblink?: { url?: string; text?: string }
-  weblink_extra?: null
-}
-
-export interface DefaultApiVacancyDetails {
-  starfsauglysing: DefaultApiVacanciesListItem
+  return `${day}.${month}.${year}`
 }
 
 const convertHtmlToPlainText = async (html: string) => {
@@ -82,75 +38,6 @@ const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
     document: richText,
     id,
   }
-}
-
-const mapLocations = (item: DefaultApiVacanciesListItem) => {
-  const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
-    []
-
-  if ('stadsetning' in (item?.stadsetningar ?? {})) {
-    const location = (
-      item.stadsetningar as {
-        stadsetning?: DefaultApiVacancyLocation
-      }
-    )['stadsetning']
-
-    if (location) {
-      locations.push({
-        postalCode: location['@kodi'],
-        title: location['@text'],
-      })
-    }
-  } else {
-    for (const location of (item?.stadsetningar as DefaultApiVacancyLocation[]) ??
-      []) {
-      if (location) {
-        locations.push({
-          postalCode: location['@kodi'],
-          title: location['@text'],
-        })
-      }
-    }
-  }
-  return locations
-}
-
-const mapContacts = (item: DefaultApiVacanciesListItem) => {
-  const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
-  if ('tengilidur' in (item?.tengilidir ?? {})) {
-    const contact = (
-      item.tengilidir as {
-        tengilidur?: DefaultApiVacancyContact
-      }
-    )['tengilidur']
-
-    if (contact) {
-      contacts.push({
-        email: contact?.netfang,
-        name: contact?.nafn,
-        phone:
-          typeof contact?.simi === 'number'
-            ? String(contact?.simi)
-            : contact?.simi,
-        jobTitle: contact?.starfsheiti,
-      })
-    }
-  } else {
-    for (const contact of (item.tengilidir as DefaultApiVacancyContact[]) ??
-      []) {
-      if (contact) {
-        contacts.push({
-          email: contact?.netfang,
-          name: contact?.nafn,
-          phone:
-            typeof contact?.simi === 'number'
-              ? String(contact?.simi)
-              : contact?.simi,
-        })
-      }
-    }
-  }
-  return contacts
 }
 
 export const sortVacancyList = (
@@ -181,18 +68,6 @@ export const sortVacancyList = (
 
 export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
   async (data: VacancyResponseDto[]) => {
-    const formatDate = (date?: Date | null) => {
-      if (!date) {
-        return undefined
-      }
-
-      const day = `${date.getDate()}`.padStart(2, '0')
-      const month = `${date.getMonth() + 1}`.padStart(2, '0')
-      const year = date.getFullYear()
-
-      return `${day}.${month}.${year}`
-    }
-
     const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
       []
 
@@ -250,12 +125,53 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
 
 export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem =
   async (
-    vacancy: DefaultApiVacancyDetails,
+    vacancy: VacancyResponseDto,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
-    const item = vacancy.starfsauglysing
+    const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+      []
 
-    const contacts = mapContacts(item)
-    const locations = mapLocations(item)
+    const locationTitles =
+      vacancy.locations
+        ?.split(',')
+        .map((location) => location.trim())
+        .filter(Boolean) ?? []
+
+    for (const title of locationTitles) {
+      locations.push({
+        postalCode: vacancy.postCode ?? undefined,
+        title,
+      })
+    }
+
+    const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
+
+    if (
+      vacancy.contact1Name ||
+      vacancy.contact1EmailAddress ||
+      vacancy.contact1PhoneNumber ||
+      vacancy.contact1JobTitle
+    ) {
+      contacts.push({
+        name: vacancy.contact1Name ?? undefined,
+        email: vacancy.contact1EmailAddress ?? undefined,
+        phone: vacancy.contact1PhoneNumber ?? undefined,
+        jobTitle: vacancy.contact1JobTitle ?? undefined,
+      })
+    }
+
+    if (
+      vacancy.contact2Name ||
+      vacancy.contact2EmailAddress ||
+      vacancy.contact2PhoneNumber ||
+      vacancy.contact2JobTitle
+    ) {
+      contacts.push({
+        name: vacancy.contact2Name ?? undefined,
+        email: vacancy.contact2EmailAddress ?? undefined,
+        phone: vacancy.contact2PhoneNumber ?? undefined,
+        jobTitle: vacancy.contact2JobTitle ?? undefined,
+      })
+    }
 
     const [
       intro,
@@ -264,39 +180,41 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       description,
       salaryTerms,
     ] = await Promise.all([
-      convertHtmlToContentfulRichText(item.inngangur ?? '', 'intro'),
+      convertHtmlToContentfulRichText(vacancy.introduction ?? '', 'intro'),
       convertHtmlToContentfulRichText(
-        item.haefnikrofur ?? '',
+        vacancy.qualifications ?? '',
         'qualificationRequirements',
       ),
       convertHtmlToContentfulRichText(
-        item.verkefni ?? '',
+        vacancy.assignments ?? '',
         'tasksAndResponsibilities',
       ),
-      convertHtmlToContentfulRichText(item.undirtexti ?? '', 'description'),
+      convertHtmlToContentfulRichText(vacancy.moreInfo ?? '', 'description'),
       convertHtmlToContentfulRichText(
-        item.launaskilmaliFull ?? '',
+        '',
         'salaryTerms',
       ),
     ])
 
     return {
-      id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
-      title: item.fyrirsogn,
-      applicationDeadlineFrom: item.umsoknarfrestur_fra,
-      applicationDeadlineTo: item.umsoknarfrestur_til,
+      id: vacancy.vacancyID
+        ? `${EXTERNAL_SYSTEM_ID_PREFIX}${vacancy.vacancyID}`
+        : undefined,
+      title: vacancy.heading ?? undefined,
+      applicationDeadlineFrom: formatDate(vacancy.publishDate),
+      applicationDeadlineTo: formatDate(vacancy.openTo),
       intro,
-      fieldOfWork: item.starfssvid,
-      institutionName: item.stofnunHeiti,
+      fieldOfWork: vacancy.jobTitle ?? undefined,
+      institutionName: vacancy.orgName ?? undefined,
       institutionReferenceIdentifier:
-        typeof item.stofnunNr === 'number'
-          ? String(item.stofnunNr)
-          : item.stofnunNr,
-      logoUrl: item.logoURL,
+        typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
+          ? String(vacancy.orgNr)
+          : vacancy.orgNr ?? undefined,
+      logoUrl: vacancy.logoUrl ?? undefined,
       locations,
       contacts,
-      jobPercentage: item.starfshlutfall,
-      applicationHref: item.weblink?.url,
+      jobPercentage: vacancy.hoursRatio ?? undefined,
+      applicationHref: vacancy.webLinkUrl ?? undefined,
       qualificationRequirements,
       tasksAndResponsibilities,
       description,
