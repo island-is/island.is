@@ -52,7 +52,6 @@ export const BankAccountsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
     number[]
   >([])
@@ -65,6 +64,7 @@ export const BankAccountsRepeater: FC<
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
       replace(estateData.estate.bankAccounts)
     }
@@ -79,7 +79,7 @@ export const BankAccountsRepeater: FC<
       setForeignBankAccountIndexes(foreignIndexes)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Calculate bank account total from balance + accruedInterest
   const updateBankAccountValue = (
