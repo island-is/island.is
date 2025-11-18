@@ -5,6 +5,7 @@ import {
   GridColumnProps,
   GridRow,
   Inline,
+  ResponsiveProp,
   SkeletonLoader,
   Stack,
   Text,
@@ -26,6 +27,9 @@ type BaseProps = {
   isSubheading?: boolean
   children?: React.ReactNode
   buttonGroup?: Array<React.ReactNode>
+  buttonGroupAlignment?: ResponsiveProp<
+    'flexStart' | 'flexEnd' | 'spaceBetween'
+  >
   serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
   span?: GridColumnProps['span']
@@ -128,11 +132,22 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
       </GridRow>
       {!props.loading && props.buttonGroup && (
         <GridRow marginBottom={marginBottom ?? 4}>
-          <GridColumn>
-            <Box marginTop={4}>
-              <Inline space={2} alignY={'bottom'}>
-                {props.buttonGroup}
-              </Inline>
+          <GridColumn span={['12/12']}>
+            <Box
+              width="full"
+              marginTop={4}
+              display="flex"
+              flexDirection={isMobile ? 'column' : 'row'}
+              alignItems={isMobile ? 'flexStart' : 'flexEnd'}
+              rowGap={isMobile ? 2 : 0}
+              columnGap={2}
+              justifyContent={
+                isMobile
+                  ? 'flexStart'
+                  : props.buttonGroupAlignment ?? 'flexStart'
+              }
+            >
+              {props.buttonGroup}
             </Box>
           </GridColumn>
         </GridRow>

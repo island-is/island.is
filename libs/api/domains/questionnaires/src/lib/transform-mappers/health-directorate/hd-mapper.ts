@@ -304,11 +304,11 @@ export const mapExternalQuestionnaireToGraphQL = (
         : q.numSubmissions > 0
         ? QuestionnairesStatusEnum.answered
         : QuestionnairesStatusEnum.notAnswered,
-      description: isDetailed ? q.message : q.message || undefined,
+      description: isDetailed ? q.message ?? undefined : q.message || undefined,
       formId: q.questionnaireId,
       organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
     },
-    expirationDate: isDetailed ? q.expiryDate : undefined,
+    expirationDate: isDetailed ? q.expiryDate ?? undefined : undefined,
     canSubmit: isDetailed ? q.canSubmit : undefined,
     submissions: isDetailed
       ? q.submissions.map((sub) => ({

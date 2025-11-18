@@ -4,18 +4,17 @@ import {
   QuestionnaireQuestionnairesStatusEnum,
   QuestionnaireSubmissionDetail,
 } from '@island.is/api/schema'
-import { Box, Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Button, Tag, TagVariant } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
-  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
@@ -23,6 +22,7 @@ import { useGetQuestionnaireQuery } from './questionnaires.generated'
 const QuestionnaireDetail: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -64,12 +64,15 @@ const QuestionnaireDetail: FC = () => {
     undefined as QuestionnaireSubmissionDetail | undefined,
   )
 
-  const answerLink = HealthPaths.HealthQuestionnairesAnswered.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  )
-    .replace(':id', id)
-    .replace(':submissionId', latestSubmission?.id ?? '')
+  const answerLink = latestSubmission
+    ? HealthPaths.HealthQuestionnairesAnswered.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      ).replace(':id', id)
+    : HealthPaths.HealthQuestionnairesAnswered.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      ).replace(':id', id)
 
   const link = isAnswered
     ? answerLink
@@ -121,32 +124,42 @@ const QuestionnaireDetail: FC = () => {
       loading={loading}
       buttonGroup={[
         link ? (
-          <LinkButton
-            key={'answer-link'}
-            variant="utility"
-            colorScheme="primary"
-            size="small"
-            icon="open"
-            to={link}
-            text={
-              isAnswered && !isExpired
+          <Box style={{ minWidth: 175 }} key={'answer-link-box'}>
+            <Button
+              key={'answer-link'}
+              variant="utility"
+              colorScheme={isAnswered ? 'light' : 'primary'}
+              size="small"
+              onClick={() =>
+                navigate(link, {
+                  state: { submissionId: latestSubmission?.id },
+                })
+              }
+            >
+              {isAnswered && !isExpired
                 ? formatMessage(messages.seeAnswers)
                 : isDraft
                 ? formatMessage(messages.continueDraftQuestionnaire)
-                : formatMessage(messages.answer)
-            }
-          />
+                : formatMessage(messages.answer)}
+            </Button>
+          </Box>
         ) : null,
         isDraft && answerLink !== link ? (
-          <LinkButton
-            key={'answered-link'}
-            variant="utility"
-            colorScheme="light"
-            size="small"
-            icon="arrowForward"
-            to={answerLink}
-            text={formatMessage(messages.seeAnswers)}
-          />
+          <Box style={{ minWidth: 175 }} key={'answer-link-box'}>
+            <Button
+              key={'answer-link'}
+              variant="utility"
+              colorScheme="light"
+              size="small"
+              onClick={() =>
+                navigate(answerLink, {
+                  state: { submissionId: latestSubmission?.id },
+                })
+              }
+            >
+              {formatMessage(messages.seeAnswers)}
+            </Button>
+          </Box>
         ) : null,
       ]}
     >

@@ -1,27 +1,34 @@
 import { QuestionnaireAnsweredQuestionnaire } from '@island.is/api/schema'
-import { Box, Button, Select, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Inline,
+  Select,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   AnsweredQuestionnaire,
   formatDate,
   IntroWrapper,
-  LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { HealthPaths, messages } from '../..'
 import * as styles from './Questionnaires.css'
 import { useGetAnsweredQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireAnswered: React.FC = () => {
-  const { id, submissionId, org } = useParams<{
+  const { id, org } = useParams<{
     id?: string
-    submissionId?: string
     org?: string
   }>()
+  const location = useLocation()
   const navigate = useNavigate()
+  const submissionId = location.state?.submissionId
+
   const { formatMessage, lang } = useLocale()
   const [currentSubmission, setCurrentSubmission] =
     useState<QuestionnaireAnsweredQuestionnaire>()
@@ -74,47 +81,64 @@ const QuestionnaireAnswered: React.FC = () => {
       title={data?.getAnsweredQuestionnaire?.data[0]?.title || ''}
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
+      buttonGroupAlignment={'spaceBetween'}
       buttonGroup={[
-        hasMoreThanOneSubmission ? (
-          <Box className={styles.select}>
-            <Select
-              options={data?.getAnsweredQuestionnaire?.data?.map(
-                (submission) => ({
-                  value: submission.id,
-                  label: submission.date
+        <Box>
+          <Inline space={2} alignY={'bottom'}>
+            <Box className={styles.select}>
+              <Select
+                options={data?.getAnsweredQuestionnaire?.data?.map(
+                  (submission) => ({
+                    value: submission.id,
+                    label: submission.date
+                      ? formatMessage(messages.answeredAt, {
+                          arg: formatDate(submission.date),
+                        })
+                      : formatMessage(messages.unknown),
+                  }),
+                )}
+                defaultValue={{
+                  label: currentSubmission?.date
                     ? formatMessage(messages.answeredAt, {
-                        arg: formatDate(submission.date),
+                        arg: formatDate(currentSubmission.date),
                       })
                     : formatMessage(messages.unknown),
-                }),
-              )}
-              defaultValue={{
-                label: currentSubmission?.date
-                  ? formatMessage(messages.answeredAt, {
-                      arg: formatDate(currentSubmission.date),
-                    })
-                  : formatMessage(messages.unknown),
-                value: currentSubmission?.id || '',
-              }}
-              key="submission-select"
-              onChange={(option) =>
-                handleSubmissionChange(option?.value as string)
-              }
-              size="xs"
-            />
-          </Box>
-        ) : null,
-        isDraft ? (
-          <LinkButton
-            key={'answer-link'}
-            variant="utility"
-            colorScheme="primary"
-            size="small"
-            icon="open"
-            to={link}
-            text={formatMessage(messages.continueDraftQuestionnaire)}
-          />
-        ) : null,
+                  value: currentSubmission?.id || '',
+                }}
+                value={{
+                  label: currentSubmission?.date
+                    ? formatMessage(messages.answeredAt, {
+                        arg: formatDate(currentSubmission.date),
+                      })
+                    : formatMessage(messages.unknown),
+                  value: currentSubmission?.id || '',
+                }}
+                key="submission-select"
+                onChange={(option) =>
+                  handleSubmissionChange(option?.value as string)
+                }
+                size="xs"
+              />
+            </Box>
+
+            {isDraft ? (
+              <Button
+                key={'answer-link'}
+                variant="utility"
+                colorScheme="primary"
+                size="small"
+                fluid
+                onClick={() =>
+                  navigate(link, {
+                    state: { submissionId: currentSubmission?.id },
+                  })
+                }
+              >
+                {formatMessage(messages.continueDraftQuestionnaire)}
+              </Button>
+            ) : null}
+          </Inline>
+        </Box>,
         <Button
           variant="utility"
           onClick={() => window.print()}
@@ -134,10 +158,7 @@ const QuestionnaireAnswered: React.FC = () => {
       )}
       {data?.getAnsweredQuestionnaire && !loading && !error && (
         <Box>
-          {/* Add your questionnaire display logic here */}
-          <AnsweredQuestionnaire
-            questionnaire={data.getAnsweredQuestionnaire?.data[0]}
-          />
+          <AnsweredQuestionnaire questionnaire={currentSubmission} />
         </Box>
       )}
       {!loading && !data?.getAnsweredQuestionnaire && !error && (

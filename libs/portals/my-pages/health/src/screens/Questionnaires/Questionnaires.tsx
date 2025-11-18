@@ -10,10 +10,10 @@ import {
   Input,
   Stack,
   Text,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   formatDate,
   IntroWrapper,
@@ -242,14 +242,16 @@ const Questionnaires: React.FC = () => {
                 <ActionCard
                   key={questionnaire.id}
                   heading={questionnaire.title}
-                  text={questionnaire.description ?? ''}
+                  headingVariant="h4"
+                  subText={questionnaire.description ?? ''}
                   eyebrow={
                     questionnaire.organization ===
                     QuestionnaireQuestionnairesOrganizationEnum.EL
                       ? 'Embætti Landlæknis'
                       : 'Landspítali'
                   }
-                  date={formatDate(questionnaire.sentDate)}
+                  eyebrowColor="purple400"
+                  text={formatDate(questionnaire.sentDate)}
                   tag={{
                     label: isAnswered
                       ? formatMessage(messages.answeredQuestionnaire)
@@ -263,10 +265,6 @@ const Questionnaires: React.FC = () => {
                     variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
                   }}
                   cta={{
-                    internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
-                      ':org',
-                      questionnaire.organization?.toLocaleLowerCase() ?? '',
-                    ).replace(':id', questionnaire.id),
                     label: formatMessage(messages.seeMore),
                     variant: 'text',
                     icon: 'arrowForward',

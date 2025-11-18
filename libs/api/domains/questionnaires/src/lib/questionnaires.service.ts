@@ -141,7 +141,7 @@ export class QuestionnairesService {
             lastUpdated: sub.lastUpdatedDate ?? undefined,
           })),
           canSubmit: data.canSubmit,
-          expirationDate: data.expiryDate,
+          expirationDate: data.expiryDate ?? undefined,
         }
   }
 
@@ -373,7 +373,7 @@ export class QuestionnairesService {
                 : _locale === 'is'
                 ? 'Ónefndur spurningalisti'
                 : 'Untitled questionnaire',
-              description: q.message,
+              description: q.message ?? undefined,
               sentDate: q.lastSubmitted?.toDateString() || '',
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,

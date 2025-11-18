@@ -1,7 +1,4 @@
 import { QuestionnaireAnsweredQuestionnaire } from '@island.is/api/schema'
-import React from 'react'
-import { formatDateWithTime } from '../../utils/dateUtils'
-import { NestedLines } from '../NestedLines/NestedLines'
 import {
   Box,
   Divider,
@@ -9,17 +6,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { InfoLineStack } from '../InfoLine/InfoLineStack'
-import { InfoLine } from '../InfoLine/InfoLine'
+import React from 'react'
+import { formatDateWithTime } from '../../utils/dateUtils'
 
 interface AnsweredQuestionnaireProps {
-  // Define your props here
   questionnaire?: QuestionnaireAnsweredQuestionnaire
 }
 
-// Helper function to check if a string is a valid date
 const isValidDate = (dateString: string): boolean => {
-  // Check if it matches common date formats (ISO, etc.)
   const date = new Date(dateString)
 
   // Check if it's a valid date
@@ -39,7 +33,6 @@ const isValidDate = (dateString: string): boolean => {
   return hasDatePattern
 }
 
-// Helper function to format value if it's a date
 const formatValue = (value: string): string => {
   if (isValidDate(value)) {
     return formatDateWithTime(value)
@@ -52,9 +45,6 @@ export const AnsweredQuestionnaire: React.FC<AnsweredQuestionnaireProps> = ({
 }) => {
   return (
     <Box>
-      <Text>
-        {questionnaire?.date && formatDateWithTime(questionnaire?.date)}
-      </Text>
       <GridColumn span={['12/12', '12/12', '10/12']}>
         <Stack space={4}>
           {questionnaire?.answers?.map((item) => (
