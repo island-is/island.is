@@ -52,17 +52,3 @@ export const outerSlider = style({
   height: 16,
   padding: 4,
 })
-
-// globalStyle(`${scaleContainer} ${scaleButton}:first-child`, {
-//   borderTopLeftRadius: theme.border.radius.standard,
-//   borderBottomLeftRadius: theme.border.radius.standard,
-//   borderLeft: '1px solid',
-//   borderTop: '1px solid',
-//   borderBottom: '1px solid',
-//   borderColor: theme.color.blue200,
-// })
-
-// globalStyle(`${scaleContainer} ${scaleButton}:last-child`, {
-//   borderTopRightRadius: theme.border.radius.standard,
-//   borderBottomRightRadius: theme.border.radius.standard,
-// })

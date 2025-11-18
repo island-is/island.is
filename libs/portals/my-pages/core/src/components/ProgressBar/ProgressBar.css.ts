@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const inner = style({
   bottom: 0,
@@ -14,7 +14,11 @@ export const vertical = style({
   height: 'auto',
 })
 
-export const options = {}
+export const options = {
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  hyphens: 'auto',
+}
 
 export const dot = style({
   width: '8px',
@@ -98,4 +102,19 @@ export const textFirst = style({
 
 export const textLast = style({
   width: '33.333%',
+})
+
+export const optionsDescription = style({
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+})
+globalStyle(`${options} p`, {
+  fontSize: 14,
 })

@@ -122,20 +122,22 @@ const QuestionnaireAnswered: React.FC = () => {
             </Box>
 
             {isDraft ? (
-              <Button
-                key={'answer-link'}
-                variant="utility"
-                colorScheme="primary"
-                size="small"
-                fluid
-                onClick={() =>
-                  navigate(link, {
-                    state: { submissionId: currentSubmission?.id },
-                  })
-                }
-              >
-                {formatMessage(messages.continueDraftQuestionnaire)}
-              </Button>
+              <Box className={styles.button}>
+                <Button
+                  fluid
+                  key={'answer-link'}
+                  variant="utility"
+                  colorScheme="primary"
+                  size="small"
+                  onClick={() =>
+                    navigate(link, {
+                      state: { submissionId: currentSubmission?.id },
+                    })
+                  }
+                >
+                  {formatMessage(messages.continueDraftQuestionnaire)}
+                </Button>
+              </Box>
             ) : null}
           </Inline>
         </Box>,
@@ -157,7 +159,7 @@ const QuestionnaireAnswered: React.FC = () => {
         <Problem type="internal_service_error" noBorder error={error} />
       )}
       {data?.getAnsweredQuestionnaire && !loading && !error && (
-        <Box>
+        <Box marginTop={4}>
           <AnsweredQuestionnaire questionnaire={currentSubmission} />
         </Box>
       )}

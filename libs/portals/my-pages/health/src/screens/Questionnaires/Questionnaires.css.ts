@@ -5,3 +5,7 @@ export const select = style({
   marginTop: 0,
   paddingTop: 0,
 })
+
+export const button = style({
+  minWidth: 175, // minWidth from design
+})

@@ -18,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
+import * as styles from './Questionnaires.css'
 
 const QuestionnaireDetail: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
@@ -124,9 +125,10 @@ const QuestionnaireDetail: FC = () => {
       loading={loading}
       buttonGroup={[
         link ? (
-          <Box style={{ minWidth: 175 }} key={'answer-link-box'}>
+          <Box className={styles.button} key={'answer-link-box'}>
             <Button
               key={'answer-link'}
+              fluid
               variant="utility"
               colorScheme={isAnswered ? 'light' : 'primary'}
               size="small"
@@ -145,8 +147,9 @@ const QuestionnaireDetail: FC = () => {
           </Box>
         ) : null,
         isDraft && answerLink !== link ? (
-          <Box style={{ minWidth: 175 }} key={'answer-link-box'}>
+          <Box className={styles.button} key={'answer-link-box'}>
             <Button
+              fluid
               key={'answer-link'}
               variant="utility"
               colorScheme="light"

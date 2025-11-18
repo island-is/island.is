@@ -13,6 +13,8 @@ import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { Scale } from './QuestionsTypes/Scale'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface QuestionRendererProps {
   question: QuestionnaireQuestion
@@ -29,6 +31,9 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   disabled = false,
   error,
 }) => {
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+
   const handleValueChange = (
     value: string | string[] | number,
     _extraAnswers?: { [key: string]: QuestionAnswer },
@@ -234,16 +239,18 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             : 0
 
         return (
-          <ProgressBar
-            progress={progress}
-            label={question.label}
-            options={question.answerOptions.options?.map((option) => ({
-              label: option.label || '',
-              value: option.value || '',
-            }))}
-            selectedValue={selectedValue}
-            onOptionClick={(value) => handleValueChange(value)}
-          />
+          <Box width={isMobile ? 'full' : 'half'}>
+            <ProgressBar
+              progress={progress}
+              label={question.label}
+              options={question.answerOptions.options?.map((option) => ({
+                label: option.label || '',
+                value: option.value || '',
+              }))}
+              selectedValue={selectedValue}
+              onOptionClick={(value) => handleValueChange(value)}
+            />
+          </Box>
         )
       }
 
