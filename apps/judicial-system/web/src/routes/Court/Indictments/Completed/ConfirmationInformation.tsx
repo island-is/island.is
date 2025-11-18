@@ -117,7 +117,7 @@ export const ConfirmationInformation = ({
 
                             return (
                               <li key={defendant.id + i}>
-                                <Text as="span">{info.label}</Text>
+                                <Text as="span">{info.label['is']}</Text>
                               </li>
                             )
                           },

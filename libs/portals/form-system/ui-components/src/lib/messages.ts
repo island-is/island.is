@@ -1040,5 +1040,9 @@ export const m = defineMessages({
     id: 'form.system:create-application',
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
   },
 })

@@ -45,7 +45,6 @@ export const OtherAssetsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
@@ -57,11 +56,11 @@ export const OtherAssetsRepeater: FC<
   )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.otherAssets) {
       replace(estateData.estate.otherAssets)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Clear errors when other asset value changes
   const updateOtherAssetValue = (fieldIndex: string) => {

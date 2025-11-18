@@ -3,11 +3,12 @@ import {
   buildSection,
   buildImageField,
 } from '@island.is/application/core'
-import { sectionImage } from '../../../assets/sectionImage'
+import { HandShake } from '@island.is/application/assets/graphics'
 
 import { application as applicationMessages } from '../../../lib/messages'
 export const secondSectionInformation = buildSection({
   id: 'secondSectionInformation',
+  title: applicationMessages.secondSectionStepperTitle,
   children: [
     buildMultiField({
       id: 'secondSectionInformation',
@@ -16,7 +17,7 @@ export const secondSectionInformation = buildSection({
       children: [
         buildImageField({
           id: 'secondSectionImage',
-          image: sectionImage,
+          image: HandShake,
           doesNotRequireAnswer: true,
         }),
       ],
