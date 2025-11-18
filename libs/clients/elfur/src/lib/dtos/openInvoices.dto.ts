@@ -1,15 +1,8 @@
-export interface OpenInvoicesDto {
-  invoices: Array<OpenInvoiceDto> | null
-  pageInfo: {
-    hasNextPage: boolean
-    hasPreviousPage?: boolean
-    startCursor?: string
-    endCursor?: string
-  }
-  totalCount: number
-}
+import { InvoiceDto } from './invoice.dto'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
-export interface OpenInvoiceDto {
-  cacheId: number
-  id: string
+export interface OpenInvoicesDto {
+  invoices: Array<InvoiceDto> | null
+  pageInfo: PageInfoDto
+  totalCount: number
 }

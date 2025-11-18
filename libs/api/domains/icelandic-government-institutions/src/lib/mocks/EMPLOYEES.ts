@@ -1,6 +1,6 @@
-import { EmployeeList } from '../models/employeeList.model'
+import { Employees } from '../models/employees.model'
 
-export const MOCK_EMPLOYEES: EmployeeList = {
+export const MOCK_EMPLOYEES: Employees = {
   totalCount: 2,
   pageInfo: {
     hasNextPage: false,

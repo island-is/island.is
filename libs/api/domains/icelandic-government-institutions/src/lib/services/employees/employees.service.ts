@@ -1,6 +1,6 @@
 import { ElfurClientService } from '@island.is/clients/elfur'
 import { Injectable } from '@nestjs/common'
-import { EmployeeList } from '../../models/employeeList.model'
+import { Employees } from '../../models/employees.model'
 import { mapEmployee } from '../../mappers/employeeMapper'
 import { isDefined } from '@island.is/shared/utils'
 import { type IEmployeesService } from './employees.service.interface'
@@ -9,7 +9,7 @@ import { type IEmployeesService } from './employees.service.interface'
 export class EmployeesService implements IEmployeesService {
   constructor(private elfurService: ElfurClientService) {}
 
-  async getEmployees(organizationId: string): Promise<EmployeeList> {
+  async getEmployees(organizationId: string): Promise<Employees> {
     const data = await this.elfurService.getOrganizationEmployees(
       organizationId,
     )
