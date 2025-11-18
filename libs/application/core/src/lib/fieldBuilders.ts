@@ -1283,7 +1283,7 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
-    isTrailer
+    isTrailer,
   } = data
 
   return {
