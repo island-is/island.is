@@ -9,10 +9,13 @@ import {
   Text as ChartText,
   XAxis,
   YAxis,
+  Tooltip,
+  DefaultTooltipContent,
+  TooltipProps,
 } from 'recharts'
 import { CartesianViewBox } from 'recharts/types/util/types'
 
-import { ArrowLink, Box, Inline, Text } from "@island.is/island-ui/core"
+import { ArrowLink, Box, Hidden, Inline, Stack, Text } from "@island.is/island-ui/core"
 import { theme } from "@island.is/island-ui/theme"
 
 import * as styles from './Chart.css'
@@ -85,6 +88,9 @@ interface Props {
     legend?: {
       title?: string
     }
+    tooltip?: {
+      title?: string
+    }
   }
 }
 
@@ -119,6 +125,8 @@ export const Chart = ({title, link, outlined, chart }: Props) => {
             tick={<CustomizedAxisTick />}
             interval={0}
           />
+          {//chart.tooltip && <Tooltip content={<InvoiceTooltip />} />
+          }
           {chart.legend && <ChartLegend content={<Legend />} wrapperStyle={{ left: 100, bottom: 24 }} align="left" verticalAlign="bottom" />}
           <XAxis dataKey={chart.xAxisOptions?.datakey} tick={<CustomizedAxisTick />} interval={0} />
           <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000', dx: -7}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />

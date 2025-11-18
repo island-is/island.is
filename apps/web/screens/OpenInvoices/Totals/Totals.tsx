@@ -188,7 +188,7 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
             </GridRow>
             <GridRow>
               <GridColumn offset={['0', '0', '0', '1/12', '1/12']} span={['12/12', '12/12', '10/12', '10/12', '10/12']}>
-                <Chart outlined={false} chart={{ bars: [{datakey: '2024', fill: theme.color.blue400}, {datakey: '2025', fill: theme.color.purple400}], dataset: MOCK_CHART_3, xAxisOptions: {datakey: 'month'}, legend: {} } } />
+                <Chart outlined={false} chart={{ bars: [{datakey: '2024', fill: theme.color.blue400}, {datakey: '2025', fill: theme.color.purple400}], dataset: MOCK_CHART_3, xAxisOptions: {datakey: 'month'}, legend: {}, tooltip: {}} } />
               </GridColumn>
             </GridRow>
           </GridContainer>
