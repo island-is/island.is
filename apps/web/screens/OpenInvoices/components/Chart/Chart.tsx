@@ -1,27 +1,20 @@
-import { useMeasure, useWindowSize } from "react-use"
-import cn from 'classnames'
 import {
   Bar,
   BarChart,
   CartesianGrid,
   LabelProps,
-  Legend,
-  Line,
-  LineChart,
+  Legend as ChartLegend,
+  LegendProps,
   ResponsiveContainer,
   Text as ChartText,
-  Tooltip,
   XAxis,
   YAxis} from 'recharts'
 import { CartesianViewBox } from "recharts/types/util/types"
 
-import { ArrowLink, Box, Icon, LinkV2, Text } from "@island.is/island-ui/core"
-import { formatCurrency } from "@island.is/shared/utils"
+import { ArrowLink, Box, Inline, Text } from "@island.is/island-ui/core"
+import { theme } from "@island.is/island-ui/theme"
 
-import { MOCK_CHART_1 } from "../../Totals/mockData"
 import * as styles from './Chart.css'
-import { theme, UNIT } from "@island.is/island-ui/theme"
-import { M } from "msw/lib/glossary-2792c6da"
 
 
 interface AxisTickProps {
@@ -29,12 +22,6 @@ interface AxisTickProps {
   y?: number
   offset?: number,
   payload?: { value: string }
-}
-
-interface yAxisLabelProps {
-  label?: string
-  labelRight?: string
-  rightPadding?: number
 }
 
 const CustomizedYAxisLabel = (data: LabelProps) => {
@@ -61,35 +48,64 @@ const CustomizedAxisTick = ({x,y ,payload}: AxisTickProps) => {
   </ChartText>
 }
 
+
+const Legend = (props: LegendProps) => {
+  const { payload } = props
+
+  if (!payload?.length) {
+    return null
+  }
+
+  return (
+    <Inline space={3}>{payload.map(entry => {
+      return (
+        <Box display="flex" alignItems='center'>
+          <Box marginRight={1} className={styles.legendIcon} style={{background: entry.color}}/>
+          <Text>{entry.value}</Text>
+        </Box>)})}</Inline>
+  )
+}
+
 interface Props {
-  title: string
+  title?: string
   link?: {
     text: string;
     url: string;
   }
-  chartData: unknown[]
+  outlined?: boolean
+  chart: {
+    bars?: Array<{
+      datakey: string,
+      fill: string
+    }>
+    dataset: unknown[]
+    xAxisOptions: {
+      datakey: string
+    }
+    legend?: {
+      title?: string
+    }
+  }
 }
 
-export const Chart = ({title, link, chartData }: Props) => {
-  if (!chartData || chartData.length < 1) {
-    return null;
-  }
+export const Chart = ({title, link, outlined, chart }: Props) => {
+  const isMultipleBars = (chart.bars?.length ?? 0) > 1;
 
   return (
-    <Box width="full" height="full" padding={4} background="white" border="standard"  borderRadius="large">
-     <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
-        <Text variant="h5">{title}</Text>
+    <Box width="full" height="full" padding={4} background="white" border={outlined ? 'standard' : 'disabled'}  borderRadius="large">
+    {(title || link) && <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
+        {title && <Text variant="h5">{title}</Text>}
         {link && <Box display="flex" alignItems="center">
           <ArrowLink href={link.url}>
             {link.text}
           </ArrowLink>
         </Box>}
-     </Box>
+     </Box>}
       <ResponsiveContainer aspect={1.5} width="100%" maxHeight={520}>
         <BarChart
-          barGap='20%'
-          barSize='8%'
-          data={chartData}
+          barGap='5%'
+          barSize={isMultipleBars ? '3%' : '8%'}
+          data={chart.dataset}
           margin={{
             top: 50,
             right: 50,
@@ -101,9 +117,11 @@ export const Chart = ({title, link, chartData }: Props) => {
             vertical={false}
             stroke="#CCDFFF"
           />
-          <XAxis dataKey="institution" tick={<CustomizedAxisTick />} interval={0} />
+          {chart.legend && <ChartLegend content={<Legend />} wrapperStyle={{ left: 100, bottom: 24 }} align="left" verticalAlign="bottom" />}
+          <XAxis dataKey={chart.xAxisOptions?.datakey} tick={<CustomizedAxisTick />} interval={0} />
           <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000', dx: -7}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />
-          <Bar dataKey="amount" fill="#0061FF" radius={[4, 4, 0, 0]}/>
+          { chart.bars?.map(bar => <Bar dataKey={bar.datakey} fill={bar.fill} radius={isMultipleBars ? [2,2,0,0] : [4, 4, 0, 0]}/>)
+          }
         </BarChart>
       </ResponsiveContainer>
     </Box>);

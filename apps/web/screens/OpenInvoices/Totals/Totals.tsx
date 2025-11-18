@@ -7,6 +7,9 @@ import { Bar,BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis 
 
 import {
   Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Stack,
   Text,
   Tooltip,
@@ -28,7 +31,8 @@ import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import { MOCK_CHART_1, MOCK_CHART_2 } from './mockData'
+import { MOCK_CHART_1, MOCK_CHART_2, MOCK_CHART_3 } from './mockData'
+import { theme } from '@island.is/island-ui/theme'
 
 const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
   locale,
@@ -168,11 +172,26 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
           <Box marginLeft={6}>
           <Text marginBottom={4}>Greiðslur á tímabilinu bleble 2024 - blabla 2025</Text>
           <Stack  space={3}>
-              <Chart title="Stærstu kaupendur" link={{ text: 'Sjá alla kaupendur', url: '/temp' }}  chartData={MOCK_CHART_1} />
-              <Chart title="Stærstu seljendur" link={{ text: 'Sjá alla seljendur', url: '/temp' }}  chartData={MOCK_CHART_2} />
+            <Chart title="Stærstu kaupendur" link={{ text: 'Sjá alla kaupendur', url: '/temp' }} chart={{ bars: [{datakey: 'amount', fill: theme.color.blue400}], dataset: MOCK_CHART_1, xAxisOptions: {datakey: 'institution'} } } />
+            <Chart title="Stærstu seljendur" link={{ text: 'Sjá alla seljendur', url: '/temp' }}  chart={{ bars: [{datakey: 'amount', fill: theme.color.blue400}], dataset: MOCK_CHART_2, xAxisOptions: {datakey: 'institution'} } } />
           </Stack>
           </Box>
       </SidebarLayout>
+        <Box paddingY={12} background="backgroundInvert">
+          <GridContainer>
+            <GridRow>
+              <GridColumn offset='1/12' span={['10/12', '10/12', '8/12', '8/12', '5/12']}>
+                <Text marginBottom={2}  variant="h1" as="h2">Greiðslur yfirstandandi árs</Text>
+                <Text marginBottom={4} variant="intro" >Grafið sýnir greidda reikninga það sem af er árinu, samanborið við sömu mánuði í fyrra. Allar tölur eru á núvirði.</Text>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn offset={['0', '0', '0', '1/12', '1/12']} span={['12/12', '12/12', '10/12', '10/12', '10/12']}>
+                <Chart outlined={false} chart={{ bars: [{datakey: '2024', fill: theme.color.blue400}, {datakey: '2025', fill: theme.color.purple400}], dataset: MOCK_CHART_3, xAxisOptions: {datakey: 'month'}, legend: {} } } />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
       </Box>
     </OpenInvoicesWrapper>
   )
