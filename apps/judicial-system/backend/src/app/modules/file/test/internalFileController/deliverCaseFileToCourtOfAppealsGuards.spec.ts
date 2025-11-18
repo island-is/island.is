@@ -1,10 +1,6 @@
-import { verifyRolesRules } from '../../../../test'
+import { verifyGuards } from '../../../../test'
 import { InternalFileController } from '../../internalFile.controller'
 
 describe('InternalCaseController - Deliver case file to court of appeals guards', () => {
-  verifyRolesRules(
-    InternalFileController,
-    'deliverCaseFileToCourtOfAppeals',
-    [],
-  )
+  verifyGuards(InternalFileController, 'deliverCaseFileToCourtOfAppeals', [])
 })
