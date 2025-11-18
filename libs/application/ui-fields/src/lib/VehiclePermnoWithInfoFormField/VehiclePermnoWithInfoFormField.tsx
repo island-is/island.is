@@ -131,7 +131,9 @@ export const VehiclePermnoWithInfoFormField: FC<
       setValue(hasErrorField, false)
       setVehicleValidation(null)
     } else {
-      loadVehicleDetails({ variables: { permno: permnoVal , isTrailer: isTrailer} })
+      loadVehicleDetails({
+        variables: { permno: permnoVal, isTrailer: isTrailer },
+      })
       loadVehicleValidation(permnoVal)
     }
   }
