@@ -88,7 +88,7 @@ export const AdditionalRealEstate = ({
   }, [getProperty, propertyNumberInput, setValue, setError])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={4}>
       <Controller
         name={initialField}
         control={control}
