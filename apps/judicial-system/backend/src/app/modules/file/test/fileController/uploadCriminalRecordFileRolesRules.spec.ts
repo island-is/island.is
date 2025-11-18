@@ -5,8 +5,8 @@ import {
 import { verifyRolesRules } from '../../../../test'
 import { FileController } from '../../file.controller'
 
-describe('FileController - Update case file to court rules', () => {
-  verifyRolesRules(FileController, 'updateFiles', [
+describe('FileController - Upload criminal record file rules', () => {
+  verifyRolesRules(FileController, 'uploadCriminalRecordFile', [
     prosecutorRule,
     prosecutorRepresentativeRule,
   ])
