@@ -66,7 +66,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
 
-        const mappedError = await errorMapper(error)
+        const mappedError = errorMapper(error)
 
         throw mappedError
       })

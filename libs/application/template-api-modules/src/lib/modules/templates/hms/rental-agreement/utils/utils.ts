@@ -190,32 +190,42 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
   )
 }
 
-export const errorMapper = async (error: { body?: string }) => {
-  const body = error.body ?? ''
-  switch (body) {
-    case 'This contract requires mobile signature authentication. Please ensure the user has mobile signature capabilities.':
-      return new TemplateApiError(
-        {
-          title: messages.errorMessages.mobileSignatureRequired,
-          summary: messages.errorMessages.mobileSignatureRequiredSummary,
-        },
-        400,
-      )
-    case 'Rental agreement already exists':
-      return new TemplateApiError(
-        {
-          title: messages.errorMessages.rentalAgreementAlreadyExists,
-          summary: messages.errorMessages.rentalAgreementAlreadyExistsSummary,
-        },
-        400,
-      )
-    default:
-      return new TemplateApiError(
-        {
-          title: messages.errorMessages.defaultErrorTitle,
-          summary: messages.errorMessages.defaultErrorSummary,
-        },
-        400,
-      )
+export const errorMapper = (error: {
+  body: { errorCode: string; details: unknown }
+}) => {
+  try {
+    const body = error.body
+    switch (body.errorCode) {
+      case '40001_mobile_signature_capabilities_missing':
+        const details = body.details as { phoneNumbers: string[] } // This field only applies here
+        return new TemplateApiError(
+          {
+            title: messages.errorMessages.mobileSignatureRequired,
+            summary: {
+              ...messages.errorMessages.mobileSignatureRequiredSummary,
+              values: {
+                phoneNumbers: details.phoneNumbers.join(', '),
+              },
+            },
+          },
+          400,
+        )
+      default:
+        return new TemplateApiError(
+          {
+            title: messages.errorMessages.defaultErrorTitle,
+            summary: messages.errorMessages.defaultErrorSummary,
+          },
+          400,
+        )
+    }
+  } catch (error) {
+    return new TemplateApiError(
+      {
+        title: messages.errorMessages.defaultErrorTitle,
+        summary: messages.errorMessages.defaultErrorSummary,
+      },
+      400,
+    )
   }
 }
