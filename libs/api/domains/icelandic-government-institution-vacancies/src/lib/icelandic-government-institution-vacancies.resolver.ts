@@ -17,8 +17,6 @@ import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicG
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import {
   CMS_ID_PREFIX,
-  DefaultApiVacanciesListItem,
-  DefaultApiVacancyDetails,
   EXTERNAL_SYSTEM_ID_PREFIX,
   mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem,
   mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem,
@@ -191,8 +189,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ) {
     const item = (await this.api.v1VacancyGetVacancyGet({
       vacancyId: id
-    })) as DefaultApiVacancyDetails
-    if (!item?.starfsauglysing) {
+    })) as VacancyResponseDto
+    if (!item) {
       return { vacancy: null }
     }
 
