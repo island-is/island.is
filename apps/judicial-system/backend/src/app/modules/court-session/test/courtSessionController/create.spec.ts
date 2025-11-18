@@ -1,13 +1,13 @@
 import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import { createTestingCourtSessionModule } from './createTestingCourtSessionModule'
+import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
 import {
   Case,
   CourtSession,
   CourtSessionRepositoryService,
-} from '../../repository'
+} from '../../../repository'
 
 interface Then {
   result: CourtSession | null

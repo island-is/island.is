@@ -1,9 +1,12 @@
 import { uuid } from 'uuidv4'
 
-import { createTestingCourtSessionModule } from './createTestingCourtSessionModule'
+import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
-import { CourtSession, CourtSessionRepositoryService } from '../../repository'
-import { UpdateCourtSessionDto } from '../dto/updateCourtSession.dto'
+import {
+  CourtSession,
+  CourtSessionRepositoryService,
+} from '../../../repository'
+import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
 interface Then {
   result: CourtSession | null
