@@ -96,6 +96,11 @@ export const mapRentalApplicationData = (
     })) || []),
   ]
 
+  console.log('--------------------------------')
+  console.dir(landlordsArray, { depth: null })
+  console.dir(tenantsArray, { depth: null })
+  console.log('--------------------------------')
+
   const propertyId = getPropertyId(units)
   const appraisalUnits = mapAppraisalUnits(units)
 
