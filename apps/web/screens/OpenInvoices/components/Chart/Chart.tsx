@@ -1,4 +1,4 @@
-import { useMeasure } from "react-use"
+import { useMeasure, useWindowSize } from "react-use"
 import cn from 'classnames'
 import {
   Bar,
@@ -15,11 +15,13 @@ import {
   YAxis} from 'recharts'
 import { CartesianViewBox } from "recharts/types/util/types"
 
-import { Box, Icon, LinkV2, Text } from "@island.is/island-ui/core"
+import { ArrowLink, Box, Icon, LinkV2, Text } from "@island.is/island-ui/core"
 import { formatCurrency } from "@island.is/shared/utils"
 
 import { MOCK_CHART_1 } from "../../Totals/mockData"
 import * as styles from './Chart.css'
+import { theme, UNIT } from "@island.is/island-ui/theme"
+import { M } from "msw/lib/glossary-2792c6da"
 
 
 interface AxisTickProps {
@@ -45,6 +47,7 @@ const CustomizedYAxisLabel = (data: LabelProps) => {
       dx={viewBox?.width}
       fill="#000000"
       textAnchor="start"
+      fontWeight={theme.typography.semiBold}
       width={180}>
       m.kr.
     </ChartText>
@@ -53,28 +56,40 @@ const CustomizedYAxisLabel = (data: LabelProps) => {
 
 
 const CustomizedAxisTick = ({x,y ,payload}: AxisTickProps) => {
-  return <ChartText x={x} y={y} style={{fontSize: "14px"}} fill="#000000" textAnchor="middle" width="30" verticalAnchor="start">
+  return <ChartText x={x} y={y} dy={15} className={styles.xAxisText} width="10" verticalAnchor="start">
      {payload?.value}
   </ChartText>
 }
 
-export const Chart = () => {
+interface Props {
+  title: string
+  link?: {
+    text: string;
+    url: string;
+  }
+  chartData: unknown[]
+}
+
+export const Chart = ({title, link, chartData }: Props) => {
+  if (!chartData || chartData.length < 1) {
+    return null;
+  }
+
   return (
     <Box width="full" height="full" padding={4} background="white" border="standard"  borderRadius="large">
      <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
-       <Text variant="h5">Stærstu kaupendur</Text>
-       <Box display="flex" alignItems="center">
-         <LinkV2 href={"/temp"} color="blue400" underline="normal" underlineVisibility="always">
-           Sjá alla kaupendur
-         </LinkV2>
-         <Icon icon="arrowForward" color="blue400" />
-       </Box>
+        <Text variant="h5">{title}</Text>
+        {link && <Box display="flex" alignItems="center">
+          <ArrowLink href={link.url}>
+            {link.text}
+          </ArrowLink>
+        </Box>}
      </Box>
       <ResponsiveContainer aspect={1.5} width="100%" maxHeight={520}>
         <BarChart
           barGap='20%'
-          barSize={56}
-          data={MOCK_CHART_1}
+          barSize='8%'
+          data={chartData}
           margin={{
             top: 50,
             right: 50,
@@ -87,72 +102,9 @@ export const Chart = () => {
             stroke="#CCDFFF"
           />
           <XAxis dataKey="institution" tick={<CustomizedAxisTick />} interval={0} />
-          <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000'}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />
-          <Bar dataKey="amount" fill="#0061FF" radius={[8, 8, 0, 0]}/>
+          <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000', dx: -7}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />
+          <Bar dataKey="amount" fill="#0061FF" radius={[4, 4, 0, 0]}/>
         </BarChart>
       </ResponsiveContainer>
     </Box>);
-
-  /*  return (
-    <Box
-      className={cn(styles.frameWrapper, {
-        [styles.scroll]: width < 800,
-      })}
-      borderColor="purple100"
-      borderWidth="standard"
-      borderRadius="large"
-      display="flex"
-      flexDirection="column"
-    >
-      <Box
-        ref={ref}
-        display="flex"
-        flexDirection="column"
-        flexGrow={1}
-        alignItems="stretch"
-        justifyContent="flexStart"
-      >
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className={styles.graphWrapper}
-      >
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          className={styles.graphParent}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              width={600}
-              height={600}
-              data={MOCK_CHART_1}
-              margin={{
-                top: 30,
-                right: 0,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray="0"
-                vertical={false}
-                stroke="#CCDFFF"
-              />
-              <XAxis
-                dataKey={'insitutions'}
-                stroke="#CCDFFF"
-                padding={{ left: 30 }}
-                tickLine={false}
-              />
-              <YAxis stroke="#CCDFFF" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Box>
-      </Box>
-      </Box>
-
-    </Box>
-  )*/
 }

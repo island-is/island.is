@@ -28,7 +28,7 @@ import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import { MOCK_CHART_1 } from './mockData'
+import { MOCK_CHART_1, MOCK_CHART_2 } from './mockData'
 
 const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
   locale,
@@ -168,7 +168,8 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
           <Box marginLeft={6}>
           <Text marginBottom={4}>Greiðslur á tímabilinu bleble 2024 - blabla 2025</Text>
           <Stack  space={3}>
-            <Chart />
+              <Chart title="Stærstu kaupendur" link={{ text: 'Sjá alla kaupendur', url: '/temp' }}  chartData={MOCK_CHART_1} />
+              <Chart title="Stærstu seljendur" link={{ text: 'Sjá alla seljendur', url: '/temp' }}  chartData={MOCK_CHART_2} />
           </Stack>
           </Box>
       </SidebarLayout>

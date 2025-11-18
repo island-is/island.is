@@ -15,6 +15,7 @@ interface Props {
   valueFrom: Date
   valueTo: Date
   onChange: (startDate: Date | undefined, endDate: Date | undefined) => void
+  initiallyExpanded?: boolean
 }
 
 export const FilterDateAccordion = ({
@@ -25,6 +26,7 @@ export const FilterDateAccordion = ({
   valueTo,
   placeholder,
   onChange,
+  initiallyExpanded = false,
 }: Props) => {
   return (
     <Box paddingTop={1} paddingX={3}>
@@ -41,6 +43,7 @@ export const FilterDateAccordion = ({
           labelUse="h5"
           labelVariant="h5"
           iconVariant="small"
+          startExpanded={initiallyExpanded}
         >
           <DatePicker
             name={id}

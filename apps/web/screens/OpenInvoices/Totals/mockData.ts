@@ -28,22 +28,22 @@ export const MOCK_CHART_1 = [
 export const MOCK_CHART_2 = [
   {
     institution: 'Orkuveita Reykjavíkur',
-    amount: '128.700'
+    amount: 128700
   },
   {
     institution: 'Landsvirkjun',
-    amount: '125.600'
+    amount: 125600
   },
   {
     institution: 'Pósturinn',
-    amount: '117.900'
+    amount: 117900
   },
   {
     institution: 'Loftbrú',
-    amount: '121.200'
+    amount: 121200
   },
   {
     institution: 'Þjóðskrá Íslands',
-    amount: '123.800'
+    amount: 123800
   }
 ]

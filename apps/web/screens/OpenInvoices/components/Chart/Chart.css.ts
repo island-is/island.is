@@ -1,3 +1,4 @@
+import { theme } from "@island.is/island-ui/theme";
 import { style } from "@vanilla-extract/css";
 
 
@@ -29,4 +30,10 @@ export const frameWrapper = style({
 
 export const scroll = style({
   overflowX: 'scroll',
+})
+
+export const xAxisText = style({
+  fill: theme.color.black,
+  fontSize: '14px',
+  textAnchor: 'middle',
 })
