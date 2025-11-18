@@ -16,6 +16,6 @@ export class PoliceCaseInfo {
   @Field(() => String, { nullable: true })
   readonly licencePlate?: string
 
-  @Field(() => IndictmentSubtype, { nullable: true })
-  readonly subtype?: keyof typeof IndictmentSubtype
+  @Field(() => [IndictmentSubtype], { nullable: true })
+  readonly subtypes?: keyof typeof IndictmentSubtype[]
 }

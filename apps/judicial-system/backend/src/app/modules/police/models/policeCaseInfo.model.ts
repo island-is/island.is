@@ -13,6 +13,6 @@ export class PoliceCaseInfo {
   @ApiPropertyOptional({ type: String })
   licencePlate?: string
 
-  @ApiPropertyOptional({ type: String })
-  subtype?: string
+  @ApiPropertyOptional({ type: String, isArray: true })
+  subtypes?: string[]
 }

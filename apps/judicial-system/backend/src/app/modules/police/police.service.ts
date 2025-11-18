@@ -34,6 +34,7 @@ import {
   CaseType,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
+  IndictmentSubtype as TTIndictmentSubtype,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -504,7 +505,7 @@ export class PoliceService {
                     IndictmentCaseSubtypes[
                       k as keyof typeof IndictmentCaseSubtypes
                     ] === subtype?.offenseType,
-                ) as keyof typeof IndictmentCaseSubtypes
+                )
 
                 const place = formatCrimeScenePlace(
                   info.gotuHeiti,
@@ -524,13 +525,19 @@ export class PoliceService {
                     place,
                     date,
                     licencePlate,
-                    subtype: key,
+                    subtypes: key ? [key] : [],
                   })
-                } else if (date && (!foundCase.date || date > foundCase.date)) {
-                  foundCase.place = place
-                  foundCase.date = date
-                  foundCase.licencePlate = licencePlate
-                  foundCase.subtype = key
+                } else {
+                  if (date && (!foundCase.date || date > foundCase.date)) {
+                    foundCase.place = place
+                    foundCase.date = date
+                    foundCase.licencePlate = licencePlate
+                    foundCase.subtypes = []
+                  }
+
+                  if (key && !foundCase.subtypes?.includes(key)) {
+                    foundCase.subtypes?.push(key)
+                  }
                 }
               },
             ),
