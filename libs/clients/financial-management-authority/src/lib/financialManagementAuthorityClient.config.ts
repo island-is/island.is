@@ -2,9 +2,11 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
-  xRoadServicePath: z.string(),
-  username: z.string(),
-  password: z.string(),
+  basePath: z.string(),
+  clientId: z.string(),
+  clientSecret: z.string(),
+  scope: z.string(),
+  authenticationServer: z.string(),
 })
 
 export const FinancialManagementAuthorityClientConfig = defineConfig<
@@ -13,11 +15,25 @@ export const FinancialManagementAuthorityClientConfig = defineConfig<
   name: 'FinancialManagementAuthorityClient',
   schema,
   load: (env) => ({
-    xRoadServicePath: env.required(
-      'XROAD_FINANCIAL_MANAGEMENT_AUTHORITY_PATH',
-      'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+    basePath: env.required(
+      'FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      '',
     ),
-    username: env.required('FINANCIAL_MANAGEMENT_AUTHORITY_USERNAME'),
-    password: env.required('FINANCIAL_MANAGEMENT_AUTHORITY_PASSWORD'),
+    clientId: env.required(
+      'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      ''
+    ),
+    clientSecret: env.required(
+      'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      '',
+    ),
+    scope: env.required(
+      'FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
+      ''
+    ),
+    authenticationServer: env.required(
+      'FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
+      '',
+    ),
   }),
 })
