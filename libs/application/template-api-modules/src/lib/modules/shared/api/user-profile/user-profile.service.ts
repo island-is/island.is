@@ -61,34 +61,54 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
-      return {
-        email: 'mockEmail@island.is',
-        mobilePhoneNumber: '9999999',
-      }
-    }
-
     const bankInfoRes =
       await this.bankinfoClientService.getBankAccountsForNationalId(
         auth.nationalId,
       )
 
-    if (bankInfoRes && params?.validateBankInformation) {
-      if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
-        // If individual does not have a valid bank account, then we fail this check
+    if (params?.validateBankInformation) {
+      if (!bankInfoRes) {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.noBankAccountError,
-            summary: coreErrorMessages.noBankAccountError,
+            summary: {
+              ...coreErrorMessages.noBankAccountErrorDescription,
+              values: {
+                link: this.getIDSLink(application, {
+                  email: false,
+                  phone: false,
+                }),
+              },
+            },
           },
           400,
         )
+      }
+      if (bankInfoRes) {
+        if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
+          // If individual does not have a valid bank account, then we fail this check
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.invalidBankAccountError,
+              summary: coreErrorMessages.invalidBankAccountError,
+            },
+            400,
+          )
+        }
       }
     }
 
     const bankInfo = bankInfoRes
       ? formatBankInfo(bankInfoRes.bankAccountInfo)
       : undefined
+
+    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
+      return {
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+        bankInfo: bankInfo ?? undefined,
+      }
+    }
 
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
