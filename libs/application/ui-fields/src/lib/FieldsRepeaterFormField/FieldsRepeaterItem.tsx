@@ -395,6 +395,7 @@ export const Item = ({
       errorTitle: item.errorTitle,
       fallbackErrorMessage: item.fallbackErrorMessage,
       validationFailedErrorMessage: item.validationFailedErrorMessage,
+      isTrailer: item.isTrailer ?? false,
     }
   }
 
