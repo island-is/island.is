@@ -603,7 +603,7 @@ export class CaseService {
   private async createCase(
     caseToCreate: CreateCaseDto,
     transaction: Transaction,
-  ): Promise<string> {
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.create(
       {
         ...caseToCreate,
@@ -622,7 +622,7 @@ export class CaseService {
       )
     }
 
-    return theCase.id
+    return theCase
   }
 
   private async handlePoliceCaseNumbersUpdate(
@@ -1878,11 +1878,13 @@ export class CaseService {
           transaction,
         )
 
-        const caseId = theCase.id
+        await this.defendantService.createForNewCase(
+          theCase.id,
+          {},
+          transaction,
+        )
 
-        await this.defendantService.createForNewCase(caseId, {}, transaction)
-
-        return caseId
+        return theCase.id
       })
       .then((caseId) => this.findById(caseId))
   }
