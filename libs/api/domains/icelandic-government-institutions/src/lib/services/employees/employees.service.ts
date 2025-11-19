@@ -10,13 +10,19 @@ import { type IEmployeesService } from './employees.service.interface'
 export class EmployeesService implements IEmployeesService {
   constructor(private elfurService: ElfurClientService) {}
 
-  async getEmployees(organizationId: string, locale: Locale): Promise<Employees> {
+  async getEmployees(
+    organizationId: string,
+    locale: Locale,
+  ): Promise<Employees> {
     const data = await this.elfurService.getOrganizationEmployees(
       organizationId,
     )
 
     return {
-      data: data.map((e) => mapEmployee(e)).filter(isDefined).sort((a,b) => a.name.localeCompare(b.name, locale)),
+      data: data
+        .map((e) => mapEmployee(e))
+        .filter(isDefined)
+        .sort((a, b) => a.name.localeCompare(b.name, locale)),
       totalCount: data.length,
       //until better
       pageInfo: {
