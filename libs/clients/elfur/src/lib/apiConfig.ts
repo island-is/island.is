@@ -27,7 +27,7 @@ export const apiConfigFactory = (
       if (name === 'X-ExecuteAsUsername') {
         return config.apiUsernameKey
       }
-      return '';
+      return ''
     },
     headers: {
       Accept: 'application/json',

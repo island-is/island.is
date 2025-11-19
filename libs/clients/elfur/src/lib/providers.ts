@@ -15,7 +15,10 @@ const apiLedger = [
   },
   {
     api: OpenInvoicesApi,
-    scopes: ['@fjs.is/elfur_openinvoices_read', '@fjs.is/elfur_organization_read'],
+    scopes: [
+      '@fjs.is/elfur_openinvoices_read',
+      '@fjs.is/elfur_organization_read',
+    ],
   },
 ]
 
