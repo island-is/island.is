@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  OperationVariables,
   ApolloCache,
   DefaultContext,
   MutationFunctionOptions,
+  OperationVariables,
 } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
-import { ControlState } from '../../hooks/controlReducer'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { ControlState } from '../../hooks/controlReducer'
 
 export const updateFormFn = async (
   control: ControlState,
@@ -32,7 +32,10 @@ export const updateFormFn = async (
           updateFormDto: {
             organizationId: newForm.organizationId,
             name: newForm.name,
-            organizationDisplayName: newForm.organizationDisplayName,
+            organizationDisplayName: {
+              is: newForm.organizationDisplayName?.is ?? '',
+              en: newForm.organizationDisplayName?.en ?? '',
+            },
             slug: newForm.slug,
             invalidationDate:
               newForm.invalidationDate === null
@@ -40,9 +43,28 @@ export const updateFormFn = async (
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
             applicationDaysToRemove: newForm.applicationDaysToRemove,
-            stopProgressOnValidatingScreen:
-              newForm.stopProgressOnValidatingScreen,
-            completedMessage: newForm.completedMessage,
+            allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
+            hasPayment: newForm.hasPayment,
+            hasSummaryScreen: newForm.hasSummaryScreen,
+            completedSectionInfo: {
+              title: {
+                is: newForm.completedSectionInfo?.title?.is ?? '',
+                en: newForm.completedSectionInfo?.title?.en ?? '',
+              },
+              confirmationHeader: {
+                is: newForm.completedSectionInfo?.confirmationHeader?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationHeader?.en ?? '',
+              },
+              confirmationText: {
+                is: newForm.completedSectionInfo?.confirmationText?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationText?.en ?? '',
+              },
+              additionalInfo:
+                newForm.completedSectionInfo?.additionalInfo?.map((info) => ({
+                  is: info?.is ?? '',
+                  en: info?.en ?? '',
+                })) ?? [],
+            },
             dependencies: newForm.dependencies ?? [],
           },
         },

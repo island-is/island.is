@@ -13,7 +13,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class LimitedAccessWriteCaseFileGuard implements CanActivate {

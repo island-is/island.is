@@ -1,16 +1,16 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
-  GridRow as Row,
-  GridColumn as Column,
-  Select,
   Box,
+  GridColumn as Column,
+  GridRow as Row,
+  Select,
 } from '@island.is/island-ui/core'
-import { useFormContext, Controller } from 'react-hook-form'
 import { Dispatch, useEffect } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
-import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
@@ -88,6 +88,7 @@ export const TimeInput = ({ item, dispatch }: Props) => {
     <Row marginTop={2}>
       <Column span="3/10">
         <Controller
+          key={`hour.${item.id}`}
           name={`${item.id}.hour`}
           control={control}
           defaultValue={
@@ -120,6 +121,7 @@ export const TimeInput = ({ item, dispatch }: Props) => {
       <Box style={{ lineHeight: '90px' }}>:</Box>
       <Column span="3/10">
         <Controller
+          key={`minute.${item.id}`}
           name={`${item.id}.minute`}
           control={control}
           defaultValue={

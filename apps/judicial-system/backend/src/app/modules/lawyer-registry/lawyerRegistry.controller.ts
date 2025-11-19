@@ -19,7 +19,7 @@ import { TokenGuard } from '@island.is/judicial-system/auth'
 import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { LawyerRegistry } from './lawyerRegistry.model'
+import { LawyerRegistry } from '../repository'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
 @UseGuards(TokenGuard)

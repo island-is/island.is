@@ -18,6 +18,7 @@ import {
   checkHasFreightPairingItemWithExemptionForWeight,
   checkHasAnyConvoyWithTrailer,
   checkIsConvoyWithTrailer,
+  checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { Application } from '@island.is/application/types'
 import { DollyType } from '../../../shared'
@@ -26,6 +27,7 @@ export const vehicleSpacingSection = buildSection({
   id: 'vehicleSpacingSection',
   title: vehicleSpacing.general.sectionTitle,
   condition: (answers) =>
+    checkIfExemptionTypeShortTerm(answers) &&
     checkHasAnyConvoyWithTrailer(answers) &&
     checkHasFreightPairingItemWithExemptionForWeight(answers),
   children: [

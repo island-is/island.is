@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -19,8 +23,12 @@ import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionCollector } from './models/collector.model'
-import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import {
+  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
+} from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionCandidateIdInput } from './dto'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -32,14 +40,6 @@ export class SignatureCollectionService {
     if (!signee.ownedLists?.some((list) => list.id === listId)) {
       throw new NotFoundException('List not found')
     }
-  }
-
-  async currentCollection(
-    collectionTypeFilter: CollectionType,
-  ): Promise<SignatureCollection[]> {
-    return await this.signatureCollectionClientService.currentCollection(
-      collectionTypeFilter,
-    )
   }
 
   async getLatestCollectionForType(
@@ -69,7 +69,7 @@ export class SignatureCollectionService {
   }
 
   async listsForUser(
-    { collectionId }: SignatureCollectionIdInput,
+    { collectionId, collectionType }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
@@ -81,6 +81,7 @@ export class SignatureCollectionService {
         collectionId: collectionId,
         areaId: signee.area?.id,
         onlyActive: true,
+        collectionType,
       },
       user,
     )
@@ -106,7 +107,11 @@ export class SignatureCollectionService {
     signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionList> {
     this.checkListAccess(listId, signee)
-    return await this.signatureCollectionClientService.getList(listId, user)
+    try {
+      return await this.signatureCollectionClientService.getList(listId, user)
+    } catch (e) {
+      throw new MethodNotAllowedException((e as Error).message)
+    }
   }
 
   async signedList(
@@ -233,6 +238,16 @@ export class SignatureCollectionService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.signatureCollectionClientService.getCandidateSummaryReport(
+      user,
+      input.candidateId,
     )
   }
 }

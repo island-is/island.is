@@ -120,7 +120,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="deregisterVehicle" loading={loading}>
+    <AuthGuard permission="deregisterVehicle" loading={loading && !vehicleData}>
       <PartnerPageLayout
         side={
           <Sidenav

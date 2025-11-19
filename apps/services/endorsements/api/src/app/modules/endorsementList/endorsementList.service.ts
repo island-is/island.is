@@ -32,6 +32,7 @@ import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl
 import * as path from 'path'
 import * as nationalId from 'kennitala'
 import format from 'date-fns/format'
+import { PassThrough } from 'stream'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -545,8 +546,10 @@ export class EndorsementListService {
     const footerY = doc.page.height - 60
     doc.image(footerImagePath, 60, footerY, { width: 120 })
 
+    const stream = new PassThrough()
+    doc.pipe(stream)
     doc.end()
-    return await getStream.buffer(doc)
+    return await getStream.buffer(stream)
   }
 
   async emailPDF(

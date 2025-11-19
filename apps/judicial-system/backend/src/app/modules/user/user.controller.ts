@@ -37,12 +37,12 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { User } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { CreateUserValidator } from './interceptors/createUser.validator'
 import { UpdateUserValidator } from './interceptors/updateUser.validator'
 import { UserInterceptor } from './interceptors/user.interceptor'
-import { User } from './user.model'
 import { UserService } from './user.service'
 
 @Controller('api')

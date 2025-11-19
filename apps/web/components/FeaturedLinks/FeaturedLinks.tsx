@@ -10,42 +10,48 @@ export const FeaturedLinks = ({ links }: FeaturedLinksProps) => {
   const { linkResolver } = useLinkResolver()
   return (
     <Inline space={2}>
-      {links.map(({ title, attention, thing }) => {
-        if (!thing?.type || !thing?.slug) {
-          return (
-            <Tag key={title} variant="blue" attention={attention}>
-              {title}
-            </Tag>
-          )
-        }
-        const cardUrl = linkResolver(thing.type as LinkType, [thing.slug])
-        if (!cardUrl?.href) {
-          return (
-            <Tag key={title} variant="blue" attention={attention}>
-              {title}
-            </Tag>
-          )
-        }
+      {links
+        .filter((link) => Boolean(link.title?.trim()))
+        .map(({ title, attention, thing }) => {
+          if (!thing?.type || !thing?.slug) {
+            return (
+              <Tag key={title} variant="blue" attention={attention}>
+                {title}
+              </Tag>
+            )
+          }
+          const cardUrl = linkResolver(thing.type as LinkType, [thing.slug])
+          if (!cardUrl?.href) {
+            return (
+              <Tag key={title} variant="blue" attention={attention}>
+                {title}
+              </Tag>
+            )
+          }
 
-        return (
-          <Tag
-            key={title}
-            {...(cardUrl.href.startsWith('/')
-              ? {
-                  CustomLink: ({ children, ...props }) => (
-                    <LinkV2 {...props} {...cardUrl} dataTestId="featured-link">
-                      {children}
-                    </LinkV2>
-                  ),
-                }
-              : { href: cardUrl.href })}
-            variant="blue"
-            attention={attention}
-          >
-            {title}
-          </Tag>
-        )
-      })}
+          return (
+            <Tag
+              key={title}
+              {...(cardUrl.href.startsWith('/')
+                ? {
+                    CustomLink: ({ children, ...props }) => (
+                      <LinkV2
+                        {...props}
+                        {...cardUrl}
+                        dataTestId="featured-link"
+                      >
+                        {children}
+                      </LinkV2>
+                    ),
+                  }
+                : { href: cardUrl.href })}
+              variant="blue"
+              attention={attention}
+            >
+              {title}
+            </Tag>
+          )
+        })}
     </Inline>
   )
 }

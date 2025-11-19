@@ -1,7 +1,6 @@
 import {
   buildCheckboxField,
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildSelectField,
@@ -16,12 +15,13 @@ import {
 } from '@island.is/application/ui-components'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { hasOtherGuardian } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getGuardianByNationalId,
   getOtherGuardian,
-  hasOtherGuardian,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const guardiansSubSection = buildSubSection({
   id: 'guardiansSubSection',
@@ -45,11 +45,7 @@ export const guardiansSubSection = buildSubSection({
           dataTestId: 'fullName1',
           disabled: true,
           defaultValue: (application: Application) =>
-            (
-              application.externalData.nationalRegistry?.data as {
-                fullName?: string
-              }
-            )?.fullName,
+            getApplicationExternalData(application.externalData).applicantName,
         }),
         buildTextField({
           id: 'guardians[0].nationalId',
@@ -59,11 +55,8 @@ export const guardiansSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            (
-              application.externalData.nationalRegistry?.data as {
-                nationalId?: string
-              }
-            )?.nationalId,
+            getApplicationExternalData(application.externalData)
+              .applicantNationalId,
         }),
         buildTextField({
           id: 'guardians[0].address.streetAddress',
@@ -71,10 +64,9 @@ export const guardiansSubSection = buildSubSection({
           width: 'half',
           dataTestId: 'address1',
           disabled: true,
-          defaultValue: (application: Application) => {
-            return getApplicationExternalData(application.externalData)
-              .applicantAddress
-          },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .applicantAddress,
         }),
         buildTextField({
           id: 'guardians[0].address.postalCode',
@@ -82,10 +74,9 @@ export const guardiansSubSection = buildSubSection({
           width: 'half',
           dataTestId: 'postalCode1',
           disabled: true,
-          defaultValue: (application: Application) => {
-            return getApplicationExternalData(application.externalData)
-              .applicantPostalCode
-          },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .applicantPostalCode,
         }),
         buildTextField({
           id: 'guardians[0].address.city',
@@ -93,10 +84,8 @@ export const guardiansSubSection = buildSubSection({
           width: 'half',
           dataTestId: 'city1',
           disabled: true,
-          defaultValue: (application: Application) => {
-            return getApplicationExternalData(application.externalData)
-              .applicantCity
-          },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData).applicantCity,
         }),
         buildTextField({
           id: 'guardians[0].email',
@@ -106,28 +95,25 @@ export const guardiansSubSection = buildSubSection({
           variant: 'email',
           required: true,
           defaultValue: (application: Application) =>
-            (
-              application.externalData.userProfile?.data as {
-                email?: string
-              }
-            )?.email,
+            getApplicationExternalData(application.externalData)
+              .userProfileEmail,
         }),
         buildPhoneField({
           id: 'guardians[0].phoneNumber',
           title: newPrimarySchoolMessages.shared.phoneNumber,
           width: 'half',
-          defaultValue: (application: Application) => {
-            const phoneNumber = (
-              application.externalData.userProfile?.data as {
-                mobilePhoneNumber?: string
-              }
-            )?.mobilePhoneNumber
-
-            return formatPhoneNumber(removeCountryCode(phoneNumber ?? ''))
-          },
           dataTestId: 'phone1',
           placeholder: '000-0000',
           required: true,
+          defaultValue: (application: Application) => {
+            const { userProfilePhoneNumber } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return formatPhoneNumber(
+              removeCountryCode(userProfilePhoneNumber ?? ''),
+            )
+          },
         }),
         buildCheckboxField({
           id: 'guardians[0].requiresInterpreter',
@@ -155,15 +141,6 @@ export const guardiansSubSection = buildSubSection({
             return !!guardians?.[0]?.requiresInterpreter?.includes(YES)
           },
         }),
-        buildHiddenInput({
-          id: 'guardians[0].citizenshipCode',
-          defaultValue: (application: Application) =>
-            (
-              application.externalData.nationalRegistry?.data as {
-                citizenship?: { code: string }
-              }
-            )?.citizenship?.code,
-        }),
 
         buildDescriptionField({
           id: 'guardiansInfo2',
@@ -181,7 +158,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.fullName,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.fullName,
         }),
         buildTextField({
           id: 'guardians[1].nationalId',
@@ -193,7 +171,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.nationalId,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.nationalId,
         }),
         buildTextField({
           id: 'guardians[1].address.streetAddress',
@@ -204,7 +183,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.streetName,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.streetName,
         }),
         buildTextField({
           id: 'guardians[1].address.postalCode',
@@ -215,7 +195,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.postalCode,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.postalCode,
         }),
         buildTextField({
           id: 'guardians[1].address.city',
@@ -226,7 +207,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.city,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.city,
         }),
         buildTextField({
           id: 'guardians[1].email',
@@ -237,6 +219,19 @@ export const guardiansSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const otherGuardian = getOtherGuardian(
+              application.answers,
+              application.externalData,
+            )
+
+            const guardian = getGuardianByNationalId(
+              application.externalData,
+              otherGuardian?.nationalId || '',
+            )
+
+            return guardian?.email || ''
+          },
         }),
         buildPhoneField({
           id: 'guardians[1].phoneNumber',
@@ -247,6 +242,19 @@ export const guardiansSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const otherGuardian = getOtherGuardian(
+              application.answers,
+              application.externalData,
+            )
+
+            const guardian = getGuardianByNationalId(
+              application.externalData,
+              otherGuardian?.nationalId || '',
+            )
+
+            return guardian?.phone || ''
+          },
         }),
         buildCheckboxField({
           id: 'guardians[1].requiresInterpreter',
@@ -277,18 +285,6 @@ export const guardiansSubSection = buildSubSection({
               hasOtherGuardian(answers, externalData) &&
               !!guardians?.[1]?.requiresInterpreter?.includes(YES)
             )
-          },
-        }),
-        buildHiddenInput({
-          id: 'guardians[1].citizenshipCode',
-          condition: (answers, externalData) =>
-            hasOtherGuardian(answers, externalData),
-          defaultValue: (application: Application) => {
-            const { otherGuardianCitizenshipCode } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            return otherGuardianCitizenshipCode
           },
         }),
       ],

@@ -22,6 +22,7 @@ export const FieldTypesEnum = {
   TIME_INPUT: 'TIME_INPUT',
   FILE: 'FILE',
   PAYMENT: 'PAYMENT',
+  APPLICANT: 'APPLICANT',
 } as const
 
 export const CertificationTypesEnum = {
@@ -44,6 +45,8 @@ export const ApplicantTypesEnum = {
   INDIVIDUAL_WITH_PROCURATION: 'INDIVIDUAL_WITH_PROCURATION',
   INDIVIDUAL_GIVING_DELEGATION: 'INDIVIDUAL_GIVING_DELEGATION',
   LEGAL_ENTITY: 'LEGAL_ENTITY',
+  LEGAL_ENTITY_OF_PROCURATION_HOLDER: 'LEGAL_ENTITY_OF_PROCURATION_HOLDER',
+  LEGAL_GUARDIAN: 'LEGAL_GUARDIAN',
 } as const
 
 export const ListTypesEnum = {
@@ -61,6 +64,8 @@ export const SectionTypes = {
   PARTIES: 'PARTIES',
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
+  SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 } as const
 
 export const UrlMethods = {

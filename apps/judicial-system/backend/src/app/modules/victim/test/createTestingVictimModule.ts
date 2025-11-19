@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { CaseService } from '../../case'
-import { Victim } from '../models/victim.model'
+import { Victim } from '../../repository'
 import { VictimController } from '../victim.controller'
 import { VictimService } from '../victim.service'
 

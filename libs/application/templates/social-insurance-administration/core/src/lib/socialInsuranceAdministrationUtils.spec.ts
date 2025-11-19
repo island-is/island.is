@@ -1,7 +1,7 @@
 import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType } from './constants'
 import {
-  bankInfoToString,
+  formatBankAccount,
   formatBank,
   formatBankInfo,
   friendlyFormatIBAN,
@@ -26,14 +26,14 @@ describe('formatBankInfo', () => {
   })
 })
 
-describe('bankInfoToString', () => {
-  it('format bank info to string', () => {
-    const bankInfo: BankInfo = {
+describe('formatBankAccount', () => {
+  it('format bank account to string', () => {
+    const bankInfo: PaymentInfo = {
       bankNumber: '2222',
       ledger: '00',
       accountNumber: '123456',
     }
-    const bankInfoString = bankInfoToString(bankInfo)
+    const bankInfoString = formatBankAccount(bankInfo)
     expect('2222-00-123456').toEqual(bankInfoString)
   })
 })
@@ -207,6 +207,38 @@ describe('shouldNotUpdateBankAccount', () => {
       bankName: 'Heiti banka',
       bankAddress: 'Heimili banka',
       currency: 'EUR',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(false).toEqual(res)
+  })
+
+  it('should return true if bank account returned from TR is not changed (BankAccountFormField)', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if bank account returned from TR is changed (BankAccountFormField)', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '000000',
     }
     const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
 

@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ScreenDto } from '../../../screens/models/dto/screen.dto'
-import { FieldDto } from '../../../fields/models/dto/field.dto'
-import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { ScreenDto } from '../../../screens/models/dto/screen.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -60,19 +60,22 @@ export class FormDto {
   status!: string
 
   @ApiProperty()
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
-  @ApiPropertyOptional({ type: LanguageType })
-  completedMessage?: LanguageType
+  @ApiProperty()
+  hasSummaryScreen!: boolean
+
+  @ApiPropertyOptional()
+  isZendeskEnabled?: boolean
+
+  @ApiProperty({ type: CompletedSectionInfo })
+  completedSectionInfo!: CompletedSectionInfo
 
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
-
-  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
-  applicantTypes?: FormApplicantTypeDto[]
 
   @ApiPropertyOptional({ type: [String] })
   urls?: string[]

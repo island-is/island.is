@@ -19,7 +19,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { ServiceRequirement, type User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -29,12 +29,12 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case, Defendant } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
@@ -88,21 +88,6 @@ export class DefendantController {
     @Body() defendantToUpdate: UpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
-
-    // If the defendant was present at the court hearing,
-    // then set the verdict view date to the case ruling date
-    // Otherwise we want to set the verdict view date to null
-    // in case it has already been set by selecting NOT_APPLICABLE
-    if (defendantToUpdate.serviceRequirement !== undefined) {
-      defendantToUpdate = {
-        ...defendantToUpdate,
-        verdictViewDate:
-          defendantToUpdate.serviceRequirement ===
-          ServiceRequirement.NOT_APPLICABLE
-            ? theCase.rulingDate
-            : null,
-      }
-    }
 
     return this.defendantService.update(
       theCase,

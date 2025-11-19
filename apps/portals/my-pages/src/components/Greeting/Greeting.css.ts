@@ -13,5 +13,5 @@ export const searchBox = style({
 
 export const image = style({
   width: '100%',
-  maxWidth: '432px',
+  maxWidth: '546px',
 })

@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
-  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { VictimService } from '../victim.service'
@@ -27,11 +27,11 @@ export class ValidateVictimGuard implements CanActivate {
 
     // We don't want to allow the user to access a victim without the case being specified first
     if (!theCase) {
-      throw new InternalServerErrorException('Missing case')
+      throw new BadRequestException('Missing case')
     }
 
     if (theCase.id !== request.victim.caseId) {
-      throw new InternalServerErrorException('Victim does not belong to case')
+      throw new BadRequestException('Victim does not belong to case')
     }
 
     return true

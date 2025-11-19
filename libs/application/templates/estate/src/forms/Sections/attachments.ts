@@ -2,9 +2,15 @@ import {
   buildSection,
   buildMultiField,
   buildFileUploadField,
+  buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { UPLOAD_ACCEPT, FILE_SIZE_LIMIT } from '../../lib/constants'
+import {
+  UPLOAD_ACCEPT,
+  FILE_SIZE_LIMIT,
+  EstateTypes,
+} from '../../lib/constants'
 
 export const attachments = buildSection({
   id: 'estateAttachments',
@@ -13,8 +19,26 @@ export const attachments = buildSection({
     buildMultiField({
       id: 'estateAttachments',
       title: m.attachmentsTitle,
-      description: m.attachmentsDescription,
+      description: ({ answers }) => {
+        const selectedEstate = getValueViaPath(answers, 'selectedEstate')
+        return selectedEstate === EstateTypes.officialDivision
+          ? m.attachmentsDescription
+          : selectedEstate === EstateTypes.estateWithoutAssets
+          ? m.attachmentsDescriptionEstateWithoutAssets
+          : selectedEstate === EstateTypes.permitForUndividedEstate
+          ? m.attachmentsDescriptionUndividedEstate
+          : m.attachmentsDescriptionDivisionOfEstateByHeirs
+      },
       children: [
+        buildTextField({
+          id: 'additionalComments',
+          title: m.additionalCommentsTitle,
+          description: m.additionalCommentsDescription,
+          placeholder: m.additionalCommentsPlaceholder,
+          variant: 'textarea',
+          rows: 4,
+          maxLength: 1800,
+        }),
         buildFileUploadField({
           id: 'estateAttachments.attached.file',
           title: m.attachmentsTitle,

@@ -142,6 +142,10 @@ export const spmm = defineMessages({
     id: 'sp.family:edit-link',
     defaultMessage: 'Breyta hjá Þjóðskrá',
   },
+  legalResidenceTooltip: {
+    id: 'sp.family:legal-residence-tooltip',
+    defaultMessage: 'Götuheiti, Húsnúmer, Íbúðarnúmer, Póstnúmer, Sveitarfélag',
+  },
 })
 
 export const mInformationNotifications = defineMessages({
@@ -468,7 +472,7 @@ export const emailsMsg = defineMessages({
   emailListText: {
     id: 'sp.settings:email-list-text',
     defaultMessage:
-      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér.Þú getur stillt {link}',
+      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér. Þú getur stillt {link}',
   },
   emailListTextLink: {
     id: 'sp.settings:email-list-text-link',

@@ -5,7 +5,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
-import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
@@ -36,7 +35,6 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
     host: string
   }
-  islykill: IslykillApiModuleConfig
 }
 
 export interface SharedModuleConfig

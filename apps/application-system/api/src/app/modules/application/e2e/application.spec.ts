@@ -77,11 +77,6 @@ const mockConfig = {
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
     },
-    islykill: {
-      cert: '',
-      passphrase: '',
-      basePath: '',
-    },
   },
 }
 

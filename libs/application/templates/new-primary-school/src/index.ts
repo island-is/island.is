@@ -4,6 +4,6 @@ export const getFields = () => import('./fields')
 
 export default NewPrimarySchoolTemplate
 
-export * from './lib/newPrimarySchoolUtils'
-export * from './lib/constants'
+export * from './utils/newPrimarySchoolUtils'
+export * from './utils/constants'
 export * from './lib/messages'

@@ -33,6 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .namespace(namespace)
     .image(imageName)
     .codeOwner(CodeOwners.Aranja)
+    .serviceAccount('services-auth-ids-api')
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -152,8 +153,9 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
     .image(imageName)
+    .serviceAccount('services-auth-ids-api-cleanup')
     .command('node')
-    .args('main.js', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .resources({
       limits: {
         cpu: '400m',

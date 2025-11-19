@@ -69,3 +69,10 @@ export enum PayInfoPaymentMeansEnum {
   Kreditkort = 'Kreditkort',
   Debetkort = 'Debetkort',
 }
+export interface PayeeInfo {
+  nationalId: string
+  name: string
+  address: string
+  zip: string
+  city: string
+}

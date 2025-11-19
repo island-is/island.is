@@ -18,6 +18,7 @@ export const getConvoyItems = (answers: FormValue): Convoy[] => {
 
   return items.map((item) => ({
     ...item,
+    convoyId: item.convoyId ?? '',
     trailer: item.trailer?.permno
       ? {
           permno: item.trailer.permno,

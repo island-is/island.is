@@ -66,7 +66,7 @@ export const userNotificationServiceSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
-    .args('--no-experimental-fetch', 'main.js')
+    .args('--no-experimental-fetch', 'main.cjs')
     .redis()
     .env(getEnv(services))
     .secrets({
@@ -140,7 +140,7 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .args('--no-experimental-fetch', 'main.cjs', '--job=worker')
     .db()
     .migrations()
     .redis()
@@ -189,7 +189,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .args('--no-experimental-fetch', 'main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
@@ -210,7 +210,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .command('node')
     .args(
       '--no-experimental-fetch',
-      'main.js',
+      'main.cjs',
       '--job=worker',
       '--isBirthdayWorker',
     )

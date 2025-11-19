@@ -15,7 +15,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { DateLog } from '../modules/case'
+import { DateLog } from '../modules/repository'
 import {
   filterWhitelistEmails,
   formatArraignmentDateEmailNotification,

@@ -4,18 +4,18 @@ export const vehicleSpacing = {
   general: defineMessages({
     sectionTitle: {
       id: 'ta.eft.application:vehicleSpacing.general.sectionTitle',
-      defaultMessage: 'Bil milli vagna',
+      defaultMessage: 'Bil milli bíls og eftirvagns',
       description: 'Title of vehicle spacing section',
     },
     pageTitle: {
       id: 'ta.eft.application:vehicleSpacing.general.pageTitle',
-      defaultMessage: 'Bil milli vagna',
+      defaultMessage: 'Bil milli bíls og eftirvagns',
       description: 'Title of vehicle spacing page',
     },
     description: {
       id: 'ta.eft.application:vehicleSpacing.general.description',
       defaultMessage:
-        'Gefa þarf upp bil í metrum milli aftasta öxuls ökutækis í fremsta öxul næsta ökutækis fyrir hvert ökutæki í vagnlest',
+        'Gefa þarf upp bil í metrum milli aftasta öxuls bíls og fremsta öxul eftirvagns eða dollý.',
       description: 'Description of vehicle spacing page',
     },
     convoySubtitle: {
@@ -25,14 +25,14 @@ export const vehicleSpacing = {
     },
     convoyDescription: {
       id: 'ta.eft.application:vehicleSpacing.general.convoyDescription',
-      defaultMessage: 'Ökutæki - {vehiclePermno}, eftirvagn - {trailerPermno}',
+      defaultMessage: 'Bíll - {vehiclePermno}, eftirvagn - {trailerPermno}',
       description: 'Convoy description',
     },
   }),
   labels: defineMessages({
     vehicleToDolly: {
       id: 'ta.eft.application:vehicleSpacing.labels.vehicleToDolly',
-      defaultMessage: 'Ökutæki í dollý',
+      defaultMessage: 'Bíll í dollý',
       description: 'Vehicle space from vehicle to dolly label',
     },
     dollyToTrailer: {
@@ -42,7 +42,7 @@ export const vehicleSpacing = {
     },
     vehicleToTrailer: {
       id: 'ta.eft.application:vehicleSpacing.labels.vehicleToTrailer',
-      defaultMessage: 'Ökutæki í eftirvagn',
+      defaultMessage: 'Bíll í eftirvagn',
       description: 'Vehicle space from vehicle to trailer label',
     },
     metersSuffix: {

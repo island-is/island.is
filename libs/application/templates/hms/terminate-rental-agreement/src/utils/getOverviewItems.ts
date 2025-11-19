@@ -6,6 +6,7 @@ import * as m from '../lib/messages'
 import { formatPhoneNumber, getSelectedContract } from './helpers'
 import { format as formatNationalId } from 'kennitala'
 import { FileType } from '../types'
+import { terminationReasonOptions } from '../utils/options'
 
 export const getPersonalInformationOverviewItems = (
   answers: FormValue,
@@ -163,6 +164,16 @@ export const getUnboundTerminationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const termimnationReason =
+    getValueViaPath<string>(
+      answers,
+      'unboundTermination.unboundTerminationReason',
+    ) ?? ''
+  const terminationReasonText =
+    terminationReasonOptions.find(
+      (option) => option.value === termimnationReason,
+    )?.label ?? ''
+
   return [
     {
       width: 'full',
@@ -176,11 +187,7 @@ export const getUnboundTerminationOverviewItems = (
     {
       width: 'full',
       keyText: m.overviewMessages.terminationReason,
-      valueText:
-        getValueViaPath<string>(
-          answers,
-          'unboundTermination.unboundTerminationReason',
-        ) ?? '',
+      valueText: terminationReasonText,
     },
   ]
 }

@@ -23,6 +23,7 @@ export type Scope =
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
   | '@tr.is/sjukraogendurhaefingargreidslur:read'
+  | '@tr.is/ororkulifeyrir:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -39,6 +40,8 @@ export type Api =
   | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
+export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
+export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 
 export interface Period {
   year: number
@@ -142,13 +145,21 @@ export enum DocumentTypeEnum {
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
 
+export interface ForeignPayment {
+  countryName: string
+  countryCode: string
+  foreignNationalId: string
+}
+
 export interface Occupation {
   isSelfEmployed?: boolean
   isStudying: boolean
   educationalInstitution?: string
   isPartTimeEmployed: boolean
-  receivingPaymentsFromOtherCountry?: boolean
   calculatedRemunerationDate?: string
+  currentSemesterEcts?: string
+  receivesForeignPayments?: boolean
+  foreignPayments?: ForeignPayment[]
 }
 
 export interface EmployeeSickPay {
@@ -159,6 +170,7 @@ export interface EmployeeSickPay {
 export interface UnionSickPay {
   hasUtilizedUnionSickPayRights: number | null
   unionNationalId?: string
+  unionName?: string
   unionSickPayEndDate?: string
 }
 
@@ -168,10 +180,29 @@ export interface Answer {
 }
 export interface SelfAssessment {
   hadAssistance: boolean
-  educationalLevel: string
-  currentEmploymentStatus: string[]
-  currentEmploymentStatusAdditional?: string
-  lastEmploymentTitle?: string
-  lastEmploymentYear?: number
   answers: Answer[]
 }
+
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
+export interface PreQuestionnaire {
+  highestEducation: string
+  employmentStatuses: EmploymentStatus[]
+  lastProfession?: string
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
+  lastProfessionYear?: number
+  disabilityReason: string
+  hasParticipatedInRehabilitationBefore: boolean
+  rehabilitationDetails?: string
+  previousRehabilitationSuccessful?: boolean
+  additionalRehabilitationInformation?: string
+}
+
+const APPLICATION_TYPES = ['ORORKA'] as const
+
+export type ApplicationType = typeof APPLICATION_TYPES[number]

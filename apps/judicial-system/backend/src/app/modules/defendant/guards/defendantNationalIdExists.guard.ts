@@ -8,7 +8,7 @@ import {
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class DefendantNationalIdExistsGuard implements CanActivate {
@@ -27,13 +27,13 @@ export class DefendantNationalIdExistsGuard implements CanActivate {
       throw new BadRequestException('Missing defendant national id')
     }
 
-    const normalizedAndFormatedNationalId =
+    const normalizedAndFormattedNationalId =
       normalizeAndFormatNationalId(defendantNationalId)
 
     const defendant = theCase.defendants?.find(
       (defendant) =>
         defendant.nationalId &&
-        normalizedAndFormatedNationalId.includes(defendant.nationalId),
+        normalizedAndFormattedNationalId.includes(defendant.nationalId),
     )
 
     if (!defendant) {

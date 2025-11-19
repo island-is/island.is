@@ -15,20 +15,16 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import {
-  CandidateApi,
-  MunicipalCollectionApi,
-  MunicipalIdentityApi,
-} from '../dataProviders'
+import { CandidateApi, MunicipalCollectionApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'createListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -82,9 +78,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: MunicipalCollectionApi,
-            }),
-            buildDataProviderItem({
-              provider: MunicipalIdentityApi,
             }),
             buildDataProviderItem({
               provider: CandidateApi,

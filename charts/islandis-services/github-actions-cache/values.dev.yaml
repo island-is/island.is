@@ -20,7 +20,7 @@ name: 'github-actions-cache'
 args:
   - '--tls-min-v1.0'
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
@@ -62,7 +62,8 @@ ingress:
           - '/'
 namespace: 'github-actions-cache'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

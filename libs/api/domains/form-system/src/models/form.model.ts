@@ -1,17 +1,18 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { Field as FieldModel } from './field.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import {
   FormCertificationType,
   FormCertificationTypeDto,
 } from './certification.model'
-import { FormApplicant } from './formApplicant.model'
-import { Section } from './section.model'
-import { ListType } from './listItem.model'
-import { LanguageType } from './languageType.model'
-import { Screen as ScreenModel } from './screen.model'
+import { CompletedSectionInfo } from './completedSectionInfo'
+import { Field as FieldModel } from './field.model'
 import { FieldType } from './fieldType.model'
+import { FormApplicant } from './formApplicant.model'
+import { LanguageType } from './languageType.model'
+import { ListType } from './listItem.model'
 import { Option } from './option.model'
 import { OrganizationUrl } from './organizationUrl.model'
+import { Screen as ScreenModel } from './screen.model'
+import { Section } from './section.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -76,10 +77,16 @@ export class Form {
   applicationDaysToRemove!: number
 
   @Field(() => Boolean)
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
-  @Field(() => LanguageType, { nullable: true })
-  completedMessage?: LanguageType
+  @Field(() => Boolean)
+  hasSummaryScreen!: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isZendeskEnabled?: boolean
+
+  @Field(() => CompletedSectionInfo, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfo
 
   @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDto[]

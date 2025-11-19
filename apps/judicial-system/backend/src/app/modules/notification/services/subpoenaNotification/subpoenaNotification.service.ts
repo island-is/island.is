@@ -15,11 +15,10 @@ import { type ConfigType } from '@island.is/nest/config'
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
 import { EventService } from '../../../event'
+import { Case, Notification, Recipient } from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './subpoenaNotification.strings'
 

@@ -20,7 +20,6 @@ import {
   Filter,
   GridContainer,
   Hidden,
-  InfoCardGrid,
   Inline,
   Select,
   Stack,
@@ -65,6 +64,7 @@ import {
 import { DebouncedCheckbox } from './components/DebouncedCheckbox'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { DebouncedInput } from './components/DebouncedInput'
+import { InfoCardGrid } from './components/InfoCardGrid/InfoCardGrid'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
@@ -73,7 +73,42 @@ const DEBOUNCE_TIME_IN_MS = 500
 const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
-const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
+const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
+
+const DISTRICT_COURT_TAGS = [
+  {
+    label: 'Reykjavík',
+    value: 'hd-reykjavik',
+  },
+  {
+    label: 'Vesturland',
+    value: 'hd-vesturland',
+  },
+  {
+    label: 'Vestfirðir',
+    value: 'hd-vestfirdir',
+  },
+  {
+    label: 'Norðurland vestra',
+    value: 'hd-nordurland-vestra',
+  },
+  {
+    label: 'Norðurland eystra',
+    value: 'hd-nordurland-eystra',
+  },
+  {
+    label: 'Austurland',
+    value: 'hd-austurland',
+  },
+  {
+    label: 'Suðurland',
+    value: 'hd-sudurland',
+  },
+  {
+    label: 'Reykjanes',
+    value: 'hd-reykjanes',
+  },
+]
 
 enum QueryParam {
   SEARCH_TERM = 'q',
@@ -96,6 +131,8 @@ interface VerdictsListProps {
   keywords: WebVerdictKeyword[]
   caseCategories: WebVerdictCaseCategory[]
   caseTypes: WebVerdictCaseType[]
+  showRetrialCourtOption: boolean
+  retrialCourtOptionValue: string
 }
 
 const normalizeLawReference = (input: string): string => {
@@ -162,8 +199,12 @@ const normalizeLawReference = (input: string): string => {
   return result
 }
 
-const extractCourtLevelFromState = (court: string | null | undefined) =>
-  court || ALL_COURTS_TAG
+const extractCourtLevelFromState = (court: string | null | undefined) => {
+  if (court === DEFAULT_DISTRICT_COURT_TAG) {
+    return DISTRICT_COURT_TAGS.map((tag) => tag.value).join(',')
+  }
+  return court || ALL_COURTS_TAG
+}
 
 const useVerdictListState = (props: VerdictsListProps) => {
   const initialRender = useRef(true)
@@ -819,7 +860,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     renderKey,
     updateRenderKey,
   } = useVerdictListState(props)
-  const { customPageData, keywords, caseCategories, caseTypes } = props
+  const {
+    customPageData,
+    keywords,
+    caseCategories,
+    caseTypes,
+    showRetrialCourtOption,
+    retrialCourtOptionValue,
+  } = props
 
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
@@ -827,7 +875,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const heading = formatMessage(m.listPage.heading)
 
   const courtTags = useMemo(() => {
-    return [
+    const tags = [
       {
         label: formatMessage(m.listPage.showAllCourts),
         value: ALL_COURTS_TAG,
@@ -845,45 +893,16 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         value: 'Hæstiréttur',
       },
     ]
-  }, [formatMessage])
-  const districtCourtTags = useMemo(() => {
-    return [
-      {
-        label: 'Reykjavík',
-        value: DEFAULT_DISTRICT_COURT_TAG,
-      },
-      {
-        label: 'Vesturland',
-        value: 'Héraðsdómur Vesturlands',
-      },
-      {
-        label: 'Vestfirðir',
-        value: 'Héraðsdómur Vestfjarða',
-      },
-      {
-        label: 'Norðurland vestra',
-        value: 'Héraðsdómur Norðurlands vestra',
-      },
-      {
-        label: 'Norðurland eystra',
-        value: 'Héraðsdómur Norðurlands eystra',
-      },
-      {
-        label: 'Austurland',
-        value: 'Héraðsdómur Austurlands',
-      },
-      {
-        label: 'Suðurland',
-        value: 'Héraðsdómur Suðurlands',
-      },
-      {
-        label: 'Reykjanes',
-        value: 'Héraðsdómur Reykjaness',
-      },
-    ]
-  }, [])
 
-  const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
+    if (showRetrialCourtOption) {
+      tags.push({
+        label: formatMessage(m.listPage.showRetrialCourt),
+        value: retrialCourtOptionValue,
+      })
+    }
+
+    return tags
+  }, [formatMessage, showRetrialCourtOption, retrialCourtOptionValue])
 
   const filterTags = useMemo(() => {
     const tags: { label: string; onClick: () => void }[] = []
@@ -1012,6 +1031,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
     return tags
   }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
+
+  const districtCourtTags = useMemo(() => {
+    return [
+      {
+        label: formatMessage(m.listPage.showAllDistrictCourts),
+        value: DEFAULT_DISTRICT_COURT_TAG,
+      },
+      ...DISTRICT_COURT_TAGS,
+    ]
+  }, [formatMessage])
+
+  const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
   return (
     <Box className="rs_read">
@@ -1248,7 +1279,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Hidden>
               </Inline>
               <InfoCardGrid
-                variant="detailed"
+                variant="detailed-reveal"
                 columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
@@ -1274,13 +1305,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
                     return {
                       description: verdict.title,
-                      subDescription: verdict.keywords.join(', '),
                       eyebrow: '',
                       id: verdict.id,
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
+                      subDescription: verdict.keywords.join(', '),
                       borderColor: 'blue200',
                       detailLines,
+                      revealMoreButtonProps: {
+                        revealLabel: formatMessage(m.listPage.revealMoreLabel),
+                        hideLabel: formatMessage(m.listPage.hideMoreLabel),
+                        revealedText: verdict.presentings,
+                      },
                     }
                   })}
               />
@@ -1322,6 +1358,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 }
 
 VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
+  if (!customPageData?.configJson?.showVerdictListPage) {
+    throw new CustomNextError(
+      404,
+      'Verdict list page has been turned off in the CMS',
+    )
+  }
+
   const searchTerm = parseAsString.parseServerSide(
     query[QueryParam.SEARCH_TERM],
   )
@@ -1389,13 +1432,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 
   const items = verdictListResponse.data.webVerdicts.items
 
-  if (!customPageData?.configJson?.showVerdictListPage) {
-    throw new CustomNextError(
-      404,
-      'Verdict list page has been turned off in the CMS',
-    )
-  }
-
   return {
     initialData: {
       visibleVerdicts: items.slice(0, ITEMS_PER_PAGE),
@@ -1406,6 +1442,11 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     caseCategories:
       caseCategoriesResponse.data.webVerdictCaseCategories.caseCategories,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
+    showRetrialCourtOption:
+      customPageData?.configJson?.showRetrialCourtOption ?? false,
+    retrialCourtOptionValue:
+      customPageData?.configJson?.retrialCourtOptionValue ??
+      'Endurupptökudómur',
   }
 }
 

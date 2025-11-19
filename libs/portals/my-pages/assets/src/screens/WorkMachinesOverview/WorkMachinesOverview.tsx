@@ -88,6 +88,7 @@ const WorkMachinesOverview = () => {
   useDebounce(
     () => {
       setActiveSearch(searchTerm)
+      setPage(DEFAULT_PAGE_NUMBER)
     },
     500,
     [searchTerm],

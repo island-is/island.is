@@ -16,6 +16,7 @@ export const LoaderCard: React.FC = () => {
         borderRadius="large"
         padding={3}
         height="full"
+        overflow="hidden"
       >
         <GridRow direction="row">
           <GridColumn>
@@ -29,7 +30,7 @@ export const LoaderCard: React.FC = () => {
               flexDirection={['column', 'column', 'column', 'column', 'row']}
               flexWrap="nowrap"
               alignItems="stretch"
-              justifyContent={'spaceBetween'}
+              justifyContent="spaceBetween"
               width="full"
             >
               <Box
@@ -42,10 +43,6 @@ export const LoaderCard: React.FC = () => {
                 <SkeletonLoader width={150} />
               </Box>
             </Box>
-          </GridColumn>
-
-          <GridColumn span="1/12" className={styles.icon}>
-            <SkeletonLoader width={100} />
           </GridColumn>
         </GridRow>
       </Box>

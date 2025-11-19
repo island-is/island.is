@@ -7,19 +7,20 @@
   "tags": ["scope:judicial-system-api"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/judicial-system/message-handler",
         "main": "apps/judicial-system/message-handler/src/main.ts",
         "tsConfig": "apps/judicial-system/message-handler/tsconfig.app.json",
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "fileReplacements": [
             {
               "replace": "apps/judicial-system/message-handler/src/environments/environment.ts",
@@ -54,8 +55,8 @@
         "cwd": "apps/judicial-system/message-handler"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

@@ -1,20 +1,22 @@
 import { FC, useContext } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
+import { getDefendantVerdictAppealDecisionLabel } from '@island.is/judicial-system/formatters'
 
-import { Defendant, VerdictAppealDecision } from '../../graphql/schema'
-import { useDefendants } from '../../utils/hooks'
+import { Defendant, Verdict, VerdictAppealDecision } from '../../graphql/schema'
+import useVerdict from '../../utils/hooks/useVerdict'
 import { FormContext } from '../FormProvider/FormProvider'
 import * as styles from './VerdictAppealDecisionChoice.css'
 
 interface Props {
   defendant: Defendant
+  verdict: Verdict
   disabled?: boolean
 }
 
 const VerdictAppealDecisionChoice: FC<Props> = (props) => {
-  const { defendant, disabled } = props
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { defendant, verdict, disabled } = props
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   return (
@@ -22,43 +24,43 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
         name={`defendant-${defendant.id}-verdict-appeal-decision`}
-        checked={
-          defendant.verdictAppealDecision === VerdictAppealDecision.POSTPONE
-        }
+        checked={verdict.appealDecision === VerdictAppealDecision.POSTPONE}
         onChange={() => {
-          setAndSendDefendantToServer(
+          setAndSendVerdictToServer(
             {
               defendantId: defendant.id,
               caseId: workingCase.id,
-              verdictAppealDecision: VerdictAppealDecision.POSTPONE,
+              appealDecision: VerdictAppealDecision.POSTPONE,
             },
             setWorkingCase,
           )
         }}
         large
         backgroundColor="white"
-        label="Dómfelldi tekur áfrýjunarfrest"
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.POSTPONE,
+        )}
         disabled={disabled}
       />
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-accept`}
         name={`defendant-${defendant.id}-verdict-appeal-decision`}
-        checked={
-          defendant.verdictAppealDecision === VerdictAppealDecision.ACCEPT
-        }
+        checked={verdict.appealDecision === VerdictAppealDecision.ACCEPT}
         onChange={() => {
-          setAndSendDefendantToServer(
+          setAndSendVerdictToServer(
             {
               defendantId: defendant.id,
               caseId: workingCase.id,
-              verdictAppealDecision: VerdictAppealDecision.ACCEPT,
+              appealDecision: VerdictAppealDecision.ACCEPT,
             },
             setWorkingCase,
           )
         }}
         large
         backgroundColor="white"
-        label="Dómfelldi unir"
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.ACCEPT,
+        )}
         disabled={disabled}
       />
     </div>

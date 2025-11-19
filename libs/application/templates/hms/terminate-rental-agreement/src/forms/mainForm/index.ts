@@ -6,7 +6,8 @@ import { chooseContractSection } from './chooseContractSection'
 import { unboundTerminationSection } from './unboundTerminationSection'
 import { boundTerminationSection } from './boundTerminationSection'
 import { cancelationSection } from './cancelationSection'
-import HmsLogo from '../../assets/HmsLogo'
+import { cancelWarningSection } from './cancelWarningSection'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { personalInformationSection } from './personalInformationSection'
 import { fileUploadSection } from './fileUploadSection'
 
@@ -20,6 +21,7 @@ export const MainForm = buildForm({
     personalInformationSection,
     chooseContractSection,
     terminationTypeSection,
+    cancelWarningSection,
     cancelationSection,
     unboundTerminationSection,
     boundTerminationSection,

@@ -23,7 +23,12 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
-import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
+import {
+  ListSummary,
+  mapCandidateSummaryReport,
+  mapListSummary,
+  SummaryReport,
+} from './types/summaryReport.dto'
 type Api =
   | MedmaelalistarApi
   | MedmaelasofnunApi
@@ -44,15 +49,6 @@ export class SignatureCollectionClientService {
 
   getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
-  }
-
-  async currentCollection(
-    collectionTypeFilter: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.electionsApi,
-      collectionTypeFilter,
-    )
   }
 
   async getLatestCollectionForType(
@@ -81,7 +77,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
-      throw new Error('List is not active')
+      throw new Error('Listi er ekki virkur')
     }
     return list
   }
@@ -165,17 +161,23 @@ export class SignatureCollectionClientService {
     { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const matchingCollection = (
-      await this.currentCollection(CollectionType.LocalGovernmental)
-    ).find((collection) => collection.id === collectionId)
-    if (!matchingCollection) {
+    const currentCollection = await this.getLatestCollectionForType(
+      CollectionType.LocalGovernmental,
+    )
+
+    const inputAreaId = areas?.[0].areaId
+    const currentAreaCollectionId = currentCollection.areas.find(
+      (area) => area.id === inputAreaId,
+    )?.collectionId
+
+    if (currentAreaCollectionId !== collectionId) {
       throw new Error('Collection not found')
     }
 
-    const { id, isActive, areas: collectionAreas } = matchingCollection
+    const { areas: collectionAreas } = currentCollection
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
+    // check if collection is open
+    if (!collectionAreas.find((area) => area.id === inputAreaId)?.isActive) {
       // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
@@ -200,7 +202,7 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        sofnunID: parseInt(id),
+        sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
         frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         simi: owner.phone,
@@ -277,59 +279,63 @@ export class SignatureCollectionClientService {
     { collectionId, candidateId, areas, collectionType }: AddListsInput,
     auth: User,
   ): Promise<Success> {
-    const {
-      id,
-      isActive,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(collectionType)
+    try {
+      const {
+        id,
+        isActive,
+        areas: collectionAreas,
+      } = await this.getLatestCollectionForType(collectionType)
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
-      throw new Error('Collection is not open')
-    }
-    // check if user is already owner of lists
-
-    const { canCreate, canCreateInfo, name } = await this.getSignee(
-      auth,
-      collectionType,
-    )
-    if (!canCreate) {
-      // allow parliamentary owners to add more areas to their collection
-      const isPresidential = collectionType === CollectionType.Presidential
-      if (
-        !isPresidential &&
-        !(
-          canCreateInfo?.length === 1 &&
-          canCreateInfo[0] === ReasonKey.AlreadyOwner
-        )
-      ) {
-        return { success: false, reasons: canCreateInfo }
+      // check if collectionId is current collection and current collection is open
+      if (collectionId !== id.toString() || !isActive) {
+        throw new Error('Collection is not open')
       }
+      // check if user is already owner of lists
+
+      const { canCreate, canCreateInfo, name } = await this.getSignee(
+        auth,
+        collectionType,
+      )
+      if (!canCreate) {
+        // allow parliamentary owners to add more areas to their collection
+        const isPresidential = collectionType === CollectionType.Presidential
+        if (
+          !isPresidential &&
+          !(
+            canCreateInfo?.length === 1 &&
+            canCreateInfo[0] === ReasonKey.AlreadyOwner
+          )
+        ) {
+          return { success: false, reasons: canCreateInfo }
+        }
+      }
+
+      const filteredAreas = areas
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      const lists = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarPost({
+        medmaelalistarRequestDTO: {
+          frambodID: parseInt(candidateId),
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: parseInt(area.id),
+            listiNafn: `${name} - ${area.name}`,
+          })),
+        },
+      })
+
+      if (filteredAreas.length !== lists.length) {
+        throw new Error('Not all lists created')
+      }
+      return { success: true }
+    } catch {
+      return { success: false }
     }
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarPost({
-      medmaelalistarRequestDTO: {
-        frambodID: parseInt(candidateId),
-        medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: parseInt(area.id),
-          listiNafn: `${name} - ${area.name}`,
-        })),
-      },
-    })
-
-    if (filteredAreas.length !== lists.length) {
-      throw new Error('Not all lists created')
-    }
-    return { success: true }
   }
 
   async signList(
@@ -423,14 +429,24 @@ export class SignatureCollectionClientService {
     },
     auth: User,
   ): Promise<Success> {
-    const { id, isActive } = await this.getLatestCollectionForType(
-      collectionType,
-    )
+    const collection = await this.getLatestCollectionForType(collectionType)
     const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
+
+    const id =
+      collectionType === CollectionType.LocalGovernmental
+        ? candidate.collectionId
+        : collection.id
+    const isActive =
+      collectionType === CollectionType.LocalGovernmental
+        ? collection.areas.find(
+            (area) => area.collectionId === candidate.collectionId,
+          )?.isActive
+        : collection.isActive
+
     // Lists can only be removed from current collection if it is open
     if (id !== collectionId || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
@@ -440,6 +456,7 @@ export class SignatureCollectionClientService {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(candidate.id),
       })
+
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {
@@ -484,7 +501,6 @@ export class SignatureCollectionClientService {
     auth: User,
   ): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth, collectionType)
-    const { endTime } = await this.getLatestCollectionForType(collectionType)
     if (!signatures) {
       return null
     }
@@ -498,21 +514,13 @@ export class SignatureCollectionClientService {
           this.getApiWithAuth(this.collectionsApi, auth),
           this.getApiWithAuth(this.electionsApi, auth),
         )
-        const isExtended = list.endTime > endTime
-        const signedThisPeriod = signature.isInitialType === !isExtended
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
           // TODO: consider extracting this into a helper function, canUnsign(ctype: CollectionType) => bool
-          canUnsign:
-            collectionType === CollectionType.Presidential
-              ? signature.isDigital &&
-                signature.valid &&
-                list.active &&
-                signedThisPeriod
-              : !signature.locked,
+          canUnsign: !signature.locked,
           ...list,
         } as SignedList
       }),
@@ -536,7 +544,10 @@ export class SignatureCollectionClientService {
     })
     return {
       success: requirementsMet && !activeSignature && noInvalidSignature,
-      reasons,
+      reasons:
+        reasons.length > 1
+          ? reasons.filter((r) => r !== ReasonKey.DeniedByService)
+          : reasons,
     }
   }
 
@@ -546,14 +557,14 @@ export class SignatureCollectionClientService {
     nationalId?: string,
   ): Promise<Signee> {
     const collection = await this.getLatestCollectionForType(collectionType)
-    const { id, isActive, areas } = collection
+    const { electionId, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
-        this.collectionsApi,
+        this.electionsApi,
         auth,
-      ).medmaelasofnunIDEinsInfoKennitalaGet({
+      ).kosningIDEinsInfoKennitalaGet({
         kennitala: nationalId ?? auth.nationalId,
-        iD: parseInt(id),
+        iD: parseInt(electionId ?? '0'),
       })
 
       const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
@@ -723,6 +734,23 @@ export class SignatureCollectionClientService {
       return { success: res.bladsidaNr === pageNumber }
     } catch {
       return { success: false }
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 }

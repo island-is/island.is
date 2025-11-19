@@ -1,4 +1,5 @@
 import { Box, TagVariant } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
@@ -6,29 +7,23 @@ import {
   IntroHeader,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { useGetCourtCasesQuery } from './CourtCases.generated'
-import { Problem } from '@island.is/react-spa/shared'
-import { useEffect } from 'react'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error, refetch } = useGetCourtCasesQuery({
+  const { data, loading, error } = useGetCourtCasesQuery({
     variables: {
       locale: lang,
     },
   })
 
   const cases = data?.lawAndOrderCourtCasesList?.cases
-
-  useEffect(() => {
-    refetch()
-  }, [lang])
 
   return (
     <>

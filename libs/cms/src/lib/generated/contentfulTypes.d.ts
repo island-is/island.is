@@ -1296,6 +1296,50 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Items */
+  items?: IGenericListItem[] | undefined
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+
+  /** Automatically fetch items */
+  automaticallyFetchItems?: boolean | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+export interface IFeaturedGenericListItems
+  extends Entry<IFeaturedGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredGenericListItems'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedLinksFields {
   /** Internal Title */
   internalTitle?: string | undefined
@@ -1432,6 +1476,9 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Email subject */
+  emailSubject?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -1473,6 +1520,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   /** Required */
   required?: boolean | undefined
@@ -1666,6 +1714,9 @@ export interface IGenericListFields {
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
 
+  /** Alphabetically Order Filter Tags */
+  alphabeticallyOrderFilterTags?: boolean | undefined
+
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
@@ -1674,6 +1725,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1990,7 +2044,7 @@ export interface IGrantCardsListFields {
   /** Funds */
   grantCardListFunds?: IFund[] | undefined
 
-  /** Max number of cards */
+  /** Max number of results */
   grantCardsListMaxNumberOfCards?: number | undefined
 
   /** Sorting */
@@ -1998,6 +2052,9 @@ export interface IGrantCardsListFields {
     | 'Alphabetical'
     | 'Most recently updated first'
     | undefined
+
+  /** Always display results as cards */
+  grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
@@ -2924,6 +2981,9 @@ export interface INewsFields {
 
   /** Featured image */
   image: Asset
+
+  /** Image text */
+  imageText?: string | undefined
 
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined
@@ -4260,6 +4320,7 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'Personuvernd/SearchInput'
     | undefined
 
   /** Localized JSON */
@@ -5331,6 +5392,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredEvents'
+  | 'featuredGenericListItems'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'

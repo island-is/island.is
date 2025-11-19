@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-sessions-worker'
 args:
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
 command:
   - 'node'
@@ -86,7 +86,8 @@ initContainer:
     DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
 namespace: 'services-sessions'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

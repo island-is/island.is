@@ -155,9 +155,7 @@ export class DrivingLicenseApi {
             (remark) =>
               !!remark.heiti &&
               licenseRemarks.some((lremark) =>
-                lremark.description.includes(
-                  remark.nr || ('' && !remark.athugasemd),
-                ),
+                lremark.description.includes(remark.nr || ''),
               ),
           )
           .map((remark) => ({

@@ -47,9 +47,11 @@ export const OJOIAdvertDisplay = ({
           {signatureDate}
         </Text>
       </Box>
-      <Box textAlign="center" marginBottom={[2, 3, 4]}>
+      <Box textAlign="center" display="flex" flexDirection="column">
         <Text variant="h3">{advertType}</Text>
-        <Text variant="h4">{advertSubject}</Text>
+        <Text variant="h4" className={s.advertDescription}>
+          {advertSubject}
+        </Text>
       </Box>
       <Box
         className={c(s.bodyText, 'ojoi-advert-display-wrapper')}

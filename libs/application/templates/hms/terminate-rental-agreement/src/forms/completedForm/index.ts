@@ -1,7 +1,7 @@
 import { buildForm, getValueViaPath } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../../lib/messages'
 
 export const completedForm = buildForm({
@@ -18,13 +18,10 @@ export const completedForm = buildForm({
           application.answers,
           'terminationType',
         )
-
         return {
-          ...m.conclusionMessages.alertMessage,
-          values: {
-            terminationType:
-              terminationType?.answer === 'cancelation' ? 'riftun' : 'uppsögn',
-          },
+          ...(terminationType?.answer === 'cancelation'
+            ? m.conclusionMessages.alertMessageCancelation
+            : m.conclusionMessages.alertMessageTermination),
         }
       },
     }),

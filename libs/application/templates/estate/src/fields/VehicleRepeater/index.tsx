@@ -15,6 +15,8 @@ import { m } from '../../lib/messages'
 import { AdditionalVehicle } from './AdditionalVehicle'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -28,22 +30,28 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
+  const { clearErrors, getValues } = useFormContext()
 
-  const estateData = getEstateDataFromApplication(application)
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.vehicles) {
       replace(estateData.estate.vehicles)
     }
-  }, [])
+  }, [application, fields.length, replace])
 
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })
@@ -106,6 +114,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     currency
                     size="sm"
                     required
+                    onChange={() => calculateTotal()}
                   />
                 </Box>
               </GridColumn>
@@ -120,10 +129,11 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             remove={handleRemoveProperty}
             index={index}
             error={error && error[index] ? error[index] : null}
+            calculateTotal={calculateTotal}
           />
         </Box>
       ))}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"
@@ -134,6 +144,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           {formatMessage(m.addVehicle)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

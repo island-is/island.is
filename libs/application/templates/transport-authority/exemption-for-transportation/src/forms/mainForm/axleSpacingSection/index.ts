@@ -20,6 +20,7 @@ import {
   checkHasFreightPairingItemWithExemptionForWeight,
   checkHasConvoyVehicleForSpacingAtIndex,
   checkHasConvoyTrailerForSpacingAtIndex,
+  checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { Application } from '@island.is/application/types'
 import { DollyType } from '../../../shared'
@@ -27,7 +28,9 @@ import { DollyType } from '../../../shared'
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
   title: axleSpacing.general.sectionTitle,
-  condition: checkHasFreightPairingItemWithExemptionForWeight,
+  condition: (answers) =>
+    checkIfExemptionTypeShortTerm(answers) &&
+    checkHasFreightPairingItemWithExemptionForWeight(answers),
   children: [
     buildMultiField({
       id: 'axleSpacingMultiField',

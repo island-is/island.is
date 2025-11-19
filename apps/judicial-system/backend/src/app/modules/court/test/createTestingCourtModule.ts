@@ -8,9 +8,9 @@ import { ConfigModule } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
+import { RobotLog } from '../../repository'
 import { courtModuleConfig } from '../court.config'
 import { CourtService } from '../court.service'
-import { RobotLog } from '../models/robotLog.model'
 
 export const createTestingCourtModule = async () => {
   const courtModule = await Test.createTestingModule({

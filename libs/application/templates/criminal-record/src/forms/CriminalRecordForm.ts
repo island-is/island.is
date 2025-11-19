@@ -7,9 +7,10 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import {
-  SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
+  IdentityApi,
   MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItems } from '../utils'
@@ -39,6 +40,9 @@ export const CriminalRecordForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: MockableSyslumadurPaymentCatalogApi,
+            }),
+            buildDataProviderItem({
+              provider: IdentityApi,
             }),
           ],
         }),

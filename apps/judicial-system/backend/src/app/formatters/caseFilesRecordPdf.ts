@@ -8,8 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
+import { Case, Defendant } from '../modules/repository'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export const formatDefendant = (defendant: Defendant) => {
@@ -250,7 +249,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
-  pdfDocument.addPageNumbers()
+  pdfDocument.addPageNumbers(tableOfContentsPageCount)
 
   return pdfDocument.getContents()
 }

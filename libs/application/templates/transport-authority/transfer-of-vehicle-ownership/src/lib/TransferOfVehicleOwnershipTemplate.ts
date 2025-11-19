@@ -17,12 +17,14 @@ import {
   corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
+  getHistoryLogRejectedWithSubjectAndActor,
+  getHistoryLogApprovedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -34,7 +36,12 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItems, getExtraData, canReviewerApprove } from '../utils'
+import {
+  getChargeItems,
+  getExtraData,
+  canReviewerApprove,
+  getReviewers,
+} from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -64,18 +71,35 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
+  if (nationalId) {
+    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: {
+          ...corePendingActionMessages.whoNeedsToReviewDescription,
+          values: {
+            value: getReviewers(application.answers)
+              .filter((x) => !x.hasApproved)
+              .map((x) =>
+                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+              )
+              .join(', '),
+          },
+        },
+        displayStatus: 'info',
+      }
+    } else if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
     }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
+  }
+  return {
+    title: corePendingActionMessages.waitingForReviewTitle,
+    content: corePendingActionMessages.waitingForReviewDescription,
+    displayStatus: 'info',
   }
 }
 
@@ -101,6 +125,26 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+      {
+        key: 'buyer.nationalId',
+        isListed: true,
+        isNationalId: true,
+        label: information.labels.buyer.title,
+      },
+      { key: 'buyer.approved', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.nationalId', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.approved', isListed: false },
+      { key: 'sellerCoOwner.$.nationalId', isListed: false },
+      { key: 'sellerCoOwner.$.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -181,11 +225,11 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: getHistoryLogApprovedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: getHistoryLogRejectedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,

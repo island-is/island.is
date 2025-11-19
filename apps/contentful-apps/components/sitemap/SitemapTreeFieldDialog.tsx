@@ -22,10 +22,15 @@ import * as styles from './SitemapTreeFieldDialog.css'
 interface CategoryState {
   label: string
   labelEN?: string
+  shortLabel?: string
+  shortLabelEN?: string
   slug: string
   slugEN?: string
   description: string
   descriptionEN?: string
+  status?: 'draft' | 'changed' | 'published'
+  version?: number
+  publishedVersion?: number
 }
 
 interface FormProps<State> {
@@ -38,22 +43,23 @@ const CategoryForm = ({
   onSubmit,
   formError,
 }: FormProps<CategoryState> & {
-  formError: { slug: string; slugEN: string }
+  formError: { slug: string; slugEN: string; label: string }
 }) => {
   const [state, setState] = useState<CategoryState>(initialState)
   return (
     <FormControl className={styles.formContainer}>
       <div>
-        <FormControl.Label>Label (Icelandic)</FormControl.Label>
+        <FormControl.Label>Title (Icelandic)</FormControl.Label>
         <TextInput
           value={state.label}
           onChange={(ev) => {
             setState((prevState) => ({ ...prevState, label: ev.target.value }))
           }}
         />
+        {formError.label && <Text fontColor="red600">{formError.label}</Text>}
       </div>
       <div>
-        <FormControl.Label>Label (English)</FormControl.Label>
+        <FormControl.Label>Title (English)</FormControl.Label>
         <div>
           <TextInput
             value={state.labelEN}
@@ -67,9 +73,33 @@ const CategoryForm = ({
         </div>
       </div>
       <div>
+        <FormControl.Label>Short title (Icelandic)</FormControl.Label>
+        <TextInput
+          value={state.shortLabel}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabel: ev.target.value,
+            }))
+          }}
+        />
+      </div>
+      <div>
+        <FormControl.Label>Short title (English)</FormControl.Label>
+        <TextInput
+          value={state.shortLabelEN}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabelEN: ev.target.value,
+            }))
+          }}
+        />
+      </div>
+      <div>
         <FormControl.Label>Slug (Icelandic)</FormControl.Label>
         <TextInput
-          placeholder={slugify(state.label)}
+          placeholder={slugify(state.label ?? '')}
           value={state.slug}
           onChange={(ev) => {
             setState((prevState) => ({ ...prevState, slug: ev.target.value }))
@@ -82,7 +112,7 @@ const CategoryForm = ({
 
         <div>
           <TextInput
-            placeholder={slugify(state.labelEN)}
+            placeholder={slugify(state.labelEN ?? '')}
             value={state.slugEN}
             onChange={(ev) => {
               setState((prevState) => ({
@@ -106,6 +136,7 @@ const CategoryForm = ({
               description: ev.target.value,
             }))
           }}
+          resize="none"
         />
       </div>
       <div>
@@ -119,6 +150,7 @@ const CategoryForm = ({
                 descriptionEN: ev.target.value,
               }))
             }}
+            resize="none"
           />
         </div>
       </div>
@@ -127,11 +159,15 @@ const CategoryForm = ({
         onClick={() => {
           const stateToSubmit = { ...state }
           if (!stateToSubmit.slug) {
-            stateToSubmit.slug = slugify(stateToSubmit.label)
+            stateToSubmit.slug = slugify(stateToSubmit.label ?? '')
           }
           if (!stateToSubmit.slugEN) {
-            stateToSubmit.slugEN = slugify(stateToSubmit.labelEN)
+            stateToSubmit.slugEN = slugify(stateToSubmit.labelEN ?? '')
           }
+          if (!stateToSubmit.status) {
+            stateToSubmit.status = 'draft'
+          }
+
           onSubmit(stateToSubmit)
         }}
       >
@@ -147,16 +183,24 @@ interface UrlState {
   url: string
   urlEN?: string
   urlType?: SitemapUrlType
+  description?: string
+  descriptionEN?: string
 }
 
-const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
+const UrlForm = ({
+  initialState,
+  onSubmit,
+  formError,
+}: FormProps<UrlState> & {
+  formError: { label: string }
+}) => {
   const [state, setState] = useState<UrlState>(initialState)
 
   return (
     <FormControl className={styles.formContainer}>
       <div>
         <Box paddingBottom="spacingXs">
-          <FormControl.Label>Label (Icelandic)</FormControl.Label>
+          <FormControl.Label>Title (Icelandic)</FormControl.Label>
           <TextInput
             value={state.label}
             onChange={(ev) => {
@@ -166,9 +210,10 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
               }))
             }}
           />
+          {formError.label && <Text fontColor="red600">{formError.label}</Text>}
         </Box>
         <div>
-          <FormControl.Label>Label (English)</FormControl.Label>
+          <FormControl.Label>Title (English)</FormControl.Label>
           <TextInput
             value={state.labelEN}
             onChange={(ev) => {
@@ -239,6 +284,35 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
         </div>
       )}
 
+      <div>
+        <FormControl.Label>Description (Icelandic)</FormControl.Label>
+        <Textarea
+          value={state.description}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              description: ev.target.value,
+            }))
+          }}
+          resize="none"
+        />
+      </div>
+      <div>
+        <FormControl.Label>Description (English)</FormControl.Label>
+        <div>
+          <Textarea
+            value={state.descriptionEN}
+            onChange={(ev) => {
+              setState((prevState) => ({
+                ...prevState,
+                descriptionEN: ev.target.value,
+              }))
+            }}
+            resize="none"
+          />
+        </div>
+      </div>
+
       <Button
         variant="primary"
         onClick={() => {
@@ -257,16 +331,20 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
 export const SitemapTreeFieldDialog = () => {
   const sdk = useSDK<DialogExtensionSDK>()
 
-  const { node, otherCategorySlugs, otherCategorySlugsEN } = sdk.parameters
-    .invocation as {
+  const { node, otherSlugs, otherSlugsEN } = sdk.parameters.invocation as {
     node: TreeNode
-    otherCategorySlugs?: string[]
-    otherCategorySlugsEN?: string[]
+    otherSlugs?: string[]
+    otherSlugsEN?: string[]
   }
 
   const [categoryFormError, setCategoryFormError] = useState({
     slug: '',
     slugEN: '',
+    label: '',
+  })
+
+  const [urlFormError, setUrlFormError] = useState({
+    label: '',
   })
 
   return (
@@ -276,7 +354,7 @@ export const SitemapTreeFieldDialog = () => {
           icon={<CloseIcon />}
           aria-label="Close"
           onClick={() => {
-            sdk.close(node)
+            sdk.close()
           }}
         />
       </div>
@@ -285,15 +363,18 @@ export const SitemapTreeFieldDialog = () => {
           formError={categoryFormError}
           initialState={node}
           onSubmit={(state) => {
-            const error = { slug: '', slugEN: '' }
-            if (otherCategorySlugs?.includes(state.slug)) {
+            const error = { slug: '', slugEN: '', label: '' }
+            if (otherSlugs?.includes(state.slug)) {
               error.slug = 'Slug already exists'
             }
-            if (otherCategorySlugsEN?.includes(state.slugEN)) {
+            if (otherSlugsEN?.includes(state.slugEN)) {
               error.slugEN = 'Slug already exists'
             }
+            if (!state.label) {
+              error.label = 'Title is required'
+            }
 
-            if (error.slug || error.slugEN) {
+            if (error.slug || error.slugEN || error.label) {
               setCategoryFormError(error)
               return
             }
@@ -303,7 +384,22 @@ export const SitemapTreeFieldDialog = () => {
         />
       )}
       {node.type === TreeNodeType.URL && (
-        <UrlForm initialState={node} onSubmit={sdk.close} />
+        <UrlForm
+          formError={urlFormError}
+          initialState={node}
+          onSubmit={(state) => {
+            const error = { label: '' }
+            if (!state.label) {
+              error.label = 'Title is required'
+            }
+            if (error.label) {
+              setUrlFormError(error)
+              return
+            }
+
+            sdk.close(state)
+          }}
+        />
       )}
     </div>
   )

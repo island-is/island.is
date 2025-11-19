@@ -6,7 +6,7 @@
   "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/umbodsmadur-skuldara/**/*.ts"]

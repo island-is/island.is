@@ -30,13 +30,17 @@ import {
   formatPostponedCourtDateEmailNotification,
 } from '../../../../formatters'
 import { notifications } from '../../../../messages'
-import { Case, DateLog } from '../../../case'
 import { CourtService } from '../../../court'
-import { Defendant } from '../../../defendant'
 import { EventService } from '../../../event'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  Notification,
+  Recipient,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './indictmentCaseNotification.strings'
 
@@ -161,7 +165,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             : '',
         courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
-          theCase.defendants && theCase.defendants[0].serviceRequirement,
+          theCase.defendants?.[0]?.verdict?.serviceRequirement,
         caseOrigin: theCase.origin,
       },
     )

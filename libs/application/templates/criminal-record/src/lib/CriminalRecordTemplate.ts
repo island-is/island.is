@@ -21,9 +21,10 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
-  SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
+  IdentityApi,
   MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
@@ -42,7 +43,7 @@ const template: ApplicationTemplate<
   name: m.name,
   codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
+  translationNamespaces: ApplicationConfigurations.CriminalRecord.translation,
   dataSchema: CriminalRecordSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -83,6 +84,7 @@ const template: ApplicationTemplate<
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
                 CriminalRecordApi,
+                IdentityApi,
               ],
             },
           ],

@@ -9,6 +9,7 @@ import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
 import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
 
 @Injectable()
 export class OrganizationUrlsService {
@@ -17,6 +18,8 @@ export class OrganizationUrlsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
+    @InjectModel(FormUrl)
+    private readonly formUrlModel: typeof FormUrl,
   ) {}
 
   async create(
@@ -54,7 +57,9 @@ export class OrganizationUrlsService {
     newOrganizationUrl.isXroad = false
 
     if (createOrganizationUrlDto.method === UrlMethods.SEND_TO_ZENDESK) {
-      newOrganizationUrl.url = 'Zendesk'
+      newOrganizationUrl.url = createOrganizationUrlDto.isTest
+        ? 'Zendesk [prófun]'
+        : 'Zendesk [raun]'
     }
     await newOrganizationUrl.save()
 
@@ -101,6 +106,19 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`Organization url with id '${id}' not found`)
     }
 
-    organizationUrl.destroy()
+    const sequelize = this.organizationUrlModel.sequelize
+    if (sequelize) {
+      await sequelize.transaction(async (t) => {
+        await this.formUrlModel.destroy({
+          where: { organizationUrlId: id },
+          transaction: t,
+        })
+        await organizationUrl.destroy({ transaction: t })
+      })
+    } else {
+      // Fallback without transaction to avoid a silent no-op
+      await this.formUrlModel.destroy({ where: { organizationUrlId: id } })
+      await organizationUrl.destroy()
+    }
   }
 }

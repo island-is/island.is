@@ -3,6 +3,7 @@ import {
   CaseState,
   DateType,
   DefenderChoice,
+  EventType,
   Gender,
   InformationForDefendant,
   Institution,
@@ -23,8 +24,21 @@ export class InternalCaseResponse {
   prosecutor!: User
   dateLogs?: DateLog[]
   rulingDate?: Date
+  ruling?: string
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   state?: CaseState
+  courtSessions?: CourtSession[]
+  eventLogs?: EventLog[]
+}
+
+interface EventLog {
+  id: string
+  created: Date
+  eventType: EventType
+}
+
+interface CourtSession {
+  ruling?: string
 }
 
 interface Defendant {
@@ -43,11 +57,7 @@ interface Defendant {
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
   subpoenaType?: SubpoenaType
-  verdictViewDate?: Date
-  verdictAppealDecision?: VerdictAppealDecision
-  verdictAppealDate?: Date
-  informationForDefendant?: InformationForDefendant[]
-  serviceRequirement?: ServiceRequirement
+  verdict?: Verdict
 }
 
 interface DateLog {
@@ -64,4 +74,16 @@ interface Subpoena {
   subpoenaId: string
   serviceStatus?: ServiceStatus
   serviceRequirement?: ServiceRequirement
+}
+
+interface Verdict {
+  id: string
+  created: Date
+  externalPoliceDocumentId: string
+  serviceStatus?: ServiceStatus
+  serviceRequirement?: ServiceRequirement
+  serviceDate?: Date
+  appealDecision?: VerdictAppealDecision
+  serviceInformationForDefendant?: InformationForDefendant[]
+  appealDate?: Date
 }

@@ -6,14 +6,14 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Link,
   PhoneInput,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Link } from 'react-router-dom'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
@@ -38,6 +38,7 @@ import { DropModalType } from './types/form'
 import { InputEmail } from './components/Inputs/Email'
 import { AccessDenied } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
+import * as s from './ProfileForm.css'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -71,10 +72,10 @@ export const ProfileForm = ({
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const [showEmailForm, setShowEmailForm] = useState(false)
 
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
   const userInfo = useUserInfo()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
@@ -151,7 +152,7 @@ export const ProfileForm = ({
          * After asking the user to verify that they are updating their profile with empty fields.
          */
 
-        await deleteIslykillValue({
+        await deleteEmailOrPhoneValue({
           email: true,
           mobilePhoneNumber: true,
         }).then(() => closeAllModals())
@@ -203,10 +204,8 @@ export const ProfileForm = ({
                     values={{
                       link: (
                         <Link
-                          color="blue400"
-                          href={InformationPaths.Notifications}
-                          underlineVisibility="always"
-                          underline="small"
+                          to={InformationPaths.SettingsNotifications}
+                          className={s.link}
                         >
                           {formatMessage(emailsMsg.emailListTextLink)}
                         </Link>

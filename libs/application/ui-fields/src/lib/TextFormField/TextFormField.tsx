@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
   formatTextWithLocale,
 } from '@island.is/application/core'
@@ -53,6 +54,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     onChange = () => undefined,
     clearOnChange,
     setOnChange,
+    allowNegative,
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -80,7 +82,8 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             formatMessage,
           )}
           disabled={disabled}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
+          allowNegative={allowNegative}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
@@ -116,11 +119,11 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           maxLength={maxLength}
           textarea={variant === 'textarea'}
           currency={variant === 'currency'}
+          thousandSeparator={thousandSeparator}
           type={
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          thousandSeparator={thousandSeparator}
           suffix={
             suffix &&
             formatTextWithLocale(
@@ -130,7 +133,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
               formatMessage,
             )
           }
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application, locale)}
           backgroundColor={backgroundColor}
           rows={rows}
           required={buildFieldRequired(application, required)}

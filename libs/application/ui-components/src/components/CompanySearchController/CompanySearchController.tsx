@@ -1,6 +1,6 @@
-import { AlertMessage, AsyncSearch, Box, Icon } from '@island.is/island-ui/core'
+import { AlertMessage, AsyncSearch, Box } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import {
   useIsEmployerValidLazyQuery,
   useSearchCompaniesLazyQuery,
@@ -14,12 +14,9 @@ import { useLocale } from '@island.is/localization'
 
 interface Props {
   id: string
-  defaultValue?: unknown
   name?: string
   label: string
   placeholder?: string
-  initialInputValue?: string
-  inputValue?: string
   colored?: boolean
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
@@ -27,22 +24,23 @@ interface Props {
   setNationalId?: (s: string) => void
   checkIfEmployerIsOnForbiddenList?: boolean
   required?: boolean
+  searchTerm?: string
+  setSearchTerm: (searchTerm: string) => void
 }
 
 export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
-  defaultValue,
   id,
   shouldIncludeIsatNumber,
   name = id,
   label,
   placeholder,
-  initialInputValue = '',
-  inputValue = '',
   colored = true,
   setLabelToDataSchema = true,
   setNationalId,
   checkIfEmployerIsOnForbiddenList,
   required,
+  searchTerm = '',
+  setSearchTerm,
 }) => {
   const {
     clearErrors,
@@ -51,7 +49,6 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
     formState: { errors },
   } = useFormContext()
   const { formatMessage } = useLocale()
-  const [searchQuery, setSearchQuery] = useState('')
   const [search, { loading, data }] = useSearchCompaniesLazyQuery()
   const [
     getIsEmployerValid,
@@ -76,19 +73,7 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
   const noResultsFound =
     data?.companyRegistryCompanies?.data?.length === 0 &&
     !loading &&
-    searchQuery.trim().length > 0
-
-  const onInputChange = (inputValue: string) => {
-    setSearchQuery(inputValue)
-    debouncer({
-      variables: {
-        input: {
-          searchTerm: inputValue,
-          first: 40,
-        },
-      },
-    })
-  }
+    searchTerm.trim().length > 0
 
   const getSearchOptions = (
     query: string,
@@ -152,11 +137,33 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
       variables: { input: { companyId: nationalId } },
     })
   }
+
+  const handleOnInputValueChange = useCallback(
+    (query: string) => {
+      setValue(
+        id,
+        setLabelToDataSchema
+          ? { isat: '', nationalId: '', label: '' }
+          : { isat: '', nationalId: '' },
+      )
+      clearErrors(id)
+      setSearchTerm(query.trim())
+      debouncer({
+        variables: {
+          input: {
+            searchTerm: query.trim(),
+            first: 40,
+          },
+        },
+      })
+    },
+    [setSearchTerm, id, setValue, clearErrors, setLabelToDataSchema, debouncer],
+  )
   return (
     <>
       <Controller
         name={name}
-        defaultValue={defaultValue}
+        defaultValue={{}}
         render={() => {
           return (
             <AsyncSearch
@@ -164,7 +171,7 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
               loading={loading || employerValidLoading}
               required={required}
               options={getSearchOptions(
-                searchQuery,
+                searchTerm,
                 data?.companyRegistryCompanies,
               )}
               errorMessage={
@@ -172,19 +179,8 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
               }
               size="large"
               placeholder={placeholder}
-              initialInputValue={initialInputValue}
-              inputValue={inputValue}
-              onInputValueChange={(query) => {
-                setValue(
-                  id,
-                  setLabelToDataSchema
-                    ? { isat: '', nationalId: '', label: '' }
-                    : { isat: '', nationalId: '' },
-                )
-                clearErrors(id)
-                const inputValue = query?.trim() || ''
-                onInputChange(inputValue)
-              }}
+              inputValue={searchTerm}
+              onInputValueChange={handleOnInputValueChange}
               colored={colored}
               onChange={(selection) => {
                 const { value, label } = selection || {}

@@ -1,7 +1,6 @@
 import {
   buildActionCardListField,
   buildDescriptionField,
-  buildDividerField,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -29,7 +28,6 @@ export const overview = buildSection({
           id: 'listOverview',
           title: m.applicantOverviewHeader,
           titleVariant: 'h4',
-          marginBottom: 'none',
           bottomLine: true,
           items: () => [
             {
@@ -63,13 +61,12 @@ export const overview = buildSection({
             },
           ],
         }),
-        buildDividerField({}),
         buildDescriptionField({
           id: 'listOverview',
           title: m.listOverviewHeader,
           titleVariant: 'h4',
-          space: 'gutter',
           marginBottom: 1,
+          marginTop: 'gutter',
         }),
         buildActionCardListField({
           id: 'createdLists',
@@ -78,7 +75,7 @@ export const overview = buildSection({
             const areas =
               getValueViaPath<SignatureCollectionArea[]>(
                 externalData,
-                'getLatestCollection.data.areas',
+                'currentCollection.data.areas',
               ) || []
             return areas?.map((area) => ({
               heading: `${getValueViaPath(answers, 'applicant.name')} - ${

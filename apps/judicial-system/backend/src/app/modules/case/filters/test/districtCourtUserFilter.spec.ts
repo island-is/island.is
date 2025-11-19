@@ -10,7 +10,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
 const continueFromCaseState = (user: User, type: string, state: string) => {

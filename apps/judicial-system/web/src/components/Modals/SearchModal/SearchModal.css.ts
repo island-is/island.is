@@ -4,6 +4,13 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const resultButton = style({
   width: '100%',
+  borderRadius: theme.border.radius.large,
+
+  selectors: {
+    '&:hover': {
+      background: theme.color.blue100,
+    },
+  },
 })
 
 export const searchModal = style({
@@ -14,6 +21,11 @@ export const searchModal = style({
 
 export const searchResultsContainer = style({
   overflow: 'scroll',
+})
+
+export const focus = style({
+  borderRadius: theme.border.radius.large,
+  background: theme.color.blue100,
 })
 
 export const searchResults = style({

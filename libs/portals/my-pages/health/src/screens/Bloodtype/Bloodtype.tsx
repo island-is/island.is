@@ -14,9 +14,11 @@ import { useBloodTypeQuery } from './Bloodtype.generated'
 
 const Bloodtype: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
-  const { data, loading, error } = useBloodTypeQuery()
+  const { data, loading, error } = useBloodTypeQuery({
+    variables: { locale: lang },
+  })
 
   const bloodType = data?.rightsPortalBloodType
 
@@ -31,6 +33,13 @@ const Bloodtype: React.FC = () => {
           key={'bloodtype-link'}
           to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
           text={formatMessage(messages.readAboutBloodtypes)}
+          variant="utility"
+          icon="open"
+        />,
+        <LinkButton
+          key={'bloodbank-page-link'}
+          to={formatMessage(messages.contactBloodbankLink)}
+          text={formatMessage(messages.contactBloodbank)}
           variant="utility"
           icon="open"
         />,

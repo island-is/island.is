@@ -8,7 +8,7 @@ const { assetExts, sourceExts } = defaultConfig.resolver
  * Metro configuration
  * https://reactnative.dev/docs/metro
  *
- * @type {import('metro-config').MetroConfig}
+ * @type {import('@react-native/metro-config').MetroConfig}
  */
 const customConfig = {
   transformer: {
@@ -17,6 +17,8 @@ const customConfig = {
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
+    // Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
+    disableHierarchicalLookup: true,
   },
 }
 

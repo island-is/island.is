@@ -1,20 +1,16 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import { getDefaultOptions } from '../utils/get-default-options'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
-import { getApolloClientAsync } from '../graphql/client'
-import {
-  GetProfileDocument,
-  GetProfileQuery,
-  GetProfileQueryVariables,
-} from '../graphql/types/schema'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
 export type AppearanceMode = ThemeMode | 'automatic'
+
+export const PREFERENCES_KEY = 'preferences_04'
 
 export interface PreferencesStore extends State {
   dev__useLockScreen: boolean
@@ -38,16 +34,17 @@ export interface PreferencesStore extends State {
   notificationsAppUpdates: boolean
   notificationsApplicationStatusUpdates: boolean
   dismissed: string[]
+  walletPassDismissedInfoAlerts: Record<string, boolean>
   useBiometrics: boolean
   locale: Locale
   appearanceMode: AppearanceMode
   appLockTimeout: number
   pinTries: number
   setLocale(locale: Locale): void
-  getAndSetLocale(): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
+  setWalletPassInfoAlertDismissed(key: string): void
   reset(): void
 }
 
@@ -78,6 +75,7 @@ const defaultPreferences = {
   notificationsAppUpdates: true,
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
+  walletPassDismissedInfoAlerts: {} as Record<string, boolean>,
   appLockTimeout: 5000,
   pinTries: 0,
 }
@@ -86,28 +84,11 @@ export const preferencesStore = create<PreferencesStore>(
   persist(
     (set, get) => ({
       ...(defaultPreferences as PreferencesStore),
-      async getAndSetLocale() {
-        const client = await getApolloClientAsync()
-
-        try {
-          const res = await client.query<
-            GetProfileQuery,
-            GetProfileQueryVariables
-          >({
-            query: GetProfileDocument,
-          })
-
-          const locale = res.data?.getUserProfile?.locale
-          const appLocale = locale === 'en' ? 'en-US' : 'is-IS'
-          set({ locale: appLocale })
-        } catch (err) {
-          // noop
-        }
-      },
       setLocale(locale: Locale) {
         if (!availableLocales.includes(locale)) {
           throw new Error('Not supported locale')
         }
+
         set({ locale })
       },
       setAppearanceMode(appearanceMode: AppearanceMode) {
@@ -124,12 +105,21 @@ export const preferencesStore = create<PreferencesStore>(
           set({ dismissed: [...now.filter((k) => k !== key)] })
         }
       },
+      setWalletPassInfoAlertDismissed(key: string) {
+        const current = { ...get().walletPassDismissedInfoAlerts }
+        if (current[key]) {
+          return
+        }
+
+        current[key] = true
+        set({ walletPassDismissedInfoAlerts: current })
+      },
       reset() {
         set(defaultPreferences as PreferencesStore)
       },
     }),
     {
-      name: 'preferences_04',
+      name: PREFERENCES_KEY,
       getStorage: () => AsyncStorage,
       onRehydrateStorage: () => (state, err) => {
         if (state) {

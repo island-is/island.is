@@ -1,16 +1,17 @@
+import { FormUrlDto } from '@island.is/form-system/shared'
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { SectionInput } from './section.input'
-import { ScreenInput } from './screen.input'
-import { FieldInput } from './field.input'
-import { LanguageTypeInput } from './languageType.input'
-import { FieldTypeInput } from './fieldType.input'
-import { ListTypeInput } from './listType.input'
 import { FormApplicantInput } from './applicant.input'
 import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
-import { FormUrlDto } from '@island.is/form-system/shared'
+import { CompletedSectionInfoInput } from './completedSectionInfo.input'
+import { FieldInput } from './field.input'
+import { FieldTypeInput } from './fieldType.input'
+import { LanguageTypeInput } from './languageType.input'
+import { ListTypeInput } from './listType.input'
+import { ScreenInput } from './screen.input'
+import { SectionInput } from './section.input'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -26,6 +27,12 @@ export class DependencyInput {
 
 @InputType('FormSystemDeleteFormInput')
 export class DeleteFormInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+}
+
+@InputType('FormSystemPublishFormInput')
+export class PublishFormInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
@@ -96,10 +103,13 @@ export class UpdateFormDtoInput {
   applicationDaysToRemove?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  completedMessage?: LanguageTypeInput
+  @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
+
+  @Field(() => CompletedSectionInfoInput, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfoInput
 
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
@@ -156,10 +166,10 @@ export class FormInput {
   derivedFrom?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  completedMessage?: LanguageTypeInput
+  @Field(() => CompletedSectionInfoInput, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfoInput
 
   @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDtoInput[]

@@ -24,7 +24,15 @@ export class SubpoenaInfo {
   private isNewValueSetAndDifferent = (
     newValue: unknown,
     oldValue: unknown,
-  ): boolean => Boolean(newValue) && newValue !== oldValue
+  ): boolean => {
+    if (newValue === undefined || newValue === null) {
+      return false
+    }
+    if (newValue instanceof Date && oldValue instanceof Date) {
+      return newValue.getTime() !== oldValue.getTime()
+    }
+    return newValue !== oldValue
+  }
 
   isSubpoenaInfoChanged(oldSubpoenaInfo: SubpoenaUpdate) {
     return subpoenaUpdateKeys.some((key) =>

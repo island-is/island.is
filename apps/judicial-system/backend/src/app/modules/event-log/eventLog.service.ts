@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -15,8 +15,8 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { EventLog } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
-import { EventLog } from './models/eventLog.model'
 
 const allowMultiple: EventType[] = [
   EventType.LOGIN,
@@ -26,6 +26,7 @@ const allowMultiple: EventType[] = [
   EventType.INDICTMENT_CONFIRMED,
   EventType.COURT_DATE_SCHEDULED,
   EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+  EventType.REQUEST_COMPLETED,
 ]
 
 const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]

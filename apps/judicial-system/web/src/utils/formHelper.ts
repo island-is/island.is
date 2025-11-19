@@ -2,11 +2,7 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
-import {
-  Case,
-  IndictmentSubtype,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
@@ -202,6 +198,7 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
   [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
@@ -289,6 +286,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
+    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: (theCase: Case) =>
+      validations.isIndictmentCourtRecordStepValid(theCase) &&
+      (theCase.courtSessions?.every((c) => c.isConfirmed) || false),
     [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
       validations.isConclusionStepValid(theCase),
     [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
@@ -318,23 +318,4 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
-}
-
-export const isTrafficViolationIndictmentCount = (
-  policeCaseNumber?: string | null,
-  indictmentSubtypes?: IndictmentSubtypeMap,
-) => {
-  if (!policeCaseNumber || !indictmentSubtypes) {
-    return false
-  }
-
-  if (
-    indictmentSubtypes[policeCaseNumber].length === 1 &&
-    indictmentSubtypes[policeCaseNumber][0] ===
-      IndictmentSubtype.TRAFFIC_VIOLATION
-  ) {
-    return true
-  }
-
-  return false
 }

@@ -17,4 +17,9 @@ export const completedMessages = defineMessages({
       'Umsókn þín um endurmat brunabótamats hefur verið send inn til Húsnæðis og mannvirkjastofnunar til yfirferðar',
     description: 'Completed alert message',
   },
+  actionCardDone: {
+    id: 'fca.application:completed.actionCardDone',
+    defaultMessage: 'Send til HMS',
+    description: 'Action card done',
+  },
 })

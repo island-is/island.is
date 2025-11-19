@@ -93,3 +93,18 @@ query GetOrganDonorStatus($locale: String) {
     }
   }
 }
+
+query getBloodTypeOverview {
+  rightsPortalBloodType {
+    registered
+    type
+  }
+}
+
+query getDentistOverview($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}

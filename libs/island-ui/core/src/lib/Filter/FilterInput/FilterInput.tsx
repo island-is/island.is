@@ -15,6 +15,8 @@ export interface FilterInputProps {
   ) => void
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
   loading?: boolean
+  maxLength?: number
+  error?: string
 }
 
 const icon: InputIcon = { name: 'search', type: 'outline' }
@@ -31,6 +33,8 @@ export const FilterInput: React.FC<
   onKeyDown,
   backgroundColor = ['blue', 'blue', 'white'],
   loading,
+  maxLength,
+  error,
 }) => {
   return (
     <Input
@@ -45,6 +49,9 @@ export const FilterInput: React.FC<
       buttons={button && [{ ...icon, ...button }]}
       {...(button ? {} : { icon })}
       loading={loading}
+      maxLength={maxLength}
+      hasError={error !== undefined}
+      errorMessage={error}
     />
   )
 }

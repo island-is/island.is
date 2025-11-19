@@ -10,7 +10,7 @@ import { label } from '../../../../support/i18n'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
-const homeUrl = '/umsoknir/nyr-grunnskoli'
+const homeUrl = '/umsoknir/grunnskoli'
 
 const applicationTest = base.extend<{ applicationPage: Page }>({
   applicationPage: async ({ browser }, use) => {
@@ -25,7 +25,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication('nyr-grunnskoli')
+    await expect(applicationPage).toBeApplication('grunnskoli')
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -97,31 +97,6 @@ applicationTest.describe('New primary school', () => {
           await page.keyboard.press('Enter')
           await page.keyboard.press('Enter')
           await page.getByTestId('select-childInfo.pronouns').click()
-          await page
-            .getByRole('region', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .differentPlaceOfResidence,
-              ),
-            })
-            .getByRole('radio', {
-              name: label(newPrimarySchoolMessages.shared.yes),
-            })
-            .click()
-          await page
-            .getByRole('textbox', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .childInfoPlaceOfResidence,
-              ),
-            })
-            .fill('Lækjargata 12')
-          await page
-            .getByRole('textbox', {
-              name: label(newPrimarySchoolMessages.shared.postalCode),
-            })
-            .last()
-            .fill('210')
           await proceed()
         },
       )

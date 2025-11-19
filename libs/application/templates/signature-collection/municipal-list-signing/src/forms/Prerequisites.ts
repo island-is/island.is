@@ -16,15 +16,15 @@ import {
 
 import { m } from '../lib/messages'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
-import { CanSignApi, GetListApi, MunicipalIdentityApi } from '../dataProviders'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -70,9 +70,6 @@ export const Prerequisites: Form = buildForm({
               provider: NationalRegistryUserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              provider: MunicipalIdentityApi,
             }),
             buildDataProviderItem({
               provider: CanSignApi,

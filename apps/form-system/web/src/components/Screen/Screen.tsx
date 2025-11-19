@@ -1,21 +1,27 @@
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
-import { Footer } from '../Footer/Footer'
-import { useApplicationContext } from '../../context/ApplicationProvider'
+import { FormSystemField } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/ui'
+import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useState } from 'react'
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import { Footer } from '../Footer/Footer'
+import { Applicants } from './components/Applicants/Applicants'
+import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
-import { useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { Applicants } from './components/Applicants/Applicants'
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { Summary } from './components/Summary/Summary'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
-  const screenTitle = currentScreen
-    ? state.screens?.[currentScreen.index]?.name?.[lang]
-    : state.sections?.[currentSection.index]?.name?.[lang]
+
+  const screenTitle =
+    currentScreen?.data?.name?.[lang] ??
+    (currentSection?.data?.sectionType === SectionTypes.COMPLETED
+      ? null
+      : state.sections?.[currentSection?.index]?.name?.[lang] ?? '')
+
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
@@ -43,17 +49,19 @@ export const Screen = () => {
         )}
         {currentSectionType === SectionTypes.PARTIES && (
           <Applicants
-            applicantTypes={
-              (state.application.applicantTypes?.filter(
-                (item) => item !== null,
-              ) as FormSystemApplicant[]) ?? []
-            }
+            applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
           />
         )}
+        {currentSectionType === SectionTypes.SUMMARY &&
+          !!state.application.hasSummaryScreen &&
+          !currentSection?.data?.isHidden && <Summary state={state} />}
+
+        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(
-              (field): field is NonNullable<typeof field> => field != null,
+              (field): field is NonNullable<typeof field> =>
+                field != null && !field.isHidden,
             )
             .map((field, index) => {
               return <Field field={field} key={index} />

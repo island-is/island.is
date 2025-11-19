@@ -25,7 +25,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Application } from '@island.is/application/types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { parse } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
 import addMonths from 'date-fns/addMonths'
 
@@ -188,10 +188,12 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.phone,
               value: ({ answers }) => {
-                const parsedPhoneNumber = parse(
+                const parsedPhoneNumber = parsePhoneNumberFromString(
                   getValueViaPath<string>(answers, 'phone') ?? '',
                 )
-                return formatPhoneNumber(parsedPhoneNumber.phone as string)
+                return formatPhoneNumber(
+                  parsedPhoneNumber?.nationalNumber?.toString() || '',
+                )
               },
             }),
             buildKeyValueField({

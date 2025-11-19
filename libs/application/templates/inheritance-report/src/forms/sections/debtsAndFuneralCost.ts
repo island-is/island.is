@@ -8,6 +8,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { FuneralAssetItem } from '../../types'
 import { DebtTypes } from '../../types'
 
 export const debtsAndFuneralCost = buildSection({
@@ -66,6 +67,7 @@ export const debtsAndFuneralCost = buildSection({
                 ],
                 hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
+                fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',
                 selections: [
                   {
@@ -128,38 +130,47 @@ export const debtsAndFuneralCost = buildSection({
                   {
                     id: 'build',
                     title: m.funeralBuildCost,
+                    assetType: FuneralAssetItem.Casket,
                   },
                   {
                     id: 'cremation',
                     title: m.funeralCremationCost,
+                    assetType: FuneralAssetItem.Cremation,
                   },
                   {
                     id: 'print',
                     title: m.funeralPrintCost,
+                    assetType: FuneralAssetItem.Printing,
                   },
                   {
                     id: 'flowers',
                     title: m.funeralFlowersCost,
+                    assetType: FuneralAssetItem.Flowers,
                   },
                   {
                     id: 'music',
                     title: m.funeralMusicCost,
+                    assetType: FuneralAssetItem.Music,
                   },
                   {
                     id: 'rent',
                     title: m.funeralRentCost,
+                    assetType: FuneralAssetItem.Venue,
                   },
                   {
                     id: 'food',
                     title: m.funeralFoodAndDrinkCost,
+                    assetType: FuneralAssetItem.Wake,
                   },
                   {
                     id: 'tombstone',
                     title: m.funeralTombstoneCost,
+                    assetType: FuneralAssetItem.Tombstone,
                   },
                   {
                     id: 'service',
                     title: m.funeralServiceCost,
+                    assetType: FuneralAssetItem.FuneralServices,
                   },
                 ],
               },

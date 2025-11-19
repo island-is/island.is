@@ -1,0 +1,19 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as ContentBlockStories from './ContentBlock.stories'
+
+import { Box } from '../Box/Box'
+import { ContentBlock } from './ContentBlock'
+
+<Meta of={ContentBlockStories} />
+
+# ContentBlock
+
+ContentBlock is a container with a set max-width that centers its children.
+
+<Canvas>
+  <Story of={ContentBlockStories.Default} />
+</Canvas>
+
+# Props
+
+<Controls />

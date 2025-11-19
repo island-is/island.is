@@ -5,9 +5,8 @@ import { CaseFileState, CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
+import { Case, CaseFile } from '../../../repository'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeleteFileResponse

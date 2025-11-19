@@ -203,8 +203,21 @@ export const messages = defineMessages({
     id: 'sp.documents:reply-cannot-be-empty',
     defaultMessage: 'Skilaboð mega ekki vera tóm',
   },
+  replyCannotBeMore: {
+    id: 'sp.documents:reply-cannot-be-more-than-500',
+    defaultMessage: 'Skilaboð mega ekki vera meira en 500 stafir',
+  },
   messagesHere: {
     id: 'sp.documents:messages-here',
     defaultMessage: 'Skilaboð hér',
+  },
+  replyEmailTooltip: {
+    id: 'sp.documents:reply-email-tooltip',
+    defaultMessage: 'Netfang sem er skráð í Mínar stillingar. ',
+  },
+  emailMissing: {
+    id: 'sp.documents:email-missing',
+    defaultMessage:
+      'Nauðsynlegt er að hafa netfang skráð til að senda skilaboðin',
   },
 })

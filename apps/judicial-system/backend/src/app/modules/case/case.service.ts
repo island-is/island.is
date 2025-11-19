@@ -1,5 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
-import { Includeable, Transaction } from 'sequelize/types'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -20,7 +19,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -38,11 +40,14 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  CourtDocumentType,
+  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
   EventType,
   eventTypes,
+  IndictmentDecision,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -61,151 +66,43 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtDocumentService, CourtSessionService } from '../court-session'
+import { DefendantService } from '../defendant'
+import { EventService } from '../event'
+import { EventLogService } from '../event-log'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import {
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
   CivilClaimant,
+  CourtDocument,
+  CourtSession,
+  CourtSessionString,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventService } from '../event'
-import { EventLog, EventLogService } from '../event-log'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
-import { Notification } from '../notification'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User } from '../user'
-import { Victim } from '../victim/models/victim.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Notification,
+  Offense,
+  Subpoena,
+  UpdateCase,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { VerdictService } from '../verdict/verdict.service'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { partition } from './filters/filterHelpers'
-import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
-import {
-  CaseStatistics,
-  IndictmentCaseStatistics,
-  RequestCaseStatistics,
-} from './models/caseStatistics.response'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
-
-interface UpdateDateLog {
-  date?: Date
-  location?: string
-}
-
-export interface UpdateCase
-  extends Pick<
-    Case,
-    | 'indictmentSubtypes'
-    | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
-    | 'isHeightenedSecurityLevel'
-    | 'courtId'
-    | 'leadInvestigator'
-    | 'arrestDate'
-    | 'requestedCourtDate'
-    | 'translator'
-    | 'requestedValidToDate'
-    | 'demands'
-    | 'lawsBroken'
-    | 'legalBasis'
-    | 'legalProvisions'
-    | 'requestedCustodyRestrictions'
-    | 'requestedOtherRestrictions'
-    | 'caseFacts'
-    | 'legalArguments'
-    | 'requestProsecutorOnlySession'
-    | 'prosecutorOnlySessionRequest'
-    | 'comments'
-    | 'caseFilesComments'
-    | 'prosecutorId'
-    | 'sharedWithProsecutorsOfficeId'
-    | 'sessionArrangements'
-    | 'courtLocation'
-    | 'courtStartDate'
-    | 'courtEndTime'
-    | 'isClosedCourtHidden'
-    | 'courtAttendees'
-    | 'prosecutorDemands'
-    | 'courtDocuments'
-    | 'sessionBookings'
-    | 'courtCaseFacts'
-    | 'introduction'
-    | 'courtLegalArguments'
-    | 'ruling'
-    | 'decision'
-    | 'validToDate'
-    | 'isCustodyIsolation'
-    | 'isolationToDate'
-    | 'conclusion'
-    | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
-    | 'caseModifiedExplanation'
-    | 'rulingModifiedHistory'
-    | 'caseResentExplanation'
-    | 'crimeScenes'
-    | 'indictmentIntroduction'
-    | 'requestDriversLicenseSuspension'
-    | 'creatingProsecutorId'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'appealReceivedByCourtDate'
-    | 'appealCaseNumber'
-    | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
-    | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
-    | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
-    | 'indictmentReviewDecision'
-    | 'indictmentDecision'
-    | 'rulingSignatureDate'
-    | 'courtSessionType'
-    | 'mergeCaseId'
-    | 'mergeCaseNumber'
-    | 'isCompletedWithoutRuling'
-    | 'hasCivilClaims'
-    | 'isRegisteredInPrisonSystem'
-  > {
-  type?: CaseType
-  state?: CaseState
-  policeCaseNumbers?: string[]
-  defendantWaivesRightToCounsel?: boolean
-  rulingDate?: Date | null
-  courtCaseNumber?: string | null
-  judgeId?: string | null
-  registrarId?: string | null
-  courtRecordSignatoryId?: string | null
-  courtRecordSignatureDate?: Date | null
-  parentCaseId?: string | null
-  indictmentReturnedExplanation?: string | null
-  indictmentDeniedExplanation?: string | null
-  indictmentHash?: string | null
-  arraignmentDate?: UpdateDateLog
-  courtDate?: UpdateDateLog
-  postponedIndefinitelyExplanation?: string
-  civilDemands?: string
-}
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -216,13 +113,14 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
 
 type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation' | 'civilDemands'
+  'postponedIndefinitelyExplanation' | 'civilDemands' | 'penalties'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
   postponedIndefinitelyExplanation:
     StringType.POSTPONED_INDEFINITELY_EXPLANATION,
   civilDemands: StringType.CIVIL_DEMANDS,
+  penalties: StringType.PENALTIES,
 }
 
 export const include: Includeable[] = [
@@ -313,6 +211,11 @@ export const include: Includeable[] = [
         where: { eventType: defendantEventTypes },
         separate: true,
       },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
     ],
     separate: true,
   },
@@ -338,6 +241,59 @@ export const include: Includeable[] = [
         separate: true,
       },
     ],
+    separate: true,
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CourtDocument,
+    as: 'unfiledCourtDocuments',
+    required: false,
+    order: [
+      ['documentOrder', 'DESC'],
+      ['created', 'ASC'],
+    ],
+    where: { courtSessionId: null },
     separate: true,
   },
   {
@@ -378,7 +334,19 @@ export const include: Includeable[] = [
     order: [['created', 'DESC']],
     separate: true,
   },
-  { model: Case, as: 'mergeCase' },
+  {
+    model: Case,
+    as: 'mergeCase',
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',
@@ -397,8 +365,43 @@ export const include: Includeable[] = [
             order: [['created', 'DESC']],
             separate: true,
           },
+          {
+            model: Verdict,
+            as: 'verdict',
+            required: false,
+          },
         ],
         separate: true,
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
       },
       {
         model: CaseFile,
@@ -456,6 +459,11 @@ export const caseListInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
     ],
     separate: true,
   },
@@ -512,14 +520,17 @@ export const caseListInclude: Includeable[] = [
 export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
+    private readonly indictmentCountService: IndictmentCountService,
+    private readonly courtSessionService: CourtSessionService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
+    private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -528,6 +539,7 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly messageService: MessageService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -591,81 +603,168 @@ export class CaseService {
   private async createCase(
     caseToCreate: CreateCaseDto,
     transaction: Transaction,
-  ): Promise<Case> {
-    const theCase = await this.caseModel.create(
+  ): Promise<string> {
+    const theCase = await this.caseRepositoryService.create(
       {
         ...caseToCreate,
-        state: isRequestCase(caseToCreate.type)
-          ? CaseState.NEW
-          : CaseState.DRAFT,
+        ...(isRequestCase(caseToCreate.type)
+          ? { state: CaseState.NEW }
+          : { state: CaseState.DRAFT, withCourtSessions: true }),
       },
       { transaction },
     )
 
-    return theCase
+    if (isIndictmentCase(theCase.type)) {
+      await this.createIndictmentsForNewPoliceCaseNumbers(
+        theCase.policeCaseNumbers,
+        theCase,
+        transaction,
+      )
+    }
+
+    return theCase.id
   }
 
-  private async syncPoliceCaseNumbersAndCaseFiles(
+  private async handlePoliceCaseNumbersUpdate(
     theCase: Case,
     update: UpdateCase,
     transaction: Transaction,
   ): Promise<void> {
-    if (update.policeCaseNumbers && theCase.caseFiles) {
-      const oldPoliceCaseNumbers = theCase.policeCaseNumbers
-      const newPoliceCaseNumbers = update.policeCaseNumbers
-      const maxIndex = Math.max(
-        oldPoliceCaseNumbers.length,
-        newPoliceCaseNumbers.length,
-      )
+    if (
+      !update.policeCaseNumbers ||
+      update.policeCaseNumbers.length === 0 ||
+      (!theCase.caseFiles && !theCase.indictmentCounts)
+    ) {
+      // Nothing to do
+      return
+    }
 
-      // Assumptions:
-      // 1. The police case numbers are in the same order as they were before
-      // 2. The police case numbers are not duplicated
-      // 3. At most one police case number is changed, added or removed
-      for (let i = 0; i < maxIndex; i++) {
-        // Police case number added
-        if (i === oldPoliceCaseNumbers.length) {
-          break
-        }
+    const oldPoliceCaseNumbers = [...theCase.policeCaseNumbers].sort()
+    const newPoliceCaseNumbers = [...update.policeCaseNumbers].sort()
 
-        // Police case number deleted
-        if (
-          i === newPoliceCaseNumbers.length ||
-          (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
-            newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
-        ) {
-          for (const caseFile of theCase.caseFiles) {
-            if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(
-                theCase,
-                caseFile,
-                transaction,
-              )
-            }
-          }
+    const removedPoliceCaseNumbers: string[] = []
+    const addedPoliceCaseNumbers: string[] = []
 
-          break
-        }
+    // Find added and removed police case numbers
+    while (oldPoliceCaseNumbers.length > 0 && newPoliceCaseNumbers.length > 0) {
+      // If the police case numbers are equal, then nothing has changed
+      if (oldPoliceCaseNumbers[0] === newPoliceCaseNumbers[0]) {
+        oldPoliceCaseNumbers.shift()
+        newPoliceCaseNumbers.shift()
 
-        // Police case number unchanged
-        if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
-          continue
-        }
-
-        // Police case number changed
-        for (const caseFile of theCase.caseFiles) {
-          if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-            await this.fileService.updateCaseFile(
-              theCase.id,
-              caseFile.id,
-              { policeCaseNumber: newPoliceCaseNumbers[i] },
-              transaction,
-            )
-          }
-        }
-
-        break
+        continue
       }
+
+      // If the first police case number in the old list is smaller
+      // than the first in the new list, then it has been removed
+      if (oldPoliceCaseNumbers[0] < newPoliceCaseNumbers[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        removedPoliceCaseNumbers.push(oldPoliceCaseNumbers.shift()!)
+
+        continue
+      }
+
+      // Otherwise, the first police case number in the new list has been added
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      addedPoliceCaseNumbers.push(newPoliceCaseNumbers.shift()!)
+    }
+
+    // If there are still police case numbers left in either list,
+    // then they have been removed or added
+    removedPoliceCaseNumbers.push(...oldPoliceCaseNumbers)
+    addedPoliceCaseNumbers.push(...newPoliceCaseNumbers)
+
+    // Assumption: If exactly one police case number has been added and
+    // exactly one has been removed, then a police case number has been changed
+    if (
+      removedPoliceCaseNumbers.length === 1 &&
+      addedPoliceCaseNumbers.length === 1
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const removedPoliceCaseNumber = removedPoliceCaseNumbers.shift()!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const addedPoliceCaseNumber = addedPoliceCaseNumbers.shift()!
+
+      if (theCase.caseFiles) {
+        // Update case files with the new police case number
+        for (const caseFile of theCase.caseFiles.filter(
+          (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.fileService.updateCaseFile(
+            theCase.id,
+            caseFile.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
+        }
+      }
+
+      if (theCase.indictmentCounts) {
+        // Update indictment counts with the new police case number
+        for (const indictmentCount of theCase.indictmentCounts.filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.indictmentCountService.update(
+            theCase.id,
+            indictmentCount.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
+        }
+      }
+
+      // We are done
+      return
+    }
+
+    if (theCase.caseFiles) {
+      // Delete case files connected to removed police case numbers
+      for (const caseFile of theCase.caseFiles.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
+      )) {
+        await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
+      }
+    }
+
+    if (theCase.indictmentCounts) {
+      // Delete indictment counts connected to removed police case numbers
+      for (const indictmentCount of theCase.indictmentCounts.filter(
+        (indictmentCount) =>
+          indictmentCount.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(indictmentCount.policeCaseNumber),
+      )) {
+        await this.indictmentCountService.delete(
+          theCase.id,
+          indictmentCount.id,
+          transaction,
+        )
+      }
+    }
+
+    // Add a single indictment count for each added police case numbers
+    if (isIndictmentCase(theCase.type)) {
+      await this.createIndictmentsForNewPoliceCaseNumbers(
+        addedPoliceCaseNumbers,
+        theCase,
+        transaction,
+      )
+    }
+  }
+
+  private async createIndictmentsForNewPoliceCaseNumbers(
+    newPoliceCaseNumbers: string[],
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    for (const policeCaseNumber of newPoliceCaseNumbers) {
+      await this.indictmentCountService.createWithPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+        transaction,
+      )
     }
   }
 
@@ -1070,6 +1169,14 @@ export class CaseService {
       caseId: theCase.id,
       body: { type: CaseNotificationType.RULING },
     })
+
+    if (theCase.withCourtSessions) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
@@ -1678,7 +1785,7 @@ export class CaseService {
     allowDeleted = false,
     transaction?: Transaction,
   ): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include,
       where: {
         id: caseId,
@@ -1696,13 +1803,12 @@ export class CaseService {
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseModel.findOne({
+    const minimalCase = await this.caseRepositoryService.findOne({
       where: {
         id,
         isArchived: false,
         state: { [Op.not]: CaseState.DELETED },
       },
-      include: [],
     })
 
     if (!minimalCase) {
@@ -1713,7 +1819,7 @@ export class CaseService {
   }
 
   getAll(user: TUser): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: caseListInclude,
       where: getCasesQueryFilter(user),
     })
@@ -1723,7 +1829,7 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         { model: Institution, as: 'court' },
         {
@@ -1869,7 +1975,7 @@ export class CaseService {
     }
   }
 
-  private async handleStateChangeEventLogUpdatesForIndictments(
+  private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1897,7 +2003,7 @@ export class CaseService {
     }
   }
 
-  private async handleStateChangeEventLogUpdatesForRequest(
+  private handleStateChangeEventLogUpdatesForRequest(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1914,9 +2020,18 @@ export class CaseService {
         transaction,
       )
     }
+
+    if (isCompletedCase(updatedCase.state)) {
+      return this.eventLogService.createWithUser(
+        EventType.REQUEST_COMPLETED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
   }
 
-  private async handleStateChangeEventLogUpdates(
+  private handleStateChangeEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1953,6 +2068,19 @@ export class CaseService {
     }
   }
 
+  private handleCreateFirstCourtSession(
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    // Guard against unexpected existing court sessions
+    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
+      return
+    }
+
+    // Create the first court session and then add court documents to it
+    return this.courtSessionService.create(theCase, transaction)
+  }
+
   private async handleEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -1983,7 +2111,7 @@ export class CaseService {
       updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
     if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-      await this.eventLogService.createWithUser(
+      return this.eventLogService.createWithUser(
         EventType.COURT_DATE_SCHEDULED,
         theCase.id,
         user,
@@ -2008,7 +2136,7 @@ export class CaseService {
     }
 
     if (isIndictmentCase(theCase.type)) {
-      await this.handleEventLogUpdatesForIndictments(
+      return this.handleEventLogUpdatesForIndictments(
         theCase,
         updatedCase,
         user,
@@ -2026,9 +2154,14 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const isReceivingIndictmentCase =
+      isReceivingCase && isIndictmentCase(theCase.type)
+
+    const completingIndictmentCase =
+      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+
     const completingIndictmentCaseWithoutRuling =
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.COMPLETED &&
+      completingIndictmentCase &&
       theCase.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.FINE,
@@ -2036,6 +2169,10 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const completingIndictmentCaseWithRuling =
+      completingIndictmentCase &&
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
     const requiresCourtTransition =
       theCase.courtId &&
@@ -2061,29 +2198,13 @@ export class CaseService {
         await this.handleCaseStringUpdates(theCase, update, transaction)
 
         if (Object.keys(update).length > 0) {
-          const [numberOfAffectedRows] = await this.caseModel.update(update, {
-            where: { id: theCase.id },
+          await this.caseRepositoryService.update(theCase.id, update, {
             transaction,
           })
-
-          if (numberOfAffectedRows > 1) {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-            )
-          } else if (numberOfAffectedRows < 1) {
-            throw new InternalServerErrorException(
-              `Could not update case ${theCase.id}`,
-            )
-          }
         }
 
         // Update police case numbers of case files if necessary
-        await this.syncPoliceCaseNumbersAndCaseFiles(
-          theCase,
-          update,
-          transaction,
-        )
+        await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
 
         // Reset case file states if court case number is changed
         if (
@@ -2092,6 +2213,110 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        // Handle first court session creation if receiving an indictment case
+        // which should have court sessions
+        if (isReceivingIndictmentCase && theCase.withCourtSessions) {
+          await this.handleCreateFirstCourtSession(theCase, transaction)
+        }
+
+        // Create new subpoenas if scheduling a new arraignment date for an indictment case
+        if (
+          schedulingNewArraignmentDateForIndictmentCase &&
+          theCase.defendants
+        ) {
+          await Promise.all(
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map(async (defendant) => {
+                const subpoena = await this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                  defendant.subpoenaType,
+                )
+
+                // Only add a court document if a court session exists
+                if (
+                  !theCase.withCourtSessions ||
+                  !theCase.courtSessions ||
+                  theCase.courtSessions.length === 0
+                ) {
+                  return
+                }
+
+                const name = `Fyrirkall ${defendant.name} ${formatDate(
+                  subpoena.created,
+                )}`
+
+                return this.courtDocumentService.create(
+                  theCase.id,
+                  {
+                    documentType: CourtDocumentType.GENERATED_DOCUMENT,
+                    name,
+                    generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+                  },
+                  transaction,
+                )
+              }),
+          )
+        }
+
+        // Ensure that verdicts exist at this stage, if they don't exist we create them
+        if (completingIndictmentCaseWithRuling && theCase.defendants) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (!defendant.verdict) {
+                return this.verdictService.createVerdict(
+                  theCase.id,
+                  { defendantId: defendant.id },
+                  transaction,
+                )
+              }
+            }),
+          )
+        }
+
+        // if ruling decision is changed to other decision
+        // we have to clean up idle verdicts
+
+        const hasNewDecision =
+          theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
+          !!update.indictmentDecision &&
+          [
+            IndictmentDecision.POSTPONING,
+            IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+            IndictmentDecision.REDISTRIBUTING,
+            IndictmentDecision.SCHEDULING,
+          ].includes(update.indictmentDecision)
+
+        const hasNewRulingDecision =
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.RULING &&
+          !!update.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.CANCELLATION,
+            CaseIndictmentRulingDecision.FINE,
+            CaseIndictmentRulingDecision.DISMISSAL,
+            CaseIndictmentRulingDecision.MERGE,
+            CaseIndictmentRulingDecision.WITHDRAWAL,
+          ].includes(update.indictmentRulingDecision)
+
+        if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (defendant.verdict) {
+                return this.verdictService.deleteVerdict(
+                  theCase.id,
+                  defendant.id,
+                  transaction,
+                )
+              }
+            }),
+          )
         }
 
         // Remove uploaded ruling files if an indictment case is completed without a ruling
@@ -2107,25 +2332,64 @@ export class CaseService {
           )
         }
 
-        // Create new subpoeans if scheduling a new arraignment date for an indictment case
         if (
-          schedulingNewArraignmentDateForIndictmentCase &&
-          theCase.defendants
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.MERGE &&
+          theCase.mergeCaseId
         ) {
-          await Promise.all(
-            theCase.defendants
-              .filter((defendant) => !defendant.isAlternativeService)
-              .map((defendant) =>
-                this.subpoenaService.createSubpoena(
-                  defendant.id,
-                  theCase.id,
-                  transaction,
-                  updatedArraignmentDate?.date,
-                  updatedArraignmentDate?.location,
-                  defendant.subpoenaType,
-                ),
-              ),
+          const parentCaseId = theCase.mergeCaseId
+          const parentCase = await this.findById(
+            parentCaseId,
+            false,
+            transaction,
           )
+
+          const parentCaseCourtSessions = parentCase.courtSessions
+          const latestCourtSession =
+            parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+              ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+              : undefined
+
+          // ensure there exists at least one court session in the parent case
+          if (parentCase.withCourtSessions && latestCourtSession) {
+            const isCourtSessionActive =
+              latestCourtSession && !latestCourtSession.isConfirmed
+            const courtSessionId = isCourtSessionActive
+              ? latestCourtSession.id
+              : (await this.courtSessionService.create(parentCase, transaction))
+                  .id
+
+            await this.courtDocumentService.updateMergedCourtDocuments({
+              parentCaseId,
+              parentCaseCourtSessionId: courtSessionId,
+              caseId: theCase.id,
+              transaction,
+            })
+            const caseSentToCourt = EventLog.getEventLogDateByEventType(
+              [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+              theCase.eventLogs,
+            )
+            await this.courtSessionService.createOrUpdateCourtSessionString({
+              caseId: parentCaseId,
+              courtSessionId,
+              mergedCaseId: theCase.id,
+              update: {
+                stringType: CourtSessionStringType.ENTRIES,
+                value: `Mál nr. ${
+                  theCase.courtCaseNumber
+                } sem var höfðað á hendur ákærða${
+                  caseSentToCourt
+                    ? ` með ákæru útgefinni ${formatDate(
+                        caseSentToCourt,
+                        'PPP',
+                      )}`
+                    : ''
+                }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+              },
+              transaction,
+            })
+          }
         }
 
         const updatedCase = await this.findById(theCase.id, true, transaction)
@@ -2427,132 +2691,5 @@ export class CaseService {
     )) as Case
 
     return updatedCase
-  }
-
-  async getCaseStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<CaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseModel.findAll({
-      where,
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
-    })
-
-    const [indictments, requests] = partition(cases, (c) =>
-      isIndictmentCase(c.type),
-    )
-
-    const requestCases = this.getRequestCaseStatistics(requests)
-    const indictmentCases = this.getIndictmentStatistics(indictments)
-    const subpoenas = await this.subpoenaService.getStatistics(
-      from,
-      to,
-      institutionId,
-    )
-
-    const stats: CaseStatistics = {
-      count: cases.length,
-      requestCases,
-      indictmentCases,
-      subpoenas,
-    }
-
-    return stats
-  }
-
-  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
-    const inProgressCount = cases.filter(
-      (caseItem) => caseItem.state !== CaseState.COMPLETED,
-    ).length
-
-    const rulingCount = cases.filter(
-      (caseItem) => caseItem.rulingDate !== null,
-    ).length
-
-    const totalCount = cases.length
-
-    const caseDurations = cases
-      .map((caseItem) => {
-        const confirmedDate = EventLog.getEventLogDateByEventType(
-          EventType.INDICTMENT_CONFIRMED,
-          caseItem.eventLogs,
-        )
-        if (!confirmedDate || !caseItem.rulingDate) return null
-
-        const diff = caseItem.rulingDate.getTime() - confirmedDate.getTime()
-        return diff > 0 ? diff : null
-      })
-      .filter((ms): ms is number => ms !== null)
-
-    const averageRulingTimeMs = caseDurations.length
-      ? Math.round(
-          caseDurations.reduce((sum, ms) => sum + ms, 0) / caseDurations.length,
-        )
-      : 0
-
-    return {
-      count: totalCount,
-      inProgressCount,
-      rulingCount,
-      averageRulingTimeMs,
-      averageRulingTimeDays: Math.round(
-        averageRulingTimeMs / (1000 * 60 * 60 * 24),
-      ),
-    }
-  }
-
-  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
-    const inProgressCount = cases.filter(
-      (c) => !isCompletedCase(c.state),
-    ).length
-
-    const completedCount = cases.filter((c) => isCompletedCase(c.state)).length
-
-    return {
-      count: cases.length,
-      inProgressCount,
-      completedCount,
-    }
   }
 }

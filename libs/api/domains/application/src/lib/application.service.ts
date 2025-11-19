@@ -19,6 +19,7 @@ import {
   ApplicationApplicationsAdminInput,
   ApplicationApplicationsAdminStatisticsInput,
   ApplicationApplicationsInstitutionAdminInput,
+  ApplicationTypesInstitutionAdminInput,
 } from './application-admin/dto/applications-applications-admin-input'
 
 @Injectable()
@@ -101,7 +102,6 @@ export class ApplicationService {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerFindAllInstitutionAdmin({
-      nationalId: input.nationalId,
       page: input.page,
       count: input.count,
       locale,
@@ -109,6 +109,21 @@ export class ApplicationService {
       applicantNationalId: input.applicantNationalId,
       from: input.from,
       to: input.to,
+      typeIdValue: input.typeIdValue,
+      searchStrValue: input.searchStrValue,
+    })
+  }
+
+  async findAllApplicationTypesInstitutionAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationTypesInstitutionAdminInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesInstitutionAdmin({
+      nationalId: input.nationalId,
+      locale,
     })
   }
 

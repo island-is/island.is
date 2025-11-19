@@ -1,13 +1,11 @@
 import {
-  getAppealDeadlineDate,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
-} from '@island.is/judicial-system/types'
-import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
+  getAppealDeadlineDate,
+  getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
+  hasDatePassed,
   isRequestCase,
   ServiceRequirement,
   UserRole,
@@ -165,18 +163,22 @@ export const getIndictmentInfo = ({
   }
 
   const theRulingDate = new Date(rulingDate)
-  const indictmentAppealDeadline = getIndictmentAppealDeadlineDate(
-    theRulingDate,
+  const indictmentAppealDeadline = getIndictmentAppealDeadlineDate({
+    baseDate: theRulingDate,
     isFine,
-  ).toISOString()
+  }).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
       isRuling || isFine,
-      isFine || defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      isFine ||
+      defendant.verdict?.serviceRequirement ===
+        ServiceRequirement.NOT_REQUIRED ||
+      defendant.verdict?.serviceRequirement ===
+        ServiceRequirement.NOT_APPLICABLE
         ? theRulingDate
-        : defendant.verdictViewDate
-        ? new Date(defendant.verdictViewDate)
+        : defendant.verdict?.serviceDate
+        ? new Date(defendant.verdict.serviceDate)
         : undefined,
     ],
   )
@@ -193,22 +195,27 @@ export const getIndictmentInfo = ({
 
 export const getIndictmentDefendantsInfo = (theCase: Case) => {
   return theCase.defendants?.map((defendant) => {
-    const serviceRequired =
-      defendant.serviceRequirement === ServiceRequirement.REQUIRED
+    const { verdict } = defendant
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-    const { verdictViewDate } = defendant
-
-    const baseDate = serviceRequired ? verdictViewDate : theCase.rulingDate
+    const baseDate = isServiceRequired
+      ? verdict.serviceDate
+      : theCase.rulingDate
     const verdictAppealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFine)
+      ? getIndictmentAppealDeadlineDate({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
       : undefined
     const isVerdictAppealDeadlineExpired =
       !!verdictAppealDeadline && hasDatePassed(verdictAppealDeadline)
 
     return {
       ...defendant,
+      // represents both verdicts and fines
       verdictAppealDeadline: verdictAppealDeadline?.toISOString(),
       isVerdictAppealDeadlineExpired,
     }

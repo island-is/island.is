@@ -4,7 +4,7 @@
   "sourceRoot": "libs/api/domains/application/src",
   "projectType": "library",
   "tags": ["lib:api", "scope:api"],
-  "implicitDependencies": ["application-system-api"],
+  "implicitDependencies": ["application-system-api", "application-types"],
   "generators": {},
   "targets": {
     "lint": {

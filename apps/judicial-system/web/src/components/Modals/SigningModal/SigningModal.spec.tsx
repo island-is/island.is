@@ -1,15 +1,10 @@
 import { ApolloError } from '@apollo/client'
 
-import { GetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
 import { getSigningProgress } from './SigningModal'
 
-type SignatureConfirmation =
-  GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
 describe('getSigningProcess', () => {
   test('should return success when document has been signed', () => {
-    const signatureConfirmation: SignatureConfirmation = {
-      documentSigned: true,
-    }
+    const signatureConfirmation = { documentSigned: true }
 
     const result = getSigningProgress(signatureConfirmation, undefined)
 
@@ -17,10 +12,7 @@ describe('getSigningProcess', () => {
   })
 
   test('should return canceled', () => {
-    const signatureConfirmation: SignatureConfirmation = {
-      documentSigned: false,
-      code: 7023,
-    }
+    const signatureConfirmation = { documentSigned: false, code: 7023 }
 
     const result = getSigningProgress(signatureConfirmation, undefined)
 
@@ -34,9 +26,7 @@ describe('getSigningProcess', () => {
   })
 
   test('should return error if document is not signed', () => {
-    const signatureConfirmation: SignatureConfirmation = {
-      documentSigned: false,
-    }
+    const signatureConfirmation = { documentSigned: false }
     const result = getSigningProgress(signatureConfirmation, undefined)
 
     expect(result).toBe('error')

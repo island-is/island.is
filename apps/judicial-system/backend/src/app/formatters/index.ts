@@ -2,6 +2,7 @@ export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from './courtRecordPdf'
+export { createIndictmentCourtRecordPdf } from './indictmentCourtRecordPdf'
 export {
   getCustodyNoticePdfAsBuffer,
   getCustodyNoticePdfAsString,
@@ -37,7 +38,8 @@ export { createCaseFilesRecord } from './caseFilesRecordPdf'
 export { createIndictment } from './indictmentPdf'
 export { createConfirmedPdf } from './confirmedPdf'
 export { createSubpoena } from './subpoenaPdf'
-export { createServiceCertificate } from './serviceCertificatePdf'
+export { createSubpoenaServiceCertificate } from './subpoenaServiceCertificatePdf'
 export { createRulingSentToPrisonAdminPdf } from './rulingSentToPrisonAdminPdf'
 export { createFineSentToPrisonAdminPdf } from './fineSentToPrisonAdminPdf'
 export { getCaseFileHash } from './getCaseFileHash'
+export { createVerdictServiceCertificate } from './verdictServiceCertificatePdf'

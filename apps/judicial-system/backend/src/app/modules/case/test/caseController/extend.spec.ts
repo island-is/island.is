@@ -1,5 +1,4 @@
-import { Op } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import {
@@ -16,8 +15,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate, randomEnum } from '../../../../test'
 import { DefendantService } from '../../../defendant'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -32,15 +31,19 @@ type GivenWhenThen = (
 
 describe('CaseController - Extend', () => {
   let mockDefendantService: DefendantService
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { defendantService, sequelize, caseModel, caseController } =
-      await createTestingCaseModule()
+    const {
+      defendantService,
+      sequelize,
+      caseRepositoryService,
+      caseController,
+    } = await createTestingCaseModule()
     mockDefendantService = defendantService
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -131,14 +134,14 @@ describe('CaseController - Extend', () => {
     const extendedCase = { id: extendedCaseId }
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
 
       await givenWhenThen(caseId, user, theCase)
     })
 
     it('should extend case', () => {
-      expect(mockCaseModel.create).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
         {
           origin,
           type,
@@ -179,7 +182,7 @@ describe('CaseController - Extend', () => {
         defendantTwo,
         transaction,
       )
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
         where: {
           id: extendedCaseId,
@@ -200,9 +203,9 @@ describe('CaseController - Extend', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -272,7 +275,7 @@ describe('CaseController - Extend', () => {
     })
 
     it('should extend case', () => {
-      expect(mockCaseModel.create).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
         {
           origin,
           type,
@@ -312,7 +315,7 @@ describe('CaseController - Extend', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -333,7 +336,7 @@ describe('CaseController - Extend', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
       const mockDefendantCreate =
         mockDefendantService.createForNewCase as jest.Mock
@@ -357,9 +360,9 @@ describe('CaseController - Extend', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)

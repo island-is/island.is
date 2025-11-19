@@ -10,13 +10,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'doneScreen',
@@ -41,15 +41,18 @@ export const Done: Form = buildForm({
             }),
             buildCopyLinkField({
               id: 'copyLink',
-              link: ({ externalData }) =>
-                getValueViaPath(externalData, 'createLists.data.slug') ??
-                'https://island.is/',
+              link: ({ externalData }) => {
+                const slug =
+                  getValueViaPath(externalData, 'submit.data.slug') ??
+                  'https://island.is/'
+                return `${document.location.origin}${slug}`
+              },
               semiBoldLink: true,
               marginBottom: 'none',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              url: '/minarsidur/min-gogn/listar/',
+              url: '/minarsidur/min-gogn/listar/sveitarstjornar-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               messageColor: 'blue600',

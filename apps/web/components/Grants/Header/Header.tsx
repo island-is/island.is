@@ -55,7 +55,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
       <Box marginTop={6} component="form" action={props.searchUrl}>
         <Input
           id="query"
-          name="search query"
+          name="query"
           placeholder={props.searchPlaceholder}
           backgroundColor="blue"
           size="md"

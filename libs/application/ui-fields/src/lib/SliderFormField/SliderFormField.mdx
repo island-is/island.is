@@ -1,0 +1,71 @@
+import {
+  Meta,
+  Story,
+  Canvas,
+  Controls,
+  Description,
+  Source,
+} from '@storybook/blocks'
+import { dedent } from 'ts-dedent'
+import * as SliderFormFieldStories from './SliderFormField.stories'
+
+import { SliderFormField } from './SliderFormField'
+
+export const createMockApplication = (data = {}) => ({
+  id: '123',
+  assignees: [],
+  state: data.state || 'draft',
+  applicant: '111111-3000',
+  typeId: data.typeId || 'ExampleForm',
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: data.answers || {},
+  externalData: data.externalData || {},
+})
+
+<Meta of={SliderFormFieldStories} />
+
+# SliderFormField
+
+### Usage in a template
+
+You can create a SliderFormField using the following function `buildSliderField`.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildSliderField({
+      id: 'field.id',
+      title: 'Slider title',
+      label: {
+        singular: 'day',
+        plural: 'days',
+      },
+      min: 1,
+      max: 5,
+      step: 1,
+      showMinMaxLabels: true,
+      showToolTip: true,
+      trackStyle: { gridTemplateRows: 8 },
+      calculateCellStyle: () => {
+        return {
+          background: 'blue',
+        }
+      },
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story of={SliderFormFieldStories.Default} />
+</Canvas>
+
+You can also use this field into a custom component by using `<SliderFormField field={...} />` with the configuration object defined above.
+
+# Props
+
+## SliderFormField
+
+<Controls />

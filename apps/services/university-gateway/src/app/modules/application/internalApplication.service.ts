@@ -11,9 +11,8 @@ import {
 import { logger } from '@island.is/logging'
 import { Op } from 'sequelize'
 
-export
 @Injectable()
-class InternalApplicationService {
+export class InternalApplicationService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 

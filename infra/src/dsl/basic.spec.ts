@@ -29,7 +29,7 @@ describe('Basic serialization', () => {
     })
     .serviceAccount()
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .resources({
       requests: { memory: '1MB', cpu: '100m' },
       limits: { memory: '512MB', cpu: '500m' },
@@ -69,7 +69,7 @@ describe('Basic serialization', () => {
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
-    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.cjs'])
   })
   it('network policies', () => {
     expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])

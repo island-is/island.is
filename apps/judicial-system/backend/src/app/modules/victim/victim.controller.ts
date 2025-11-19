@@ -31,13 +31,13 @@ import {
   MinimalCaseExistsGuard,
   MinimalCurrentCase,
 } from '../case'
+import { Victim } from '../repository'
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
 import { ValidateVictimGuard } from './guards/validateVictim.guard'
 import { CurrentVictim } from './guards/victim.decorator'
 import { VictimWriteGuard } from './guards/victimWrite.guard'
 import { DeleteVictimResponse } from './models/deleteVictim.response'
-import { Victim } from './models/victim.model'
 import { VictimService } from './victim.service'
 
 @Controller('api/case/:caseId/victim')

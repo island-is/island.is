@@ -5,14 +5,33 @@ export {
   DefenderChoice,
   SubpoenaType,
   DefendantPlea,
-  ServiceRequirement,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
-  VerdictAppealDecision,
-  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
+
+export {
+  ServiceRequirement,
+  VerdictAppealDecision,
+  InformationForDefendant,
+  informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
+} from './lib/verdict'
+
+export { CourtSessionStringType } from './lib/courtSessionString'
+export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+  DocumentDeliverySupplementCode,
+  DocumentDeliveryMethod,
+  getServiceDateFromSupplements,
+} from './lib/policeDocument'
+export type {
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
 
 export {
   InstitutionType,
@@ -45,7 +64,12 @@ export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
+export {
+  CaseFileState,
+  CaseFileCategory,
+  HashAlgorithm,
+  PoliceFileTypeCode,
+} from './lib/file'
 
 export {
   UserRole,
@@ -75,10 +99,13 @@ export {
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
+export { DataGroups } from './lib/statistics'
+
 export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
   CaseAppealState,
@@ -105,12 +132,11 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
-  hasTrafficViolationSubtype,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   isIndictmentCaseState,
@@ -127,6 +153,8 @@ export {
   getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/dates'
 
 export type {
@@ -138,6 +166,8 @@ export type {
 export {
   IndictmentCountOffense,
   offenseSubstances,
+  isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
@@ -152,6 +182,13 @@ export {
 } from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
+
+export {
+  CourtSessionClosedLegalBasis,
+  CourtSessionRulingType,
+  CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
+} from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
 export { getCaseTableType, caseTables } from './lib/tables/caseTable'

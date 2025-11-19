@@ -5,7 +5,9 @@ const devConfig = {
     defaultNamespace: '@island.is/auth/delegation-api',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
     audience,
   },
   port: 5333,

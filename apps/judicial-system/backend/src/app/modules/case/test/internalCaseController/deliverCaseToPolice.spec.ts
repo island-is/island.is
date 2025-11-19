@@ -17,7 +17,7 @@ import {
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/requestPdf')

@@ -26,3 +26,6 @@ libs/shared/webpack
 
 # Ignoring tsconfig.base.json so changes to `paths` don't affect all projects
 tsconfig.base.json
+
+#ignore node_modules
+node_modules

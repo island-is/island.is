@@ -16,6 +16,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import {
   SignatureCollectionAddListsInput,
   SignatureCollectionCancelListsInput,
+  SignatureCollectionCandidateIdInput,
   SignatureCollectionCanSignFromPaperInput,
   SignatureCollectionIdInput,
   SignatureCollectionListIdInput,
@@ -31,7 +32,10 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSignee,
 } from './models'
-import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import {
+  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
+} from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
@@ -57,21 +61,10 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
-  @Query(() => [SignatureCollection])
-  async signatureCollectionCurrent(
-    @Args('input')
-    input: SignatureCollectionBaseInput,
-  ): Promise<SignatureCollection[]> {
-    return this.signatureCollectionService.currentCollection(
-      input.collectionType,
-    )
-  }
-
-  @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionLatestForType(
     @Args('input') input: SignatureCollectionBaseInput,
-  ) {
+  ): Promise<SignatureCollection> {
     return this.signatureCollectionService.getLatestCollectionForType(
       input.collectionType,
     )
@@ -99,13 +92,13 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => [SignatureCollectionListBase])
+  @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
     @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionListBase[]> {
+  ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.listsForUser(input, signee, user)
   }
 
@@ -265,6 +258,21 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.updateSignaturePageNumber(
       user,
       input,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @AllowManager()
+  @Query(() => SignatureCollectionSummaryReport)
+  @Audit()
+  async signatureCollectionCandidateReport(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return this.signatureCollectionService.getCandidateSummaryReport(
+      input,
+      user,
     )
   }
 }

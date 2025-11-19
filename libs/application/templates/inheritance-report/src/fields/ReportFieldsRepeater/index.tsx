@@ -22,6 +22,7 @@ import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
+  parseDebtType,
   parseLabel,
 } from '../../lib/utils/helpers'
 import {
@@ -130,7 +131,6 @@ export const ReportFieldsRepeater: FC<
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
-
     // All additional fields should be enabled by default
     values.push('enabled')
 
@@ -149,8 +149,10 @@ export const ReportFieldsRepeater: FC<
     explicitAVal = '0',
     explicitBVal = '0',
   ) => {
-    const stockValues: { amount?: string; exchangeRateOrInterest?: string } =
-      getValues(fieldIndex)
+    const stockValues: {
+      amount?: string
+      exchangeRateOrInterest?: string
+    } = getValues(fieldIndex)
 
     const faceValue = stockValues?.amount
     const rateOfExchange = stockValues?.exchangeRateOrInterest
@@ -204,6 +206,7 @@ export const ReportFieldsRepeater: FC<
           ).map((data: any) => {
             return {
               ...data,
+              debtType: parseDebtType(data.debtType ?? ''),
               initial: true,
               enabled: true,
             }
@@ -278,6 +281,7 @@ export const ReportFieldsRepeater: FC<
         ...field,
         enabled: !field.enabled,
       }
+      clearErrors(`${id}[${index}]`)
       update(index, updatedField)
     } else {
       remove(index)
@@ -383,8 +387,7 @@ export const ReportFieldsRepeater: FC<
                         })}
                         error={err}
                         disabled={!repeaterField.enabled}
-                        readOnly={repeaterField.initial}
-                        required={!repeaterField.initial}
+                        required
                       />
                     ) : field.id === 'share' ? (
                       <InputController

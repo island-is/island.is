@@ -19,12 +19,12 @@ import {
 } from '@island.is/judicial-system/auth'
 import { type User } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CurrentCase } from '../case'
+import { Case, Defendant } from '../repository'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { prisonSystemStaffUpdateRule } from './guards/rolesRules'
-import { Defendant } from './models/defendant.model'
 import { DefendantService } from './defendant.service'
 
 @Controller('api/case/:caseId/limitedAccess/defendant')

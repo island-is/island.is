@@ -130,7 +130,9 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
             </>
           ) : hasPending ? (
             <>
-              {txt('statusCurrentBase') + ' '}
+              {txt(
+                type === 'base' ? 'statusCurrentBase' : 'statusCurrentAmending',
+              ) + ' '}
               <small className={s.metaDate}>
                 {txt(
                   'statusHasPending',

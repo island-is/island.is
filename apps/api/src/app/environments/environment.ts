@@ -91,11 +91,6 @@ const prodConfig = () => ({
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
   },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
 })
 
 const devConfig = () => ({
@@ -201,11 +196,6 @@ const devConfig = () => ({
   },
   audit: {
     defaultNamespace: '@island.is/api',
-  },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
 
