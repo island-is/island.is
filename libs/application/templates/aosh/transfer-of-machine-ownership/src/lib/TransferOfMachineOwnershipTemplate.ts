@@ -66,7 +66,7 @@ const reviewStatePendingAction = (
   nationalId: string,
 ): PendingAction => {
   if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+    if (nationalId === InstitutionNationalIds.VINNUEFTIRLITID) {
       return {
         title: corePendingActionMessages.waitingForReviewTitle,
         content: {
