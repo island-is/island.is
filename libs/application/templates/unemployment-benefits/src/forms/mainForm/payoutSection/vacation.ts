@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 import { doYouHaveVacationDays } from '../../../utils'
+import { getVacationDaysLimit } from '../../../utils/getVacationDaysLimit'
 
 export const vacationSubSection = buildSubSection({
   id: 'vacationSubSection',
@@ -75,6 +76,14 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
+              maxDate: () => {
+                const beforeLimit = getVacationDaysLimit()
+                const max = beforeLimit
+                  ? new Date(new Date().getFullYear(), 8, 15) // September 15th this year
+                  : new Date(new Date().getFullYear() + 1, 8, 15) // September 15th next year
+
+                return max
+              },
             },
             endDate: {
               component: 'date',
@@ -82,6 +91,14 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
+              maxDate: () => {
+                const beforeLimit = getVacationDaysLimit()
+                const max = beforeLimit
+                  ? new Date(new Date().getFullYear(), 8, 15) // September 15th this year
+                  : new Date(new Date().getFullYear() + 1, 8, 15) // September 15th next year
+
+                return max
+              },
             },
           },
         }),

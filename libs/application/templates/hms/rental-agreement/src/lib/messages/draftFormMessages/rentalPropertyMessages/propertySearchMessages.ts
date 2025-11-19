@@ -18,6 +18,13 @@ export const propertySearch = {
         'Finndu eignina með heimilisfangi eða fasteignanúmeri. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
+    spouseFamilyNotice: {
+      id: 'ra.application:registerProperty.search.spouseFamilyNotice',
+      defaultMessage:
+        'Ef hið leigða er bústaður fjölskyldu leigusala eða notað við atvinnurekstur hjóna, eða ætlað til þess, þá ber að fá undirskrift maka sbr. IX. kafla hjúskaparlaga. Hægt er að skila slíku samþykki maka í tölvupósti til HMS og verður það þá fylgiskjal hins skráða samnings.',
+      description:
+        'Notice message regarding property being used for family purposes',
+    },
     propertySearchPlaceholder: {
       id: 'ra.application:registerProperty.search.propertySearchPlaceholder',
       defaultMessage: 'Leitaðu eftir heimilisfangi eða fasteignanúmeri',
