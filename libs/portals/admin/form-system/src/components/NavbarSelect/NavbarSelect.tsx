@@ -30,7 +30,7 @@ const filterSections = (
 }
 
 export const NavbarSelect = () => {
-  const { control, selectStatus } = useContext(ControlContext)
+  const { control, selectStatus, openComponents } = useContext(ControlContext)
   const { activeItem, form } = control
   const { sections, screens, fields } = form
   let selectable = false
@@ -69,7 +69,8 @@ export const NavbarSelect = () => {
             active={activeItem?.data?.id === screen?.id}
             selectable={selectable}
           />
-          {renderFieldsForScreen(screen)}
+          {openComponents.screens.includes(screen?.id as string) &&
+            renderFieldsForScreen(screen)}
         </Box>
       ))
   }
@@ -83,7 +84,8 @@ export const NavbarSelect = () => {
           active={activeItem?.data?.id === section.id}
           selectable={selectable}
         />
-        {renderScreensForSection(section)}
+        {openComponents.sections.includes(section.id) &&
+          renderScreensForSection(section)}
       </Box>
     ))
   }

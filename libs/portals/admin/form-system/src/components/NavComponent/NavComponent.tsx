@@ -6,7 +6,7 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
@@ -31,8 +31,15 @@ export const NavComponent = ({
   selectable,
   focusComponent,
 }: Props) => {
-  const { control, selectStatus, controlDispatch, formUpdate, inListBuilder } =
-    useContext(ControlContext)
+  const {
+    control,
+    selectStatus,
+    controlDispatch,
+    formUpdate,
+    inListBuilder,
+    openComponents,
+    setOpenComponents,
+  } = useContext(ControlContext)
   const { activeItem, activeListItem, form } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
@@ -78,6 +85,48 @@ export const NavComponent = ({
 
   const showCheckbox = (): boolean =>
     (connected() || listIsConnected()) && !selectable && !inListBuilder
+
+  const renderChevron = () => {
+    const isSectionOrScreen = type === 'Section' || type === 'Screen'
+    const isClosed =
+      !openComponents.sections.includes(data.id) &&
+      !openComponents.screens.includes(data.id)
+    if (isSectionOrScreen && isClosed) {
+      const hasChildren =
+        type === 'Section'
+          ? form.screens?.some((screen) => screen?.sectionId === data.id)
+          : form.fields?.some((field) => field?.screenId === data.id)
+      if (hasChildren) {
+        return (
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Box
+              className={cn(styles.chevronStyle)}
+              onClick={() => {
+                if (type === 'Section') {
+                  setOpenComponents((prev) => ({
+                    ...prev,
+                    sections: prev.sections.includes(data.id)
+                      ? prev.sections.filter((id) => id !== data.id)
+                      : [...prev.sections, data.id as string],
+                  }))
+                }
+                if (type === 'Screen') {
+                  setOpenComponents((prev) => ({
+                    ...prev,
+                    screens: prev.screens.includes(data.id)
+                      ? prev.screens.filter((id) => id !== data.id)
+                      : [...prev.screens, data.id as string],
+                  }))
+                }
+              }}
+            >
+              <Icon icon="chevronForward" size="small" color="dark300" />
+            </Box>
+          </Box>
+        )
+      }
+    }
+  }
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: data.id as UniqueIdentifier,
@@ -142,7 +191,7 @@ export const NavComponent = ({
             {focusComponent ? index : ''}
           </Box>
           <Box
-            paddingLeft={2}
+            paddingLeft={1}
             overflow="hidden"
             display="flex"
             minWidth={0}
@@ -170,6 +219,7 @@ export const NavComponent = ({
             ) &&
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
+          {renderChevron()}
         </Box>
       ) : (
         <Box
@@ -240,6 +290,7 @@ export const NavComponent = ({
               <Checkbox checked={true} disabled={true} />
             </Box>
           )}
+          {renderChevron()}
         </Box>
       )}
     </Box>
