@@ -2,7 +2,11 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import addYears from 'date-fns/addYears'
 import format from 'date-fns/format'
-import { parseAsBoolean, parseAsIsoDateTime, useQueryState } from 'next-usequerystate'
+import {
+  parseAsBoolean,
+  parseAsIsoDateTime,
+  useQueryState,
+} from 'next-usequerystate'
 
 import {
   Box,
@@ -171,24 +175,65 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
           }
         >
           <Box marginLeft={6}>
-          <Text marginBottom={4}>Greiðslur á tímabilinu bleble 2024 - blabla 2025</Text>
-          <Stack  space={3}>
-            <Chart title="Stærstu kaupendur" link={{ text: 'Sjá alla kaupendur', url: '/temp' }} chart={{ bars: [{datakey: 'amount', fill: theme.color.blue400}], dataset: MOCK_CHART_1, xAxisOptions: {datakey: 'institution'} } } />
-            <Chart title="Stærstu seljendur" link={{ text: 'Sjá alla seljendur', url: '/temp' }}  chart={{ bars: [{datakey: 'amount', fill: theme.color.blue400}], dataset: MOCK_CHART_2, xAxisOptions: {datakey: 'institution'} } } />
-          </Stack>
+            <Text marginBottom={4}>
+              Greiðslur á tímabilinu bleble 2024 - blabla 2025
+            </Text>
+            <Stack space={3}>
+              <Chart
+                title="Stærstu kaupendur"
+                link={{ text: 'Sjá alla kaupendur', url: '/temp' }}
+                chart={{
+                  bars: [{ datakey: 'amount', fill: theme.color.blue400 }],
+                  dataset: MOCK_CHART_1,
+                  xAxisOptions: { datakey: 'institution' },
+                }}
+              />
+              <Chart
+                title="Stærstu seljendur"
+                link={{ text: 'Sjá alla seljendur', url: '/temp' }}
+                chart={{
+                  bars: [{ datakey: 'amount', fill: theme.color.blue400 }],
+                  dataset: MOCK_CHART_2,
+                  xAxisOptions: { datakey: 'institution' },
+                }}
+              />
+            </Stack>
           </Box>
-      </SidebarLayout>
+        </SidebarLayout>
         <Box paddingY={12} background="backgroundInvert">
           <GridContainer>
             <GridRow>
-              <GridColumn offset='1/12' span={['10/12', '10/12', '8/12', '8/12', '5/12']}>
-                <Text marginBottom={2}  variant="h1" as="h2">Greiðslur yfirstandandi árs</Text>
-                <Text marginBottom={4} variant="intro" >Grafið sýnir greidda reikninga það sem af er árinu, samanborið við sömu mánuði í fyrra. Allar tölur eru á núvirði.</Text>
+              <GridColumn
+                offset="1/12"
+                span={['10/12', '10/12', '8/12', '8/12', '5/12']}
+              >
+                <Text marginBottom={2} variant="h1" as="h2">
+                  Greiðslur yfirstandandi árs
+                </Text>
+                <Text marginBottom={4} variant="intro">
+                  Grafið sýnir greidda reikninga það sem af er árinu, samanborið
+                  við sömu mánuði í fyrra. Allar tölur eru á núvirði.
+                </Text>
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn offset={['0', '0', '0', '1/12', '1/12']} span={['12/12', '12/12', '10/12', '10/12', '10/12']}>
-                <Chart outlined={false} chart={{ bars: [{datakey: '2024', fill: theme.color.blue400}, {datakey: '2025', fill: theme.color.purple400}], dataset: MOCK_CHART_3, xAxisOptions: {datakey: 'month'}, legend: {}, tooltip: {}} } />
+              <GridColumn
+                offset={['0', '0', '0', '1/12', '1/12']}
+                span={['12/12', '12/12', '10/12', '10/12', '10/12']}
+              >
+                <Chart
+                  outlined={false}
+                  chart={{
+                    bars: [
+                      { datakey: '2024', fill: theme.color.blue400 },
+                      { datakey: '2025', fill: theme.color.purple400 },
+                    ],
+                    dataset: MOCK_CHART_3,
+                    xAxisOptions: { datakey: 'month' },
+                    legend: {},
+                    tooltip: {},
+                  }}
+                />
               </GridColumn>
             </GridRow>
           </GridContainer>
