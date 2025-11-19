@@ -12,8 +12,8 @@ import {
 } from 'recharts'
 import { CartesianViewBox } from 'recharts/types/util/types'
 
-import { ArrowLink, Box, Inline, Text } from "@island.is/island-ui/core"
-import { theme } from "@island.is/island-ui/theme"
+import { ArrowLink, Box, Inline, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Chart.css'
 
