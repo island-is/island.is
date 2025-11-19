@@ -2,16 +2,16 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  DefaultTooltipContent,
   LabelProps,
   Legend as ChartLegend,
   LegendProps,
   ResponsiveContainer,
   Text as ChartText,
+  Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
-  Tooltip,
-  DefaultTooltipContent,
-  TooltipProps,
 } from 'recharts'
 import { CartesianViewBox } from 'recharts/types/util/types'
 
