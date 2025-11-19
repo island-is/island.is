@@ -20,7 +20,6 @@ export const ElfurClientConfig = defineConfig<z.infer<typeof schema>>({
       clientId: env.required('ELFUR_CLIENT_ID', '@fjs.is/hugsmidjan'),
       clientSecret: env.required('ELFUR_CLIENT_SECRET', ''),
       apiUsernameKey: env.required('ELFUR_USERNAME_KEY', ''),
-      scope: ['@fjs.is/elfur_employee_read', '@fjs.is/elfur_organization_read'],
     }
   },
 })

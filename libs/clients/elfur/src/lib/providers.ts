@@ -11,11 +11,14 @@ import { ElfurClientConfig } from './elfur.config'
 const apiLedger = [
   {
     api: OrganizationEmployeeApi,
-    scopes: ['@fjs.is/elfur_openinvoices_read'],
+    scopes: ['@fjs.is/elfur_employee_read', '@fjs.is/elfur_organization_read'],
   },
   {
     api: OpenInvoicesApi,
-    scopes: ['@fjs.is/elfur_employee_read', '@fjs.is/elfur_organization_read'],
+    scopes: [
+      '@fjs.is/elfur_openinvoices_read',
+      '@fjs.is/elfur_organization_read',
+    ],
   },
 ]
 

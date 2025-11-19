@@ -4487,31 +4487,15 @@
       }
     },
     "securitySchemes": {
-      "Bearer": {
-        "type": "apiKey",
-        "description": "Enter: Bearer {JWT token}.",
-        "name": "Authorization",
-        "in": "header"
-      },
       "ExecuteAsUsername": {
         "type": "apiKey",
         "description": "Enter: Username base64 encoded token.",
         "name": "X-ExecuteAsUsername",
         "in": "header"
-      },
-      "ExecuteAsPassword": {
-        "type": "apiKey",
-        "description": "Enter: Password base64 encoded token.",
-        "name": "X-ExecuteAsPassword",
-        "in": "header"
       }
     }
   },
-  "security": [
-    { "Bearer": [] },
-    { "ExecuteAsUsername": [] },
-    { "ExecuteAsPassword": [] }
-  ],
+  "security": [{ "ExecuteAsUsername": [] }],
   "tags": [
     {
       "name": "Account",

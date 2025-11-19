@@ -23,8 +23,13 @@ export const apiConfigFactory = (
         : undefined,
     }),
     basePath: config.basePath,
+    apiKey: (name: string | undefined) => {
+      if (name === 'X-ExecuteAsUsername') {
+        return config.apiUsernameKey
+      }
+      return ''
+    },
     headers: {
-      'X-Executeasusername': config.apiUsernameKey,
       Accept: 'application/json',
     },
   })

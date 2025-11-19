@@ -1,9 +1,20 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { ArgsType, Field, registerEnumType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
+import { IsLocale } from '@island.is/nest/core'
+import { LocaleEnum } from '@island.is/shared/types'
 
-@InputType('IcelandicGovernmentInstitutionsEmployeesInput')
-export class EmployeesInput {
+registerEnumType(LocaleEnum, {
+  name: 'Locale',
+  description: 'Available locales',
+})
+
+@ArgsType()
+export class IcelandicGovernmentInstitutionsEmployeesInput {
   @IsString()
   @Field()
   organizationId!: string
+
+  @Field(() => LocaleEnum)
+  @IsLocale()
+  locale!: LocaleEnum
 }

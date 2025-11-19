@@ -199,6 +199,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/law-and-order/                                                                                             @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
+/libs/clients/elfur                                                                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan
@@ -244,6 +245,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/legal-gazette/                                                                                   @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/                                @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                                              @island-is/hugsmidjan
+/libs/api/domains/legal-gazette                                                                                              @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
 /libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
