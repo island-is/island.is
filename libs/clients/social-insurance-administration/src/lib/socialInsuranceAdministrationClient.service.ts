@@ -23,24 +23,13 @@ import {
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
-  TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
-  TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebExternalModelsServicePortalBaseCertificate,
-  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
-  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
-  TrWebExternalModelsServicePortalConfirmedTreatment,
-  TrWebExternalModelsServicePortalNationalRegistryAddress,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
-  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
   TrWebApiServicesDomainProfessionsModelsProfessionDto,
+  TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
+  TrWebContractsExternalServicePortalDisabilityPensionCertificate,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
@@ -64,6 +53,17 @@ import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsDocumentsDocument'
+import { TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto'
+import { TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn'
+import { TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto'
+import { TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto'
+import { TrWebExternalModelsServicePortalBaseCertificate } from '../../gen/fetch/models/TrWebExternalModelsServicePortalBaseCertificate'
+import { TrWebExternalModelsServicePortalConfirmationOfIllHealth } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmationOfIllHealth'
+import { TrWebExternalModelsServicePortalConfirmationOfPendingResolution } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmationOfPendingResolution'
+import { TrWebExternalModelsServicePortalConfirmedTreatment } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmedTreatment'
+import { TrWebExternalModelsServicePortalNationalRegistryAddress } from '../../gen/fetch/models/TrWebExternalModelsServicePortalNationalRegistryAddress'
+import { TrWebExternalModelsServicePortalRehabilitationPlan } from '../../gen/fetch/models/TrWebExternalModelsServicePortalRehabilitationPlan'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -128,9 +128,7 @@ export class SocialInsuranceAdministrationClientService {
   getPaymentPlan(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
-    return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
-      year: undefined,
-    })
+    return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet()
   }
 
   async getPayments(
@@ -208,7 +206,7 @@ export class SocialInsuranceAdministrationClientService {
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,
-      trWebCommonsExternalPortalsApiModelsDocumentsDocument: documents,
+      trWebContractsExternalDigitalIcelandDocumentsDocument: documents,
     })
   }
 
@@ -350,7 +348,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCertificateForDisabilityPension(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalDisabilityPensionCertificate> {
+  ): Promise<TrWebContractsExternalServicePortalDisabilityPensionCertificate> {
     return this.medicalDocumentsApiForDisabilityPensionWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()

@@ -1,15 +1,18 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { Doctor } from './doctor.model'
 import { DisabilityDiagnosisCollection } from './disabilityDiagnosisCollection.model'
-import { HealthImpact } from './healthImpact.model'
-import { AbilityRating } from './abilityRating.model'
-import { Impairment } from './impairment.model'
-import { EnvironmentalFactor } from './environmentalFactor.model'
+import { ImpairmentRatingDomain } from './impairmentRatingDomain.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDisabilityPensionCertificate')
 export class DisabilityPensionCertificate {
   @Field()
   referenceId!: string
+
+  @Field({ nullable: true })
+  healthCenter?: string
+
+  @Field({ nullable: true })
+  createdAt?: Date
 
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
@@ -29,14 +32,14 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   healthHistorySummary?: string
 
-  @Field(() => HealthImpact, { nullable: true })
-  healthImpact?: HealthImpact
+  @Field({ nullable: true })
+  participationLimitationCause?: string
 
-  @Field(() => Int, { nullable: true })
-  participationLimitationCause?: number
+  @Field({ nullable: true })
+  stabilityOfHealth?: string
 
-  @Field(() => Int, { nullable: true })
-  abilityChangePotential?: number
+  @Field({ nullable: true })
+  abilityChangePotential?: string
 
   @Field({ nullable: true })
   medicationAndSupports?: string
@@ -44,18 +47,15 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   assessmentToolsUsed?: string
 
-  @Field(() => [AbilityRating], { nullable: true })
-  physicalAbilityRatings?: AbilityRating[]
+  @Field(() => Int,{ nullable: true })
+  capacityForWork?: number
 
-  @Field(() => [AbilityRating], { nullable: true })
-  cognitiveAndMentalAbilityRatings?: AbilityRating[]
+  @Field({ nullable: true })
+  previousRehabilitation?: string
 
-  @Field(() => [AbilityRating], { nullable: true })
-  functionalAssessment?: AbilityRating[]
+  @Field(() => ImpairmentRatingDomain, { nullable:true })
+  physicalImpairments?: ImpairmentRatingDomain
 
-  @Field(() => [Impairment], { nullable: true })
-  impairments?: Impairment[]
-
-  @Field(() => [EnvironmentalFactor], { nullable: true })
-  environmentalFactors?: EnvironmentalFactor[]
+  @Field(() => ImpairmentRatingDomain, { nullable:true })
+  mentalImpairments?: ImpairmentRatingDomain
 }
