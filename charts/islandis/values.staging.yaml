@@ -2664,6 +2664,8 @@ services-form-system-api:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
+    FORM_SYSTEM_BUCKET: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'

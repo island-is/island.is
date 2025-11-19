@@ -45,7 +45,6 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   restrictionCases,
@@ -186,14 +185,6 @@ export class CaseController {
     this.logger.debug(`Updating case ${caseId}`)
 
     const update: UpdateCase = updateDto
-
-    // TODO: Remove when court record automation activated on prod
-    if (
-      isIndictmentCase(theCase.type) &&
-      update.comments?.trim() === 'Sjálfvirk þingbók'
-    ) {
-      update.withCourtSessions = true
-    }
 
     // Make sure valid users are assigned to the case's roles
     if (update.prosecutorId) {

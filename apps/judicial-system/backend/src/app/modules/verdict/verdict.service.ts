@@ -273,12 +273,13 @@ export class VerdictService {
       defendant.nationalId &&
       normalizeAndFormatNationalId(defendant.nationalId)[0]
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
-    const ruling = theCase.courtSessions?.find(
-      (courtSession) =>
-        // there should only be one judgement over all court sessions
-        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
-        courtSession.ruling,
-    )?.ruling
+    const ruling =
+      theCase.courtSessions?.find(
+        (courtSession) =>
+          // there should only be one judgement over all court sessions
+          courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
+          courtSession.ruling,
+      )?.ruling ?? theCase.ruling
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },

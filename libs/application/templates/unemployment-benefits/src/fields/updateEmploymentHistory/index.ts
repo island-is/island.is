@@ -1,6 +1,5 @@
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
@@ -19,12 +18,10 @@ export const UpdateEmploymentHistory: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback,
 }) => {
   const { locale } = useLocale()
-  const { setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   setBeforeSubmitCallback?.(async () => {
     try {
-      setValue('employmentHistory.lastJobs', [])
       const employmentHistoryAnswers =
         getValueViaPath<EmploymentHistoryInAnswers>(
           application.answers,
@@ -41,7 +38,7 @@ export const UpdateEmploymentHistory: FC<FieldBaseProps> = ({
               answers: {
                 employmentHistory: {
                   ...employmentHistoryAnswers,
-                  lastJobs: [],
+                  currentJobs: [],
                 },
               },
             },

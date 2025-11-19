@@ -72,6 +72,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         serviceRequirement
         serviceDate
         serviceInformationForDefendant
+        externalPoliceDocumentId
       }
     }
     defenderName
@@ -238,6 +239,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         name
         caseFileId
         generatedPdfUri
+        submittedBy
       }
       mergedFiledDocuments {
         id
@@ -253,6 +255,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         caseFileId
         generatedPdfUri
       }
+      courtSessionStrings {
+        id
+        courtSessionId
+        mergedCaseId
+        stringType
+        value
+      }
     }
     mergedCases {
       id
@@ -260,7 +269,49 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      hasCivilClaims
       withCourtSessions
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defenderChoice
+        defendantPlea
+        requestedDefenderChoice
+        requestedDefenderNationalId
+        requestedDefenderName
+        isDefenderChoiceConfirmed
+        caseFilesSharedWithDefender
+        verdictAppealDeadline
+        isVerdictAppealDeadlineExpired
+        subpoenaType
+        isSentToPrisonAdmin
+        sentToPrisonAdminDate
+        openedByPrisonAdminDate
+        punishmentType
+        isAlternativeService
+        alternativeServiceDescription
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          defendantId
+          policeSubpoenaId
+        }
+      }
       courtSessions {
         id
         startDate
@@ -278,6 +329,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+          submittedBy
         }
         mergedFiledDocuments {
           id
@@ -292,6 +344,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           name
           caseFileId
           generatedPdfUri
+        }
+        courtSessionStrings {
+          id
+          courtSessionId
+          mergedCaseId
+          stringType
+          value
         }
       }
       caseFiles {

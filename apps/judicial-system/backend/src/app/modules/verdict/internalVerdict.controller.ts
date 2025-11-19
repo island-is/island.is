@@ -20,6 +20,10 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
+  formatDate,
+  getVerdictServiceStatusText,
+} from '@island.is/judicial-system/formatters'
+import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -165,17 +169,31 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
     @CurrentVerdict() verdict: Verdict,
+    @CurrentCase() theCase: Case,
     @Body() update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(
-      `Updating verdict by external police document id ${policeDocumentId}`,
+    this.logger.info(
+      `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
-    return await this.verdictService.updatePoliceDelivery(verdict, update)
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+    )
+    if (
+      updatedVerdict.serviceStatus &&
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
+        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+      })
+    }
+    return updatedVerdict
   }
 
   @UseGuards(

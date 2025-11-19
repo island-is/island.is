@@ -27,5 +27,5 @@ export const MockPaymentCatalogWithTwoItems =
         },
       ],
     },
-    externalDataId: 'paymentCatalog',
+    externalDataId: 'payment',
   })
