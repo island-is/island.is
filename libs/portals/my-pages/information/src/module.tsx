@@ -1,10 +1,6 @@
 import { lazy } from 'react'
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import {
-  m,
-  hasNotificationScopes,
-  isCompany,
-} from '@island.is/portals/my-pages/core'
+import { m, hasNotificationScopes } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
@@ -36,7 +32,7 @@ const UserNotificationsSettings = lazy(() =>
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
-  enabled: ({ userInfo, isCompany: isCompanyUser }) => !isCompanyUser,
+  enabled: ({ isCompany: isCompanyUser }) => !isCompanyUser,
   routes: async (routesProps) => {
     const { scopes } = routesProps.userInfo
     const hasUserDetailsAccess = scopes.includes(ApiScope.meDetails)

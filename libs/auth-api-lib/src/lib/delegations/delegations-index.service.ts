@@ -256,8 +256,6 @@ export class DelegationsIndexService {
       },
     })
 
-    console.log('Magneaðir scopes', scopes)
-
     if (apiScopes.length !== scopes.length) {
       const foundScopes = apiScopes.map((s) => s.name)
       const invalidScopes = scopes.filter((s) => !foundScopes.includes(s))
@@ -290,19 +288,10 @@ export class DelegationsIndexService {
           })
           .then((x) => x.map((d) => d.delegationType))
 
-        console.log(
-          `Scope ${scope.name} supports delegation types:`,
-          scopeDelegationTypes,
-        )
-
         // Check if this scope supports Custom delegations
         const scopeSupportsCustom = scopeDelegationTypes.includes(
           AuthDelegationType.Custom,
         )
-
-        console.log('MAGENA scopeSupportsCustom', scope.name, {
-          scopeSupportsCustom,
-        })
 
         const delegations = await this.delegationIndexModel
           .findAll({
@@ -329,15 +318,11 @@ export class DelegationsIndexService {
           .then((d) => d.flat().map((d) => d.toDTO()))
           .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
 
-        console.log('MAGENA delegations', scope.name, delegations)
-
         return delegations
       })
 
       // Wait for all scope queries to complete
       const delegations = (await Promise.all(scopePromises)).flat()
-
-      console.log('MAGENA ALL', delegations)
 
       // For now, we don't implement pagination but still return the paginated response
       return {
@@ -348,7 +333,6 @@ export class DelegationsIndexService {
         },
       }
     } catch (error) {
-      console.error('MAGENA getDelegationRecords error', error)
       throw error
     }
   }

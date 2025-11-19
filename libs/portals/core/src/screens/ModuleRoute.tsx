@@ -6,7 +6,7 @@ import { usePortalMeta } from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
 import { Box } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { isCompany } from '@island.is/portals/my-pages/core'
+import { isCompany } from '../utils/isCompany'
 
 type ModuleRouteProps = {
   route: PortalRoute

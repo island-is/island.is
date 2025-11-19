@@ -4,7 +4,7 @@ import type { BffUser } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { isCompany } from '@island.is/portals/my-pages/core'
+import { isCompany } from './isCompany'
 
 interface FilterEnabledModulesArgs {
   modules: PortalModule[]
