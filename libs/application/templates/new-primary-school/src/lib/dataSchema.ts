@@ -16,6 +16,13 @@ const phoneNumberSchema = z
     params: errorMessages.phoneNumber,
   })
 
+const nationalIdWithNameSchema = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((nationalId) => kennitala.isValid(nationalId), {
+    params: errorMessages.nationalId,
+  }),
+})
+
 export const dataSchema = z.object({
   applicationType: z.enum([
     ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -63,11 +70,8 @@ export const dataSchema = z.object({
   relatives: z
     .array(
       z.object({
-        fullName: z.string().min(1),
+        nationalIdWithName: nationalIdWithNameSchema,
         phoneNumber: phoneNumberSchema,
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
         relation: z.string(),
       }),
     )
@@ -104,10 +108,7 @@ export const dataSchema = z.object({
   siblings: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
+        nationalIdWithName: nationalIdWithNameSchema,
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -247,14 +248,14 @@ export const dataSchema = z.object({
       hasWelfareContact: z.string().optional(),
       welfareContact: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
@@ -272,7 +273,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact && welfareContact.name.length > 0
+          ? welfareContact && !!welfareContact.name?.trim()
           : true,
       { path: ['welfareContact', 'name'] },
     )
@@ -280,9 +281,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact &&
-            welfareContact.email &&
-            welfareContact.email.length > 0
+          ? welfareContact && !!welfareContact.email?.trim()
           : true,
       { path: ['welfareContact', 'email'] },
     )
@@ -305,7 +304,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.name.length > 0
+          ? caseManager && !!caseManager.name?.trim()
           : true,
       { path: ['caseManager', 'name'] },
     )
@@ -320,7 +319,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.email && caseManager.email.length > 0
+          ? caseManager && !!caseManager.email?.trim()
           : true,
       {
         path: ['caseManager', 'email'],

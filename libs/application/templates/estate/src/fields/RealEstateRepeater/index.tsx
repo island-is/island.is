@@ -15,6 +15,8 @@ import { m } from '../../lib/messages'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -26,23 +28,28 @@ export const RealEstateRepeater: FC<
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
+  const { clearErrors, getValues } = useFormContext()
 
-  const estateData = getEstateDataFromApplication(application)
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.assets) {
       replace(estateData.estate.assets)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   const handleAddProperty = () =>
     append({
       share: 100,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })
@@ -106,6 +113,7 @@ export const RealEstateRepeater: FC<
                   currency
                   size="sm"
                   required
+                  onChange={() => calculateTotal()}
                 />
               </Box>
             </GridColumn>,
@@ -125,6 +133,7 @@ export const RealEstateRepeater: FC<
               remove={handleRemoveProperty}
               index={index}
               error={error && error[index] ? error[index] : null}
+              calculateTotal={calculateTotal}
             />
           </Box>
         )
@@ -140,6 +149,7 @@ export const RealEstateRepeater: FC<
           {formatMessage(m.addProperty)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

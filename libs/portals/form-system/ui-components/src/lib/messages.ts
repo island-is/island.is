@@ -1021,4 +1021,9 @@ export const m = defineMessages({
     defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
     description: 'Are you sure you want to delete the form: {formName}?',
   },
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
+  },
 })
