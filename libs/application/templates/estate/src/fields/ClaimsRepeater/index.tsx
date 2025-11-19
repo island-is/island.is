@@ -119,7 +119,7 @@ export const ClaimsRepeater: FC<
               defaultValue={field.enabled ?? true}
               render={({ field: ctrl }) => <input type="hidden" {...ctrl} />}
             />
-            <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+            <Box display="flex" justifyContent="flexEnd">
               {field.initial && (
                 <Button
                   variant="text"

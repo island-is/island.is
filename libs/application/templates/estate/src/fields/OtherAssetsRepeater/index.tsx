@@ -118,7 +118,7 @@ export const OtherAssetsRepeater: FC<
               defaultValue={field.enabled ?? true}
               render={() => <input type="hidden" />}
             />
-            <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+            <Box display="flex" justifyContent="flexEnd">
               {field.initial && (
                 <Button
                   variant="text"

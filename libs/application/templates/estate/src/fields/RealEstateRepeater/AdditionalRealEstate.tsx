@@ -94,7 +94,7 @@ export const AdditionalRealEstate = ({
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+      <Box display="flex" justifyContent="flexEnd">
         <Button
           variant="ghost"
           size="small"
