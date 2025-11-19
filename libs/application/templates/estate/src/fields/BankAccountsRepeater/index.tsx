@@ -176,8 +176,8 @@ export const BankAccountsRepeater: FC<
                   }}
                 >
                   {field.enabled
-                    ? formatMessage(m.activate)
-                    : formatMessage(m.disable)}
+                    ? formatMessage(m.disable)
+                    : formatMessage(m.activate)}
                 </Button>
               )}
               {!field.initial && (

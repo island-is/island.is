@@ -42,7 +42,6 @@ export const GunsRepeater: FC<
       assetNumber: '',
       description: '',
       marketValue: '',
-      share: 100,
     })
   const handleRemoveAsset = (index: number) => remove(index)
 
