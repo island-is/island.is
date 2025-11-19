@@ -130,7 +130,7 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
-    if(!nationalIdField) return;
+    if(!nationalIdField) return
     if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
