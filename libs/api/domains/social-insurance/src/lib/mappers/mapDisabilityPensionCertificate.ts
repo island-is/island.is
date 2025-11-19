@@ -1,29 +1,11 @@
-import {
-  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
-  TrWebExternalModelsServicePortalDoctorInfo,
-  TrWebExternalModelsServicePortalDisabilityDiagnosis,
-  TrWebExternalModelsServicePortalHealthImpact,
-  TrWebExternalModelsServicePortalAbilityRating,
-  TrWebExternalModelsServicePortalImpairment,
-  TrWebExternalModelsServicePortalEnvironmentalFactor,
-  TrWebExternalModelsServicePortalFunction,
-  TrWebExternalModelsServicePortalEnvironmentalCategory,
-  TrWebExternalModelsServicePortalImpairmentType,
-} from '@island.is/clients/social-insurance-administration'
 import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
-import { HealthImpact } from '../models/medicalDocuments/healthImpact.model'
-import { AbilityRating } from '../models/medicalDocuments/abilityRating.model'
-import { Impairment } from '../models/medicalDocuments/impairment.model'
-import { EnvironmentalFactor } from '../models/medicalDocuments/environmentalFactor.model'
-import { MedicalDocumentFunction } from '../models/medicalDocuments/function.model'
-import { EnvironmentalCategory } from '../enums/environmentalCategory'
-import { ImpairmentType } from '../enums/impairmentType'
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
+import { TrWebContractsExternalServicePortalDisabilityDiagnosis, TrWebContractsExternalServicePortalDisabilityPensionCertificate, TrWebContractsExternalServicePortalDoctorInfo, TrWebContractsExternalServicePortalHealthImpact, TrWebContractsExternalServicePortalQuestionnaireResult } from '@island.is/clients/social-insurance-administration'
 
 const mapDoctor = (
-  doctorInfo?: TrWebExternalModelsServicePortalDoctorInfo,
+  doctorInfo?: TrWebContractsExternalServicePortalDoctorInfo,
 ): Doctor | undefined => {
   if (!doctorInfo) return undefined
 
@@ -33,11 +15,12 @@ const mapDoctor = (
     residence: doctorInfo.residence ?? undefined,
     phoneNumber: doctorInfo.phoneNumber ?? undefined,
     email: doctorInfo.email ?? undefined,
+    jobTitle: 'no data'
   }
 }
 
 const mapDisabilityDiagnosis = (
-  diagnosis?: TrWebExternalModelsServicePortalDisabilityDiagnosis,
+  diagnosis?: TrWebContractsExternalServicePortalDisabilityDiagnosis,
 ): DisabilityDiagnosis | undefined => {
   if (!diagnosis || !diagnosis.code) return undefined
 
@@ -48,8 +31,8 @@ const mapDisabilityDiagnosis = (
 }
 
 const mapDisabilityDiagnosisCollection = (
-  diagnosis?: Array<TrWebExternalModelsServicePortalDisabilityDiagnosis> | null,
-  diagnosesOthers?: Array<TrWebExternalModelsServicePortalDisabilityDiagnosis> | null,
+  diagnosis?: Array<TrWebContractsExternalServicePortalDisabilityDiagnosis> | null,
+  diagnosesOthers?: Array<TrWebContractsExternalServicePortalDisabilityDiagnosis> | null,
 ): DisabilityDiagnosisCollection | undefined => {
   if (!diagnosis && !diagnosesOthers) return undefined
 
@@ -63,105 +46,8 @@ const mapDisabilityDiagnosisCollection = (
   }
 }
 
-const mapHealthImpact = (
-  healthImpact?: TrWebExternalModelsServicePortalHealthImpact,
-): HealthImpact | undefined => {
-  if (!healthImpact) return undefined
-
-  return {
-    description: healthImpact.description ?? undefined,
-    impactLevel: healthImpact.impactLevel ?? undefined,
-  }
-}
-
-const mapAbilityRating = (
-  rating?: TrWebExternalModelsServicePortalAbilityRating,
-): AbilityRating | undefined => {
-  if (!rating) return undefined
-
-  return {
-    type: rating.type ?? undefined,
-    score: rating.score ?? undefined,
-  }
-}
-
-const mapFunction = (
-  func?: TrWebExternalModelsServicePortalFunction,
-): MedicalDocumentFunction | undefined => {
-  if (!func) return undefined
-
-  return {
-    title: func.title ?? undefined,
-    keyNumber: func.keyNumber ?? undefined,
-    description: func.description ?? undefined,
-  }
-}
-
-const mapImpairmentType = (
-  type?: TrWebExternalModelsServicePortalImpairmentType,
-): ImpairmentType | undefined => {
-  if (type === undefined || type === null) return undefined
-
-  switch (type) {
-    case 0:
-      return ImpairmentType.TYPE_0
-    case 1:
-      return ImpairmentType.TYPE_1
-    default:
-      return undefined
-  }
-}
-
-const mapImpairment = (
-  impairment?: TrWebExternalModelsServicePortalImpairment,
-): Impairment | undefined => {
-  if (!impairment) return undefined
-
-  return {
-    type: mapImpairmentType(impairment.type),
-    functions: impairment.functions?.map(mapFunction).filter(Boolean) as
-      | MedicalDocumentFunction[]
-      | undefined,
-  }
-}
-
-const mapEnvironmentalCategory = (
-  category?: TrWebExternalModelsServicePortalEnvironmentalCategory,
-): EnvironmentalCategory | undefined => {
-  if (category === undefined || category === null) return undefined
-
-  switch (category) {
-    case 0:
-      return EnvironmentalCategory.CATEGORY_0
-    case 1:
-      return EnvironmentalCategory.CATEGORY_1
-    case 2:
-      return EnvironmentalCategory.CATEGORY_2
-    case 3:
-      return EnvironmentalCategory.CATEGORY_3
-    case 4:
-      return EnvironmentalCategory.CATEGORY_4
-    case 5:
-      return EnvironmentalCategory.CATEGORY_5
-    default:
-      return undefined
-  }
-}
-
-const mapEnvironmentalFactor = (
-  factor?: TrWebExternalModelsServicePortalEnvironmentalFactor,
-): EnvironmentalFactor | undefined => {
-  if (!factor) return undefined
-
-  return {
-    category: mapEnvironmentalCategory(factor.category),
-    keyNumber: factor.keyNumber ?? undefined,
-    description: factor.description ?? undefined,
-  }
-}
-
 export const mapDisabilityPensionCertificate = (
-  data: TrWebExternalModelsServicePortalDisabilityPensionCertificate,
+  data: TrWebContractsExternalServicePortalDisabilityPensionCertificate,
 ): DisabilityPensionCertificate | null => {
   if (!data || !data.referenceId) {
     return null
@@ -169,6 +55,8 @@ export const mapDisabilityPensionCertificate = (
 
   return {
     referenceId: data.referenceId,
+    createdAt: data.created ?? undefined,
+    healthCenter: data.serviceProviderName ?? undefined,
     doctor: mapDoctor(data.doctorInfo),
     lastInspectionDate: data.lastInspectionDate
       ? data.lastInspectionDate.toISOString()
@@ -184,26 +72,15 @@ export const mapDisabilityPensionCertificate = (
       data.diagnosesOthers,
     ),
     healthHistorySummary: data.healthHistorySummary ?? undefined,
-    healthImpact: mapHealthImpact(data.healthImpact),
+    stabilityOfHealth: data.healthImpact?.impactLevel?.display ?? undefined,
     participationLimitationCause:
-      data.participationLimitationCause ?? undefined,
-    abilityChangePotential: data.abilityChangePotential ?? undefined,
-    medicationAndSupports: data.medicationAndSupports ?? undefined,
+      data.participationLimitationCause?.display ?? undefined,
+    abilityChangePotential: data.abilityChangePotential?.display ?? undefined,
+    medicationAndSupports: data.interventionUsed ?? undefined,
     assessmentToolsUsed: data.assessmentToolsUsed ?? undefined,
-    physicalAbilityRatings: data.physicalAbilityRatings
-      ?.map(mapAbilityRating)
-      .filter(Boolean) as AbilityRating[] | undefined,
-    cognitiveAndMentalAbilityRatings: data.cognitiveAndMentalAbilityRatings
-      ?.map(mapAbilityRating)
-      .filter(Boolean) as AbilityRating[] | undefined,
-    functionalAssessment: data.functionalAssessment
-      ?.map(mapAbilityRating)
-      .filter(Boolean) as AbilityRating[] | undefined,
-    impairments: data.impairments?.map(mapImpairment).filter(Boolean) as
-      | Impairment[]
-      | undefined,
-    environmentalFactors: data.environmentalFactors
-      ?.map(mapEnvironmentalFactor)
-      .filter(Boolean) as EnvironmentalFactor[] | undefined,
+    capacityForWork: data.capacityForWork ?? undefined,
+    previousRehabilitation: data.previousRehabilitation ?? undefined,
+    physicalImpairments: undefined, //MISSING
+    mentalImpairments: undefined, //MISSING
   }
 }
