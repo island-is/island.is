@@ -7,9 +7,9 @@ import {
   IcelandicGovernmentInstitutionsEmployee,
   Query,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 
 import { GET_ORGANIZATION_TEAM_MEMBERS } from './queries'
-import { useI18n } from '@island.is/web/i18n'
 
 interface Props {
   slice: ConnectedComponent
