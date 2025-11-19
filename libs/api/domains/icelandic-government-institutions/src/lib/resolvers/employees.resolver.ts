@@ -4,8 +4,7 @@ import { BypassAuth } from '@island.is/auth-nest-tools'
 import { Employees } from '../models/employees.model'
 import { IcelandicGovernmentInstitutionsEmployeesInput } from '../dtos/getEmployees.input'
 import { EmployeesService } from '../services/employees/employees.service'
-import { Inject, PipeTransform } from '@nestjs/common'
-import { type Locale } from '@island.is/shared/types'
+import { Inject } from '@nestjs/common'
 
 @Resolver()
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
