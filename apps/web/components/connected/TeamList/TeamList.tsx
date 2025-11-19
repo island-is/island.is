@@ -9,6 +9,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { GET_ORGANIZATION_TEAM_MEMBERS } from './queries'
+import { useI18n } from '@island.is/web/i18n'
 
 interface Props {
   slice: ConnectedComponent
@@ -45,10 +46,12 @@ const mapTeamMember = (
 }
 
 const ConnectedTeamList = ({ slice }: Props) => {
+  const { activeLocale } = useI18n()
   const organizationId: string =
     parseOrganizationId(slice.configJson?.['organizationNumber']) ?? ''
+
   const { data } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
-    variables: { input: { organizationId } },
+    variables: { locale: activeLocale, organizationId },
   })
 
   const employeeList =

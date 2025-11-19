@@ -2,9 +2,9 @@ import gql from 'graphql-tag'
 
 export const GET_ORGANIZATION_TEAM_MEMBERS = gql`
   query getOrgTeamMembers(
-    $input: IcelandicGovernmentInstitutionsEmployeesInput!
+    $locale: String!, $organizationId!: String!
   ) {
-    icelandicGovernmentInstitutionsEmployees(input: $input) {
+    icelandicGovernmentInstitutionsEmployees(locale: $locale, organizationId: $organizationId) {
       data {
         name
         job
