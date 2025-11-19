@@ -1,0 +1,87 @@
+import { HealthDirectorateAppointments } from '@island.is/api/schema'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { InfoCardGrid, LinkButton } from '@island.is/portals/my-pages/core'
+import { isDefined } from '@island.is/shared/utils'
+import React from 'react'
+import { messages } from '../../..'
+import { HealthPaths } from '../../../lib/paths'
+import { DataState } from '../../../utils/types'
+
+interface Props {
+  data?: DataState<HealthDirectorateAppointments | null>
+}
+const Appointments: React.FC<Props> = ({ data }) => {
+  const { formatMessage } = useLocale()
+  const appointments = data?.data?.data
+  const isEmpty = !isDefined(data?.data)
+
+  const cards = data?.loading
+    ? [{ loading: true, title: '', description: '' }]
+    : data?.error
+    ? [
+        {
+          error: data?.error,
+          title: '',
+          description: '',
+        },
+      ]
+    : appointments?.map((appointment) => ({
+        loading: false,
+        error: data?.error,
+        title: appointment.title ?? '',
+        description: formatMessage(messages.appointmentAt, {
+          arg: appointment.practitioners.join(', '),
+        }),
+        href: HealthPaths.HealthAppointments,
+        appointment: {
+          date: appointment.date ?? '',
+          time: appointment.time ?? '',
+          location: {
+            label: appointment.location?.name ?? '',
+            href: `https://ja.is/?q=${appointment.location?.name ?? ''}`, // TODO: CHECK FOR OTHER SOLUTIONS
+          },
+        },
+      })) ?? []
+
+  return (
+    <Box marginBottom={2}>
+      <Box
+        display={'flex'}
+        justifyContent="spaceBetween"
+        alignItems="center"
+        marginBottom={2}
+      >
+        <Box>
+          <Text variant="eyebrow" color="foregroundBrandSecondary">
+            {formatMessage(messages.myAppointments)}
+          </Text>
+        </Box>
+        <Box>
+          <LinkButton
+            to={HealthPaths.HealthAppointments}
+            text={formatMessage(messages.allAppointments)}
+            variant="text"
+            size="small"
+            icon="arrowForward"
+          />
+        </Box>
+      </Box>
+      <InfoCardGrid
+        cards={cards}
+        size={isEmpty ? 'small' : undefined}
+        empty={
+          isEmpty && !data?.loading
+            ? {
+                title: formatMessage(messages.noAppointmentsTitle),
+                description: formatMessage(messages.noAppointmentsText),
+              }
+            : undefined
+        }
+        variant="appointment"
+      />
+    </Box>
+  )
+}
+
+export default Appointments

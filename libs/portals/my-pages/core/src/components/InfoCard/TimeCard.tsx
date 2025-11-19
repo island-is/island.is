@@ -47,16 +47,9 @@ export const TimeCard = ({
 }: AppointmentCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  if (!data) {
-    return (
-      <EmptyCard
-        title={title}
-        description={description}
-        size={'large'}
-        img="./assets/images/sofa.svg"
-      />
-    )
-  }
+
+  if (!data) return
+
   return (
     <Box>
       <Box

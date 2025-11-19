@@ -2051,4 +2051,20 @@ export const messages = defineMessages({
     id: 'sp.health:dispensation-places',
     defaultMessage: 'Afgreiðslustaðir',
   },
+  allAppointments: {
+    id: 'sp.health:all-appointments',
+    defaultMessage: 'Allar tímabókanir',
+  },
+  noAppointmentsTitle: {
+    id: 'sp.health:no-appointments-title',
+    defaultMessage: 'Engir tímar',
+  },
+  noAppointmentsText: {
+    id: 'sp.health:no-appointments',
+    defaultMessage: 'Engar tímabókanir framundan',
+  },
+  appointmentAt: {
+    id: 'sp.health:appointment-at',
+    defaultMessage: 'Tími hjá: {arg} ',
+  },
 })

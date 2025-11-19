@@ -24,6 +24,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
+import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -37,6 +38,7 @@ import { HealthDirectorateReferralInput } from './dto/referral.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
+import { Appointments } from './models/appointments.model'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import { MedicineHistory } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
@@ -342,6 +344,20 @@ export class HealthDirectorateResolver {
     return this.api.getPermitCountries(user, locale)
   }
 
+  /* Appointments */
+  @Query(() => Appointments, {
+    name: 'healthDirectorateAppointments',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async getAppointments(
+    @Args() input: HealthDirectorateAppointmentsInput,
+    @CurrentUser() user: User,
+  ): Promise<Appointments | null> {
+    return this.api.getAppointments(user, input)
+  }
+
+  /* Mutations */
   @Mutation(() => PermitReturn, {
     nullable: true,
     name: 'healthDirectoratePatientDataCreatePermit',

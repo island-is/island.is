@@ -1,5 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  AppointmentStatus,
   HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
@@ -13,6 +14,7 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
+import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -23,6 +25,7 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
+import { Appointment, Appointments } from './models/appointments.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -45,6 +48,7 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapAppointmentStatus,
   mapDelegationStatus,
   mapDispensationItem,
   mapPermit,
@@ -590,5 +594,70 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    input: HealthDirectorateAppointmentsInput,
+  ): Promise<Appointments | null> {
+    try {
+      const data = await this.healthApi.getAppointments(
+        auth,
+        input.from,
+        input.status
+          ?.map((status) => mapAppointmentStatus(status))
+          .filter(
+            (status): status is AppointmentStatus => status !== undefined,
+          ) || undefined,
+      )
+      if (!data) {
+        return null
+      }
+
+      const appointments: Array<Appointment> =
+        data.map((item) => {
+          return {
+            id: item.id,
+            date: item.startTime
+              ? new Date(item.startTime).toLocaleDateString('is-IS')
+              : item.startTime,
+            time: item.startTime
+              ? new Date(item.startTime).toLocaleTimeString('is-IS', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : item.startTime,
+            weekday: item.startTime
+              ? new Date(item.startTime).toLocaleDateString('is-IS', {
+                  weekday: 'long',
+                })
+              : undefined,
+            title: item.description,
+            status: item.status,
+            instructions: item.patientInstruction,
+            location: {
+              id: item.location?.id || '',
+              name: item.location?.name || '',
+              organization: item.location?.organization || '',
+              address: item.location?.address || '',
+              directions: item.location?.directions || '',
+              city: item.location?.city || '',
+              postalCode: item.location?.postalCode || '',
+              country: item.location?.country || '',
+              latitude: item.location?.latitude || 0,
+              longitude: item.location?.longitude || 0,
+            },
+            practitioners: item.practitioners || [],
+          }
+        }) ?? []
+      return { data: appointments }
+    } catch (error) {
+      this.logger.error(
+        'Error fetching appointments from Health Directorate API',
+        error,
+      )
+      return null
+    }
   }
 }

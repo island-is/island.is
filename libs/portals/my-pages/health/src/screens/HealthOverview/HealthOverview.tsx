@@ -13,13 +13,18 @@ import {
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
   useGetBloodTypeOverviewQuery,
+  useGetAppointmentsOverviewQuery,
 } from './HealthOverview.generated'
 
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
+import Appointments from './components/Appointments'
+import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
+
+const TODAY = DEFAULT_DATE_TO.toISOString()
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
@@ -28,7 +33,6 @@ export const HealthOverview = () => {
   const isMobile = width < theme.breakpoints.md
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
   const {
     data: healthCenterData,
     loading: healthCenterLoading,
@@ -83,6 +87,20 @@ export const HealthOverview = () => {
     error: bloodTypeError,
   } = useGetBloodTypeOverviewQuery()
 
+  const {
+    data: appointmentsData,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+  } = useGetAppointmentsOverviewQuery({
+    variables: {
+      from: undefined, // TODO: Change back to TODAY when data is present,
+      status: [
+        HealthDirectorateAppointmentStatus.BOOKED,
+        HealthDirectorateAppointmentStatus.PENDING,
+      ],
+    },
+  })
+
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
@@ -102,6 +120,13 @@ export const HealthOverview = () => {
         </GridColumn>
       </GridRow>
       {/* Appointments */}
+      <Appointments
+        data={{
+          data: appointmentsData?.healthDirectorateAppointments,
+          loading: appointmentsLoading,
+          error: !!appointmentsError,
+        }}
+      />
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
