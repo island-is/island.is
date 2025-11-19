@@ -15,6 +15,7 @@ export type SortableData = {
   }
   children?: React.ReactElement | null // Children for each row if expandable
   onExpandCallback?: () => void
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } & { [key: string]: string | React.ReactElement | any }
 
 export type SortableTableProps = {

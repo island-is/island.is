@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useWindowSize } from 'react-use'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
@@ -19,7 +18,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import {
@@ -62,9 +60,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   useContentfulId(customPageData?.id)
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
-
-  const { width } = useWindowSize()
-  const isTablet = width <= theme.breakpoints.lg
 
   const [getInvoices] = useLazyQuery<
     {

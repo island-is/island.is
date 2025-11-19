@@ -27,7 +27,6 @@ interface FooterProps {
 
 export const Footer = ({
   imageUrl,
-  imageAlt,
   heading,
   columns,
   color,

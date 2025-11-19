@@ -1,5 +1,4 @@
 import { isValidElement, useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
 
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 

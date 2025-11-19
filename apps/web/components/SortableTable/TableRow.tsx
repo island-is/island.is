@@ -35,6 +35,7 @@ export const TableRow = ({
   } = item
   const valueItems = Object.values(itemObject)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderValueItem = (valueItem: any, i: number) => {
     if (tag && valueItems.length - 1 === i) {
       return (

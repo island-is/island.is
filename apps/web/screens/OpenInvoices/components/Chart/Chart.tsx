@@ -2,20 +2,17 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  DefaultTooltipContent,
   LabelProps,
   Legend as ChartLegend,
   LegendProps,
   ResponsiveContainer,
   Text as ChartText,
-  Tooltip,
-  TooltipProps,
   XAxis,
   YAxis,
 } from 'recharts'
 import { CartesianViewBox } from 'recharts/types/util/types'
 
-import { ArrowLink, Box, Hidden, Inline, Stack, Text } from "@island.is/island-ui/core"
+import { ArrowLink, Box, Inline, Text } from "@island.is/island-ui/core"
 import { theme } from "@island.is/island-ui/theme"
 
 import * as styles from './Chart.css'
