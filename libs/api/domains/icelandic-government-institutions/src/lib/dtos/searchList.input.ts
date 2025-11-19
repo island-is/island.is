@@ -1,4 +1,4 @@
-import { PaginationDto, } from '@island.is/nest/pagination'
+import { PaginationDto } from '@island.is/nest/pagination'
 import { Field } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 
