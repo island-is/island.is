@@ -16,6 +16,8 @@ import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { AssetFormField, AssetsRepeaterProps, ErrorValue } from '../../types'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>
@@ -28,21 +30,27 @@ export const AssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
+  const { control, clearErrors, getValues } = useFormContext()
+
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.[assetName]) {
       replace(estateData.estate[assetName])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace, assetName])
 
   const handleAddAsset = () =>
     append({
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       share: 100,
     })
   const handleRemoveAsset = (index: number) => remove(index)
@@ -102,6 +110,7 @@ export const AssetsRepeater: FC<
                   currency
                   size="sm"
                   required
+                  onChange={() => calculateTotal()}
                 />
               </Box>
             </GridColumn>,
@@ -187,6 +196,7 @@ export const AssetsRepeater: FC<
                   error={fieldError?.marketValue}
                   currency
                   size="sm"
+                  onChange={() => calculateTotal()}
                 />
               </GridColumn>
             </GridRow>
@@ -204,6 +214,7 @@ export const AssetsRepeater: FC<
           {formatMessage(texts.addAsset)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

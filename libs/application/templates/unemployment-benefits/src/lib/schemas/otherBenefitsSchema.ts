@@ -89,7 +89,10 @@ export const otherBenefitsSchema = z
             code: z.ZodIssueCode.custom,
           })
         }
-        if (!payment.paymentAmount) {
+        if (
+          payment.subType !== PaymentTypeIds.SPOUSE_PENSION &&
+          !payment.paymentAmount
+        ) {
           ctx.addIssue({
             path: ['payments', index, 'paymentAmount'],
             code: z.ZodIssueCode.custom,
@@ -117,7 +120,6 @@ export const otherBenefitsSchema = z
 
         if (
           payment.subType !== PaymentTypeIds.REHAB_PENSION_ID &&
-          payment.subType !== PaymentTypeIds.SPOUSE_PENSION &&
           !payment.paymentAmount
         ) {
           ctx.addIssue({

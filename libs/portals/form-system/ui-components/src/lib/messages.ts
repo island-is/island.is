@@ -1035,5 +1035,9 @@ export const m = defineMessages({
     id: 'form.system.has-sublabel',
     defaultMessage: 'Hefur undirtexta',
     description: 'Has sublabel',
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
   },
 })

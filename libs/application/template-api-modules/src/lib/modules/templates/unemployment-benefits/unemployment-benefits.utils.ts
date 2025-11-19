@@ -34,6 +34,7 @@ import {
 } from '@island.is/application/templates/unemployment-benefits'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
+  GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
@@ -138,7 +139,16 @@ export const getJobWishList = (
 export const getJobCareer = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
+  externalData: ExternalData,
 ) => {
+  const rskEmploymentList =
+    getValueViaPath<
+      Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+    >(
+      externalData,
+      'unemploymentApplication.data.rskEmploymentInformation',
+      [],
+    ) ?? []
   const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
     answers,
     'employmentHistory',
@@ -148,29 +158,58 @@ export const getJobCareer = (
       answers,
       'currentSituation.currentSituationRepeater',
     ) || []
-  const jobCareer = employmentHistory?.lastJobs.map((job, index) => {
-    let workHours
-    let salary
-    if (currentJob && currentJob.length > 0) {
-      workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
+  const previousJobCareer =
+    employmentHistory?.lastJobs?.map((job) => {
+      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const employerSSN =
+        job.nationalIdWithName && job.nationalIdWithName !== '-'
+          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
+          : job.employer?.nationalId
+      const employerName =
+        job.nationalIdWithName && job.nationalIdWithName !== '-'
+          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+              ?.name
+          : job.employer?.name
+      return {
+        employerSSN: employerSSN,
+        employer: employerName,
+        started: job.startDate,
+        quit: job.endDate,
+        workRatio: parseInt(job.percentage || ''),
+        jobName: job.title,
+        jobCodeId: jobId || '',
+      }
+    }) || []
 
-      salary = getValueViaPath<string>(currentJob[index], 'salary', '')
-    }
-    const jobName = jobCodes?.find((x) => x.name === job.title)?.name
-    return {
-      employerSSN: job.employer?.nationalId,
-      employer: job.employer?.name,
-      started: job.startDate,
-      quit: job.endDate,
-      workRatio: parseInt(job.percentage || ''),
-      workHours: workHours || '',
-      salary: salary || '',
-      jobName: job.title,
-      jobCodeId: jobName || '',
-    }
-  })
+  const currentJobCareer =
+    employmentHistory?.currentJobs?.map((job, index) => {
+      let workHours
+      if (currentJob && currentJob.length > 0) {
+        workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
+      }
+      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const employerSSN =
+        job.nationalIdWithName && job.nationalIdWithName !== '-'
+          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
+          : job.employer?.nationalId
+      const employerName =
+        job.nationalIdWithName && job.nationalIdWithName !== '-'
+          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+              ?.name
+          : job.employer?.name
+      return {
+        employerSSN: employerSSN,
+        employer: employerName,
+        started: job.startDate,
+        quit: job.endDate,
+        workRatio: parseInt(job.percentage || ''),
+        workHours: workHours || '',
+        jobName: job.title,
+        jobCodeId: jobId || '',
+      }
+    }) || []
 
-  return { jobs: jobCareer || [] }
+  return { jobs: [previousJobCareer, currentJobCareer].flat() || [] }
 }
 
 export const getLicenseInformation = (answers: FormValue) => {
@@ -397,6 +436,136 @@ export const getEducationalQuestions = (answers: FormValue) => {
   }
 }
 
+const checkAcknowledgement = (value?: string) => {
+  if (value !== YES) {
+    throw new TemplateApiError(
+      {
+        title: errorMsgs.acknowledgementError,
+        summary: errorMsgs.acknowledgementError,
+      },
+      400,
+    )
+  }
+}
+
+export const getAcknowledgements = (answers: FormValue) => {
+  //Gagnaöflun
+  const dataCollectionAcknowledgementCheck = getValueViaPath<boolean>(
+    answers,
+    'approveExternalData',
+  )
+    ? YES
+    : NO
+
+  const dataCollectionAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.dataCollectionAcknowledgement',
+  )
+
+  checkAcknowledgement(dataCollectionAcknowledgementCheck)
+
+  //Tilkynna þarf breytingar
+  const notifyChangesAcknowledgementCheck = getValueViaPath<string[]>(
+    answers,
+    'informationChangeAgreement',
+  )?.[0]
+
+  checkAcknowledgement(notifyChangesAcknowledgementCheck)
+
+  const notifyChangesAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.notifyChangesAcknowledgement',
+  )
+
+  //Réttindi og skyldur á meðan þú ert í atvinnuleit
+  const rightsAndObligationsAcknowledgementCheck = getValueViaPath<string[]>(
+    answers,
+    'yourRightsAgreement',
+  )?.[0]
+  checkAcknowledgement(rightsAndObligationsAcknowledgementCheck)
+
+  const rightsAndObligationsAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.rightsAndObligationsAcknowledgement',
+  )
+
+  //Vinna samhliða greiðslum
+  const workAlongsidePaymentsAcknowledgementCheck = getValueViaPath<string[]>(
+    answers,
+    'concurrentWorkAgreement',
+  )?.[0]
+  checkAcknowledgement(workAlongsidePaymentsAcknowledgementCheck)
+  const workAlongsidePaymentsAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.workAlongsidePaymentsAcknowledgement',
+  )
+
+  //Missir bótaréttar
+  const lossOfBenefitEntitlementAcknowledgementCheck = getValueViaPath<
+    string[]
+  >(answers, 'lossOfRightsAgreement')?.[0]
+  checkAcknowledgement(lossOfBenefitEntitlementAcknowledgementCheck)
+
+  const lossOfBenefitEntitlementAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.lossOfBenefitEntitlementAcknowledgement',
+  )
+
+  //Utanlandsferðir og atvinna erlendis
+  const foreignTravelAndWorkAbroadAcknowledgementCheck = getValueViaPath<
+    string[]
+  >(answers, 'vacationsAndForeginWorkAgreement')?.[0]
+  checkAcknowledgement(foreignTravelAndWorkAbroadAcknowledgementCheck)
+  const foreignTravelAndWorkAbroadAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.foreignTravelAndWorkAbroadAcknowledgement',
+  )
+
+  //Útborgun atvinnuleysisbóta
+  const unemploymentBenefitsPaymentAcknowledgementCheck = getValueViaPath<
+    string[]
+  >(answers, 'unemploymentBenefitsPayoutAgreement')?.[0]
+  checkAcknowledgement(unemploymentBenefitsPaymentAcknowledgementCheck)
+  const unemploymentBenefitsPaymentAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.unemploymentBenefitsPaymentAcknowledgement',
+  )
+
+  //Boðun í viðtal, á fund og í önnur úrræði
+  const meetingsAndMeasuresAcknowledgementCheck = getValueViaPath<string[]>(
+    answers,
+    'interviewAndMeetingAgreement',
+  )?.[0]
+  checkAcknowledgement(meetingsAndMeasuresAcknowledgementCheck)
+  const meetingsAndMeasuresAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.meetingsAndMeasuresAcknowledgement',
+  )
+
+  //Staðfesting á atvinnuleit þinni í hverjum mánuði
+  const monthlyJobSearchAcknowledgementCheck = getValueViaPath<string[]>(
+    answers,
+    'employmentSearchConfirmationAgreement',
+  )?.[0]
+  checkAcknowledgement(monthlyJobSearchAcknowledgementCheck)
+  const monthlyJobSearchAcknowledgement = getValueViaPath<string>(
+    answers,
+    'acknowledgements.monthlyJobSearchAcknowledgement',
+  )
+
+  return {
+    dataCollectionAcknowledgement,
+    notifyChangesAcknowledgement,
+    rightsAndObligationsAcknowledgement,
+    workAlongsidePaymentsAcknowledgement,
+    lossOfBenefitEntitlementAcknowledgement,
+    foreignTravelAndWorkAbroadAcknowledgement,
+    unemploymentBenefitsPaymentAcknowledgement,
+    meetingsAndMeasuresAcknowledgement,
+    monthlyJobSearchAcknowledgement,
+  }
+}
+
 export const getPreviousOccupationInformation = (
   answers: FormValue,
   externalData: ExternalData,
@@ -491,60 +660,118 @@ export const getFileInfo = async (
 
 export const getPensionAndOtherPayments = (
   otherBenefits: OtherBenefitsInAnswers,
+  answers: FormValue,
+  externalData: ExternalData,
 ) => {
-  return otherBenefits?.receivingBenefits === YES
-    ? {
-        wellfarePayments: otherBenefits.payments
-          ?.filter(
-            (x) =>
-              x.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID,
-          )
-          .map((payment) => {
-            return {
-              incomeTypeId: payment.subType,
-              periodFrom: payment.dateFrom,
-              periodTo: payment.dateTo,
-              estimatedIncome: parseInt(payment.paymentAmount || ''),
-              realIncome: parseInt(payment.paymentAmount || ''),
-            }
-          }),
-        pensionPayments: otherBenefits.payments
-          ?.filter(
-            (x) => x.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID,
-          )
-          .map((payment) => {
-            return {
-              incomeTypeId: payment.subType,
-              estimatedIncome: parseInt(payment.paymentAmount || ''),
-              realIncome: parseInt(payment.paymentAmount || ''),
-              pensionFundId: payment.pensionFund,
-            }
-          }),
-        privatePensionPayments: otherBenefits.payments
-          ?.filter(
-            (x) =>
-              x.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID,
-          )
-          .map((payment) => {
-            return {
-              incomeTypeId: payment.subType,
-              estimatedIncome: parseInt(payment.paymentAmount || ''),
-              realIncome: parseInt(payment.paymentAmount || ''),
-              privatePensionFundId: payment.pensionFund,
-            }
-          }),
-        sicknessBenefitPayments: otherBenefits.payments
-          ?.filter(
-            (x) => x.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID,
-          )
-          .map((payment) => {
-            return {
-              incomeTypeId: payment.typeOfPayment,
-              unionId: payment.union,
-            }
-          }),
-      }
-    : null
+  const otherBenefitsFromAnswers =
+    otherBenefits?.receivingBenefits === YES
+      ? {
+          wellfarePayments: otherBenefits.payments
+            ?.filter(
+              (x) =>
+                x.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID,
+            )
+            .map((payment) => {
+              return {
+                incomeTypeId: payment.subType,
+                periodFrom: payment.dateFrom,
+                periodTo: payment.dateTo,
+                estimatedIncome: payment.paymentAmount
+                  ? parseInt(payment.paymentAmount)
+                  : 0,
+              }
+            }),
+          pensionPayments: otherBenefits.payments
+            ?.filter(
+              (x) => x.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID,
+            )
+            .map((payment) => {
+              return {
+                incomeTypeId: payment.subType,
+                estimatedIncome: payment.paymentAmount
+                  ? parseInt(payment.paymentAmount)
+                  : 0,
+                pensionFundId: payment.pensionFund,
+              }
+            }),
+          privatePensionPayments: otherBenefits.payments
+            ?.filter(
+              (x) =>
+                x.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID,
+            )
+            .map((payment) => {
+              return {
+                incomeTypeId: payment.subType,
+                estimatedIncome: payment.paymentAmount
+                  ? parseInt(payment.paymentAmount)
+                  : 0,
+                privatePensionFundId: payment.pensionFund,
+              }
+            }),
+          sicknessBenefitPayments: otherBenefits.payments
+            ?.filter(
+              (x) =>
+                x.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID,
+            )
+            .map((payment) => {
+              return {
+                incomeTypeId: payment.typeOfPayment,
+                unionId: payment.union,
+              }
+            }),
+        }
+      : null
+
+  const rskEmploymentList =
+    getValueViaPath<
+      Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+    >(
+      externalData,
+      'unemploymentApplication.data.rskEmploymentInformation',
+      [],
+    ) ?? []
+
+  const currentSituation =
+    getValueViaPath<CurrentSituationInAnswers>(answers, 'currentSituation') ||
+    undefined
+
+  const partTimeJobPayments =
+    currentSituation?.status === EmploymentStatus.PARTJOB
+      ? currentSituation?.currentSituationRepeater?.map((job) => {
+          return {
+            employerSSN:
+              job.nationalIdWithName && job.nationalIdWithName !== '-'
+                ? rskEmploymentList?.find(
+                    (x) => x.ssn === job.nationalIdWithName,
+                  )?.ssn
+                : job.employer?.nationalId,
+            estimatedIncome: job.salary ? parseInt(job.salary) : 0,
+            ratio: parseInt(job.percentage || ''),
+            periodFrom: job.startDate,
+          }
+        })
+      : []
+
+  const irregularJobPayments =
+    currentSituation?.status === EmploymentStatus.OCCASIONAL
+      ? currentSituation?.currentSituationRepeater?.map((job) => {
+          return {
+            employerSSN:
+              job.nationalIdWithName && job.nationalIdWithName !== '-'
+                ? rskEmploymentList?.find(
+                    (x) => x.ssn === job.nationalIdWithName,
+                  )?.ssn
+                : job.employer?.nationalId,
+            estimatedIncome: job.salary ? parseInt(job.salary) : 0,
+          }
+        })
+      : []
+
+  return {
+    ...otherBenefitsFromAnswers,
+    partTimeJobPayments: partTimeJobPayments,
+    irregularJobPayments: irregularJobPayments,
+  }
 }
 
 const getFileExtension = (fileName: string): string | undefined => {
