@@ -1,29 +1,27 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray, useFormContext, Controller } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
-import { AssetFormField, ErrorValue } from '../../types'
-
 import { m } from '../../lib/messages'
-import { AdditionalRealEstate } from './AdditionalRealEstate'
-import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
+import { AssetFormField, GunsRepeaterProps, ErrorValue } from '../../types'
 import { RepeaterTotal } from '../RepeaterTotal'
 import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
-export const RealEstateRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps>
+export const GunsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps & GunsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const error = (errors as ErrorValue)?.estate?.assets
   const { id } = field
+  const texts = field?.props?.texts
+  const assetName = field?.props?.assetName
+  const error = (errors as ErrorValue)?.estate?.[assetName]
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-
-  const { clearErrors, getValues, control, trigger, setValue } =
-    useFormContext()
+  const { control, clearErrors, getValues } = useFormContext()
 
   const { total, calculateTotal } = useRepeaterTotal(
     id,
@@ -34,21 +32,19 @@ export const RealEstateRepeater: FC<
 
   useEffect(() => {
     const estateData = getEstateDataFromApplication(application)
-    if (fields.length === 0 && estateData.estate?.assets) {
-      replace(estateData.estate.assets)
+    if (fields.length === 0 && estateData.estate?.[assetName]) {
+      replace(estateData.estate[assetName])
     }
-  }, [application, fields.length, replace])
+  }, [application, fields.length, replace, assetName])
 
-  const handleAddProperty = () =>
+  const handleAddAsset = () =>
     append({
-      share: 100,
       assetNumber: '',
       description: '',
       marketValue: '',
-      initial: false,
-      enabled: true,
+      share: 100,
     })
-  const handleRemoveProperty = (index: number) => remove(index)
+  const handleRemoveAsset = (index: number) => remove(index)
 
   const handleToggleEnabled = (asset: AssetFormField, index: number) => {
     const updatedAsset = {
@@ -66,22 +62,89 @@ export const RealEstateRepeater: FC<
         const fieldIndex = `${id}[${index}]`
         const fieldError = error && error[index] ? error[index] : null
 
-        // Render additional (user-added) properties with the existing component
+        // Render additional (user-added) assets
         if (!asset.initial) {
+          const assetNumberField = `${fieldIndex}.assetNumber`
+          const assetTypeField = `${fieldIndex}.description`
+          const initialField = `${fieldIndex}.initial`
+          const enabledField = `${fieldIndex}.enabled`
+          const marketValueField = `${fieldIndex}.marketValue`
+
           return (
-            <AdditionalRealEstate
-              key={asset.id}
-              field={asset}
-              fieldName={id}
-              remove={handleRemoveProperty}
-              index={index}
-              error={fieldError}
-              calculateTotal={calculateTotal}
-            />
+            <Box position="relative" key={asset.id} marginTop={4}>
+              <Controller
+                name={initialField}
+                control={control}
+                defaultValue={asset.initial || false}
+                render={() => <input type="hidden" />}
+              />
+              <Controller
+                name={enabledField}
+                control={control}
+                defaultValue={true}
+                render={() => <input type="hidden" />}
+              />
+              <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={handleRemoveAsset.bind(null, index)}
+                />
+              </Box>
+              <GridRow>
+                <GridColumn
+                  span={['1/1', '1/2']}
+                  paddingBottom={2}
+                  paddingTop={2}
+                >
+                  <InputController
+                    id={assetNumberField}
+                    name={assetNumberField}
+                    label={formatMessage(texts.assetNumber)}
+                    backgroundColor="blue"
+                    required
+                    defaultValue={asset.assetNumber}
+                    error={fieldError?.assetNumber}
+                  />
+                </GridColumn>
+                <GridColumn
+                  span={['1/1', '1/2']}
+                  paddingBottom={2}
+                  paddingTop={2}
+                >
+                  <InputController
+                    id={assetTypeField}
+                    name={assetTypeField}
+                    label={formatMessage(texts.assetType)}
+                    defaultValue={asset.description}
+                    placeholder=""
+                    required
+                    error={fieldError?.description}
+                    backgroundColor="blue"
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                  <InputController
+                    id={marketValueField}
+                    name={marketValueField}
+                    label={formatMessage(m.marketValueTitle)}
+                    defaultValue={asset.marketValue}
+                    placeholder="0 kr."
+                    error={fieldError?.marketValue}
+                    currency
+                    required
+                    backgroundColor="blue"
+                    onChange={() => calculateTotal()}
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
           )
         }
 
-        // Render initial (prefilled) properties with the same layout style as inheritance-report
+        // Render initial (prefilled) assets with the same layout style as inheritance-report
         return (
           <Box position="relative" key={asset.id} marginTop={4}>
             <Controller
@@ -113,7 +176,7 @@ export const RealEstateRepeater: FC<
                 <InputController
                   id={`${fieldIndex}.assetNumber`}
                   name={`${fieldIndex}.assetNumber`}
-                  label={formatMessage(m.propertyNumber)}
+                  label={formatMessage(texts.assetNumber)}
                   backgroundColor="blue"
                   defaultValue={asset.assetNumber}
                   readOnly
@@ -125,7 +188,7 @@ export const RealEstateRepeater: FC<
                 <InputController
                   id={`${fieldIndex}.description`}
                   name={`${fieldIndex}.description`}
-                  label={formatMessage(m.address)}
+                  label={formatMessage(texts.assetType)}
                   defaultValue={asset.description}
                   readOnly
                   disabled={!asset.enabled}
@@ -134,31 +197,9 @@ export const RealEstateRepeater: FC<
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
                 <InputController
-                  id={`${fieldIndex}.share`}
-                  name={`${fieldIndex}.share`}
-                  label={formatMessage(m.propertyShare)}
-                  defaultValue={String(asset.share)}
-                  type="number"
-                  suffix="%"
-                  backgroundColor="blue"
-                  required
-                  disabled={!asset.enabled}
-                  error={fieldError?.share}
-                  onChange={(e) => {
-                    setValue(
-                      `${fieldIndex}.share`,
-                      Number(e.target.value.replace('%', '')),
-                    )
-                    calculateTotal()
-                    trigger(`${fieldIndex}.share`)
-                  }}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']}>
-                <InputController
                   id={`${fieldIndex}.marketValue`}
                   name={`${fieldIndex}.marketValue`}
-                  label={formatMessage(m.realEstateValueTitle)}
+                  label={formatMessage(m.marketValueTitle)}
                   placeholder="0 kr."
                   defaultValue={asset.marketValue}
                   error={fieldError?.marketValue}
@@ -178,10 +219,10 @@ export const RealEstateRepeater: FC<
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddProperty}
+          onClick={handleAddAsset}
           size="small"
         >
-          {formatMessage(m.addProperty)}
+          {formatMessage(texts.addAsset)}
         </Button>
       </Box>
       <RepeaterTotal id={id} total={total} show={!!fields.length} />
@@ -189,4 +230,4 @@ export const RealEstateRepeater: FC<
   )
 }
 
-export default RealEstateRepeater
+export default GunsRepeater
