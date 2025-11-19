@@ -46,9 +46,10 @@ export const GunsRepeater: FC<
   const handleRemoveAsset = (index: number) => remove(index)
 
   const handleToggleEnabled = (asset: AssetFormField, index: number) => {
+    const isEnabled = asset.enabled !== false
     const updatedAsset = {
       ...asset,
-      enabled: !asset.enabled,
+      enabled: !isEnabled,
     }
     update(index, updatedAsset)
     clearErrors(`${id}[${index}].marketValue`)
@@ -159,57 +160,67 @@ export const GunsRepeater: FC<
               render={() => <input type="hidden" />}
             />
             <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-              <Button
-                variant="text"
-                size="small"
-                icon={asset.enabled ? 'remove' : 'add'}
-                onClick={() => handleToggleEnabled(asset, index)}
-              >
-                {asset.enabled
-                  ? formatMessage(m.disable)
-                  : formatMessage(m.activate)}
-              </Button>
+              {(() => {
+                const isEnabled = asset.enabled !== false
+                return (
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={isEnabled ? 'remove' : 'add'}
+                    onClick={() => handleToggleEnabled(asset, index)}
+                  >
+                    {isEnabled
+                      ? formatMessage(m.disable)
+                      : formatMessage(m.activate)}
+                  </Button>
+                )
+              })()}
             </Box>
-            <GridRow>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${fieldIndex}.assetNumber`}
-                  name={`${fieldIndex}.assetNumber`}
-                  label={formatMessage(texts.assetNumber)}
-                  backgroundColor="blue"
-                  defaultValue={asset.assetNumber}
-                  readOnly
-                  disabled={!asset.enabled}
-                  error={fieldError?.assetNumber}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${fieldIndex}.description`}
-                  name={`${fieldIndex}.description`}
-                  label={formatMessage(texts.assetType)}
-                  defaultValue={asset.description}
-                  readOnly
-                  disabled={!asset.enabled}
-                  error={fieldError?.description}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']}>
-                <InputController
-                  id={`${fieldIndex}.marketValue`}
-                  name={`${fieldIndex}.marketValue`}
-                  label={formatMessage(m.marketValueTitle)}
-                  placeholder="0 kr."
-                  defaultValue={asset.marketValue}
-                  error={fieldError?.marketValue}
-                  currency
-                  backgroundColor="blue"
-                  disabled={!asset.enabled}
-                  required
-                  onChange={() => calculateTotal()}
-                />
-              </GridColumn>
-            </GridRow>
+            {(() => {
+              const isEnabled = asset.enabled !== false
+              return (
+                <GridRow>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${fieldIndex}.assetNumber`}
+                      name={`${fieldIndex}.assetNumber`}
+                      label={formatMessage(texts.assetNumber)}
+                      backgroundColor="blue"
+                      defaultValue={asset.assetNumber}
+                      readOnly
+                      disabled={!isEnabled}
+                      error={fieldError?.assetNumber}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${fieldIndex}.description`}
+                      name={`${fieldIndex}.description`}
+                      label={formatMessage(texts.assetType)}
+                      defaultValue={asset.description}
+                      readOnly
+                      disabled={!isEnabled}
+                      error={fieldError?.description}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']}>
+                    <InputController
+                      id={`${fieldIndex}.marketValue`}
+                      name={`${fieldIndex}.marketValue`}
+                      label={formatMessage(m.marketValueTitle)}
+                      placeholder="0 kr."
+                      defaultValue={asset.marketValue}
+                      error={fieldError?.marketValue}
+                      currency
+                      backgroundColor="blue"
+                      disabled={!isEnabled}
+                      required
+                      onChange={() => calculateTotal()}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )
+            })()}
           </Box>
         )
       })}

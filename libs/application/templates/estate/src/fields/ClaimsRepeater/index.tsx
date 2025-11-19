@@ -132,7 +132,12 @@ export const ClaimsRepeater: FC<
                       enabled: !field.enabled,
                     }
                     update(index, updatedClaim)
-                    clearErrors(`${id}[${index}].value`)
+                    calculateTotal()
+                    clearErrors([
+                      `${id}[${index}].value`,
+                      `${id}[${index}].publisher`,
+                      `${id}[${index}].nationalId`,
+                    ])
                   }}
                 >
                   {field.enabled
