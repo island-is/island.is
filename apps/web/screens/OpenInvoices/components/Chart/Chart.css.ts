@@ -1,6 +1,6 @@
-import { style } from "@vanilla-extract/css";
+import { style } from '@vanilla-extract/css'
 
-import { theme } from "@island.is/island-ui/theme";
+import { theme } from '@island.is/island-ui/theme'
 
 export const xAxisText = style({
   fill: theme.color.black,
@@ -11,5 +11,5 @@ export const xAxisText = style({
 export const legendIcon = style({
   width: '24px',
   height: '24px',
-  borderRadius: theme.border.radius.standard
+  borderRadius: theme.border.radius.standard,
 })

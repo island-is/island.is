@@ -15,8 +15,15 @@ import {
 } from 'recharts'
 import { CartesianViewBox } from 'recharts/types/util/types'
 
-import { ArrowLink, Box, Hidden, Inline, Stack, Text } from "@island.is/island-ui/core"
-import { theme } from "@island.is/island-ui/theme"
+import {
+  ArrowLink,
+  Box,
+  Hidden,
+  Inline,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Chart.css'
 
@@ -38,19 +45,27 @@ const CustomizedYAxisLabel = (data: LabelProps) => {
       fill="#000000"
       textAnchor="start"
       fontWeight={theme.typography.semiBold}
-      width={180}>
+      width={180}
+    >
       m.kr.
     </ChartText>
   )
 }
 
-
-const CustomizedAxisTick = ({x,y ,payload}: AxisTickProps) => {
-  return <ChartText x={x} y={y} dy={15} className={styles.xAxisText} width="10" verticalAnchor="start">
-     {payload?.value}
-  </ChartText>
+const CustomizedAxisTick = ({ x, y, payload }: AxisTickProps) => {
+  return (
+    <ChartText
+      x={x}
+      y={y}
+      dy={15}
+      className={styles.xAxisText}
+      width="10"
+      verticalAnchor="start"
+    >
+      {payload?.value}
+    </ChartText>
+  )
 }
-
 
 const Legend = (props: LegendProps) => {
   const { payload } = props
@@ -60,25 +75,33 @@ const Legend = (props: LegendProps) => {
   }
 
   return (
-    <Inline space={3}>{payload.map(entry => {
-      return (
-        <Box display="flex" alignItems='center'>
-          <Box marginRight={1} className={styles.legendIcon} style={{background: entry.color}}/>
-          <Text>{entry.value}</Text>
-        </Box>)})}</Inline>
+    <Inline space={3}>
+      {payload.map((entry) => {
+        return (
+          <Box display="flex" alignItems="center">
+            <Box
+              marginRight={1}
+              className={styles.legendIcon}
+              style={{ background: entry.color }}
+            />
+            <Text>{entry.value}</Text>
+          </Box>
+        )
+      })}
+    </Inline>
   )
 }
 
 interface Props {
   title?: string
   link?: {
-    text: string;
-    url: string;
+    text: string
+    url: string
   }
   outlined?: boolean
   chart: {
     bars?: Array<{
-      datakey: string,
+      datakey: string
       fill: string
     }>
     dataset: unknown[]
@@ -94,22 +117,31 @@ interface Props {
   }
 }
 
-export const Chart = ({title, link, outlined, chart }: Props) => {
-  const isMultipleBars = (chart.bars?.length ?? 0) > 1;
+export const Chart = ({ title, link, outlined, chart }: Props) => {
+  const isMultipleBars = (chart.bars?.length ?? 0) > 1
 
   return (
-    <Box width="full" height="full" padding={4} background="white" border={outlined ? 'standard' : 'disabled'}  borderRadius="large">
-    {(title || link) && <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
-        {title && <Text variant="h5">{title}</Text>}
-        {link && <Box display="flex" alignItems="center">
-          <ArrowLink href={link.url}>
-            {link.text}
-          </ArrowLink>
-        </Box>}
-     </Box>}
+    <Box
+      width="full"
+      height="full"
+      padding={4}
+      background="white"
+      border={outlined ? 'standard' : 'disabled'}
+      borderRadius="large"
+    >
+      {(title || link) && (
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
+          {title && <Text variant="h5">{title}</Text>}
+          {link && (
+            <Box display="flex" alignItems="center">
+              <ArrowLink href={link.url}>{link.text}</ArrowLink>
+            </Box>
+          )}
+        </Box>
+      )}
       <ResponsiveContainer aspect={1.5} width="100%" maxHeight={520}>
         <BarChart
-          barGap='5%'
+          barGap="5%"
           barSize={isMultipleBars ? '3%' : '8%'}
           data={chart.dataset}
           margin={{
@@ -125,14 +157,41 @@ export const Chart = ({title, link, outlined, chart }: Props) => {
             tick={<CustomizedAxisTick />}
             interval={0}
           />
-          {//chart.tooltip && <Tooltip content={<InvoiceTooltip />} />
+          {
+            //chart.tooltip && <Tooltip content={<InvoiceTooltip />} />
           }
-          {chart.legend && <ChartLegend content={<Legend />} wrapperStyle={{ left: 100, bottom: 24 }} align="left" verticalAlign="bottom" />}
-          <XAxis dataKey={chart.xAxisOptions?.datakey} tick={<CustomizedAxisTick />} interval={0} />
-          <YAxis label={<CustomizedYAxisLabel />} type="number" tick={{ fill: '#000000', dx: -7}} domain={['dataMin - 5000', 'auto']} format={'string'} tickFormatter={(value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} />
-          { chart.bars?.map(bar => <Bar dataKey={bar.datakey} fill={bar.fill} radius={isMultipleBars ? [2,2,0,0] : [4, 4, 0, 0]}/>)
-          }
+          {chart.legend && (
+            <ChartLegend
+              content={<Legend />}
+              wrapperStyle={{ left: 100, bottom: 24 }}
+              align="left"
+              verticalAlign="bottom"
+            />
+          )}
+          <XAxis
+            dataKey={chart.xAxisOptions?.datakey}
+            tick={<CustomizedAxisTick />}
+            interval={0}
+          />
+          <YAxis
+            label={<CustomizedYAxisLabel />}
+            type="number"
+            tick={{ fill: '#000000', dx: -7 }}
+            domain={['dataMin - 5000', 'auto']}
+            format={'string'}
+            tickFormatter={(value) =>
+              value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+            }
+          />
+          {chart.bars?.map((bar) => (
+            <Bar
+              dataKey={bar.datakey}
+              fill={bar.fill}
+              radius={isMultipleBars ? [2, 2, 0, 0] : [4, 4, 0, 0]}
+            />
+          ))}
         </BarChart>
       </ResponsiveContainer>
-    </Box>);
+    </Box>
+  )
 }
