@@ -1,5 +1,7 @@
 import ListView from './IcelandicGovernmentInstitutionVacanciesList'
+import ListViewWIP from './IcelandicGovernmentInstitutionVacanciesListWIP'
 import DetailView from './IcelandicGovernmentInstitutionVacancyDetails'
 
 export const IcelandicGovernmentInstitutionVacanciesList = ListView
+export const IcelandicGovernmentInstitutionVacanciesListWIP = ListViewWIP
 export const IcelandicGovernmentInstitutionVacancyDetails = DetailView

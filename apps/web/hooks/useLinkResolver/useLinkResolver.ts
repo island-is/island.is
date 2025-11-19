@@ -99,6 +99,14 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
+  vacancieswip: {
+    is: '/wip-starfatorg',
+    en: '',
+  },
+  vacancydetailswip: {
+    is: '/wip-starfatorg/[id]',
+    en: '',
+  },
   pensioncalculatorresults: {
     is: '/s/tryggingastofnun/reiknivel/nidurstodur',
     en: '/en/o/social-insurance-administration/calculator/results',
