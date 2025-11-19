@@ -4,10 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
-import {
-  IdentityInput,
-  Query,
-} from '@island.is/api/schema'
+import { IdentityInput, Query } from '@island.is/api/schema'
 import {
   InputController,
   PhoneInputController,
@@ -130,7 +127,7 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
-    if(!nationalIdField) return
+    if (!nationalIdField) return
     if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
@@ -203,13 +200,13 @@ export const NationalIdWithName: FC<
 
     // Check if the search mode matches the provided nationalId
     const searchModeMismatch =
-    ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
-    !(searchPersons && searchCompanies)
-    
+      ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
+      !(searchPersons && searchCompanies)
+
     // Prevent search if the provided nationalId does not match the searchMode
     if (searchModeMismatch) {
       setValue(nameField, '')
-      // This results in an error shown provided by 'getNameFieldErrorMessage' func 
+      // This results in an error shown provided by 'getNameFieldErrorMessage' func
       setInvalidNationalId(true)
       return
     }
@@ -220,7 +217,6 @@ export const NationalIdWithName: FC<
     getIdentity({
       variables: { input: { nationalId: nationalIdInput } },
     })
-
   }, [
     nationalIdInput,
     getIdentity,
