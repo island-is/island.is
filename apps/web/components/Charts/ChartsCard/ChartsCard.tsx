@@ -96,14 +96,12 @@ export const ChartsCard: React.FC<
                   {organization}
                 </Text>
               )}
-              {graphTitle && (
-                <Text variant="h3" color="dark400">
-                  {/*
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              <Text variant="h3" color="dark400">
+                {/*
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error make web strict */}
-                  <Hyphen>{graphTitle}</Hyphen>
-                </Text>
-              )}
+                <Hyphen>{graphTitle}</Hyphen>
+              </Text>
               {graphDescription && (
                 <Text color="dark400">{graphDescription}</Text>
               )}
