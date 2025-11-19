@@ -10,8 +10,9 @@ import { DataState } from '../../../utils/types'
 
 interface Props {
   data?: DataState<HealthDirectorateAppointments | null>
+  showLinkButton?: boolean
 }
-const Appointments: React.FC<Props> = ({ data }) => {
+const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
   const appointments = data?.data?.data
   const isEmpty = !isDefined(data?.data)
@@ -33,6 +34,7 @@ const Appointments: React.FC<Props> = ({ data }) => {
         description: formatMessage(messages.appointmentAt, {
           arg: appointment.practitioners.join(', '),
         }),
+        to: HealthPaths.HealthAppointmentDetail.replace(':id', appointment.id),
         href: HealthPaths.HealthAppointments,
         appointment: {
           date: appointment.date ?? '',
@@ -57,15 +59,17 @@ const Appointments: React.FC<Props> = ({ data }) => {
             {formatMessage(messages.myAppointments)}
           </Text>
         </Box>
-        <Box>
-          <LinkButton
-            to={HealthPaths.HealthAppointments}
-            text={formatMessage(messages.allAppointments)}
-            variant="text"
-            size="small"
-            icon="arrowForward"
-          />
-        </Box>
+        {showLinkButton && (
+          <Box>
+            <LinkButton
+              to={HealthPaths.HealthAppointments}
+              text={formatMessage(messages.allAppointments)}
+              variant="text"
+              size="small"
+              icon="arrowForward"
+            />
+          </Box>
+        )}
       </Box>
       <InfoCardGrid
         cards={cards}

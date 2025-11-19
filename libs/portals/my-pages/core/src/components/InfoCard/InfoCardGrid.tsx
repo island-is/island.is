@@ -3,9 +3,9 @@ import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { useWindowSize } from 'react-use'
 import EmptyCard from './EmptyCard'
+import { ErrorCard } from './ErrorCard'
 import InfoCard, { InfoCardProps } from './InfoCard'
 import * as styles from './InfoCard.css'
-import { ErrorCard } from './ErrorCard'
 
 interface InfoCardGridProps {
   cards: (InfoCardProps | null)[]

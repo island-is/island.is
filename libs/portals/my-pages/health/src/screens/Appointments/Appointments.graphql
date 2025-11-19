@@ -1,0 +1,31 @@
+query getAppointments(
+  $from: DateTime
+  $status: [HealthDirectorateAppointmentStatus!]
+) {
+  healthDirectorateAppointments(from: $from, status: $status) {
+    data {
+      __typename
+      id
+      title
+      instruction
+      date
+      time
+      weekday
+      status
+      location {
+        __typename
+        id
+        name
+        organization
+        directions
+        address
+        city
+        postalCode
+        country
+        latitude
+        longitude
+      }
+      practitioners
+    }
+  }
+}

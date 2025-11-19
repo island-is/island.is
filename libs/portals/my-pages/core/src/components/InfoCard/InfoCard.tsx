@@ -112,7 +112,12 @@ export const InfoCard: React.FC<InfoCardProps> = ({
 
   const content =
     variant === 'appointment' ? (
-      <TimeCard title={title} data={appointment} description={description} />
+      <TimeCard
+        title={title}
+        data={appointment}
+        description={description}
+        to={to}
+      />
     ) : (
       <Box
         border="standard"

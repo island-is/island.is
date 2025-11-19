@@ -64,6 +64,10 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
+  dateAndTime: {
+    id: 'sp.health:date-and-time',
+    defaultMessage: 'Dagsetning og tími',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -1730,9 +1734,25 @@ export const messages = defineMessages({
     defaultMessage: 'Mitt heilsuyfirlit',
     id: 'sp.health:my-health-overview',
   },
+  appointments: {
+    defaultMessage: 'Tímabókanir',
+    id: 'sp.health:appointments',
+  },
+  appointmentDetail: {
+    defaultMessage: 'Upplýsingar um tímabókun',
+    id: 'sp.health:appointment-detail',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
+  },
+  appointmentsIntro: {
+    defaultMessage: 'Hér sérðu yfirlit yfir tímabókanir þínar.',
+    id: 'sp.health:appointments-intro',
+  },
+  appointmentsDetailIntro: {
+    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -2066,5 +2086,17 @@ export const messages = defineMessages({
   appointmentAt: {
     id: 'sp.health:appointment-at',
     defaultMessage: 'Tími hjá: {arg} ',
+  },
+  appointmentAtSimple: {
+    id: 'sp.health:appointment-at-simple',
+    defaultMessage: 'Tími hjá',
+  },
+  locationAddress: {
+    id: 'sp.health:location-address',
+    defaultMessage: 'Staðsetning',
+  },
+  instructions: {
+    id: 'sp.health:instructions',
+    defaultMessage: 'Leiðbeiningar',
   },
 })
