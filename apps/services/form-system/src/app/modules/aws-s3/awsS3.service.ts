@@ -13,6 +13,6 @@ export class AwsS3Service {
     private readonly config: ConfigType<typeof awsS3ModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    this.s3 = new S3({ region: this.config.region })
+    this.s3 = new S3({ region: 'eu-west-1' })
   }
 }
