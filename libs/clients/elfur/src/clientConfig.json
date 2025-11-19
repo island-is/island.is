@@ -4495,9 +4495,7 @@
       }
     }
   },
-  "security": [
-    { "ExecuteAsUsername": [] }
-  ],
+  "security": [{ "ExecuteAsUsername": [] }],
   "tags": [
     {
       "name": "Account",
