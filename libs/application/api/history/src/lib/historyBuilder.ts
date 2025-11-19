@@ -42,42 +42,49 @@ export class HistoryBuilder {
       const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
       if (historyLog) {
-        let subjectAndActorText: string | undefined
-
+        // Only fetch subject/actor name by nationalId if necessary
+        let subjectName: string | undefined
+        let actorName: string | undefined
         if (
           (subjectNationalId && subjectNationalId !== applicantNationalId) ||
           (actorNationalId && actorNationalId !== applicantNationalId)
         ) {
-          const [subjectName, actorName] = await Promise.all([
+          ;[subjectName, actorName] = await Promise.all([
             subjectNationalId
-              ? this.identityService.tryToGetNameFromNationalId(
-                  subjectNationalId,
-                )
+              ? this.identityService
+                  .tryToGetNameFromNationalId(subjectNationalId)
+                  .then((name) => name ?? subjectNationalId)
               : Promise.resolve(undefined),
+
             actorNationalId
-              ? this.identityService.tryToGetNameFromNationalId(actorNationalId)
+              ? this.identityService
+                  .tryToGetNameFromNationalId(actorNationalId)
+                  .then((name) => name ?? actorNationalId)
               : Promise.resolve(undefined),
           ])
+        }
 
-          if (subjectName) {
-            if (!actorName || subjectNationalId === actorNationalId) {
-              subjectAndActorText = formatMessage(
-                coreHistoryMessages.byReviewer,
-                { subject: subjectName },
-              )
-            } else {
-              subjectAndActorText = formatMessage(
-                coreHistoryMessages.byReviewerWithActor,
-                { subject: subjectName, actor: actorName },
-              )
-            }
+        const message = historyLog.logMessage
+
+        let subjectAndActorText: string | undefined
+        if (subjectName) {
+          if (actorName && subjectNationalId !== actorNationalId) {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewerWithActor,
+              { subject: subjectName, actor: actorName },
+            )
+          } else {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewer,
+              { subject: subjectName },
+            )
           }
         }
 
         result.push(
           new HistoryResponseDto(
             entryTimestamp,
-            historyLog.logMessage,
+            message,
             formatMessage,
             subjectAndActorText,
           ),
