@@ -42,14 +42,41 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ) {}
 
   private async getVacanciesFromExternalSystem(
-    input: IcelandicGovernmentInstitutionVacanciesInput,
+    _input: IcelandicGovernmentInstitutionVacanciesInput,
   ) {
     let errorOccurred = false
-    let vacancies: VacancyResponseDto[] = []
+    const vacancies: VacancyResponseDto[] = []
 
     try {
-      vacancies = (await this.api.v1VacancyGetVacancyListGet({
-      })) as VacancyResponseDto[]
+      const pageSize = 100
+      let rowOffset = 0
+
+      // The external API is paginated and only returns 25 results by default
+      // when no pagination parameters are supplied. We need to keep fetching
+      // until no more data is returned.
+      // Note: We are currently not applying any additional filters from input.
+      // If filtering is added in the future, it should be included in the
+      // request parameters inside this loop.
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const page = (await this.api.v1VacancyGetVacancyListGet({
+          rowOffset,
+          fetchSize: pageSize,
+        })) as VacancyResponseDto[]
+
+        if (!page || page.length === 0) {
+          break
+        }
+
+        vacancies.push(...page)
+
+        if (page.length < pageSize) {
+          // Fewer results than requested means we've reached the end.
+          break
+        }
+
+        rowOffset += page.length
+      }
     } catch (error) {
       errorOccurred = true
       if (error instanceof FetchError) {
