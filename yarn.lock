@@ -32878,9 +32878,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.3.3":
-  version: 10.3.3
-  resolution: "glob@npm:10.3.3"
+"glob@npm:10.3.4":
+  version: 10.3.4
+  resolution: "glob@npm:10.3.4"
   dependencies:
     foreground-child: "npm:^3.1.0"
     jackspeak: "npm:^2.0.3"
@@ -32889,7 +32889,7 @@ __metadata:
     path-scurry: "npm:^1.10.1"
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 10/0d1a59dff5d5d7085f9c1e3b0c9c3a7e3a199a013ef8f800c0886e3cfe6f8e293f7847081021a97f96616bf778c053c6937382675f369ec8231c8b95d3ba11e2
+  checksum: 10/6375721bcd0c615fe4c1d61faaf9eb93e15d428f26bac6e85739221a84659b42601b2a085b20915142c0eb3d8a7155914884ff80f145d8c9f2397c8b771b8b60
   languageName: node
   linkType: hard
 
@@ -36170,7 +36170,7 @@ __metadata:
     formik: "npm:2.2.9"
     fridagar: "npm:^3.2.0"
     fuse.js: "npm:7.0.0"
-    glob: "npm:10.3.3"
+    glob: "npm:10.3.4"
     graphql: "npm:16.6.0"
     graphql-tag: "npm:2.12.5"
     graphql-type-json: "npm:0.3.2"
