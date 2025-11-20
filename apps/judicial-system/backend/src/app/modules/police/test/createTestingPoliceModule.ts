@@ -1,3 +1,4 @@
+import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,12 +13,11 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { IndictmentSubtype } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
 import { PoliceService } from '../police.service'
-import { getModelToken } from '@nestjs/sequelize'
-import { IndictmentSubtype } from '../../repository'
 
 jest.mock('../../event/event.service')
 jest.mock('../../aws-s3/awsS3.service.ts')
