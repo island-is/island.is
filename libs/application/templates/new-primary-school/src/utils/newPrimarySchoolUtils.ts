@@ -496,17 +496,12 @@ export const getApplicationType = (
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
 
-  console.log('nationalId', nationalId)
   if (!isValid(nationalId)) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
-
-  console.log('currentYear', currentYear)
-  console.log('firstGradeYear', firstGradeYear)
-  console.log('yearOfBirth', yearOfBirth)
 
   if (!yearOfBirth) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
@@ -519,8 +514,8 @@ export const getApplicationType = (
     // so the year of birth can be between currentYear - 6 and currentYear - 1
     return yearOfBirth >= firstGradeYear && yearOfBirth <= currentYear - 1
       ? //return yearOfBirth === firstGradeYear
-        ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL // innritun í 1. bekk
-      : ApplicationType.NEW_PRIMARY_SCHOOL // umsókn um skólaskipti
+        ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   return ApplicationType.NEW_PRIMARY_SCHOOL
