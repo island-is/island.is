@@ -36,7 +36,6 @@ import {
   isRestrictionCase,
   isSuccessfulServiceStatus,
   PunishmentType,
-  ServiceRequirement,
   type User as TUser,
   VerdictInfo,
 } from '@island.is/judicial-system/types'
