@@ -109,7 +109,7 @@ const getVerdictServiceStatusDescriptor = (
       return 'Birt fyrir verjanda'
     }
     case VerdictServiceStatus.LEGAL_PAPER: {
-      return 'Birt í lögbirtingarblaðinu'
+      return 'Birt í Lögbirtingablaðinu'
     }
 
     default: {
