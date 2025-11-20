@@ -16,6 +16,8 @@ import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
 import { PoliceService } from '../police.service'
+import { getModelToken } from '@nestjs/sequelize'
+import { IndictmentSubtype } from '../../repository'
 
 jest.mock('../../event/event.service')
 jest.mock('../../aws-s3/awsS3.service.ts')
@@ -45,6 +47,12 @@ export const createTestingPoliceModule = async () => {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(IndictmentSubtype),
+        useValue: {
+          findOne: jest.fn(),
         },
       },
     ],
