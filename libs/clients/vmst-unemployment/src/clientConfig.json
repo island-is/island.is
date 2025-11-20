@@ -6,6 +6,42 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/ping": {
+      "get": {
+        "tags": ["Diagnostic"],
+        "operationId": "Diagnostic_Ping",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": ["Diagnostic"],
+        "operationId": "Diagnostic_Status",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Diagnostics_HealthCheckResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/OpenApi": {
       "get": {
         "tags": ["OpenApi"],
@@ -1019,6 +1055,19 @@
   },
   "components": {
     "schemas": {
+      "Galdur_Domain_Models_Diagnostics_HealthCheckResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Galdur_Domain_Models_Applications_ActivationGrantApplications_ViewModels_ActivationGrantViewModel": {
         "allOf": [
           {
@@ -2678,6 +2727,10 @@
                 "$ref": "#/components/schemas/Galdur_Domain_Models_IPS_IPSAnalysis_IPSAdditionalJobInfoDTO"
               }
             ]
+          },
+          "workHours": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -7053,6 +7106,13 @@
               "$ref": "#/components/schemas/Galdur_Domain_Models_Income_IncomeDTO"
             }
           },
+          "irregularJobPayments": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Income_IncomeDTO"
+            }
+          },
           "showType1": {
             "type": "boolean"
           },
@@ -8224,6 +8284,76 @@
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_CompensationDTO"
               }
             ]
+          },
+          "acknowledgements": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_UnemploymentApplicationAcknowledgementsDTO"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_UnemploymentApplicationAcknowledgementsDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Auðkenni umsóknar",
+            "format": "guid",
+            "nullable": true
+          },
+          "dataCollectionAcknowledgement": {
+            "type": "string",
+            "description": "Gagnaöflun",
+            "nullable": true
+          },
+          "notifyChangesAcknowledgement": {
+            "type": "string",
+            "description": "Tilkynna þarf breytingar",
+            "nullable": true
+          },
+          "rightsAndObligationsAcknowledgement": {
+            "type": "string",
+            "description": "Réttindi og skyldur á meðan þú ert í atvinnuleit",
+            "nullable": true
+          },
+          "workAlongsidePaymentsAcknowledgement": {
+            "type": "string",
+            "description": "Vinna samhliða greiðslum",
+            "nullable": true
+          },
+          "lossOfBenefitEntitlementAcknowledgement": {
+            "type": "string",
+            "description": "Missir bótaréttar",
+            "nullable": true
+          },
+          "foreignTravelAndWorkAbroadAcknowledgement": {
+            "type": "string",
+            "description": "Utanlandsferðir og atvinna erlendis",
+            "nullable": true
+          },
+          "unemploymentBenefitsPaymentAcknowledgement": {
+            "type": "string",
+            "description": "Útborgun atvinnuleysisbóta",
+            "nullable": true
+          },
+          "meetingsAndMeasuresAcknowledgement": {
+            "type": "string",
+            "description": "Boðun í viðtal, á fund og í önnur úrræði",
+            "nullable": true
+          },
+          "monthlyJobSearchAcknowledgement": {
+            "type": "string",
+            "description": "Staðfesting á atvinnuleit í hverjum mánuði",
+            "nullable": true
+          },
+          "introductoryMeetingAcknowledgement": {
+            "type": "string",
+            "description": "Kynningarfundur – skyldumæting",
+            "nullable": true
           }
         }
       },

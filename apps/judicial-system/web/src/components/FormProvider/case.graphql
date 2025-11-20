@@ -63,7 +63,6 @@ query Case($input: CaseQueryInput!) {
         serviceDate
         serviceInformationForDefendant
         externalPoliceDocumentId
-        legalPaperRequestDate
         comment
         deliveredToDefenderNationalId
         servedBy
@@ -402,6 +401,7 @@ query Case($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      hasCivilClaims
       withCourtSessions
       courtSessions {
         id
@@ -505,6 +505,7 @@ query Case($input: CaseQueryInput!) {
           serviceRequirement
           serviceDate
           serviceInformationForDefendant
+          externalPoliceDocumentId
         }
       }
       caseFiles {

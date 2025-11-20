@@ -67,6 +67,8 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæra afturkölluð',
   [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
+  VERDICT_SERVICE_STATUS:
+    ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
 }
 
 export type CaseEvent =
@@ -78,12 +80,14 @@ export type CaseEvent =
   | 'RESUBMIT'
   | 'SCHEDULE_COURT_DATE'
   | 'SUBPOENA_SERVICE_STATUS'
+  | 'VERDICT_SERVICE_STATUS'
 
 const caseEventsToLog = [
   'CREATE',
   'CREATE_XRD',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
+  'VERDICT_SERVICE_STATUS',
   'COMPLETE',
   'ACCEPT',
   'REJECT',

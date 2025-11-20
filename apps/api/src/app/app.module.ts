@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
-
+import { LegalGazetteModule } from '@island.is/api/domains/legal-gazette'
 import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
@@ -138,7 +138,6 @@ import {
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
-
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -331,6 +330,7 @@ const environment = getConfig
     UniversityCareersModule,
     OfficialJournalOfIcelandModule,
     OfficialJournalOfIcelandApplicationModule,
+    LegalGazetteModule,
     CompanyRegistryModule,
     QuestionnairesModule,
     IcelandicNamesModule.register({

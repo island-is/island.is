@@ -23,6 +23,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/legal-gazette": [
+        "libs/api/domains/legal-gazette/src/index.ts"
+      ],
       "@island.is/api/domains/administration-of-occupational-safety-and-health": [
         "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
       ],

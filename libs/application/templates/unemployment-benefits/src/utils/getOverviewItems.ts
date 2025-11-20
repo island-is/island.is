@@ -45,6 +45,7 @@ import {
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
 } from './educationInformation'
+import { getEmploymentFromRsk } from './getEmploymenInfo'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
@@ -142,8 +143,26 @@ export const useEmploymentInformationOverviewItems = (
     'employmentHistory',
   )
 
-  const historyNames = employmentHistory?.lastJobs.map((job) => {
-    return `${job.employer?.name}: ${job.title}`
+  const rskEmploymentList = getEmploymentFromRsk(_externalData)
+
+  const previousJobInformation = employmentHistory?.lastJobs?.map((job) => {
+    const employerName =
+      job.nationalIdWithName && job.nationalIdWithName !== '-'
+        ? rskEmploymentList.find(
+            (x) => x.employerSSN === job.nationalIdWithName,
+          )?.employer
+        : job.employer?.name
+    return `${employerName}: ${job.title}`
+  })
+
+  const currentJobInformation = employmentHistory?.currentJobs?.map((job) => {
+    const employerName =
+      job.nationalIdWithName && job.nationalIdWithName !== '-'
+        ? rskEmploymentList.find(
+            (x) => x.employerSSN === job.nationalIdWithName,
+          )?.employer
+        : job.employer?.name
+    return `${employerName}: ${job.title}`
   })
 
   return [
@@ -159,7 +178,7 @@ export const useEmploymentInformationOverviewItems = (
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentInformation.history,
-      valueText: historyNames,
+      valueText: [previousJobInformation, currentJobInformation].flat(),
     },
   ]
 }
