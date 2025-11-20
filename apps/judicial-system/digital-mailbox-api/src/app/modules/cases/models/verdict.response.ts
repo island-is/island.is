@@ -8,9 +8,9 @@ import {
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
+  getDefendantServiceDate,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
-  ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
@@ -45,20 +45,17 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
-    const isServiceRequired =
-      defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      internalCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.FINE
-
-    const baseDate = isServiceRequired
-      ? defendant?.verdict?.serviceDate
-      : internalCase.rulingDate
+    const baseDate = getDefendantServiceDate({
+      verdict: defendant.verdict,
+      fallbackDate: internalCase.rulingDate,
+    })
 
     const appealDeadline = baseDate
       ? getIndictmentAppealDeadlineDate({
-          baseDate: new Date(baseDate),
-          isFine,
+          baseDate,
+          isFine:
+            internalCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
         })
       : null
 

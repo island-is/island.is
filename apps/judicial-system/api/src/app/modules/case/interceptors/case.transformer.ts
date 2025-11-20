@@ -2,12 +2,12 @@ import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   getAppealDeadlineDate,
+  getDefendantServiceDate,
   getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   hasDatePassed,
   isRequestCase,
-  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -162,52 +162,45 @@ export const getIndictmentInfo = ({
     return {}
   }
 
-  const theRulingDate = new Date(rulingDate)
+  // appeal deadline for the non-defendant users
   const indictmentAppealDeadline = getIndictmentAppealDeadlineDate({
-    baseDate: theRulingDate,
+    baseDate: new Date(rulingDate),
     isFine,
   }).toISOString()
 
-  const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
-    (defendant) => [
-      isRuling || isFine,
-      isFine ||
-      defendant.verdict?.serviceRequirement ===
-        ServiceRequirement.NOT_REQUIRED ||
-      defendant.verdict?.serviceRequirement ===
-        ServiceRequirement.NOT_APPLICABLE
-        ? theRulingDate
-        : defendant.verdict?.serviceDate
-        ? new Date(defendant.verdict.serviceDate)
-        : undefined,
-    ],
-  )
+  const defendantVerdictInfo = defendants?.map((defendant) => ({
+    canAppealVerdict: isRuling || isFine,
+    serviceDate: getDefendantServiceDate({
+      verdict: defendant.verdict,
+      fallbackDate: rulingDate,
+    }),
+  }))
 
-  const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
-    getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
+  const {
+    isVerdictViewedByAllRequiredDefendants,
+    hasVerdictAppealDeadlineExpiredForAll,
+  } = getIndictmentVerdictAppealDeadlineStatus(defendantVerdictInfo, isFine)
 
   return {
     indictmentAppealDeadline,
-    indictmentVerdictViewedByAll,
-    indictmentVerdictAppealDeadlineExpired,
+    indictmentVerdictViewedByAll: isVerdictViewedByAllRequiredDefendants,
+    indictmentVerdictAppealDeadlineExpired:
+      hasVerdictAppealDeadlineExpiredForAll,
   }
 }
 
 export const getIndictmentDefendantsInfo = (theCase: Case) => {
   return theCase.defendants?.map((defendant) => {
-    const { verdict } = defendant
-    const isServiceRequired =
-      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-
-    const baseDate = isServiceRequired
-      ? verdict.serviceDate
-      : theCase.rulingDate
+    const baseDate = getDefendantServiceDate({
+      verdict: defendant.verdict,
+      fallbackDate: theCase.rulingDate,
+    })
     const verdictAppealDeadline = baseDate
       ? getIndictmentAppealDeadlineDate({
-          baseDate: new Date(baseDate),
-          isFine,
+          baseDate,
+          isFine:
+            theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
         })
       : undefined
     const isVerdictAppealDeadlineExpired =

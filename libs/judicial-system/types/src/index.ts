@@ -148,9 +148,11 @@ export {
 } from './lib/case'
 
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+export type { VerdictInfo } from './lib/indictmentCase'
 
 export {
   getIndictmentAppealDeadlineDate,
+  getDefendantServiceDate,
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,
