@@ -22,6 +22,7 @@ import {
   DateType,
   DefendantEventType,
   EventType,
+  getDefendantServiceDate,
   getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
@@ -983,11 +984,10 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
 
     const verdictInfo: VerdictInfo[] | undefined = c.defendants?.map((d) => ({
       canAppealVerdict: true,
-      serviceDate:
-        // TODO: fix this in the database so we can always fetch the service date
-        d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-          ? c.rulingDate
-          : d.verdict?.serviceDate,
+      serviceDate: getDefendantServiceDate({
+        verdict: d.verdict,
+        fallbackDate: c.rulingDate,
+      }),
     }))
 
     const {
