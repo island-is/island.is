@@ -26,7 +26,7 @@ const TitleWithCounter: FC<Pick<CasesCardProps, 'title' | 'type'>> = (
   const counter = data?.caseTable.rowCount || 0
 
   return (
-    <Text variant="h4" color="blue400" marginBottom={1}>
+    <Text as="span" variant="h4" color="blue400" marginBottom={1}>
       {props.title} (
       {loading || error ? (
         <span className={styles.loadingDots}>
