@@ -28,6 +28,7 @@ export const GET_VERDICTS_QUERY = gql`
         laws
         dateFrom
         dateTo
+        caseContact
       }
     }
   }

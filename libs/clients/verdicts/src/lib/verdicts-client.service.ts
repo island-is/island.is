@@ -97,6 +97,7 @@ export class VerdictsClientService {
     laws?: string[]
     dateFrom?: string
     dateTo?: string
+    caseContact?: string
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
 
@@ -118,6 +119,7 @@ export class VerdictsClientService {
               laws: input.laws,
               dateFrom: input.dateFrom ? input.dateFrom : undefined,
               dateTo: input.dateTo ? input.dateTo : undefined,
+              caseContact: input.caseContact,
             },
           })
         : { status: 'rejected', items: [], total: 0 },

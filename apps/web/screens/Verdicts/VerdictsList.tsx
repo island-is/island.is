@@ -120,6 +120,7 @@ enum QueryParam {
   LAWS = 'laws',
   DATE_FROM = 'dateFrom',
   DATE_TO = 'dateTo',
+  CASE_CONTACT = 'caseContact',
 }
 
 interface VerdictsListProps {
@@ -224,6 +225,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
       [QueryParam.KEYWORD]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
+      [QueryParam.CASE_CONTACT]: parseAsString
+        .withOptions({ clearOnDefault: true })
+        .withDefault(''),
       [QueryParam.CASE_CATEGORIES]: parseAsArrayOf(
         parseAsString.withOptions({ clearOnDefault: true }),
       ).withOptions({
@@ -298,6 +302,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
         laws: laws ? [laws] : null,
         dateFrom: queryParams[QueryParam.DATE_FROM]?.toISOString() ?? null,
         dateTo: queryParams[QueryParam.DATE_TO]?.toISOString() ?? null,
+        caseContact: queryParams[QueryParam.CASE_CONTACT] ?? null,
       }
     },
     [],
@@ -473,6 +478,7 @@ const FILTER_ACCORDION_ITEM_IDS = [
   'case-number-accordion',
   'laws-accordion',
   'keywords-accordion',
+  'case-contact-accordion',
   'case-category-accordion',
   'case-types-accordion',
   'date-accordion',
@@ -649,10 +655,36 @@ const Filters = ({
 
           <AccordionItem
             id={FILTER_ACCORDION_ITEM_IDS[3]}
-            label={formatMessage(m.listPage.caseCategoryAccordionLabel)}
+            label={formatMessage(m.listPage.caseContactAccordionLabel)}
             expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[3])}
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[3])
+            }}
+            iconVariant="small"
+            labelVariant="h5"
+            labelColor={
+              queryState[QueryParam.CASE_CONTACT] ? 'blue400' : undefined
+            }
+          >
+            <DebouncedInput
+              key={renderKey}
+              value={queryState[QueryParam.CASE_CONTACT]}
+              onChange={(value) => {
+                updateQueryState(QueryParam.CASE_CONTACT, value)
+              }}
+              label={formatMessage(m.listPage.caseContactInputLabel)}
+              name="casecontact-input"
+              debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+              clearStateButtonText={formatMessage(m.listPage.clearFilter)}
+            />
+          </AccordionItem>
+
+          <AccordionItem
+            id={FILTER_ACCORDION_ITEM_IDS[4]}
+            label={formatMessage(m.listPage.caseCategoryAccordionLabel)}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
+            onToggle={(expanded) => {
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
             }}
             iconVariant="small"
             labelVariant="h5"
@@ -719,11 +751,11 @@ const Filters = ({
           </AccordionItem>
 
           <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[4]}
+            id={FILTER_ACCORDION_ITEM_IDS[5]}
             label={formatMessage(m.listPage.caseTypeAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[5])}
             onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[5])
             }}
             iconVariant="small"
             labelVariant="h5"
@@ -786,11 +818,11 @@ const Filters = ({
           </AccordionItem>
 
           <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[5]}
+            id={FILTER_ACCORDION_ITEM_IDS[6]}
             label={formatMessage(m.listPage.dateAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[5])}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[6])}
             onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[5])
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[6])
             }}
             iconVariant="small"
             labelVariant="h5"
@@ -937,6 +969,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         }`,
         onClick: () => {
           updateQueryState(QueryParam.KEYWORD, null)
+          updateRenderKey()
+        },
+      })
+    }
+
+    if (queryState[QueryParam.CASE_CONTACT]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.caseContactAccordionLabel)}: ${
+          queryState[QueryParam.CASE_CONTACT]
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.CASE_CONTACT, '')
           updateRenderKey()
         },
       })
@@ -1386,6 +1430,9 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   )
   const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
   const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
+  const caseContact = parseAsString.parseServerSide(
+    query[QueryParam.CASE_CONTACT],
+  )
 
   const [
     verdictListResponse,
@@ -1407,6 +1454,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           caseNumber,
           dateFrom,
           dateTo,
+          caseContact,
         },
       },
     }),
