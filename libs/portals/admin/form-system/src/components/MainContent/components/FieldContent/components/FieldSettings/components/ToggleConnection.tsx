@@ -1,26 +1,17 @@
+import { m } from '@island.is/form-system/ui'
 import {
-  GridRow as Row,
   GridColumn as Column,
+  GridRow as Row,
   ToggleSwitchCheckbox,
-  Text,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import { FormSystemField } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
 
 export const ToggleConnection = () => {
-  const { control, selectStatus, setSelectStatus } = useContext(ControlContext)
-  const currentItem = control.activeItem.data as FormSystemField
-  const currentItemDependency = control.form.dependencies?.find(
-    (dep) => dep?.parentProp === currentItem.id,
-  )
-  const hasConnections =
-    currentItemDependency !== undefined &&
-    currentItemDependency?.childProps &&
-    currentItemDependency.childProps.length > 0
+  const { selectStatus, setSelectStatus } = useContext(ControlContext)
+
   const { formatMessage } = useIntl()
   return (
     <Row>
@@ -36,11 +27,6 @@ export const ToggleConnection = () => {
           }
         />
       </Column>
-      {hasConnections && (
-        <Column>
-          <Text variant="eyebrow">{formatMessage(m.hasConnections)}</Text>
-        </Column>
-      )}
     </Row>
   )
 }
