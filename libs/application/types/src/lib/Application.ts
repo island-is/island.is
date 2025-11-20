@@ -73,6 +73,20 @@ export interface Application<TAnswers = FormValue> {
   draftFinishedSteps?: number
 }
 
+export interface ApplicationCard {
+  id: string
+  created: Date
+  modified: Date
+  typeId: ApplicationTypes
+  status: ApplicationStatus
+  name?: string
+  progress?: number
+  slug?: string
+  org?: string
+  orgContentfulId?: string
+  nationalId?: string
+  actionCard?: ActionCardMetaData
+}
 export interface ApplicationWithAttachments extends Application {
   attachments: object
 }

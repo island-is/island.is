@@ -416,7 +416,7 @@ export class ApplicationsService {
       where: {
         nationalId,
         pruned: false,
-        isTest: false,
+        isTest: true,
       },
       include: [{ model: Value, as: 'values' }],
     })

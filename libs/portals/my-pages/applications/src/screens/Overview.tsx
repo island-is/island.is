@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   useCombinedApplications,
+  useApplicationCards,
   useGetOrganizationsQuery,
 } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -54,9 +55,17 @@ const Overview = () => {
     error,
     refetch,
   } = useCombinedApplications()
+  const {
+    data: applicationCards,
+    loading: loadingCards,
+    error: errorCards,
+    refetch: refetchApplicationCards,
+  } = useApplicationCards()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
+
+  console.log('applicationCards', applicationCards)
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
     variables: {
@@ -89,7 +98,8 @@ const Overview = () => {
 
   const institutions = getInstitutions(
     defaultInstitution,
-    applications,
+    // applications,
+    applicationCards,
     organizations,
   )
 
@@ -101,7 +111,8 @@ const Overview = () => {
 
   const applicationsSortedByStatus = getFilteredApplicationsByStatus(
     filterValue,
-    applications,
+    // applications,
+    applicationCards,
     focusedApplication?.id,
   )
 
@@ -135,7 +146,8 @@ const Overview = () => {
   }
 
   const noApplications =
-    (applications.length === 0 && !focusedApplication) ||
+    // (applications.length === 0 && !focusedApplication) ||
+    (applicationCards.length === 0 && !focusedApplication) ||
     (statusToShow === ApplicationOverViewStatus.incomplete &&
       applicationsSortedByStatus.incomplete.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.inProgress &&
@@ -150,94 +162,108 @@ const Overview = () => {
         intro={GetIntroductionHeadingOrIntro(statusToShow)}
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
-      {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-      {(error || (!loading && !applications)) && (
+      {(loading || loadingOrg || loadingCards || !orgData) && (
+        <ActionCardLoader repeat={3} />
+      )}
+      {(error ||
+        (!loading && !applications) ||
+        (!loadingCards && !applicationCards)) && (
         <Problem error={error} noBorder={false} />
       )}
-      {applications &&
-        applications.length > 0 &&
-        orgData &&
-        !loading &&
-        !loadingOrg &&
-        !error && (
-          <>
-            <Box paddingBottom={[3, 5]}>
-              <GridRow alignItems="flexEnd">
-                <GridColumn span={['1/1', '1/2']}>
-                  <Box height="full">
-                    <Input
-                      icon={{ name: 'search' }}
-                      backgroundColor="blue"
-                      size="xs"
-                      value={filterValue.searchQuery}
-                      onChange={(ev) => handleSearchChange(ev.target.value)}
-                      name="umsoknir-leit"
-                      label={formatMessage(m.searchLabel)}
-                      placeholder={formatMessage(m.searchPlaceholder)}
-                    />
-                  </Box>
-                </GridColumn>
-                <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
-                  <Box height="full">
-                    <Select
-                      name="institutions"
-                      backgroundColor="blue"
-                      size="xs"
-                      defaultValue={institutions[0]}
-                      options={institutions}
-                      value={filterValue.activeInstitution}
-                      onChange={(e) => {
-                        if (e) {
-                          handleInstitutionChange(e)
-                        }
-                      }}
-                      label={formatMessage(m.searchInstitutiontLabel)}
-                    />
-                  </Box>
-                </GridColumn>
-              </GridRow>
-            </Box>
-            {focusedApplication && (
-              <ApplicationGroup
-                applications={[focusedApplication]}
-                label={formatMessage(m.focusedApplication)}
-                organizations={organizations}
-                refetch={refetch}
-                focus={true}
-              />
-            )}
-            {applicationsSortedByStatus.incomplete?.length > 0 &&
-              (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.incomplete) && (
+      {
+        /* {applications &&
+        applications.length > 0 && */
+        applicationCards &&
+          applicationCards.length > 0 &&
+          orgData &&
+          !loading &&
+          !loadingOrg &&
+          !loadingCards &&
+          !errorCards &&
+          !error && (
+            <>
+              <Box paddingBottom={[3, 5]}>
+                <GridRow alignItems="flexEnd">
+                  <GridColumn span={['1/1', '1/2']}>
+                    <Box height="full">
+                      <Input
+                        icon={{ name: 'search' }}
+                        backgroundColor="blue"
+                        size="xs"
+                        value={filterValue.searchQuery}
+                        onChange={(ev) => handleSearchChange(ev.target.value)}
+                        name="umsoknir-leit"
+                        label={formatMessage(m.searchLabel)}
+                        placeholder={formatMessage(m.searchPlaceholder)}
+                      />
+                    </Box>
+                  </GridColumn>
+                  <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
+                    <Box height="full">
+                      <Select
+                        name="institutions"
+                        backgroundColor="blue"
+                        size="xs"
+                        defaultValue={institutions[0]}
+                        options={institutions}
+                        value={filterValue.activeInstitution}
+                        onChange={(e) => {
+                          if (e) {
+                            handleInstitutionChange(e)
+                          }
+                        }}
+                        label={formatMessage(m.searchInstitutiontLabel)}
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              {focusedApplication && (
                 <ApplicationGroup
-                  applications={applicationsSortedByStatus.incomplete}
-                  label={formatMessage(m.incompleteApplications)}
+                  applications={[focusedApplication]}
+                  label={formatMessage(m.focusedApplication)}
                   organizations={organizations}
-                  refetch={refetch}
+                  // refetch={refetch}
+                  refetch={refetchApplicationCards}
+                  focus={true}
                 />
               )}
-            {applicationsSortedByStatus.inProgress?.length > 0 &&
-              (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.inProgress) && (
-                <ApplicationGroup
-                  applications={applicationsSortedByStatus.inProgress}
-                  label={formatMessage(m.inProgressApplications)}
-                  organizations={organizations}
-                  refetch={refetch}
-                />
-              )}
-            {applicationsSortedByStatus.finished?.length > 0 &&
-              (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.completed) && (
-                <ApplicationGroup
-                  applications={applicationsSortedByStatus.finished}
-                  label={formatMessage(m.finishedApplications)}
-                  organizations={organizations}
-                  refetch={refetch}
-                />
-              )}
-          </>
-        )}
+              {applicationsSortedByStatus.incomplete?.length > 0 &&
+                (statusToShow === ApplicationOverViewStatus.all ||
+                  statusToShow === ApplicationOverViewStatus.incomplete) && (
+                  <ApplicationGroup
+                    applications={applicationsSortedByStatus.incomplete}
+                    label={formatMessage(m.incompleteApplications)}
+                    organizations={organizations}
+                    // refetch={refetch}
+                    refetch={refetchApplicationCards}
+                  />
+                )}
+              {applicationsSortedByStatus.inProgress?.length > 0 &&
+                (statusToShow === ApplicationOverViewStatus.all ||
+                  statusToShow === ApplicationOverViewStatus.inProgress) && (
+                  <ApplicationGroup
+                    applications={applicationsSortedByStatus.inProgress}
+                    label={formatMessage(m.inProgressApplications)}
+                    organizations={organizations}
+                    // refetch={refetch}
+                    refetch={refetchApplicationCards}
+                  />
+                )}
+              {applicationsSortedByStatus.finished?.length > 0 &&
+                (statusToShow === ApplicationOverViewStatus.all ||
+                  statusToShow === ApplicationOverViewStatus.completed) && (
+                  <ApplicationGroup
+                    applications={applicationsSortedByStatus.finished}
+                    label={formatMessage(m.finishedApplications)}
+                    organizations={organizations}
+                    // refetch={refetch}
+                    refetch={refetchApplicationCards}
+                  />
+                )}
+            </>
+          )
+      }
       {!error && !loading && noApplications && (
         <Problem
           type="no_data"
