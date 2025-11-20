@@ -4,11 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
-import {
-  IdentityInput,
-  Query,
-  RskCompanyInfoInput,
-} from '@island.is/api/schema'
+import { IdentityInput, Query } from '@island.is/api/schema'
 import {
   InputController,
   PhoneInputController,
@@ -16,7 +12,7 @@ import {
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
-import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
+import { IDENTITY_QUERY } from './graphql/queries'
 import { setInputsOnChange } from '@island.is/shared/utils'
 
 interface NationalIdWithNameProps {
@@ -91,8 +87,10 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
-  const [nationalIdInput, setNationalIdInput] = useState('')
+  const { setValue, getValues } = useFormContext()
+  const [nationalIdInput, setNationalIdInput] = useState(
+    getValues(nationalIdField) || '',
+  )
 
   const getFieldErrorString = (
     error: unknown,
@@ -128,6 +126,26 @@ export const NationalIdWithName: FC<
     nationalIdFieldErrors = getFieldErrorString(error, 'nationalId')
   }
 
+  const getNameFieldErrorMessage = () => {
+    if (!nationalIdInput) return
+    if (nationalIdInput.length !== 10) return
+
+    const notFoundMessage = formatMessage(
+      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+    )
+
+    // Invalid national ID or mismatch with allowed search modes
+    if (invalidNationalId) return notFoundMessage
+
+    const queryFailed = queryError || data?.identity === null
+    const nameError = getFieldErrorString(error, 'name')
+
+    if (queryFailed) return notFoundMessage
+    if (nameError && !data?.identity) return nameError
+
+    return undefined
+  }
+
   // get default values
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue
@@ -153,57 +171,12 @@ export const NationalIdWithName: FC<
           onNameChange && onNameChange(data.identity?.name ?? '')
           if (data.identity?.name) {
             setValue(nameField, data.identity?.name)
-          } else if (
-            searchPersons &&
-            !searchCompanies &&
-            data?.identity === null
-          ) {
-            setValue(nameField, '')
-          } else if (
-            searchPersons &&
-            searchCompanies &&
-            companyData?.companyRegistryCompany === null
-          ) {
+          } else {
             setValue(nameField, '')
           }
         },
       },
     )
-
-  // query to get company name by national id
-  const [
-    getCompanyIdentity,
-    {
-      data: companyData,
-      loading: companyQueryLoading,
-      error: companyQueryError,
-    },
-  ] = useLazyQuery<Query, { input: RskCompanyInfoInput }>(
-    gql`
-      ${COMPANY_IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (companyData) => {
-        onNameChange &&
-          onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        if (companyData.companyRegistryCompany?.name) {
-          setValue(nameField, companyData.companyRegistryCompany?.name)
-        } else if (
-          !searchPersons &&
-          searchCompanies &&
-          companyData?.companyRegistryCompany === null
-        ) {
-          setValue(nameField, '')
-        } else if (
-          searchPersons &&
-          searchCompanies &&
-          data?.identity === null
-        ) {
-          setValue(nameField, '')
-        }
-      },
-    },
-  )
 
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
@@ -211,36 +184,42 @@ export const NationalIdWithName: FC<
       return
     }
     if (nationalIdInput.length !== 10) {
+      // Clear name field whenever national id is not complete
+      // avoids name lingering from previous valid national ids
+      setValue(nameField, '')
       return
     }
 
-    if (kennitala.isValid(nationalIdInput)) {
-      setInvalidNationalId(false)
-      searchPersons &&
-        getIdentity({
-          variables: {
-            input: {
-              nationalId: nationalIdInput,
-            },
-          },
-        })
-
-      searchCompanies &&
-        getCompanyIdentity({
-          variables: {
-            input: {
-              nationalId: nationalIdInput,
-            },
-          },
-        })
-    } else {
+    if (!kennitala.isValid(nationalIdInput)) {
       setValue(nameField, '')
       setInvalidNationalId(true)
+      return
     }
+
+    const isPerson = kennitala.isPerson(nationalIdInput)
+
+    // Check if the search mode matches the provided nationalId
+    const searchModeMismatch =
+      ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
+      !(searchPersons && searchCompanies)
+
+    // Prevent search if the provided nationalId does not match the searchMode
+    if (searchModeMismatch) {
+      setValue(nameField, '')
+      // This results in an error shown provided by 'getNameFieldErrorMessage' func
+      setInvalidNationalId(true)
+      return
+    }
+
+    setInvalidNationalId(false)
+
+    // Identity returns both companies and individuals
+    getIdentity({
+      variables: { input: { nationalId: nationalIdInput } },
+    })
   }, [
     nationalIdInput,
     getIdentity,
-    getCompanyIdentity,
     searchPersons,
     searchCompanies,
     setValue,
@@ -276,13 +255,7 @@ export const NationalIdWithName: FC<
                 )
               }
             })}
-            loading={
-              searchPersons
-                ? queryLoading
-                : searchCompanies
-                ? companyQueryLoading
-                : undefined
-            }
+            loading={queryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}
@@ -298,26 +271,7 @@ export const NationalIdWithName: FC<
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
             required={disabled ? required : false}
-            error={
-              searchPersons
-                ? queryError || data?.identity === null || invalidNationalId
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !data
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : searchCompanies
-                ? companyQueryError ||
-                  companyData?.companyRegistryCompany === null
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !companyData
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : undefined
-            }
+            error={getNameFieldErrorMessage()}
             disabled={disabled}
             readOnly={!disabled || readOnly}
           />
