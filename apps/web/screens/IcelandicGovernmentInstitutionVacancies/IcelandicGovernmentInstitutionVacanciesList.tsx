@@ -309,7 +309,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           }`,
           variant: getDeadlineVariant(vacancy.applicationDeadlineTo),
         },
-      ]
+      ].filter(isDefined)
 
       return {
         id: vacancy.id,
