@@ -1,36 +1,43 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import {
   Banknumber,
-  MessageWithLink,
+  Checkbox,
   CurrencyField,
   Email,
   FileUpload,
+  List,
+  m,
+  MessageWithLink,
   NationalId,
   PhoneNumber,
   PropertyNumber,
   Radio,
   TextInput,
   TimeInput,
-  Checkbox,
-  List,
-  m,
 } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
-import { useIntl } from 'react-intl'
-import { useForm, FormProvider } from 'react-hook-form'
+import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FormProvider, useForm } from 'react-hook-form'
 
 interface Props {
   data: FormSystemField
+  screenOrSection?: boolean
 }
 
-export const Preview = ({ data }: Props) => {
+export const Preview = ({ data, screenOrSection }: Props) => {
   const type = data.fieldType
   const methods = useForm()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   return (
     <FormProvider {...methods}>
-      <Box padding={2} background="blue100">
+      <Box padding={2} border="standard" borderRadius="large">
+        {!screenOrSection && (
+          <Text variant="h5" marginBottom={4}>
+            {formatMessage(m.previewField)}
+          </Text>
+        )}
+
         {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
         {type === FieldTypesEnum.BANK_ACCOUNT && (
           <div>
