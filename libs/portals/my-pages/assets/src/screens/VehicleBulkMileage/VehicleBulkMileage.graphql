@@ -27,10 +27,10 @@ query vehiclesList($input: VehiclesListInputV3!) {
 
 query vehiclesListCount($input: VehiclesListInputV3!) {
   vehiclesListV3(input: $input) {
-      pageNumber
-      pageSize
-      totalPages
-      totalRecords
+    pageNumber
+    pageSize
+    totalPages
+    totalRecords
   }
 }
 
