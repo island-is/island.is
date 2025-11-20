@@ -9,6 +9,7 @@ export {
 } from './lib/socialInsuranceAdministrationClient.type'
 export * from './lib/dto'
 export { MedicalAndRehabilitationPaymentsDTO } from './lib/dto/medicalAndRehabilitationPayments.dto'
-export * from '../gen/fetch'
+export * from '../generated/v1/gen/fetch'
+export * from '../generated/v2/gen/fetch'
 export * from './lib/enums'
 export * from './lib/mapper'

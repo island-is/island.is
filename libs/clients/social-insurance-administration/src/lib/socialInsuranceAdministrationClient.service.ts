@@ -1,36 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
-  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ApiProtectedV1PensionCalculatorPostRequest,
-  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-  ApplicantApi,
-  ApplicationApi,
-  DeathBenefitsApi,
-  GeneralApi,
-  IncomePlanApi,
-  MedicalDocumentsApi,
-  PaymentPlanApi,
-  PensionCalculatorApi,
-  QuestionnairesApi,
-  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
-  TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
-  TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
-  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
-  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
-  TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
-  TrWebApiServicesDomainUnionsModelsUnionDto,
-  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
-  TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
-  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
-  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
-  TrWebApiServicesDomainProfessionsModelsProfessionDto,
-  TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
-  TrWebContractsExternalServicePortalDisabilityPensionCertificate,
-} from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
 import {
@@ -53,23 +23,15 @@ import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsDocumentsDocument'
-import { TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto'
-import { TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn'
-import { TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto'
-import { TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto } from '../../gen/fetch/models/TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto'
-import { TrWebExternalModelsServicePortalBaseCertificate } from '../../gen/fetch/models/TrWebExternalModelsServicePortalBaseCertificate'
-import { TrWebExternalModelsServicePortalConfirmationOfIllHealth } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmationOfIllHealth'
-import { TrWebExternalModelsServicePortalConfirmationOfPendingResolution } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmationOfPendingResolution'
-import { TrWebExternalModelsServicePortalConfirmedTreatment } from '../../gen/fetch/models/TrWebExternalModelsServicePortalConfirmedTreatment'
-import { TrWebExternalModelsServicePortalNationalRegistryAddress } from '../../gen/fetch/models/TrWebExternalModelsServicePortalNationalRegistryAddress'
-import { TrWebExternalModelsServicePortalRehabilitationPlan } from '../../gen/fetch/models/TrWebExternalModelsServicePortalRehabilitationPlan'
+import { ApplicationApi as ApplicationWriteApiV2} from '../../generated/v2/gen/fetch'
+import { ApplicationApi, ApplicantApi, PaymentPlanApi, GeneralApi, PensionCalculatorApi, DeathBenefitsApi, IncomePlanApi, MedicalDocumentsApi, QuestionnairesApi, TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto, TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments, TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn, TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn, ApiProtectedV1PensionCalculatorPostRequest, TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo, ApiProtectedV1IncomePlanWithholdingTaxGetRequest, ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest, TrWebApiServicesDomainUnionsModelsUnionDto, ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest, TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto, TrWebContractsExternalServicePortalDisabilityPensionCertificate, TrWebApiServicesDomainProfessionsModelsProfessionDto, TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto, TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto, TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto, TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto, TrWebApiServicesDomainApplicationsModelsApplicationTypeDto, TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage, TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanConditionsDto, TrWebContractsExternalDigitalIcelandDocumentsDocument, TrWebApiServicesDomainApplicationsModelsIsEligibleForApplicationReturn, TrWebContractsExternalDigitalIcelandIncomePlanExternalIncomeTypeDto, TrWebContractsExternalDigitalIcelandIncomePlanWithholdingTaxDto, TrWebContractsExternalServicePortalRehabilitationPlan, TrWebContractsExternalServicePortalBaseCertificate, TrWebContractsExternalServicePortalConfirmedTreatment, TrWebContractsExternalServicePortalConfirmationOfIllHealth, TrWebContractsExternalServicePortalConfirmationOfPendingResolution, TrWebContractsExternalServicePortalNationalRegistryAddress } from '../../generated/v1/gen/fetch'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly applicationApi: ApplicationApi,
     private readonly applicationWriteApi: ApplicationWriteApi,
+    private readonly applicationWriteApiV2: ApplicationWriteApiV2,
     private readonly applicantApi: ApplicantApi,
     private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
@@ -85,11 +47,11 @@ export class SocialInsuranceAdministrationClientService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private applicationApiWithAuth = (user: User) =>
-    this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))
-
   private applicationWriteApiWithAuth = (user: User) =>
     this.applicationWriteApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private applicationWriteApiV2WithAuth = (user: User) =>
+    this.applicationWriteApiV2.withMiddleware(new AuthMiddleware(user as Auth))
 
   private applicantApiWithAuth = (user: User) =>
     this.applicantApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -153,7 +115,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getIncomePlanConditions(
     user: User,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto> {
+  ): Promise<TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanConditionsDto> {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
@@ -162,7 +124,7 @@ export class SocialInsuranceAdministrationClientService {
   async sendDisabilityPensionApplication(
     user: User,
     input: DisabilityPensionDto,
-  ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
+  ): Promise<void> {
     const enableLightweightMode = user
       ? await this.featureFlagService.getValue(
           Features.disabilityPensionLightweightModeEnabled,
@@ -175,9 +137,9 @@ export class SocialInsuranceAdministrationClientService {
       this.logger.info('lightweight mode enabled for post - ONLY DEV')
     }
 
-    return this.applicationWriteApiWithAuth(
+    return this.applicationWriteApiV2WithAuth(
       user,
-    ).apiProtectedV1ApplicationApplicationTypePost({
+    ).apiProtectedV2ApplicationApplicationTypePost({
       applicationType: 'disabilitypension',
       lightweightValidation: enableLightweightMode,
       body: input,
@@ -200,7 +162,7 @@ export class SocialInsuranceAdministrationClientService {
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    documents: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>,
+    documents: Array<TrWebContractsExternalDigitalIcelandDocumentsDocument>,
   ): Promise<void> {
     return this.applicationWriteApiWithAuth(
       user,
@@ -219,7 +181,7 @@ export class SocialInsuranceAdministrationClientService {
   async getIsEligible(
     user: User,
     applicationType: string,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
+  ): Promise<TrWebApiServicesDomainApplicationsModelsIsEligibleForApplicationReturn> {
     if (applicationType === 'disabilitypension') {
       const enableLightweightMode = user
         ? await this.featureFlagService.getValue(
@@ -274,7 +236,7 @@ export class SocialInsuranceAdministrationClientService {
   async getCategorizedIncomeTypes(
     user: User,
   ): Promise<
-    Array<TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto>
+    Array<TrWebContractsExternalDigitalIcelandIncomePlanExternalIncomeTypeDto>
   > {
     return this.incomePlanApiWithAuth(
       user,
@@ -284,7 +246,7 @@ export class SocialInsuranceAdministrationClientService {
   async getWithholdingTax(
     user: User,
     year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto> {
+  ): Promise<TrWebContractsExternalDigitalIcelandIncomePlanWithholdingTaxDto> {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
@@ -309,7 +271,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getRehabilitationPlan(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+  ): Promise<TrWebContractsExternalServicePortalRehabilitationPlan> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
@@ -340,7 +302,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCertificateForSicknessAndRehabilitation(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+  ): Promise<TrWebContractsExternalServicePortalBaseCertificate> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
@@ -356,7 +318,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getConfirmedTreatment(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmedTreatment> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsConfirmedtreatmentGet()
@@ -364,7 +326,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getConfirmationOfPendingResolution(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfPendingResolution> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsConfirmationofpendingresolutionGet()
@@ -372,7 +334,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getConfirmationOfIllHealth(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfIllHealth> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
@@ -515,7 +477,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getResidenceInformation(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalNationalRegistryAddress> {
+  ): Promise<TrWebContractsExternalServicePortalNationalRegistryAddress> {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantResidenceInformationGet()
