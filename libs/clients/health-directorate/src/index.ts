@@ -38,4 +38,3 @@ export {
   EuPatientConsentStatus,
   PrescriptionCommissionStatus,
 } from './lib/clients'
-export { Form, LshDevService, LshDevConfig } from './lib/clients/lsh-dev'

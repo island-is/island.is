@@ -101,8 +101,9 @@ const QuestionnaireAnswer: React.FC = () => {
           id,
           organization: organization,
           entries: entries,
-          formId: data?.questionnairesDetail?.baseInformation.id || '',
+          formId: data?.questionnairesDetail?.baseInformation.formId || '',
         },
+        locale: lang,
       },
     })
       .then((response) => {

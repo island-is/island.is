@@ -9,7 +9,6 @@ import {
 
 import {
   HealthDirectorateHealthService,
-  LshDevService,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
 } from '@island.is/clients/health-directorate'
@@ -37,7 +36,6 @@ import { mapLshQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
 @Injectable()
 export class QuestionnairesService {
   constructor(
-    private readonly lshDevApi: LshDevService,
     private readonly api: HealthDirectorateHealthService,
     private readonly lshApi: LshClientService,
     @Inject(LOGGER_PROVIDER)
@@ -294,6 +292,7 @@ export class QuestionnairesService {
   async submitQuestionnaire(
     user: User,
     input: QuestionnaireInput,
+    locale: Locale,
   ): Promise<QuestionnairesResponse> {
     const organization = this.normalizeOrganization(input.organization)
 
@@ -308,17 +307,18 @@ export class QuestionnairesService {
     if (organization === QuestionnairesOrganizationEnum.LSH) {
       try {
         const lshAnswer = mapToLshAnswer(input)
-        const response = await this.lshDevApi.postPatientForm(
+        const response = await this.lshApi.postAnsweredQuestionnaire(
           user,
+          locale,
+          lshAnswer.gUID ?? input.id,
           lshAnswer,
-          lshAnswer.GUID,
         )
         return {
-          success: true,
-          message: 'Questionnaire submitted successfully to LSH',
+          success: response?.status === 'success' || true,
+          message: response?.message || 'Questionnaire submitted successfully',
         }
       } catch (e) {
-        this.logger.warn('Error submitting questionnaire to LSH', e)
+        this.logger.error('Error submitting questionnaire to LSH', e)
         return {
           success: false,
           message: 'Error submitting questionnaire to LSH',

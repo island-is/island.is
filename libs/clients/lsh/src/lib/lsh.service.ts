@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   BloodApi,
+  GenericStatusResponse,
   Questionnaire,
   QuestionnaireAnswers,
   QuestionnaireApi,
@@ -67,5 +68,21 @@ export class LshClientService {
     return await this.questionnaireWithAuth(user)
       .apiQuestionnaireGuidAnswersGet({ locale: locale, guid: id })
       .catch(handle404)
+  }
+
+  postAnsweredQuestionnaire = async (
+    user: User,
+    locale: string,
+    id: string,
+    answers: QuestionnaireAnswers,
+  ): Promise<GenericStatusResponse> => {
+    console.log('Submitting questionnaire to LSH with answers:', answers)
+    return await this.questionnaireWithAuth(
+      user,
+    ).apiQuestionnaireGuidAnswersPost({
+      locale: locale,
+      guid: id,
+      questionnaireAnswers: answers,
+    })
   }
 }

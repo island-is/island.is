@@ -20,6 +20,7 @@ export const LshClientConfig = defineConfig<z.infer<typeof schema>>({
       questionnaireScope: [
         '@landspitali.is/sjukraskrar:read',
         '@landspitali.is/questionnaires:read',
+        '@landspitali.is/questionnaires:write',
       ],
     }
   },

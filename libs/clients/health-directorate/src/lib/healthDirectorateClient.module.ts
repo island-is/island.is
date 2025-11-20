@@ -9,14 +9,9 @@ import { HealthDirectorateClientService } from './clients/occupational-license/h
 import { HealthDirectorateVaccinationsService } from './clients/vaccinations/vaccinations.service'
 import { HealthDirectorateOrganDonationService } from './clients/organ-donation/organDonation.service'
 import {
-  exportedLshDevApis,
-  LshDevApiConfiguration,
-} from './clients/lsh-dev/lsh-dev.provider'
-import {
   HealthDirectorateHealthModule,
   HealthDirectorateHealthService,
 } from './clients/health'
-import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
 
 @Module({
   imports: [HealthDirectorateHealthModule],
@@ -25,20 +20,16 @@ import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
     HealthDirectorateVaccinationsService,
     HealthDirectorateOrganDonationService,
     HealthDirectorateHealthService,
-    LshDevService,
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
-    LshDevApiConfiguration,
     ...exportedApis,
-    ...exportedLshDevApis,
   ],
   exports: [
     HealthDirectorateClientService,
     HealthDirectorateVaccinationsService,
     HealthDirectorateOrganDonationService,
     HealthDirectorateHealthService,
-    LshDevService,
   ],
 })
 export class HealthDirectorateClientModule {}

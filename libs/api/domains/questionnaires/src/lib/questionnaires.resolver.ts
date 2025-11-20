@@ -72,7 +72,8 @@ export class QuestionnairesResolver {
   async submitQuestionnaire(
     @CurrentUser() user: User,
     @Args('input') input: QuestionnaireInput,
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
   ): Promise<QuestionnairesResponse> {
-    return this.questionnairesService.submitQuestionnaire(user, input)
+    return this.questionnairesService.submitQuestionnaire(user, input, locale)
   }
 }

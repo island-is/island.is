@@ -50,6 +50,7 @@ query GetQuestionnaireWithQuestions(
       organization
       department
       sentDate
+      formId
     }
     canSubmit
     draftAnswers {
@@ -124,8 +125,8 @@ query GetAnsweredQuestionnaire(
   }
 }
 
-mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
-  submitQuestionnaire(input: $input) {
+mutation SubmitQuestionnaire($input: QuestionnaireInput!, $locale: String!) {
+  submitQuestionnaire(input: $input, locale: $locale) {
     __typename
     success
     message

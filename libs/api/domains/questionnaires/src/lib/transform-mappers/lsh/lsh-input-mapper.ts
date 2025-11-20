@@ -1,3 +1,4 @@
+import { QuestionnaireAnswers } from '@island.is/clients/lsh'
 import { AnswerOptionType } from '../../../models/question.model'
 import { QuestionnaireInput } from '../../dto/questionnaire.input'
 
@@ -47,15 +48,17 @@ const typeMapper = (type: AnswerOptionType): LSHQuestionType => {
   }
 }
 
-export const mapToLshAnswer = (input: QuestionnaireInput): LSHAnswer => {
+export const mapToLshAnswer = (
+  input: QuestionnaireInput,
+): QuestionnaireAnswers => {
   return {
-    Answers: input.entries.map((entry) => ({
-      EntryID: entry.entryID,
-      Type: typeMapper(entry.type as AnswerOptionType),
-      Values: entry.answers.map((a) => a.values) as [string],
+    answers: input.entries.map((entry) => ({
+      entryID: entry.entryID,
+      type: typeMapper(entry.type as AnswerOptionType),
+      values: entry.answers.map((a) => a.values) as [string],
     })),
-    FormID: input.formId,
-    GUID: input.id,
-    InstanceID: '', // TODO check what this is
+    formID: input.formId,
+    gUID: input.id,
+    instanceID: '', // TODO check what this is
   }
 }
