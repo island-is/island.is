@@ -413,7 +413,10 @@ export const PoliceCaseList = () => {
         date = new Date(policeCaseInfo.date)
       }
 
-      if (policeCase.subtypes?.length === 0 && policeCaseInfo.subtypes) {
+      if (
+        (!policeCase.subtypes || policeCase.subtypes?.length === 0) &&
+        policeCaseInfo.subtypes
+      ) {
         subtypes = policeCaseInfo.subtypes
       }
 
