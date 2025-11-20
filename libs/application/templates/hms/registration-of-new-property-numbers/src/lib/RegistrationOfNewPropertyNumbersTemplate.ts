@@ -143,6 +143,7 @@ const template: ApplicationTemplate<
               {
                 logMessage: coreHistoryMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
           },
