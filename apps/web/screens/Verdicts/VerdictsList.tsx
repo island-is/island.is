@@ -886,7 +886,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       },
       {
         label: formatMessage(m.listPage.showCourtOfAppeal),
-        value: 'Landsréttur',
+        value: 'landsrettur',
       },
       {
         label: formatMessage(m.listPage.showSupremeCourt),
