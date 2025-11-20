@@ -1,4 +1,3 @@
-import { SectionTypes } from '@island.is/form-system/shared'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
@@ -9,6 +8,9 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
 import { ApplicationDto } from './dto/application.dto'
 import { ValueDto } from './dto/value.dto'
+import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
+import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
+import { Field } from '../../fields/models/field.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -66,7 +68,12 @@ export class ApplicationMapper {
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
               callRuleset: screen.callRuleset,
-              isHidden: this.isHidden(screen.id, application.dependencies),
+              isHidden: this.isHidden(
+                screen.id,
+                application.dependencies,
+                section.sectionType,
+                screen.fields,
+              ),
               isCompleted: this.isCompleted(screen.id, application.completed),
               fields: screen.fields?.map((field) => {
                 return {
@@ -151,9 +158,15 @@ export class ApplicationMapper {
   private isHidden(
     id: string,
     dependencies: Dependency[] | undefined,
+    sectionType?: string,
+    fields?: Field[],
   ): boolean {
     if (!dependencies) {
       return false
+    }
+
+    if (sectionType === SectionTypes.PARTIES && fields && !fields[0]?.values) {
+      return true
     }
 
     const childProps = dependencies.flatMap(
@@ -181,5 +194,107 @@ export class ApplicationMapper {
     }
 
     return completed?.includes(id)
+  }
+
+  async mapApplicationsToMyPagesApplications(
+    applications: Application[],
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    if (!applications?.length) {
+      return []
+    }
+
+    const mapped: MyPagesApplicationResponseDto[] = applications.flatMap(
+      (app) => {
+        if (app.status === ApplicationStatus.DRAFT) return [this.draft(app)]
+        if (app.status === ApplicationStatus.COMPLETED)
+          return [this.completed(app)]
+        return [] // flatMap removes these automatically
+      },
+    )
+
+    // Sort newest first (optional)
+    mapped.sort(
+      (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime(),
+    )
+
+    return mapped
+  }
+
+  private draft(app: Application): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        pendingAction: {
+          displayStatus: 'displayStatus',
+          title: 'title',
+          content: 'content',
+          button: 'button',
+        },
+        history: [],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+      },
+      attachments: {},
+      typeId: '',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: app.formName,
+      status: app.status,
+      pruned: false,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
+    } as MyPagesApplicationResponseDto
+  }
+
+  private completed(app: Application): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        pendingAction: {
+          displayStatus: 'success',
+          title: app.completedMessage,
+        },
+        history: [],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+      },
+      attachments: {},
+      typeId: '',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: app.formName,
+      status: app.status,
+      pruned: false,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
+    }
   }
 }

@@ -34,8 +34,8 @@ export const PartyType = ({
         <Checkbox
           label={label}
           checked={isGroupChecked}
-          onChange={(e) =>
-            handleCheckboxChange(groupApplicantTypes, e.target.checked)
+          onChange={async (e) =>
+            await handleCheckboxChange(groupApplicantTypes, e.target.checked)
           }
         ></Checkbox>
       </Box>

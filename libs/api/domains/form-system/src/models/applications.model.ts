@@ -153,4 +153,7 @@ export class ApplicationResponse {
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
+
+  @Field(() => Boolean, { nullable: true })
+  isLoginTypeAllowed?: boolean
 }

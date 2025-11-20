@@ -15,7 +15,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import {
-  useApplications,
+  useCombinedApplications,
   useGetOrganizationsQuery,
 } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -48,7 +48,12 @@ const defaultFilterValues: FilterValues = {
 const Overview = () => {
   useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
-  const { data: applications, loading, error, refetch } = useApplications()
+  const {
+    data: applications,
+    loading,
+    error,
+    refetch,
+  } = useCombinedApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
