@@ -67,9 +67,11 @@ export class VerdictsClientService {
   ) {}
 
   private async getAuthenticatedGoproApis() {
-    let bearerToken = await this.goproAuthenticationApi.authenticateV1({
-      username: this.config.goproUsername,
-      password: this.config.goproPassword,
+    let bearerToken = await this.goproAuthenticationApi.authenticateV2({
+      credentials: {
+        username: this.config.goproUsername,
+        password: this.config.goproPassword,
+      },
     })
     if (bearerToken.startsWith('"') && bearerToken.endsWith('"'))
       bearerToken = bearerToken.slice(1, -1)
@@ -102,7 +104,7 @@ export class VerdictsClientService {
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
-        ? goproVerdictApi.getVerdictsV1({
+        ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
               itemsPerPage: ITEMS_PER_PAGE,
@@ -221,7 +223,7 @@ export class VerdictsClientService {
   async getSingleVerdictById(id: string) {
     if (id.startsWith(GOPRO_ID_PREFIX)) {
       const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-      const response = await goproVerdictApi.getVerdictV1({
+      const response = await goproVerdictApi.getVerdictV2({
         id: id.slice(GOPRO_ID_PREFIX.length),
       })
       if (response.item?.docContent)
@@ -263,7 +265,7 @@ export class VerdictsClientService {
   async getCaseTypes() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseTypesV1(),
+      goproVerdictApi.getCaseTypesV2(),
       this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
     ])
 
@@ -293,7 +295,7 @@ export class VerdictsClientService {
   async getCaseCategories() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
     const [goproResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseCategoriesV1(),
+      goproVerdictApi.getCaseCategoriesV2(),
     ])
 
     const caseCategorySet = new Set<string>()
@@ -317,7 +319,7 @@ export class VerdictsClientService {
   async getKeywords() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      goproVerdictApi.getKeywordsV1(),
+      goproVerdictApi.getKeywordsV2(),
       this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
     ])
 
@@ -387,7 +389,7 @@ export class VerdictsClientService {
         : { status: 'rejected', items: [], total: 0 },
       onlyFetchSupremeCourtAgendas
         ? { status: 'rejected', items: [], total: 0 }
-        : goproCourtAgendasApi.getPublishedBookingsV1({
+        : goproCourtAgendasApi.getPublishedBookingsV2({
             pageNumber: pageNumber,
             courts: input.court ? input.court.split(',') : [],
             itemsPerPage,
@@ -465,7 +467,7 @@ export class VerdictsClientService {
 
   async getLawyers() {
     const { goproLawyersApi } = await this.getAuthenticatedGoproApis()
-    const response = await goproLawyersApi.getLawyersV1()
+    const response = await goproLawyersApi.getLawyersV2()
     const lawyerNames = (response.items ?? [])
       .filter(this.isLawyerValid)
       .map((lawyer) => lawyer.name)
