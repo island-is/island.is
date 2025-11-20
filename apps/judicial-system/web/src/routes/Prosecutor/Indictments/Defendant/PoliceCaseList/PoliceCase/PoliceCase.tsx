@@ -279,7 +279,7 @@ export const PoliceCase: FC<Props> = ({
                 })
               }
               aria-label={formatMessage(strings.removeSubtype, {
-                subtype: indictmentSubtypes[policeCaseNumberSubtypes[0]],
+                subtype: indictmentSubtypes[subtype],
               })}
             >
               <Box display="flex" alignItems="center">
