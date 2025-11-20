@@ -50,7 +50,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
     case VerdictServiceStatus.LEGAL_PAPER:
       return [
-        `Dómur birtur í Lögbirtingarblaðinu - ${
+        `Dómur birtur í Lögbirtingablaðinu - ${
           verdict.serviceDate ? `${formatDate(verdict.serviceDate)}` : ''
         }`,
       ]
