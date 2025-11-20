@@ -107,9 +107,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   const [selectedPage, setSelectedPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [isGridView, setIsGridView] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
 
   const { width } = useWindowSize()
-  const isTablet = width <= theme.breakpoints.lg
+  // Guard against SSR hydration mismatch - default to desktop layout on server
+  const isTablet = isMounted && width <= theme.breakpoints.lg
 
   const [parameters, setParameters] = useState<{
     fieldOfWork: string[]
@@ -122,6 +124,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   })
 
   const searchTermHasBeenInitialized = useRef(false)
+
+  // Set mounted state after first render to enable responsive layout
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const filteredVacancies = vacancies.filter((vacancy) => {
     const searchKeywords = searchTerm
