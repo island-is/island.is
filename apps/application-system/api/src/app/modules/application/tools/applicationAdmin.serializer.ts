@@ -164,7 +164,6 @@ export class ApplicationAdminSerializer
           historyModel,
           intl.formatMessage,
           helper,
-          application.applicant,
         )
       : undefined
 

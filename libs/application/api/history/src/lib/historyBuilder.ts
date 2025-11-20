@@ -24,7 +24,6 @@ export class HistoryBuilder {
     history: History[],
     formatMessage: FormatMessage,
     templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>,
-    applicantNationalId: string,
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
@@ -46,8 +45,8 @@ export class HistoryBuilder {
         let subjectName: string | undefined
         let actorName: string | undefined
         if (
-          (subjectNationalId && subjectNationalId !== applicantNationalId) ||
-          (actorNationalId && actorNationalId !== applicantNationalId)
+          historyLog.includeSubjectAndActor &&
+          (subjectNationalId || actorNationalId)
         ) {
           ;[subjectName, actorName] = await Promise.all([
             subjectNationalId

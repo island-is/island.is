@@ -224,10 +224,12 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage: coreHistoryMessages.applicationApprovedBy,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
