@@ -22,7 +22,7 @@ import { useEffect, useState, useMemo } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
+import { useVehiclesListCountQuery, useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
@@ -40,7 +40,20 @@ const VehicleBulkMileage = () => {
   const [search, setSearch] = useState<string>()
   const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
-  const [vehicleListQuery, { data, loading, error }] =
+  const { data: countData } = useVehiclesListCountQuery({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 10,
+        query: search ?? undefined,
+        filterOnlyVehiclesUserCanRegisterMileage: true,
+        filterOnlyMileageRequiredVehicles: false,
+        includeNextMainInspectionDate: false
+      }
+    }
+  })
+
+  const [vehicleListQuery, { loading, error }] =
     useVehiclesListLazyQuery()
 
   const debouncedQuery = useMemo(() => {
@@ -52,6 +65,7 @@ const VehicleBulkMileage = () => {
             pageSize: 10,
             query: search ?? undefined,
             filterOnlyVehiclesUserCanRegisterMileage: true,
+            filterOnlyMileageRequiredVehicles: true,
             includeNextMainInspectionDate: false,
           },
         },
@@ -107,9 +121,9 @@ const VehicleBulkMileage = () => {
 
   useEffect(() => {
     if (!displayFilters) {
-      setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
+      setDisplayFilters((countData?.vehiclesListV3?.totalRecords ?? 0) > 10)
     }
-  }, [data, displayFilters])
+  }, [countData, displayFilters])
 
   const buttons = [
     <LinkButton
