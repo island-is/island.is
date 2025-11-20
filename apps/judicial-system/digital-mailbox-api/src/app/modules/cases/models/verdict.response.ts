@@ -71,6 +71,7 @@ export class VerdictResponse {
 
     const rulingInstructionsItems = getRulingInstructionItems(
       verdict?.serviceInformationForDefendant ?? [],
+      lang,
     )
 
     return {
