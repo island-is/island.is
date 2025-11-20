@@ -42,7 +42,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
     const currentYear = new Date().getFullYear()
-    const firstGradeYear = currentYear - FIRST_GRADE_AGE
+    const firstGradeYear = currentYear - 1 //FIRST_GRADE_AGE // temporary change so that children aged 1 to 16 can apply (not just 6 to 16)
     const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
@@ -100,10 +100,21 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
     if (!childNationalId) return undefined
 
-    return await this.friggClientService.getPreferredSchool(
-      auth,
-      childNationalId,
-    )
+    return {
+      id: '1212',
+      name: 'Test School',
+      type: 'school',
+      subType: 'primarySchool',
+      sector: 'public',
+      gradeLevels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      unitId: '1212',
+      settings: null,
+    }
+
+    // return await this.friggClientService.getPreferredSchool(
+    //   auth,
+    //   childNationalId,
+    // )
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
