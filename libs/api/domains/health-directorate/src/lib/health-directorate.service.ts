@@ -617,7 +617,7 @@ export class HealthDirectorateService {
 
       const appointments: Array<Appointment> =
         data.map((item) => {
-          return {
+          const data: Appointment = {
             id: item.id,
             date: item.startTime
               ? new Date(item.startTime).toLocaleDateString('is-IS')
@@ -635,7 +635,7 @@ export class HealthDirectorateService {
               : undefined,
             title: item.description,
             status: item.status,
-            instructions: item.patientInstruction,
+            instruction: item.patientInstruction,
             location: {
               id: item.location?.id || '',
               name: item.location?.name || '',
@@ -650,6 +650,7 @@ export class HealthDirectorateService {
             },
             practitioners: item.practitioners || [],
           }
+          return data
         }) ?? []
       return { data: appointments }
     } catch (error) {

@@ -36,8 +36,8 @@ const AppointmentDetail = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.appointmentDetail)}
-      intro={formatMessage(messages.appointmentsDetailIntro)}
+      title={messages.appointmentDetail}
+      intro={messages.appointmentsDetailIntro}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
@@ -45,58 +45,62 @@ const AppointmentDetail = () => {
       loading={loading}
     >
       {!loading && !error && !appointment && <Problem type="no_data" />}
-      <InfoLineStack label={formatMessage(m.info)} space={1}>
-        <InfoLine
-          label={formatMessage(messages.dateAndTime)}
-          content={
-            appointment?.weekday +
-            ', ' +
-            formatDate(appointment?.date ?? '') +
-            ', ' +
-            'kl. ' +
-            appointment?.time
-          }
-          loading={loading}
-        />
-        <InfoLine
-          label={formatMessage(messages.type)}
-          content={appointment?.title ?? ''}
-          loading={loading}
-        />
-        {appointment?.instruction && (
+      {!error && (
+        <InfoLineStack label={formatMessage(m.info)} space={1}>
           <InfoLine
-            label={formatMessage(messages.instructions)}
-            content={appointment?.instruction ?? ''}
+            label={formatMessage(messages.dateAndTime)}
+            content={
+              appointment?.date
+                ? appointment?.weekday +
+                  ', ' +
+                  formatDate(appointment?.date ?? '') +
+                  ', ' +
+                  'kl. ' +
+                  appointment?.time
+                : undefined
+            }
             loading={loading}
           />
-        )}
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.locationAddress)}
-          content={appointment?.location?.name ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={formatMessage(m.address)}
-          content={
-            [
-              appointment?.location?.address,
-              [appointment?.location?.postalCode, appointment?.location?.city]
+          <InfoLine
+            label={formatMessage(messages.type)}
+            content={appointment?.title ?? ''}
+            loading={loading}
+          />
+          {appointment?.instruction && (
+            <InfoLine
+              label={formatMessage(messages.instructions)}
+              content={appointment?.instruction ?? ''}
+              loading={loading}
+            />
+          )}
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.locationAddress)}
+            content={appointment?.location?.name ?? ''}
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(m.address)}
+            content={
+              [
+                appointment?.location?.address,
+                [appointment?.location?.postalCode, appointment?.location?.city]
+                  .filter(Boolean)
+                  .join(' '),
+              ]
                 .filter(Boolean)
-                .join(' '),
-            ]
-              .filter(Boolean)
-              .join(', ') ?? ''
-          }
-        />
-        {(appointment?.practitioners?.length ?? 0) > 0 && (
-          <InfoLine
-            loading={loading}
-            label={formatMessage(messages.appointmentAtSimple)}
-            content={appointment?.practitioners.join(', ') ?? ''}
+                .join(', ') ?? ''
+            }
           />
-        )}
-      </InfoLineStack>
+          {(appointment?.practitioners?.length ?? 0) > 0 && (
+            <InfoLine
+              loading={loading}
+              label={formatMessage(messages.appointmentAtSimple)}
+              content={appointment?.practitioners.join(', ') ?? ''}
+            />
+          )}
+        </InfoLineStack>
+      )}
     </IntroWrapper>
   )
 }

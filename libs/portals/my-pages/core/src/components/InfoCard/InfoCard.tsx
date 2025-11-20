@@ -106,7 +106,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   }
 
   if (loading) {
-    console.log('InfoCard loading:', loading, 'with variant:', variant)
     return <LoaderCard />
   }
 

@@ -2,7 +2,6 @@ import { HealthDirectorateAppointments } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InfoCardGrid, LinkButton } from '@island.is/portals/my-pages/core'
-import { isDefined } from '@island.is/shared/utils'
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
@@ -15,7 +14,7 @@ interface Props {
 const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
   const appointments = data?.data?.data
-  const isEmpty = !isDefined(data?.data)
+  const isEmpty = !appointments || appointments?.length === 0
 
   const cards = data?.loading
     ? [{ loading: true, title: '', description: '' }]

@@ -27,8 +27,8 @@ const AppointmentsOverview = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.appointments)}
-      intro={formatMessage(messages.appointmentsIntro)}
+      title={messages.appointments}
+      intro={messages.appointmentsIntro}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
