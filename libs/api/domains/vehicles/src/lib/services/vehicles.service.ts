@@ -112,9 +112,6 @@ export class VehiclesService {
       includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
-      //TODO: remove when upload ready
-      onlyMileageRequiredVehicles:
-        input.filterOnlyVehiclesUserCanRegisterMileage,
       query: input.query,
     })
 
