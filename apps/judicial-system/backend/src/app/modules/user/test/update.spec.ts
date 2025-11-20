@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution, User } from '../../repository'
+import { User } from '../../repository'
 
 interface Then {
   result: User
