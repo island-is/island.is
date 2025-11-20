@@ -349,6 +349,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateAppointments',
   })
   @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
   @Scopes(ApiScope.internal, ApiScope.health)
   async getAppointments(
     @Args() input: HealthDirectorateAppointmentsInput,

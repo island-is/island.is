@@ -435,7 +435,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.appointments,
       path: HealthPaths.HealthAppointments,
-      //key: 'HealthAppointments',
+      key: 'HealthAppointments',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -444,7 +444,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.appointmentDetail,
       path: HealthPaths.HealthAppointmentDetail,
-      //  key: 'HealthAppointments',
+      key: 'HealthAppointments',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),

@@ -20,17 +20,33 @@ import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import Appointments from './components/Appointments'
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
-
-const TODAY = DEFAULT_DATE_TO.toISOString()
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const [showAppointments, setShowAppointments] = useState(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalHealthAppointmentsPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowAppointments(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
@@ -99,6 +115,7 @@ export const HealthOverview = () => {
         HealthDirectorateAppointmentStatus.PENDING,
       ],
     },
+    skip: !showAppointments,
   })
 
   const currentMedicinePeriod =
@@ -120,13 +137,15 @@ export const HealthOverview = () => {
         </GridColumn>
       </GridRow>
       {/* Appointments */}
-      <Appointments
-        data={{
-          data: appointmentsData?.healthDirectorateAppointments,
-          loading: appointmentsLoading,
-          error: !!appointmentsError,
-        }}
-      />
+      {showAppointments && (
+        <Appointments
+          data={{
+            data: appointmentsData?.healthDirectorateAppointments,
+            loading: appointmentsLoading,
+            error: !!appointmentsError,
+          }}
+        />
+      )}
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
