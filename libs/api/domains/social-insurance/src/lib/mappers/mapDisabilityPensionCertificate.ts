@@ -2,7 +2,13 @@ import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
-import { TrWebContractsExternalServicePortalDisabilityDiagnosis, TrWebContractsExternalServicePortalDisabilityPensionCertificate, TrWebContractsExternalServicePortalDoctorInfo, TrWebContractsExternalServicePortalHealthImpact, TrWebContractsExternalServicePortalQuestionnaireResult } from '@island.is/clients/social-insurance-administration'
+import {
+  TrWebContractsExternalServicePortalDisabilityDiagnosis,
+  TrWebContractsExternalServicePortalDisabilityPensionCertificate,
+  TrWebContractsExternalServicePortalDoctorInfo,
+  TrWebContractsExternalServicePortalHealthImpact,
+  TrWebContractsExternalServicePortalQuestionnaireResult,
+} from '@island.is/clients/social-insurance-administration'
 
 const mapDoctor = (
   doctorInfo?: TrWebContractsExternalServicePortalDoctorInfo,
@@ -15,7 +21,7 @@ const mapDoctor = (
     residence: doctorInfo.residence ?? undefined,
     phoneNumber: doctorInfo.phoneNumber ?? undefined,
     email: doctorInfo.email ?? undefined,
-    jobTitle: 'no data'
+    jobTitle: 'no data',
   }
 }
 

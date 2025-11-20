@@ -47,15 +47,15 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   assessmentToolsUsed?: string
 
-  @Field(() => Int,{ nullable: true })
+  @Field(() => Int, { nullable: true })
   capacityForWork?: number
 
   @Field({ nullable: true })
   previousRehabilitation?: string
 
-  @Field(() => ImpairmentRatingDomain, { nullable:true })
+  @Field(() => ImpairmentRatingDomain, { nullable: true })
   physicalImpairments?: ImpairmentRatingDomain
 
-  @Field(() => ImpairmentRatingDomain, { nullable:true })
+  @Field(() => ImpairmentRatingDomain, { nullable: true })
   mentalImpairments?: ImpairmentRatingDomain
 }

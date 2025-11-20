@@ -187,7 +187,10 @@ import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
-import { SocialInsuranceAdministrationClientConfig, SocialInsuranceAdministrationClientConfigV2 } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientConfig,
+  SocialInsuranceAdministrationClientConfigV2,
+} from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 import { FormSystemClientConfig } from '@island.is/clients/form-system'
 import { FormSystemModule } from '@island.is/api/domains/form-system'

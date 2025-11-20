@@ -1,4 +1,16 @@
-import { ApplicationApi, ApplicantApi, DocumentsApi, GeneralApi, IncomePlanApi, PaymentPlanApi, PensionCalculatorApi, DeathBenefitsApi, TestApi, MedicalDocumentsApi, QuestionnairesApi } from "../../generated/v1/gen/fetch"
+import {
+  ApplicationApi,
+  ApplicantApi,
+  DocumentsApi,
+  GeneralApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PensionCalculatorApi,
+  DeathBenefitsApi,
+  TestApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
+} from '../../generated/v1/gen/fetch'
 
 export type Scope =
   | '@tr.is/umsaekjandi:read'

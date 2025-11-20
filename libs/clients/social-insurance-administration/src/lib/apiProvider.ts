@@ -12,8 +12,23 @@ import {
   QuestionnairesApiForDisabilityPension,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
-import { ApplicationApi, ApplicantApi, GeneralApi, DocumentsApi, IncomePlanApi, PaymentPlanApi, PensionCalculatorApi, DeathBenefitsApi, MedicalDocumentsApi, QuestionnairesApi, Configuration } from '../../generated/v1/gen/fetch'
-import { ApplicationApi as ApplicationWriteApiV2, Configuration as ConfigurationV2 } from '../../generated/v2/gen/fetch'
+import {
+  ApplicationApi,
+  ApplicantApi,
+  GeneralApi,
+  DocumentsApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PensionCalculatorApi,
+  DeathBenefitsApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
+  Configuration,
+} from '../../generated/v1/gen/fetch'
+import {
+  ApplicationApi as ApplicationWriteApiV2,
+  Configuration as ConfigurationV2,
+} from '../../generated/v2/gen/fetch'
 import { Provider } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
@@ -91,7 +106,6 @@ const apiCollection: Array<{
   },
 ]
 
-
 export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
   provide: ApplicationWriteApiV2,
   scope: LazyDuringDevScope,
@@ -101,25 +115,25 @@ export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new ApplicationWriteApiV2(
-        new ConfigurationV2({
-          fetchApi: createEnhancedFetch({
-            name: 'clients-tr',
-            organizationSlug: 'tryggingastofnun',
-            autoAuth: idsClientConfig.isConfigured
-                ? {
-                  mode: 'tokenExchange',
-                  issuer: idsClientConfig.issuer,
-                  clientId: idsClientConfig.clientId,
-                  clientSecret: idsClientConfig.clientSecret,
-                  scope: ['@tr.is/umsoknir:write'],
-                }
-                : undefined,
-          }),
-          basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-          headers: {
+      new ConfigurationV2({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-tr',
+          organizationSlug: 'tryggingastofnun',
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: ['@tr.is/umsoknir:write'],
+              }
+            : undefined,
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
         },
-    }),
+      }),
     ),
   inject: [
     XRoadConfig.KEY,
@@ -127,7 +141,6 @@ export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
     IdsClientConfig.KEY,
   ],
 }
-
 
 export const apiProvider = apiCollection.map((apiRecord) => ({
   provide: apiRecord.api,

@@ -22,7 +22,7 @@ import {
   TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest
+  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
