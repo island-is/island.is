@@ -6,10 +6,7 @@ import {
   ToastContainer,
 } from '@island.is/island-ui/core'
 import {
-  Application,
   ApplicationCard as ApplicationCardType,
-  ApplicationTypes,
-  institutionMapper,
   InstitutionTypes,
 } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -19,7 +16,7 @@ import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
 const pageSize = 5
 
 type ApplicationFields = Pick<
-  Application & ApplicationCardType,
+  ApplicationCardType,
   | 'actionCard'
   | 'id'
   | 'typeId'
