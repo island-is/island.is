@@ -4,7 +4,6 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { SocialInsuranceAdministrationClientConfigV2 } from './config/socialInsuranceAdministrationClientV2.config'
 import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
 import { Scope } from './socialInsuranceAdministrationClient.type'
 

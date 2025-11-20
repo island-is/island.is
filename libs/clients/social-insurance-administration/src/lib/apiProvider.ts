@@ -12,11 +12,11 @@ import {
   QuestionnairesApiForDisabilityPension,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
-import { SocialInsuranceAdministrationClientConfig } from '..'
 import { ApplicationApi, ApplicantApi, GeneralApi, DocumentsApi, IncomePlanApi, PaymentPlanApi, PensionCalculatorApi, DeathBenefitsApi, MedicalDocumentsApi, QuestionnairesApi, Configuration } from '../../generated/v1/gen/fetch'
 import { ApplicationApi as ApplicationWriteApiV2, Configuration as ConfigurationV2 } from '../../generated/v2/gen/fetch'
 import { Provider } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
 import { SocialInsuranceAdministrationClientConfigV2 } from './config/socialInsuranceAdministrationClientV2.config'
 
 const apiCollection: Array<{
@@ -92,7 +92,7 @@ const apiCollection: Array<{
 ]
 
 
-const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
+export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
   provide: ApplicationWriteApiV2,
   scope: LazyDuringDevScope,
   useFactory: (
@@ -120,11 +120,16 @@ const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
           'X-Road-Client': xroadConfig.xRoadClient,
         },
     }),
-    )
+    ),
+  inject: [
+    XRoadConfig.KEY,
+    SocialInsuranceAdministrationClientConfigV2.KEY,
+    IdsClientConfig.KEY,
+  ],
 }
 
 
-export const apiProvider = [...apiCollection.map((apiRecord) => ({
+export const apiProvider = apiCollection.map((apiRecord) => ({
   provide: apiRecord.api,
   scope: LazyDuringDevScope,
   useFactory: (
@@ -149,4 +154,4 @@ export const apiProvider = [...apiCollection.map((apiRecord) => ({
     SocialInsuranceAdministrationClientConfig.KEY,
     IdsClientConfig.KEY,
   ],
-})), ApplicationV2ApiProvider]
+}))

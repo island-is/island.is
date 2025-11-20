@@ -24,9 +24,13 @@
         "requestBody": {
           "description": "Input for application, varies by type",
           "content": {
-            "application/json; x-api-version=2": { "schema": {} },
-            "text/json; x-api-version=2": { "schema": {} },
-            "application/*+json; x-api-version=2": { "schema": {} }
+            "application/json; x-api-version=2": {
+              "schema": { "type": "object" }
+            },
+            "text/json; x-api-version=2": { "schema": { "type": "object" } },
+            "application/*+json; x-api-version=2": {
+              "schema": { "type": "object" }
+            }
           }
         },
         "responses": {
@@ -278,9 +282,6 @@
         },
         "additionalProperties": false,
         "description": "Detailed error message"
-      },
-      "Microsoft.AspNetCore.Mvc.ProblemDetails": {
-        "additionalProperties": false
       }
     },
     "securitySchemes": {

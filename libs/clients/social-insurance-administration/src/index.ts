@@ -1,6 +1,7 @@
 export { SocialInsuranceAdministrationClientModule } from './lib/socialInsuranceAdministrationClient.module'
 export { SocialInsuranceAdministrationClientService } from './lib/socialInsuranceAdministrationClient.service'
-export { SocialInsuranceAdministrationClientConfig } from './lib/socialInsuranceAdministrationClient.config'
+export { SocialInsuranceAdministrationClientConfig } from './lib/config/socialInsuranceAdministrationClient.config'
+export { SocialInsuranceAdministrationClientConfigV2 } from './lib/config/socialInsuranceAdministrationClientV2.config'
 export {
   DocumentTypeEnum,
   Employer,
@@ -10,6 +11,5 @@ export {
 export * from './lib/dto'
 export { MedicalAndRehabilitationPaymentsDTO } from './lib/dto/medicalAndRehabilitationPayments.dto'
 export * from '../generated/v1/gen/fetch'
-export * from '../generated/v2/gen/fetch'
 export * from './lib/enums'
 export * from './lib/mapper'

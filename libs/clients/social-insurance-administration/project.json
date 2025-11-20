@@ -28,7 +28,8 @@
           "cat <<< $(jq '.components.schemas.\"TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset\".properties.gildi += {\"type\": \"string\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationGuid}/documents\".post.requestBody += {\"required\": \"true\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.\"Microsoft.AspNetCore.Mvc.ProblemDetails\".additionalProperties = false' src/lib/config/clientConfig-v2.json) > src/lib/config/clientConfig-v2.json",
+          "cat <<< $(jq '.paths.\"/api/protected/v2/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/lib/config/clientConfig-v2.json) > src/lib/config/clientConfig-v2.json",
+
           "prettier --write src/lib/config/clientConfig.json",
           "prettier --write src/lib/config/clientConfig-v2.json"
         ],

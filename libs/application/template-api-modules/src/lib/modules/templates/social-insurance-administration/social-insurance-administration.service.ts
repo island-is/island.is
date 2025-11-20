@@ -19,6 +19,10 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
