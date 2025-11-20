@@ -4,9 +4,9 @@ import {
   Input,
   GridRow as Row,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
@@ -19,7 +19,7 @@ interface Props {
 export const CurrencyField = ({ item, dispatch }: Props) => {
   const label = item?.name?.is
   const { control } = useFormContext()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
 
   return (
     <Row marginTop={2}>

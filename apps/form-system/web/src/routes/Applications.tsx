@@ -50,7 +50,7 @@ export const Applications = () => {
           input: {
             slug: slug,
             createApplicationDto: {
-              isTest: false,
+              isTest: true,
             },
           },
         },
@@ -75,6 +75,7 @@ export const Applications = () => {
           },
         },
       })
+      console.log('hoho', app)
       return app.data?.formSystemGetApplications?.applications
     } catch (error) {
       console.error('Error fetching applications:', error)

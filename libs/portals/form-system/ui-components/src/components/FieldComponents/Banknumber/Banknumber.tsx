@@ -5,6 +5,7 @@ import {
   GridRow as Row,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
@@ -15,10 +16,10 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
 }
 
-export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
+export const Banknumber = ({ item, dispatch }: Props) => {
+  const { lang } = useLocale()
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),

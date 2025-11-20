@@ -358,18 +358,53 @@ export const setFieldValue = (
 
   const currentField = screen.fields?.find((field) => field?.id === fieldId)
   let { dependencies: newDependencies } = state.application
-  const dependenciesChanged = isControllerField(currentField, newDependencies)
 
-  if (dependenciesChanged) {
-    newDependencies = newDependencies?.map((dependency) => {
-      if (dependency?.parentProp === fieldId) {
-        return {
-          ...dependency,
-          isSelected: !dependency.isSelected,
+  const parentId =
+    currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+    currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+      ? currentField?.list?.find((item) => item?.label?.is === value)?.id
+      : fieldId
+
+  const isController = isControllerField(currentField, newDependencies)
+
+  if (isController) {
+    if (
+      currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    ) {
+      newDependencies = newDependencies?.map((dependency) => {
+        if (!dependency) return dependency
+        const listItemIds = currentField?.list
+          ?.map((item) => item?.id)
+          .filter(Boolean)
+        if (dependency?.parentProp === parentId) {
+          return {
+            ...dependency,
+            isSelected: true,
+          }
+        } else if (
+          listItemIds?.includes(dependency?.parentProp ?? '') &&
+          dependency?.parentProp !== parentId
+        ) {
+          return {
+            ...dependency,
+            isSelected: false,
+          }
         }
-      }
-      return dependency
-    })
+        return dependency
+      })
+    } else {
+      newDependencies = newDependencies?.map((dependency) => {
+        if (!dependency) return dependency
+        if (dependency?.parentProp === parentId) {
+          return {
+            ...dependency,
+            isSelected: !dependency.isSelected,
+          }
+        }
+        return dependency
+      })
+    }
 
     const updatedSectionsWithDependencies = updatedSections.map((section) => {
       const isSectionHidden = newDependencies?.some(
@@ -447,14 +482,22 @@ const isControllerField = (
   field: Maybe<FormSystemField> | undefined,
   dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
 ): boolean => {
-  if (
-    field?.fieldType === FieldTypesEnum.CHECKBOX ||
-    field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-    field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
-  ) {
+  if (field?.fieldType === FieldTypesEnum.CHECKBOX) {
     return (
       dependencies?.some((dependency) => {
         return dependency?.parentProp === field?.id
+      }) ?? false
+    )
+  }
+  if (
+    field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+    field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+  ) {
+    const listItemIds =
+      field?.list?.map((item) => item?.id).filter(Boolean) ?? []
+    return (
+      dependencies?.some((dependency) => {
+        return listItemIds.includes(dependency?.parentProp ?? '')
       }) ?? false
     )
   }
