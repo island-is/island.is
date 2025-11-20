@@ -48,7 +48,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
                 size === 'small' && !isMobile && !isTablet ? '6/12' : '12/12'
               }
               className={styles.gridCard}
-              key={`infocard-${card?.title ?? index}`}
+              key={card?.id ?? `infocard-${index}`}
             >
               {card?.error ? (
                 <ErrorCard title={card.title} to={card.to} />

@@ -27,6 +27,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         },
       ]
     : appointments?.map((appointment) => ({
+        id: appointment.id,
         loading: false,
         error: data?.error,
         title: appointment.title ?? '',
