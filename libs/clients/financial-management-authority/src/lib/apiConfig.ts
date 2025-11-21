@@ -22,7 +22,7 @@ export const ApiConfig = {
           clientSecret: config.clientSecret.trim(),
           scope: config.scope.split(' '),
           issuer: authServer,
-          tokenEndpoint: `${authServer}/connect/token`
+          tokenEndpoint: `${authServer}/connect/token`,
         },
       }),
       basePath: config.basePath,
