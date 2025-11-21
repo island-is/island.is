@@ -10,20 +10,8 @@ export class DisabilityPensionCertificate {
   @Field()
   referenceId!: string
 
-  @Field({ nullable: true })
-  healthCenter?: string
-
-  @Field({ nullable: true })
-  createdAt?: Date
-
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
-
-  @Field({ nullable: true, description: 'ISO8601 formatted date' })
-  lastInspectionDate?: string
-
-  @Field({ nullable: true, description: 'ISO8601 formatted date' })
-  certificateDate?: string
 
   @Field({ nullable: true, description: 'ISO8601 formatted date' })
   dateOfWorkIncapacity?: string
@@ -45,9 +33,6 @@ export class DisabilityPensionCertificate {
 
   @Field(() => MedicationAndSupportsUsed, { nullable: true })
   medicationAndSupportsUsed?: MedicationAndSupportsUsed
-
-  @Field({ nullable: true })
-  assessmentToolsUsed?: string
 
   @Field(() => Int, { nullable: true })
   capacityForWork?: number

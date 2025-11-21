@@ -9,9 +9,6 @@ export class Doctor {
   doctorNumber?: string
 
   @Field({ nullable: true })
-  jobTitle?: string
-
-  @Field({ nullable: true })
   residence?: string
 
   @Field({ nullable: true })

@@ -30,7 +30,6 @@ const mapDoctor = (
     residence: doctorInfo.residence ?? undefined,
     phoneNumber: doctorInfo.phoneNumber ?? undefined,
     email: doctorInfo.email ?? undefined,
-    jobTitle: 'no data',
   }
 }
 
@@ -154,15 +153,7 @@ export const mapDisabilityPensionCertificate = (
 
   return {
     referenceId: data.referenceId,
-    createdAt: data.created ?? undefined,
-    healthCenter: data.serviceProviderName ?? undefined,
     doctor: mapDoctor(data.doctorInfo),
-    lastInspectionDate: data.lastInspectionDate
-      ? data.lastInspectionDate.toISOString()
-      : undefined,
-    certificateDate: data.certificateDate
-      ? data.certificateDate.toISOString()
-      : undefined,
     dateOfWorkIncapacity: data.dateOfWorkIncapacityStart
       ? data.dateOfWorkIncapacityStart.toISOString()
       : undefined,
@@ -178,7 +169,6 @@ export const mapDisabilityPensionCertificate = (
       data.participationLimitationCause?.display ?? undefined,
     abilityChangePotential: data.abilityChangePotential?.display ?? undefined,
     medicationAndSupportsUsed: mapMedicationAndSupportsUsed(data),
-    assessmentToolsUsed: data.assessmentToolsUsed ?? undefined,
     capacityForWork: data.capacityForWork ?? undefined,
     previousRehabilitation: data.previousRehabilitation ?? undefined,
     physicalImpairments: physicalImpairmentQuestionnaireResult
