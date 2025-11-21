@@ -183,7 +183,9 @@ async function main() {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
-    execSync('yarn codegen >> codegen.log', { stdio: 'inherit' })
+    execSync('yarn codegen --skip-cache', {
+      stdio: 'inherit',
+    })
   }
 
   console.log(
