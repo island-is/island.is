@@ -18,6 +18,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@nestjs/config'
 import { VerdictsClientConfig } from './verdicts-client.config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import { CaseFilterOptionType } from './types'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
@@ -264,57 +265,76 @@ export class VerdictsClientService {
     return null
   }
 
-  async getCaseTypes() {
+  async getCaseFilterOptionsPerCourt() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseTypesV2(),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-    ])
+    const [courtOfAppealResponse, supremeCourtResponse, districtCourtResponse] =
+      await Promise.allSettled([
+        goproVerdictApi.getCaseTypesV2(),
+        this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+        goproVerdictApi.getCaseCategoriesV2(),
+      ])
 
-    const caseTypeSet = new Set<string>()
+    const mapOfAll = new Map<string, CaseFilterOptionType>()
 
-    if (goproResponse.status === 'fulfilled') {
-      for (const caseType of goproResponse.value.items ?? []) {
-        if (caseType.label) caseTypeSet.add(caseType.label)
-      }
-    }
-    if (supremeCourtResponse.status === 'fulfilled') {
-      for (const caseType of supremeCourtResponse.value.items ?? []) {
-        if (caseType.label) caseTypeSet.add(caseType.label)
-      }
-    }
+    const courtOfAppealSet = new Set<string>()
+    if (courtOfAppealResponse.status === 'fulfilled')
+      for (const caseType of courtOfAppealResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          courtOfAppealSet.add(caseType.label)
+        }
 
-    const caseTypes = Array.from(caseTypeSet).map((caseType) => ({
-      label: caseType,
+    const supremeCourtSet = new Set<string>()
+    if (supremeCourtResponse.status === 'fulfilled')
+      for (const caseType of supremeCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          supremeCourtSet.add(caseType.label)
+        }
+
+    const districtCourtSet = new Set<string>()
+    if (districtCourtResponse.status === 'fulfilled')
+      for (const caseType of districtCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseCategory)
+          districtCourtSet.add(caseType.label)
+        }
+
+    const courtOfAppealOptions = Array.from(courtOfAppealSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
     }))
-    caseTypes.sort(sortAlpha('label'))
+    courtOfAppealOptions.sort(sortAlpha('label'))
+    const supremeCourtOptions = Array.from(supremeCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
+    }))
+    supremeCourtOptions.sort(sortAlpha('label'))
+    const districtCourtOptions = Array.from(districtCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseCategory,
+    }))
+    districtCourtOptions.sort(sortAlpha('label'))
+
+    const allOptions = Array.from(mapOfAll, ([label, typeOfOption]) => ({
+      label,
+      typeOfOption,
+    }))
+    allOptions.sort(sortAlpha('label'))
 
     return {
-      caseTypes,
-    }
-  }
-
-  async getCaseCategories() {
-    const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [goproResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseCategoriesV2(),
-    ])
-
-    const caseCategorySet = new Set<string>()
-
-    if (goproResponse.status === 'fulfilled') {
-      for (const caseCategory of goproResponse.value.items ?? []) {
-        if (caseCategory.label) caseCategorySet.add(caseCategory.label)
-      }
-    }
-
-    const caseCategories = Array.from(caseCategorySet).map((caseCategory) => ({
-      label: caseCategory,
-    }))
-    caseCategories.sort(sortAlpha('label'))
-
-    return {
-      caseCategories,
+      courtOfAppeal: {
+        options: courtOfAppealOptions,
+      },
+      supremeCourt: {
+        options: supremeCourtOptions,
+      },
+      districtCourt: {
+        options: districtCourtOptions,
+      },
+      all: {
+        options: allOptions,
+      },
     }
   }
 
