@@ -6,9 +6,8 @@ import {
   ToastContainer,
 } from '@island.is/island-ui/core'
 import {
-  Application,
-  ApplicationTypes,
-  institutionMapper,
+  ApplicationCard as ApplicationCardType,
+  InstitutionTypes,
 } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
@@ -17,8 +16,15 @@ import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
 const pageSize = 5
 
 type ApplicationFields = Pick<
-  Application,
-  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  ApplicationCardType,
+  | 'actionCard'
+  | 'id'
+  | 'typeId'
+  | 'status'
+  | 'modified'
+  | 'name'
+  | 'progress'
+  | 'org'
 >
 
 interface Props {
@@ -45,11 +51,11 @@ const ApplicationList = ({
     totalPages: Math.ceil(applications.length / pageSize),
   }
 
-  const getLogo = (typeId: ApplicationTypes): string => {
+  const getLogo = (application: ApplicationFields): string => {
     if (!organizations) {
       return ''
     }
-    const institutionSlug = institutionMapper[typeId].slug
+    const institutionSlug = application.org as InstitutionTypes
     const institution = organizations.find((x) => x.slug === institutionSlug)
     return getOrganizationLogoUrl(
       institution?.title ?? 'stafraent-island',
@@ -76,7 +82,7 @@ const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
-              logo={getLogo(application.typeId)}
+              logo={getLogo(application)}
               onDelete={onApplicationDelete}
               onClick={onClick}
             />

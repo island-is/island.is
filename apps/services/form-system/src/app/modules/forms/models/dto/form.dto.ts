@@ -51,7 +51,7 @@ export class FormDto {
   isTranslated!: boolean
 
   @ApiProperty()
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @ApiProperty()
   derivedFrom!: string
