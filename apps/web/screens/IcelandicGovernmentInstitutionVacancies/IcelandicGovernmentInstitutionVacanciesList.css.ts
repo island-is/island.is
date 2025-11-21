@@ -2,40 +2,22 @@ import { style } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 
-export const filterTagRow = style({
-  minHeight: '40px',
-  marginBottom: '18px',
-  marginTop: '24px',
-})
-
-export const filterInput = style({
+export const sidebar = style({
+  minWidth: '230px',
+  maxWidth: '230px',
   ...themeUtils.responsiveStyle({
-    md: {
-      width: '480px',
-    },
-  }),
-})
-
-export const logo = style({
-  objectFit: 'contain',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      minWidth: 60,
-      maxWidth: 60,
-    },
     lg: {
-      minWidth: 80,
-      maxWidth: 80,
+      minWidth: '318px',
+      maxWidth: '318px',
     },
   }),
 })
 
-export const vacancyCard = style({
-  display: 'flex',
-  flexWrap: 'nowrap',
-  height: '100%',
-})
-
-export const vacancyCardText = style({
-  alignSelf: 'flex-start',
+export const contentWrapper = style({
+  maxWidth: 'calc(100% - 230px)',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      maxWidth: 'calc(100% - 318px)',
+    },
+  }),
 })
