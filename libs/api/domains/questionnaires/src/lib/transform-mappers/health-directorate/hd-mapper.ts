@@ -1,4 +1,3 @@
-/* eslint-disable func-style */
 /**
  * Health Directorate Questionnaire Mapper - Transforms Health Directorate API Form objects into the internal Questionnaire format.
  */

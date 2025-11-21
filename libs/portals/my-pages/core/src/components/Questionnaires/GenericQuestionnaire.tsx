@@ -403,7 +403,9 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                             ),
                           )}
                         </Stack>
-                        <Divider />
+                        <Box paddingBottom={3} paddingTop={6}>
+                          <Divider />
+                        </Box>
                       </Box>
                     ))}
                   </Stack>

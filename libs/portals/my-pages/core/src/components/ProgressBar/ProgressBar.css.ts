@@ -1,3 +1,4 @@
+import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const inner = style({
@@ -115,6 +116,17 @@ export const optionsDescription = style({
   whiteSpace: 'nowrap',
   border: 0,
 })
-globalStyle(`${options} p`, {
+
+globalStyle(`${textPosition} > p`, {
+  paddingLeft: theme.spacing[2],
+  paddingRight: theme.spacing[2],
   fontSize: 14,
+})
+
+globalStyle(`${textPosition}:not(${textLast}) > p`, {
+  paddingLeft: 0,
+})
+
+globalStyle(`${textPosition}:not(${textFirst}) > p`, {
+  paddingRight: 0,
 })

@@ -168,7 +168,7 @@ export const ProgressBar: FC<Props> = ({
               const isFirst = index === 0
               const position =
                 (index / (options.length - 1)) * 100 +
-                (isLast ? -2 : isFirst ? 2 : 0)
+                (isLast ? -1 : isFirst ? 1 : 0)
 
               // Make sure each radiogroup has exactly one tabbable option:
               // - If selection is valid → the selected one
@@ -230,7 +230,7 @@ export const ProgressBar: FC<Props> = ({
               const isFirst = index === 0
               const position =
                 (index / (options.length - 1)) * 100 +
-                (isLast ? -2 : isFirst ? 2 : 0)
+                (isLast ? -1 : isFirst ? 1 : 0)
 
               return (
                 <Box
@@ -258,7 +258,7 @@ export const ProgressBar: FC<Props> = ({
             // For middle items, use dot position; for first/last, use edge positions
             const position = isMiddle
               ? (index / (options.length - 1)) * 100
-              : (index / options.length) * 100
+              : (index / options.length) * 100 + (isLast ? 2 : 0)
 
             const textAlign = isLast ? 'right' : 'left'
 

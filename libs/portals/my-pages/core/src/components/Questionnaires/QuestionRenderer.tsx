@@ -3,7 +3,7 @@ import {
   QuestionnaireOptionsLabelValue,
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
-import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import { Box, DatePicker, Divider, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import HtmlParser from 'react-html-parser'
 import { QuestionAnswer } from '../../types/questionnaire'
@@ -239,11 +239,11 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             : 0
 
         return (
-          <Box width={isMobile ? 'full' : 'half'}>
+          <Box width={'full'} paddingBottom={3}>
             <ProgressBar
               progress={progress}
               label={question.label}
-              options={question.answerOptions.options?.map((option) => ({
+              options={options?.map((option) => ({
                 label: option.label || '',
                 value: option.value || '',
               }))}
