@@ -37,6 +37,7 @@ import {
   getChargeItems,
   getExtraData,
   getReviewers,
+  getReviewerRole,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -220,12 +221,36 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApprovedBy,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwner')
+                      return applicationMessage.historyLogApprovedByCoOwner
+                    else if (role === 'operators')
+                      return applicationMessage.historyLogApprovedByNewOperator
+                  }
+                  return coreHistoryMessages.applicationApprovedBy
+                },
                 includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwner')
+                      return applicationMessage.historyLogRejectedByCoOwner
+                    else if (role === 'operators')
+                      return applicationMessage.historyLogRejectedByNewOperator
+                  }
+                  return coreHistoryMessages.applicationRejected
+                },
                 includeSubjectAndActor: true,
               },
               {

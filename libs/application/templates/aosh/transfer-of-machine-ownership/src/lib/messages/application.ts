@@ -35,10 +35,15 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
-  historyLogApprovedByReviewer: {
-    id: 'aosh.tmo.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af öllum aðilum',
-    description: 'History log approved by reviewer',
+  historyLogApprovedByBuyer: {
+    id: 'aosh.tmo.application:historyLogApprovedByBuyer',
+    defaultMessage: 'Samþykkt af kaupanda',
+    description: 'History log approved by buyer',
+  },
+  historyLogRejectedByBuyer: {
+    id: 'aosh.tmo.application:historyLogRejectedByBuyer',
+    defaultMessage: 'Hafnað af kaupanda',
+    description: 'History log rejected by buyer',
   },
   actionCardPrerequisites: {
     id: 'aosh.tmo.application:actionCardPrerequisites',

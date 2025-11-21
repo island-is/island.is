@@ -263,12 +263,12 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: applicationMessage.historyLogApprovedByBuyer,
                 includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: applicationMessage.historyLogRejectedByBuyer,
                 includeSubjectAndActor: true,
               },
               {

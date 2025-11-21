@@ -41,6 +41,7 @@ import {
   getExtraData,
   canReviewerApprove,
   getReviewers,
+  getReviewerRole,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -217,12 +218,36 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApprovedBy,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwners')
+                      return applicationMessage.historyLogApprovedByOldCoOwner
+                    else if (role === 'coOwners')
+                      return applicationMessage.historyLogApprovedByNewCoOwner
+                  }
+                  return coreHistoryMessages.applicationApprovedBy
+                },
                 includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwners')
+                      return applicationMessage.historyLogRejectedByOldCoOwner
+                    else if (role === 'coOwners')
+                      return applicationMessage.historyLogRejectedByNewCoOwner
+                  }
+                  return coreHistoryMessages.applicationRejected
+                },
                 includeSubjectAndActor: true,
               },
               {

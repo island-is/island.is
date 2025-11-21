@@ -39,6 +39,7 @@ import {
   getExtraData,
   canReviewerApprove,
   getReviewers,
+  getReviewerRole,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -223,12 +224,44 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApprovedBy,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'buyer')
+                      return applicationMessage.historyLogApprovedByBuyer
+                    else if (role === 'buyerCoOwners')
+                      return applicationMessage.historyLogApprovedByBuyerCoOwner
+                    else if (role === 'buyerOperators')
+                      return applicationMessage.historyLogApprovedByBuyerOperator
+                    else if (role === 'sellerCoOwners')
+                      return applicationMessage.historyLogApprovedBySellerCoOwner
+                  }
+                  return coreHistoryMessages.applicationApprovedBy
+                },
                 includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'buyer')
+                      return applicationMessage.historyLogRejectedByBuyer
+                    else if (role === 'buyerCoOwners')
+                      return applicationMessage.historyLogRejectedByBuyerCoOwner
+                    else if (role === 'buyerOperators')
+                      return applicationMessage.historyLogRejectedByBuyerOperator
+                    else if (role === 'sellerCoOwners')
+                      return applicationMessage.historyLogRejectedBySellerCoOwner
+                  }
+                  return coreHistoryMessages.applicationRejected
+                },
                 includeSubjectAndActor: true,
               },
               {
