@@ -62,11 +62,17 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
 
 const reviewStatePendingAction = (
   application: Application,
-  role: string,
+  _role: string,
   nationalId: string,
 ): PendingAction => {
   if (nationalId) {
-    if (nationalId === InstitutionNationalIds.VINNUEFTIRLITID) {
+    if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
+    } else {
       return {
         title: corePendingActionMessages.waitingForReviewTitle,
         content: {
@@ -81,12 +87,6 @@ const reviewStatePendingAction = (
           },
         },
         displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
       }
     }
   }
