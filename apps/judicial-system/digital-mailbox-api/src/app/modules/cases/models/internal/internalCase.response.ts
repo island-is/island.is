@@ -86,4 +86,5 @@ interface Verdict {
   appealDecision?: VerdictAppealDecision
   serviceInformationForDefendant?: InformationForDefendant[]
   appealDate?: Date
+  isDefaultJudgement?: boolean
 }
