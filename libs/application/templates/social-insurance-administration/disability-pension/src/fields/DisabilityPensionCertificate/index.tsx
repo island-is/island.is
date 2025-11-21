@@ -21,10 +21,11 @@ import { Query } from '@island.is/api/schema'
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const { data, loading } = useQuery<Query>(
     siaDisabilityPensionCertificateQuery,
+    { variables: { locale: lang}}
   )
 
   setBeforeSubmitCallback?.(async () => {
@@ -51,19 +52,11 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.job)}</Label>
-          <Text>MISSING DATA</Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.residence)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate?.doctor
               ?.residence ?? '-'}
           </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.address)}</Label>
-          <Text>MISSING DATA</Text>
         </GridColumn>
       </GridRow>
     </Stack>

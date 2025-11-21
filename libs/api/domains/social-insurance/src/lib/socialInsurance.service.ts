@@ -257,11 +257,12 @@ export class SocialInsuranceService {
 
   async getDisabilityPensionCertificate(
     user: User,
+    locale: Locale,
   ): Promise<DisabilityPensionCertificate | null> {
     const data = await this.socialInsuranceApi
       .getCertificateForDisabilityPension(user)
       .catch(handle404)
-    return data ? mapDisabilityPensionCertificate(data) : null
+    return data ? mapDisabilityPensionCertificate(data, locale) : null
   }
 
   async getConfirmedTreatment(

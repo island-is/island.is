@@ -1,7 +1,9 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { Doctor } from './doctor.model'
 import { DisabilityDiagnosisCollection } from './disabilityDiagnosisCollection.model'
-import { ImpairmentRatingDomain } from './impairmentRatingDomain.model'
+import { ImpairmentRating } from './impairmentRating.model'
+import { MedicationAndSupportsUsed } from './medicationAndSupportsUsed.model'
+import { StabilityOfHealth } from './stabilityOfHealth.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDisabilityPensionCertificate')
 export class DisabilityPensionCertificate {
@@ -35,14 +37,14 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   participationLimitationCause?: string
 
-  @Field({ nullable: true })
-  stabilityOfHealth?: string
+  @Field(() => StabilityOfHealth, { nullable: true })
+  stabilityOfHealth?: StabilityOfHealth
 
   @Field({ nullable: true })
   abilityChangePotential?: string
 
-  @Field({ nullable: true })
-  medicationAndSupports?: string
+  @Field(() => MedicationAndSupportsUsed, { nullable: true })
+  medicationAndSupportsUsed?: MedicationAndSupportsUsed
 
   @Field({ nullable: true })
   assessmentToolsUsed?: string
@@ -53,9 +55,9 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   previousRehabilitation?: string
 
-  @Field(() => ImpairmentRatingDomain, { nullable: true })
-  physicalImpairments?: ImpairmentRatingDomain
+  @Field(() => [ImpairmentRating], { nullable: true })
+  physicalImpairments?: ImpairmentRating[]
 
-  @Field(() => ImpairmentRatingDomain, { nullable: true })
-  mentalImpairments?: ImpairmentRatingDomain
+  @Field(() => [ImpairmentRating], { nullable: true })
+  mentalImpairments?: ImpairmentRating[]
 }

@@ -1,7 +1,7 @@
 import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
-import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/DisabilityPensionCertificate'
 import {
   TrWebContractsExternalServicePortalDisabilityDiagnosis,
   TrWebContractsExternalServicePortalDisabilityPensionCertificate,
@@ -9,6 +9,13 @@ import {
   TrWebContractsExternalServicePortalHealthImpact,
   TrWebContractsExternalServicePortalQuestionnaireResult,
 } from '@island.is/clients/social-insurance-administration'
+import { ImpairmentRatingDomain } from '../models/medicalDocuments/impairmentRatingDomain.model'
+import type { Locale} from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import { DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE, DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE } from '../constants'
+import { ImpairmentRating } from '../models/medicalDocuments/impairmentRating.model'
+import { MedicationAndSupportsUsed } from '../models/medicalDocuments/medicationAndSupportsUsed.model'
+import { StabilityOfHealth } from '../models/medicalDocuments/stabilityOfHealth.model'
 
 const mapDoctor = (
   doctorInfo?: TrWebContractsExternalServicePortalDoctorInfo,
@@ -52,12 +59,62 @@ const mapDisabilityDiagnosisCollection = (
   }
 }
 
+const mapImpairmentRating = (data: TrWebContractsExternalServicePortalQuestionnaireResult, locale: Locale): ImpairmentRating[] | undefined => {
+  const { answers, scale } = data
+
+  if (!answers || !scale) {
+    return undefined
+  }
+
+  return answers.map(answerData => {
+    const answerValue = scale.find(s => s.value === answerData.answer)
+    if (!answerValue?.value || !answerData.questionTitle) {
+      return undefined
+    }
+    return ({
+      title: answerData.questionTitle ?? locale === 'en' ? 'Missing title' : 'Titil vantar',
+      value: answerValue.value ?? locale === 'en' ? 'Missing answer' : 'Svar vantar'
+    })
+  }).filter(isDefined)
+}
+
+const mapMedicationAndSupportsUsed = (data: TrWebContractsExternalServicePortalDisabilityPensionCertificate): MedicationAndSupportsUsed | undefined => {
+  const { noMedicationAndSupportUsed, medicationUsed, assessmentToolsUsed, interventionUsed} = data
+
+  if (noMedicationAndSupportUsed || (!medicationUsed && !assessmentToolsUsed && !interventionUsed)) {
+    return undefined
+  }
+
+  return {
+    medicationUsed: medicationUsed ?? undefined,
+    supportsUsed: assessmentToolsUsed ?? undefined,
+    interventionUsed: interventionUsed ?? undefined
+  }
+}
+
+const mapStabilityOfHealth = (data: TrWebContractsExternalServicePortalHealthImpact): StabilityOfHealth | undefined => {
+  const { description, impactLevel } = data
+
+  if (!impactLevel?.display) {
+    return undefined
+  }
+
+  return {
+    description: impactLevel.display,
+    furtherDetails: description ?? undefined
+  }
+}
+
 export const mapDisabilityPensionCertificate = (
   data: TrWebContractsExternalServicePortalDisabilityPensionCertificate,
+  locale: Locale,
 ): DisabilityPensionCertificate | null => {
   if (!data || !data.referenceId) {
     return null
   }
+
+  const physicalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE)
+  const mentalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE)
 
   return {
     referenceId: data.referenceId,
@@ -78,15 +135,15 @@ export const mapDisabilityPensionCertificate = (
       data.diagnosesOthers,
     ),
     healthHistorySummary: data.healthHistorySummary ?? undefined,
-    stabilityOfHealth: data.healthImpact?.impactLevel?.display ?? undefined,
+    stabilityOfHealth: data.healthImpact ? mapStabilityOfHealth(data.healthImpact) : undefined,
     participationLimitationCause:
       data.participationLimitationCause?.display ?? undefined,
     abilityChangePotential: data.abilityChangePotential?.display ?? undefined,
-    medicationAndSupports: data.interventionUsed ?? undefined,
+    medicationAndSupportsUsed: mapMedicationAndSupportsUsed(data),
     assessmentToolsUsed: data.assessmentToolsUsed ?? undefined,
     capacityForWork: data.capacityForWork ?? undefined,
     previousRehabilitation: data.previousRehabilitation ?? undefined,
-    physicalImpairments: undefined, //MISSING
-    mentalImpairments: undefined, //MISSING
+    physicalImpairments: physicalImpairmentQuestionnaireResult ? mapImpairmentRating(physicalImpairmentQuestionnaireResult, locale) : undefined,
+    mentalImpairments: mentalImpairmentQuestionnaireResult ? mapImpairmentRating(mentalImpairmentQuestionnaireResult, locale) : undefined,
   }
 }
