@@ -51,3 +51,45 @@ export const getReviewers = (
 
   return result
 }
+
+export const getReviewerRole = (
+  answers: FormValue,
+  nationalId: string,
+):
+  | 'buyer'
+  | 'buyerCoOwners'
+  | 'buyerOperators'
+  | 'sellerCoOwners'
+  | undefined => {
+  // Buyer
+  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
+  if (buyer?.nationalId === nationalId) return 'buyer'
+
+  // Buyer's co-owner
+  const buyerCoOwners = getValueViaPath<CoOwnerAndOperator[]>(
+    answers,
+    'buyerCoOwnerAndOperator',
+  )?.filter(
+    ({ wasRemoved, type }) => wasRemoved !== 'true' && type === 'coOwner',
+  )
+  if (buyerCoOwners?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'buyerCoOwners'
+
+  // Buyer's operator
+  const buyerOperators = getValueViaPath<CoOwnerAndOperator[]>(
+    answers,
+    'buyerCoOwnerAndOperator',
+  )?.filter(
+    ({ wasRemoved, type }) => wasRemoved !== 'true' && type === 'operator',
+  )
+  if (buyerOperators?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'buyerOperators'
+
+  // Seller's co-owner
+  const sellerCoOwners = getValueViaPath<CoOwnerAndOperator[]>(
+    answers,
+    'sellerCoOwner',
+  )
+  if (sellerCoOwners?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'sellerCoOwners'
+}

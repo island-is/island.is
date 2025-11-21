@@ -17,8 +17,6 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
-  getHistoryLogApprovedWithSubjectAndActor,
-  getHistoryLogRejectedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -39,6 +37,7 @@ import {
   getChargeItems,
   getExtraData,
   getReviewers,
+  getReviewerRole,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -67,11 +66,17 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
 
 const reviewStatePendingAction = (
   application: Application,
-  role: string,
+  _role: string,
   nationalId: string,
 ): PendingAction => {
   if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+    if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
+    } else {
       return {
         title: corePendingActionMessages.waitingForReviewTitle,
         content: {
@@ -86,12 +91,6 @@ const reviewStatePendingAction = (
           },
         },
         displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
       }
     }
   }
@@ -222,11 +221,37 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwner')
+                      return applicationMessage.historyLogApprovedByCoOwner
+                    else if (role === 'operators')
+                      return applicationMessage.historyLogApprovedByNewOperator
+                  }
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwner')
+                      return applicationMessage.historyLogRejectedByCoOwner
+                    else if (role === 'operators')
+                      return applicationMessage.historyLogRejectedByNewOperator
+                  }
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,

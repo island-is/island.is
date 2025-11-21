@@ -18,3 +18,28 @@ export const hasReviewerApproved = (
 
   return true
 }
+
+export const canReviewerApprove = (
+  reviewerNationalId: string,
+  answers: FormValue,
+): boolean => {
+  return !hasReviewerApproved(reviewerNationalId, answers)
+}
+
+export const getReviewers = (
+  answers: FormValue,
+): { nationalId: string; name: string; hasApproved: boolean }[] => {
+  const result: { nationalId: string; name: string; hasApproved: boolean }[] =
+    []
+
+  // Buyer
+  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
+  if (buyer?.nationalId)
+    result.push({
+      nationalId: buyer.nationalId,
+      name: buyer.name,
+      hasApproved: buyer.approved ?? false,
+    })
+
+  return result
+}

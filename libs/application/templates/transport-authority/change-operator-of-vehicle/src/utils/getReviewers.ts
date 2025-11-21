@@ -38,3 +38,24 @@ export const getReviewers = (
 
   return result
 }
+
+export const getReviewerRole = (
+  answers: FormValue,
+  nationalId: string,
+): 'ownerCoOwner' | 'operators' | undefined => {
+  // Co-owner
+  const ownerCoOwner = getValueViaPath<UserInformation[]>(
+    answers,
+    'ownerCoOwner',
+  )
+  if (ownerCoOwner?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'ownerCoOwner'
+
+  // New operator
+  const operators = getValueViaPath<OperatorInformation[]>(
+    answers,
+    'operators',
+  )?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+  if (operators?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'operators'
+}

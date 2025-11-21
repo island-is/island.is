@@ -17,8 +17,6 @@ import {
   corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
-  getHistoryLogApprovedWithSubjectAndActor,
-  getHistoryLogRejectedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import {
@@ -43,6 +41,7 @@ import {
   getExtraData,
   canReviewerApprove,
   getReviewers,
+  getReviewerRole,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -70,11 +69,17 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
 
 const reviewStatePendingAction = (
   application: Application,
-  role: string,
+  _role: string,
   nationalId: string,
 ): PendingAction => {
   if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+    if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
+    } else {
       return {
         title: corePendingActionMessages.waitingForReviewTitle,
         content: {
@@ -89,12 +94,6 @@ const reviewStatePendingAction = (
           },
         },
         displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
       }
     }
   }
@@ -219,11 +218,37 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwners')
+                      return applicationMessage.historyLogApprovedByOldCoOwner
+                    else if (role === 'coOwners')
+                      return applicationMessage.historyLogApprovedByNewCoOwner
+                  }
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (subjectNationalId) {
+                    const role = getReviewerRole(
+                      application.answers,
+                      subjectNationalId,
+                    )
+                    if (role === 'ownerCoOwners')
+                      return applicationMessage.historyLogRejectedByOldCoOwner
+                    else if (role === 'coOwners')
+                      return applicationMessage.historyLogRejectedByNewCoOwner
+                  }
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
