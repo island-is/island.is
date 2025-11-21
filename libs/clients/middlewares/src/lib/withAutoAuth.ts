@@ -70,15 +70,6 @@ export interface AutoAuthOptions {
   tokenEndpoint?: string
 
   audience?: string
-
-  /**
-   * How the client should authenticate to the token endpoint.
-   *
-   * - 'body' (default): client_id and client_secret are sent in the request body.
-   * - 'basic': clientId and clientSecret are sent in the Authorization header as
-   *   `Authorization: Basic base64(clientId:clientSecret)`, and are omitted from the body.
-   */
-  clientAuthentication?: 'body' | 'basic'
 }
 
 export interface AuthMiddlewareOptions {
@@ -192,27 +183,14 @@ export const withAutoAuth = ({
       return auth.authorization
     }
 
-    const useBasicClientAuthentication =
-      options.clientAuthentication === 'basic'
+    const params = new URLSearchParams({
+      grant_type: GrantType.clientCredentials,
+      client_id: options.clientId,
+      client_secret: options.clientSecret,
+      scope: options.scope.join(' '),
+      ...(options.audience && { audience: options.audience }),
+    })
 
-    const params = new URLSearchParams()
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }
-
-    // Configure client authentication
-    if (useBasicClientAuthentication) {
-      const basicAuth = Buffer.from(
-        `${options.clientId}:${options.clientSecret}`,
-        'utf8',
-      ).toString('base64')
-      headers.Authorization = `Basic ${basicAuth}`
-    } else {
-      params.set('client_id', options.clientId)
-      params.set('client_secret', options.clientSecret)
-    }
-
-    // Configure grant type and token exchange specific parameters
     if (auth && isTokenExchange) {
       params.set('grant_type', GrantType.tokenExchane)
       params.set('subject_token', auth.authorization.replace(/^bearer /i, ''))
@@ -221,19 +199,13 @@ export const withAutoAuth = ({
         'requested_token_type',
         requestActorToken ? TokenType.actorAccessToken : TokenType.accessToken,
       )
-    } else {
-      params.set('grant_type', GrantType.clientCredentials)
-    }
-
-    // Common parameters
-    params.set('scope', options.scope.join(' '))
-    if (options.audience) {
-      params.set('audience', options.audience)
     }
 
     const response = await innerFetch(tokenEndpoint, {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
       body: params,
       auth,
     })
