@@ -22,7 +22,7 @@ import {
   DocumentsV2Category,
   DocumentsV2Sender,
 } from '../../graphql/types/schema'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;

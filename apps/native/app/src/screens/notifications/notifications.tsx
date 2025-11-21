@@ -13,7 +13,7 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 import styled from 'styled-components/native'
 
 import {

@@ -1,6 +1,5 @@
 #import <Expo/Expo.h>
 #import "RNAppAuthAuthorizationFlowManager.h"
-#import <ReactNativeNavigation/ReactNativeNavigation.h>
 #import "RNIsland.h"
 #import <react-native-spotlight-search/RCTSpotlightSearch.h>
 #import <RNQuickAction/RNQuickActionManager.h>

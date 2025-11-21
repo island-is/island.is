@@ -67,6 +67,7 @@ const Text = styled.Text`
 export const TestingLoginScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
+  console.log('TestingLoginScreen', componentId)
   const authStore = useAuthStore()
   const { environment = environments.prod, cognito } = useEnvironmentStore()
   const { openBrowser } = useBrowser()

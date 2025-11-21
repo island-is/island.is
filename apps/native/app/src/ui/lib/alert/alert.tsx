@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'

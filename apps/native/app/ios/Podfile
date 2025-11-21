@@ -11,7 +11,7 @@ platform :ios, '15.6'
 prepare_react_native_project!
 
 # Disable New Architecture
-ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+# ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
 $VCEnableLocation = false
@@ -60,6 +60,7 @@ target 'IslandApp' do
   pod 'GoogleDataTransport', :modular_headers => true
   pod 'nanopb', :modular_headers => true
   pod 'RNFS', :path => '../../../../node_modules/react-native-fs'
+
 
 
   use_react_native!(

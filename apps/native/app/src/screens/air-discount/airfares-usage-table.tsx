@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 
 import { Typography, dynamicColor } from '../../ui'
 import { GetAirDiscountFlightLegsQuery } from '../../graphql/types/schema'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[3]}px;

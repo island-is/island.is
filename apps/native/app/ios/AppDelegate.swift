@@ -14,12 +14,38 @@ import UIKit
 
 @main
 class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
+    // var window: UIWindow?
+
+    // var reactNativeDelegate: ReactNativeDelegate?
+    // var reactNativeFactory: RCTReactNativeFactory?
+
     weak var authorizationFlowManagerDelegate: RNAppAuthAuthorizationFlowManagerDelegate?
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        self.moduleName = "index"
         FirebaseApp.configure()
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+        // let delegate = ReactNativeDelegate()
+        // let factory = RCTReactNativeFactory(delegate: delegate)
+        // delegate.dependencyProvider = RCTAppDependencyProvider()
+    
+        // reactNativeDelegate = delegate
+        // reactNativeFactory = factory
+    
+        // window = UIWindow(frame: UIScreen.main.bounds)
+    
+        // factory.startReactNative(
+        //     withModuleName: "RnDiffApp",
+        //     in: window,
+        //     launchOptions: launchOptions
+        // )
+    
+        // return true
     }
 
     override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -64,14 +90,14 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
     }
 
     override func extraModules(for bridge: RCTBridge) -> [RCTBridgeModule] {
-        return ReactNativeNavigation.extraModules(for: bridge)
+        return super.extraModules(for: bridge)
     }
 
-    override func sourceURL(for _: RCTBridge) -> URL? {
+    override func bundleURL() -> URL? {
         #if DEBUG
-            RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+            return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
         #else
-            Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+            return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
         #endif
     }
 }

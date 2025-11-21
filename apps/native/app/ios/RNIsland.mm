@@ -1,6 +1,13 @@
-#import "ReactNativeNavigation.h"
 #import "RNIsland.h"
+#import <React/RCTConvert.h>
+#import <React/RCTUtils.h>
 #import <SafariServices/SafariServices.h>
+
+// Minimal forward declaration to avoid importing private headers
+@class UIViewController;
+@interface ReactNativeNavigation : NSObject
++ (UIViewController *)findViewController:(NSString *)componentId;
+@end
 
 @implementation RNIsland
 

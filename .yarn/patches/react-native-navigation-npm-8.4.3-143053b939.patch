@@ -1,0 +1,36 @@
+diff --git a/autolink/postlink/path.js b/autolink/postlink/path.js
+index c3fb62d4ebaab10850d24e1adee7ae3e42982f64..c682a90e390d57912d76413c8672e212cf4e531a 100644
+--- a/autolink/postlink/path.js
++++ b/autolink/postlink/path.js
+@@ -3,6 +3,9 @@ var ignoreFolders = {
+   ignore: ['node_modules/**', '**/build/**', '**/Build/**', '**/DerivedData/**', '**/*-tvOS*/**'],
+ };
+ var { warnn, infon, debugn } = require('./log');
++var path = require('path');
++
++var mainApplicationKotlin = path.resolve(process.cwd(), './android/app/src/main/java/is/island/app/MainApplication.java');
+ 
+ exports.mainActivityKotlin = glob.sync('**/MainActivity.kt', ignoreFolders)[0];
+ var mainApplicationKotlin = glob.sync('**/MainApplication.kt', ignoreFolders)[0];
+diff --git a/lib/android/app/src/main/java/com/reactnativenavigation/views/touch/OverlayTouchDelegate.kt b/lib/android/app/src/main/java/com/reactnativenavigation/views/touch/OverlayTouchDelegate.kt
+index 81e3b74c6531f75e240edb411273a46c9502d44b..b5014556fcd12e07ccfc6ea5d31b219236d6d2a5 100644
+--- a/lib/android/app/src/main/java/com/reactnativenavigation/views/touch/OverlayTouchDelegate.kt
++++ b/lib/android/app/src/main/java/com/reactnativenavigation/views/touch/OverlayTouchDelegate.kt
+@@ -12,6 +12,17 @@ import com.reactnativenavigation.utils.coordinatesInsideView
+ import com.reactnativenavigation.views.component.ComponentLayout
+ import androidx.core.view.isVisible
+ 
++		import android.content.Context
++	import android.util.AttributeSet
++* /* DebuggingOverlay.kt */
++	
++	public class DebuggingOverlay @JvmOverloads constructor(
++	    context: Context,
++	    attrs: AttributeSet? = null
++	) : View(context, attrs) {
++	    // ...
++}
++
+ open class OverlayTouchDelegate(
+     private val component: ComponentLayout,
+     private val reactView: ReactView
