@@ -64,6 +64,10 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
+  dateAndTime: {
+    id: 'sp.health:date-and-time',
+    defaultMessage: 'Dagsetning og tími',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -1730,9 +1734,25 @@ export const messages = defineMessages({
     defaultMessage: 'Mitt heilsuyfirlit',
     id: 'sp.health:my-health-overview',
   },
+  appointments: {
+    defaultMessage: 'Tímabókanir',
+    id: 'sp.health:appointments',
+  },
+  appointmentDetail: {
+    defaultMessage: 'Upplýsingar um tímabókun',
+    id: 'sp.health:appointment-detail',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
+  },
+  appointmentsIntro: {
+    defaultMessage: 'Hér sérðu yfirlit yfir tímabókanir þínar.',
+    id: 'sp.health:appointments-intro',
+  },
+  appointmentsDetailIntro: {
+    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -2050,5 +2070,81 @@ export const messages = defineMessages({
   dispensationPlaces: {
     id: 'sp.health:dispensation-places',
     defaultMessage: 'Afgreiðslustaðir',
+  },
+  allAppointments: {
+    id: 'sp.health:all-appointments',
+    defaultMessage: 'Allar tímabókanir',
+  },
+  noAppointmentsTitle: {
+    id: 'sp.health:no-appointments-title',
+    defaultMessage: 'Engir tímar',
+  },
+  noAppointmentsText: {
+    id: 'sp.health:no-appointments',
+    defaultMessage: 'Engar tímabókanir framundan',
+  },
+  appointmentAt: {
+    id: 'sp.health:appointment-at',
+    defaultMessage: 'Tími hjá: {arg} ',
+  },
+  appointmentAtSimple: {
+    id: 'sp.health:appointment-at-simple',
+    defaultMessage: 'Tími hjá',
+  },
+  locationAddress: {
+    id: 'sp.health:location-address',
+    defaultMessage: 'Staðsetning',
+  },
+  instructions: {
+    id: 'sp.health:instructions',
+    defaultMessage: 'Leiðbeiningar',
+  },
+  appointmentSearchPlaceholder: {
+    id: 'sp.health:appointment-search-placeholder',
+    defaultMessage: 'Leita að tíma eða stað',
+  },
+  appointmentStatusArrived: {
+    id: 'sp.health:appointment-status-arrived',
+    defaultMessage: 'Mætt/ur',
+  },
+  appointmentStatusBooked: {
+    id: 'sp.health:appointment-status-booked',
+    defaultMessage: 'Bókaður',
+  },
+  appointmentStatusCancelled: {
+    id: 'sp.health:appointment-status-cancelled',
+    defaultMessage: 'Afbókaður',
+  },
+  appointmentStatusCheckedIn: {
+    id: 'sp.health:appointment-status-checked-in',
+    defaultMessage: 'Skráður inn',
+  },
+  appointmentStatusDeleted: {
+    id: 'sp.health:appointment-status-deleted',
+    defaultMessage: 'Eytt',
+  },
+  appointmentStatusEnteredInError: {
+    id: 'sp.health:appointment-status-entered-in-error',
+    defaultMessage: 'Skráður fyrir mistök',
+  },
+  appointmentStatusFulfilled: {
+    id: 'sp.health:appointment-status-fulfilled',
+    defaultMessage: 'Uppfylltur',
+  },
+  appointmentStatusNoShow: {
+    id: 'sp.health:appointment-status-no-show',
+    defaultMessage: 'Mætti ekki',
+  },
+  appointmentStatusPending: {
+    id: 'sp.health:appointment-status-pending',
+    defaultMessage: 'Í bið',
+  },
+  appointmentStatusProposed: {
+    id: 'sp.health:appointment-status-proposed',
+    defaultMessage: 'Fyrirhugaður',
+  },
+  appointmentStatusWaitlist: {
+    id: 'sp.health:appointment-status-waitlist',
+    defaultMessage: 'Á biðlista',
   },
 })

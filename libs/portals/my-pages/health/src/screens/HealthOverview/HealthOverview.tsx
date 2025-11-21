@@ -13,10 +13,15 @@ import {
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
   useGetBloodTypeOverviewQuery,
+  useGetAppointmentsOverviewQuery,
 } from './HealthOverview.generated'
 
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
+import Appointments from './components/Appointments'
+import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -26,9 +31,24 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const [showAppointments, setShowAppointments] = useState(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalHealthAppointmentsPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowAppointments(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
   const {
     data: healthCenterData,
     loading: healthCenterLoading,
@@ -83,6 +103,21 @@ export const HealthOverview = () => {
     error: bloodTypeError,
   } = useGetBloodTypeOverviewQuery()
 
+  const {
+    data: appointmentsData,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+  } = useGetAppointmentsOverviewQuery({
+    variables: {
+      from: undefined, // TODO: Change back to TODAY when data is present,
+      status: [
+        HealthDirectorateAppointmentStatus.BOOKED,
+        HealthDirectorateAppointmentStatus.PENDING,
+      ],
+    },
+    skip: !showAppointments,
+  })
+
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
@@ -102,6 +137,15 @@ export const HealthOverview = () => {
         </GridColumn>
       </GridRow>
       {/* Appointments */}
+      {showAppointments && (
+        <Appointments
+          data={{
+            data: appointmentsData?.healthDirectorateAppointments,
+            loading: appointmentsLoading,
+            error: !!appointmentsError,
+          }}
+        />
+      )}
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
