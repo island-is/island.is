@@ -60,14 +60,6 @@ export const sortApplicationsOrganizations = (
     return
   }
   applications.forEach((elem) => {
-    // const inst =
-    //   elem.formSystemOrgSlug ??
-    //   institutionMapper[elem.typeId].slug ??
-    //   'INSTITUTION_MISSING'
-    // const contentfulId =
-    //   elem.formSystemOrgContentfulId ??
-    //   institutionMapper[elem.typeId].contentfulId ??
-    //   'INSTITUTION_MISSING'
     const inst = (elem.org as InstitutionTypes) ?? 'INSTITUTION_MISSING'
     const contentfulId = elem.orgContentfulId ?? 'INSTITUTION_MISSING'
     institutions.push({

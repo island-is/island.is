@@ -49,15 +49,13 @@ const Overview = () => {
   const { formatMessage, locale } = useLocale()
   const {
     data: applicationCards,
-    loading: loadingCards,
-    error: errorCards,
-    refetch: refetchApplicationCards,
+    loading,
+    error,
+    refetch,
   } = useApplicationCards()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
-
-  console.log('applicationCards', applicationCards)
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
     variables: {
@@ -152,18 +150,16 @@ const Overview = () => {
         intro={GetIntroductionHeadingOrIntro(statusToShow)}
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
-      {(loadingCards || loadingOrg || !orgData) && (
-        <ActionCardLoader repeat={3} />
-      )}
-      {(errorCards || (!loadingCards && !applicationCards)) && (
-        <Problem error={errorCards} noBorder={false} />
+      {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
+      {(error || (!loading && !applicationCards)) && (
+        <Problem error={error} noBorder={false} />
       )}
       {applicationCards &&
         applicationCards.length > 0 &&
         orgData &&
         !loadingOrg &&
-        !loadingCards &&
-        !errorCards && (
+        !loading &&
+        !error && (
           <>
             <Box paddingBottom={[3, 5]}>
               <GridRow alignItems="flexEnd">
@@ -206,7 +202,7 @@ const Overview = () => {
                 applications={[focusedApplication]}
                 label={formatMessage(m.focusedApplication)}
                 organizations={organizations}
-                refetch={refetchApplicationCards}
+                refetch={refetch}
                 focus={true}
               />
             )}
@@ -217,7 +213,7 @@ const Overview = () => {
                   applications={applicationsSortedByStatus.incomplete}
                   label={formatMessage(m.incompleteApplications)}
                   organizations={organizations}
-                  refetch={refetchApplicationCards}
+                  refetch={refetch}
                 />
               )}
             {applicationsSortedByStatus.inProgress?.length > 0 &&
@@ -227,7 +223,7 @@ const Overview = () => {
                   applications={applicationsSortedByStatus.inProgress}
                   label={formatMessage(m.inProgressApplications)}
                   organizations={organizations}
-                  refetch={refetchApplicationCards}
+                  refetch={refetch}
                 />
               )}
             {applicationsSortedByStatus.finished?.length > 0 &&
@@ -237,12 +233,12 @@ const Overview = () => {
                   applications={applicationsSortedByStatus.finished}
                   label={formatMessage(m.finishedApplications)}
                   organizations={organizations}
-                  refetch={refetchApplicationCards}
+                  refetch={refetch}
                 />
               )}
           </>
         )}
-      {!errorCards && !loadingCards && noApplications && (
+      {!error && !loading && noApplications && (
         <Problem
           type="no_data"
           noBorder={false}
