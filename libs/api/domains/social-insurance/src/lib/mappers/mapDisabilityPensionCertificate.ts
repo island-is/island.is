@@ -1,7 +1,6 @@
 import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
-import { DisabilityPensionCertificate } from '../models/medicalDocuments/DisabilityPensionCertificate'
 import {
   TrWebContractsExternalServicePortalDisabilityDiagnosis,
   TrWebContractsExternalServicePortalDisabilityPensionCertificate,
@@ -9,13 +8,13 @@ import {
   TrWebContractsExternalServicePortalHealthImpact,
   TrWebContractsExternalServicePortalQuestionnaireResult,
 } from '@island.is/clients/social-insurance-administration'
-import { ImpairmentRatingDomain } from '../models/medicalDocuments/impairmentRatingDomain.model'
 import type { Locale} from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE, DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE } from '../constants'
 import { ImpairmentRating } from '../models/medicalDocuments/impairmentRating.model'
 import { MedicationAndSupportsUsed } from '../models/medicalDocuments/medicationAndSupportsUsed.model'
 import { StabilityOfHealth } from '../models/medicalDocuments/stabilityOfHealth.model'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
 
 const mapDoctor = (
   doctorInfo?: TrWebContractsExternalServicePortalDoctorInfo,
