@@ -7,7 +7,7 @@ import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 import { redirects } from './assetRedirects'
 import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
-import { BulkMileageWrapper } from './wrappers/bulkMileageWrapper'
+import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
 const IPOverview = lazy(() =>
   import(
