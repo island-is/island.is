@@ -9,5 +9,5 @@ export class MedicationAndSupportsUsed {
   supportsUsed?: string
 
   @Field({ nullable: true })
-  interventionsUsed?: string;
+  interventionsUsed?: string
 }

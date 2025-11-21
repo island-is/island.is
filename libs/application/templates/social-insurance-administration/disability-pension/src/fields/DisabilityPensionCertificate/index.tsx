@@ -123,11 +123,18 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>{formatMessage(m.certificate.impairmentStability)}</Label>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate
-              .stabilityOfHealth?.description ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate.stabilityOfHealth
+              ?.description ?? '-'}
           </Text>
-          {data?.socialInsuranceDisabilityPensionCertificate?.stabilityOfHealth?.furtherDetails && <Text>{data.socialInsuranceDisabilityPensionCertificate
-              .stabilityOfHealth.furtherDetails}</Text>}
+          {data?.socialInsuranceDisabilityPensionCertificate?.stabilityOfHealth
+            ?.furtherDetails && (
+            <Text>
+              {
+                data.socialInsuranceDisabilityPensionCertificate
+                  .stabilityOfHealth.furtherDetails
+              }
+            </Text>
+          )}
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
@@ -144,36 +151,57 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span="1/1">
           <Label>{formatMessage(m.certificate.employmentCapability)}</Label>
-          <Text>{data?.socialInsuranceDisabilityPensionCertificate
-            ?.capacityForWork ?? '-'}</Text>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate
+              ?.capacityForWork ?? '-'}
+          </Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>{formatMessage(m.certificate.previousTherapies)}</Label>
-          <Text>{data?.socialInsuranceDisabilityPensionCertificate
-            ?.previousRehabilitation ?? '-'}</Text>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate
+              ?.previousRehabilitation ?? '-'}
+          </Text>
         </GridColumn>
       </GridRow>
     </Stack>
   )
 
-
   const medicationAndSupportsUsed = () => {
-    if (!(data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed)) {
-      return <Text>{formatMessage(m.certificate.noMedicationAndSupportsUsed)}</Text>
+    if (
+      !data?.socialInsuranceDisabilityPensionCertificate
+        ?.medicationAndSupportsUsed
+    ) {
+      return (
+        <Text>{formatMessage(m.certificate.noMedicationAndSupportsUsed)}</Text>
+      )
     }
 
     return (
-        <>{data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.medicationUsed && (
-          <Text>{`${formatMessage(m.certificate.medicine)}: ${data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.medicationUsed}`}</Text>
+      <>
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.medicationUsed && (
+          <Text>{`${formatMessage(m.certificate.medicine)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.medicationUsed
+          }`}</Text>
         )}
-        {data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.supportsUsed && (
-          <Text>{`${formatMessage(m.certificate.supports)}: ${data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.supportsUsed}`}</Text>
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.supportsUsed && (
+          <Text>{`${formatMessage(m.certificate.supports)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.supportsUsed
+          }`}</Text>
         )}
-        {data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.interventionsUsed && (
-          <Text>{`${formatMessage(m.certificate.otherInterventions)}: ${data?.socialInsuranceDisabilityPensionCertificate?.medicationAndSupportsUsed.interventionsUsed}`}</Text>
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.interventionsUsed && (
+          <Text>{`${formatMessage(m.certificate.otherInterventions)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.interventionsUsed
+          }`}</Text>
         )}
-        </>
-    );
+      </>
+    )
   }
 
   const physicalImpairments = () => (
