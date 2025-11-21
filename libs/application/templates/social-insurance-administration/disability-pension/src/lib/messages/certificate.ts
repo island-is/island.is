@@ -113,6 +113,22 @@ export const certificate = defineMessages({
       'Hvaða endurhæfing hefur verið reynd?',
     description: 'What therapies have been tried?',
   },
+  medicine: {
+    id: 'dp.application:certificate.information.medicine',
+    defaultMessage: 'Lyf',
+  },
+  otherInterventions: {
+    id: 'dp.application:certificate.information.other.interventions',
+    defaultMessage: 'Önnur inngrip',
+  },
+  supports: {
+    id: 'dp.application:certificate.information.supports',
+    defaultMessage: 'Hjálpartæki',
+  },
+  noMedicationAndSupportsUsed: {
+    id: 'dp.application:certificate.information.no.medication.and.supports.used',
+    defaultMessage: 'Engin lyf eða hjálpartæki eru notuð',
+  },
 
   // Physical impairment
   physicalImpairment: {
