@@ -9,6 +9,7 @@ export const ApiConfig = {
   useFactory: (
     config: ConfigType<typeof FinancialManagementAuthorityClientConfig>,
   ) => {
+    const authServer = config.authenticationServer.replace(/\/+$/, '')
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-financial-management-authority',
@@ -20,8 +21,8 @@ export const ApiConfig = {
           clientId: config.clientId.trim(),
           clientSecret: config.clientSecret.trim(),
           scope: config.scope.split(' '),
-          issuer: config.authenticationServer,
-          tokenEndpoint: config.authenticationServer + 'connect/token'
+          issuer: authServer,
+          tokenEndpoint: `${authServer}/connect/token`
         },
       }),
       basePath: config.basePath,
