@@ -180,7 +180,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
       staging: {
@@ -190,7 +190,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
       prod: {
@@ -200,7 +200,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
     })
