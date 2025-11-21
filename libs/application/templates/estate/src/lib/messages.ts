@@ -261,6 +261,21 @@ export const m = defineMessages({
     defaultMessage: 'Samtals',
     description: '',
   },
+  activate: {
+    id: 'es.application:activate',
+    defaultMessage: 'Virkja',
+    description: '',
+  },
+  disable: {
+    id: 'es.application:disable',
+    defaultMessage: 'Afvirkja',
+    description: '',
+  },
+  delete: {
+    id: 'es.application:delete',
+    defaultMessage: 'Fjarlægja',
+    description: '',
+  },
 
   // Applicant
   announcer: {

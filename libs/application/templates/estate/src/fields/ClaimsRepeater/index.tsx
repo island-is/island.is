@@ -3,13 +3,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
@@ -112,7 +106,7 @@ export const ClaimsRepeater: FC<
         const fieldError = error && error[index] ? error[index] : null
 
         return (
-          <Box position="relative" key={field.id} marginTop={2}>
+          <Box position="relative" key={field.id} marginTop={4}>
             <Controller
               name={initialField}
               control={control}
@@ -125,44 +119,46 @@ export const ClaimsRepeater: FC<
               defaultValue={field.enabled ?? true}
               render={({ field: ctrl }) => <input type="hidden" {...ctrl} />}
             />
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={0}
-            >
-              <Text variant="h4" />
-              <Box display="flex" alignItems="center" columnGap={2}>
-                {field.initial && (
-                  <Button
-                    variant="text"
-                    icon={field.enabled ? 'remove' : 'add'}
-                    size="small"
-                    iconType="outline"
-                    onClick={() => {
-                      const updatedClaim = {
-                        ...field,
-                        enabled: !field.enabled,
-                      }
-                      update(index, updatedClaim)
-                      clearErrors(`${id}[${index}].value`)
-                    }}
-                  >
-                    {field.enabled
-                      ? formatMessage(m.inheritanceDisableMember)
-                      : formatMessage(m.inheritanceEnableMember)}
-                  </Button>
-                )}
-                {!field.initial && (
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    circle
-                    icon="remove"
-                    onClick={handleRemoveClaim.bind(null, index)}
-                  />
-                )}
-              </Box>
+            <Box display="flex" justifyContent="flexEnd">
+              {field.initial &&
+                (() => {
+                  const isEnabled = field.enabled !== false
+                  return (
+                    <Button
+                      variant="text"
+                      icon={isEnabled ? 'remove' : 'add'}
+                      size="small"
+                      iconType="outline"
+                      onClick={() => {
+                        const isEnabled = field.enabled !== false
+                        const updatedClaim = {
+                          ...field,
+                          enabled: isEnabled ? false : true,
+                        }
+                        update(index, updatedClaim)
+                        calculateTotal()
+                        clearErrors([
+                          `${id}[${index}].value`,
+                          `${id}[${index}].publisher`,
+                          `${id}[${index}].nationalId`,
+                        ])
+                      }}
+                    >
+                      {isEnabled
+                        ? formatMessage(m.disable)
+                        : formatMessage(m.activate)}
+                    </Button>
+                  )
+                })()}
+              {!field.initial && (
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={handleRemoveClaim.bind(null, index)}
+                />
+              )}
             </Box>
             <GridRow>
               <GridColumn
@@ -179,7 +175,7 @@ export const ClaimsRepeater: FC<
                   required
                   error={fieldError?.publisher}
                   size="sm"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
@@ -199,7 +195,7 @@ export const ClaimsRepeater: FC<
                   currency
                   size="sm"
                   backgroundColor="blue"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
@@ -214,7 +210,7 @@ export const ClaimsRepeater: FC<
                   format="######-####"
                   size="sm"
                   backgroundColor="blue"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
