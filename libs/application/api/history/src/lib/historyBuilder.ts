@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationContext,
   ApplicationStateSchema,
   FormatMessage,
@@ -24,6 +25,7 @@ export class HistoryBuilder {
     history: History[],
     formatMessage: FormatMessage,
     templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>,
+    application: Application,
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
@@ -63,7 +65,10 @@ export class HistoryBuilder {
           ])
         }
 
-        const message = historyLog.logMessage
+        const message =
+          typeof historyLog.logMessage === 'function'
+            ? historyLog.logMessage(application, subjectNationalId)
+            : historyLog.logMessage
 
         let subjectAndActorText: string | undefined
         if (subjectName) {
