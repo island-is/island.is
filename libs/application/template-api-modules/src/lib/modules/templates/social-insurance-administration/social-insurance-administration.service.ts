@@ -16,13 +16,13 @@ import {
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import type {
+import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
-  TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
-  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
+  type TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+  type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
