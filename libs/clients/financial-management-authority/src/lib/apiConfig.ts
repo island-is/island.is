@@ -22,7 +22,7 @@ export const ApiConfig = {
           scope: config.scope.split(' '),
           issuer: config.authenticationServer,
           tokenEndpoint: config.authenticationServer + 'connect/token',
-          clientAuthentication: 'basic'
+          clientAuthentication: 'basic',
         },
       }),
       basePath: config.basePath,

@@ -2,7 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import {
   VacancyApi,
-  VacancyResponseDto
+  VacancyResponseDto,
 } from '@island.is/clients/financial-management-authority'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
@@ -211,11 +211,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     }
   }
 
-  private async getVacancyFromExternalSystem(
-    id: string
-  ) {
+  private async getVacancyFromExternalSystem(id: string) {
     const item = (await this.api.v1VacancyGetVacancyGet({
-      vacancyId: id
+      vacancyId: id,
     })) as VacancyResponseDto
     if (!item) {
       return { vacancy: null }

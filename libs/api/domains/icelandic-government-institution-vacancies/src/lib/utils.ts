@@ -190,10 +190,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
         'tasksAndResponsibilities',
       ),
       convertHtmlToContentfulRichText(vacancy.moreInfo ?? '', 'description'),
-      convertHtmlToContentfulRichText(
-        '',
-        'salaryTerms',
-      ),
+      convertHtmlToContentfulRichText('', 'salaryTerms'),
     ])
 
     return {
