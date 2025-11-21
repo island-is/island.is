@@ -1,5 +1,5 @@
 import { HTMLText } from '@island.is/regulations'
-import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
+import { Editor, EditorFileUploader } from '@dmr.is/regulations-tools/Editor'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'

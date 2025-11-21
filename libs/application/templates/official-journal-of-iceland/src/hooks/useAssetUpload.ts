@@ -1,6 +1,6 @@
 import { GET_PRESIGNED_URL_MUTATION } from '../graphql/queries'
 import { useMutation } from '@apollo/client'
-import { EditorFileUploader } from '@island.is/regulations-tools/EditorFrame'
+import { EditorFileUploader } from '@dmr.is/regulations-tools/EditorFrame'
 
 /**
  *
