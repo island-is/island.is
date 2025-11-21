@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, View } from 'react-native'
+import { Image, SafeAreaView, View, Text } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
@@ -12,19 +12,19 @@ import { CancelButton, dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
-import { preferencesStore } from '../../stores/preferences-store'
+// import { preferencesStore } from '../../stores/preferences-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
-const Host = styled.View`
+const Host = styled(View)`
   flex: 1;
   justify-content: center;
   align-items: center;
   background-color: ${dynamicColor('background')};
 `
 
-const Title = styled.Text`
+const Title = styled(Text)`
   ${font({
     fontSize: 20,
   })}
@@ -34,7 +34,7 @@ const Title = styled.Text`
   text-align: center;
 `
 
-const Subtitle = styled.Text`
+const Subtitle = styled(Text)`
   ${font({
     fontSize: 14,
   })}
@@ -43,7 +43,7 @@ const Subtitle = styled.Text`
   text-align: center;
 `
 
-const Center = styled.View`
+const Center = styled(View)`
   justify-content: center;
   align-items: center;
 `
@@ -87,12 +87,12 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           Keychain.setGenericPassword('PIN_CODE', code, {
             service: 'PIN_CODE',
           }).then(() => {
-            preferencesStore.setState(() => ({ hasOnboardedPinCode: true }))
-            if (replacePin) {
-              Navigation.dismissModal(componentId)
-            } else {
-              nextOnboardingStep()
-            }
+            // preferencesStore.setState(() => ({ hasOnboardedPinCode: true }))
+            // if (replacePin) {
+            //   Navigation.dismissModal(componentId)
+            // } else {
+            //   nextOnboardingStep()
+            // }
           })
         } else {
           setInvalid(true)

@@ -101,7 +101,6 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
         showsHorizontalScrollIndicator={false}
         snapToAlignment={'start'}
         automaticallyAdjustContentInsets={false}
-        contentInsetAdjustmentBehavior="never"
         decelerationRate={0}
       >
         {children}

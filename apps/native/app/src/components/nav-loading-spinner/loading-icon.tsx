@@ -1,5 +1,5 @@
 import { ActivityIndicator } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 import { isAndroid } from '../../utils/devices'
 
 export const LoadingIcon = () => {
