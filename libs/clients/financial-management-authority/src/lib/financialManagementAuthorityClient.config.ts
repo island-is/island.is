@@ -15,22 +15,13 @@ export const FinancialManagementAuthorityClientConfig = defineConfig<
   name: 'FinancialManagementAuthorityClient',
   schema,
   load: (env) => ({
-    basePath: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
-      '',
-    ),
-    clientId: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
-      ''
-    ),
+    basePath: env.required('FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH', ''),
+    clientId: env.required('FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID', ''),
     clientSecret: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
       '',
     ),
-    scope: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
-      ''
-    ),
+    scope: env.required('FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE', ''),
     authenticationServer: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
       '',
