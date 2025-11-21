@@ -83,6 +83,7 @@ export interface ApplicationCard {
   progress?: number
   slug?: string
   org?: string
+  applicationPath?: string
   orgContentfulId?: string
   nationalId?: string
   actionCard?: ActionCardMetaData

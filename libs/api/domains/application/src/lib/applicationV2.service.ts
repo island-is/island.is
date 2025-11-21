@@ -6,7 +6,10 @@ import { ApplicationCardsInput } from './dto/applicationCards.input'
 import { ApplicationCard } from './applicationV2.model'
 import { ApplicationResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
-import { institutionMapper } from '@island.is/application/types'
+import {
+  institutionMapper,
+  ApplicationConfigurations,
+} from '@island.is/application/types'
 
 @Injectable()
 export class ApplicationV2Service {
@@ -46,7 +49,7 @@ export class ApplicationV2Service {
       locale,
     })
 
-    const asCards = applications.map((application): ApplicationCard => {
+    const appSystemCards = applications.map((application): ApplicationCard => {
       return {
         id: application.id,
         created: application.created,
@@ -55,14 +58,17 @@ export class ApplicationV2Service {
         status: application.status,
         name: application.name,
         progress: application.progress,
-        slug: institutionMapper[application.typeId].slug,
+        slug: ApplicationConfigurations[application.typeId]?.slug,
         org: institutionMapper[application.typeId].slug,
+        applicationPath: `umsoknir/${
+          ApplicationConfigurations[application.typeId]?.slug
+        }/${application.id}`,
         orgContentfulId: institutionMapper[application.typeId].contentfulId,
         nationalId: institutionMapper[application.typeId].nationalId,
         actionCard: application.actionCard,
       }
     })
-    const fsCards = formSystemApplications.map(
+    const formSystemCards = formSystemApplications.map(
       (application): ApplicationCard => {
         return {
           id: application.id,
@@ -74,13 +80,14 @@ export class ApplicationV2Service {
           progress: application.progress,
           slug: application.formSystemFormSlug,
           org: application.formSystemOrgSlug,
+          applicationPath: `form/${application.formSystemFormSlug}/${application.id}`,
           orgContentfulId: application.formSystemOrgContentfulId,
-          // nationalId: application.nationalId, // TODO: add nationalId
+          nationalId: undefined, // TODO: add nationalId if possible
           actionCard: application.actionCard,
         }
       },
     )
-    return [...asCards, ...fsCards].sort(
+    return [...appSystemCards, ...formSystemCards].sort(
       (a, b) => b.modified.getTime() - a.modified.getTime(),
     )
   }

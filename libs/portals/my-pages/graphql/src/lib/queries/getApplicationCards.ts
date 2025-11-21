@@ -12,6 +12,7 @@ export const APPLICATION_CARDS = gql`
       progress
       slug
       org
+      applicationPath
       orgContentfulId
       nationalId
       actionCard {

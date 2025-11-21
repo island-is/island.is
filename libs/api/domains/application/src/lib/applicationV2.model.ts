@@ -32,6 +32,9 @@ export class ApplicationCard {
   org?: string
 
   @Field(() => String, { nullable: true })
+  applicationPath?: string
+
+  @Field(() => String, { nullable: true })
   orgContentfulId?: string
 
   @Field(() => String, { nullable: true })
