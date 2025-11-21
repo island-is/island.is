@@ -1,9 +1,9 @@
 import { useLocalizedQuery } from '@island.is/localization'
-import { COMBINED_APPLICATIONS } from '../../lib/queries/getCombinedApplications'
+import { APPLICATION_CARDS } from '../../lib/queries/getApplicationCards'
 
-export const useCombinedApplications = () => {
+export const useApplicationCards = () => {
   const { data, loading, error, refetch } = useLocalizedQuery(
-    COMBINED_APPLICATIONS,
+    APPLICATION_CARDS,
     {
       variables: {
         input: { scopeCheck: true },
@@ -12,7 +12,7 @@ export const useCombinedApplications = () => {
   )
 
   return {
-    data: data?.myPagesApplications ?? [],
+    data: data?.ApplicationCard ?? [],
     loading,
     error,
     refetch,

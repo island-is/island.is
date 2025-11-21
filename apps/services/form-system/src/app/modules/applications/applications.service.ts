@@ -40,6 +40,7 @@ import { Dependency } from '../../dataTypes/dependency.model'
 import { SectionTypes } from '@island.is/form-system/shared'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 import type { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class ApplicationsService {
@@ -416,7 +417,8 @@ export class ApplicationsService {
       where: {
         nationalId,
         pruned: false,
-        isTest: false,
+        isTest:
+          isRunningOnEnvironment('local') || isRunningOnEnvironment('dev'),
       },
       include: [{ model: Value, as: 'values' }],
     })

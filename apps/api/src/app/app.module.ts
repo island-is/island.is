@@ -53,7 +53,6 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
-import { MyPagesApplicationModule } from '@island.is/api/domains/my-pages'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { NotificationsModule } from '@island.is/api/domains/notifications'
@@ -278,9 +277,6 @@ const environment = getConfig
     }),
     EducationV2Module,
     ApplicationModule.register({
-      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
-    }),
-    MyPagesApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),

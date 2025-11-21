@@ -1,34 +1,23 @@
-import { getSlugFromType } from '@island.is/application/core'
 import { ApplicationCardFields } from '../components/ApplicationCard/types'
-
-const getBaseUrl = () => {
-  const path = window.location.origin
-  const isLocalhost = path.includes('localhost')
-  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
-}
-
-const getFormSystemBaseUrl = () => {
-  const path = window.location.origin
-  const isLocalhost = path.includes('localhost')
-  return isLocalhost ? 'http://localhost:4201/form' : `${path}/form`
-}
 
 export const useOpenApplication = (
   application: Pick<
     ApplicationCardFields,
-    'id' | 'typeId' | 'formSystemFormSlug'
+    'id' | 'typeId' | 'slug' | 'applicationPath'
   >,
 ) => {
-  const baseUrl = application.formSystemFormSlug
-    ? getFormSystemBaseUrl()
-    : getBaseUrl()
-  const slug = application.formSystemFormSlug
-    ? application.formSystemFormSlug
-    : getSlugFromType(application.typeId)
-  const url = `${baseUrl}/${slug}/${application.id}`
+  const path = window.location.origin
+  const isLocalhost = path.includes('localhost')
+  const localUrl = `${
+    application.applicationPath?.startsWith('umsoknir/')
+      ? 'http://localhost:4242'
+      : 'http://localhost:4201'
+  }/${application.applicationPath}`
+  const url = isLocalhost ? localUrl : `${path}/${application.applicationPath}`
+
   const openApplication = () => {
     window.open(url)
   }
 
-  return { openApplication, url, slug }
+  return { openApplication, url, slug: application.slug }
 }

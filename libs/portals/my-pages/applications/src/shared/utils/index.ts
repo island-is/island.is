@@ -2,6 +2,7 @@ import {
   Application,
   ApplicationStatus,
   InstitutionTypes,
+  ApplicationCard,
 } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
@@ -51,7 +52,7 @@ export const sortApplicationsStatus = (
 }
 
 export const sortApplicationsOrganizations = (
-  applications: ApplicationWithInstitution[],
+  applications: (ApplicationWithInstitution & ApplicationCard)[],
   organizations?: Organization[],
 ): InstitutionOption[] | undefined => {
   let institutions: InstitutionOption[] = []
@@ -59,14 +60,8 @@ export const sortApplicationsOrganizations = (
     return
   }
   applications.forEach((elem) => {
-    const inst =
-      elem.formSystemOrgSlug ??
-      institutionMapper[elem.typeId].slug ??
-      'INSTITUTION_MISSING'
-    const contentfulId =
-      elem.formSystemOrgContentfulId ??
-      institutionMapper[elem.typeId].contentfulId ??
-      'INSTITUTION_MISSING'
+    const inst = (elem.org as InstitutionTypes) ?? 'INSTITUTION_MISSING'
+    const contentfulId = elem.orgContentfulId ?? 'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
       label: organizations.find((x) => x.id === contentfulId)?.title ?? inst,
@@ -104,7 +99,7 @@ export const getBaseUrlForm = () => {
 
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
-  applications: ApplicationWithInstitution[] = [],
+  applications: (ApplicationWithInstitution & ApplicationCard)[] = [],
   filteredOutApplication?: string,
 ) => {
   if (!filterValue) {
@@ -140,7 +135,7 @@ export const getFilteredApplicationsByStatus = (
 
 export const getInstitutions = (
   defaultInstitution: InstitutionOption,
-  applications: Application[],
+  applications: (Application & ApplicationCard)[],
   organizations: any,
 ): InstitutionOption[] => {
   if (!applications || !organizations) {

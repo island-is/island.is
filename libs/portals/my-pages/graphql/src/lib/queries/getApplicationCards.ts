@@ -1,18 +1,20 @@
 import { gql } from '@apollo/client'
 
-export const COMBINED_APPLICATIONS = gql`
-  query CombinedApplications(
-    $input: ApplicationApplicationsInput
-    $locale: String!
-  ) {
-    myPagesApplications(input: $input, locale: $locale) {
+export const APPLICATION_CARDS = gql`
+  query ApplicationCards($input: ApplicationCardsInput, $locale: String!) {
+    ApplicationCard(input: $input, locale: $locale) {
       id
       created
       modified
-      applicant
-      assignees
-      applicantActors
-      state
+      typeId
+      status
+      name
+      progress
+      slug
+      org
+      applicationPath
+      orgContentfulId
+      nationalId
       actionCard {
         title
         description
@@ -35,17 +37,6 @@ export const COMBINED_APPLICATIONS = gql`
         draftFinishedSteps
         historyButton
       }
-      typeId
-      answers
-      externalData
-      progress
-      name
-      institution
-      status
-      pruned
-      formSystemFormSlug
-      formSystemOrgContentfulId
-      formSystemOrgSlug
     }
   }
 `
