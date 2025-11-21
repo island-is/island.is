@@ -167,7 +167,10 @@ export const FieldsRepeaterFormField = ({
       : itemCondition
   }
 
-  const showAddButton = !hideAddButton
+  const showAddButton =
+    typeof hideAddButton === 'function'
+      ? !hideAddButton(updatedApplication)
+      : !hideAddButton
   const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
 
   return (
