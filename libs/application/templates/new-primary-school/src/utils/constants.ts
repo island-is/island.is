@@ -123,19 +123,20 @@ export enum PayerOption {
 }
 
 export enum ApplicationFeatureKey {
+  CONSENTS = 'consents',
   APPLICANT_INFO = 'applicant_info',
   GUARDIANS = 'guardians',
-  CURRENT_ORGANIZATION = 'current_organization',
   EMERGENCY_CONTACTS = 'emergency_contacts',
-  HEALTH_INFO = 'health_info',
-  SOCIAL_INFO = 'social_info',
-  LANGUAGE_INFO = 'language_info',
+  CURRENT_ORGANIZATION = 'current_organization',
   APPLICATION_REASON = 'application_reason',
   SIBLINGS = 'siblings',
   TIMEFRAME = 'timeframe',
+  LANGUAGE_INFO = 'language_info',
+  HEALTH_INFO = 'health_info',
+  SOCIAL_INFO = 'social_info',
+  CHILD_CIRCUMSTANCES = 'child_circumstances',
   PAYMENT_INFO = 'payment_info',
-  ATTACHMENTS = 'attachments',
-  CONSENTS = 'consents',
   TERMS = 'terms',
+  ATTACHMENTS = 'attachments',
   ADDITIONAL_REQUESTORS = 'additional_requestors',
 }

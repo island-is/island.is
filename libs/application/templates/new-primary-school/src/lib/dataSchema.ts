@@ -339,30 +339,6 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
-  acceptTerms: z.array(z.enum([YES])).nonempty(),
-  childCircumstances: z
-    .object({
-      onSiteObservation: z.array(z.enum([YES])).length(1),
-      onSiteObservationAdditionalInfo: z.array(z.enum([YES])).length(1),
-      callInExpert: z
-        .array(z.enum([YES]))
-        .length(1)
-        .optional(),
-      childViews: z.array(z.enum([YES])).length(1),
-    })
-    .refine(
-      (data) => {
-        return (
-          data.callInExpert === undefined ||
-          (Array.isArray(data.callInExpert) &&
-            data.callInExpert.length === 1 &&
-            data.callInExpert[0] === 'yes')
-        )
-      },
-      {
-        path: ['callInExpert'],
-      },
-    ),
   payer: z
     .object({
       option: z.nativeEnum(PayerOption),
