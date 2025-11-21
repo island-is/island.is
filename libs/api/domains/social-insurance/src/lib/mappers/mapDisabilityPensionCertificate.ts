@@ -110,7 +110,7 @@ const mapMedicationAndSupportsUsed = (
   return {
     medicationUsed: medicationUsed ?? undefined,
     supportsUsed: assessmentToolsUsed ?? undefined,
-    interventionUsed: interventionUsed ?? undefined,
+    interventionsUsed: interventionUsed ?? undefined,
   }
 }
 
