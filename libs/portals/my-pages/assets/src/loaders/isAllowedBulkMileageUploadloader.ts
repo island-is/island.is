@@ -15,23 +15,23 @@ export const GET_VEHICLE_COUNT_QUERY = gql`
 
 export const isAllowedBulkMileageUploadLoader: WrappedLoaderFn =
   ({ client }) =>
-    async () => {
-      const { data } = await client.query<Query>({
-        query: GET_VEHICLE_COUNT_QUERY,
-        variables: {
-          input: {
-            page: 1,
-            pageSize: 10,
-            filterOnlyVehiclesUserCanRegisterMileage: true,
-            filterOnlyMileageRequiredVehicles: false,
-            includeNextMainInspectionDate: false,
-          },
+  async () => {
+    const { data } = await client.query<Query>({
+      query: GET_VEHICLE_COUNT_QUERY,
+      variables: {
+        input: {
+          page: 1,
+          pageSize: 10,
+          filterOnlyVehiclesUserCanRegisterMileage: true,
+          filterOnlyMileageRequiredVehicles: false,
+          includeNextMainInspectionDate: false,
         },
-      })
-      const totalVehicles = data?.vehiclesListV3?.totalRecords ?? 0
+      },
+    })
+    const totalVehicles = data?.vehiclesListV3?.totalRecords ?? 0
 
-      if (totalVehicles > 10) {
-        return true
-      }
-      return false
+    if (totalVehicles > 10) {
+      return true
     }
+    return false
+  }

@@ -157,21 +157,33 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
-        element: <BulkMileageWrapper><VehicleBulkMileageUpload /></BulkMileageWrapper>,
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageUpload />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
-        element: <BulkMileageWrapper><VehicleBulkMileageJobOverview /></BulkMileageWrapper>,
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobOverview />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
-        element: <BulkMileageWrapper><VehicleBulkMileageJobDetail /></BulkMileageWrapper>,
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobDetail />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesLookup,
