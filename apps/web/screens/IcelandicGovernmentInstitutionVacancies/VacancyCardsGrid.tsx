@@ -36,9 +36,9 @@ export const VacancyCardsGrid = ({
         gap: theme.spacing[gap],
       }}
     >
-      {cards.map((card, index) => (
+      {cards.map((card) => (
         <InfoCard
-          key={`${card.title}-${index}`}
+          key={card.id}
           background={cardsBackground}
           padding={3}
           borderColor={cardsBorder}
