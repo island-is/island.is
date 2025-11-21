@@ -10,4 +10,3 @@ export enum VacancyLanguageEnum {
 registerEnumType(VacancyLanguageEnum, {
   name: 'VacancyLanguageEnum',
 })
-
