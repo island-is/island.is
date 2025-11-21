@@ -1,5 +1,6 @@
 import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
   buildHiddenInput,
   buildMultiField,
@@ -9,11 +10,17 @@ import {
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { ApplicationType } from '../../../utils/constants'
+import {
+  ApplicationType,
+  NU_UNIT_ID,
+  OrganizationSubType,
+} from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getCurrentAndNextGrade,
+  getSelectedSchoolSubType,
+  getSelectedSchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const newSchoolSubSection = buildSubSection({
@@ -109,6 +116,48 @@ export const newSchoolSubSection = buildSubSection({
             const { schoolMunicipality } = getApplicationAnswers(answers)
 
             return !!schoolMunicipality
+          },
+        }),
+        buildAlertMessageField({
+          id: 'newSchool.alertMessage',
+          title: newPrimarySchoolMessages.shared.alertTitle,
+          message: newPrimarySchoolMessages.primarySchool.newSchoolAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          marginTop: 4,
+          condition: (answers, externalData) => {
+            const selectedSchoolId = getSelectedSchoolUnitId(
+              answers,
+              externalData,
+            )
+
+            return selectedSchoolId === NU_UNIT_ID
+          },
+        }),
+        buildAlertMessageField({
+          id: 'newSchool.specialSchoolOrDepartmentAlertMessage',
+          title: newPrimarySchoolMessages.shared.alertTitle,
+          message:
+            newPrimarySchoolMessages.primarySchool
+              .newSchoolSpecialSchoolOrDepartmentAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          marginTop: 4,
+          condition: (answers, externalData) => {
+            const selectedSchoolSubType = getSelectedSchoolSubType(
+              answers,
+              externalData,
+            )
+
+            return (
+              selectedSchoolSubType !== '' &&
+              [
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL,
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL,
+              ].includes(selectedSchoolSubType)
+            )
           },
         }),
         buildHiddenInput({

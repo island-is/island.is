@@ -20,6 +20,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Umsókn um skólaskipti',
       description: 'Application for school transfer',
     },
+    continuingEnrollmentApplicationName: {
+      id: 'nps.application:continuing.enrollment.application.name',
+      defaultMessage: 'Umsókn um áframhaldandi skólavist',
+      description: 'Application for continuing enrollment',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -226,6 +231,28 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:prerequisites.childrenRadioTitle',
       defaultMessage: 'Veldu barn fyrir umsóknina',
       description: 'Select child for the application',
+    },
+  }),
+
+  applicationType: defineMessages({
+    sectionTitle: {
+      id: 'nps.application:application.type.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    schoolTransferSubLabel: {
+      id: 'nps.application:application.type.school.transfer.sub.label',
+      defaultMessage:
+        'Sé barnið þitt skráð í skóla getur þú óskað eftir að það verði skráð í annan skóla í því sveitarfélagi þar sem þú býrð. Þú getur einnig sótt um að barnið þitt fari í skóla í öðru sveitarfélagi eða í sjálfstætt starfandi skóla. Almennt gildir að í sveitarfélögum er val um grunnskóla en ef takmarka þarf fjölda nemenda í einstaka skólum eiga nemendur áfram rétt á skólavist í þeim skóla sem þeir þegar eru skráðir í.',
+      description:
+        'If your child is already registered in a school, you can request a transfer to another school within your municipality. You can also apply for your child to attend a school in another municipality or an independent school. In general, families can choose between primary schools within the municipality. In general, municipalities offer a choice of primary schools. However, if it becomes necessary to limit the number of students in certain schools, students still retain the right to continue their schooling at the school where they are already enrolled.',
+    },
+    continuingEnrollmentSubLabel: {
+      id: 'nps.application:application.type.continuing.enrollment.sub.label',
+      defaultMessage:
+        'Sé barnið þitt þegar skráð í skóla utan þess sveitarfélags þar sem það á lögheimili eða í sjálfstætt starfandi skóla, þá þarf foreldri að óska eftir áframhaldandi skólavist á hverju ári, með endurnýjun umsóknar.',
+      description:
+        'If your child is already enrolled in a school outside the municipality where they are legally registered, or in an independent school, the parent must request continuing enrollment each year by submitting a renewed application.',
     },
   }),
 
@@ -498,6 +525,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:primary.school.new.school.sub.section.title',
       defaultMessage: 'Nýr skóli',
       description: 'New school',
+    },
+    newSchoolAlertMessage: {
+      id: 'nps.application:primary.school.new.school.alert.message',
+      defaultMessage:
+        'Einungis þau börn sem stundað hafa skipulagðar íþróttaæfingar með þjálfara hjá íþróttafélagi síðastliðið ár, eiga kost á því að vera teknir inn á afreksíþróttabraut. Ef þú telur að barnið þitt uppfylli ekki þau skilyrði mælum við með því að skrá barnið þitt á akademíubraut.',
+      description:
+        'Only children who have participated in organised sports training with a coach at a sports club in the past year are eligible to be admitted to the elite sports course. If you believe that your child does not meet these criteria, we recommend registering your child for the academy course.',
+    },
+    newSchoolSpecialSchoolOrDepartmentAlertMessage: {
+      id: 'nps.application:primary.school.new.school.special.school.or.department.alert.message',
+      defaultMessage:
+        'Þú hefur valið að sækja um sérúrræði fyrir barnið þitt. Sérúrræði eru fyrir börn með metnar sérþarfir sem talið er að ekki sé hægt að mæta með almennu námi í grunnskóla, hvort sem er með stuðningi í kennslustund eða sérkennslu.',
+      description:
+        'You have chosen to apply for special resources for your child. Special resources are for children with assessed special needs who are considered to be unable to attend general education in primary school, whether with support in the classroom or special education.',
     },
 
     // Starting school
@@ -776,14 +817,14 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Has the child had a welfare contact person?',
     },
     hasWelfarePrimarySchoolContactDescription: {
-      id: 'nps.application:different.needs.has.welfare.contact.description',
+      id: 'nps.application:different.needs.has.welfare.primary.school.contact.description',
       defaultMessage:
         'Tengiliður farsældar er sá aðili innan grunnskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
       description:
         'The welfare contact person is the individual within the primary school who provides information and guidance, and has assisted parents in applying for services for their child.',
     },
     hasWelfareNurserySchoolContactDescription: {
-      id: 'nps.application:different.needs.has.welfare.contact.description',
+      id: 'nps.application:different.needs.has.welfare.nursery.school.contact.description',
       defaultMessage:
         'Tengiliður farsældar er sá aðili innan leikskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
       description:
@@ -858,6 +899,138 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:different.needs.requesting.meeting.description',
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
+    },
+
+    // Terms
+    termsSubSectionTitle: {
+      id: 'nps.application:different.needs.terms.sub.section.title',
+      defaultMessage: 'Skilmálar',
+      description: 'Terms',
+    },
+    termsSubSectionDescription: {
+      id: 'nps.application:different.needs.terms.description#markdown',
+      defaultMessage:
+        'Í umsókninni felst þríhliða samkomulag milli forsjáraðila, heimaskóla barns og þess skóla sem tekur tímabundið við barni. \n\nAllir aðilar skuldbinda sig til að vinna saman að velferð barns með það að markmiði að tryggja farsæla endurkomu þess í heimaskóla. Í því felst meðal annars að taka þátt í samstarfi um úrlausnir fyrir barnið, viðhalda virkum samskiptum milli allra aðila, fara eftir markmiðum og áætlun eftir bestu getu, og taka þátt í endurmati á stöðu mála.',
+      description:
+        'The application includes a tripartite agreement between the custodians, the child’s home school and the school that temporarily accepts the child. \n\nAll parties commit to working together on the welfare of the child, with the aim of ensuring a successful return to their home school. This includes participating in collaborative solutions for the child, maintaining active communication between all parties, following objectives and plans to the best of their ability, and participating in the reassessment of the situation.',
+    },
+    termsCheckbox: {
+      id: 'nps.application:different.needs.terms.checkbox',
+      defaultMessage:
+        'Með því að haka hér við staðfesta forsjáraðilar sinn hluta samkomulagsins.',
+      description:
+        'By checking this box custodians confirm their part in the above agreement.',
+    },
+
+    // Child's circumstances
+    childCircumstancesSubSectionTitle: {
+      id: 'nps.application:different.needs.child.circumstances.sub.section.title',
+      defaultMessage: 'Aðstæður barns',
+      description: "Child's circumstances",
+    },
+    childCircumstancesSubSectionDescription: {
+      id: 'nps.application:different.needs.child.circumstances.sub.section.description#markdown',
+      defaultMessage:
+        'Til að geta metið betur þörf barns fyrir úrræðið sem sótt er um kann að vera þörf á því að afla frekari upplýsinga á umsóknartímanum um aðstæður barnsins í nærumhverfi þess.\n\nUpplýsingar um aðstæður barns geta falið í sér viðkvæmar persónuupplýsingar, svo sem upplýsingar um heilsufar, og upplýsingar sem geta talist viðkvæms eðlis, svo sem upplýsingar um fjölskylduhagi eða félagslegan vanda barns og háttsemi.\n\nAllar athuganir eru gerðar í samráði við þjónustuteymi eða stuðningsteymi barns. Ef ræða þarf við sérfræðinga utan skólans verður forsjáraðila gefinn kostur á að hafa áhrif á val þeirra. Þá verða niðurstöður athuganna og álits kynntar forsjáraðila áður en endanleg ákvörðun er tekin.\n\nTil að uppfylla skyldur okkar samkvæmt lögum um persónuvernd og vinnslu persónuupplýsinga og reglugerð um stuðning við nemendur með sérþarfir í grunnskóla þurfum við að afla samþykkis foreldra áður en frekari upplýsinga er aflað.    \n\nBiðjum við þig að staðfesta að þú hafir kynnt þér efni þetta og veita samþykki þitt fyrir framangreindri vinnslu persónuupplýsinga í þeim tilgangi sem hér að neðan er lýst.',
+      description:
+        'In order to better assess a child’s need for the resources applied for, it may be necessary to gather more information during the application process regarding the child’s circumstances in his or her immediate environment.\n\nInformation on the child’s circumstances may include sensitive personal information, such as health information, and information that may be considered sensitive in nature, such as information on the child’s family history or social problems and behaviour.\n\nAll checks are carried out in consultation with the child’s service or support team. If experts outside the school are needed, the guardian will be given the opportunity to influence their choice. The results of the observations and opinions will be presented to the guardian before the final decision is made.\n\nIn order to comply with our legal obligations regarding data protection and the processing of personal information, as well as, regulations regarding the support of pupils with special needs in primary education, we need to obtain parental consent before obtaining any further information.\n\nWe ask you to confirm that you have familiarised yourself with this material and give your consent to the aforementioned processing of personal data for the purposes described below.',
+    },
+    onSiteObservation: {
+      id: 'nps.application:different.needs.on.site.observation',
+      defaultMessage:
+        'Áður en afstaða er tekin til umsóknarinnar kann að vera þörf á því að meta frekar aðstæður barns með vettvangsathugun.',
+      description:
+        'Before a decision is made on the application, there may be a need to further assess the childs situation with an on-site observation.',
+    },
+    approveOnsiteObservation: {
+      id: 'nps.application:different.needs.approve.onsite.observation',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, framkvæmi athugun á barni og aðstæðum þess í núverandi skóla og skrái niðurstöðurnar.',
+      description:
+        'I approve that a professional council or an authorized representative conducts an observation of the child and their situation in the current school and records the findings.',
+    },
+    onSiteObservationAdditionalInfo: {
+      id: 'nps.application:different.needs.on.site.observation.additional.info',
+      defaultMessage:
+        'Einnig kann að vera þörf á því að afla frekari gagna frá sérfræðingum í þeim tilgangi að upplýsa betur um aðstæður barns í kjölfar vettvangsathugunar.',
+      description:
+        'There may also be a need to obtain further information from specialists in order to better understand the childs situation following the on-site observation.',
+    },
+    approveOnSiteObservationAdditionalInfo: {
+      id: 'nps.application:different.needs.approve.on.site.observation.additional.info',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, afli eftir þörfum frekari upplýsinga um barnið mitt í kjölfar vettvangsathugunar.',
+      description:
+        'I approve that a professional council or an authorized representative obtains further information about my child as needed following the on-site observation.',
+    },
+    callInExpert: {
+      id: 'nps.application:different.needs.call.in.expert',
+      defaultMessage:
+        'Þá kann að vera nauðsynlegt að kalla til sérfræðinga utan skólans í fötlun barns og námi og skólagöngu fatlaðra barna, eða eftir atvikum barna með tilfinninga- og/eða hegðunarvanda.',
+      description:
+        'It may then be necessary to call in experts outside the school regarding the childs disability and education, or as the case may be, children with emotional and/or behavioral difficulties.',
+    },
+    approveCallInExpert: {
+      id: 'nps.application:different.needs.approve.call.in.expert',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, sæki ráðgjöf sérfræðinga utan skólans í námi og skólagöngu barnsins míns, fötlun eða eftir atvikum vanda þess.',
+      description:
+        'I approve that a professional council or an authorized representative seeks advice from experts outside the school regarding my childs education and schooling, disability, or as the case may be, their difficulties.',
+    },
+    childViews: {
+      id: 'nps.application:different.needs.child.views',
+      defaultMessage:
+        'Loks er mikilvægt að kanna afstöðu barns og gefa því færi á að tjá sig um viðhorf sín til nýrra gagna sem fagráð kann að hafa safnað og mögulegrar skólavistar, með hliðstjón af aldri og þroska þess.',
+      description:
+        'Finally, it is important to explore the childs perspective and give them the opportunity to express their views on the new data that a professional council may have collected and possible school placement, taking into account their age and maturity.',
+    },
+    approveChildViews: {
+      id: 'nps.application:different.needs.approve.child.views',
+      defaultMessage:
+        'Ég samþykki að fagráð eða aðili í umboði þess, afli upplýsinga um viðhorf barnsins sjálfs til nýrra gagna sem safnað hefur verið og mögulegrar skólavistar í þeim skóla sem sótt er um.',
+      description:
+        'I agree that the professional council, or a party acting on its behalf, may obtain information about the childs own attitude towards the new data that has been collected and possible school placement at the school applied for.',
+    },
+
+    // Payer
+    payerSubSectionTitle: {
+      id: 'nps.application:different.needs.payer.sub.section.title',
+      defaultMessage: 'Greiðandi',
+      description: 'Payer',
+    },
+    payerTitle: {
+      id: 'nps.application:different.needs.payer.title',
+      defaultMessage: 'Hver greiðir fyrir skólavist barnsins?',
+      description: 'Who pays the child’s school fees',
+    },
+    payerDescription: {
+      id: 'nps.application:different.needs.payer.description',
+      defaultMessage:
+        'Hér er átt við greiðslu gjalda eins og innritunargjald, staðfestingargjald, efnisgjald, foreldrafélagsgjald og skólagjald þar sem það á við.',
+      description:
+        'This refers to the payment of fees such as enrolment fees, confirmation fees, materials fees, parent association fees and school fees where applicable',
+    },
+    payerOptionApplicant: {
+      id: 'nps.application:different.needs.payer.option.applicant',
+      defaultMessage: 'Umsækjandi',
+      description: 'Applicant',
+    },
+    payerOptionOther: {
+      id: 'nps.application:different.needs.payer.option.other',
+      defaultMessage: 'Annar',
+      description: 'Other',
+    },
+    payerInformation: {
+      id: 'nps.application:different.needs.payer.information',
+      defaultMessage: 'Upplýsingar um greiðanda',
+      description: 'Payer information',
+    },
+    payerInformationDescription: {
+      id: 'nps.application:different.needs.payer.information.description',
+      defaultMessage:
+        'Greiðandi verður beðinn um að staðfesta greiðsluþátttöku með rafrænum skilríkjum áður en umsókn er send inn.',
+      description:
+        'The payer will be asked to confirm the payment participation with electronic ID before submitting the application.',
     },
   }),
 
@@ -954,16 +1127,121 @@ export const newPrimarySchoolMessages: MessageDir = {
     expandableDescription: {
       id: 'nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
-        'Sveitarfélagið og skólinn munu taka afstöðu til umsóknarinnar og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barns og/eða forsjáraðila. Mun þá sveitarfélagið eða skólinn setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, verður forsjáraðili og barn boðað til móttökuviðtals.',
+        'Skólinn fær núna umsóknina til sín til umfjöllunar og mun svara þér um ákvörðun sína eins fljótt og auðið er með bréfi sem sent verður í stafræna pósthólfið þitt á [Ísland.is](https://island.is).\n\nÁður en ákvörðun er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barnsins þíns eða ástæður umsóknar. Mun þá sveitarfélagið þar sem þú ert með skráð lögheimili eða skólinn sem þú ert að sækja um skólavist í, setja sig í samband við þig.\n\nEf þú sóttir um sjálfstætt starfandi skóla, og skráðir annan aðila sem greiðanda gjalda fyrir skólavist, þá verður greiðandi beðinn um að staðfesta þátttöku sína áður en umsókn er send til skóla til úrvinnslu.\n\nAthugið að ekki er víst að hægt sé að verða við ósk forsjáraðila en það fer eftir fjölda lausra plássa, fjölda umsókna og aðstæðum í skólanum á hverjum tíma.\n\nEf umsókn um skólaskipti er samþykkt, verður þú og barnið þitt boðað til móttökuviðtals.',
       description:
-        "The municipality and the school will make a decision on the application and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information in order to provide better information about the child's and/or guardian's circumstances. The municipality or the school will then contact you.\n\nIf the application for a new school is approved, the guardian and child will be invited to an admission interview.",
+        'The school will now receive your application for consideration and will reply to you as soon as possible with a message sent to your digital mailbox at [Ísland.is](https://island.is). \n\nBefore a decision is made, additional information may be needed to better understand your child’s situation or the reasons for the application. You will be contacted by the municipality where you are registered or by the school where you applied, if need be. \n\nIf you applied for an independent school, and you register another party as the payer for the school fees, the payer will be asked to confirm before the application is sent to the school for processing. \n\nPlease note that it may not be possible to comply with the guardian’s request, it will depend on the number of places available, the number of applications and the circumstances at the school at any given time. \n\nIf your application for a school transfer is accepted, you and your child will be invited to a reception interview.',
     },
-    privateSchoolExpandableDescription: {
-      id: 'nps.application:conclusion.private.school.expandable.description#markdown',
+    enrollmentExpandableDescription: {
+      id: 'nps.application:conclusion.enrollment.expandable.description#markdown',
       defaultMessage:
-        'Takk fyrir að senda inn umsókn.\n\nUmsóknin fer fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
+        'Takk fyrir að staðfesta skólavistina.\n\nSkólinn mun senda þér upplýsingar um fyrsta skóladag þegar nær dregur. Fram að því hvetjum við þig til að skoða heimasíðu skólans.',
       description:
-        "Thank you for submitting your application.\n\nFirst the application is reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nWhen a decision on payment participation has been made, the school itself will review the application. The decision will be sent to the parents as soon as possible.",
+        'Thank you for confirming the school enrolment.\n\nThe school will send you information about the first day of school as it gets closer. Until then, we encourage you to look at the school’s website.',
+    },
+    specialEducationExpandableDescription: {
+      id: 'nps.application:conclusion.special.education.expandable.description#markdown',
+      defaultMessage:
+        'Forsjáraðili hefur 14 daga til að skila nauðsynlegum fylgiskjölum með umsókn til skóla ef þau voru ekki send rafrænt með þessari umsókn, en án þeirra verður umsókn ekki tekin til umfjöllunar.\n\nSkólinn tekur ákvörðun um skólavist byggða á grundvelli tillagna fagráðs sem fjallar um allar umsóknir. Tilkynnir skólinn þér um ákvörðunina eins fljótt og auðið er með bréfi sem sent verður í stafræna pósthólfið þitt á [Ísland.is](https://island.is).\n\nÁður en afstaða er tekin kann þó að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barnsins þíns eða ástæður umsóknar. Mun þá sveitarfélagið þar sem þú ert með skráð lögheimili eða skólinn sem þú ert að sækja um skólavist í, setja sig í samband við þig.\n\nÍ þeim tilvikum sem aðilar deila forsjá er nauðsynlegt að samþykki beggja aðila fyrir umsókn liggi fyrir. Sé forsjá deilt verður þessi umsókn send fyrst til undirritunar hjá þeim aðila sem ekki er skráður fyrir umsókninni. Samþykki hans er forsenda þess að umsókn sé send áfram til úrvinnslu.\n\nEf þú sóttir um sjálfstætt starfandi skóla, og skráðir annan aðila sem greiðanda gjalda fyrir skólavist, þá verður greiðandi einnig beðinn um að staðfesta þátttöku sína áður en umsókn er send til skóla til úrvinnslu.\n\nAthugið að ekki er víst að hægt sé að verða við ósk þinni en það fer meðal annars eftir fjölda umsókna, fjölda lausra plássa og aðstæðum í hverjum skóla á hverjum tíma. Ef umsókn er synjað vegna þessa er foreldrum gefinn kostur á að halda umsókn sinni í skólanum virkri til umfjöllun síðar.\n\nEf umsókn um skólavist er samþykkt, verður þú og barnið þitt boðað til móttökuviðtals.',
+      description:
+        'The guardian has 14 days to return the necessary documents with the application to the school if they were not sent electronically with the application, without them the application will not be considered.\n\nThe school makes a decision regarding school enrolment based on the proposal of a professional council, which considers all applications. The school will notify you of their decision as soon as possible with a message sent to your digital mailbox at Ísland.is.\n\nBefore a decision is made, additional information may be needed to better understand your child’s situation or the reasons for the application. You will be contacted by the municipality where you are registered or by the school where you applied, if need be.\n\nIn cases where the parties share custody, it is necessary that both parties consent to the application. If custody is shared, this application will first be sent to be signed by the person who is not registered for the application. Their approval is a prerequisite for the application to be forwarded for processing.\n\nIf you applied for an independent school, and you register another party as the payer for the school fees, the payer will be asked to confirm before the application is sent to the school for processing.\n\nPlease note that it may not be possible to comply with your request, it will depend on the number of places available, the number of applications and the circumstances at the school at any given time. If the application is rejected due to these reasons, the parents are given the option to keep their application active at the school for later consideration.\n\nIf your application for school enrolment is accepted, you and your child will be invited to a reception interview.',
+    },
+  }),
+}
+
+export const assigneeMessages: MessageDir = {
+  shared: defineMessages({
+    childName: {
+      id: 'nps.application:assignee.shared.child.name',
+      defaultMessage: 'Nafn barns',
+      description: 'Child’s name',
+    },
+    approve: {
+      id: 'nps.application:assignee.shared.approve',
+      defaultMessage: 'Samþykkja',
+      description: 'Approve',
+    },
+    reject: {
+      id: 'nps.application:assignee.shared.reject',
+      defaultMessage: 'Hafna',
+      description: 'Reject',
+    },
+    thanksDescription: {
+      id: 'nps.application:assignee.shared.thanks.description',
+      defaultMessage: 'Takk fyrir! Afstaða þín er skráð.',
+      description: 'Thank you! Your position has been registered.',
+    },
+    editApplication: {
+      id: 'nps.application:assignee.shared.edit.application',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
+  }),
+
+  otherGuardian: defineMessages({
+    title: {
+      id: 'nps.application:assignee.other.guardian.title',
+      defaultMessage: 'Undirritun beggja forsjáraðila',
+      description: 'Signature of both guardians',
+    },
+    approvalDescription: {
+      id: 'nps.application:assignee.other.guardian.approval.description',
+      defaultMessage:
+        'Óskað hefur verið eftir undirritun þinni vegna umsóknar fyrir barnið þitt í eftirfarandi skóla',
+      description:
+        'Your signature has been requested on an application for your child’s enrolment in the following school',
+    },
+    rejectedDescription: {
+      id: 'nps.application:assignee.other.guardian.rejected.description',
+      defaultMessage:
+        'Forsjáraðili hefur hafnað því að undirrita umsókn fyrir barnið ykkar í eftirfarandi skóla',
+      description:
+        'The guardian has refused to sign your child’s application for the following school',
+    },
+    name: {
+      id: 'nps.application:assignee.other.guardian.name',
+      defaultMessage: 'Nafn forsjáraðila',
+      description: 'Name of guardian',
+    },
+    alertMessage: {
+      id: 'nps.application:assignee.other.guardian.alert.message',
+      defaultMessage:
+        'Ekki er hægt að senda inn umsókn nema að undirritun beggja forsjáraðila liggi fyrir.',
+      description:
+        'Unable to submit application without the signatures of both guardians',
+    },
+  }),
+
+  payer: defineMessages({
+    title: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.title',
+      defaultMessage: 'Greiðandi skólagjalda',
+      description: 'english description',
+    },
+    approvalDescription: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.approval.description',
+      defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
+      description: 'english description',
+    },
+    rejectedDescription: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.rejected.description',
+      defaultMessage:
+        'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
+      description: 'english description',
+    },
+    name: {
+      id: 'nps.application:assignee.payer.name',
+      defaultMessage: 'Nafn greiðanda',
+      description: 'Payer name',
+    },
+    alertMessage: {
+      // TODO: MMS needs to update the text
+      id: 'nps.application:assignee.payer.alert.message',
+      defaultMessage:
+        'Vinsamlegast farðu inn í umsóknina og veldu annan greiðanda',
+      description: 'english description',
     },
   }),
 }
@@ -1042,29 +1320,99 @@ export const errorMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
-  applicationApproved: {
-    id: 'nps.application:application.approved',
-    defaultMessage: 'Umsókn samþykkt',
-    description: 'Application approved',
-  },
-  applicationApprovedDescription: {
-    id: 'nps.application:application.approved.description',
-    defaultMessage: 'Umsókn um grunnskóla samþykkt',
-    description: 'The application for primary school has been approved',
-  },
-  applicationRejected: {
-    id: 'nps.application:application.rejected',
-    defaultMessage: 'Umsókn hafnað',
-    description: 'Application rejected',
-  },
-  applicationRejectedDescription: {
-    id: 'nps.application:application.rejected.description',
-    defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
-    description: 'The application for primary school has been rejected',
-  },
-  applicationReceivedTitle: {
-    id: 'nps.application:application.received.title',
+  applicationReceivedTag: {
+    id: 'nps.application:application.received.tag',
     defaultMessage: 'Móttekin',
     description: 'Received',
+  },
+})
+
+export const pendingActionMessages = defineMessages({
+  applicationApprovedDescription: {
+    id: 'nps.application:pending.action.application.approved.description',
+    defaultMessage: 'Umsókn í grunnskóla samþykkt',
+    description: 'The application for primary school has been approved',
+  },
+  applicationRejectedDescription: {
+    id: 'nps.application:pending.action.application.rejected.description',
+    defaultMessage: 'Umsókn í grunnskóla hefur verið hafnað',
+    description: 'The application for primary school has been rejected',
+  },
+  otherGuardianApprovalAssigneeDescription: {
+    id: 'nps.application:pending.action.other.guardian.approval.assignee.description',
+    defaultMessage:
+      'Óskað hefur verið eftir undirritun þinni vegna umsóknar fyrir barnið þitt í skóla.',
+    description:
+      'Your signature has been requested on an application for your child’s enrolment in school.',
+  },
+  otherGuardianApprovalApplicantDescription: {
+    id: 'nps.application:pending.action.other.guardian.approval.applicant.description',
+    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá forsjáraðila.',
+    description: 'Your application is pending approval from guardian.',
+  },
+  otherGuardianRejectedTitle: {
+    id: 'nps.application:pending.action.other.guardian.rejected.title',
+    defaultMessage: 'Forsjáraðili hefur hafnað umsókn',
+    description: 'The guardian has rejected the application',
+  },
+  otherGuardianRejectedDescription: {
+    id: 'nps.application:pending.action.other.guardian.rejected.description',
+    defaultMessage:
+      'Forsjáraðili hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
+    description:
+      'The application has been rejected by a guardian, please make changes to the application.',
+  },
+  payerApprovalAssigneeDescription: {
+    id: 'nps.application:pending.action.payer.approval.assignee.description',
+    defaultMessage:
+      'Þú hefur verið skráð/ur sem greiðandi fyrir skólavist barns.',
+    description:
+      'You have been registered as the payer for a child’s school fees.',
+  },
+  payerApprovalApplicantDescription: {
+    id: 'nps.application:pending.action.payer.approval.applicant.description',
+    defaultMessage: 'Umsókn þín er í bið eftir samþykki frá skráðum greiðanda.',
+    description:
+      'Your application is pending approval from the registered payer.',
+  },
+  payerRejectedTitle: {
+    id: 'nps.application:pending.action.payer.rejected.title',
+    defaultMessage: 'Skráður greiðandi hefur hafnað umsókn',
+    description: 'The registered payer has rejected the application',
+  },
+  payerRejectedDescription: {
+    id: 'nps.application:pending.action.payer.rejected.description',
+    defaultMessage:
+      'Skráður greiðandi hefur hafnað umsókn, vinsamlegast gerðu breytingar á umsókn.',
+    description:
+      'The registered payer has rejected the application, please make changes to the application.',
+  },
+})
+
+export const historyMessages = defineMessages({
+  otherGuardianApprovalApproved: {
+    id: 'nps.application:history.other.guardian.approval.approved',
+    defaultMessage: 'Forsjáraðili samþykkti umsókn',
+    description: 'The guardian approved the application',
+  },
+  otherGuardianApprovalRejected: {
+    id: 'nps.application:history.other.guardian.approval.rejected',
+    defaultMessage: 'Forsjáraðili hafnaði umsókn',
+    description: 'The guardian rejected the application',
+  },
+  payerApprovalApproved: {
+    id: 'nps.application:history.payer.approval.approved',
+    defaultMessage: 'Skráður greiðandi samþykkti umsókn',
+    description: 'The registered payer approved the application',
+  },
+  payerApprovalRejected: {
+    id: 'nps.application:history.payer.approval.rejected',
+    defaultMessage: 'Skráður greiðandi hafnaði umsókn',
+    description: 'The registered payer rejected the application',
+  },
+  applicationEdited: {
+    id: 'nps.application:history.application.edited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
   },
 })

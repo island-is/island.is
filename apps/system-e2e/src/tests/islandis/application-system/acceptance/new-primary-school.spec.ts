@@ -10,6 +10,7 @@ import { label } from '../../../../support/i18n'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
+
 const homeUrl = '/umsoknir/grunnskoli'
 
 const applicationTest = base.extend<{ applicationPage: Page }>({
@@ -41,6 +42,8 @@ applicationTest.describe('New primary school', () => {
       const page = applicationPage
       const { proceed } = helpers(page)
 
+      page.goto(`${homeUrl}?delegationChecked=true`)
+
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
@@ -63,6 +66,16 @@ applicationTest.describe('New primary school', () => {
             name: label(newPrimarySchoolMessages.pre.startApplication),
           })
           .click()
+      })
+
+      await applicationTest.step('Select application type', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(newPrimarySchoolMessages.applicationType.sectionTitle),
+          }),
+        ).toBeVisible()
+        await page.getByTestId('new-primary-school').click()
+        await proceed()
       })
 
       await applicationTest.step(
@@ -121,6 +134,20 @@ applicationTest.describe('New primary school', () => {
           await page.getByTestId('email1').fill('guardian1@test.is')
           await page.getByTestId('phone1').fill('79999999')
 
+          await page
+            .getByRole('checkbox', {
+              name: label(
+                newPrimarySchoolMessages.childrenNGuardians.requiresInterpreter,
+              ),
+            })
+            .first()
+            .click()
+          await page
+            .getByTestId('select-guardians[0].preferredLanguage')
+            .click()
+          await page.keyboard.press('ArrowDown')
+          await page.keyboard.press('Enter')
+
           await expect(
             page.getByText(
               label(newPrimarySchoolMessages.childrenNGuardians.otherGuardian),
@@ -132,12 +159,12 @@ applicationTest.describe('New primary school', () => {
         },
       )
 
-      await applicationTest.step("Register the child's contacts", async () => {
+      await applicationTest.step("Register the child's relatives", async () => {
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
         await expect(
           page.getByRole('heading', {
             name: label(
-              newPrimarySchoolMessages.childrenNGuardians.contactsTitle,
+              newPrimarySchoolMessages.childrenNGuardians.relativesTitle,
             ),
           }),
         ).toBeVisible()
@@ -145,7 +172,7 @@ applicationTest.describe('New primary school', () => {
         await page
           .getByRole('button', {
             name: label(
-              newPrimarySchoolMessages.childrenNGuardians.contactsAddContact,
+              newPrimarySchoolMessages.childrenNGuardians.relativesAddRelative,
             ),
           })
           .click()
@@ -153,21 +180,31 @@ applicationTest.describe('New primary school', () => {
           page.getByText(
             label(
               newPrimarySchoolMessages.childrenNGuardians
-                .contactsRegistrationTitle,
+                .relativesRegistrationTitle,
             ),
           ),
         ).toBeVisible()
-        await page.getByTestId('contact-full-name').fill('Gervimaður Ameríka')
-        await page.getByTestId('contact-phone-number').fill('799-99999')
-        await page.getByTestId('contact-national-id').fill('0101302989')
-        await page.getByTestId('contact-relation').click()
+        await page
+          .getByLabel(label(newPrimarySchoolMessages.shared.nationalId))
+          .fill('0101302989')
+
+        // Wait for non-empty name
+        await expect(
+          page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+        ).not.toBeEmpty()
+        await expect(
+          page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+        ).toHaveValue('Gervimaður Ameríka')
+
+        await page.getByTestId('relative-phone-number').fill('799-99999')
+        await page.getByTestId('relative-relation').click()
         await page.keyboard.press('ArrowDown')
         await page.keyboard.press('Enter')
         await page
           .getByRole('button', {
             name: label(
               newPrimarySchoolMessages.childrenNGuardians
-                .contactsRegisterContact,
+                .relativesRegisterRelative,
             ),
           })
           .click()
@@ -193,7 +230,7 @@ applicationTest.describe('New primary school', () => {
         await verifyRequestCompletion(
           page,
           '/api/graphql',
-          'FriggSchoolsByMunicipality',
+          'FriggOrganizationsByType',
         )
         await expect(
           page.getByRole('heading', {
@@ -202,9 +239,12 @@ applicationTest.describe('New primary school', () => {
             ),
           }),
         ).toBeVisible()
-        await page.getByTestId('select-newSchool.municipality').click()
-        await page.keyboard.press('Enter')
 
+        await verifyRequestCompletion(
+          page,
+          '/api/graphql',
+          'FriggOrganizationsByType',
+        )
         await page.getByTestId('select-newSchool.school').click()
         await page.keyboard.press('Enter')
         await proceed()
@@ -253,8 +293,18 @@ applicationTest.describe('New primary school', () => {
               ),
             ),
           ).toBeVisible()
-          await page.getByTestId('sibling-full-name').fill('Systir Nafnsdóttir')
-          await page.getByTestId('sibling-national-id').fill('99999999999')
+
+          await page
+            .getByLabel(label(newPrimarySchoolMessages.shared.nationalId))
+            .fill('0101302719')
+
+          // Wait for non-empty name
+          await expect(
+            page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+          ).not.toBeEmpty()
+          await expect(
+            page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+          ).toHaveValue('Gervimaður Evrópa')
 
           await page
             .getByRole('button', {
@@ -299,12 +349,9 @@ applicationTest.describe('New primary school', () => {
         await expect(
           page
             .locator('form')
-            .getByText(
-              label(
-                newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-              ),
-              { exact: true },
-            ),
+            .getByText(label(newPrimarySchoolMessages.shared.language), {
+              exact: true,
+            }),
         ).toBeVisible()
 
         await page
@@ -341,16 +388,15 @@ applicationTest.describe('New primary school', () => {
         await page.getByRole('option', { name: 'Íslenska' }).click()
 
         await page.getByTestId('sign-language').click()
-        await page.getByTestId('guardian-requires-interpreter').click()
         await proceed()
       })
 
-      await applicationTest.step('Allergies and intolerances', async () => {
+      await applicationTest.step('Health protection', async () => {
         await expect(
           page.getByRole('heading', {
             name: label(
               newPrimarySchoolMessages.differentNeeds
-                .allergiesAndIntolerancesSubSectionTitle,
+                .healthProtectionSubSectionTitle,
             ),
           }),
         ).toBeVisible()
@@ -365,16 +411,12 @@ applicationTest.describe('New primary school', () => {
           .click()
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
         await page
-          .getByTestId(
-            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
-          )
+          .getByTestId('select-healthProtection.foodAllergiesOrIntolerances')
           .click()
         await page.keyboard.press('Enter')
         await page.keyboard.press('Enter')
         await page
-          .getByTestId(
-            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
-          )
+          .getByTestId('select-healthProtection.foodAllergiesOrIntolerances')
           .click()
 
         await page
@@ -385,13 +427,9 @@ applicationTest.describe('New primary school', () => {
           })
           .click()
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
-        await page
-          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
-          .click()
+        await page.getByTestId('select-healthProtection.otherAllergies').click()
         await page.keyboard.press('Enter')
-        await page
-          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
-          .click()
+        await page.getByTestId('select-healthProtection.otherAllergies').click()
 
         await page.getByTestId('uses-epi-pen').click()
         await page.getByTestId('has-confirmed-medical-diagnoses').click()
@@ -409,7 +447,23 @@ applicationTest.describe('New primary school', () => {
         ).toBeVisible()
         await page.getByTestId('has-diagnoses').click()
         await page.getByTestId('no-has-had-support').click()
-        await page.getByTestId('has-integrated-services').click()
+
+        await page.getByTestId('has-welfare-contact').click()
+        await page
+          .getByRole('textbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds.welfareContactName,
+            ),
+          })
+          .fill('Tengiliður Nafnsson')
+        await page
+          .getByRole('textbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+            ),
+          })
+          .fill('tengilidur@test.is')
+
         await page.getByTestId('has-case-manager').click()
         await page
           .getByRole('textbox', {
@@ -425,6 +479,9 @@ applicationTest.describe('New primary school', () => {
             ),
           })
           .fill('malastjori@test.is')
+
+        await page.getByTestId('has-integrated-services').click()
+
         await page
           .getByRole('checkbox', {
             name: label(

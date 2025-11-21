@@ -26,9 +26,12 @@ export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if application type is "Application for a new primary school"
+    // Display section if application type is "Application for a new primary school" or "Continuing enrollment"
     const { applicationType } = getApplicationAnswers(answers)
-    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      applicationType === ApplicationType.CONTINUING_ENROLLMENT
+    )
   },
   children: [
     buildMultiField({

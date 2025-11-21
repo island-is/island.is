@@ -1,10 +1,21 @@
 import { YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
-import { LanguageEnvironmentOptions } from './constants'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
+import {
+  ApplicationFeatureKey,
+  LanguageEnvironmentOptions,
+  OrganizationSubType,
+  PayerOption,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  getSelectedSchoolData,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -71,4 +82,88 @@ export const showCaseManagerFields = (answers: FormValue) => {
   const { hasCaseManager } = getApplicationAnswers(answers)
 
   return isWelfareContactSelected(answers) && hasCaseManager === YES
+}
+
+export const shouldShowPage = (
+  answers: FormValue,
+  externalData: ExternalData,
+  key: ApplicationFeatureKey,
+): boolean => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) return false
+
+  const selectedSchoolSettings = getSelectedSchoolData(
+    externalData,
+    selectedSchoolId,
+  )?.settings
+
+  if (!selectedSchoolSettings) return false
+
+  return selectedSchoolSettings.applicationConfigs[0].applicationFeatures.some(
+    (feature) => feature.key === key,
+  )
+}
+
+export const hasOtherPayer = (answers: FormValue) => {
+  const { payer } = getApplicationAnswers(answers)
+
+  return payer === PayerOption.OTHER
+}
+
+export const needsPayerApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.PAYMENT_INFO,
+    ) && hasOtherPayer(application.answers)
+  )
+}
+
+export const needsOtherGuardianApproval = (application: Application) => {
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ADDITIONAL_REQUESTORS,
+    ) && hasOtherGuardian(application.answers, application.externalData)
+  )
+}
+
+export const shouldShowExpectedEndDate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+  )
+}
+
+export const hasSpecialEducationSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
+  )
 }

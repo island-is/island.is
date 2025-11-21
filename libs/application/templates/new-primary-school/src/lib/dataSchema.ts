@@ -2,7 +2,11 @@ import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
+import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
+  PayerOption,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -24,12 +28,9 @@ const nationalIdWithNameSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  applicationType: z.enum([
-    ApplicationType.NEW_PRIMARY_SCHOOL,
-    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  applicationType: z.nativeEnum(ApplicationType),
   childInfo: z
     .object({
       usePronounAndPreferredName: z.array(z.string()),
@@ -337,6 +338,34 @@ export const dataSchema = z.object({
           ? !!hasIntegratedServices
           : true,
       { path: ['hasIntegratedServices'] },
+    ),
+  payer: z
+    .object({
+      option: z.nativeEnum(PayerOption),
+      other: z
+        .object({
+          name: z.string(),
+          nationalId: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.name?.trim() : true,
+      { path: ['other', 'name'] },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER
+          ? other && kennitala.isValid(other.nationalId)
+          : true,
+      { path: ['other', 'nationalId'], params: errorMessages.nationalId },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
+      { path: ['other', 'email'] },
     ),
 })
 

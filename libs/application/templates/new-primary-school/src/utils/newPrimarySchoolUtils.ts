@@ -1,13 +1,23 @@
-import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import {
+  NO,
+  YES,
+  YesOrNo,
+  corePendingActionMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
+  PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  newPrimarySchoolMessages,
+  pendingActionMessages,
+} from '../lib/messages'
 import {
   Affiliation,
   Child,
@@ -27,7 +37,9 @@ import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  PayerOption,
   ReasonForApplicationOptions,
+  Roles,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -161,6 +173,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
+
+  const payerName = getValueViaPath<string>(answers, 'payer.other.name')
+
+  const payerNationalId = getValueViaPath<string>(
+    answers,
+    'payer.other.nationalId',
+  )
+
+  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
+
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -240,6 +263,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    payer,
+    payerName,
+    payerNationalId,
+    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -458,6 +485,8 @@ export const determineNameFromApplicationAnswers = (
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+    ? newPrimarySchoolMessages.shared.continuingEnrollmentApplicationName
     : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
@@ -495,26 +524,27 @@ export const getApplicationType = (
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
-
-  if (!isValid(nationalId)) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
-  if (!yearOfBirth) {
+  if (!isValid(nationalId) || !yearOfBirth) {
+    return undefined
+  }
+
+  // if the child is a first grader and not currently enrolled in a primary
+  // school, set the application type to enrollment in primary school
+  if (yearOfBirth === firstGradeYear && !childInformation?.primaryOrgId) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  // if the child is not a first grader and not currently enrolled in a primary
+  // school (no data in Frigg), set the application type to new primary school
+  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  if (!childInformation?.primaryOrgId) {
-    return yearOfBirth === firstGradeYear
-      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      : ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
-  return ApplicationType.NEW_PRIMARY_SCHOOL
+  // else the application type should be determined by the applicant
+  return undefined
 }
 
 export const getGuardianByNationalId = (
@@ -627,4 +657,52 @@ export const getSelectedSchoolSubType = (
   }
 
   return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
+}
+
+export const getSelectedSchoolUnitId = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+  return selectedSchoolId
+    ? getSelectedSchoolData(externalData, selectedSchoolId)?.unitId ?? ''
+    : ''
+}
+
+export const payerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.payerApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const otherGuardianApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.otherGuardianApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.otherGuardianApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
 }

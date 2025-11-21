@@ -33,6 +33,7 @@ import {
   OptionsType,
   OrganizationSector,
   OrganizationSubType,
+  PayerOption,
 } from './constants'
 import {
   formatGrade,
@@ -46,6 +47,7 @@ import {
   getSelectedSchoolSector,
   getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
+import { shouldShowExpectedEndDate } from './conditionUtils'
 
 const getFriggOptions = async (
   apolloClient: ApolloClient<object>,
@@ -361,8 +363,7 @@ export const schoolItems = (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    getSelectedSchoolSubType(answers, externalData) ===
-      OrganizationSubType.INTERNATIONAL_SCHOOL &&
+    shouldShowExpectedEndDate(answers, externalData) &&
     temporaryStay === YES
       ? [
           {
@@ -750,4 +751,36 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...welfareContactItems2,
     ...baseItems2,
   ]
+}
+
+export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
+  const { payer, payerName, payerNationalId, payerEmail } =
+    getApplicationAnswers(answers)
+
+  return payer === PayerOption.APPLICANT
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+          valueText:
+            newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+        },
+      ]
+    : [
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.fullName,
+          valueText: payerName,
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.nationalId,
+          valueText: formatKennitala(payerNationalId ?? ''),
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.shared.email,
+          valueText: payerEmail,
+        },
+      ]
 }
