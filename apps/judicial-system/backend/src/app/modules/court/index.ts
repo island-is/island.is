@@ -1,5 +1,1 @@
-export {
-  CourtDocumentFolder,
-  CourtService,
-  courtSubtypes,
-} from './court.service'
+export { CourtDocumentFolder, CourtService } from './court.service'

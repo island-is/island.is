@@ -130,18 +130,21 @@ describe('PoliceController - Get police case info', () => {
           place: 'Testgata 3, Testbær',
           date: new Date('2021-02-23T13:17:00'),
           licencePlate: 'ABC-123',
+          subtypes: [],
         },
         {
           policeCaseNumber: '007-2020-000103',
           date: new Date('2021-02-23T13:17:00'),
           place: 'Teststígur, Testbær',
           licencePlate: 'CDE-123',
+          subtypes: [],
         },
         {
           date: new Date('2021-02-23T13:17:00'),
           policeCaseNumber: '007-2020-000057',
           place: 'Teststígur',
           licencePlate: undefined,
+          subtypes: [],
         },
         { policeCaseNumber: '008-2013-000033' },
       ])

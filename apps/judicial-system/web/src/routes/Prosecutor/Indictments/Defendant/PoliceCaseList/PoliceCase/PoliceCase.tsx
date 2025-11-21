@@ -36,6 +36,7 @@ import {
 import { isPartiallyVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './PoliceCase.strings'
+import * as styles from './PoliceCase.css'
 
 export interface PoliceCaseUpdate {
   policeCaseNumber?: string
@@ -179,9 +180,9 @@ export const PoliceCase: FC<Props> = ({
     workingCase.origin === CaseOrigin.LOKE && index === 0
 
   return (
-    <BlueBox>
+    <BlueBox className={styles.grid}>
       {deletePoliceCase && (
-        <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+        <Box display="flex" justifyContent="flexEnd">
           <Button
             onClick={() => deletePoliceCase()}
             colorScheme="destructive"
@@ -192,132 +193,119 @@ export const PoliceCase: FC<Props> = ({
           </Button>
         </Box>
       )}
-      <Box marginBottom={2}>
-        <InputMask
-          component={Input}
-          mask={POLICE_CASE_NUMBER}
-          replacement={{ _: /\d/ }}
-          value={policeCaseNumberInput}
-          onChange={(event) => {
-            if (
-              !policeCaseNumbers.some(
-                (policeCaseNumber, idx) =>
-                  idx !== index && policeCaseNumber === event.target.value,
-              )
-            ) {
-              removeErrorMessageIfValid(
-                ['empty', 'police-casenumber-format'],
-                event.target.value,
-                policeCaseNumberErrorMessage,
-                setPoliceCaseNumberErrorMessage,
-              )
-              setPoliceCase({ policeCaseNumber: event.target.value })
-            }
+      <InputMask
+        component={Input}
+        mask={POLICE_CASE_NUMBER}
+        replacement={{ _: /\d/ }}
+        value={policeCaseNumberInput}
+        onChange={(event) => {
+          if (
+            !policeCaseNumbers.some(
+              (policeCaseNumber, idx) =>
+                idx !== index && policeCaseNumber === event.target.value,
+            )
+          ) {
+            removeErrorMessageIfValid(
+              ['empty', 'police-casenumber-format'],
+              event.target.value,
+              policeCaseNumberErrorMessage,
+              setPoliceCaseNumberErrorMessage,
+            )
+            setPoliceCase({ policeCaseNumber: event.target.value })
+          }
 
-            setPoliceCaseNumberInput(event.target.value)
-          }}
-          onBlur={(event) => {
-            if (policeCaseNumberInput !== policeCaseNumber) {
-              setPoliceCaseNumberErrorMessage(
-                formatMessage(strings.policeCaseNumberExists),
-              )
-            } else {
-              validateAndSetErrorMessage(
-                ['empty', 'police-casenumber-format'],
-                event.target.value,
-                setPoliceCaseNumberErrorMessage,
-              )
-              updatePoliceCase()
-            }
-          }}
-          disabled={isPoliceCaseNumberImmutable}
-          data-testid={`policeCaseNumber${index}`}
-          name="policeCaseNumber"
-          autoComplete="off"
-          label={formatMessage(strings.policeCaseNumberLabel)}
-          placeholder={formatMessage(strings.policeCaseNumberPlaceholder, {
-            prefix:
-              workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
-              user?.institution?.policeCaseNumberPrefix ??
-              '',
-            year: new Date().getFullYear(),
-          })}
-          hasError={policeCaseNumberErrorMessage !== ''}
-          errorMessage={policeCaseNumberErrorMessage}
-          required
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Select
-          name="case-type"
-          options={options}
-          label={formatMessage(strings.indictmentTypeLabel)}
-          placeholder={formatMessage(strings.indictmentTypePlaceholder)}
-          onChange={(selectedOption) => {
-            const indictmentSubtype = selectedOption?.value
+          setPoliceCaseNumberInput(event.target.value)
+        }}
+        onBlur={(event) => {
+          if (policeCaseNumberInput !== policeCaseNumber) {
+            setPoliceCaseNumberErrorMessage(
+              formatMessage(strings.policeCaseNumberExists),
+            )
+          } else {
+            validateAndSetErrorMessage(
+              ['empty', 'police-casenumber-format'],
+              event.target.value,
+              setPoliceCaseNumberErrorMessage,
+            )
+            updatePoliceCase()
+          }
+        }}
+        disabled={isPoliceCaseNumberImmutable}
+        data-testid={`policeCaseNumber${index}`}
+        name="policeCaseNumber"
+        autoComplete="off"
+        label={formatMessage(strings.policeCaseNumberLabel)}
+        placeholder={formatMessage(strings.policeCaseNumberPlaceholder, {
+          prefix:
+            workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
+            user?.institution?.policeCaseNumberPrefix ??
+            '',
+          year: new Date().getFullYear(),
+        })}
+        hasError={policeCaseNumberErrorMessage !== ''}
+        errorMessage={policeCaseNumberErrorMessage}
+        required
+      />
+      <Select
+        name="case-type"
+        options={options}
+        label={formatMessage(strings.indictmentTypeLabel)}
+        placeholder={formatMessage(strings.indictmentTypePlaceholder)}
+        onChange={(selectedOption) => {
+          const indictmentSubtype = selectedOption?.value
 
-            if (!indictmentSubtype) {
-              return
-            }
+          if (!indictmentSubtype) {
+            return
+          }
 
-            updatePoliceCase({
-              subtypes: [...policeCaseNumberSubtypes, indictmentSubtype],
-            })
-          }}
-          value={null}
-          required
-        />
-      </Box>
+          updatePoliceCase({
+            subtypes: [...policeCaseNumberSubtypes, indictmentSubtype],
+          })
+        }}
+        value={null}
+        required
+      />
       {policeCaseNumberSubtypes.length > 0 && (
-        <Box marginBottom={2}>
+        <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
           {policeCaseNumberSubtypes.map((subtype) => (
-            <Box
-              display="inlineBlock"
+            <Tag
               key={subtype}
-              component="span"
-              marginBottom={1}
-              marginRight={1}
+              variant="darkerBlue"
+              onClick={() =>
+                updatePoliceCase({
+                  subtypes: policeCaseNumberSubtypes.filter(
+                    (s) => s !== subtype,
+                  ),
+                })
+              }
+              aria-label={formatMessage(strings.removeSubtype, {
+                subtype: indictmentSubtypes[subtype],
+              })}
             >
-              <Tag
-                variant="darkerBlue"
-                onClick={() =>
-                  updatePoliceCase({
-                    subtypes: policeCaseNumberSubtypes.filter(
-                      (s) => s !== subtype,
-                    ),
-                  })
-                }
-                aria-label={formatMessage(strings.removeSubtype, {
-                  subtype: indictmentSubtypes[policeCaseNumberSubtypes[0]],
-                })}
-              >
-                <Box display="flex" alignItems="center">
-                  {capitalize(indictmentSubtypes[subtype])}
-                  <Icon icon="close" size="small" />
-                </Box>
-              </Tag>
-            </Box>
+              <Box display="flex" alignItems="center">
+                {capitalize(indictmentSubtypes[subtype])}
+                <Icon icon="close" size="small" />
+              </Box>
+            </Tag>
           ))}
         </Box>
       )}
-      <Box marginBottom={2}>
-        <Input
-          name="policeCasePlace"
-          autoComplete="off"
-          label={formatMessage(strings.policeCasePlaceLabel)}
-          placeholder={formatMessage(strings.policeCasePlacePlaceholder)}
-          value={policeCaseNumberCrimeScene.place ?? ''}
-          onChange={(event) =>
-            setPoliceCase({
-              crimeScene: {
-                ...policeCaseNumberCrimeScene,
-                place: event.target.value,
-              },
-            })
-          }
-          onBlur={() => updatePoliceCase()}
-        />
-      </Box>
+      <Input
+        name="policeCasePlace"
+        autoComplete="off"
+        label={formatMessage(strings.policeCasePlaceLabel)}
+        placeholder={formatMessage(strings.policeCasePlacePlaceholder)}
+        value={policeCaseNumberCrimeScene.place ?? ''}
+        onChange={(event) =>
+          setPoliceCase({
+            crimeScene: {
+              ...policeCaseNumberCrimeScene,
+              place: event.target.value,
+            },
+          })
+        }
+        onBlur={() => updatePoliceCase()}
+      />
       <DateTime
         name={crimeSceneDateId}
         maxDate={new Date()}

@@ -3,11 +3,11 @@ import {
   CaseDecision,
   CaseOrigin,
   CaseType,
+  courtSubtypes,
   EventType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 

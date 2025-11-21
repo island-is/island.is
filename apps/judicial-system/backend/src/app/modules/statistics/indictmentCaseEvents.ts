@@ -11,6 +11,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseType,
+  courtSubtypes,
   DefendantEventType,
   EventType,
   InstitutionType,
@@ -18,7 +19,6 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
 import {
   IndictmentCaseEventType,
