@@ -14,7 +14,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  InfoCardGrid,
   Inline,
   Pagination,
   Stack,
@@ -37,15 +36,17 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
-import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { getExcerpt } from './utils'
+import { getDeadlineVariant, getExcerpt } from './utils'
+import { VacancyCardsGrid } from './VacancyCardsGrid'
+import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
 type Vacancy =
   IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 12
+const SHOW_CURRENT_BREADCRUMB = false
 export const VACANCY_INTRO_MAX_LENGTH = 280
 
 const mapVacanciesField = (
@@ -129,6 +130,13 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  // Force grid view on mobile/tablet
+  useEffect(() => {
+    if (isTablet && !isGridView) {
+      setIsGridView(true)
+    }
+  }, [isTablet, isGridView])
 
   const filteredVacancies = vacancies.filter((vacancy) => {
     const searchKeywords = searchTerm
@@ -293,15 +301,6 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           : undefined,
       ].filter(isDefined)
 
-      const getDeadlineVariant = (deadline: string) => {
-        const deadlineDate = new Date(deadline)
-        const tomorrow = new Date()
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        tomorrow.setHours(0, 0, 0, 0)
-
-        return deadlineDate < tomorrow ? 'red' : 'mint'
-      }
-
       const tags = [
         vacancy.applicationDeadlineTo && {
           label: `${n('applicationDeadlineTo', 'Umsóknarfrestur')}: ${
@@ -461,11 +460,13 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               <Breadcrumbs
                 items={[
                   { title: 'Ísland.is', href: '/' },
-                  {
-                    title: n('breadcrumbTitle', 'Starfatorg'),
-                    href: linkResolver('vacancies').href,
-                  },
-                ]}
+                  SHOW_CURRENT_BREADCRUMB
+                    ? {
+                        title: n('breadcrumbTitle', 'Starfatorg'),
+                        href: linkResolver('vacancies').href,
+                      }
+                    : undefined,
+                ].filter(isDefined)}
               />
               <Box className="rs_read" marginTop={2}>
                 <Text variant="h1" as="h1">
@@ -509,132 +510,166 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       </GridContainer>
       <Box background="blue100">
         {!isTablet && (
-          <SidebarLayout
-            fullWidthContent={true}
-            sidebarContent={
-              <Stack space={3}>
-                <Text variant="h4" as="h4" paddingY={1}>
-                  {n('search', 'Leit')}
-                </Text>
-                <FilterInput
-                  placeholder={n(
-                    'filterSearchPlaceholder',
-                    'Leita í Starfatorgi',
-                  )}
-                  name="sidebarFilterInput"
-                  value={searchTerm}
-                  onChange={(value) => {
-                    setSelectedPage(1)
-                    setSearchTerm(value)
-                    searchTermHasBeenInitialized.current = true
-                  }}
-                />
-                <Filter
-                  labelClear={n('clear', 'Hreinsa')}
-                  labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
-                  labelOpen={n('open', 'Opna')}
-                  labelClose={n('close', 'Loka')}
-                  labelResult={n('showResults', 'Skoða niðurstöður')}
-                  labelTitle={n('filterResults', 'Sía niðurstöður')}
-                  onFilterClear={() => {
-                    setParameters({
-                      fieldOfWork: [],
-                      location: [],
-                      institution: [],
-                    })
-                  }}
-                  variant="default"
-                >
-                  <FilterMultiChoice
-                    labelClear={n('clearFilter', 'Hreinsa val')}
-                    onChange={({ categoryId, selected }) => {
-                      setSelectedPage(1)
-                      setParameters((prevParams) => ({
-                        ...prevParams,
-                        [categoryId]: selected,
-                      }))
-                    }}
-                    onClear={(categoryId) => {
-                      setSelectedPage(1)
-                      setParameters((prevParams) => ({
-                        ...prevParams,
-                        [categoryId]: [],
-                      }))
-                    }}
-                    categories={filterCategories}
-                  />
-                </Filter>
-              </Stack>
-            }
-          >
-            <Box marginLeft={[0, 0, 0, 2]}>
+          <GridContainer>
+            <Box
+              display="flex"
+              flexDirection="row"
+              height="full"
+              paddingY={6}
+              position="relative"
+            >
+              {/* Sidebar */}
               <Box
-                className="rs_read"
-                marginBottom={3}
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
+                printHidden
+                display={['none', 'none', 'block']}
+                position="sticky"
+                alignSelf="flexStart"
+                className={styles.sidebar}
+                style={{ top: 72 }}
               >
-                <Text>
-                  <strong>{filteredVacancies.length}</strong>{' '}
-                  {filteredVacancies.length % 10 === 1 &&
-                  filteredVacancies.length % 100 !== 11
-                    ? n('singleJobFound', 'starf fannst')
-                    : n('jobsFound', 'störf fundust')}
-                </Text>
-                {!isTablet && (
-                  <Button
-                    variant="utility"
-                    icon={isGridView ? 'menu' : 'gridView'}
-                    iconType="filled"
-                    colorScheme="white"
-                    size="small"
-                    onClick={() => setIsGridView(!isGridView)}
+                <Stack space={3}>
+                  <Text variant="h4" as="h4" paddingY={1}>
+                    {n('search', 'Leit')}
+                  </Text>
+                  <FilterInput
+                    placeholder={n(
+                      'filterSearchPlaceholder',
+                      'Leita í Starfatorgi',
+                    )}
+                    name="sidebarFilterInput"
+                    value={searchTerm}
+                    onChange={(value) => {
+                      setSelectedPage(1)
+                      setSearchTerm(value)
+                      searchTermHasBeenInitialized.current = true
+                    }}
+                  />
+                  <Filter
+                    labelClear={n('clear', 'Hreinsa')}
+                    labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+                    labelOpen={n('open', 'Opna')}
+                    labelClose={n('close', 'Loka')}
+                    labelResult={n('showResults', 'Skoða niðurstöður')}
+                    labelTitle={n('filterResults', 'Sía niðurstöður')}
+                    onFilterClear={() => {
+                      setParameters({
+                        fieldOfWork: [],
+                        location: [],
+                        institution: [],
+                      })
+                    }}
+                    variant="default"
                   >
-                    {isGridView
-                      ? n('displayList', 'Sýna sem lista')
-                      : n('displayGrid', 'Sýna sem spjöld')}
-                  </Button>
+                    <FilterMultiChoice
+                      labelClear={n('clearFilter', 'Hreinsa val')}
+                      onChange={({ categoryId, selected }) => {
+                        setSelectedPage(1)
+                        setParameters((prevParams) => ({
+                          ...prevParams,
+                          [categoryId]: selected,
+                        }))
+                      }}
+                      onClear={(categoryId) => {
+                        setSelectedPage(1)
+                        setParameters((prevParams) => ({
+                          ...prevParams,
+                          [categoryId]: [],
+                        }))
+                      }}
+                      categories={filterCategories}
+                    />
+                  </Filter>
+                </Stack>
+              </Box>
+
+              {/* Content */}
+              <Box
+                flexGrow={1}
+                paddingLeft={2}
+                className={styles.contentWrapper}
+              >
+                <Box
+                  className="rs_read"
+                  marginBottom={3}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                >
+                  <Text>
+                    <strong>{filteredVacancies.length}</strong>{' '}
+                    {filteredVacancies.length % 10 === 1 &&
+                    filteredVacancies.length % 100 !== 11
+                      ? n('singleJobFound', 'starf fannst')
+                      : n('jobsFound', 'störf fundust')}
+                  </Text>
+                  {!isTablet && (
+                    <Button
+                      variant="utility"
+                      icon={isGridView ? 'menu' : 'gridView'}
+                      iconType="filled"
+                      colorScheme="white"
+                      size="small"
+                      onClick={() => setIsGridView(!isGridView)}
+                    >
+                      {isGridView
+                        ? n('displayList', 'Sýna sem lista')
+                        : n('displayGrid', 'Sýna sem spjöld')}
+                    </Button>
+                  )}
+                </Box>
+                {(parameters.fieldOfWork.length > 0 ||
+                  parameters.location.length > 0 ||
+                  parameters.institution.length > 0) && (
+                  <Box marginBottom={3}>
+                    <Inline space={2}>
+                      {renderFilterTags('fieldOfWork', parameters.fieldOfWork)}
+                      {renderFilterTags('location', parameters.location)}
+                      {renderFilterTags('institution', parameters.institution)}
+                    </Inline>
+                  </Box>
+                )}
+                <Box style={{ minHeight: '100vh' }}>
+                  <VacancyCardsGrid
+                    columns={!isGridView ? 1 : 2}
+                    variant="detailed"
+                    cards={vacancyCards}
+                  />
+                  {vacancyCards.length === 0 && (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      paddingY={8}
+                    >
+                      <Text variant="h5">
+                        {n('noResults', 'Engar niðurstöður fundust')}
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
+                {filteredVacancies.length > 0 && (
+                  <Box marginTop={2} paddingBottom={2}>
+                    <Pagination
+                      variant="blue"
+                      page={selectedPage}
+                      itemsPerPage={ITEMS_PER_PAGE}
+                      totalItems={filteredVacancies.length}
+                      totalPages={totalPages}
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            setSelectedPage(page)
+                          }}
+                        >
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
                 )}
               </Box>
-              {(parameters.fieldOfWork.length > 0 ||
-                parameters.location.length > 0 ||
-                parameters.institution.length > 0) && (
-                <Box marginBottom={3}>
-                  <Inline space={2}>
-                    {renderFilterTags('fieldOfWork', parameters.fieldOfWork)}
-                    {renderFilterTags('location', parameters.location)}
-                    {renderFilterTags('institution', parameters.institution)}
-                  </Inline>
-                </Box>
-              )}
-              <InfoCardGrid
-                columns={!isGridView ? 1 : 2}
-                variant="detailed"
-                cards={vacancyCards}
-              />
-              {filteredVacancies.length > 0 && (
-                <Box marginTop={2} paddingBottom={2}>
-                  <Pagination
-                    variant="blue"
-                    page={selectedPage}
-                    itemsPerPage={ITEMS_PER_PAGE}
-                    totalItems={filteredVacancies.length}
-                    totalPages={totalPages}
-                    renderLink={(page, className, children) => (
-                      <button
-                        onClick={() => {
-                          setSelectedPage(page)
-                        }}
-                      >
-                        <span className={className}>{children}</span>
-                      </button>
-                    )}
-                  />
-                </Box>
-              )}
             </Box>
-          </SidebarLayout>
+          </GridContainer>
         )}
         {isTablet && (
           <Box marginX={3} paddingTop={3}>
@@ -653,6 +688,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                   setSelectedPage(1)
                   setSearchTerm(value)
                   searchTermHasBeenInitialized.current = true
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.blur()
+                  }
                 }}
                 backgroundColor="white"
               />
@@ -716,12 +756,25 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 </Inline>
               </Box>
             )}
-            <Box marginTop={2}>
-              <InfoCardGrid
+            <Box marginTop={2} style={{ minHeight: '100vh' }}>
+              <VacancyCardsGrid
                 columns={1}
                 variant="detailed"
                 cards={vacancyCards}
+                forceMediumSize={true}
               />
+              {vacancyCards.length === 0 && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  paddingY={8}
+                >
+                  <Text variant="h5">
+                    {n('noResults', 'Engar niðurstöður fundust')}
+                  </Text>
+                </Box>
+              )}
             </Box>
             {filteredVacancies.length > 0 && (
               <Box marginTop={2} paddingBottom={4}>
