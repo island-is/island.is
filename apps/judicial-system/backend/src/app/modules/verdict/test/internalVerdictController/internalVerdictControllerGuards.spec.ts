@@ -28,14 +28,7 @@ describe('InternalVerdictController - deliverVerdictToNationalCommissionersOffic
       DefendantExistsGuard,
       VerdictExistsGuard,
     ],
-    [
-      {
-        guard: CaseTypeGuard,
-        prop: {
-          allowedCaseTypes: indictmentCases,
-        },
-      },
-    ],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
   )
 })
 
@@ -57,14 +50,7 @@ describe('InternalVerdictController - updateVerdictAppeal', () => {
       DefendantNationalIdExistsGuard,
       VerdictExistsGuard,
     ],
-    [
-      {
-        guard: CaseTypeGuard,
-        prop: {
-          allowedCaseTypes: indictmentCases,
-        },
-      },
-    ],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
   )
 })
 
@@ -72,4 +58,12 @@ describe('InternalVerdictController - getVerdictSupplements', () => {
   verifyGuards(InternalVerdictController, 'getVerdictSupplements', [
     ExternalPoliceVerdictExistsGuard,
   ])
+})
+
+describe('InternalVerdictController - deliverVerdictServiceCertificatesToPolice', () => {
+  verifyGuards(
+    InternalVerdictController,
+    'deliverVerdictServiceCertificatesToPolice',
+    [],
+  )
 })

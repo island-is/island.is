@@ -28,13 +28,13 @@ import { StatisticsService } from './statistics.service'
 
 @Controller('api')
 @ApiTags('statistics')
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class StatisticsController {
   constructor(
     private readonly statisticService: StatisticsService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/statistics')
   @ApiOkResponse({
@@ -58,7 +58,6 @@ export class StatisticsController {
     )
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/indictments/statistics')
   @ApiOkResponse({
@@ -76,7 +75,6 @@ export class StatisticsController {
     )
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/subpoenas/statistics')
   @ApiOkResponse({
@@ -95,7 +93,6 @@ export class StatisticsController {
     )
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/requests/statistics')
   @ApiOkResponse({
@@ -114,7 +111,6 @@ export class StatisticsController {
     )
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/statistics/export-csv')
   @ApiOkResponse({

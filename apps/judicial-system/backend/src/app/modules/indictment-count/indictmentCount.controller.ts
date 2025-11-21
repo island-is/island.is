@@ -18,10 +18,15 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { IndictmentCount, Offense } from '..//repository'
-import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../case'
+import {
+  CaseTypeGuard,
+  MinimalCaseAccessGuard,
+  MinimalCaseExistsGuard,
+} from '../case'
 import { CreateOffenseDto } from './dto/createOffense.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
@@ -32,14 +37,19 @@ import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')
 @ApiTags('indictment-counts')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  MinimalCaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  MinimalCaseAccessGuard,
+)
 export class IndictmentCountController {
   constructor(
     private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(MinimalCaseExistsGuard, MinimalCaseAccessGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
@@ -52,11 +62,7 @@ export class IndictmentCountController {
     return this.indictmentCountService.create(caseId)
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId')
   @ApiOkResponse({
@@ -79,11 +85,7 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId')
   @ApiOkResponse({ description: 'Deletes an indictment count' })
@@ -103,11 +105,7 @@ export class IndictmentCountController {
     return { deleted }
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post(':indictmentCountId/offense')
   @ApiCreatedResponse({
@@ -129,12 +127,7 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-    OffenseExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({
@@ -158,12 +151,7 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-    OffenseExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({ description: 'Deletes an offense' })

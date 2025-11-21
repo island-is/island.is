@@ -45,6 +45,7 @@ import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
+  SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {
   constructor(
@@ -52,7 +53,6 @@ export class LimitedAccessSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')

@@ -6,26 +6,16 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../../../guards'
+import { verifyRolesRules } from '../../../../test'
 import { DefendantController } from '../../defendant.controller'
 
 describe('DefendantController - Update rules', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let rules: any[]
-
-  beforeEach(() => {
-    rules = Reflect.getMetadata(
-      'roles-rules',
-      DefendantController.prototype.update,
-    )
-  })
-
-  it('should give permission to roles', () => {
-    expect(rules).toHaveLength(6)
-    expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(prosecutorRepresentativeRule)
-    expect(rules).toContain(districtCourtJudgeRule)
-    expect(rules).toContain(districtCourtRegistrarRule)
-    expect(rules).toContain(districtCourtAssistantRule)
-    expect(rules).toContain(publicProsecutorStaffRule)
-  })
+  verifyRolesRules(DefendantController, 'update', [
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    publicProsecutorStaffRule,
+  ])
 })
