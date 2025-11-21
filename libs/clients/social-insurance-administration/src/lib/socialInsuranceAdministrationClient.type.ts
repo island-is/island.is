@@ -1,6 +1,6 @@
 import {
-  ApplicantApi,
   ApplicationApi,
+  ApplicantApi,
   DocumentsApi,
   GeneralApi,
   IncomePlanApi,
@@ -10,7 +10,7 @@ import {
   TestApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
-} from '../../gen/fetch'
+} from '../../generated/v1/gen/fetch'
 
 export type Scope =
   | '@tr.is/umsaekjandi:read'
