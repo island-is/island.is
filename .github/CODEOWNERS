@@ -365,7 +365,6 @@ codemagic.yaml                                                                  
 /libs/clients/consultation-portal/                                                                                           @island-is/advania
 /libs/api/domains/consultation-portal/                                                                                       @island-is/advania
 /libs/api/domains/form-system                                                                                                @island-is/advania
-/libs/api/domains/my-pages                                                                                                   @island-is/advania @island-is/norda
 /libs/portals/admin/form-system                                                                                              @island-is/advania
 /libs/clients/form-system/                                                                                                   @island-is/advania
 /libs/form-system                                                                                                            @island-is/advania
