@@ -1,7 +1,7 @@
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import {
   errorMessages,
-  FIRST_GRADE_AGE,
+  // FIRST_GRADE_AGE,
   getApplicationAnswers,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
