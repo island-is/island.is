@@ -16,7 +16,7 @@ import {
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import {
+import type {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
   TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
