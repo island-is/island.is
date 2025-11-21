@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { NationalRegistryUserApi, IdentityApi } from '../dataProviders'
+import { NationalRegistryV3UserApi, IdentityApi } from '../dataProviders'
 import { isCompany } from 'kennitala'
 import { Features } from '@island.is/feature-flags'
 
@@ -86,7 +86,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryV3UserApi],
               delete: true,
             },
             {
@@ -114,7 +114,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryV3UserApi],
               delete: true,
             },
           ],
