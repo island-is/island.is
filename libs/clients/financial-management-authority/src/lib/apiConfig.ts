@@ -21,7 +21,7 @@ export const ApiConfig = {
           clientSecret: config.clientSecret.trim(),
           scope: config.scope.split(' '),
           issuer: config.authenticationServer,
-          tokenEndpoint: config.authenticationServer + 'connect/token'
+          tokenEndpoint: config.authenticationServer + 'connect/token',
         },
       }),
       basePath: config.basePath,
