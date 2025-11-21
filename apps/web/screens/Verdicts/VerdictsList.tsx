@@ -720,7 +720,7 @@ const Filters = ({
                             }
                             return {
                               ...previousState,
-                              [QueryParam.CASE_TYPES]:
+                              [queryParamKey]:
                                 updatedValues.length === 0
                                   ? null
                                   : updatedValues,
@@ -921,7 +921,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         for (const category of queryState[QueryParam.CASE_CATEGORIES]) {
           tags.push({
             label: `${formatMessage(
-              m.listPage.caseCategoryAccordionLabel,
+              m.listPage.caseTypeAccordionLabel,
             )}: ${category}`,
             onClick: () => {
               updateQueryState(QueryParam.CASE_CATEGORIES, (previousState) => {
