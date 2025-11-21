@@ -56,7 +56,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+        node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }} --skip-cache
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
