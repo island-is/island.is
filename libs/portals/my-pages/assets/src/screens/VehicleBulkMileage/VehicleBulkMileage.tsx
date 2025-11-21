@@ -22,13 +22,11 @@ import { useEffect, useState, useMemo } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
-import {
-  useVehiclesListCountQuery,
-  useVehiclesListLazyQuery,
-} from './VehicleBulkMileage.generated'
+import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { useLoaderData } from 'react-router-dom'
 
 interface FormData {
   [key: string]: number
@@ -36,26 +34,12 @@ interface FormData {
 
 const VehicleBulkMileage = () => {
   useNamespaces('sp.vehicles')
+  const isAllowedBulkMileageUpload: boolean = useLoaderData() as boolean
   const { formatMessage } = useLocale()
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
-  const [displayFilters, setDisplayFilters] = useState<boolean>(false)
-
-  const { data: countData } = useVehiclesListCountQuery({
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 10,
-        query: search ?? undefined,
-        filterOnlyVehiclesUserCanRegisterMileage: true,
-        filterOnlyMileageRequiredVehicles: false,
-        includeNextMainInspectionDate: false,
-      },
-    },
-  })
-
   const [vehicleListQuery, { loading, error }] = useVehiclesListLazyQuery()
 
   const debouncedQuery = useMemo(() => {
@@ -121,12 +105,6 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
-  useEffect(() => {
-    if (!displayFilters) {
-      setDisplayFilters((countData?.vehiclesListV3?.totalRecords ?? 0) > 10)
-    }
-  }, [countData, displayFilters])
-
   const buttons = [
     <LinkButton
       key="finance"
@@ -164,7 +142,7 @@ const VehicleBulkMileage = () => {
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
           buttonGroup={
-            displayFilters
+            isAllowedBulkMileageUpload
               ? [
                   ...buttons,
                   <LinkButton
@@ -185,7 +163,7 @@ const VehicleBulkMileage = () => {
               : buttons
           }
         >
-          {displayFilters && (
+          {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>
               <GridRow>
                 <GridColumn span="4/12">
