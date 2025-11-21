@@ -120,31 +120,36 @@ export const ClaimsRepeater: FC<
               render={({ field: ctrl }) => <input type="hidden" {...ctrl} />}
             />
             <Box display="flex" justifyContent="flexEnd">
-              {field.initial && (
-                <Button
-                  variant="text"
-                  icon={field.enabled ? 'remove' : 'add'}
-                  size="small"
-                  iconType="outline"
-                  onClick={() => {
-                    const updatedClaim = {
-                      ...field,
-                      enabled: !field.enabled,
-                    }
-                    update(index, updatedClaim)
-                    calculateTotal()
-                    clearErrors([
-                      `${id}[${index}].value`,
-                      `${id}[${index}].publisher`,
-                      `${id}[${index}].nationalId`,
-                    ])
-                  }}
-                >
-                  {field.enabled
-                    ? formatMessage(m.disable)
-                    : formatMessage(m.activate)}
-                </Button>
-              )}
+              {field.initial &&
+                (() => {
+                  const isEnabled = field.enabled !== false
+                  return (
+                    <Button
+                      variant="text"
+                      icon={isEnabled ? 'remove' : 'add'}
+                      size="small"
+                      iconType="outline"
+                      onClick={() => {
+                        const isEnabled = field.enabled !== false
+                        const updatedClaim = {
+                          ...field,
+                          enabled: isEnabled ? false : true,
+                        }
+                        update(index, updatedClaim)
+                        calculateTotal()
+                        clearErrors([
+                          `${id}[${index}].value`,
+                          `${id}[${index}].publisher`,
+                          `${id}[${index}].nationalId`,
+                        ])
+                      }}
+                    >
+                      {isEnabled
+                        ? formatMessage(m.disable)
+                        : formatMessage(m.activate)}
+                    </Button>
+                  )
+                })()}
               {!field.initial && (
                 <Button
                   variant="ghost"
@@ -170,7 +175,7 @@ export const ClaimsRepeater: FC<
                   required
                   error={fieldError?.publisher}
                   size="sm"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
@@ -190,7 +195,7 @@ export const ClaimsRepeater: FC<
                   currency
                   size="sm"
                   backgroundColor="blue"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
@@ -205,7 +210,7 @@ export const ClaimsRepeater: FC<
                   format="######-####"
                   size="sm"
                   backgroundColor="blue"
-                  disabled={field.initial && !field.enabled}
+                  disabled={field.initial && field.enabled === false}
                   onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
