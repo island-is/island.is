@@ -46,7 +46,9 @@ export class MedicalDocumentsResolver {
   })
   async siaGetDisabilityPensionCertificate(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true }) locale: Locale = 'is',) {
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
     return this.service.getDisabilityPensionCertificate(user, locale)
   }
 

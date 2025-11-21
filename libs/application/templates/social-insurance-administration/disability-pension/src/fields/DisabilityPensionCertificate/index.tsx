@@ -25,7 +25,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
 
   const { data, loading } = useQuery<Query>(
     siaDisabilityPensionCertificateQuery,
-    { variables: { locale: lang}}
+    { variables: { locale: lang } },
   )
 
   setBeforeSubmitCallback?.(async () => {

@@ -8,9 +8,12 @@ import {
   TrWebContractsExternalServicePortalHealthImpact,
   TrWebContractsExternalServicePortalQuestionnaireResult,
 } from '@island.is/clients/social-insurance-administration'
-import type { Locale} from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE, DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE } from '../constants'
+import {
+  DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE,
+  DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE,
+} from '../constants'
 import { ImpairmentRating } from '../models/medicalDocuments/impairmentRating.model'
 import { MedicationAndSupportsUsed } from '../models/medicalDocuments/medicationAndSupportsUsed.model'
 import { StabilityOfHealth } from '../models/medicalDocuments/stabilityOfHealth.model'
@@ -58,40 +61,63 @@ const mapDisabilityDiagnosisCollection = (
   }
 }
 
-const mapImpairmentRating = (data: TrWebContractsExternalServicePortalQuestionnaireResult, locale: Locale): ImpairmentRating[] | undefined => {
+const mapImpairmentRating = (
+  data: TrWebContractsExternalServicePortalQuestionnaireResult,
+  locale: Locale,
+): ImpairmentRating[] | undefined => {
   const { answers, scale } = data
 
   if (!answers || !scale) {
     return undefined
   }
 
-  return answers.map(answerData => {
-    const answerValue = scale.find(s => s.value === answerData.answer)
-    if (!answerValue?.value || !answerData.questionTitle) {
-      return undefined
-    }
-    return ({
-      title: answerData.questionTitle ?? locale === 'en' ? 'Missing title' : 'Titil vantar',
-      value: answerValue.value ?? locale === 'en' ? 'Missing answer' : 'Svar vantar'
+  return answers
+    .map((answerData) => {
+      const answerValue = scale.find((s) => s.value === answerData.answer)
+      if (!answerValue?.value || !answerData.questionTitle) {
+        return undefined
+      }
+      return {
+        title:
+          answerData.questionTitle ?? locale === 'en'
+            ? 'Missing title'
+            : 'Titil vantar',
+        value:
+          answerValue.value ?? locale === 'en'
+            ? 'Missing answer'
+            : 'Svar vantar',
+      }
     })
-  }).filter(isDefined)
+    .filter(isDefined)
 }
 
-const mapMedicationAndSupportsUsed = (data: TrWebContractsExternalServicePortalDisabilityPensionCertificate): MedicationAndSupportsUsed | undefined => {
-  const { noMedicationAndSupportUsed, medicationUsed, assessmentToolsUsed, interventionUsed} = data
+const mapMedicationAndSupportsUsed = (
+  data: TrWebContractsExternalServicePortalDisabilityPensionCertificate,
+): MedicationAndSupportsUsed | undefined => {
+  const {
+    noMedicationAndSupportUsed,
+    medicationUsed,
+    assessmentToolsUsed,
+    interventionUsed,
+  } = data
 
-  if (noMedicationAndSupportUsed || (!medicationUsed && !assessmentToolsUsed && !interventionUsed)) {
+  if (
+    noMedicationAndSupportUsed ||
+    (!medicationUsed && !assessmentToolsUsed && !interventionUsed)
+  ) {
     return undefined
   }
 
   return {
     medicationUsed: medicationUsed ?? undefined,
     supportsUsed: assessmentToolsUsed ?? undefined,
-    interventionUsed: interventionUsed ?? undefined
+    interventionUsed: interventionUsed ?? undefined,
   }
 }
 
-const mapStabilityOfHealth = (data: TrWebContractsExternalServicePortalHealthImpact): StabilityOfHealth | undefined => {
+const mapStabilityOfHealth = (
+  data: TrWebContractsExternalServicePortalHealthImpact,
+): StabilityOfHealth | undefined => {
   const { description, impactLevel } = data
 
   if (!impactLevel?.display) {
@@ -100,7 +126,7 @@ const mapStabilityOfHealth = (data: TrWebContractsExternalServicePortalHealthImp
 
   return {
     description: impactLevel.display,
-    furtherDetails: description ?? undefined
+    furtherDetails: description ?? undefined,
   }
 }
 
@@ -112,8 +138,19 @@ export const mapDisabilityPensionCertificate = (
     return null
   }
 
-  const physicalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE)
-  const mentalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE)
+  const physicalImpairmentQuestionnaireResult = (
+    data.questionnaireResults ?? []
+  ).find(
+    (s) =>
+      s.questionnaireCode ===
+      DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE,
+  )
+  const mentalImpairmentQuestionnaireResult = (
+    data.questionnaireResults ?? []
+  ).find(
+    (s) =>
+      s.questionnaireCode === DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE,
+  )
 
   return {
     referenceId: data.referenceId,
@@ -134,7 +171,9 @@ export const mapDisabilityPensionCertificate = (
       data.diagnosesOthers,
     ),
     healthHistorySummary: data.healthHistorySummary ?? undefined,
-    stabilityOfHealth: data.healthImpact ? mapStabilityOfHealth(data.healthImpact) : undefined,
+    stabilityOfHealth: data.healthImpact
+      ? mapStabilityOfHealth(data.healthImpact)
+      : undefined,
     participationLimitationCause:
       data.participationLimitationCause?.display ?? undefined,
     abilityChangePotential: data.abilityChangePotential?.display ?? undefined,
@@ -142,7 +181,11 @@ export const mapDisabilityPensionCertificate = (
     assessmentToolsUsed: data.assessmentToolsUsed ?? undefined,
     capacityForWork: data.capacityForWork ?? undefined,
     previousRehabilitation: data.previousRehabilitation ?? undefined,
-    physicalImpairments: physicalImpairmentQuestionnaireResult ? mapImpairmentRating(physicalImpairmentQuestionnaireResult, locale) : undefined,
-    mentalImpairments: mentalImpairmentQuestionnaireResult ? mapImpairmentRating(mentalImpairmentQuestionnaireResult, locale) : undefined,
+    physicalImpairments: physicalImpairmentQuestionnaireResult
+      ? mapImpairmentRating(physicalImpairmentQuestionnaireResult, locale)
+      : undefined,
+    mentalImpairments: mentalImpairmentQuestionnaireResult
+      ? mapImpairmentRating(mentalImpairmentQuestionnaireResult, locale)
+      : undefined,
   }
 }
