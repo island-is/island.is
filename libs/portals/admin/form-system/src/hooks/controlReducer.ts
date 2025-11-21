@@ -193,7 +193,7 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge'
+        property: 'isLarge' | 'hasDescription'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
