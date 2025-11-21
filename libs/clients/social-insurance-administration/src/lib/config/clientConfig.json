@@ -5549,9 +5549,11 @@
         "properties": {
           "questionCode": { "type": "string", "nullable": true },
           "questionTitle": { "type": "string", "nullable": true },
+          "questionSubcategory": { "type": "string", "nullable": true },
           "explanationText": { "type": "string", "nullable": true },
           "question": { "type": "string", "nullable": true },
-          "icfCode": { "type": "string", "nullable": true }
+          "icfCode": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -6872,9 +6874,11 @@
         "properties": {
           "questionCode": { "type": "string", "nullable": true },
           "questionTitle": { "type": "string", "nullable": true },
+          "questionSubcategory": { "type": "string", "nullable": true },
           "question": { "type": "string", "nullable": true },
           "answer": { "type": "string", "nullable": true },
-          "explanationText": { "type": "string", "nullable": true }
+          "explanationText": { "type": "string", "nullable": true },
+          "icfCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

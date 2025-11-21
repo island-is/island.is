@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const siaDisabilityPensionCertificateQuery = gql`
-  query SiaDisabilityPensionCertificate {
-    socialInsuranceDisabilityPensionCertificate {
+  query SiaDisabilityPensionCertificate($locale: String!) {
+    socialInsuranceDisabilityPensionCertificate(locale: $locale) {
       referenceId
       doctor {
         name
