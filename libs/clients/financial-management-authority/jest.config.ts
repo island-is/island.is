@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-icelandic-government-institution-vacancies',
+  displayName: 'clients-financial-management-authority',
   preset: '../../../jest.preset.js',
   globals: {},
   testEnvironment: 'node',
@@ -15,5 +15,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory:
-    '../../../coverage/libs/clients/icelandic-government-institution-vacancies',
+    '../../../coverage/libs/clients/financial-management-authority',
 }
