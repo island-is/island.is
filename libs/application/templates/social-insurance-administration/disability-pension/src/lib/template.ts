@@ -124,11 +124,11 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 IdentityApi,
-                UserProfileApi,/*.configure({
+                UserProfileApi /*.configure({
                   params: {
                     validateEmail: true,
                   },
-                }),*/
+                }),*/,
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
