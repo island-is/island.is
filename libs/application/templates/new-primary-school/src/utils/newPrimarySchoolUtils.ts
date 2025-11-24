@@ -509,8 +509,12 @@ export const getApplicationType = (
 
   // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
   if (!childInformation?.primaryOrgId) {
-    return yearOfBirth === firstGradeYear
-      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    // temporary check - need to be fixed before february 2026 after testing phase is over and rule about enrollment age has been finalized
+    // if the child is 1 to 6 years old, it's an enrollment application
+    // so the year of birth can be between currentYear - 6 and currentYear - 1
+    return yearOfBirth >= firstGradeYear && yearOfBirth <= currentYear - 1
+      ? //return yearOfBirth === firstGradeYear
+        ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
       : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 

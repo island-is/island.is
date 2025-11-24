@@ -29,8 +29,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       },
       FORM_SYSTEM_BUCKET: {
         dev: 'island-is-dev-storage-form-system',
-        staging: '', // Still need to get buckets created
-        prod: '',
+        staging: 'island-is-staging-storage-form-system',
+        prod: 'island-is-prod-storage-form-system',
       },
       REDIS_URL_NODE_01: {
         dev: JSON.stringify([
