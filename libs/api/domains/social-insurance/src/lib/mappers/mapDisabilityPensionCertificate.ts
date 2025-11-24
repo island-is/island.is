@@ -64,14 +64,23 @@ const mapImpairmentRating = (data: TrWebContractsExternalServicePortalQuestionna
     return undefined
   }
 
-  return answers.map(answerData => {
-    const answerValue = scale.find(s => s.value === answerData.answer)
-    if (!answerValue?.value || !answerData.questionTitle) {
-      return undefined
-    }
-    return ({
-      title: answerData.questionTitle ?? locale === 'en' ? 'Missing title' : 'Titil vantar',
-      value: answerValue.value ?? locale === 'en' ? 'Missing answer' : 'Svar vantar'
+  return answers
+    .map((answerData) => {
+      const answerValue = scale.find((s) => s.value?.toString() === answerData.answer)
+      if (!answerValue?.value || !answerData.questionTitle) {
+        return undefined
+      }
+
+      return {
+        title:
+          answerData.questionTitle ?? (locale === 'en'
+            ? 'Missing title'
+            : 'Titil vantar'),
+        value:
+          answerValue.display ?? (locale === 'en'
+            ? 'Missing answer'
+            : 'Svar vantar'),
+      }
     })
   }).filter(isDefined)
 }
@@ -111,8 +120,21 @@ export const mapDisabilityPensionCertificate = (
     return null
   }
 
-  const physicalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE)
-  const mentalImpairmentQuestionnaireResult = (data.questionnaireResults ?? []).find(s => s.questionnaireCode === DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE)
+
+  const physicalImpairmentQuestionnaireResult = (
+    data.questionnaireResults ?? []
+  ).find(
+    (s) =>
+      s.questionnaireCode ===
+      DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE,
+  )
+
+  const mentalImpairmentQuestionnaireResult = (
+    data.questionnaireResults ?? []
+  ).find(
+    (s) =>
+      s.questionnaireCode === DISABILITY_CERTIFICATE_MENTAL_QUESTIONNAIRE_CODE,
+  )
 
   return {
     referenceId: data.referenceId,
