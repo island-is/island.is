@@ -3,6 +3,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   getValueViaPath,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -117,7 +118,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(14),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
