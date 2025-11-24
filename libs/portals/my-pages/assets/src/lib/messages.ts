@@ -173,7 +173,7 @@ export const messages = defineMessages({
   },
   notAllowedBulkMileage: {
     id: 'sp.work-machines:not-allowed-bulk-mileage',
-    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu. Vinsamlegast hafðu samband við Samgöngustofu fyrir frekari aðstoð.',
+    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu.',
   },
 })
 
