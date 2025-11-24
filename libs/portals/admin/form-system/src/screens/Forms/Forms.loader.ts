@@ -13,9 +13,11 @@ import {
   GET_APPLICATIONS,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
+  GET_ORGANIZATION_TITLE,
   LoaderResponse,
 } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
+
 export interface FormsLoaderQueryResponse {
   formSystemForms: FormSystemFormResponse
 }
@@ -85,13 +87,37 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       ?.filter((form) => form !== null)
       .map((form) => removeTypename(form)) as FormSystemForm[]
 
-    const organizations = dataForms.formSystemForms?.organizations?.map(
-      (org) => ({
-        label: org?.label,
-        value: org?.value,
-        isSelected: org?.isSelected,
-      }),
-    ) as FormSystemOption[]
+    // Safe organizations mapping (handles undefined)
+    const organizationsRaw = dataForms.formSystemForms?.organizations ?? []
+
+    const organizations = organizationsRaw
+      .filter((org): org is NonNullable<typeof org> => !!org)
+      .map(
+        (org) =>
+          ({
+            label: org.label,
+            value: org.value,
+            isSelected: org.isSelected,
+          } as FormSystemOption),
+      )
+
+    // Only enrich titles if we have organizations
+    if (organizations.length > 0) {
+      await Promise.all(
+        organizations.map(async (org) => {
+          try {
+            const { data: titleData } = await client.query({
+              query: GET_ORGANIZATION_TITLE,
+              variables: { input: { nationalId: org.value } },
+              fetchPolicy: 'cache-first',
+            })
+            org.label = titleData?.formSystemOrganizationTitle || org.value
+          } catch (e) {
+            // swallow errors; keep original label/value
+          }
+        }),
+      )
+    }
 
     const applications = dataApplications.formSystemApplications?.applications
       ?.filter((application) => application !== null)

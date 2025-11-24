@@ -27,7 +27,7 @@ export const FormFragment = gql`
     isTranslated
     hasPayment
     beenPublished
-    applicationDaysToRemove
+    daysUntilApplicationPrune
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen

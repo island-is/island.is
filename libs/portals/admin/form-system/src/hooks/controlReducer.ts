@@ -124,7 +124,7 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
+  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -648,12 +648,12 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_APPLICATION_DAYS_TO_REMOVE': {
+    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
       return {
         ...state,
         form: {
           ...form,
-          applicationDaysToRemove: action.payload.value,
+          daysUntilApplicationPrune: action.payload.value,
         },
       }
     }
