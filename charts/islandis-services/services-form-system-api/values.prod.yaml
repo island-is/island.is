@@ -25,7 +25,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'services_form_system_api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
-  FORM_SYSTEM_BUCKET: ''
+  FORM_SYSTEM_BUCKET: 'island-is-prod-storage-form-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
