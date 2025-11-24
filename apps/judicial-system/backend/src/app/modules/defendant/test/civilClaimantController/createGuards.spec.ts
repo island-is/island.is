@@ -1,25 +1,6 @@
-import { CanActivate } from '@nestjs/common'
-
-import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
+import { verifyGuards } from '../../../../test'
 import { CivilClaimantController } from '../../civilClaimant.controller'
 
 describe('CivilClaimantController - Create guards', () => {
-  let guards: Array<new () => CanActivate>
-  const expectedGuards = [CaseExistsGuard, CaseWriteGuard]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      CivilClaimantController.prototype.create,
-    )
-  })
-
-  it('should have the correct guards in the correct order', () => {
-    expect(guards).toHaveLength(expectedGuards.length)
-
-    expectedGuards.forEach((expectedGuard, index) => {
-      const guardInstance = new guards[index]()
-      expect(guardInstance).toBeInstanceOf(expectedGuard)
-    })
-  })
+  verifyGuards(CivilClaimantController, 'create', [])
 })
