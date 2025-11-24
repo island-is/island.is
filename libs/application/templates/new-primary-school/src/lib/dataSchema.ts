@@ -150,6 +150,10 @@ export const dataSchema = z.object({
       preferredLanguage: z.string().optional().nullable(),
     })
     .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      // LanguageEnvironment is stored as <id>::<option> in the DB
+      const selectedLanguageEnvironment =
+        languageEnvironment.split('::')[1] ?? ''
+
       const checkAndAddIssue = (index: number) => {
         // If required 2 languages but the second language field is still hidden
         // else check if applicant has selected a languages
@@ -169,12 +173,13 @@ export const dataSchema = z.object({
       }
 
       if (
-        languageEnvironment ===
+        selectedLanguageEnvironment ===
         LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
       ) {
         checkAndAddIssue(0)
       } else if (
-        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        selectedLanguageEnvironment ===
+        LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
       ) {
         checkAndAddIssue(0)
         checkAndAddIssue(1)
@@ -182,12 +187,16 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
+        // LanguageEnvironment is stored as <id>::<option> in the DB
+        const selectedLanguageEnvironment =
+          languageEnvironment.split('::')[1] ?? ''
+
         if (
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 1) ||
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 2)
