@@ -17,6 +17,7 @@ export const messages = defineMessages({
     id: 'sp.assets:holdings',
     defaultMessage: 'Eignarhlutfall',
   },
+
   status: {
     id: 'sp.assets:status',
     defaultMessage: 'Staða',
@@ -171,10 +172,7 @@ export const messages = defineMessages({
     id: 'sp.work-machines:no-inspection',
     defaultMessage: 'Óskoðuð',
   },
-  notAllowedBulkMileage: {
-    id: 'sp.work-machines:not-allowed-bulk-mileage',
-    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu.',
-  },
+
 })
 
 export const vehicleMessage = defineMessages({
@@ -205,6 +203,10 @@ export const vehicleMessage = defineMessages({
   vehicleBulkMileageIntro: {
     id: 'sp.vehicles:vehicle-bulk-mileage-intro',
     defaultMessage: `Yfirlit yfir skráða kílómetrastöðu. Að minnsta kosti 30 dagar verða að líða á milli skráningar kílómetrastöðu, <href>sjá nánar um það hér.</href>`,
+  },
+  notAllowedBulkMileage: {
+    id: 'sp.vehicles:not-allowed-bulk-mileage',
+    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu.',
   },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
