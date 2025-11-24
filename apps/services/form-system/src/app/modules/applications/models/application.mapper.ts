@@ -10,6 +10,7 @@ import { ApplicationDto } from './dto/application.dto'
 import { ValueDto } from './dto/value.dto'
 import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
+import { Field } from '../../fields/models/field.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -67,7 +68,12 @@ export class ApplicationMapper {
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
               callRuleset: screen.callRuleset,
-              isHidden: this.isHidden(screen.id, application.dependencies),
+              isHidden: this.isHidden(
+                screen.id,
+                application.dependencies,
+                section.sectionType,
+                screen.fields,
+              ),
               isCompleted: this.isCompleted(screen.id, application.completed),
               fields: screen.fields?.map((field) => {
                 return {
@@ -152,9 +158,15 @@ export class ApplicationMapper {
   private isHidden(
     id: string,
     dependencies: Dependency[] | undefined,
+    sectionType?: string,
+    fields?: Field[],
   ): boolean {
     if (!dependencies) {
       return false
+    }
+
+    if (sectionType === SectionTypes.PARTIES && fields && !fields[0]?.values) {
+      return true
     }
 
     const childProps = dependencies.flatMap(
