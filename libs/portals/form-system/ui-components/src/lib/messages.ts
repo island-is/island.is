@@ -618,7 +618,7 @@ export const m = defineMessages({
   },
   unpublish: {
     id: 'form.system:unpublish',
-    defaultMessage: 'Afturkalla útgáfu',
+    defaultMessage: 'Taka úr útgáfu',
     description: 'Unpublish',
   },
   tryOut: {
