@@ -172,7 +172,6 @@ export const messages = defineMessages({
     id: 'sp.work-machines:no-inspection',
     defaultMessage: 'Óskoðuð',
   },
-
 })
 
 export const vehicleMessage = defineMessages({

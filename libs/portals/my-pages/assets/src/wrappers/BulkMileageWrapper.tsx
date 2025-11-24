@@ -21,8 +21,7 @@ export const BulkMileageWrapper = ({ children }: Props) => {
           noBorder={false}
           tag={formatMessage(coreMessages.accessDenied)}
           title={formatMessage(coreMessages.accessDenied)}
-          message={formatMessage(m.notAllowedBulkMileage)
-          }
+          message={formatMessage(m.notAllowedBulkMileage)}
           imgSrc="./assets/images/movingTruck.svg"
         />
       </Box>
