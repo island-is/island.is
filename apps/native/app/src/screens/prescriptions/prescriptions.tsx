@@ -1,10 +1,14 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
+  HealthDirectorateMedicineHistoryItem,
+  HealthDirectoratePrescription,
+  RightsPortalDrugCertificate,
   useGetDrugCertificatesQuery,
   useGetDrugPrescriptionsQuery,
   useGetMedicineHistoryQuery,
@@ -16,6 +20,7 @@ import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
 import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicin-history-card'
 import { PrescriptionCard } from './components/prescription-card'
+import { Text } from 'react-native-reanimated/lib/typescript/Animated'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -53,46 +58,121 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
 
-  const showPrescriptions = selectedTab === 0
-  const showDrugCertificates = selectedTab === 1
-  const showMedicineHistory = selectedTab === 2
+  const disableDrugCertificates = useFeatureFlag(
+    'isDrugCertificateEnabled',
+    false,
+  )
 
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
+    fetchPolicy: 'cache-first',
   })
 
   const medicineHistoryRes = useGetMedicineHistoryQuery({
     variables: { locale: useLocale() },
+    fetchPolicy: 'cache-first',
   })
 
-  const certificatesRes = useGetDrugCertificatesQuery()
+  const certificatesRes = useGetDrugCertificatesQuery({
+    fetchPolicy: 'cache-first',
+  })
 
-  const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
-  const prescriptions =
-    prescriptionsRes.data?.healthDirectoratePrescriptions?.prescriptions
-  const medicineHistory =
-    medicineHistoryRes.data?.healthDirectorateMedicineHistory?.medicineHistory
+  const renderSkeletons = useCallback(
+    () =>
+      Array.from({ length: 5 }).map((_, index) => (
+        <GeneralCardSkeleton height={90} key={index} />
+      )),
+    [],
+  )
 
-  const showPrescriptionError =
-    showPrescriptions && prescriptionsRes.error && !prescriptionsRes.data
-  const showDrugCertificateError =
-    showDrugCertificates && certificatesRes.error && !certificatesRes.data
-  const showMedicineHistoryError =
-    showMedicineHistory && medicineHistoryRes.error && !medicineHistoryRes.data
+  const tabs = useMemo(() => {
+    const allTabs = [
+      {
+        id: 'prescriptions',
+        titleId: 'health.prescriptions.title',
+        enabled: true,
+        queryResult: prescriptionsRes,
+        getData: () =>
+          prescriptionsRes.data?.healthDirectoratePrescriptions?.prescriptions,
+        renderContent: (data: HealthDirectoratePrescription[]) => (
+          <Wrapper>
+            {prescriptionsRes.loading && !prescriptionsRes.data
+              ? renderSkeletons()
+              : data?.map((prescription, index) => (
+                  <PrescriptionCard
+                    key={`${prescription?.id}-${index}`}
+                    prescription={prescription}
+                  />
+                ))}
+          </Wrapper>
+        ),
+      },
+      {
+        id: 'drugCertificates',
+        titleId: 'health.drugCertificates.title',
+        enabled: disableDrugCertificates,
+        queryResult: certificatesRes,
+        getData: () => certificatesRes.data?.rightsPortalDrugCertificates,
+        renderContent: (data: RightsPortalDrugCertificate[]) => (
+          <Wrapper>
+            {certificatesRes.loading && !certificatesRes.data
+              ? renderSkeletons()
+              : data?.map((certificate, index) => (
+                  <CertificateCard
+                    key={`${certificate?.id}-${index}`}
+                    certificate={certificate}
+                  />
+                ))}
+          </Wrapper>
+        ),
+      },
+      {
+        id: 'medicineHistory',
+        titleId: 'health.medicineHistory.title',
+        enabled: true,
+        queryResult: medicineHistoryRes,
+        getData: () =>
+          medicineHistoryRes.data?.healthDirectorateMedicineHistory
+            ?.medicineHistory,
+        renderContent: (data: HealthDirectorateMedicineHistoryItem[]) => (
+          <Wrapper>
+            {medicineHistoryRes.loading && !medicineHistoryRes.data
+              ? renderSkeletons()
+              : data?.map((medicine, index) => (
+                  <MedicineHistoryCard
+                    key={`${medicine?.id}-${index}`}
+                    medicine={medicine}
+                  />
+                ))}
+          </Wrapper>
+        ),
+      },
+    ]
+
+    return allTabs.filter((tab) => tab.enabled)
+  }, [
+    disableDrugCertificates,
+    prescriptionsRes,
+    certificatesRes,
+    medicineHistoryRes,
+    renderSkeletons,
+  ])
+
+  const activeTab = tabs[selectedTab]
+  const activeTabData = activeTab?.getData()
+
+  const handleTabChange = (tabIndex: number) => {
+    setSelectedTab(tabIndex)
+  }
+
+  const showError =
+    activeTab && activeTab.queryResult.error && !activeTab.queryResult.data
 
   const showNoDataError =
-    (showDrugCertificates &&
-      !certificatesRes.error &&
-      !drugCertificates?.length &&
-      !certificatesRes.loading) ||
-    (showPrescriptions &&
-      !prescriptionsRes.error &&
-      !prescriptions?.length &&
-      !prescriptionsRes.loading) ||
-    (showMedicineHistory &&
-      !medicineHistoryRes.error &&
-      !medicineHistory?.length &&
-      !medicineHistoryRes.loading)
+    activeTab &&
+    !activeTab.queryResult.error &&
+    !activeTabData?.length &&
+    !activeTab.queryResult.loading
 
   useConnectivityIndicator({
     componentId,
@@ -116,14 +196,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     }
   }, [prescriptionsRes, certificatesRes, medicineHistoryRes])
 
-  const renderSkeletons = useCallback(
-    () =>
-      Array.from({ length: 5 }).map((_, index) => (
-        <GeneralCardSkeleton height={90} key={index} />
-      )),
-    [],
-  )
-
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -133,94 +205,25 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         style={{ flex: 1 }}
       >
         <Host>
-          <Top>
-            <FormattedMessage
-              id={'health.prescriptions.description'}
-              defaultMessage={
-                'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.'
-              }
-            />
-          </Top>
-
           <Wrapper>
             <TabButtons
-              buttons={[
-                {
-                  title: intl.formatMessage({
-                    id: 'health.prescriptions.title',
-                  }),
-                },
-                {
-                  title: intl.formatMessage({
-                    id: 'health.drugCertificates.title',
-                  }),
-                },
-                {
-                  title: intl.formatMessage({
-                    id: 'health.medicineHistory.title',
-                  }),
-                },
-              ]}
+              buttons={tabs.map((tab) => ({
+                title: intl.formatMessage({
+                  id: tab.titleId,
+                }),
+              }))}
               selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
+              setSelectedTab={handleTabChange}
             />
           </Wrapper>
-          {showDrugCertificates &&
-          (drugCertificates?.length || certificatesRes.loading) ? (
+          {activeTab &&
+            (activeTabData?.length || activeTab.queryResult.loading) &&
+            activeTab.renderContent(activeTabData as any)}
+          {showError && (
             <Wrapper>
-              {certificatesRes.loading && !certificatesRes.data
-                ? renderSkeletons()
-                : drugCertificates?.map((certificate, index) => (
-                    <CertificateCard
-                      key={`${certificate?.id}-${index}`}
-                      certificate={certificate}
-                    />
-                  ))}
+              <Problem error={activeTab?.queryResult.error} />
             </Wrapper>
-          ) : null}
-          {showPrescriptions &&
-          (prescriptions?.length || prescriptionsRes.loading) ? (
-            <Wrapper>
-              {prescriptionsRes.loading && !prescriptionsRes.data
-                ? renderSkeletons()
-                : prescriptions?.map((prescription, index) => (
-                    <PrescriptionCard
-                      key={`${prescription?.id}-${index}`}
-                      prescription={prescription}
-                    />
-                  ))}
-            </Wrapper>
-          ) : null}
-          {showMedicineHistory &&
-          (medicineHistory?.length || medicineHistoryRes.loading) ? (
-            <Wrapper>
-              {medicineHistoryRes.loading && !medicineHistoryRes.data
-                ? renderSkeletons()
-                : medicineHistory?.map((medicine, index) => {
-                    return (
-                      <MedicineHistoryCard
-                        key={`${medicine?.id}-${index}`}
-                        medicine={medicine}
-                      />
-                    )
-                  })}
-            </Wrapper>
-          ) : null}
-          {showPrescriptionError ||
-            showDrugCertificateError ||
-            (showMedicineHistoryError && (
-              <Wrapper>
-                <Problem
-                  error={
-                    showPrescriptionError ||
-                    showDrugCertificateError ||
-                    showMedicineHistoryError
-                      ? prescriptionsRes.error
-                      : certificatesRes.error || medicineHistoryRes.error
-                  }
-                />
-              </Wrapper>
-            ))}
+          )}
           {showNoDataError && (
             <Wrapper>
               <Problem type="no_data" />
