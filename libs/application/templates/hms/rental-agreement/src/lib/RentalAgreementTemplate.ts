@@ -107,7 +107,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
+              api: [UserProfileApi, IdentityApi, NationalRegistryV3SpouseApi],
               delete: true,
             },
           ],
