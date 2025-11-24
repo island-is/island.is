@@ -63,7 +63,6 @@ export const TextInput: React.FC<TextInputProps> = ({
 
     onChange(newValue)
   }
-
   return (
     <>
       <Text variant="h5" marginBottom={2}>
@@ -84,8 +83,11 @@ export const TextInput: React.FC<TextInputProps> = ({
           disabled={disabled}
           required={required}
           maxLength={maxLength ? +maxLength : undefined}
+          min={min}
+          max={max}
           textarea={multiline}
           rows={multiline ? rows : undefined}
+          type={type === 'decimal' ? 'number' : type}
           inputMode={
             type === 'decimal'
               ? 'decimal'

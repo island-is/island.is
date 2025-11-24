@@ -64,6 +64,14 @@ query GetQuestionnaireWithQuestions(
     sections {
       __typename
       title
+      id
+      dependsOn
+      visibilityConditions {
+        questionId
+        operator
+        expectedValues
+        showWhenMatched
+      }
       questions {
         __typename
         id

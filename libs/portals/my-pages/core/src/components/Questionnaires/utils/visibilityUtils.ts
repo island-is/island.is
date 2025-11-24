@@ -165,6 +165,31 @@ export const isQuestionVisibleWithStructuredConditions = (
   return evaluateStructuredVisibilityConditions(visibilityConditions, answers)
 }
 
+export const isSectionVisible = (
+  section: {
+    visibilityConditions?:
+      | StructuredVisibilityCondition[]
+      | QuestionnaireVisibilityCondition[]
+      | null
+    dependsOn?: string[] | null
+  },
+  answers: { [key: string]: QuestionAnswer },
+): boolean => {
+  // If no visibility conditions, section is always visible
+  if (
+    !section.visibilityConditions ||
+    section.visibilityConditions.length === 0
+  ) {
+    return true
+  }
+
+  // Evaluate all visibility conditions (AND logic)
+  return evaluateStructuredVisibilityConditions(
+    section.visibilityConditions as StructuredVisibilityCondition[],
+    answers,
+  )
+}
+
 // Safe expression evaluator for mathematical formulas
 // Wrap in try-catch when calling this function
 const evaluateExpression = (expression: string): number => {

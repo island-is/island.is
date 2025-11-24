@@ -11,7 +11,10 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
-import { isQuestionVisibleWithStructuredConditions } from './utils/visibilityUtils'
+import {
+  isQuestionVisibleWithStructuredConditions,
+  isSectionVisible,
+} from './utils/visibilityUtils'
 
 import {
   Questionnaire,
@@ -44,7 +47,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   backLink,
   img,
   initialAnswers,
-  isDraft = false,
+  isDraft: _isDraft = false,
 }) => {
   const { formatMessage } = useLocale()
   const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>(
@@ -105,6 +108,10 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     if (!questionnaire.sections?.length) return []
 
     return questionnaire.sections
+      .filter((section) => {
+        // First check if the section itself is visible based on its conditions
+        return isSectionVisible(section, answers)
+      })
       .map((section) => {
         if (!section.questions?.length) return { ...section, questions: [] }
 
@@ -164,6 +171,32 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
       )
     }
   }, [questionSteps])
+
+  // Clear answers for hidden questions
+  useEffect(() => {
+    if (!questionnaire.sections?.length) return
+
+    const visibleQuestionIds = new Set(
+      processedSections.flatMap(
+        (section) => section.questions?.map((q) => q.id) || [],
+      ),
+    )
+
+    // Find answers for questions that are no longer visible
+    const hiddenQuestionIds = Object.keys(answers).filter(
+      (questionId) => !visibleQuestionIds.has(questionId),
+    )
+
+    if (hiddenQuestionIds.length > 0) {
+      setAnswers((prev) => {
+        const newAnswers = { ...prev }
+        hiddenQuestionIds.forEach((questionId) => {
+          delete newAnswers[questionId]
+        })
+        return newAnswers
+      })
+    }
+  }, [processedSections, answers, questionnaire.sections])
 
   const handleAnswerChange = useCallback(
     (answer: QuestionAnswer) => {

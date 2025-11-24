@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Question } from './question.model'
+import { Question, VisibilityCondition } from './question.model'
 import { QuestionnairesBaseItem } from './questionnaires.model'
 
 @ObjectType('QuestionnaireAnswerValue')
@@ -41,6 +41,9 @@ export class QuestionnaireSubmissionDetail {
 @ObjectType('QuestionnaireSection')
 export class QuestionnaireSection {
   @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
   title?: string
 
   @Field({ nullable: true })
@@ -48,6 +51,12 @@ export class QuestionnaireSection {
 
   @Field(() => [Question], { nullable: true })
   questions?: Question[]
+
+  @Field(() => [VisibilityCondition], { nullable: true })
+  visibilityConditions?: VisibilityCondition[]
+
+  @Field(() => [String], { nullable: true })
+  dependsOn?: string[]
 }
 
 @ObjectType('Questionnaire')
