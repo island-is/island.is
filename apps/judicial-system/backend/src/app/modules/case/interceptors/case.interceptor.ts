@@ -9,8 +9,12 @@ import {
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
+  hasDatePassed,
+  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -22,9 +26,30 @@ import {
   EventLog,
 } from '../../repository'
 
-export const transformDefendants = (defendants?: Defendant[]) => {
+export const transformDefendants = ({
+  defendants,
+  indictmentRulingDecision,
+  rulingDate,
+}: {
+  defendants?: Defendant[]
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+}) => {
   return defendants?.map((defendant) => {
     const { verdict } = defendant
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+    const { deadlineDate, isDeadlineExpired } = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : {}
+
     return {
       ...defendant.toJSON(),
       ...(verdict
@@ -39,6 +64,8 @@ export const transformDefendants = (defendants?: Defendant[]) => {
             },
           }
         : {}),
+      verdictAppealDeadline: deadlineDate,
+      isVerdictAppealDeadlineExpired: isDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
@@ -106,7 +133,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants(theCase.defendants),
+    defendants: transformDefendants({ defendants: theCase.defendants }),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),

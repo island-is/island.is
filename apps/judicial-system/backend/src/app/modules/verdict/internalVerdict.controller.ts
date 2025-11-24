@@ -29,7 +29,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
+  getIndictmentAppealDeadline,
   hasDatePassed,
   indictmentCases,
   ServiceRequirement,
@@ -84,13 +84,13 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate({
+  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
     baseDate: new Date(baseDate),
     isFine,
   })
-  if (hasDatePassed(appealDeadline)) {
+  if (isDeadlineExpired) {
     throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
     )
   }
 }

@@ -34,8 +34,7 @@ import {
   CourtSessionRulingType,
   DefendantEventType,
   EventType,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -647,12 +646,11 @@ export class InternalCaseService {
         theCase.defendants ?? [],
         filterMap((defendant) => {
           if (defendant.verdict?.serviceDate) {
-            const appealDeadline = getIndictmentAppealDeadlineDate({
+            const { isDeadlineExpired } = getIndictmentAppealDeadline({
               baseDate: defendant.verdict?.serviceDate,
               isFine: false,
             })
-            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
-            if (isAppealDeadlineExpired) {
+            if (isDeadlineExpired) {
               return option.some({ theCase, defendant })
             }
           }
