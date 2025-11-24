@@ -13,7 +13,6 @@ import {
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
-  hasDatePassed,
   ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'

@@ -30,7 +30,6 @@ import {
 import {
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadline,
-  hasDatePassed,
   indictmentCases,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
