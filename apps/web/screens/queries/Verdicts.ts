@@ -51,21 +51,32 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
   }
 `
 
-export const GET_VERDICT_CASE_TYPES_QUERY = gql`
-  query GetVerdictCaseTypes {
-    webVerdictCaseTypes {
-      caseTypes {
-        label
+export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
+  query GetVerdictCaseFilterOptionsPerCourt {
+    webVerdictCaseFilterOptionsPerCourt {
+      courtOfAppeal {
+        options {
+          label
+          typeOfOption
+        }
       }
-    }
-  }
-`
-
-export const GET_VERDICT_CASE_CATEGORIES_QUERY = gql`
-  query GetVerdictCaseCategories {
-    webVerdictCaseCategories {
-      caseCategories {
-        label
+      supremeCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      districtCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      all {
+        options {
+          label
+          typeOfOption
+        }
       }
     }
   }
