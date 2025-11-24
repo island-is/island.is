@@ -22,13 +22,19 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
 import { Case, CourtSession, CourtSessionString } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
@@ -38,7 +44,13 @@ import { CourtSessionService } from './courtSession.service'
 
 @Controller('api/case/:caseId/courtSession')
 @ApiTags('court-sessions')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseWriteGuard,
+)
 export class CourtSessionController {
   constructor(
     private readonly courtSessionService: CourtSessionService,
@@ -46,7 +58,6 @@ export class CourtSessionController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -68,7 +79,7 @@ export class CourtSessionController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -95,7 +106,7 @@ export class CourtSessionController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -122,7 +133,7 @@ export class CourtSessionController {
     })
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
