@@ -72,19 +72,20 @@ const mapImpairmentRating = (
 
   return answers
     .map((answerData) => {
-      const answerValue = scale.find((s) => s.value === answerData.answer)
+      const answerValue = scale.find((s) => s.value?.toString() === answerData.answer)
       if (!answerValue?.value || !answerData.questionTitle) {
         return undefined
       }
+
       return {
         title:
-          answerData.questionTitle ?? locale === 'en'
+          answerData.questionTitle ?? (locale === 'en'
             ? 'Missing title'
-            : 'Titil vantar',
+            : 'Titil vantar'),
         value:
-          answerValue.value ?? locale === 'en'
+          answerValue.display ?? (locale === 'en'
             ? 'Missing answer'
-            : 'Svar vantar',
+            : 'Svar vantar'),
       }
     })
     .filter(isDefined)
@@ -137,6 +138,7 @@ export const mapDisabilityPensionCertificate = (
     return null
   }
 
+
   const physicalImpairmentQuestionnaireResult = (
     data.questionnaireResults ?? []
   ).find(
@@ -144,6 +146,7 @@ export const mapDisabilityPensionCertificate = (
       s.questionnaireCode ===
       DISABILITY_CERTIFICATE_PHYSICAL_QUESTIONNAIRE_CODE,
   )
+
   const mentalImpairmentQuestionnaireResult = (
     data.questionnaireResults ?? []
   ).find(
