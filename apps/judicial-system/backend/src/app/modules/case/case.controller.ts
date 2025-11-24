@@ -42,8 +42,11 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -110,6 +113,7 @@ import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -140,7 +144,6 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -158,7 +161,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -301,13 +304,7 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(
-    JwtAuthUserGuard,
-    CaseExistsGuard,
-    RolesGuard,
-    CaseWriteGuard,
-    CaseTransitionGuard,
-  )
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -347,7 +344,6 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
@@ -362,7 +358,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -383,7 +379,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, CaseExistsGuard)
+  @UseGuards(CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -412,8 +408,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -448,8 +442,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -497,11 +489,14 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -511,8 +506,12 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -528,14 +527,41 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -568,8 +594,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
@@ -609,8 +633,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -647,13 +669,7 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseReadGuard,
-  )
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases), CaseReadGuard)
   @RolesRules(publicProsecutorStaffRule)
   @Get('case/:caseId/rulingSentToPrisonAdmin')
   @Header('Content-Type', 'application/pdf')
@@ -693,8 +709,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -738,8 +752,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -773,9 +785,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
-    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -810,9 +820,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
-    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -839,8 +847,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -870,7 +876,7 @@ export class CaseController {
     return extendedCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

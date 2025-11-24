@@ -1,14 +1,14 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
-  GridRow as Row,
   GridColumn as Column,
   Input,
+  GridRow as Row,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
-import { FormSystemField } from '@island.is/api/schema'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
-import { useFormContext, Controller } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
 interface Props {
@@ -19,12 +19,13 @@ interface Props {
 export const CurrencyField = ({ item, dispatch }: Props) => {
   const label = item?.name?.is
   const { control } = useFormContext()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
 
   return (
     <Row marginTop={2}>
       <Column span="10/10">
         <Controller
+          key={item.id}
           name={item.id}
           control={control}
           defaultValue={getValue(item, 'iskNumber') ?? ''}

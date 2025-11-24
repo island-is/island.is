@@ -1,480 +1,373 @@
 {
   "swagger": "2.0",
-  "info": {
-    "version": "v1",
-    "title": "GoPro External Integration REST Services - API version 1.0"
-  },
+  "info": { "version": "v1", "title": "GoPro Foris Custom Services" },
   "host": "foris.gopro.net",
   "basePath": "/domssm/services",
   "schemes": ["https"],
   "paths": {
-    "/Case/GetCaseContacts": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Retrieve contacts associated with a specific case",
-        "operationId": "GetCaseContacts",
-        "consumes": ["application/json", "text/json"],
+    "/Access/Config": {
+      "get": {
+        "tags": ["Access: Configuration"],
+        "summary": "Gets the authentication configuration.",
+        "operationId": "Configuration_Config",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetCaseContactsRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseContactsResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.Common.Gdf.Entities.PrimaryConfigType"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/GetCaseContacts": {
+    "/Access/Login": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Retrieve contacts associated with a specific case",
-        "operationId": "GetCaseContacts",
+        "tags": ["Access: Configuration"],
+        "summary": "Login by user creadentials or API key authorization header.",
+        "operationId": "Configuration_Login",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetCaseContactsRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseContactsResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/CreateCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Create a new case in GoPro with linked contacts and documents attached.\r\nAPI: 1.0",
-        "operationId": "CreateCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Cases/CreateCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Create a new case in GoPro with linked contacts and documents attached.\r\nAPI: 1.0",
-        "operationId": "CreateCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/CreateQuickCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Create a new case in GoPro",
-        "operationId": "CreateQuickCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateQuickCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Cases/CreateQuickCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Create a new case in GoPro",
-        "operationId": "CreateQuickCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateQuickCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/GetCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Retrieve basic info for specified GoPro case",
-        "operationId": "GetCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Cases/GetCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Retrieve basic info for specified GoPro case",
-        "operationId": "GetCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/UpdateCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Update a case by case number or record ID",
-        "operationId": "UpdateCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/UpdateCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Cases/UpdateCase": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Update a case by case number or record ID",
-        "operationId": "UpdateCase",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/UpdateCaseRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/GetUpdates": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Returns a list of cases that had been updated since startingDate argument.\r\nAPI: 1.0",
-        "operationId": "GetUpdates",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/StartingTimeRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/CasesResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Cases/GetUpdates": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Returns a list of cases that had been updated since startingDate argument.\r\nAPI: 1.0",
-        "operationId": "GetUpdates",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/StartingTimeRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/CasesResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Case/SearchCases": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Search cases by case template (optional) and contact. If template is not specified, search is not filtered by case type. Contact must be specified",
-        "operationId": "SearchCases",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
+            "name": "credentials",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TemplateAndContactFilterRequest"
+              "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserCredentialsType"
             }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/CasesResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.Common.Gdf.Entities.Rest.CurrentContextObject"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/SearchCases": {
+    "/Lawyer/SyncLawyers": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Search cases by case template (optional) and contact. If template is not specified, search is not filtered by case type. Contact must be specified",
-        "operationId": "SearchCases",
+        "tags": ["Extension: Lawyer"],
+        "summary": "Adds or updates a list of active lawyers in the database.\r\nIf a lawyer with the specified identifier already exists, their information is updated; otherwise, a new lawyer is inserted.",
+        "operationId": "SyncLawyers",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "requestData",
             "in": "body",
+            "description": "The request containing the list of lawyers to add or update.",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TemplateAndContactFilterRequest"
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.SyncLawyersRequest"
             }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/CasesResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.EIR.Responses.ReferenceResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/Case/LinkContactToCase": {
+    "/v2/Lawyer/SyncLawyers": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Associate an individual or company contact with a case",
-        "operationId": "LinkContactToCase",
+        "tags": ["Extension: Lawyer"],
+        "summary": "Adds or updates a list of active lawyers in the database.\r\nIf a lawyer with the specified identifier already exists, their information is updated; otherwise, a new lawyer is inserted.",
+        "operationId": "SyncLawyers",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "The request containing the list of lawyers to add or update.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.SyncLawyersRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.EIR.Responses.ReferenceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/Lawyer/GetLawyers": {
+      "get": {
+        "tags": ["Extension: Lawyer"],
+        "summary": "Retrieves all active lawyers from the database.\r\nThis endpoint returns the list of lawyers currently registered in the system.",
+        "operationId": "GetLawyersV1",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetLawyersResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/Lawyer/GetLawyers": {
+      "get": {
+        "tags": ["Extension: Lawyer"],
+        "summary": "Retrieves all active lawyers from the database.\r\nThis endpoint returns the list of lawyers currently registered in the system.",
+        "operationId": "GetLawyersV2",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetLawyersResponse"
+            }
+          }
+        }
+      }
+    },
+    "/Booking/GetPublishedBookings": {
+      "get": {
+        "tags": ["Extension: PublishedBooking"],
+        "summary": "Get published bookings by court",
+        "operationId": "GetPublishedBookingsV1",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "courts",
+            "in": "query",
+            "description": "Published bookings per court/s. If no values provided bookings for all courts will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "lawyer",
+            "in": "query",
+            "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Number of pages (Default is 1)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Number of returned bookings per page(Default is 20)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Booking start date and time. Example(2025-07-01T14:00:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Booking end date and time. Example(2025-07-01T14:30:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Allowed: StartDateTime, EndDateTime or PublishDate",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderDirection",
+            "in": "query",
+            "description": "Allowed: ASC or DESC",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetPublishedBookingsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/Booking/GetPublishedBookings": {
+      "get": {
+        "tags": ["Extension: PublishedBooking"],
+        "summary": "Get published bookings by court",
+        "operationId": "GetPublishedBookingsV2",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "courts",
+            "in": "query",
+            "description": "Published bookings per court/s. If no values provided bookings for all courts will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "lawyer",
+            "in": "query",
+            "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Number of pages (Default is 1)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Number of returned bookings per page(Default is 20)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Booking start date and time. Example(2025-07-01T14:00:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Booking end date and time. Example(2025-07-01T14:30:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Allowed: StartDateTime, EndDateTime or PublishDate",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderDirection",
+            "in": "query",
+            "description": "Allowed: ASC or DESC",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetPublishedBookingsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/Case/GetPublishedCase/{court}/{id}": {
+      "get": {
+        "tags": ["Extension: PublishedCase"],
+        "summary": "Get a detailed case data specified by unique ID",
+        "operationId": "GetPublishedCaseV1",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "court",
+            "in": "path",
+            "description": "Published case court",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published case",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetPublishedCaseResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/Case/GetPublishedCase/{court}/{id}": {
+      "get": {
+        "tags": ["Extension: PublishedCase"],
+        "summary": "Get a detailed case data specified by unique ID",
+        "operationId": "GetPublishedCaseV2",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "court",
+            "in": "path",
+            "description": "Published case court",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published case",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetPublishedCaseResponse"
+            }
+          }
+        }
+      }
+    },
+    "/Verdict/getVerdicts": {
+      "post": {
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Search verdicts.\r\nUsing advanced key search and multiple criteria parameters.\r\nUse \"orderBy\" expression parameter. Syntax: sort_field [ ASC | DESC ] [ , ...n ]\r\nSupported fields for sort_field: { Court | Casetype | CaseNumber | Category | Title | VerdictDate | PublishDate }\r\nSamples: \"Court ASC\", \"Court, VerdictDate DESC\"",
+        "operationId": "GetVerdictsV1",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
         "parameters": [
@@ -483,31 +376,26 @@
             "in": "body",
             "description": "",
             "required": true,
-            "schema": { "$ref": "#/definitions/LinkContactRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.GetVerdictsRequest"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetVerdictsResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/LinkContactToCase": {
+    "/v2/Verdict/getVerdicts": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Associate an individual or company contact with a case",
-        "operationId": "LinkContactToCase",
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Search verdicts.\r\nUsing advanced key search and multiple criteria parameters.\r\nUse \"orderBy\" expression parameter. Syntax: sort_field [ ASC | DESC ] [ , ...n ]\r\nSupported fields for sort_field: { Court | Casetype | CaseNumber | Category | Title | VerdictDate | PublishDate }\r\nSamples: \"Court ASC\", \"Court, VerdictDate DESC\"",
+        "operationId": "GetVerdictsV2",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
         "parameters": [
@@ -516,953 +404,178 @@
             "in": "body",
             "description": "",
             "required": true,
-            "schema": { "$ref": "#/definitions/LinkContactRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.GetVerdictsRequest"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetVerdictsResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/Case/GetFolder": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Returns information about a folder by specified folder name and parent ID",
-        "operationId": "GetFolder",
-        "consumes": ["application/json", "text/json"],
+    "/Verdict/{id}": {
+      "get": {
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get a detailed verdict data specified by unique ID",
+        "operationId": "GetVerdictV1",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published verdict",
             "required": true,
-            "schema": { "$ref": "#/definitions/GetFolderRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/GetFolderResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetVerdictResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/GetFolder": {
-      "post": {
-        "tags": ["Case"],
-        "summary": "Returns information about a folder by specified folder name and parent ID",
-        "operationId": "GetFolder",
-        "consumes": ["application/json", "text/json"],
+    "/v2/Verdict/{id}": {
+      "get": {
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get a detailed verdict data specified by unique ID",
+        "operationId": "GetVerdictV2",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published verdict",
             "required": true,
-            "schema": { "$ref": "#/definitions/GetFolderRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/GetFolderResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetVerdictResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/Case/GetDefaultStatus": {
+    "/Verdict/getCaseTypes": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Returns default status for a list",
-        "operationId": "GetDefaultStatus",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of case templates in use",
+        "operationId": "GetCaseTypesV1",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/NamedReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetCaseTypesResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/GetDefaultStatus": {
+    "/v2/Verdict/getCaseTypes": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Returns default status for a list",
-        "operationId": "GetDefaultStatus",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of case templates in use",
+        "operationId": "GetCaseTypesV2",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/NamedReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetCaseTypesResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/Case/CreateFolder": {
+    "/Verdict/getCaseCategories": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Creates a folder under specified case",
-        "operationId": "CreateFolder",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of case categories in use",
+        "operationId": "GetCaseCategoriesV1",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateFolderRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetCaseCategoriesResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Cases/CreateFolder": {
+    "/v2/Verdict/getCaseCategories": {
       "post": {
-        "tags": ["Case"],
-        "summary": "Creates a folder under specified case",
-        "operationId": "CreateFolder",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of case categories in use",
+        "operationId": "GetCaseCategoriesV2",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateFolderRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetCaseCategoriesResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/Clients/CreateCompany": {
+    "/Verdict/getKeywords": {
       "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new company partner in GoPro",
-        "operationId": "CreateCompany",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of keywords",
+        "operationId": "GetKeywordsV1",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Company" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetKeywordsResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
-    "/v1/Clients/CreateCompany": {
+    "/v2/Verdict/getKeywords": {
       "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new company partner in GoPro",
-        "operationId": "CreateCompany",
-        "consumes": ["application/json", "text/json"],
+        "tags": ["Extension: PublishedVerdict"],
+        "summary": "Get list of keywords",
+        "operationId": "GetKeywordsV2",
+        "consumes": [],
         "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Company" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetKeywordsResponse"
+            }
           }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Clients/CreateIndividual": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new person (individual) partner in GoPro",
-        "operationId": "CreateIndividual",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Individual" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Clients/CreateIndividual": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new person (individual) partner in GoPro",
-        "operationId": "CreateIndividual",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Individual" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Clients/CreateContact": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new partner contact in GoPro",
-        "operationId": "CreateContact",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Contact" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Clients/CreateContact": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Create a new partner contact in GoPro",
-        "operationId": "CreateContact",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/Contact" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Clients/GetCompany": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve company info from GoPro",
-        "operationId": "GetCompany",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetClientRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCompanyResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Clients/GetCompany": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve company info from GoPro",
-        "operationId": "GetCompany",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetClientRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCompanyResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Clients/GetIndividual": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve person (individual) parter info from GoPro",
-        "operationId": "GetIndividual",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetClientRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetIndividualResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Clients/GetIndividual": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve person (individual) parter info from GoPro",
-        "operationId": "GetIndividual",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetClientRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetIndividualResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Clients/GetContact": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve contact info from GoPro",
-        "operationId": "GetContact",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetContactRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetContactResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Clients/GetContact": {
-      "post": {
-        "tags": ["Clients"],
-        "summary": "Retrieve contact info from GoPro",
-        "operationId": "GetContact",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetContactRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetContactResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Documents/CreateDocument": {
-      "post": {
-        "tags": ["Document"],
-        "summary": "Create a new file document in GoPro",
-        "operationId": "CreateDocument",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateDocumentRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Documents/CreateDocument": {
-      "post": {
-        "tags": ["Document"],
-        "summary": "Create a new file document in GoPro",
-        "operationId": "CreateDocument",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateDocumentRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Forms/CreateForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Create a new custom form (custom GoPro object type)\r\nAPI: 1.0",
-        "operationId": "CreateForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Forms/CreateForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Create a new custom form (custom GoPro object type)\r\nAPI: 1.0",
-        "operationId": "CreateForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Forms/UpdateForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Update an existing custom Gopro object / form\r\nAPI: 1.0",
-        "operationId": "UpdateForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/UpdateFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Forms/UpdateForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Update an existing custom Gopro object / form\r\nAPI: 1.0",
-        "operationId": "UpdateForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/UpdateFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Forms/GetForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Retrieve a custom Gopro object / form\r\nAPI: 1.0",
-        "operationId": "GetForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetFormResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Forms/GetForm": {
-      "post": {
-        "tags": ["Forms"],
-        "summary": "Retrieve a custom Gopro object / form\r\nAPI: 1.0",
-        "operationId": "GetForm",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/GetFormRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetFormResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Memos/CreateMemo": {
-      "post": {
-        "tags": ["Memo"],
-        "summary": "Create a new GoPro memo",
-        "operationId": "CreateMemo",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateMemoRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/v1/Memos/CreateMemo": {
-      "post": {
-        "tags": ["Memo"],
-        "summary": "Create a new GoPro memo",
-        "operationId": "CreateMemo",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/CreateMemoRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
+        }
       }
     },
     "/Authenticate": {
       "get": {
-        "tags": ["Security"],
+        "tags": ["External Integration API: Security"],
         "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods. API: 1.0",
         "operationId": "Authenticate",
         "consumes": [],
@@ -1490,9 +603,9 @@
     },
     "/v1/Authenticate": {
       "get": {
-        "tags": ["Security"],
+        "tags": ["External Integration API: Security"],
         "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods. API: 1.0",
-        "operationId": "Authenticate",
+        "operationId": "AuthenticateV1",
         "consumes": [],
         "produces": ["application/json", "text/json"],
         "parameters": [
@@ -1516,236 +629,612 @@
         }
       }
     },
-    "/Verdict/getVerdicts": {
+    "/v2/Authenticate": {
       "post": {
-        "tags": ["Verdict"],
-        "summary": "Search verdicts.\r\nUsing advanced key search and multiple criteria parameters.\r\nUse \"orderBy\" expression parameter. Syntax: sort_field [ ASC | DESC ] [ , ...n ]\r\nSupported fields for sort_field: { Court | Casetype | CaseNumber | Category | Title | VerdictDate | PublishDate }\r\nSamples: \"Court ASC\", \"Court, VerdictDate DESC\"",
-        "operationId": "GetVerdicts",
+        "tags": ["External Integration API: Security"],
+        "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods. API: 2.0",
+        "operationId": "AuthenticateV2",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
         "parameters": [
           {
-            "name": "requestData",
+            "name": "credentials",
             "in": "body",
             "description": "",
             "required": true,
-            "schema": { "$ref": "#/definitions/GetVerdictsRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
+            "schema": { "$ref": "#/definitions/GoPro.EIR.Models.Credentials" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetVerdictsResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
+          "200": { "description": "OK", "schema": { "type": "string" } }
+        }
       }
     },
-    "/Verdict/{id}": {
+    "/Configuration/Cache/Clear": {
       "get": {
-        "tags": ["Verdict"],
-        "summary": "Get a detailed verdict data specified by unique ID",
-        "operationId": "GetVerdict",
+        "tags": ["Tools: Cache"],
+        "summary": "Clear the server cache in UIRest",
+        "operationId": "Cache_Clear",
         "consumes": [],
         "produces": ["application/json", "text/json"],
+        "responses": {
+          "200": { "description": "OK", "schema": { "type": "boolean" } }
+        }
+      }
+    },
+    "/Token": {
+      "post": {
+        "tags": ["Authentication"],
+        "consumes": ["application/x-www-form-urlencoded"],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "Unique ID of the published verdict",
+            "name": "grant_type",
+            "in": "formData",
             "required": true,
+            "type": "string",
+            "default": "password"
+          },
+          {
+            "name": "username",
+            "in": "formData",
+            "required": false,
             "type": "string"
           },
           {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
+            "name": "password",
+            "in": "formData",
             "required": false,
-            "type": "string",
-            "default": ""
+            "type": "string"
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetVerdictResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Verdict/publishVerdict": {
-      "post": {
-        "tags": ["Verdict"],
-        "summary": "Register or update a verdict in public registry by court, external case id and number, title and announcement date.\r\nIf case by specified court and external id is already published then it is updated",
-        "operationId": "PublishVerdict",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/PublishVerdictRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Verdict/addVerdictDocument": {
-      "post": {
-        "tags": ["Verdict"],
-        "summary": "Upload a PDF representation of the verdict.\r\nUnique id of the published verdict: verdictID\r\nBase64 encoded content of the PDF document: content",
-        "operationId": "AddVerdictDocument",
-        "consumes": ["application/json", "text/json"],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "requestData",
-            "in": "body",
-            "description": "",
-            "required": true,
-            "schema": { "$ref": "#/definitions/AddVerdictDocumentRequest" }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/ReferenceResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Verdict/getCaseTypes": {
-      "post": {
-        "tags": ["Verdict"],
-        "summary": "Get list of case templates in use",
-        "operationId": "GetCaseTypes",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseTypesResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Verdict/getCaseCategories": {
-      "post": {
-        "tags": ["Verdict"],
-        "summary": "Get list of case categories in use",
-        "operationId": "GetCaseCategories",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetCaseCategoriesResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
-      }
-    },
-    "/Verdict/getKeywords": {
-      "post": {
-        "tags": ["Verdict"],
-        "summary": "Get list of keywords",
-        "operationId": "GetKeywords",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "Token returned by Authenticate method.",
-            "required": false,
-            "type": "string",
-            "default": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/GetKeywordsResponse" }
-          }
-        },
-        "security": [{ "basic": [] }]
+          "200": { "description": "Success", "schema": { "type": "object" } }
+        }
       }
     }
   },
   "definitions": {
-    "GetCaseContactsRequest": {
-      "description": "GetCaseContacts method request structure",
+    "GoPro.Common.Gdf.Entities.PrimaryConfigType": {
       "type": "object",
       "properties": {
-        "caseNumber": {
-          "description": "Case number or record ID",
-          "type": "string"
+        "clientId": { "type": "string" },
+        "tenant": { "type": "string" },
+        "instance": { "type": "string" },
+        "authority": { "type": "string" },
+        "knownAuthorities": { "type": "array", "items": { "type": "string" } },
+        "mode": { "format": "int32", "type": "integer" },
+        "debug": { "format": "int32", "type": "integer" },
+        "serviceUrl": { "type": "string" },
+        "helpSystemUrl": { "type": "string" },
+        "caseWorkerUrl": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.UserCredentialsType": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.Rest.CurrentContextObject": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userProfileStatus": { "format": "int32", "type": "integer" },
+        "profileMessage": { "type": "string" },
+        "token": { "type": "string" },
+        "currentuser": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserType"
+        },
+        "currentClientContact": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ContactRefType"
+        },
+        "privileges": { "type": "array", "items": { "type": "string" } },
+        "licences": { "type": "array", "items": { "type": "string" } },
+        "filterScope": {
+          "format": "int32",
+          "enum": [0, 1, 2],
+          "type": "integer"
+        },
+        "userOrganisationContext": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.Rest.OrganisationContext"
+        },
+        "enterpriseMode": { "type": "boolean" },
+        "settings": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
         }
       }
     },
-    "GetCaseContactsResponse": {
-      "description": "General case contacts response collection",
+    "GoPro.Common.Gdf.Entities.UserType": {
       "type": "object",
       "properties": {
-        "contacts": {
-          "description": "A collection of contact structures",
+        "name": { "$ref": "#/definitions/GoPro.Common.Gdf.Entities.NameType" },
+        "fullName": { "type": "string" },
+        "loginName": { "type": "string" },
+        "password": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "userRoles": {
           "type": "array",
-          "items": { "$ref": "#/definitions/CaseContact" }
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRoleRefType"
+          }
+        },
+        "language": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "email": { "type": "string" },
+        "emailServer": { "type": "string" },
+        "emailDatabase": { "type": "string" },
+        "emailUsername": { "type": "string" },
+        "emailPassword": { "type": "string" },
+        "emailReplyTo": { "type": "string" },
+        "emailSignature": { "type": "string" },
+        "calendarServer": { "type": "string" },
+        "calendarUsername": { "type": "string" },
+        "calendarPassword": { "type": "string" },
+        "timeZone": { "type": "string" },
+        "title": { "type": "string" },
+        "photo": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.FileAttachmentType"
+        },
+        "defaultACLEntries": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ACLType" }
+        },
+        "currentPositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserPositionRefType"
+          }
+        },
+        "mainPosition": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserPositionRefType"
+        },
+        "apiKeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.APIKeyRefType"
+          }
+        },
+        "substituteFor": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+          }
+        },
+        "isAway": { "type": "boolean" },
+        "substituteUser": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "securityClearanceIDs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "organization": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ACLDocumentRefType"
+        },
+        "organizationName": { "type": "string" },
+        "location": { "type": "string" },
+        "department": { "type": "string" },
+        "disabled": { "type": "boolean" },
+        "lockedOut": { "type": "boolean" },
+        "phoneNumbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.PhoneNumberType"
+          }
+        },
+        "emailClient": {
+          "format": "int32",
+          "enum": [0, 1, 2, 3],
+          "type": "integer"
+        },
+        "idNumber": { "type": "string" },
+        "externalid": { "type": "string" },
+        "expiryDate": { "format": "date-time", "type": "string" },
+        "visible": { "type": "boolean" },
+        "organizationUnit": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ACLDocumentRefType"
+        },
+        "deletable": { "type": "boolean" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "category": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.CategoryRefType"
+        },
+        "translationKey": { "type": "string" },
+        "createdBy": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "creationDate": { "format": "date-time", "type": "string" },
+        "modifiedBy": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "modifiedDate": { "format": "date-time", "type": "string" },
+        "deletedBy": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "deletedDate": { "format": "date-time", "type": "string" },
+        "subject": { "type": "string" },
+        "metaDataEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.MetaDataType"
+          }
+        },
+        "aclEntries": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ACLType" }
+        },
+        "historyEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.Common.Gdf.Entities.HistoryType"
+          }
+        },
+        "markedForDelete": { "type": "boolean" },
+        "hidden": { "type": "boolean" },
+        "contextProperties": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ContextPropertiesType"
+        },
+        "checkedOutStatus": {
+          "format": "int32",
+          "enum": [0, 1, 2],
+          "type": "integer"
+        },
+        "checkedOutBy": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "checkedOutDate": { "format": "date-time", "type": "string" },
+        "checkedOutComment": { "type": "string" },
+        "attachmentNames": { "type": "array", "items": { "type": "string" } },
+        "documentType": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "responseCount": { "format": "int32", "type": "integer" },
+        "thumbprint": { "format": "byte", "type": "string" },
+        "originalSubject": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "multiTenant": { "type": "boolean" },
+        "id": { "type": "string" },
+        "saveCount": { "format": "int64", "type": "integer" },
+        "referenceCount": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.ContactRefType": {
+      "type": "object",
+      "properties": {
+        "referenceRole": { "type": "string" },
+        "documentNumber": { "type": "string" },
+        "documentType": { "format": "int32", "type": "integer" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.Rest.OrganisationContext": {
+      "type": "object",
+      "properties": {
+        "organisationId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "organisationName": { "type": "string" },
+        "globalAccess": { "type": "boolean" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.NameType": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "middleName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "initials": { "type": "string" },
+        "format": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.UserRoleRefType": {
+      "type": "object",
+      "properties": {
+        "organisationUnitPath": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.ListValueRefType": {
+      "type": "object",
+      "properties": {
+        "comment": { "type": "string" },
+        "status": { "format": "int32", "type": "integer" },
+        "documentNumber": { "type": "string" },
+        "documentType": { "format": "int32", "type": "integer" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.FileAttachmentType": {
+      "type": "object",
+      "properties": {
+        "fileName": { "type": "string" },
+        "fileSize": { "format": "int64", "type": "integer" },
+        "encoding": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "stream": { "format": "byte", "type": "string" },
+        "externalid": { "type": "string" },
+        "contentIdentifier": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.ACLType": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ACLDocumentRefType"
+        },
+        "userType": {
+          "format": "int32",
+          "enum": [0, 1, 2, 3, 4],
+          "type": "integer"
+        },
+        "accessMask": { "format": "int32", "type": "integer" },
+        "organizationUnit": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.OrganizationUnitRefType"
+        }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.UserPositionRefType": {
+      "type": "object",
+      "properties": {
+        "organisationUnitPath": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.APIKeyRefType": {
+      "type": "object",
+      "properties": {
+        "expiryDate": { "format": "date-time", "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.UserRefType": {
+      "type": "object",
+      "properties": {
+        "emailAddress": { "type": "string" },
+        "organisationUnitPath": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.ACLDocumentRefType": {
+      "type": "object",
+      "properties": {
+        "organisationUnitPath": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.PhoneNumberType": {
+      "type": "object",
+      "properties": {
+        "number": { "type": "string" },
+        "type": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "country": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "remark": { "type": "string" },
+        "id": { "type": "string" },
+        "saveCount": { "format": "int64", "type": "integer" },
+        "referenceCount": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.CategoryRefType": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.MetaDataType": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "string" },
+        "valueType": {
+          "format": "int32",
+          "enum": [0, 1, 2, 3, 4, 5, 6, 7],
+          "type": "integer"
+        },
+        "definitionID": { "type": "string" },
+        "name": { "type": "string" },
+        "id": { "type": "string" },
+        "saveCount": { "format": "int64", "type": "integer" },
+        "referenceCount": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.HistoryType": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.UserRefType"
+        },
+        "creationDate": { "format": "date-time", "type": "string" },
+        "status": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "eventType": {
+          "$ref": "#/definitions/GoPro.Common.Gdf.Entities.ListValueRefType"
+        },
+        "comment": { "type": "string" }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.ContextPropertiesType": {
+      "type": "object",
+      "properties": {
+        "currentUserAccess": {
+          "format": "int32",
+          "enum": [0, 1, 2],
+          "type": "integer"
+        }
+      }
+    },
+    "GoPro.Common.Gdf.Entities.OrganizationUnitRefType": {
+      "type": "object",
+      "properties": {
+        "organisationUnitPath": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.Misc.Examples.Models.Company": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "clientNumber": { "type": "string" },
+        "webPage": { "type": "string" },
+        "isatNumber": { "type": "string" },
+        "isatName": { "type": "string" },
+        "id": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "language": { "type": "string" },
+        "mobilePhone": { "type": "string" },
+        "homePhone": { "type": "string" },
+        "workPhone": { "type": "string" },
+        "faxNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "statusName": { "type": "string" }
+      }
+    },
+    "GoPro.Misc.Examples.Models.Individual": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "middleName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "id": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "language": { "type": "string" },
+        "mobilePhone": { "type": "string" },
+        "homePhone": { "type": "string" },
+        "workPhone": { "type": "string" },
+        "faxNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "statusName": { "type": "string" }
+      }
+    },
+    "GoPro.Misc.Examples.Models.Contact": {
+      "type": "object",
+      "properties": {
+        "companyID": { "type": "string" },
+        "contactRole": { "type": "string" },
+        "firstName": { "type": "string" },
+        "middleName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "id": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "language": { "type": "string" },
+        "mobilePhone": { "type": "string" },
+        "homePhone": { "type": "string" },
+        "workPhone": { "type": "string" },
+        "faxNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "statusName": { "type": "string" }
+      }
+    },
+    "GoPro.Misc.Examples.Models.GetClientRequest": {
+      "required": ["identifier"],
+      "type": "object",
+      "properties": {
+        "identifier": { "type": "string" },
+        "searchInactive": { "type": "boolean" }
+      }
+    },
+    "GoPro.Misc.Examples.Models.GetContactRequest": {
+      "required": ["contactId"],
+      "type": "object",
+      "properties": {
+        "contactId": { "type": "string" },
+        "companyId": { "type": "string" },
+        "searchInactive": { "type": "boolean" }
+      }
+    },
+    "GoPro.SM.Services.Requests.SyncLawyersRequest": {
+      "type": "object",
+      "properties": {
+        "lawyers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.LawyerRequestModel"
+          }
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.LawyerRequestModel": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "accountManager": { "type": "string" },
+        "statusName": { "type": "string" },
+        "statusFlag": { "format": "int32", "type": "integer" },
+        "recordType": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "lastName": { "type": "string" },
+        "countryName": { "type": "string" },
+        "streetName": { "type": "string" },
+        "streetNumber": { "type": "string" },
+        "floor": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "modifiedDate": { "type": "string" },
+        "relatedRecordCount": { "format": "int32", "type": "integer" },
+        "jobTitle": { "type": "string" },
+        "documentNumber": { "type": "string" },
+        "court": { "type": "string" },
+        "isRemovedFromLawyersList": { "type": "boolean" }
+      }
+    },
+    "GoPro.EIR.Responses.ReferenceResponse": {
+      "description": "General GoPro reference response",
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "description": "GoPro target record id",
+          "type": "string"
         },
         "succeeded": {
           "description": "General success indicator",
@@ -1762,7 +1251,621 @@
         }
       }
     },
-    "CaseContact": {
+    "GoPro.SM.Services.Responses.GetLawyersResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedLawyerData"
+          }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedLawyerData": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "accountManager": { "type": "string" },
+        "statusName": { "type": "string" },
+        "statusFlag": { "format": "int32", "type": "integer" },
+        "recordType": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "lastName": { "type": "string" },
+        "countryName": { "type": "string" },
+        "streetName": { "type": "string" },
+        "streetNumber": { "type": "string" },
+        "floor": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "modifiedDate": { "format": "date-time", "type": "string" },
+        "jobTitle": { "type": "string" },
+        "isRemovedFromLawyersList": { "type": "boolean" }
+      }
+    },
+    "GoPro.SM.Services.Requests.PublishRoomBookingRequest": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalCaseID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "casePublicationID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "courtRoom": { "type": "string" },
+        "closedHearing": { "type": "boolean" },
+        "startDateTime": { "type": "string" },
+        "endDateTime": { "type": "string" },
+        "scheduleType": { "type": "string" },
+        "counselTime": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetPublishedBookingsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedBookingData"
+          }
+        },
+        "total": { "format": "int32", "type": "integer" },
+        "currentPage": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" },
+        "identifier": { "type": "string" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedBookingData": {
+      "type": "object",
+      "properties": {
+        "bookingId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": {
+          "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedCaseNumber"
+        },
+        "caseNumberRaw": { "type": "string" },
+        "caseTitle": {
+          "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedCaseTitle"
+        },
+        "caseSubType": { "type": "string" },
+        "court": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CourtModel" },
+        "scheduleDate": { "format": "date-time", "type": "string" },
+        "scheduleToDate": { "format": "date-time", "type": "string" },
+        "courtRoom": { "type": "string" },
+        "bookingType": { "type": "string" },
+        "closedHearing": { "type": "boolean" },
+        "length": { "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.JudgeModel" }
+        },
+        "lawyers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.LawyerModel"
+          }
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedCaseNumber": {
+      "type": "object",
+      "properties": {
+        "caseTypeLetter": { "type": "string" },
+        "number": { "format": "int32", "type": "integer" },
+        "year": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedCaseTitle": {
+      "type": "object",
+      "properties": {
+        "html": { "type": "string" },
+        "raw": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Data.Entities.CourtModel": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Data.Entities.JudgeModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "isPresident": { "type": "boolean" },
+        "placement": { "format": "int32", "type": "integer" },
+        "idNumber": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Data.Entities.LawyerModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "placement": { "format": "int32", "type": "integer" },
+        "side": { "type": "string" },
+        "idNumber": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Services.Requests.PublishCaseRequest": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseSubType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.JudgeModel" }
+        },
+        "attack": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.PartyModel" }
+        },
+        "defense": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.PartyModel" }
+        },
+        "links": { "type": "string" },
+        "status": { "type": "string" },
+        "isConfidential": { "type": "boolean" }
+      }
+    },
+    "GoPro.SM.Data.Entities.PartyModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "lawyers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.LawyerModel"
+          }
+        },
+        "placement": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetPublishedCaseResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedCaseData"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedCaseData": {
+      "type": "object",
+      "properties": {
+        "recordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseSubType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "format": "date-time", "type": "string" },
+        "keywords": { "type": "string" },
+        "judges": { "type": "string" },
+        "plaintiffs": { "type": "string" },
+        "defendants": { "type": "string" },
+        "status": { "type": "string" },
+        "isConfidential": { "type": "boolean" }
+      }
+    },
+    "GoPro.SM.Services.Requests.GetVerdictsRequest": {
+      "type": "object",
+      "properties": {
+        "searchTerm": { "type": "string" },
+        "courts": { "type": "array", "items": { "type": "string" } },
+        "caseCategories": { "type": "array", "items": { "type": "string" } },
+        "caseTypes": { "type": "array", "items": { "type": "string" } },
+        "caseNumber": { "type": "string" },
+        "title": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "laws": { "type": "array", "items": { "type": "string" } },
+        "dateFrom": { "type": "string" },
+        "dateTo": { "type": "string" },
+        "orderBy": { "type": "string" },
+        "pageNumber": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" },
+        "caseContact": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetVerdictsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedVerdictData"
+          }
+        },
+        "total": { "format": "int32", "type": "integer" },
+        "currentPage": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" },
+        "identifier": { "type": "string" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.DetailedVerdictData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CourtModel" },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseCategory": { "type": "string" },
+        "title": { "type": "string" },
+        "verdict": { "type": "string" },
+        "docContent": { "type": "string" },
+        "verdictHtml": { "type": "string" },
+        "presentings": { "type": "string" },
+        "presentingsHtml": { "type": "string" },
+        "verdictDate": { "format": "date-time", "type": "string" },
+        "publishDate": { "format": "date-time", "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.JuryJudge" }
+        },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "lawCitations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CaseLaw" }
+        },
+        "plaintiffs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.PartyModel" }
+        },
+        "defendants": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.PartyModel" }
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.JuryJudge": {
+      "type": "object",
+      "properties": {
+        "isPresident": { "type": "boolean" },
+        "name": { "type": "string" },
+        "title": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Data.Entities.CaseLaw": {
+      "type": "object",
+      "properties": {
+        "position": { "format": "int32", "type": "integer" },
+        "citation": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetVerdictResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/GoPro.SM.Data.Entities.DetailedVerdictData"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Services.Requests.PublishVerdictRequest": {
+      "type": "object",
+      "properties": {
+        "court": { "type": "string" },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseCategory": { "type": "string" },
+        "title": { "type": "string" },
+        "verdict": { "type": "string" },
+        "verdictHtml": { "type": "string" },
+        "presentings": { "type": "string" },
+        "presentingsHtml": { "type": "string" },
+        "verdictDate": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.JuryJudge" }
+        },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "lawCitations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CaseLaw" }
+        }
+      }
+    },
+    "GoPro.SM.Services.Requests.AddVerdictDocumentRequest": {
+      "type": "object",
+      "properties": {
+        "verdictID": {
+          "description": "Record ID of the immediate parent.\r\nMatches both container case in GoPro and verdict ID from the custom table.",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject/title of the new document",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "File name of the document",
+          "type": "string"
+        },
+        "content": {
+          "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetCaseTypesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Services.Models.CaseTypeInfo"
+          }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Services.Models.CaseTypeInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetCaseCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Services.Models.CaseCategoryInfo"
+          }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Services.Models.CaseCategoryInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    },
+    "GoPro.SM.Services.Responses.GetKeywordsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Data.Entities.KeywordInfo"
+          }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Data.Entities.KeywordInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    },
+    "GoPro.EIR.Requests.GetCaseContactsRequest": {
+      "description": "GetCaseContacts method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Responses.GetCaseContactsResponse": {
+      "description": "General case contacts response collection",
+      "type": "object",
+      "properties": {
+        "contacts": {
+          "description": "A collection of contact structures",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.CaseContact" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Models.CaseContact": {
       "description": "GoPro case contact data model",
       "type": "object",
       "properties": {
@@ -1793,7 +1896,7 @@
         "caseContactID": { "description": "Case Contact ID", "type": "string" }
       }
     },
-    "CreateCaseRequest": {
+    "GoPro.EIR.Requests.CreateCaseRequest": {
       "description": "CreateCase method request structure",
       "required": ["template", "subject"],
       "type": "object",
@@ -1817,21 +1920,34 @@
         "journalKeys": {
           "description": "Optional collection of related journal keys",
           "type": "array",
-          "items": { "$ref": "#/definitions/JournalKey" }
-        },
-        "metadata": {
-          "description": "List of metadata values",
-          "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.JournalKey" }
         },
         "physicalLocation": {
           "description": "Physical location (if existing and specified)",
           "type": "string"
         },
+        "ignoreDefaultEmployees": {
+          "description": "Optional. When true then default employees for the case template are ignored and not assigned to the case on creation.\r\nWhen false (or missing) default workers are assigned implicitly. Note that this flag has no effect on handling the ResponsibleEmployees list.\r\nThese are always assigned to the case.",
+          "type": "boolean"
+        },
+        "responsibleEmployees": {
+          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which may or may not be added to the case. See <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.IgnoreDefaultEmployees\" />",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.ResponsibleWorker"
+          }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
+        },
         "contacts": {
           "description": "List of clients (individuals or companies) who will be linked to the case by different roles. If client is not registered (missing from system) - they will be created first",
           "type": "array",
-          "items": { "$ref": "#/definitions/LinkedRoleContact" }
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.LinkedRoleContact"
+          }
         },
         "searchInactiveContacts": {
           "description": "Optional. When true then searches for both active and inactive contacts. Default: false",
@@ -1840,20 +1956,11 @@
         "documents": {
           "description": "List of document attached under case",
           "type": "array",
-          "items": { "$ref": "#/definitions/DocumentInfo" }
-        },
-        "ignoreDefaultEmployees": {
-          "description": "When false then default employees for the case template are ignored and not assigned to the case on creation.\r\nWhen true default workers are added. Note that this flag has no effect on handling the ResponsibleEmployees list.\r\nThese are always assigned to the case.",
-          "type": "boolean"
-        },
-        "responsibleEmployees": {
-          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which may or may not be added to the case. See <seealso cref=\"P:GoPro.EIR.Requests.CreateCaseRequest.IgnoreDefaultEmployees\" />",
-          "type": "array",
-          "items": { "$ref": "#/definitions/ResponsibleWorker" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.DocumentInfo" }
         }
       }
     },
-    "JournalKey": {
+    "GoPro.EIR.Models.JournalKey": {
       "description": "Journal key category",
       "type": "object",
       "properties": {
@@ -1869,7 +1976,21 @@
         }
       }
     },
-    "Metadata": {
+    "GoPro.EIR.Models.ResponsibleWorker": {
+      "description": "Represents a GoPro user. Used for denoting a case responsible worker",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "description": "Record ID of the user (GUID).\r\nIf not GUID then assuming email address or user name(s) (by this priority order)",
+          "type": "string"
+        },
+        "primary": {
+          "description": "Flag that shows whether this user is the primary responsible for the case. Can be either false/true or 0/1 or nei/já or no/yes",
+          "type": "boolean"
+        }
+      }
+    },
+    "GoPro.EIR.Models.Metadata": {
       "description": "Metadata value with definition reference",
       "type": "object",
       "properties": {
@@ -1889,7 +2010,7 @@
         }
       }
     },
-    "LinkedRoleContact": {
+    "GoPro.EIR.Models.LinkedRoleContact": {
       "description": "Contact information. Used in relation with cases\r\nwhere multiple contacts can be linked by specific role and priority",
       "required": ["name", "idnumber"],
       "type": "object",
@@ -1918,6 +2039,7 @@
           "description": "Type of client. Possible values: Individual, Company, Contact",
           "type": "string"
         },
+        "gender": { "description": "Gender", "type": "string" },
         "address": {
           "description": "Street address of the client",
           "type": "string"
@@ -1935,7 +2057,7 @@
         "city": { "description": "City name", "type": "string" }
       }
     },
-    "DocumentInfo": {
+    "GoPro.EIR.Models.DocumentInfo": {
       "description": "GoPro document",
       "type": "object",
       "properties": {
@@ -1944,7 +2066,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Document class name. One of the values in \"Document classes\" GoPro list",
+          "description": "Document class name. One of the values in the \"Document classes - General\" GoPro list",
           "type": "string"
         },
         "fileName": {
@@ -1955,48 +2077,147 @@
           "description": "Binary content represented as Base64 encoded string",
           "type": "string"
         },
+        "involvedParty": {
+          "description": "Record GUID or SSN (ID #) of the primary case contact. Represents the GoPro external party.",
+          "type": "string"
+        },
+        "responsible": {
+          "description": "Record GUID, email or full name of the responsible worker (owner) of the document. Represents the GoPro internal party (user).",
+          "type": "string"
+        },
+        "fileCreated": {
+          "description": "Original file creation time. Using ISO 8601 format or yyyy-MM-dd HH:mm:ss",
+          "type": "string"
+        },
+        "direction": {
+          "format": "int32",
+          "description": "Delivery direction of the document (None, In, Out)",
+          "enum": [0, 1, 2],
+          "type": "integer"
+        },
+        "deliveryDate": {
+          "description": "The date when document was sent from sender to the recipient. Using ISO 8601 format or yyyy-MM-dd HH:mm:ss",
+          "type": "string"
+        },
         "metadata": {
           "description": "List of metadata values",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
         }
       }
     },
-    "ResponsibleWorker": {
-      "description": "Represents a GoPro user. Used for denoting a case responsible worker",
+    "GoPro.EIR.Requests.V2.CreateCaseRequestV2": {
+      "description": "CreateCase method request structure",
+      "required": ["template", "subject"],
       "type": "object",
       "properties": {
-        "userId": { "description": "Record ID of the user", "type": "string" },
+        "template": { "description": "Case template name", "type": "string" },
+        "subject": {
+          "description": "Subject (name) of the case",
+          "type": "string"
+        },
+        "category": { "description": "Case category name", "type": "string" },
+        "organization": {
+          "description": "Name path or ID of organization to search for the case template.\r\nUse special word \"all\" (lower case only) to look in all organizations.\r\nSkip parameter or pass empty to assume current user organization",
+          "type": "string"
+        },
+        "deadline": { "description": "Deadline date", "type": "string" },
+        "keywords": {
+          "description": "Keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "journalKeys": {
+          "description": "Optional collection of related journal keys",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.JournalKey" }
+        },
+        "physicalLocation": {
+          "description": "Physical location (if existing and specified)",
+          "type": "string"
+        },
+        "ignoreDefaultEmployees": {
+          "description": "Optional. When true then default employees for the case template are ignored and not assigned to the case on creation.\r\nWhen false (or missing) default workers are assigned implicitly. Note that this flag has no effect on handling the ResponsibleEmployees list.\r\nThese are always assigned to the case.",
+          "type": "boolean"
+        },
+        "responsibleEmployees": {
+          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which may or may not be added to the case. See <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.IgnoreDefaultEmployees\" />",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.ResponsibleWorker"
+          }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
+        },
+        "contacts": {
+          "description": "List of clients (individuals or companies) who will be linked to the case by different roles. If client is not registered (missing from system) - they will be created first",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.V2.LinkedRoleContactV2"
+          }
+        },
+        "searchInactiveContacts": {
+          "description": "Optional. When true then searches for both active and inactive contacts. Default: false",
+          "type": "boolean"
+        },
+        "documents": {
+          "description": "List of document attached under case",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.DocumentInfo" }
+        }
+      }
+    },
+    "GoPro.EIR.Models.V2.LinkedRoleContactV2": {
+      "description": "Contact information. Used in relation with cases\r\nwhere multiple contacts can be linked by specific role and priority",
+      "required": ["name", "idnumber"],
+      "type": "object",
+      "properties": {
+        "role": {
+          "description": "Role for this contact relation",
+          "type": "string"
+        },
         "primary": {
-          "description": "Flag that shows whether this user is the primary responsible for the case. Can be either false/true or 0/1 or nei/já or no/yes",
-          "type": "boolean"
-        }
-      }
-    },
-    "ReferenceResponse": {
-      "description": "General GoPro reference response",
-      "type": "object",
-      "properties": {
-        "identifier": {
-          "description": "GoPro target record id",
+          "description": "Flag that shows whether contact is primary for the case (main involved party). Can be either false/true or 0/1 or nei/já or no/yes",
           "type": "string"
         },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
+        "id": {
+          "description": "Unique record ID (a GUID) of an existing contact",
           "type": "string"
-        }
+        },
+        "name": {
+          "description": "Full name of the person or company",
+          "type": "string"
+        },
+        "idnumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of client. Possible values: Individual, Company, Contact",
+          "type": "string"
+        },
+        "gender": { "description": "Gender", "type": "string" },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Main (default) phone number for contact",
+          "type": "string"
+        },
+        "postalCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City name", "type": "string" }
       }
     },
-    "CreateQuickCaseRequest": {
+    "GoPro.EIR.Requests.CreateQuickCaseRequest": {
       "description": "CreateQuickCase method request structure",
       "required": ["template", "subject"],
       "type": "object",
@@ -2020,16 +2241,31 @@
         "journalKeys": {
           "description": "Optional collection of related journal keys",
           "type": "array",
-          "items": { "$ref": "#/definitions/JournalKey" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.JournalKey" }
+        },
+        "physicalLocation": {
+          "description": "Physical location (if existing and specified)",
+          "type": "string"
+        },
+        "ignoreDefaultEmployees": {
+          "description": "Optional. When true then default employees for the case template are ignored and not assigned to the case on creation.\r\nWhen false (or missing) default workers are assigned implicitly. Note that this flag has no effect on handling the ResponsibleEmployees list.\r\nThese are always assigned to the case.",
+          "type": "boolean"
+        },
+        "responsibleEmployees": {
+          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which may or may not be added to the case. See <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.IgnoreDefaultEmployees\" />",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.ResponsibleWorker"
+          }
         },
         "metadata": {
           "description": "List of metadata values",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
         }
       }
     },
-    "GetCaseRequest": {
+    "GoPro.EIR.Requests.GetCaseRequest": {
       "description": "GetCase method request structure",
       "type": "object",
       "properties": {
@@ -2044,12 +2280,12 @@
         }
       }
     },
-    "GetCaseResponse": {
+    "GoPro.EIR.Responses.GetCaseResponse": {
       "description": "General single case response structure",
       "type": "object",
       "properties": {
         "case": {
-          "$ref": "#/definitions/Case",
+          "$ref": "#/definitions/GoPro.EIR.Models.Case",
           "description": "Case structure"
         },
         "succeeded": {
@@ -2067,7 +2303,7 @@
         }
       }
     },
-    "Case": {
+    "GoPro.EIR.Models.Case": {
       "description": "GoPro case data model",
       "type": "object",
       "properties": {
@@ -2135,7 +2371,7 @@
         "metaDataEntries": {
           "description": "List of related metadata with values",
           "type": "array",
-          "items": { "$ref": "#/definitions/MetaValue" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.MetaValue" }
         },
         "id": {
           "description": "Unique record ID (a GUID) of the case in GoPro system",
@@ -2144,7 +2380,7 @@
         "caseNumber": { "description": "Case number", "type": "string" }
       }
     },
-    "MetaValue": {
+    "GoPro.EIR.Models.MetaValue": {
       "description": "Metadata value",
       "type": "object",
       "properties": {
@@ -2160,7 +2396,7 @@
         }
       }
     },
-    "UpdateCaseRequest": {
+    "GoPro.EIR.Requests.UpdateCaseRequest": {
       "description": "UpdateCase method request structure",
       "type": "object",
       "properties": {
@@ -2173,10 +2409,18 @@
           "type": "string"
         },
         "status": { "description": "Status name", "type": "string" },
+        "template": { "description": "Case template name", "type": "string" },
         "metadata": {
           "description": "Collection of associated metadata values with definitions",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
+        },
+        "responsibleEmployees": {
+          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which will be assigned to the case.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.EIR.Models.ResponsibleWorker"
+          }
         },
         "overwrite": {
           "description": "Flag to control full overwriting of properties\r\nWhen true - all properties are cleared and reset with the new value. Missing properties will be cleared to empty/default value(s). Object should be retrieved first before updating\r\nWhen false - only passed arguments will be updated.",
@@ -2184,7 +2428,7 @@
         }
       }
     },
-    "StartingTimeRequest": {
+    "GoPro.EIR.Requests.StartingTimeRequest": {
       "description": "GetUpdates method request structure",
       "type": "object",
       "properties": {
@@ -2194,14 +2438,14 @@
         }
       }
     },
-    "CasesResponse": {
+    "GoPro.EIR.Responses.CasesResponse": {
       "description": "General case response collection",
       "type": "object",
       "properties": {
         "cases": {
           "description": "A collection of case structures",
           "type": "array",
-          "items": { "$ref": "#/definitions/Case" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Case" }
         },
         "succeeded": {
           "description": "General success indicator",
@@ -2218,7 +2462,7 @@
         }
       }
     },
-    "TemplateAndContactFilterRequest": {
+    "GoPro.EIR.Requests.TemplateAndContactFilterRequest": {
       "description": "SearchCases method request structure",
       "required": ["contactIdNumber"],
       "type": "object",
@@ -2233,7 +2477,7 @@
         }
       }
     },
-    "LinkContactRequest": {
+    "GoPro.EIR.Requests.LinkContactRequest": {
       "description": "LinkContactToCase method request structure",
       "type": "object",
       "properties": {
@@ -2248,10 +2492,14 @@
         "role": {
           "description": "Role name for this contact relation. See \"Roles\" list in GoPro system for predefined roles",
           "type": "string"
+        },
+        "primary": {
+          "description": "Flag that shows whether contact is primary for the case (main involved party).",
+          "type": "boolean"
         }
       }
     },
-    "GetFolderRequest": {
+    "GoPro.EIR.Requests.GetFolderRequest": {
       "description": "GetFolder method request structure",
       "type": "object",
       "properties": {
@@ -2262,12 +2510,12 @@
         }
       }
     },
-    "GetFolderResponse": {
+    "GoPro.EIR.Responses.GetFolderResponse": {
       "description": "GetFolder method response structure",
       "type": "object",
       "properties": {
         "folder": {
-          "$ref": "#/definitions/Folder",
+          "$ref": "#/definitions/GoPro.EIR.Models.Folder",
           "description": "Folder object"
         },
         "succeeded": {
@@ -2285,10 +2533,16 @@
         }
       }
     },
-    "Folder": {
+    "GoPro.EIR.Models.Folder": {
       "description": "GoPro folder data model",
       "type": "object",
       "properties": {
+        "id": {
+          "format": "uuid",
+          "description": "Unique record ID (a GUID) of the folder in GoPro system",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
         "name": { "description": "Name of folder", "type": "string" },
         "journalkey": { "description": "Journal key", "type": "string" },
         "keywords": {
@@ -2300,14 +2554,14 @@
         "body": { "description": "Notes and comments", "type": "string" }
       }
     },
-    "GetFormRequest": {
+    "GoPro.EIR.Requests.GetFormRequest": {
       "description": "GetForm method request structure",
       "type": "object",
       "properties": {
         "id": { "description": "Record ID of custom form", "type": "string" }
       }
     },
-    "NamedReferenceResponse": {
+    "GoPro.EIR.Responses.NamedReferenceResponse": {
       "description": "General GoPro reference response with name",
       "type": "object",
       "properties": {
@@ -2334,7 +2588,7 @@
         }
       }
     },
-    "CreateFolderRequest": {
+    "GoPro.EIR.Requests.CreateFolderRequest": {
       "description": "CreateFolder method request structure",
       "type": "object",
       "properties": {
@@ -2350,7 +2604,7 @@
         "body": { "description": "Description / comments", "type": "string" }
       }
     },
-    "Company": {
+    "GoPro.EIR.Models.Company": {
       "description": "A company partner",
       "type": "object",
       "properties": {
@@ -2395,7 +2649,7 @@
         }
       }
     },
-    "Individual": {
+    "GoPro.EIR.Models.Individual": {
       "description": "Data model for GoPro person (individual) partner",
       "type": "object",
       "properties": {
@@ -2411,6 +2665,7 @@
           "description": "Surname of the person",
           "type": "string"
         },
+        "gender": { "description": "Gender", "type": "string" },
         "jobTitle": { "description": "Job title", "type": "string" },
         "id": {
           "description": "Unique record ID (a GUID) of the client",
@@ -2445,7 +2700,7 @@
         }
       }
     },
-    "Contact": {
+    "GoPro.EIR.Models.Contact": {
       "description": "Contact data model",
       "type": "object",
       "properties": {
@@ -2469,6 +2724,7 @@
           "description": "Surname of contact person",
           "type": "string"
         },
+        "gender": { "description": "Gender", "type": "string" },
         "jobTitle": { "description": "Job title", "type": "string" },
         "id": {
           "description": "Unique record ID (a GUID) of the client",
@@ -2503,7 +2759,7 @@
         }
       }
     },
-    "GetClientRequest": {
+    "GoPro.EIR.Requests.GetClientRequest": {
       "description": "Request for a single client (individual or company)",
       "required": ["identifier"],
       "type": "object",
@@ -2518,12 +2774,12 @@
         }
       }
     },
-    "GetCompanyResponse": {
+    "GoPro.EIR.Responses.GetCompanyResponse": {
       "description": "GetCompany method response structure",
       "type": "object",
       "properties": {
         "company": {
-          "$ref": "#/definitions/Company",
+          "$ref": "#/definitions/GoPro.EIR.Models.Company",
           "description": "Company structure"
         },
         "succeeded": {
@@ -2541,12 +2797,12 @@
         }
       }
     },
-    "GetIndividualResponse": {
+    "GoPro.EIR.Responses.GetIndividualResponse": {
       "description": "GetIndividual method response structure",
       "type": "object",
       "properties": {
         "individual": {
-          "$ref": "#/definitions/Individual",
+          "$ref": "#/definitions/GoPro.EIR.Models.Individual",
           "description": "Person (individual) object"
         },
         "succeeded": {
@@ -2564,7 +2820,7 @@
         }
       }
     },
-    "GetContactRequest": {
+    "GoPro.EIR.Requests.GetContactRequest": {
       "description": "GetContact method request structure",
       "required": ["contactId"],
       "type": "object",
@@ -2583,12 +2839,12 @@
         }
       }
     },
-    "GetContactResponse": {
+    "GoPro.EIR.Responses.GetContactResponse": {
       "description": "GetContact method response structure",
       "type": "object",
       "properties": {
         "contact": {
-          "$ref": "#/definitions/Contact",
+          "$ref": "#/definitions/GoPro.EIR.Models.Contact",
           "description": "Contact structure"
         },
         "succeeded": {
@@ -2606,7 +2862,240 @@
         }
       }
     },
-    "CreateDocumentRequest": {
+    "GoPro.EIR.Models.V2.CompanyV2": {
+      "description": "A company partner",
+      "type": "object",
+      "properties": {
+        "name": { "description": "Company name", "type": "string" },
+        "clientNumber": { "description": "Client number", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "isatNumber": { "description": "ISAT Number", "type": "string" },
+        "isatName": { "description": "ISAT Name", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "phoneNumbers": {
+          "description": "List of phone numbers with type",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.PhoneNumber" }
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Models.PhoneNumber": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "number": { "description": "Phone number", "type": "string" },
+        "type": {
+          "description": "Type of phone number.\r\nPossible default GoPro values: Work, Mobile, Home, Fax, Pager\r\nCustom environment may have other values defined",
+          "type": "string"
+        },
+        "isDefault": {
+          "description": "This is the default phone number of the contact/company.\r\nWARNING: Only one in the phone numbers list can be default for a client",
+          "type": "boolean"
+        }
+      }
+    },
+    "GoPro.EIR.Models.V2.IndividualV2": {
+      "description": "Data model for GoPro person (individual) partner",
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "description": "First name of the person",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Middle name of the person",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Surname of the person",
+          "type": "string"
+        },
+        "gender": { "description": "Gender", "type": "string" },
+        "jobTitle": { "description": "Job title", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "phoneNumbers": {
+          "description": "List of phone numbers with type",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.PhoneNumber" }
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Models.V2.ContactV2": {
+      "description": "Contact data model",
+      "type": "object",
+      "properties": {
+        "companyID": {
+          "description": "GoPro record ID of the company represented by this person",
+          "type": "string"
+        },
+        "contactRole": {
+          "description": "Role of this contact relation",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name of contact person",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Middle name of contact person",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Surname of contact person",
+          "type": "string"
+        },
+        "gender": { "description": "Gender", "type": "string" },
+        "jobTitle": { "description": "Job title", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "phoneNumbers": {
+          "description": "List of phone numbers with type",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.PhoneNumber" }
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Responses.V2.GetCompanyV2Response": {
+      "description": "GetCompany method response structure",
+      "type": "object",
+      "properties": {
+        "company": {
+          "$ref": "#/definitions/GoPro.EIR.Models.V2.CompanyV2",
+          "description": "Company structure"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Responses.V2.GetIndividualV2Response": {
+      "description": "GetIndividual method response structure",
+      "type": "object",
+      "properties": {
+        "individual": {
+          "$ref": "#/definitions/GoPro.EIR.Models.V2.IndividualV2",
+          "description": "Person (individual) object"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Responses.V2.GetContactV2Response": {
+      "description": "GetContact method response structure",
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/GoPro.EIR.Models.V2.ContactV2",
+          "description": "Contact structure"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.EIR.Requests.CreateDocumentRequest": {
       "description": "CreateDocument method request structure",
       "type": "object",
       "properties": {
@@ -2622,6 +3111,10 @@
           "description": "Subject/title of the new document",
           "type": "string"
         },
+        "type": {
+          "description": "Document class name. One of the values in the \"Document classes - General\" GoPro list",
+          "type": "string"
+        },
         "fileName": {
           "description": "File name of the document",
           "type": "string"
@@ -2630,14 +3123,36 @@
           "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
           "type": "string"
         },
+        "involvedParty": {
+          "description": "Record GUID or SSN (ID #) of the primary case contact. Represents the GoPro external party.",
+          "type": "string"
+        },
+        "responsible": {
+          "description": "Record GUID, email or full name of the responsible worker (owner) of the document. Represents the GoPro internal party (user).",
+          "type": "string"
+        },
+        "fileCreated": {
+          "description": "Original file creation time. Using ISO 8601 format or yyyy-MM-dd HH:mm:ss",
+          "type": "string"
+        },
+        "direction": {
+          "format": "int32",
+          "description": "Delivery direction of the document (None, In, Out)",
+          "enum": [0, 1, 2],
+          "type": "integer"
+        },
+        "deliveryDate": {
+          "description": "The date when document was sent from sender to the recipient. Using ISO 8601 format or yyyy-MM-dd HH:mm:ss",
+          "type": "string"
+        },
         "metadata": {
           "description": "List of metadata values",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
         }
       }
     },
-    "CreateFormRequest": {
+    "GoPro.EIR.Requests.CreateFormRequest": {
       "description": "CreateForm method request structure",
       "type": "object",
       "properties": {
@@ -2655,7 +3170,7 @@
         },
         "name": { "description": "Name of custom form", "type": "string" },
         "contact": {
-          "$ref": "#/definitions/LinkedContact",
+          "$ref": "#/definitions/GoPro.EIR.Models.LinkedContact",
           "description": "Client (individual or company) who will be linked to the form. If client is not registered (missing from system) - they will be created first"
         },
         "keywords": {
@@ -2666,11 +3181,11 @@
         "metadata": {
           "description": "List of metadata values",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
         }
       }
     },
-    "LinkedContact": {
+    "GoPro.EIR.Models.LinkedContact": {
       "description": "Single contact information. Used in relation with forms, documents, etc.\r\nwhere only a single contact can be assigned",
       "required": ["name", "idnumber"],
       "type": "object",
@@ -2691,6 +3206,7 @@
           "description": "Type of client. Possible values: Individual, Company, Contact",
           "type": "string"
         },
+        "gender": { "description": "Gender", "type": "string" },
         "address": {
           "description": "Street address of the client",
           "type": "string"
@@ -2708,7 +3224,79 @@
         "city": { "description": "City name", "type": "string" }
       }
     },
-    "UpdateFormRequest": {
+    "GoPro.EIR.Requests.V2.CreateFormRequestV2": {
+      "description": "CreateForm method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID of the top parent case",
+          "type": "string"
+        },
+        "parentID": {
+          "description": "Record ID of the immediate parent under which will be placed the form. When this is not the top case then <seealso cref=\"P:GoPro.EIR.Requests.V2.CreateFormRequestV2.CaseNumber\" /> is required",
+          "type": "string"
+        },
+        "template": {
+          "description": "Form template specified by name",
+          "type": "string"
+        },
+        "name": { "description": "Name of custom form", "type": "string" },
+        "contact": {
+          "$ref": "#/definitions/GoPro.EIR.Models.V2.LinkedContactV2",
+          "description": "Client (individual or company) who will be linked to the form. If client is not registered (missing from system) - they will be created first"
+        },
+        "keywords": {
+          "description": "Keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
+        }
+      }
+    },
+    "GoPro.EIR.Models.V2.LinkedContactV2": {
+      "description": "Single contact information. Used in relation with forms, documents, etc.\r\nwhere only a single contact can be assigned",
+      "required": ["name", "idnumber"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique record ID (a GUID) of an existing contact",
+          "type": "string"
+        },
+        "name": {
+          "description": "Full name of the person or company",
+          "type": "string"
+        },
+        "idnumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of client. Possible values: Individual, Company, Contact",
+          "type": "string"
+        },
+        "gender": { "description": "Gender", "type": "string" },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Main (default) phone number for contact",
+          "type": "string"
+        },
+        "postalCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City name", "type": "string" }
+      }
+    },
+    "GoPro.EIR.Requests.UpdateFormRequest": {
       "description": "UpdateForm method request structure",
       "type": "object",
       "properties": {
@@ -2718,7 +3306,7 @@
         },
         "name": { "description": "Form name", "type": "string" },
         "contact": {
-          "$ref": "#/definitions/LinkedContact",
+          "$ref": "#/definitions/GoPro.EIR.Models.LinkedContact",
           "description": "Linked contact"
         },
         "keywords": {
@@ -2729,7 +3317,7 @@
         "metadata": {
           "description": "Collection of associated metadata values with definitions",
           "type": "array",
-          "items": { "$ref": "#/definitions/Metadata" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
         },
         "overwrite": {
           "description": "Flag to control full overwriting of properties\r\nWhen true - all properties are cleared and reset with the new value. Missing properties will be cleared to empty/default value(s). Object should be retrieved first before updating\r\nWhen false - only passed arguments will be updated.",
@@ -2737,12 +3325,41 @@
         }
       }
     },
-    "GetFormResponse": {
+    "GoPro.EIR.Requests.V2.UpdateFormRequestV2": {
+      "description": "UpdateForm method request structure",
+      "type": "object",
+      "properties": {
+        "formID": {
+          "description": "Record id of target form",
+          "type": "string"
+        },
+        "name": { "description": "Form name", "type": "string" },
+        "contact": {
+          "$ref": "#/definitions/GoPro.EIR.Models.V2.LinkedContactV2",
+          "description": "Linked contact"
+        },
+        "keywords": {
+          "description": "List of keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metadata": {
+          "description": "Collection of associated metadata values with definitions",
+          "type": "array",
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.Metadata" }
+        },
+        "overwrite": {
+          "description": "Flag to control full overwriting of properties\r\nWhen true - all properties are cleared and reset with the new value. Missing properties will be cleared to empty/default value(s). Object should be retrieved first before updating\r\nWhen false - only passed arguments will be updated.",
+          "type": "boolean"
+        }
+      }
+    },
+    "GoPro.EIR.Responses.GetFormResponse": {
       "description": "GetForm method response structure",
       "type": "object",
       "properties": {
         "form": {
-          "$ref": "#/definitions/CustomForm",
+          "$ref": "#/definitions/GoPro.EIR.Models.CustomForm",
           "description": "Form object"
         },
         "succeeded": {
@@ -2760,7 +3377,7 @@
         }
       }
     },
-    "CustomForm": {
+    "GoPro.EIR.Models.CustomForm": {
       "description": "GoPro custom form data model",
       "type": "object",
       "properties": {
@@ -2801,15 +3418,15 @@
         "metaDataEntries": {
           "description": "List of related metadata with values",
           "type": "array",
-          "items": { "$ref": "#/definitions/MetaValue" }
+          "items": { "$ref": "#/definitions/GoPro.EIR.Models.MetaValue" }
         },
         "parent": {
-          "$ref": "#/definitions/CaseReference",
+          "$ref": "#/definitions/GoPro.EIR.Models.CaseReference",
           "description": "Parent case"
         }
       }
     },
-    "CaseReference": {
+    "GoPro.EIR.Models.CaseReference": {
       "description": "Base case reference data model",
       "type": "object",
       "properties": {
@@ -2820,7 +3437,7 @@
         "caseNumber": { "description": "Case number", "type": "string" }
       }
     },
-    "CreateMemoRequest": {
+    "GoPro.EIR.Requests.CreateMemoRequest": {
       "description": "CreateMemo method request structure",
       "type": "object",
       "properties": {
@@ -2842,260 +3459,21 @@
         }
       }
     },
-    "GetVerdictsRequest": {
+    "GoPro.EIR.Models.Credentials": {
+      "description": "",
       "type": "object",
       "properties": {
-        "searchTerm": { "type": "string" },
-        "courtLevel": { "type": "string" },
-        "caseCategories": { "type": "array", "items": { "type": "string" } },
-        "caseTypes": { "type": "array", "items": { "type": "string" } },
-        "caseNumber": { "type": "string" },
-        "title": { "type": "string" },
-        "keywords": { "type": "array", "items": { "type": "string" } },
-        "laws": { "type": "array", "items": { "type": "string" } },
-        "dateFrom": { "type": "string" },
-        "dateTo": { "type": "string" },
-        "orderBy": { "type": "string" },
-        "pageNumber": { "format": "int32", "type": "integer" },
-        "itemsPerPage": { "format": "int32", "type": "integer" }
-      }
-    },
-    "GetVerdictsResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/DetailedVerdictData" }
-        },
-        "total": { "format": "int32", "type": "integer" },
-        "currentPage": { "format": "int32", "type": "integer" },
-        "itemsPerPage": { "format": "int32", "type": "integer" },
-        "identifier": { "type": "string" },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
-        }
-      }
-    },
-    "DetailedVerdictData": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "format": "uuid",
-          "type": "string",
-          "example": "00000000-0000-0000-0000-000000000000"
-        },
-        "court": { "type": "string" },
-        "caseId": {
-          "format": "uuid",
-          "type": "string",
-          "example": "00000000-0000-0000-0000-000000000000"
-        },
-        "caseNumber": { "type": "string" },
-        "caseType": { "type": "string" },
-        "caseCategory": { "type": "string" },
-        "title": { "type": "string" },
-        "verdict": { "type": "string" },
-        "docContent": { "type": "string" },
-        "verdictHtml": { "type": "string" },
-        "presentings": { "type": "string" },
-        "presentingsHtml": { "type": "string" },
-        "verdictDate": { "format": "date-time", "type": "string" },
-        "publishDate": { "format": "date-time", "type": "string" },
-        "judges": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/JuryJudge" }
-        },
-        "keywords": { "type": "array", "items": { "type": "string" } },
-        "lawCitations": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/CaseLaw" }
-        }
-      }
-    },
-    "JuryJudge": {
-      "type": "object",
-      "properties": {
-        "isPresident": { "type": "boolean" },
-        "name": { "type": "string" },
-        "title": { "type": "string" }
-      }
-    },
-    "CaseLaw": {
-      "type": "object",
-      "properties": {
-        "position": { "format": "int32", "type": "integer" },
-        "citation": { "type": "string" }
-      }
-    },
-    "GetVerdictResponse": {
-      "type": "object",
-      "properties": {
-        "item": { "$ref": "#/definitions/DetailedVerdictData" },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
-        }
-      }
-    },
-    "PublishVerdictRequest": {
-      "type": "object",
-      "properties": {
-        "court": { "type": "string" },
-        "caseId": {
-          "format": "uuid",
-          "type": "string",
-          "example": "00000000-0000-0000-0000-000000000000"
-        },
-        "caseNumber": { "type": "string" },
-        "caseType": { "type": "string" },
-        "caseCategory": { "type": "string" },
-        "title": { "type": "string" },
-        "verdict": { "type": "string" },
-        "verdictHtml": { "type": "string" },
-        "presentings": { "type": "string" },
-        "presentingsHtml": { "type": "string" },
-        "verdictDate": { "type": "string" },
-        "publishDate": { "type": "string" },
-        "judges": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/JuryJudge" }
-        },
-        "keywords": { "type": "array", "items": { "type": "string" } },
-        "lawCitations": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/CaseLaw" }
-        }
-      }
-    },
-    "AddVerdictDocumentRequest": {
-      "type": "object",
-      "properties": {
-        "verdictID": {
-          "description": "Record ID of the immediate parent.\r\nMatches both container case in GoPro and verdict ID from the custom table.",
-          "type": "string"
-        },
-        "subject": {
-          "description": "Subject/title of the new document",
-          "type": "string"
-        },
-        "fileName": {
-          "description": "File name of the document",
-          "type": "string"
-        },
-        "content": {
-          "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
-          "type": "string"
-        }
-      }
-    },
-    "GetCaseTypesResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/CaseTypeInfo" }
-        },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
-        }
-      }
-    },
-    "CaseTypeInfo": {
-      "type": "object",
-      "properties": {
-        "id": { "format": "int32", "type": "integer" },
-        "label": { "type": "string" }
-      }
-    },
-    "GetCaseCategoriesResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/CaseCategoryInfo" }
-        },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
-        }
-      }
-    },
-    "CaseCategoryInfo": {
-      "type": "object",
-      "properties": {
-        "id": { "format": "int32", "type": "integer" },
-        "label": { "type": "string" }
-      }
-    },
-    "GetKeywordsResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/KeywordInfo" }
-        },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
-        }
-      }
-    },
-    "KeywordInfo": {
-      "type": "object",
-      "properties": {
-        "id": { "format": "int32", "type": "integer" },
-        "label": { "type": "string" }
+        "username": { "description": "User name", "type": "string" },
+        "password": { "description": "Password", "type": "string" }
       }
     }
   },
   "securityDefinitions": {
-    "basic": { "type": "basic", "description": "Basic HTTP Authentication" }
+    "Authorization": {
+      "type": "apiKey",
+      "description": "Filling bearer token here",
+      "name": "Bearer",
+      "in": "header"
+    }
   }
 }

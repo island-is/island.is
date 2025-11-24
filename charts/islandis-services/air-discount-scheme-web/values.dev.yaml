@@ -68,7 +68,8 @@ ingress:
           - '/'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 pvcs: []
 replicaCount:
   default: 1

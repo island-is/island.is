@@ -126,6 +126,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       <Row>
         <Column span="5/10">
           <Controller
+            key={item.id}
             name={item.id}
             control={control}
             defaultValue={getValue(item, 'nationalId') ?? ''}
@@ -174,6 +175,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       <Row>
         <Column span="10/10">
           <Input
+            required={item?.isRequired ?? false}
             label={formatMessage(m.namePerson)}
             name="nafn"
             disabled

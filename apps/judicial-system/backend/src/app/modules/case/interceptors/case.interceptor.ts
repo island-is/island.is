@@ -23,19 +23,34 @@ import {
 } from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {
-  return defendants?.map((defendant) => ({
-    ...defendant.toJSON(),
-    sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getEventLogDateByEventType(
-          DefendantEventType.SENT_TO_PRISON_ADMIN,
-          defendant.eventLogs,
-        )
-      : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.OPENED_BY_PRISON_ADMIN,
-      defendant.eventLogs,
-    ),
-  }))
+  return defendants?.map((defendant) => {
+    const { verdict } = defendant
+    return {
+      ...defendant.toJSON(),
+      ...(verdict
+        ? {
+            verdict: {
+              ...verdict.toJSON(),
+              verdictDeliveredToNationalCommissionersOffice:
+                DefendantEventLog.getEventLogDateByEventType(
+                  DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+                  defendant.eventLogs,
+                ),
+            },
+          }
+        : {}),
+      sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        defendant.eventLogs,
+      ),
+    }
+  })
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {
@@ -66,14 +81,14 @@ const transformCaseRepresentatives = (theCase: Case) => {
   const defendantsAndDefenders = theCase.defendants?.flatMap((defendant) => {
     const defendantAndDefender = [
       {
-        name: defendant.name,
+        name: defendant.name ?? '',
         nationalId: defendant.nationalId,
         caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
       },
     ]
     if (defendant.defenderName) {
       defendantAndDefender.push({
-        name: defendant.defenderName,
+        name: defendant.defenderName ?? '',
         nationalId: defendant.defenderNationalId,
         caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
       })
@@ -95,6 +110,7 @@ const transformCase = (theCase: Case) => {
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
+    penalties: CaseString.penalties(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,

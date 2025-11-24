@@ -1,12 +1,4 @@
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -33,6 +25,7 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
+import { ISLAND_IS_ORIGIN_CODE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleMileageOverview)
@@ -86,6 +79,7 @@ export class VehiclesMileageResolver {
   ) {
     const res = await this.vehiclesService.putMileageReading(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
@@ -95,6 +89,7 @@ export class VehiclesMileageResolver {
 
     return mileageDetailConstructor({
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
       internalId: res.internalId,
     })
@@ -132,43 +127,8 @@ export class VehiclesMileageResolver {
   ) {
     return this.vehiclesService.putMileageReadingV2(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
-    })
-  }
-
-  @ResolveField('canRegisterMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canRegisterMileage(user, {
-      permno: overview.permno ?? '',
-    })
-  }
-
-  @ResolveField('requiresMileageRegistration', () => Boolean, {
-    nullable: true,
-  })
-  resolveRequiresMileageRegistration(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.requiresMileageRegistration(user, {
-      permno: overview?.permno ?? '',
-    })
-  }
-
-  @ResolveField('canUserRegisterVehicleMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanUserRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canUserRegisterMileage(user, {
-      permno: overview?.permno ?? '',
     })
   }
 }

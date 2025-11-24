@@ -7,18 +7,18 @@ export const newPrimarySchoolMessages: MessageDir = {
   shared: defineMessages({
     applicationName: {
       id: 'nps.application:application.name',
-      defaultMessage: 'Umsókn í nýjan grunnskóla',
-      description: 'Application for a new primary school',
+      defaultMessage: 'Umsókn í grunnskóla',
+      description: 'Application for primary school',
     },
     enrollmentApplicationName: {
       id: 'nps.application:enrollment.application.name',
-      defaultMessage: 'Innritun í grunnskóla',
-      description: 'Enrollment in primary school',
+      defaultMessage: 'Innritun í 1. bekk',
+      description: 'Enrollment in 1st grade',
     },
     newPrimarySchoolApplicationName: {
       id: 'nps.application:new.primary.school.application.name',
-      defaultMessage: 'Umsókn í nýjan skóla',
-      description: 'Application for a new school',
+      defaultMessage: 'Umsókn um skólaskipti',
+      description: 'Application for school transfer',
     },
     institution: {
       id: 'nps.application:institution.name',
@@ -278,24 +278,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
-    differentPlaceOfResidence: {
-      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence',
-      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
-      description:
-        "Is the child's temporary residence different from the registered legal domicile?",
-    },
-    differentPlaceOfResidenceDescription: {
-      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence.description',
-      defaultMessage:
-        'Aðsetur og lögheimili er ekki sama skráningin. Aðsetur er tímabundin skráning á búsetu sem notuð er þegar dvalið er utan lögheimilis í afmarkaðan tíma svo sem vegna náms eða veikinda.',
-      description:
-        'Temporary residence and legal domicile are not the same registration. Temporary residence is a temporary registration of residence used when staying outside the legal domicile for a limited time, such as for education or illness.',
-    },
-    childInfoPlaceOfResidence: {
-      id: 'nps.application:childrenNGuardians.child.info.place.of.residence',
-      defaultMessage: 'Aðsetur barns',
-      description: "Child's temporary residence",
-    },
 
     // Guardians
     guardiansSubSectionTitle: {
@@ -403,12 +385,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu ástæðu',
       description: 'Select reason',
     },
-    registerNewDomicileAlertMessage: {
-      id: 'nps.application:primary.school.register.new.domicile.alert.message',
-      defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
-      description:
-        'We remind you to register your new domicile in Registers Iceland.',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {
@@ -490,19 +466,19 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolSubSectionDescription: {
       id: 'nps.application:primary.school.school.sub.section.description',
       defaultMessage:
-        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Einstaka sveitarfélög úthluta barni námsvist í hverfisskóla eða sem næst þeirra lögheimili. Í báðun tilfellum geta foreldrar sótt um annan skóla hvort sem er innan sveitarfélags eða utan. Ekki er þó víst að nýr skóli sjái sér fært að taka á móti barni. Er það ávalt háð aðstæðum hverju sinni.',
+        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Langflest sveitarfélög úthluta barni skólavist í hverfisskóla eða sem næst þeirra heimili. Eftir sem áður er það réttur forsjáraðila að sækja um annan skóla fyrir barnið sitt, hvort sem er innan sveitarfélagsins, utan þess eða í sjálfstætt starfandi skóla. Ekki er þó víst að sá skóli geti tekið á móti barninu og fer það eftir þeim reglum sem sveitarfélagið setur og aðstæðum í nýjum skóla hverju sinni.',
       description:
-        'Children have the right to attend school in the municipality where they have their registered domicile. Some municipalities assign a child to a neighbourhood school or the school closest to their domicile. In both cases, parents can apply for another school, whether within the municipality or outside it. However, it is not certain that the new school will be able to accept the child. This is always subject to the circumstances at the time.',
+        'Children have the right to attend school in the municipality where they are registered as legal residents. Most municipalities assign children to their district school or the one closest to their home. However, it is the right of the guardian to apply for another school for their child, whether within the municipality, outside it, or in an independent school. However, it is not certain that the school will be able to accept the child, and this depends on the rules set by the municipality and the circumstances in the new school each time.',
     },
-    schoolApplyForNeighbourhoodSchoolLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.label',
+    schoolApplyForPreferredSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.label',
       defaultMessage: 'Staðfesta innritun í hverfisskóla',
       description: 'Confirm enrollment in the neighbourhood school',
     },
-    schoolApplyForNeighbourhoodSchoolSubLabel: {
-      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {neighbourhoodSchoolName}',
-      description: 'Your neighbourhood school is: {neighbourhoodSchoolName}',
+    schoolApplyForPreferredSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.preferred.school.sub.label',
+      defaultMessage: 'Hverfisskólinn ykkar er: {preferredSchoolName}',
+      description: 'Your neighbourhood school is: {preferredSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',
@@ -512,9 +488,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolApplyForOtherSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.sub.label',
       defaultMessage:
-        'Þú getur sótt um fyrir barnið þitt í skóla utan þíns skólahverfis, en ekki er víst að skólinn geti tekið við barninu.',
+        'Ef forsjáraðili velur að hafna innritun í hverfisskóla þá býðst honum sjálfkrafa sá möguleiki að sækja um annan skóla fyrir barnið sitt.',
       description:
-        'You can apply for your child to attend a school outside your school district, but it is not certain that the school will be able to accept your child.',
+        'If the guardian chooses to decline enrollment in the neighbourhood school, they are automatically offered the option to apply for another school for their child.',
     },
 
     // Apply to a new school
@@ -1062,5 +1038,33 @@ export const errorMessages = defineMessages({
     id: 'nps.application:error.other.allergies.required',
     defaultMessage: 'Það þarf að velja að minnsta kosti eitt ofnæmi',
     description: 'At least one allergy must be selected',
+  },
+})
+
+export const statesMessages = defineMessages({
+  applicationApproved: {
+    id: 'nps.application:application.approved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Application approved',
+  },
+  applicationApprovedDescription: {
+    id: 'nps.application:application.approved.description',
+    defaultMessage: 'Umsókn um grunnskóla samþykkt',
+    description: 'The application for primary school has been approved',
+  },
+  applicationRejected: {
+    id: 'nps.application:application.rejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationRejectedDescription: {
+    id: 'nps.application:application.rejected.description',
+    defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
+    description: 'The application for primary school has been rejected',
+  },
+  applicationReceivedTitle: {
+    id: 'nps.application:application.received.title',
+    defaultMessage: 'Móttekin',
+    description: 'Received',
   },
 })

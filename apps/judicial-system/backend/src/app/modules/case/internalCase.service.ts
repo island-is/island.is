@@ -1,5 +1,8 @@
-import CryptoJS from 'crypto-js'
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -24,21 +27,29 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
+  CourtSessionRulingType,
+  DefendantEventType,
   EventType,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
   NotificationType,
   restrictionCases,
+  ServiceRequirement,
   type User as TUser,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -58,12 +69,14 @@ import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  CourtSession,
   DateLog,
   Defendant,
+  DefendantEventLog,
   EventLog,
   IndictmentCount,
   Institution,
@@ -159,8 +172,8 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(CaseArchive)
-    private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(forwardRef(() => CaseArchiveRepositoryService))
+    private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
@@ -245,8 +258,18 @@ export class InternalCaseService {
     buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf =
-        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -392,16 +415,20 @@ export class InternalCaseService {
       const newCase = await this.caseRepositoryService.create(
         {
           ...caseToCreate,
-          state: isRequestCase(caseToCreate.type)
-            ? CaseState.NEW
-            : CaseState.DRAFT,
+          ...(isRequestCase(caseToCreate.type)
+            ? {
+                state: CaseState.NEW,
+                courtId: creator.institution?.defaultCourtId,
+              }
+            : {
+                state: CaseState.DRAFT,
+                courtId: undefined,
+                withCourtSessions: true,
+              }),
           origin: CaseOrigin.LOKE,
           creatingProsecutorId: creator.id,
           prosecutorId:
             creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-          courtId: isRequestCase(caseToCreate.type)
-            ? creator.institution?.defaultCourtId
-            : undefined,
           prosecutorsOfficeId: creator.institution?.id,
         },
         { transaction },
@@ -534,29 +561,16 @@ export class InternalCaseService {
         })
       }
 
-      await this.caseArchiveModel.create(
+      await this.caseArchiveRepositoryService.create(
+        theCase.id,
         {
-          caseId: theCase.id,
-          archive: CryptoJS.AES.encrypt(
-            JSON.stringify({
-              ...caseArchive,
-              defendants: defendantsArchive,
-              caseFiles: caseFilesArchive,
-              indictmentCounts: indictmentCountsArchive,
-              caseStrings: caseStringsArchive,
-            }),
-            this.config.archiveEncryptionKey,
-            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
-          ).toString(),
-          // To decrypt:
-          // JSON.parse(
-          //   Base64.fromBase64(
-          //     CryptoJS.AES.decrypt(
-          //       archive,
-          //       this.config.archiveEncryptionKey,
-          //     ).toString(CryptoJS.enc.Base64),
-          //   ),
-          // )
+          archiveJson: JSON.stringify({
+            ...caseArchive,
+            defendants: defendantsArchive,
+            caseFiles: caseFilesArchive,
+            indictmentCounts: indictmentCountsArchive,
+            caseStrings: caseStringsArchive,
+          }),
         },
         { transaction },
       )
@@ -571,6 +585,81 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
+    { theCase: Case; defendant: Defendant }[]
+  > {
+    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: true,
+              where: {
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                serviceStatus: {
+                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
+                },
+                serviceDate: {
+                  [Op.lte]: minDate,
+                },
+              },
+            },
+          ],
+          where: {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                                      (SELECT defendant_id
+                                        FROM defendant_event_log
+                                        WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
+                                    `),
+            },
+          },
+        },
+      ],
+      where: {
+        state: { [Op.eq]: CaseState.COMPLETED },
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      },
+    })
+
+    return cases.flatMap((theCase) =>
+      pipe(
+        theCase.defendants ?? [],
+        filterMap((defendant) => {
+          if (defendant.verdict?.serviceDate) {
+            const appealDeadline = getIndictmentAppealDeadlineDate({
+              baseDate: defendant.verdict?.serviceDate,
+              isFine: false,
+            })
+            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
+            if (isAppealDeadlineExpired) {
+              return option.some({ theCase, defendant })
+            }
+          }
+          return option.none
+        }),
+      ),
+    )
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
@@ -1123,6 +1212,21 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
+      .then(async (courtDocuments) => {
+        if (theCase.withCourtSessions) {
+          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+
+          courtDocuments.push({
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          })
+        }
+
+        return courtDocuments
+      })
       .then((courtDocuments) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )
@@ -1371,6 +1475,25 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         { model: DateLog, as: 'dateLogs' },
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['created', 'DESC']],
+          attributes: ['ruling'],
+          where: {
+            ruling_type: CourtSessionRulingType.JUDGEMENT,
+          },
+        },
       ],
       attributes: [
         'courtCaseNumber',
@@ -1378,6 +1501,7 @@ export class InternalCaseService {
         'state',
         'indictmentRulingDecision',
         'rulingDate',
+        'ruling',
       ],
       where: {
         type: CaseType.INDICTMENT,
@@ -1401,13 +1525,26 @@ export class InternalCaseService {
     theCase: Case,
     defendantNationalId: string,
   ): Promise<Case> {
-    const subpoena = theCase.defendants?.[0].subpoenas?.[0]
+    // TODO: Handle multiple defendants
+    //       Here we should use the defendant with the given national id
+    const defendant = theCase.defendants?.[0]
+
+    if (!defendant) {
+      // This should not happen as we always search for cases with a defendant national id
+      return theCase
+    }
+
+    const subpoena = defendant?.subpoenas?.[0]
 
     if (!subpoena) {
       return theCase
     }
 
-    const latestSubpoena = await this.subpoenaService.getSubpoena(subpoena)
+    const latestSubpoena = await this.subpoenaService.getSubpoena(
+      theCase,
+      defendant,
+      subpoena,
+    )
 
     if (latestSubpoena === subpoena) {
       // The subpoena was up to date

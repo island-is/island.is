@@ -1,22 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { EnumType } from './enumType.model'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { PreviousApplication } from './previousApplication.model'
 import { RequestedPeriod } from './requestedPeriod.model'
+import { RequestedTreatment } from './requestedTreatment.model'
 import { ServiceProvider } from './serviceProvider.model'
-
-@ObjectType('SocialInsuranceMedicalDocumentsRequestedTreatment')
-class RequestedTreatment {
-  @Field(() => EnumType, { nullable: true })
-  treatmentType?: EnumType
-
-  @Field({ nullable: true })
-  otherTreatmentDescription?: string
-}
 
 @ObjectType('SocialInsuranceMedicalDocumentsConfirmationOfPendingResolution')
 export class ConfirmationOfPendingResolution {
   @Field({ nullable: true })
   referenceId?: string
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  created?: Date
 
   @Field(() => ServiceProvider, { nullable: true })
   serviceProvider?: ServiceProvider
@@ -32,4 +26,7 @@ export class ConfirmationOfPendingResolution {
 
   @Field(() => RequestedPeriod, { nullable: true })
   requestedPeriod?: RequestedPeriod
+
+  @Field({ nullable: true })
+  typeAppliedFor?: string
 }

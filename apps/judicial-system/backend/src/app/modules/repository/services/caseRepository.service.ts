@@ -266,7 +266,7 @@ export class CaseRepositoryService {
   ): Promise<Case> {
     try {
       this.logger.debug('Creating a new case with data:', {
-        data: Object.keys(data ?? {}),
+        data: Object.keys(data),
       })
 
       const createOptions: CreateOptions = {}
@@ -282,7 +282,7 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error('Error creating a new case with data:', {
-        data: Object.keys(data ?? {}),
+        data: Object.keys(data),
         error,
       })
 
@@ -297,7 +297,7 @@ export class CaseRepositoryService {
   ): Promise<Case> {
     try {
       this.logger.debug(`Updating case ${caseId} with data:`, {
-        data: Object.keys(data ?? {}),
+        data: Object.keys(data),
       })
 
       const updateOptions: UpdateOptions = {
@@ -323,7 +323,7 @@ export class CaseRepositoryService {
         // Tolerate failure, but log error
         this.logger.error(
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
-          { data: Object.keys(data ?? {}) },
+          { data: Object.keys(data) },
         )
       }
 
@@ -332,7 +332,7 @@ export class CaseRepositoryService {
       return cases[0]
     } catch (error) {
       this.logger.error(`Error updating case ${caseId} with data:`, {
-        data: Object.keys(data ?? {}),
+        data: Object.keys(data),
         error,
       })
 

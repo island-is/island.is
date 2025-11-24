@@ -41,6 +41,7 @@ export const collapseGovernment = (
     )
     if (area) {
       area.collectionId = collection.id?.toString()
+      area.collectionStatus = status
     }
 
     if (status === CollectionStatus.Active) {

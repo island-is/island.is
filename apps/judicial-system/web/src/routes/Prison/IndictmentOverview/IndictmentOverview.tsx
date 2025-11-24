@@ -11,9 +11,15 @@ import {
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  hasGeneratedCourtRecordPdf,
+  isCompletedCase,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -82,7 +88,7 @@ const IndictmentOverview = () => {
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+  const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision ?? undefined,
       sentToPrisonAdminDate,
@@ -101,6 +107,17 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
+  // We show a court record pdf button if the case does not have a ruling
+  // and it should have court sessions (not an uploaded court record)
+  const showGeneratedCourtRecord = !hasRuling && workingCase.withCourtSessions
+  // We disable the court record pdf button if the court record pdf does not exist (should not happen)
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
+    workingCase.courtSessions,
+    user,
+  )
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {
       isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
@@ -182,6 +199,22 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {isCompletedCase(workingCase.state) &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) &&
+          workingCase.courtSessions?.at(-1)?.ruling && (
+            <Box component="section" marginBottom={5}>
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
@@ -199,6 +232,16 @@ const IndictmentOverview = () => {
               hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
             )}
           </Text>
+          {showGeneratedCourtRecord && (
+            <PdfButton
+              caseId={workingCase.id}
+              title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+              pdfType="courtRecord"
+              renderAs="row"
+              elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
+            />
+          )}
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
@@ -207,6 +250,27 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
+          {workingCase.defendants?.map((defendant) => {
+            if (
+              !defendant.verdict?.serviceDate ||
+              !defendant.verdict?.externalPoliceDocumentId
+            ) {
+              return null
+            }
+
+            const serviceCertificateFileName = `Birtingarvottorð ${defendant.name}.pdf`
+
+            return (
+              <PdfButton
+                key={defendant.id}
+                caseId={workingCase.id}
+                title={serviceCertificateFileName}
+                pdfType="verdictServiceCertificate"
+                elementId={[defendant.id, serviceCertificateFileName]}
+                renderAs="row"
+              />
+            )
+          })}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
@@ -225,7 +289,7 @@ const IndictmentOverview = () => {
                 caseId={workingCase.id}
                 title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={pdfElementId}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}

@@ -9,60 +9,55 @@ import {
 } from '@react-pdf/renderer'
 import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionListSummary,
-} from '@island.is/api/schema'
+import { SignatureCollectionSummaryReport } from '@island.is/api/schema'
 import format from 'date-fns/format'
 
 const PdfDocument = ({
   report,
-  collectionType,
 }: {
-  report: SignatureCollectionListSummary
-  collectionType: SignatureCollectionCollectionType
+  report: SignatureCollectionSummaryReport
 }) => {
+  const lists = report?.lists ?? [report]
   return (
     <Document>
-      {report && (
-        <Page style={styles.body} key={report.candidateName}>
+      {lists.map((list) => (
+        <Page style={styles.body} key={list.listName}>
           <View>
             <Text style={styles.pageTitle}>
-              {report.listName?.split(' - ')[1]}
+              {list.listName?.split(' - ')[1] ?? list.areaName}
             </Text>
             <View style={styles.dividerLineBox}>
               <View style={styles.dividerLine} />
             </View>
 
-            <Text style={styles.header}>Flokkur:</Text>
-            <Text style={styles.text}>{report.candidateName}</Text>
+            <Text style={styles.header}>Framboð:</Text>
+            <Text style={styles.text}>{list.candidateName}</Text>
 
             <Text style={styles.header}>Dagsetning:</Text>
             <Text style={styles.text}>
               {format(new Date(), 'dd.MM.yyyy HH:mm')}
             </Text>
 
-            {collectionType ===
-              SignatureCollectionCollectionType.Parliamentary && (
+            {list.partyBallotLetter && (
               <>
                 <Text style={styles.header}>Listabókstafur:</Text>
-                <Text style={styles.text}>{report.partyBallotLetter}</Text>
+                <Text style={styles.text}>{list.partyBallotLetter}</Text>
               </>
             )}
 
             <Text style={styles.header}>Rafræn meðmæli:</Text>
-            <Text style={styles.text}>{report.nrOfDigitalSignatures}</Text>
+            <Text style={styles.text}>{list.nrOfDigitalSignatures}</Text>
 
             <Text style={styles.header}>Meðmæli af pappír:</Text>
-            <Text style={styles.text}>{report.nrOfPaperSignatures}</Text>
+            <Text style={styles.text}>{list.nrOfPaperSignatures}</Text>
 
             <Text style={styles.header}>Samtals fjöldi gildra meðmæla:</Text>
-            <Text style={styles.text}>{report.nrOfSignatures}</Text>
+            <Text style={styles.text}>{list.nrOfSignatures}</Text>
           </View>
 
           <Image src={logo} style={styles.logo} fixed />
         </Page>
-      )}
+      ))}
     </Document>
   )
 }

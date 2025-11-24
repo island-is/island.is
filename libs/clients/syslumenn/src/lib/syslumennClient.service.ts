@@ -60,6 +60,7 @@ import {
   mapDataUploadResponse,
   mapDepartedToRegistryPerson,
   mapDistrictCommissionersAgenciesResponse,
+  mapDrivingInstructor,
   mapEstateInfo,
   mapEstateRegistrant,
   mapEstateToInheritanceReportInfo,
@@ -668,7 +669,8 @@ export class SyslumennService {
         kennitala: nationalId,
       },
     })
-    return res.yfirlit?.map(mapEstateInfo) ?? []
+
+    return res?.yfirlit?.map(mapEstateInfo) ?? []
   }
 
   async getMasterLicences() {
@@ -813,5 +815,15 @@ export class SyslumennService {
     })
     const items = res.map(mapReligiousOrganization)
     return items.filter((item) => Boolean(item?.name))
+  }
+
+  async getDrivingInstructors() {
+    const { id, api } = await this.createApi()
+    const res = await api.okukennaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapDrivingInstructor)
+      .filter((instructor) => Boolean(instructor.name))
   }
 }

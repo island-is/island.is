@@ -1,4 +1,3 @@
-import { ConfigType } from '@nestjs/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 import {
@@ -6,16 +5,18 @@ import {
   Configuration as SupremeCourtConfiguration,
 } from '../../gen/fetch/supreme-court'
 import {
-  SecurityApi,
-  VerdictApi,
+  ExtensionPublishedVerdictApi,
   Configuration as GoProConfiguration,
+  ExtensionPublishedBookingApi,
+  ExtensionLawyerApi,
+  ExternalIntegrationAPISecurityApi,
 } from '../../gen/fetch/gopro'
 import { VerdictsClientConfig } from './verdicts-client.config'
 
 export const GoProApiConfig = {
   provide: 'GoProVerdictApiConfig',
   scope: LazyDuringDevScope,
-  useFactory: (config: ConfigType<typeof VerdictsClientConfig>) => {
+  useFactory: () => {
     return new GoProConfiguration({
       fetchApi: createEnhancedFetch({
         name: 'clients-gopro-verdicts',
@@ -25,14 +26,17 @@ export const GoProApiConfig = {
       headers: {
         Accept: 'application/json',
       },
-      username: config.goproUsername,
-      password: config.goproPassword,
     })
   },
   inject: [VerdictsClientConfig.KEY],
 }
 
-export const GoProApiProviders = [SecurityApi, VerdictApi].map((api) => ({
+export const GoProApiProviders = [
+  ExtensionPublishedVerdictApi,
+  ExtensionPublishedBookingApi,
+  ExtensionLawyerApi,
+  ExternalIntegrationAPISecurityApi,
+].map((api) => ({
   provide: api,
   useFactory: (config: GoProConfiguration) => {
     return new api(config)

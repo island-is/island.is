@@ -12,6 +12,7 @@ import { Defendant, Subpoena } from '../repository'
 import {
   CaseModule,
   CourtModule,
+  CourtSessionModule,
   DefendantModule,
   EventModule,
   FileModule,
@@ -31,6 +32,7 @@ import { SubpoenaService } from './subpoena.service'
     forwardRef(() => MessageModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => FileModule),
     SequelizeModule.forFeature([Subpoena, Defendant]),
     ConfigModule.forRoot({

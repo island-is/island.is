@@ -233,6 +233,16 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
+    // Indictment court record
+    await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
+    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
+
+    await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
+    await page.getByTestId('ruling').fill('Dómsorð')
+
+    await page.getByTestId('confirm-court-record').click()
+    await page.getByTestId('continueButton').click()
+
     // Conclusion
     await expect(page).toHaveURL(`domur/akaera/stada-og-lyktir/${caseId}`)
 
@@ -247,16 +257,6 @@ test.describe.serial('Indictment tests', () => {
           .nth(1)
           .click()
       },
-      'TestThingbok.pdf',
-    )
-    await chooseDocument(
-      page,
-      async () => {
-        await page
-          .getByRole('button', { name: 'Velja gögn til að hlaða upp' })
-          .nth(2)
-          .click()
-      },
       'TestDomur.pdf',
     )
 
@@ -265,11 +265,18 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
-    // Summary
+    // Case overview
     await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
-
     await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalPrimaryButton').click()
+
+    await page.waitForSelector('input[type="checkbox"]', { state: 'visible' })
+    await page
+      .getByRole('checkbox', { name: 'Ég hef rýnt þetta dómskjal' })
+      .check()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Completed case overview
     await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)
@@ -278,8 +285,6 @@ test.describe.serial('Indictment tests', () => {
       .locator('label')
       .filter({ hasText: 'Birta skal dómfellda dóminn' })
       .click()
-
-    await page.locator('label').filter({ hasText: 'Dómsorð' }).fill('Dómsorð')
 
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()

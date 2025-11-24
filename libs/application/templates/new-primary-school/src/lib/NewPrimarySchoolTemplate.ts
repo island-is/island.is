@@ -1,7 +1,6 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  NO,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
@@ -16,6 +15,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   FormModes,
+  InstitutionNationalIds,
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
@@ -25,23 +25,24 @@ import { CodeOwners } from '@island.is/shared/constants'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
+  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
-  SchoolType,
   States,
 } from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
+  getSelectedSchoolSubType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+import { newPrimarySchoolMessages, statesMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -76,12 +77,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               action: ApiModuleActions.getChildInformation,
               externalDataId: 'childInformation',
               throwOnError: true,
-              order: 0,
             }),
             defineTemplateApi({
-              action: ApiModuleActions.getCitizenship,
-              externalDataId: 'citizenship',
-              order: 1,
+              action: ApiModuleActions.getPreferredSchool,
+              externalDataId: 'preferredSchool',
+              throwOnError: true,
             }),
           ],
           roles: [
@@ -100,7 +100,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ChildrenApi,
+                SchoolsApi,
+              ],
             },
           ],
         },
@@ -112,7 +117,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
-          'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
@@ -159,20 +163,42 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignOrganization'],
         meta: {
           name: States.SUBMITTED,
-          status: FormModes.COMPLETED,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: statesMessages.applicationReceivedTitle,
+            },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
               content: corePendingActionMessages.applicationReceivedDescription,
-              displayStatus: 'success',
+              displayStatus: 'info',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.applicationRejected,
+              },
+            ],
           },
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -182,7 +208,56 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          status: FormModes.APPROVED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationApproved,
+              content: statesMessages.applicationApprovedDescription,
+              displayStatus: 'success',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: FormModes.REJECTED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationRejected,
+              content: statesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },
@@ -195,7 +270,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         set(
           application.answers,
           'applicationType',
-          getApplicationType(application.externalData),
+          getApplicationType(application.answers, application.externalData),
         )
 
         return context
@@ -207,31 +282,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
-        if (
-          reasonForApplication !==
-          ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ) {
-          unset(
-            application.answers,
-            'reasonForApplication.transferOfLegalDomicile',
-          )
-        }
-
         // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
           ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
-        }
-        return context
-      }),
-      clearPlaceOfResidence: assign((context) => {
-        const { application } = context
-        const { childInfo } = getApplicationAnswers(application.answers)
-        if (childInfo?.differentPlaceOfResidence === NO) {
-          unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
@@ -291,32 +347,61 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearExpectedEndDate: assign((context) => {
         const { application } = context
-        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+        const { temporaryStay } = getApplicationAnswers(application.answers)
+
+        const selectedSchoolSubType = getSelectedSchoolSubType(
           application.answers,
+          application.externalData,
         )
 
-        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+        if (
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+        ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const MMS_ID =
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU ?? ''
+
+        const assignees = application.assignees
+        if (MMS_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(MMS_ID)) {
+            assignees.push(MMS_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [MMS_ID])
+          }
+        }
+
+        return context
+      }),
     },
   },
 
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+
+    if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
     return undefined
   },
 }

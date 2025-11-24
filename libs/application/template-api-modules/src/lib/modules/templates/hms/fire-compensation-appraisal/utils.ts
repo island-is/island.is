@@ -28,7 +28,7 @@ export const paymentForAppraisal = (currentAppraisal: number) => {
 const GUID = 'c7c13606-9a03-40ec-837b-ec5d7665a8fe' // HMS does nothing with this but it has to have a certain form for the request to go through
 const APPLICATION_TYPE = 'LscVK9yI7EeXf4WDCOBfww' // This is fixed and comes from HMS
 
-const getApplicant = (answers: FormValue) => {
+export const getApplicant = (answers: FormValue) => {
   return {
     address: getValueViaPath<string>(answers, 'applicant.address'),
     city: getValueViaPath<string>(answers, 'applicant.city'),
@@ -62,18 +62,29 @@ export const mapAnswersToApplicationDto = (
 ): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
-  const selectedRealEstateId = getValueViaPath<string>(answers, 'realEstate')
-  const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
+  const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+    answers,
+    'otherPropertiesThanIOwnCheckbox',
+  )?.includes(YES)
+  const selectedRealEstateId = otherPropertiesThanIOwn
+    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    : getValueViaPath<string>(answers, 'realEstate')
 
+  const realEstates = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
+
+  const selectedRealEstate = realEstates?.find(
+    (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+  )
   const parsedFiles = files?.map((file) => {
-    const ending = file.key.split('.').pop()
+    const parts = file.key.split('.')
+    const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
+    const heiti = parts.join('.').replace(/^[^_]*_/, '')
     const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
       flokkur: ending === 'pdf' ? 5 : 2,
-      heiti: file.key.replace(/^[^_]*_/, ''),
+      heiti,
       dags: new Date(),
       tegund,
       fileID: hashToLength20(file.key.split('_')[0]),

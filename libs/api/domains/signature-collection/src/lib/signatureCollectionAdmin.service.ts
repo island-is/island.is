@@ -26,8 +26,11 @@ import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
-import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
-import { SignatureCollectionUploadPaperSignatureInput } from './dto'
+import { SignatureCollectionSummaryReport } from './models/summaryReport.model'
+import {
+  SignatureCollectionCandidateIdInput,
+  SignatureCollectionUploadPaperSignatureInput,
+} from './dto'
 import { SignatureCollectionAdmin } from './models/admin.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { SignatureCollectionLockListInput } from './dto/lockList.input'
@@ -67,6 +70,13 @@ export class SignatureCollectionAdminService {
 
   async allLists(
     input: SignatureCollectionIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionList[]> {
+    return this.getService(admin.adminScope).getLists(input, admin)
+  }
+
+  async listsForCandidate(
+    input: SignatureCollectionCandidateIdInput,
     admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionList[]> {
     return this.getService(admin.adminScope).getLists(input, admin)
@@ -256,11 +266,21 @@ export class SignatureCollectionAdminService {
   async getAreaSummaryReport(
     input: SignatureCollectionAreaSummaryReportInput,
     admin: SignatureCollectionAdmin,
-  ): Promise<SignatureCollectionAreaSummaryReport> {
+  ): Promise<SignatureCollectionSummaryReport> {
     return await this.getService(admin.adminScope).getAreaSummaryReport(
       admin,
       input.collectionId,
       input.areaId,
+    )
+  }
+
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.getService(admin.adminScope).getCandidateSummaryReport(
+      admin,
+      input.candidateId,
     )
   }
 

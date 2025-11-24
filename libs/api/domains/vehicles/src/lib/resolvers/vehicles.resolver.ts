@@ -68,7 +68,7 @@ export class VehiclesResolver {
         downloadServiceUrls: !input?.type
           ? {
               excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
-              pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`,
+              pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf`,
             }
           : null,
       }
@@ -78,7 +78,7 @@ export class VehiclesResolver {
         false,
         false,
       )
-      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership`
       return { ...res?.data, downloadServiceURL }
     }
   }
@@ -100,7 +100,7 @@ export class VehiclesResolver {
       }),
       downloadServiceUrls: {
         excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
-        pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`,
+        pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/`,
       },
       paging: {
         pageNumber: res.pageNumber,

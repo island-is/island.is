@@ -9,24 +9,26 @@ import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { dateFormat } from '@island.is/shared/constants'
 import { isDefined } from '@island.is/shared/utils'
-import { useState } from 'react'
-import { Reply, ReplyState } from '../../lib/types'
-import { useGetDocumentTicketLazyQuery } from '../../queries/Overview.generated'
+import { useCallback, useEffect, useState } from 'react'
+import { ReplyState } from '../../lib/types'
+import { useGetDocumentTicketQuery } from '../../queries/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
-import NoPDF from '../NoPDF/NoPDF'
 import ReplyForm from './ReplyForm'
 import ReplyHeader from './ReplyHeader'
 import ReplySent from './ReplySent'
+import { DocumentComment } from '@island.is/api/schema'
 
 const ReplyContainer = () => {
   const { formatMessage } = useLocale()
   const { profile } = useUserInfo()
   const { replyState, activeDocument, setReplyState } = useDocumentContext()
 
-  const [sent, setSent] = useState<boolean>()
-  const [showAllReplies, setShowAllReplies] = useState(false)
-  const [getTicketQuery, { loading }] = useGetDocumentTicketLazyQuery({
+  const [sent, setSent] = useState<boolean>(false)
+  const [showAllReplies, setShowAllReplies] = useState(true)
+  const [isFirstTimeReply, setIsFirstTimeReply] = useState(false)
+  const { data, loading, refetch } = useGetDocumentTicketQuery({
+    skip: !activeDocument?.id,
     variables: {
       input: {
         id: activeDocument?.id ?? '',
@@ -34,33 +36,108 @@ const ReplyContainer = () => {
       },
     },
     fetchPolicy: 'no-cache',
+    onError: (err) => {
+      console.error('Failed to fetch ticket data:', err)
+    },
   })
 
   const { data: userProfile } = useUserProfile()
-  const userEmail = userProfile?.email
+
+  const allRepliesData: DocumentComment[] =
+    data?.documentV2?.ticket?.comments ?? []
+  const userEmail = userProfile?.email ?? profile?.email
   const hasEmail = isDefined(userEmail)
-  const userName = profile.name
-  const { isMobile } = useIsMobile()
+  const userName = profile?.name ?? ''
   const replies = replyState?.replies
+  const repliesLength = replies?.comments?.length ?? 0
 
-  const successfulSubmit = () => {
-    setSent(true)
-    changeReplyState({ replyOpen: false }) // Close the reply form after sending
-  }
+  // Check if user has EVER made any replies in this document thread (historical check)
+  // This looks at all comments in the thread to determine if user has replied before
+  const userHistoricalReplies = allRepliesData.filter(
+    (comment) => !comment.isZendeskAgent,
+  )
 
-  const changeReplyState = (partial: Partial<ReplyState>) => {
-    setReplyState((prev) => {
-      return {
-        ...prev,
-        reply: partial.reply ?? prev?.reply,
-        replyable: partial.replyable ?? prev?.replyable ?? false,
-        replyOpen: partial.replyOpen ?? prev?.replyOpen ?? false,
-        replies: partial.replies ?? prev?.replies,
-        closedForMoreReplies:
-          partial.closedForMoreReplies ?? prev?.closedForMoreReplies ?? false,
+  useEffect(() => {
+    if (userHistoricalReplies.length === 0) {
+      setIsFirstTimeReply(true)
+    } else if (userHistoricalReplies.length > 0) {
+      setIsFirstTimeReply(false)
+    }
+  }, [userHistoricalReplies])
+
+  const { isMobile } = useIsMobile()
+
+  useEffect(() => {
+    if (repliesLength > (isMobile ? 2 : 4)) {
+      setShowAllReplies(false)
+    }
+  }, [repliesLength, isMobile])
+
+  const changeReplyState = useCallback(
+    (partial: Partial<ReplyState>) => {
+      if (!setReplyState) {
+        console.warn('setReplyState is not available')
+        return
       }
+
+      setReplyState((prev) => {
+        if (!prev) {
+          return {
+            sentReply: partial.sentReply,
+            replyable: partial.replyable ?? false,
+            replyOpen: partial.replyOpen ?? false,
+            replies: partial.replies,
+            closedForMoreReplies: partial.closedForMoreReplies ?? false,
+          }
+        }
+
+        return {
+          ...prev,
+          sentReply: partial.sentReply ?? prev.sentReply,
+          replyable: partial.replyable ?? prev.replyable ?? false,
+          replyOpen: partial.replyOpen ?? prev.replyOpen ?? false,
+          replies: partial.replies ?? prev.replies,
+          closedForMoreReplies:
+            partial.closedForMoreReplies ?? prev.closedForMoreReplies ?? false,
+        }
+      })
+    },
+    [setReplyState],
+  )
+
+  const successfulSubmit = useCallback(() => {
+    setIsFirstTimeReply(false)
+    refetch?.()
+    setSent(true)
+    changeReplyState({ replyOpen: false })
+  }, [refetch, changeReplyState])
+
+  const toggleShowAllReplies = useCallback(() => {
+    setShowAllReplies((prev) => !prev)
+  }, [])
+
+  const handleReplyButtonClick = useCallback(() => {
+    if (sent && replyState?.sentReply) {
+      setSent(false)
+    }
+    changeReplyState({
+      replyOpen: true,
+      sentReply: undefined,
     })
-  }
+  }, [sent, replyState?.sentReply, changeReplyState])
+
+  const handleCloseReply = useCallback(() => {
+    changeReplyState({ replyOpen: false })
+  }, [changeReplyState])
+
+  const hideReplies = isMobile && replyState?.replyOpen
+  const lastReply = replies?.comments?.at?.(-1)
+  const repliesComments =
+    sent && showAllReplies ? replies?.comments?.slice(0, -1) : replies?.comments
+
+  const shouldShowExpandButton =
+    !hideReplies && !showAllReplies && repliesLength > (isMobile ? 2 : 4)
+
   const button = (
     <Box marginTop={3}>
       <Button
@@ -68,126 +145,93 @@ const ReplyContainer = () => {
         preTextIcon="undo"
         preTextIconType="outline"
         size="small"
-        onClick={() => {
-          if (sent && replyState?.reply) {
-            setSent(false)
-            getTicketQuery({
-              onCompleted: (data) => {
-                const ticket = data?.documentV2?.ticket
-                if (ticket?.comments) {
-                  const reply: Reply = {
-                    id: ticket?.id,
-                    createdDate: ticket?.createdDate,
-                    updatedDate: ticket?.updatedDate,
-                    subject: ticket?.subject,
-                    authorId: ticket?.authorId,
-                    status: ticket?.status,
-                    comments: ticket?.comments,
-                  }
-                  changeReplyState({
-                    replies: reply,
-                    reply: sent ? replyState?.reply : undefined,
-                  })
-                }
-              },
-            })
-          }
-          changeReplyState({
-            replyOpen: true,
-          })
-        }}
+        onClick={handleReplyButtonClick}
       >
         {formatMessage(messages.sendMessage)}
       </Button>
     </Box>
   )
 
-  const toggleShowAllReplies = () => {
-    setShowAllReplies(!showAllReplies)
-  }
-
-  if (!activeDocument) {
-    return <NoPDF />
-  }
-
-  const repliesLength = replies?.comments?.length ?? 0
-  const lastReply = replies?.comments?.[repliesLength - 1] ?? null
-  const lastReplyID = replies?.id ?? null
-  const hideReplies = isMobile && replyState?.replyOpen
   return (
     <>
       <Box>
-        {/* Show only the last reply, other replies are hidden behind "Show all messages" button */}
-        {/* Hide replies when on mobile and the reply form is open */}
-        {!hideReplies &&
-        !showAllReplies &&
-        repliesLength > (isMobile ? 2 : 4) ? (
+        {shouldShowExpandButton ? (
           <>
             <Box paddingY={3}>
               <Divider />
             </Box>
-            <Box display="flex" justifyContent="center" width="full">
+            <Box
+              display="flex"
+              justifyContent="center"
+              width="full"
+              paddingBottom={sent ? 3 : 0}
+            >
               <Button
                 variant="text"
                 size="small"
-                onClick={() => toggleShowAllReplies()}
+                onClick={toggleShowAllReplies}
               >
                 {formatMessage(messages.showAllRepliesWithArgs, {
                   repliesLength: repliesLength,
                 })}
               </Button>
             </Box>
-            <Box>
-              <Box paddingY={3}>
-                <Divider />
+            {!sent && lastReply && (
+              <Box>
+                <Box paddingY={3}>
+                  <Divider />
+                </Box>
+                <ReplyHeader
+                  caseNumber={replies?.id ?? ''}
+                  initials={
+                    !lastReply.isZendeskAgent
+                      ? getInitials(userName)
+                      : undefined
+                  }
+                  avatar={activeDocument?.img}
+                  title={lastReply.author ?? activeDocument?.subject ?? ''}
+                  hasEmail={hasEmail}
+                  subTitle={
+                    lastReply.createdDate
+                      ? formatDate(lastReply.createdDate, dateFormat.is)
+                      : ''
+                  }
+                  displayEmail={false}
+                />
+                <ReplySent body={lastReply.body ?? ''} />
               </Box>
-              <ReplyHeader
-                caseNumber={lastReplyID ?? undefined}
-                initials={
-                  profile.name === lastReply?.author
-                    ? getInitials(lastReply?.author ?? '')
-                    : undefined
-                }
-                avatar={activeDocument.img}
-                title={lastReply?.author ?? activeDocument.subject}
-                hasEmail={isDefined(userEmail)}
-                subTitle={formatDate(lastReply?.createdDate, dateFormat.is)}
-                displayEmail={false}
-              />
-
-              <ReplySent body={lastReply?.body} />
-            </Box>
+            )}
           </>
-        ) : // Show all replies
-        hideReplies ? undefined : (
-          replies?.comments?.map((reply) => (
-            <Box key={reply.id}>
+        ) : !hideReplies ? (
+          repliesComments?.map((reply, index) => (
+            <Box key={reply.id || `reply-${index}`}>
               <Box paddingY={1}>
                 <Divider />
               </Box>
               <ReplyHeader
-                caseNumber={replies.id ?? undefined}
+                caseNumber={replies?.id ?? ''}
                 initials={
-                  profile.name === reply.author
-                    ? getInitials(reply.author ?? '')
-                    : undefined
+                  !reply.isZendeskAgent ? getInitials(userName) : undefined
                 }
-                avatar={activeDocument.img}
+                avatar={activeDocument?.img}
                 title={
-                  profile.name === reply.author
-                    ? reply.author
-                    : activeDocument.sender ?? activeDocument.subject
+                  !reply.isZendeskAgent
+                    ? reply.author ?? userName
+                    : activeDocument?.sender ?? activeDocument?.subject ?? ''
                 }
-                hasEmail={isDefined(userEmail)}
-                subTitle={formatDate(reply?.createdDate, dateFormat.is)}
+                hasEmail={hasEmail}
+                subTitle={
+                  reply.createdDate
+                    ? formatDate(reply.createdDate, dateFormat.is)
+                    : ''
+                }
                 displayEmail={false}
               />
-              {<ReplySent body={reply.body} />}
+              <ReplySent body={reply.body ?? ''} />
             </Box>
           ))
-        )}
+        ) : null}
 
-        {/* If the thread is closed, we display a info message */}
         {replyState?.closedForMoreReplies && (
           <AlertMessage
             type="info"
@@ -195,36 +239,36 @@ const ReplyContainer = () => {
           />
         )}
       </Box>
-      {/* Newly sent reply displayed */}
-      {sent && replyState?.reply && (
+
+      {sent && replyState?.sentReply && (
         <>
           <Divider />
           <ReplyHeader
+            caseNumber={replyState.sentReply.id ?? ''}
             initials={getInitials(userName)}
-            title={sent ? userName : formatMessage(messages.titleWord)}
-            subTitle={formatMessage(messages.toWithArgs, {
-              receiverName: activeDocument.sender,
-            })}
+            title={userName}
+            subTitle={
+              replies?.comments?.length
+                ? formatDate(
+                    replies.comments[replies.comments.length - 1]?.createdDate,
+                  )
+                : ''
+            }
             secondSubTitle={
               !sent && hasEmail
                 ? formatMessage(messages.fromWithArgs, {
-                    senderName: userEmail,
+                    senderName: userEmail ?? '',
                   })
                 : undefined
             }
-            displayEmail
-            hasEmail={hasEmail}
-            displayCloseButton={!sent}
-            onClose={() => changeReplyState({ replyOpen: false })}
           />
-
           <ReplySent
-            body={replyState.reply.body}
+            body={replyState.sentReply.body ?? ''}
             intro={
-              replies?.comments?.length === 0
+              isFirstTimeReply
                 ? formatMessage(messages.replySent, {
-                    email: userEmail,
-                    caseNumber: replyState.reply.id,
+                    email: replyState.sentReply.email ?? userEmail ?? '',
+                    caseNumber: replyState.sentReply.id ?? '',
                   })
                 : undefined
             }
@@ -237,24 +281,23 @@ const ReplyContainer = () => {
           {!isMobile && <Divider />}
           <ReplyHeader
             initials={getInitials(userName)}
-            title={isMobile ? activeDocument.subject : userName}
+            title={isMobile ? activeDocument?.subject ?? '' : userName}
             subTitle={formatMessage(messages.toWithArgs, {
-              receiverName: activeDocument.sender,
+              receiverName: activeDocument?.sender ?? '',
             })}
             secondSubTitle={
               !sent && hasEmail
                 ? formatMessage(messages.fromWithArgs, {
-                    senderName: userEmail,
+                    senderName: userEmail ?? '',
                   })
                 : undefined
             }
             displayEmail
             hasEmail={hasEmail}
             displayCloseButton={!sent}
-            onClose={() => changeReplyState({ replyOpen: false })}
+            onClose={handleCloseReply}
           />
 
-          {/* Form  */}
           {!loading && replyState.replyOpen && (
             <ReplyForm
               hasEmail={hasEmail}
@@ -263,6 +306,7 @@ const ReplyContainer = () => {
           )}
         </Box>
       )}
+
       {!replyState?.closedForMoreReplies &&
         replyState?.replyable &&
         !replyState?.replyOpen &&

@@ -1,15 +1,8 @@
 import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 import { AssetFormField } from '../../types'
-import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY } from '../../graphql'
@@ -22,12 +15,14 @@ export const AdditionalVehicle = ({
   remove,
   fieldName,
   error,
+  calculateTotal,
 }: {
   field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void
   error: Record<string, string>
+  calculateTotal?: () => void
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const vehicleNumberField = `${fieldIndex}.assetNumber`
@@ -83,7 +78,7 @@ export const AdditionalVehicle = ({
   }, [getProperty, name, nameField, vehicleNumberInput, setValue])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={4}>
       <Controller
         name={initialField}
         control={control}
@@ -102,8 +97,7 @@ export const AdditionalVehicle = ({
         defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">{formatMessage(m.vehicleRepeaterHeader)}</Text>
-      <Box position="absolute" className={styles.removeFieldButton}>
+      <Box display="flex" justifyContent="flexEnd">
         <Button
           variant="ghost"
           size="small"
@@ -151,8 +145,9 @@ export const AdditionalVehicle = ({
             placeholder={'0 kr.'}
             error={error?.marketValue}
             currency
-            size="sm"
+            backgroundColor="blue"
             required
+            onChange={() => calculateTotal?.()}
           />
         </GridColumn>
       </GridRow>

@@ -9,6 +9,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
+    .serviceAccount(serviceName)
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
@@ -17,6 +18,28 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
+      },
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
+      FORM_SYSTEM_BUCKET: {
+        dev: 'island-is-dev-storage-form-system',
+        staging: 'island-is-staging-storage-form-system',
+        prod: 'island-is-prod-storage-form-system',
+      },
+      REDIS_URL_NODE_01: {
+        dev: JSON.stringify([
+          'localhost:7010',
+          'localhost:7011',
+          'localhost:7012',
+        ]),
+        staging: '/k8s/shared/redis/REDIS_URL_NODE_01',
+        prod: '/k8s/shared/redis/REDIS_URL_NODE_01',
       },
     })
     .secrets({
@@ -28,17 +51,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
-    })
-    .ingress({
-      primary: {
-        host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
-        },
-        paths: ['/form-api'],
-        public: true,
-      },
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },

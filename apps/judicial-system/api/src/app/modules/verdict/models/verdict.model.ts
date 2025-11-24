@@ -24,6 +24,9 @@ export class Verdict {
   modified?: string
 
   @Field(() => String, { nullable: true })
+  verdictDeliveredToNationalCommissionersOffice?: string
+
+  @Field(() => String, { nullable: true })
   defendantId?: string
 
   @Field(() => String, { nullable: true })
@@ -54,11 +57,11 @@ export class Verdict {
   externalPoliceDocumentId?: string
 
   @Field(() => String, { nullable: true })
-  legalPaperRequestDate?: string
-
-  @Field(() => String, { nullable: true })
   comment?: string
 
   @Field(() => String, { nullable: true })
-  defenderNationalId?: string
+  deliveredToDefenderNationalId?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isDefaultJudgement?: boolean
 }

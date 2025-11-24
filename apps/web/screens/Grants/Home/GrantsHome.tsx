@@ -24,6 +24,8 @@ import {
   QueryGetGenericTagsInTagGroupsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 
@@ -44,6 +46,8 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   locale,
   customPageData,
 }) => {
+  useLocalLinkTypeResolver()
+  useContentfulId(customPageData?.id)
   const intl = useIntl()
   const { linkResolver } = useLinkResolver()
 

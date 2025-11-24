@@ -22,7 +22,7 @@ env:
   API_URL: 'https://judicial-system.staging01.devland.is'
   INTERNAL_API_URL: 'http://web-judicial-system-api'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'
@@ -59,7 +59,8 @@ ingress:
           - '/'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 pvcs: []
 replicaCount:
   default: 1
@@ -67,11 +68,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '512Mi'
   requests:
-    cpu: '15m'
-    memory: '128Mi'
+    cpu: '100m'
+    memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'

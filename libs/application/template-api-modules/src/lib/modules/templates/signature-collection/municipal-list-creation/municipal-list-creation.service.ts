@@ -6,6 +6,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
   CollectionType,
+  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-creation'
@@ -17,6 +18,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 @Injectable()
 export class MunicipalListCreationService extends BaseTemplateApiService {
   constructor(
@@ -35,9 +37,30 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       this.collectionType,
     )
 
-    // TODO: Is this relevant for LocalGovernmental/Municipal Elections?
-    if (!candidate.hasPartyBallotLetter) {
-      throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
+    if (!candidate.canCreate) {
+      if (!candidate.canCreateInfo) {
+        // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
+        throw new TemplateApiError(errorMessages.deniedByService, 400)
+      }
+      const errors: ProviderErrorReason[] = candidate.canCreateInfo?.map(
+        (key) => {
+          switch (key) {
+            case ReasonKey.UnderAge:
+              return errorMessages.age
+            case ReasonKey.NoCitizenship:
+              return errorMessages.citizenship
+            case ReasonKey.NotISResidency:
+              return errorMessages.residency
+            case ReasonKey.CollectionNotOpen:
+              return errorMessages.active
+            case ReasonKey.AlreadyOwner:
+              return errorMessages.owner
+            default:
+              return errorMessages.deniedByService
+          }
+        },
+      )
+      throw new TemplateApiError(errors, 405)
     }
 
     return candidate

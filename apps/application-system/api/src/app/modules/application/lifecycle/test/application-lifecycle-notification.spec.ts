@@ -14,6 +14,7 @@ import {
 
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
+import { HistoryService } from '@island.is/application/api/history'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
 
 jest.mock('@island.is/application/template-loader')
@@ -49,6 +50,10 @@ describe('ApplicationLifeCycleService', () => {
         },
         {
           provide: NotificationsApi,
+          useValue: {},
+        },
+        {
+          provide: HistoryService,
           useValue: {},
         },
       ],
@@ -238,6 +243,10 @@ describe('ApplicationLifeCycleService', () => {
         {
           provide: NotificationsApi,
           useValue: notificationApi,
+        },
+        {
+          provide: HistoryService,
+          useValue: {},
         },
       ],
     }).compile()

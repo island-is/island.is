@@ -456,6 +456,7 @@ export class ApplicationService {
         userDeletedAt: new Date(),
         externalData: {},
         answers: {},
+        attachments: {},
       },
       { where: { id } },
     )

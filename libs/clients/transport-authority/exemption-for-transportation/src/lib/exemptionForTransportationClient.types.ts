@@ -1,7 +1,7 @@
 interface ExemptionRulesPoliceEscort {
   maxHeight: number
   maxWidth: number
-  maxLength: number
+  maxTotalLength: number
 }
 
 export interface ExemptionRulesLimitations {
@@ -26,6 +26,10 @@ export interface ExemptionValidationMessage {
 export interface ExemptionVehicleValidation {
   isInspected: boolean
   isInOrder: boolean
+  numberOfAxles?: number
+  color?: string
+  make?: string
+  permno?: string
   errorMessages?: Array<ExemptionValidationMessage> | null
 }
 

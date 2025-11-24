@@ -15,17 +15,19 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import {
+  SocialInsuranceAdministrationActivitiesOfProfessionsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationResidenceInformationApi,
-  SocialInsuranceAdministrationEmploymentStatusesApi,
 } from '../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
@@ -155,6 +157,12 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEmploymentStatusesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationActivitiesOfProfessionsApi,
             }),
           ],
         }),

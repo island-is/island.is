@@ -12,6 +12,7 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
+import { randomUUID } from 'crypto'
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
@@ -24,7 +25,7 @@ export const createApplication = (
   created: new Date(),
   modified: new Date(),
   externalData: {},
-  id: faker.random.word(),
+  id: randomUUID(),
   state: 'DRAFT',
   typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: '',

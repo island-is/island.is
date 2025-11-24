@@ -6,12 +6,14 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { CURRENT_EMPLOYMENT_STATUS_OTHER } from '../../../utils/constants'
+import { OTHER } from '../../../utils/constants'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getEmploymentStatuses,
-  getSelfAssessmentLastEmploymentYearOptions,
+  getSelfAssessmentLastProfessionYearOptions,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
@@ -43,7 +45,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
               })) ?? []
 
             const otherIndex = options.findIndex(
-              (option) => option.value === CURRENT_EMPLOYMENT_STATUS_OTHER,
+              (option) => option.value === OTHER,
             )
 
             if (otherIndex >= 0) {
@@ -61,32 +63,86 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           condition: (answers) => {
             const { currentEmploymentStatuses } = getApplicationAnswers(answers)
 
-            return currentEmploymentStatuses?.includes(
-              CURRENT_EMPLOYMENT_STATUS_OTHER,
-            )
+            return currentEmploymentStatuses?.includes(OTHER)
           },
         }),
         buildDescriptionField({
-          id: 'selfAssessment.lastEmployment.description',
+          id: 'selfAssessment.lastProfession.title',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .lastEmployment,
+              .lastProfessionTitle,
           titleVariant: 'h4',
           space: 4,
         }),
-        buildTextField({
-          id: 'selfAssessment.lastEmploymentTitle',
-          title: medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
-        }),
         buildSelectField({
-          id: 'selfAssessment.lastEmploymentYear',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .lastEmploymentYear,
+          id: 'selfAssessment.lastProfession',
+          title: medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .lastEmploymentYearPlaceholder,
-          options: getSelfAssessmentLastEmploymentYearOptions(),
+              .lastProfessionPlaceholder,
+          options: (application: Application) => {
+            const { professions } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return professions.map(({ value, description }) => ({
+              value: value,
+              label: description,
+            }))
+          },
+        }),
+        buildTextField({
+          id: 'selfAssessment.lastProfessionDescription',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .furtherExplanation,
+          marginBottom: 2,
+          condition: (answers) => {
+            const { lastProfession } = getApplicationAnswers(answers)
+
+            return lastProfession === OTHER
+          },
+        }),
+        buildSelectField({
+          id: 'selfAssessment.lastActivityOfProfession',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .lastActivityOfProfession,
+          placeholder:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .lastActivityOfProfessionPlaceholder,
+          options: (application: Application) => {
+            const { activitiesOfProfessions } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return activitiesOfProfessions.map(({ value, description }) => ({
+              value: value,
+              label: description,
+            }))
+          },
+        }),
+        buildTextField({
+          id: 'selfAssessment.lastActivityOfProfessionDescription',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .furtherExplanation,
+          marginBottom: 2,
+          condition: (answers) => {
+            const { lastActivityOfProfession } = getApplicationAnswers(answers)
+
+            return lastActivityOfProfession === OTHER
+          },
+        }),
+        buildSelectField({
+          id: 'selfAssessment.lastProfessionYear',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .lastProfessionYear,
+          placeholder:
+            medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .lastProfessionYearPlaceholder,
+          options: getSelfAssessmentLastProfessionYearOptions(),
         }),
       ],
     }),

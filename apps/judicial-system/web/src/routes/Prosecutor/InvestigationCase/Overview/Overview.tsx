@@ -159,7 +159,9 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
           workingCase.court && (
@@ -289,6 +291,7 @@ export const Overview = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
+            elementId={formatMessage(core.pdfButtonRequest)}
           />
         </Box>
       </FormContentContainer>
@@ -332,15 +335,17 @@ export const Overview = () => {
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            onSecondaryButtonClick={() => {
-              router.push(getStandardUserDashboardRoute(user))
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(getStandardUserDashboardRoute(user))
+              },
             }}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

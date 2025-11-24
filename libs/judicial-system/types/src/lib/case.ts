@@ -39,7 +39,6 @@ export enum IndictmentSubtype {
   ANIMAL_PROTECTION = 'ANIMAL_PROTECTION',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
-  BODILY_INJURY = 'BODILY_INJURY',
   BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
   CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
   COVER_UP = 'COVER_UP',
@@ -72,7 +71,13 @@ export enum IndictmentSubtype {
   TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY = 'BODILY_INJURY',
 }
+
+export const deprecatedIndictmentSubtypes: IndictmentSubtype[] = [
+  IndictmentSubtype.BODILY_INJURY,
+]
 
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
@@ -368,6 +373,17 @@ export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
+export const isRulingOrDismissalCase = (
+  rulingDecision?: CaseIndictmentRulingDecision | null,
+) => {
+  return Boolean(
+    rulingDecision &&
+      [
+        CaseIndictmentRulingDecision.RULING,
+        CaseIndictmentRulingDecision.DISMISSAL,
+      ].includes(rulingDecision),
+  )
+}
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {

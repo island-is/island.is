@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
 import {
@@ -28,11 +28,11 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
   const intl = useIntl()
   const userProfile = useGetProfileQuery()
   const { updateUserProfile, loading } = useUpdateUserProfile()
-  const [info, setInfo] = React.useState(bankInfoObject(bankInfo))
-  const [bank, onChangeBankText] = React.useState(info?.bank ?? '')
-  const [l, onChangeBookText] = React.useState(info?.l ?? '')
-  const [account, onChangeNumberText] = React.useState(info?.account ?? '')
-  const [disabled, setDisabled] = React.useState(true)
+  const [info, setInfo] = useState(bankInfoObject(bankInfo))
+  const [bank, onChangeBankText] = useState(info?.bank ?? '')
+  const [l, onChangeBookText] = useState(info?.l ?? '')
+  const [account, onChangeNumberText] = useState(info?.account ?? '')
+  const [disabled, setDisabled] = useState(true)
 
   useEffect(() => {
     if (userProfile.data?.getUserProfile?.bankInfo) {

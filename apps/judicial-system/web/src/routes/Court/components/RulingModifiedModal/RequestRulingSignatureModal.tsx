@@ -38,10 +38,14 @@ const RequestRulingSignatureModal: FC<Props> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={description}
-      onPrimaryButtonClick={handleContinue}
-      primaryButtonText={formatMessage(strings.yes)}
-      onSecondaryButtonClick={onNo}
-      secondaryButtonText={formatMessage(strings.no)}
+      primaryButton={{
+        text: formatMessage(strings.yes),
+        onClick: handleContinue,
+      }}
+      secondaryButton={{
+        text: formatMessage(strings.no),
+        onClick: onNo,
+      }}
     />
   )
 }

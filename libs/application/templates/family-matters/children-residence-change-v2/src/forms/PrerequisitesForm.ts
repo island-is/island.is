@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../lib/messages'
 import {
   ChildrenCustodyInformationApi,
@@ -18,7 +18,7 @@ import {
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.application.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

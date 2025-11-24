@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
@@ -267,6 +267,7 @@ describe('InternalCaseController - Create', () => {
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
           prosecutorsOfficeId,
+          withCourtSessions: true,
         },
         {
           transaction,

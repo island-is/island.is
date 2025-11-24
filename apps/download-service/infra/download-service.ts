@@ -18,6 +18,7 @@ export const serviceSetup = (services: {
   service('download-service')
     .image('download-service')
     .namespace('download-service')
+    .serviceAccount('download-service')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

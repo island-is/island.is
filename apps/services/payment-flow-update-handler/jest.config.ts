@@ -1,5 +1,5 @@
 export default {
-  displayName: 'payment-flow-update-handler',
+  displayName: 'services-payment-flow-update-handler',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

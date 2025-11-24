@@ -6,8 +6,10 @@ import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
 import { VerdictsInput } from './dto/verdicts.input'
 import { VerdictByIdInput } from './dto/verdictById.input'
 import { KeywordsResponse } from './dto/keywords.response'
-import { CaseTypesResponse } from './dto/caseTypes.response'
-import { CaseCategoriesResponse } from './dto/caseCategories.response'
+import { CourtAgendasResponse } from './dto/courtAgendas.response'
+import { CourtAgendasInput } from './dto/courtAgendas.input'
+import { LawyersResponse } from './dto/lawyers.response'
+import { CaseFilterOptionsResponse } from './dto/caseFilterOptions.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -37,19 +39,11 @@ export class VerdictsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => CaseTypesResponse, {
-    name: 'webVerdictCaseTypes',
+  @Query(() => CaseFilterOptionsResponse, {
+    name: 'webVerdictCaseFilterOptionsPerCourt',
   })
-  async caseTypes(): Promise<CaseTypesResponse> {
-    return this.verdictsService.getCaseTypes()
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => CaseCategoriesResponse, {
-    name: 'webVerdictCaseCategories',
-  })
-  async caseCategories(): Promise<CaseCategoriesResponse> {
-    return this.verdictsService.getCaseCategories()
+  async caseFilterOptionsPerCourt(): Promise<CaseFilterOptionsResponse> {
+    return this.verdictsService.getCaseFilterOptionsPerCourt()
   }
 
   @CacheControl(defaultCache)
@@ -58,5 +52,23 @@ export class VerdictsResolver {
   })
   async keywords(): Promise<KeywordsResponse> {
     return this.verdictsService.getKeywords()
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourtAgendasResponse, {
+    name: 'webCourtAgendas',
+  })
+  async courtAgendas(
+    @Args('input') input: CourtAgendasInput,
+  ): Promise<CourtAgendasResponse> {
+    return this.verdictsService.getCourtAgendas(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => LawyersResponse, {
+    name: 'webVerdictLawyers',
+  })
+  async lawyers(): Promise<LawyersResponse> {
+    return this.verdictsService.getLawyers()
   }
 }

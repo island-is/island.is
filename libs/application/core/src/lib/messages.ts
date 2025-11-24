@@ -343,6 +343,21 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Hlaða niður skjali',
     description: 'Button label to download file',
   },
+  defaultQuantityTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultQuantityTitle',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity label for payment overview field',
+  },
+  defaultUnitPriceTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
+    defaultMessage: 'Verð',
+    description: 'Unit price label for payment overview field',
+  },
+  defaultTotalPerUnitTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
+    defaultMessage: 'Samtals verð',
+    description: 'Total per unit label for payment overview field',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -846,6 +861,21 @@ export const coreErrorMessages = defineMessages({
       'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
     description: 'No contract found summary',
   },
+  noPropertiesFoundTitle: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundTitle',
+    defaultMessage: 'Engar eignir fundust',
+    description: 'No properties found title',
+  },
+  noPropertiesFoundSummary: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundSummary',
+    defaultMessage: 'Engar eignir fundust skráðar fyrir þessa kennitölu.',
+    description: 'No properties found summary',
+  },
+  needToFinishRegistration: {
+    id: 'application.system:core.fetch.data.needToFinishRegistration',
+    defaultMessage: 'Vantar að klára skráningu',
+    description: 'Need to finish registration to continue',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
@@ -1077,6 +1107,38 @@ export const coreHistoryMessages = defineMessages({
     id: 'application.system:core.history.applicationApproved',
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
+  },
+  applicationApprovedByReviewer: {
+    id: 'application.system:core.history.applicationApprovedByReviewer',
+    defaultMessage: 'Samþykkt. [{subject}]',
+    description: 'History log approved by reviewer',
+  },
+  applicationApprovedByReviewerWithActor: {
+    id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
+    defaultMessage: 'Samþykkt. [{actor} fyrir hönd {subject}]',
+    description: 'History log approved by actor on behalf of reviewer',
+  },
+  applicationApprovedByReviewerFallback: {
+    id: 'application.system:core.history.applicationApprovedByReviewerFallback',
+    defaultMessage: 'Samþykkt af samþykktaraðila',
+    description:
+      'History log approved by reviewer, fallback string when nationalId info missing',
+  },
+  applicationRejectedByReviewer: {
+    id: 'application.system:core.history.applicationRejectedByReviewer',
+    defaultMessage: 'Hafnað af {subject}',
+    description: 'History log Rejected by reviewer',
+  },
+  applicationRejectedByReviewerWithActor: {
+    id: 'application.system:core.history.applicationRejectedByReviewerWithActor',
+    defaultMessage: 'Hafnað af {actor} fyrir hönd {subject}',
+    description: 'History log Rejected by actor on behalf of reviewer',
+  },
+  applicationRejectedByReviewerFallback: {
+    id: 'application.system:core.history.applicationRejectedByReviewerFallback',
+    defaultMessage: 'Hafnað af samþykktaraðila',
+    description:
+      'History log Rejected by reviewer, fallback string when nationalId info missing',
   },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',

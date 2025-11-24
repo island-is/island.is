@@ -2,6 +2,21 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    caseContactAccordionLabel: {
+      id: 'web.verdicts:listPage.caseContactAccordionLabel',
+      defaultMessage: 'Málsaðili',
+      description: 'Label á "Málsaðili" accordion einingu',
+    },
+    caseContactInputLabel: {
+      id: 'web.verdicts:listPage.caseContactInputLabel',
+      defaultMessage: 'Sláðu inn málsaðila',
+      description: 'Label á "Málsaðili" input',
+    },
+    showAllDistrictCourts: {
+      id: 'web.verdicts:listPage.showAllDistrictCourts',
+      defaultMessage: 'Allir héraðsdómstólar',
+      description: 'Allir héraðsdómstólar',
+    },
     revealMoreLabel: {
       id: 'web.verdicts:listPage.revealMoreLabel',
       defaultMessage: 'Sjá reifun',

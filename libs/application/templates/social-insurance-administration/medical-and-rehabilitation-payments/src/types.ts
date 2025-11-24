@@ -26,7 +26,7 @@ export interface SelfAssessmentQuestionnaireAnswers {
   questionId: string
 }
 
-export interface EctsUnits {
+export interface LabeledValue {
   description: string
   value: string
 }

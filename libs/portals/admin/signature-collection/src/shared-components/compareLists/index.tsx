@@ -34,30 +34,30 @@ const CompareLists = ({
 }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [signatureInReview, setSignatureInReview] =
+    useState<SignatureCollectionSignature>()
+
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const [uploadResults, setUploadResults] =
     useState<Array<SignatureCollectionSignature>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
 
-  const compareLists = async (nationalIds: Array<string>) => {
+  const compareLists = async (nationalIds: string[]) => {
     try {
-      const res = await compareMutation({
-        variables: {
-          input: {
-            collectionId:
-              collectionType ===
-              SignatureCollectionCollectionType.LocalGovernmental
-                ? municipalAreaId ?? ''
-                : collectionId,
-            nationalIds: nationalIds,
-          },
-        },
+      const inputCollectionId =
+        collectionType === SignatureCollectionCollectionType.LocalGovernmental
+          ? municipalAreaId ?? ''
+          : collectionId
+
+      const { data } = await compareMutation({
+        variables: { input: { collectionId: inputCollectionId, nationalIds } },
       })
 
-      if (res.data) {
+      if (data) {
         setUploadResults(
-          res.data?.signatureCollectionAdminBulkCompareSignaturesAllLists,
+          data.signatureCollectionAdminBulkCompareSignaturesAllLists,
         )
       }
     } catch (e) {
@@ -67,27 +67,17 @@ const CompareLists = ({
 
   const unSignFromList = async (signatureId: string) => {
     try {
-      const res = await unSignMutation({
-        variables: {
-          input: {
-            signatureId,
-            collectionType,
-          },
-        },
+      const { data } = await unSignMutation({
+        variables: { input: { signatureId, collectionType } },
       })
 
-      if (res.data?.signatureCollectionAdminUnsign.success) {
+      const unsignResult = data?.signatureCollectionAdminUnsign
+
+      if (unsignResult?.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
-        setUploadResults(
-          uploadResults?.filter((result: SignatureCollectionSignature) => {
-            return result.id !== signatureId
-          }),
-        )
-      } else if (
-        Array.isArray(res.data?.signatureCollectionAdminUnsign.reasons) &&
-        res.data.signatureCollectionAdminUnsign.reasons.length > 0
-      ) {
-        toast.error(res.data.signatureCollectionAdminUnsign.reasons[0])
+        setUploadResults(uploadResults?.filter((r) => r.id !== signatureId))
+      } else if (unsignResult?.reasons?.length) {
+        toast.error(unsignResult.reasons[0])
       }
     } catch (e) {
       toast.error(e.message)
@@ -97,7 +87,6 @@ const CompareLists = ({
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
     const data = await getFileData(newFile)
-
     const nationalIds = data.map((d: Record<string, unknown>) => {
       const kennitala = d.Kennitala
       return String(kennitala).replace('-', '')
@@ -169,53 +158,85 @@ const CompareLists = ({
                 {formatMessage(m.compareListsResultsHeader)}
               </Text>
               <Text marginBottom={5}>
-                {formatMessage(
-                  loading || (uploadResults?.length ?? 0) > 0
-                    ? m.compareListsResultsDescription
-                    : m.compareListsNoResultsDescription,
-                )}
+                {!loading &&
+                  formatMessage(
+                    uploadResults?.length
+                      ? m.compareListsResultsDescription
+                      : m.compareListsNoResultsDescription,
+                  )}
               </Text>
-              {uploadResults && uploadResults?.length > 0 && (
-                <Table>
-                  <Head>
-                    <Row>
-                      <HeadData>{formatMessage(m.signeeNationalId)}</HeadData>
-                      <HeadData>{formatMessage(m.signeeName)}</HeadData>
-                      <HeadData>{formatMessage(m.singleList)}</HeadData>
-                      <HeadData></HeadData>
-                    </Row>
-                  </Head>
-                  <Body>
-                    {!loading ? (
-                      uploadResults?.map(
-                        (result: SignatureCollectionSignature) => (
-                          <Row key={result.id}>
-                            <Data style={{ minWidth: '140px' }}>
-                              {formatNationalId(result.signee.nationalId)}
-                            </Data>
-                            <Data style={{ minWidth: '250px' }}>
-                              {result.signee.name}
-                            </Data>
-                            <Data>{result.listTitle}</Data>
-                            <Data style={{ minWidth: '160px' }}>
-                              <Button
-                                variant="utility"
-                                onClick={() => unSignFromList(result.id)}
-                              >
-                                {formatMessage(m.unsignFromList)}
-                              </Button>
-                            </Data>
-                          </Row>
-                        ),
-                      )
-                    ) : (
-                      <Skeleton />
-                    )}
-                  </Body>
-                </Table>
-              )}
+              <Table>
+                <Head>
+                  <Row>
+                    <HeadData>{formatMessage(m.signeeNationalId)}</HeadData>
+                    <HeadData>{formatMessage(m.signeeName)}</HeadData>
+                    <HeadData>{formatMessage(m.singleList)}</HeadData>
+                    <HeadData></HeadData>
+                  </Row>
+                </Head>
+                <Body>
+                  {!loading ? (
+                    uploadResults?.map(
+                      (result: SignatureCollectionSignature) => (
+                        <Row key={result.id}>
+                          <Data style={{ minWidth: '140px' }}>
+                            {formatNationalId(result.signee.nationalId)}
+                          </Data>
+                          <Data style={{ minWidth: '250px' }}>
+                            {result.signee.name}
+                          </Data>
+                          <Data>{result.listTitle}</Data>
+                          <Data style={{ minWidth: '160px' }}>
+                            <Button
+                              variant="text"
+                              size="small"
+                              colorScheme="destructive"
+                              onClick={() => {
+                                setConfirmModalIsOpen(true)
+                                setSignatureInReview(result)
+                              }}
+                            >
+                              {formatMessage(m.unsignFromList)}
+                            </Button>
+                          </Data>
+                        </Row>
+                      ),
+                    )
+                  ) : (
+                    <Skeleton />
+                  )}
+                </Body>
+              </Table>
             </Box>
           )}
+        </Box>
+      </Modal>
+      <Modal
+        id="confirmRemoveSignatureFromListModal"
+        isVisible={confirmModalIsOpen}
+        title={`${signatureInReview?.signee?.name ?? ''} - ${formatMessage(
+          m.removeSignatureFromListModalDescription,
+        )}`}
+        onClose={() => {
+          setConfirmModalIsOpen(false)
+        }}
+        hideOnClickOutside={false}
+        closeButtonLabel={''}
+        label={''}
+      >
+        <Text>{formatMessage(m.confirmRemoveSignatureFromList)}</Text>
+        <Box display="flex" justifyContent="center" marginY={5}>
+          <Button
+            colorScheme="destructive"
+            loading={loading}
+            onClick={() => {
+              signatureInReview?.id && unSignFromList(signatureInReview.id)
+              setSignatureInReview(undefined)
+              setConfirmModalIsOpen(false)
+            }}
+          >
+            {formatMessage(m.removeSignatureFromListButton)}
+          </Button>
         </Box>
       </Modal>
     </Box>

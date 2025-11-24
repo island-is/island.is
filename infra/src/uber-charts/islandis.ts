@@ -52,8 +52,6 @@ import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/a
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 
-import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
-
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
 import {
@@ -68,7 +66,6 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
-import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
@@ -174,11 +171,7 @@ const userNotificationCleanupWorkerService =
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
-const unicornApp = unicornAppSetup()
-
 const githubActionsCache = githubActionsCacheSetup()
-
-const externalContractsTests = externalContractsTestsSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -219,10 +212,11 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   staging: [
     appSystemApi,
@@ -260,10 +254,11 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffServicePortalService,
     bffAdminPortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   dev: [
     appSystemApi,
@@ -292,7 +287,6 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     userNotificationBirthdayWorkerService,
-    externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
     cmsImporter,
@@ -307,7 +301,6 @@ export const Services: EnvironmentServices = {
     paymentsWebApp,
     paymentsService,
     bffServicePortalService,
-    unicornApp,
     formSystemApi,
     formSystemWeb,
     paymentFlowUpdateHandlerService,

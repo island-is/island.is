@@ -51,6 +51,16 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Leigusamningur til að {terminationType}',
     description: 'Rental agreement title in the overview',
   },
+  rentalAgreementTitleCancelation: {
+    id: 'tra.application:overview.rentalAgreementTitleCancelation',
+    defaultMessage: 'Riftun leigusamnings',
+    description: 'Rental agreement title cancelation in the overview',
+  },
+  rentalAgreementTitleTermination: {
+    id: 'tra.application:overview.rentalAgreementTitleTermination',
+    defaultMessage: 'Uppsögn leigusamnings',
+    description: 'Rental agreement title termination in the overview',
+  },
   rentalAgreementNumber: {
     id: 'tra.application:overview.rentalAgreementNumber',
     defaultMessage: 'Samningsnúmer',

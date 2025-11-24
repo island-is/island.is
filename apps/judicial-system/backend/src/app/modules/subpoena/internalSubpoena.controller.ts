@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Inject,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -56,7 +57,19 @@ export class InternalSubpoenaController {
       `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
     )
 
-    return this.subpoenaService.update(subpoena, update)
+    if (!subpoena.case || !subpoena.defendant) {
+      // This should never happen because of the PoliceSubpoenaExistsGuard
+      throw new InternalServerErrorException(
+        `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
+      )
+    }
+
+    return this.subpoenaService.update(
+      subpoena.case,
+      subpoena.defendant,
+      subpoena,
+      update,
+    )
   }
 
   @UseGuards(
@@ -239,9 +252,6 @@ export class InternalSubpoenaController {
         MessageType
           .DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION
       ]
-    }/:defendantId/:subpoenaId`,
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
     }/:defendantId/:subpoenaId`,
   ])
   @ApiOkResponse({

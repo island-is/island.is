@@ -1,3 +1,4 @@
+import { FormStatus } from '@island.is/form-system/shared'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -9,13 +10,13 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Section } from '../../sections/models/section.model'
-import { Organization } from '../../organizations/models/organization.model'
-import { LanguageType } from '../../../dataTypes/languageType.model'
+import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
-import { FormStatus } from '@island.is/form-system/shared'
+import { Organization } from '../../organizations/models/organization.model'
+import { Section } from '../../sections/models/section.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -97,9 +98,9 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.INTEGER,
-    defaultValue: 60,
+    defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Column({
     type: DataType.UUID,
@@ -130,11 +131,23 @@ export class Form extends Model<Form> {
   hasSummaryScreen!: boolean
 
   @Column({
-    type: DataType.JSON,
-    allowNull: true,
-    defaultValue: () => new LanguageType(),
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: () => ({
+      title: new LanguageType(),
+      confirmationHeader: new LanguageType(),
+      confirmationText: new LanguageType(),
+      additionalInfo: [],
+    }),
   })
-  completedMessage?: LanguageType
+  completedSectionInfo!: CompletedSectionInfo
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
 
   @Column({
     type: DataType.JSON,

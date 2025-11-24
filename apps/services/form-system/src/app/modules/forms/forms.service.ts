@@ -4,56 +4,58 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes, UrlMethods } from '@island.is/form-system/shared'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { Screen } from '../screens/models/screen.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
-import { Field } from '../fields/models/field.model'
-import { Organization } from '../organizations/models/organization.model'
-import { SectionDto } from '../sections/models/dto/section.dto'
-import { Section } from '../sections/models/section.model'
-import { FormDto } from './models/dto/form.dto'
-import { FormResponseDto } from './models/dto/form.response.dto'
-import { Form } from './models/form.model'
-import { ListItem } from '../listItems/models/listItem.model'
-import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { User } from '@island.is/auth-nest-tools'
+import { UrlTypes } from '@island.is/form-system/enums'
 import {
-  UpdateFormResponse,
+  FormStatus,
+  SectionTypes,
   UpdateFormError,
+  UpdateFormResponse,
+  UrlMethods,
 } from '@island.is/form-system/shared'
-import {
-  CertificationType,
-  CertificationTypes,
-} from '../../dataTypes/certificationTypes/certificationType.model'
-import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { randomUUID } from 'crypto'
+import { jwtDecode } from 'jwt-decode'
+import { Op, UniqueConstraintError } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { v4 as uuidV4 } from 'uuid'
 import {
   ApplicantType,
   ApplicantTypes,
 } from '../../dataTypes/applicantTypes/applicantType.model'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import {
+  CertificationType,
+  CertificationTypes,
+} from '../../dataTypes/certificationTypes/certificationType.model'
+import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
   FieldType,
   FieldTypes,
 } from '../../dataTypes/fieldTypes/fieldType.model'
+import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { randomUUID } from 'crypto'
-import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { Application } from '../applications/models/application.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
+import { Field } from '../fields/models/field.model'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
+import { ListItem } from '../listItems/models/listItem.model'
+import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
+import { Organization } from '../organizations/models/organization.model'
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormStatus } from '@island.is/form-system/shared'
-import { Option } from '../../dataTypes/option.model'
-import { Op, UniqueConstraintError } from 'sequelize'
-import { v4 as uuidV4 } from 'uuid'
-import { Sequelize } from 'sequelize-typescript'
-import { User } from '@island.is/auth-nest-tools'
-import { jwtDecode } from 'jwt-decode'
-import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
-import { UrlTypes } from '@island.is/form-system/enums'
-import { Application } from '../applications/models/application.model'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Screen } from '../screens/models/screen.model'
+import { SectionDto } from '../sections/models/dto/section.dto'
+import { Section } from '../sections/models/section.model'
+import { FormDto } from './models/dto/form.dto'
+import { FormResponseDto } from './models/dto/form.response.dto'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { Form } from './models/form.model'
 
 @Injectable()
 export class FormsService {
@@ -88,7 +90,6 @@ export class FormsService {
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      console.log('changing nationalId')
       nationalId = token.nationalId
     }
 
@@ -99,18 +100,7 @@ export class FormsService {
     if (!organization) {
       organization = await this.organizationModel.create({
         nationalId: nationalId,
-        name: { is: '', en: '' },
       } as Organization)
-    }
-
-    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
-    // if Admin is logged in then the token.nationalId is always the nationalId of the admin organization
-    if (nationalId === token.nationalId) {
-      organization.name = {
-        is: token.name ?? 'unknown',
-        en: organization.name.en,
-      }
-      await organization.save()
     }
 
     const forms = await this.formModel.findAll({
@@ -130,17 +120,30 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
+      'completedSectionInfo',
     ]
 
     const formResponseDto: FormResponseDto = {
       forms: forms.map((form) => {
-        return defaults(
+        const dto = defaults(
           pick(form, keys),
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
+
+        if (dto.completedSectionInfo) {
+          const cs = dto.completedSectionInfo
+
+          cs.title ??= { is: '', en: '' }
+          cs.confirmationHeader ??= { is: '', en: '' }
+          cs.confirmationText ??= { is: '', en: '' }
+
+          cs.additionalInfo ??= []
+        }
+
+        return dto
       }),
       organizationNationalIds: await this.organizationModel
         .findAll({
@@ -149,14 +152,14 @@ export class FormsService {
         .then((organizations) => organizations.map((org) => org.nationalId)),
       organizations: await this.organizationModel
         .findAll({
-          attributes: ['nationalId', 'name'],
+          attributes: ['nationalId'],
         })
         .then((organizations) =>
           organizations.map(
             (org) =>
               ({
                 value: org.nationalId,
-                label: org.name.is,
+                label: '',
                 isSelected: org.nationalId === nationalId,
               } as Option),
           ),
@@ -195,10 +198,19 @@ export class FormsService {
       )
     }
 
-    const newForm: Form = await this.formModel.create({
+    const completedSectionInfo = {
+      title: { is: '', en: '' },
+      confirmationHeader: { is: '', en: '' },
+      confirmationText: { is: '', en: '' },
+      additionalInfo: [],
+    } as CompletedSectionInfo
+
+    const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
+      draftTotalSteps: 3,
+      completedSectionInfo,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -297,12 +309,30 @@ export class FormsService {
     updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
     const form = await this.formModel.findByPk(id)
-
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
+    const originalHasPayment = form.hasPayment
+    const originalHasSummary = form.hasSummaryScreen
+
     Object.assign(form, updateFormDto)
+
+    if (originalHasPayment !== form.hasPayment) {
+      if (originalHasPayment) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
+
+    if (originalHasSummary !== form.hasSummaryScreen) {
+      if (originalHasSummary) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
 
     const response = new UpdateFormResponse()
 
@@ -430,6 +460,14 @@ export class FormsService {
         form.organizationId,
         UrlTypes.VALIDATION,
       ),
+    }
+
+    if (form.completedSectionInfo) {
+      const cs = form.completedSectionInfo
+      cs.title ??= { is: '', en: '' }
+      cs.confirmationHeader ??= { is: '', en: '' }
+      cs.confirmationText ??= { is: '', en: '' }
+      cs.additionalInfo ??= []
     }
 
     return response
@@ -580,10 +618,10 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
-      'completedMessage',
+      'completedSectionInfo',
       'dependencies',
     ]
     const formDto: FormDto = Object.assign(
@@ -770,6 +808,7 @@ export class FormsService {
     newForm.derivedFrom = isDerived ? existingForm.id : ''
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
+    newForm.completedSectionInfo = existingForm.completedSectionInfo
 
     const sections: Section[] = []
     const screens: Screen[] = []

@@ -85,3 +85,16 @@ export const SocialInsuranceAdministrationEmploymentStatusesApi =
     externalDataId: 'socialInsuranceAdministrationEmploymentStatuses',
     namespace: 'SocialInsuranceAdministration',
   })
+
+export const SocialInsuranceAdministrationProfessionsApi = defineTemplateApi({
+  action: 'getProfessions',
+  externalDataId: 'socialInsuranceAdministrationProfessions',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationActivitiesOfProfessionsApi =
+  defineTemplateApi({
+    action: 'getActivitiesOfProfessions',
+    externalDataId: 'socialInsuranceAdministrationActivitiesOfProfessions',
+    namespace: 'SocialInsuranceAdministration',
+  })

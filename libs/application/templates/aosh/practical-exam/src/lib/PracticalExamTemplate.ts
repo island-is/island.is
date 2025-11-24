@@ -32,7 +32,6 @@ import { shared } from './messages/shared'
 import { getChargeItems, isCompany } from '../utils'
 import { ApiActions, PaymentOptions, Roles, States } from '../utils/enums'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Features } from '@island.is/feature-flags'
 import { Events } from '../utils/types'
 
 const template: ApplicationTemplate<
@@ -47,7 +46,6 @@ const template: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.PracticalExam.translation,
   dataSchema: PracticalExamAnswersSchema,
   requiredScopes: [ApiScope.vinnueftirlitid],
-  featureFlag: Features.PracticalExamEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

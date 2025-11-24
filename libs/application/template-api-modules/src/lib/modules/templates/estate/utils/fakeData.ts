@@ -34,6 +34,14 @@ export const getFakeEstateInfo = (
       permitForUndividedEstate: 'Í lagi',
     },
     cash: [],
+    moneyAndDeposit: [
+      {
+        assetNumber: 'MD-2023-001',
+        description: 'Peningar í bankahólfi',
+        marketValue: '750000',
+        share: 100,
+      },
+    ],
     marriageSettlement: false,
     assets: [
       {
@@ -74,7 +82,30 @@ export const getFakeEstateInfo = (
         share: 100,
       },
     ],
-    otherAssets: [],
+    otherAssets: [
+      {
+        assetNumber: 'HV-2023-001',
+        description: 'Hugverkaréttindi',
+        marketValue: '500000',
+        share: 100,
+      },
+      {
+        assetNumber: 'BS-2023-002',
+        description: 'Búseturéttur',
+        marketValue: '2000000',
+        share: 100,
+      },
+    ],
+    bankAccounts: [
+      {
+        assetNumber: '0159-26-000001',
+        description: 'Bankareikningur',
+        marketValue: '1500000',
+        share: 100,
+      },
+    ],
+    claims: [],
+    stocks: [],
     estateMembers: [
       {
         name: 'Gervimaður Afríka',

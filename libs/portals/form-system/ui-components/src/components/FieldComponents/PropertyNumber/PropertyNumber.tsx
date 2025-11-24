@@ -9,9 +9,9 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { Action, PropertyNumberType } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
@@ -19,7 +19,6 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
@@ -33,7 +32,7 @@ const emptyProperty: PropertyNumberType = {
 const PROPERTY_NUMBER_REGEX = /^\d{7}$/
 
 export const PropertyNumber = ({ item, dispatch }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const { control, setValue } = useFormContext()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)
   const [property, setProperty] = useState<PropertyNumberType>({
@@ -118,6 +117,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
             <Row>
               <Column span="1/2">
                 <Controller
+                  key={item.id}
                   name={`${item.id}.customPropertyNumber`}
                   control={control}
                   defaultValue={property.propertyNumber}

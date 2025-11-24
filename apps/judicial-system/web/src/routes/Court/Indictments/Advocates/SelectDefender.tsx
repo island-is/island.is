@@ -75,10 +75,12 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
       defenderPhoneNumber: defendantWaivesRightToCounsel
         ? null
         : defendant.defenderPhoneNumber,
-      defenderChoice:
-        defendantWaivesRightToCounsel === true
-          ? DefenderChoice.WAIVE
-          : DefenderChoice.DELAY,
+      defenderChoice: defendantWaivesRightToCounsel
+        ? DefenderChoice.WAIVE
+        : DefenderChoice.DELAY,
+      caseFilesSharedWithDefender: defendantWaivesRightToCounsel
+        ? null
+        : defendant.caseFilesSharedWithDefender,
     }
 
     handleSetAndSendDefendantToServer(update)
@@ -125,12 +127,12 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     handleSetAndSendDefendantToServer(update)
   }
 
-  const getDefenceChoice = () => {
+  const getRequestedDefenderChoice = () => {
     switch (defendant.requestedDefenderChoice) {
       case DefenderChoice.WAIVE:
         return 'Ég óska ekki eftir verjanda.'
       case DefenderChoice.CHOOSE:
-        return `${defendant.defenderName} ${defendant.defenderNationalId}`
+        return `${defendant.requestedDefenderName} ${defendant.requestedDefenderNationalId}`
       case DefenderChoice.DELAY:
         return 'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.'
       case DefenderChoice.DELEGATE:
@@ -159,7 +161,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             )}
           </Box>
           {defendant.requestedDefenderChoice && (
-            <Text variant="small">{`Ósk ákærða um verjanda: ${getDefenceChoice()}`}</Text>
+            <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedDefenderChoice()}`}</Text>
           )}
         </Box>
         <Box marginBottom={2}>
@@ -298,20 +300,20 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               : strings.confirmDefenderChoiceModalText,
             { defenderName: defendant?.defenderName },
           )}
-          primaryButtonText={formatMessage(
-            strings.confirmModalPrimaryButtonText,
-            { isConfirming: !defendant.isDefenderChoiceConfirmed },
-          )}
-          onPrimaryButtonClick={() =>
-            toggleDefenderChoiceConfirmed(
-              defendant,
-              !defendant.isDefenderChoiceConfirmed,
-            )
-          }
-          secondaryButtonText={formatMessage(
-            strings.confirmModalSecondaryButtonText,
-          )}
-          onSecondaryButtonClick={() => setDisplayModal(false)}
+          primaryButton={{
+            text: formatMessage(strings.confirmModalPrimaryButtonText, {
+              isConfirming: !defendant.isDefenderChoiceConfirmed,
+            }),
+            onClick: () =>
+              toggleDefenderChoiceConfirmed(
+                defendant,
+                !defendant.isDefenderChoiceConfirmed,
+              ),
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.confirmModalSecondaryButtonText),
+            onClick: () => setDisplayModal(false),
+          }}
         />
       )}
     </Box>

@@ -51,18 +51,72 @@ export const LinkExistingApplication: FC<
   const assignEstateToAnswers = useCallback(
     async (estate: EstateRegistrant | undefined) => {
       if (estate) {
+        // Build the estate-specific fields
+        const estateFields: Record<string, unknown> = {
+          caseNumber: estate.caseNumber,
+          nameOfDeceased: estate.nameOfDeceased,
+          nationalIdOfDeceased: estate.nationalIdOfDeceased,
+          dateOfDeath: estate.dateOfDeath,
+          districtCommissionerHasWill: estate.districtCommissionerHasWill,
+          marriageSettlement: estate.marriageSettlement,
+          knowledgeOfOtherWills: estate.knowledgeOfOtherWills,
+          ownBusinessManagement: estate.ownBusinessManagement,
+          assetsAbroad: estate.assetsAbroad,
+          occupationRightViaCondominium: estate.occupationRightViaCondominium,
+          bankStockOrShares: estate.bankStockOrShares,
+          ships: estate.ships,
+          flyers: estate.flyers,
+          cash: estate.cash,
+          moneyAndDeposit: estate.moneyAndDeposit,
+          guns: estate.guns,
+          otherAssets: estate.otherAssets,
+          otherDebts: estate.otherDebts,
+        }
+
+        // Handle assets - preserve encountered flag if it exists
+        if (application.answers.assets) {
+          estateFields.assets = {
+            ...((application.answers.assets as Record<string, unknown>) ?? {}),
+            assets: estate.assets,
+          }
+        } else {
+          estateFields.assets = { assets: estate.assets }
+        }
+
+        // Handle estateMembers - only update if confirmation already exists
+        // Otherwise skip it to avoid validation errors
+        if (
+          application.answers.estateMembers &&
+          (application.answers.estateMembers as Record<string, unknown>)
+            .confirmation
+        ) {
+          estateFields.estateMembers = {
+            ...((application.answers.estateMembers as Record<
+              string,
+              unknown
+            >) ?? {}),
+            members: estate.estateMembers,
+          }
+        }
+
+        // Handle vehicles - preserve encountered flag if it exists
+        if (application.answers.vehicles) {
+          estateFields.vehicles = {
+            ...((application.answers.vehicles as Record<string, unknown>) ??
+              {}),
+            vehicles: estate.vehicles,
+          }
+        } else {
+          estateFields.vehicles = { vehicles: estate.vehicles }
+        }
+
         const res = await updateApplication({
           variables: {
             input: {
               id: application.id,
               answers: {
                 ...application.answers,
-                ...{
-                  ...estate,
-                  assets: { assets: estate.assets },
-                  estateMembers: { members: estate.estateMembers },
-                  vehicles: { vehicles: estate.vehicles },
-                },
+                ...estateFields,
               },
             },
             locale,

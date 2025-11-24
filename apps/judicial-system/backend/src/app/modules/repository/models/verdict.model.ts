@@ -126,16 +126,14 @@ export class Verdict extends Model {
   serviceInformationForDefendant?: InformationForDefendant[]
 
   @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiPropertyOptional({ type: Date })
-  legalPaperRequestDate?: Date
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiPropertyOptional({ type: String })
-  defenderNationalId?: string
+  deliveredToDefenderNationalId?: string
+
+  // this is set to true when a default ruling or judgement is made in court when defendant is not present
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefaultJudgement?: boolean
 }

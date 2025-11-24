@@ -1,24 +1,25 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
-  GridRow as Row,
   GridColumn as Column,
   Input,
+  GridRow as Row,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useRef } from 'react'
-import { FormSystemField } from '@island.is/api/schema'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { m } from '../../../lib/messages'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
-import { useFormContext, Controller } from 'react-hook-form'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
 }
 
-export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
+export const Banknumber = ({ item, dispatch }: Props) => {
+  const { lang } = useLocale()
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
@@ -67,6 +68,7 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
       <Row marginTop={2}>
         <Column span="4/12">
           <Controller
+            key={item.id}
             name={`${item.id}.bank`}
             control={control}
             rules={{

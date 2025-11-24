@@ -63,6 +63,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           uploadAccept: FILE_TYPES_ALLOWED,
+          uploadMultiple: true,
           condition: (answer: Answer) => {
             const answers = answer as Citizenship
             if (answers?.parentInformation?.hasValidParents === YES) {
@@ -84,6 +85,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           uploadAccept: FILE_TYPES_ALLOWED,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader:
             supportingDocuments.labels.otherDocuments.incomeConfirmation,
           uploadDescription:
@@ -99,6 +101,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader:
             supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
           uploadDescription:
@@ -113,6 +116,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader: supportingDocuments.labels.otherDocuments.legalHome,
           uploadDescription:
             supportingDocuments.labels.otherDocuments.acceptedFileTypes,
@@ -126,6 +130,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader: supportingDocuments.labels.otherDocuments.icelandicTest,
           uploadDescription:
             supportingDocuments.labels.otherDocuments.acceptedFileTypes,

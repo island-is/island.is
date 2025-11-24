@@ -126,7 +126,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
           </GridColumn>
         )}
       </GridRow>
-      {props.buttonGroup && (
+      {!props.loading && props.buttonGroup && (
         <GridRow marginBottom={marginBottom ?? 4}>
           <GridColumn>
             <Box marginTop={4}>

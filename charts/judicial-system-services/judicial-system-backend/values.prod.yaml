@@ -102,7 +102,8 @@ initContainer:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

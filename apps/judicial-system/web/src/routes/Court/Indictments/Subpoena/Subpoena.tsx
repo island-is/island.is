@@ -291,9 +291,13 @@ const Subpoena: FC = () => {
         primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     } else if (isIssuingSubpoenas) {
+      const hasCivilClaimants =
+        workingCase.civilClaimants && workingCase.civilClaimants.length > 0
       setModalContent({
         title: formatMessage(strings.modalTitle),
-        text: formatMessage(strings.modalText),
+        text: hasCivilClaimants
+          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
+          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.',
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
     }
@@ -303,6 +307,7 @@ const Subpoena: FC = () => {
     isIssuingSubpoenas,
     formatMessage,
     modalContent,
+    workingCase.civilClaimants,
   ])
 
   const stepIsValid = isSubpoenaStepValid(
@@ -468,11 +473,15 @@ const Subpoena: FC = () => {
         <Modal
           title={modalContent.title}
           text={modalContent.text}
-          primaryButtonText={modalContent.primaryButtonText}
-          onPrimaryButtonClick={() => scheduleArraignmentDate()}
-          onSecondaryButtonClick={() => setNavigateTo(undefined)}
-          secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={isCreatingSubpoena}
+          primaryButton={{
+            text: modalContent.primaryButtonText,
+            onClick: () => scheduleArraignmentDate(),
+            isLoading: isCreatingSubpoena,
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.modalSecondaryButtonText),
+            onClick: () => setNavigateTo(undefined),
+          }}
         />
       )}
     </PageLayout>

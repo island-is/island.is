@@ -2,8 +2,6 @@ import * as inputStyles from '../Input/Input.css'
 import * as styles from './AsyncSearch.css'
 
 import Downshift, { DownshiftProps } from 'downshift'
-import { Input, InputProps } from './shared/Input/Input'
-import { Menu, MenuProps } from './shared/Menu/Menu'
 import React, {
   ButtonHTMLAttributes,
   HTMLProps,
@@ -14,16 +12,18 @@ import React, {
   useContext,
   useState,
 } from 'react'
+import { Input, InputProps } from './shared/Input/Input'
+import { Menu, MenuProps } from './shared/Menu/Menu'
 
-import { ColorSchemeContext } from '../context'
-import { ControllerStateAndHelpers } from 'downshift/typings'
-import { ErrorMessage } from '../Input/ErrorMessage'
-import { Icon } from '../IconRC/Icon'
-import { Item } from './shared/Item/Item'
-import { Label } from './shared/Label/Label'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { ControllerStateAndHelpers } from 'downshift/typings'
+import { ColorSchemeContext } from '../context'
+import { Icon } from '../IconRC/Icon'
+import { ErrorMessage } from '../Input/ErrorMessage'
+import { Item } from './shared/Item/Item'
+import { Label } from './shared/Label/Label'
 
 export type AsyncSearchSizes = 'medium' | 'large' | 'semi-large'
 
@@ -125,6 +125,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
         itemToString={(item: AsyncSearchOption | null) =>
           item ? item.label : ''
         }
+        inputValue={inputValue}
         {...props}
       >
         {(downshiftProps: ControllerStateAndHelpers<AsyncSearchOption>) => {
@@ -151,6 +152,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             filteredOptions.map((item, index) => (
               <Item
                 index={index}
+                key={item.value}
                 highlightedIndex={highlightedIndex}
                 isActive={highlightedIndex === index}
                 showDividerIfActive={showDividerIfActive}
@@ -158,7 +160,6 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 size={size === 'semi-large' ? 'medium' : size}
                 item={item}
                 {...getItemProps({
-                  key: item.value,
                   index,
                   item,
                   isSelected: options.includes(item),
@@ -382,6 +383,7 @@ export const AsyncSearchInput = forwardRef<
             isOpen={isOpen}
             ref={ref}
             hasError={hasError}
+            placeholder={value ? undefined : inputProps.placeholder}
           />
           {!loading ? (
             <button
@@ -396,7 +398,7 @@ export const AsyncSearchInput = forwardRef<
               tabIndex={value ? 0 : -1}
               {...buttonProps}
             >
-              <Icon size={normalizedSize} icon="search" color={iconColor} />
+              <Icon size={normalizedSize} icon={'search'} color={iconColor} />
             </button>
           ) : (
             <span

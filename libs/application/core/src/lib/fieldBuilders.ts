@@ -254,6 +254,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   } = data
 
   return {
@@ -270,6 +271,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   }
 }
 
@@ -315,10 +317,12 @@ export const buildTextField = (
     rightAlign,
     tooltip,
     onChange,
+    allowNegative,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
+    allowNegative,
     placeholder,
     backgroundColor,
     variant,
@@ -675,8 +679,13 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
-    data
+  const {
+    message,
+    alertType,
+    links,
+    shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -686,6 +695,7 @@ export const buildAlertMessageField = (
     component: FieldComponents.ALERT_MESSAGE,
     links,
     shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
   }
 }
 
@@ -715,13 +725,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -834,6 +857,7 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
   }
 }
 
@@ -1193,6 +1217,7 @@ export const buildBankAccountField = (
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -1273,6 +1298,7 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   } = data
 
   return {
@@ -1287,5 +1313,6 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   }
 }

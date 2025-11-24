@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -30,8 +31,11 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -151,8 +155,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    LimitedAccessCaseExistsGuard,
     RolesGuard,
+    LimitedAccessCaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseCompletedGuard,
@@ -232,8 +236,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     MergedCaseExistsGuard,
@@ -276,12 +280,19 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
-    CaseCompletedGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('case/:caseId/limitedAccess/courtRecord')
+  @Get([
+    'case/:caseId/limitedAccess/courtRecord',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -297,15 +308,42 @@ export class LimitedAccessCaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (!isCompletedCase(theCase.state)) {
+        throw new ForbiddenException(`Case ${caseId} is not completed`)
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }
 
   @UseGuards(
     JwtAuthUserGuard,
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
     CaseCompletedGuard,
@@ -367,8 +405,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     MergedCaseExistsGuard,

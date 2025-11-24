@@ -19,6 +19,7 @@ import {
   corePendingActionMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { application as applicationMessage, overview } from './messages'
@@ -28,6 +29,19 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
+import { ExemptionType } from '../shared'
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const exemptionType = getValueViaPath<ExemptionType>(
+    application.answers,
+    'exemptionPeriod.type',
+  )
+  if (exemptionType === ExemptionType.SHORT_TERM)
+    return applicationMessage.nameShortTerm
+  else if (exemptionType === ExemptionType.LONG_TERM)
+    return applicationMessage.nameLongTerm
+  return applicationMessage.name
+}
 
 const ExemptionForTransportationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -35,12 +49,11 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION,
-  name: applicationMessage.name,
+  name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.ExemptionForTransportation.translation,
-  ],
   dataSchema: ExemptionForTransportationSchema,
   featureFlag: Features.ExemptionForTransportation,
   stateMachineConfig: {
@@ -165,11 +178,14 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

@@ -7,13 +7,11 @@ import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
 import {
+  CaseTableType,
+  DateType,
   Lawyer,
   LawyerType,
   mapToLawyer,
-} from '@island.is/judicial-system/types'
-import {
-  CaseTableType,
-  DateType,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -25,7 +23,13 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
-import { CourtSessionResponse } from '../court-session'
+import {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  DeleteCourtDocumentResponse,
+  DeleteCourtSessionResponse,
+} from '../court-session'
+import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
@@ -50,18 +54,16 @@ import {
 } from '../police'
 import { CaseStatistics } from '../statistics'
 import {
+  CaseDataExportInput,
   IndictmentCaseStatistics,
-  RequestCaseStatistics,
-  SubpoenaStatistics,
-} from '../statistics'
-import { CaseDataExportInput } from '../statistics/dto/caseDataExport.input'
-import {
   IndictmentStatisticsInput,
+  RequestCaseStatistics,
   RequestStatisticsInput,
+  SubpoenaStatistics,
   SubpoenaStatisticsInput,
-} from '../statistics/dto/caseStatistics.input'
+} from '../statistics'
 import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict'
+import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 
@@ -375,6 +377,12 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  deliverCaseVerdict(caseId: string) {
+    return this.post<unknown, DeliverCaseVerdictResponse>(
+      `case/${caseId}/deliverVerdict`,
+    )
+  }
+
   createCasePresignedPost(
     caseId: string,
     createPresignedPost: unknown,
@@ -508,6 +516,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.post(`case/${caseId}/verdicts`, createVerdicts)
+  }
+
   updateVerdict(
     caseId: string,
     defendantId: string,
@@ -517,6 +529,10 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/defendant/${defendantId}/verdict`,
       updateVerdict,
     )
+  }
+
+  getVerdict(caseId: string, defendantId: string): Promise<Verdict> {
+    return this.get<Verdict>(`case/${caseId}/defendant/${defendantId}/verdict`)
   }
 
   createCivilClaimant(
@@ -603,6 +619,67 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
+    )
+  }
+
+  updateCourtSessionString(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSessionString: unknown,
+  ): Promise<CourtSessionString> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
+      updateCourtSessionString,
+    )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
+  }
+
+  createCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    createCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument`,
+      createCourtDocument,
+    )
+  }
+
+  updateCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+    updateCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
+      updateCourtDocument,
+    )
+  }
+
+  fileCourtDocumentInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+  ): Promise<CourtDocumentResponse> {
+    return this.patch(`case/${caseId}/courtDocument/${courtDocumentId}`, {
+      courtSessionId,
+    })
+  }
+
+  deleteCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+  ): Promise<DeleteCourtDocumentResponse> {
+    return this.delete(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
     )
   }
 

@@ -6,7 +6,7 @@ export const dataSchema = z.object({
   listId: z.string().min(1),
   list: z.object({
     name: z.string(),
-    letter: z.string().optional(), // Todo: change to required once tests are done,
+    letter: z.string().optional(),
   }),
 
   /* Upplýsingar */

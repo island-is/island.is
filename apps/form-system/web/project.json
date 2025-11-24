@@ -46,7 +46,7 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "port": 4201,
+        "port": 4242,
         "buildTarget": "form-system-web:build",
         "hmr": true
       },
@@ -75,6 +75,12 @@
       "options": {
         "commands": ["yarn infra run-local-env services-bff-portals-my-pages"],
         "cwd": "infra"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form-system/web/src/{app,components,routes,lib}/**/*.{js,ts,tsx}'"
       }
     },
     "dev": {

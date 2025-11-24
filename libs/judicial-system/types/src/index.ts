@@ -17,7 +17,21 @@ export {
   VerdictAppealDecision,
   InformationForDefendant,
   informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
 } from './lib/verdict'
+
+export { CourtSessionStringType } from './lib/courtSessionString'
+export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+  DocumentDeliverySupplementCode,
+  DocumentDeliveryMethod,
+  getServiceDateFromSupplements,
+} from './lib/policeDocument'
+export type {
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
 
 export {
   InstitutionType,
@@ -91,6 +105,7 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
   CaseAppealState,
@@ -121,6 +136,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   isIndictmentCaseState,
@@ -137,6 +153,8 @@ export {
   getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/dates'
 
 export type {
@@ -168,6 +186,8 @@ export { type CourtDocument } from './lib/courtDocument'
 export {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
+  CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
 } from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'

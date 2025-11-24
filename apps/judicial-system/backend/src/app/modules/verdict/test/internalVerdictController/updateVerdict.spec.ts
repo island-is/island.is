@@ -2,9 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { VerdictServiceStatus } from '@island.is/judicial-system/types'
 
-import { Verdict } from '../../../repository'
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
+import { Case, Verdict } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: Verdict
@@ -17,6 +18,20 @@ describe('InternalVerdictController - Update verdict', () => {
   const verdictId = uuid()
   const externalPoliceDocumentId = uuid()
 
+  const defendantId1 = uuid()
+  const caseId = uuid()
+  const policeCaseNumber = uuid()
+  const courtCaseNumber = uuid()
+  const policeCaseNumbers = [uuid(), policeCaseNumber, uuid()]
+  const caseFileId = uuid()
+  const caseFile = { id: caseFileId, caseId, policeCaseNumber }
+  const theCase = {
+    id: caseId,
+    defendants: [{ id: defendantId1 }],
+    policeCaseNumbers,
+    caseFiles: [caseFile],
+    courtCaseNumber,
+  } as Case
   const verdict = { id: verdictId, externalPoliceDocumentId } as Verdict
 
   const dto = {
@@ -39,7 +54,7 @@ describe('InternalVerdictController - Update verdict', () => {
       const then = {} as Then
 
       await internalVerdictController
-        .updateVerdict(externalPoliceDocumentId, verdict, dto)
+        .updateVerdict(externalPoliceDocumentId, verdict, theCase, dto)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

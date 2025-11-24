@@ -18,7 +18,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
   id: 'convoyLongTermMultiField',
   condition: checkIfExemptionTypeLongTerm,
   title: convoy.general.pageTitle,
-  description: convoy.general.description,
+  description: convoy.general.descriptionLongTerm,
   children: [
     buildTableRepeaterField({
       id: 'convoy.items',
@@ -37,10 +37,10 @@ export const ConvoyLongTermMultiField = buildMultiField({
           convoy.labels.trailerTableHeader,
         ],
         format: {
-          index: (_, index) => {
+          index: (_value, displayIndex) => {
             return {
               ...convoy.labels.convoyNumber,
-              values: { number: index + 1 },
+              values: { number: displayIndex + 1 },
             }
           },
         },
@@ -69,6 +69,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: false,
         },
         trailer: {
           component: 'vehiclePermnoWithInfo',
@@ -82,6 +83,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: true,
         },
         dollyType: {
           component: 'hiddenInput',
@@ -99,6 +101,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
       doesNotRequireAnswer: true,
       alertType: 'error',
       shouldBlockInSetBeforeSubmitCallback: true,
+      allowMultipleSetBeforeSubmitCallbacks: true,
     }),
     buildCustomField({
       component: 'HandleBeforeSubmitConvoy',

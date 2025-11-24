@@ -1,4 +1,9 @@
 import { ApolloClient } from '@apollo/client'
+import {
+  EducationFriggOptionsListInput,
+  OrganizationTypeEnum,
+  Query,
+} from '@island.is/api/schema'
 import { YES } from '@island.is/application/core'
 import {
   ExternalData,
@@ -19,20 +24,15 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {
   friggOptionsQuery,
-  friggSchoolsByMunicipalityQuery,
+  friggOrganizationsByTypeQuery,
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import {
-  FriggOptionsQuery,
-  FriggOptionsQueryVariables,
-  FriggSchoolsByMunicipalityQuery,
-} from '../types/schema'
 import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
-  ReasonForApplicationOptions,
-  SchoolType,
+  OrganizationSector,
+  OrganizationSubType,
 } from './constants'
 import {
   formatGrade,
@@ -40,8 +40,11 @@ import {
   getApplicationExternalData,
   getCurrentSchoolName,
   getGenderMessage,
-  getNeighbourhoodSchoolName,
+  getPreferredSchoolName,
+  getSchoolName,
   getSelectedOptionLabel,
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
 
 const getFriggOptions = async (
@@ -50,8 +53,8 @@ const getFriggOptions = async (
   locale: Locale,
 ) => {
   const { data } = await apolloClient.query<
-    FriggOptionsQuery,
-    FriggOptionsQueryVariables
+    Query,
+    { type: EducationFriggOptionsListInput }
   >({
     query: friggOptionsQuery,
     variables: {
@@ -152,25 +155,7 @@ export const childItems = async (
         ]
       : []
 
-  const differentPlaceOfResidenceItems: Array<KeyValueItem> =
-    childInfo?.differentPlaceOfResidence === YES
-      ? [
-          {
-            width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians
-                .childInfoPlaceOfResidence,
-            valueText: `${childInfo?.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
-          },
-        ]
-      : []
-
-  return [
-    ...baseItems,
-    ...preferredNameItems,
-    ...pronounsItems,
-    ...differentPlaceOfResidenceItems,
-  ]
+  return [...baseItems, ...preferredNameItems, ...pronounsItems]
 }
 
 export const guardiansItems = (
@@ -254,42 +239,36 @@ export const relativesTable = async (
   return {
     header: [
       newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.nationalId,
+      newPrimarySchoolMessages.shared.phoneNumber,
       newPrimarySchoolMessages.shared.relation,
     ],
     rows: relatives.map((r) => [
-      r.fullName,
+      r.nationalIdWithName.name,
+      formatKennitala(r.nationalIdWithName.nationalId),
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
     ]),
   }
 }
 
-export const currentSchoolItems = async (
+export const currentSchoolItems = (
   answers: FormValue,
   externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
   locale: Locale,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const { currentSchoolId } = getApplicationAnswers(answers)
   const { childGradeLevel, primaryOrgId } =
     getApplicationExternalData(externalData)
-
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
-  })
-  const selectedSchoolName = data?.friggSchoolsByMunicipality
-    ?.flatMap((m) => m.managing ?? [])
-    .find((school) => school?.id === currentSchoolId)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.primarySchool.currentSchool,
-      valueText: getCurrentSchoolName(externalData) || selectedSchoolName,
+      valueText:
+        getCurrentSchoolName(externalData) ||
+        getSchoolName(externalData, currentSchoolId ?? ''),
     },
   ]
 
@@ -319,12 +298,17 @@ export const currentNurseryItems = async (
 ): Promise<KeyValueItem[]> => {
   const { currentNursery } = getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
+  const { data } = await apolloClient.query<Query>({
+    query: friggOrganizationsByTypeQuery,
+    variables: {
+      input: {
+        type: OrganizationTypeEnum.ChildCare,
+      },
+    },
   })
-  const currentNurseryName = data?.friggSchoolsByMunicipality
-    ?.flatMap((municipality) => municipality.managing)
-    .find((nursery) => nursery?.id === currentNursery)?.name
+  const currentNurseryName = data?.friggOrganizationsByType?.find(
+    (nursery) => nursery?.id === currentNursery,
+  )?.name
 
   return [
     {
@@ -335,40 +319,30 @@ export const currentNurseryItems = async (
   ]
 }
 
-export const schoolItems = async (
+export const schoolItems = (
   answers: FormValue,
   externalData: ExternalData,
-  _userNationalId: string,
-  apolloClient: ApolloClient<object>,
-): Promise<KeyValueItem[]> => {
+): KeyValueItem[] => {
   const {
     applicationType,
     expectedStartDate,
-    selectedSchool,
-    applyForNeighbourhoodSchool,
-    selectedSchoolType,
+    selectedSchoolId,
+    applyForPreferredSchool,
     temporaryStay,
     expectedEndDate,
   } = getApplicationAnswers(answers)
-
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
-  })
-  const selectedSchoolName = data?.friggSchoolsByMunicipality
-    ?.flatMap((municipality) => municipality.managing)
-    .find((school) => school?.id === selectedSchool)?.name
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText:
-        applyForNeighbourhoodSchool === YES
+        applyForPreferredSchool === YES
           ? newPrimarySchoolMessages.overview.neighbourhoodSchool
           : newPrimarySchoolMessages.overview.selectedSchool,
       valueText:
-        applyForNeighbourhoodSchool === YES
-          ? getNeighbourhoodSchoolName(externalData)
-          : selectedSchoolName,
+        applyForPreferredSchool === YES
+          ? getPreferredSchoolName(externalData)
+          : getSchoolName(externalData, selectedSchoolId ?? ''),
     },
   ]
 
@@ -387,7 +361,8 @@ export const schoolItems = async (
 
   const expectedEndDateItems: Array<KeyValueItem> =
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-    selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+    getSelectedSchoolSubType(answers, externalData) ===
+      OrganizationSubType.INTERNATIONAL_SCHOOL &&
     temporaryStay === YES
       ? [
           {
@@ -405,23 +380,19 @@ export const schoolItems = async (
 
 export const reasonForApplicationItems = async (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
   locale: Locale,
 ): Promise<KeyValueItem[]> => {
-  const {
-    reasonForApplication,
-    reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
-    selectedSchoolType,
-  } = getApplicationAnswers(answers)
+  const { reasonForApplicationId } = getApplicationAnswers(answers)
 
   const friggOptionsType =
-    selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+    getSelectedSchoolSector(answers, externalData) ===
+    OrganizationSector.PRIVATE
       ? OptionsType.REASON_PRIVATE_SCHOOL
-      : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+      : getSelectedSchoolSubType(answers, externalData) ===
+        OrganizationSubType.INTERNATIONAL_SCHOOL
       ? OptionsType.REASON_INTERNATIONAL_SCHOOL
       : OptionsType.REASON
 
@@ -443,23 +414,7 @@ export const reasonForApplicationItems = async (
     },
   ]
 
-  const movingMunicipalityItems: Array<KeyValueItem> =
-    reasonForApplication === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-      ? [
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.address,
-            valueText: reasonForApplicationStreetAddress,
-          },
-          {
-            width: 'half',
-            keyText: newPrimarySchoolMessages.shared.postalCode,
-            valueText: reasonForApplicationPostalCode,
-          },
-        ]
-      : []
-
-  return [...baseItems, ...movingMunicipalityItems]
+  return [...baseItems]
 }
 
 export const siblingsTable = (answers: FormValue): TableData => {
@@ -470,7 +425,10 @@ export const siblingsTable = (answers: FormValue): TableData => {
       newPrimarySchoolMessages.shared.fullName,
       newPrimarySchoolMessages.shared.nationalId,
     ],
-    rows: siblings.map((s) => [s.fullName, formatKennitala(s.nationalId)]),
+    rows: siblings.map((s) => [
+      s.nationalIdWithName.name,
+      formatKennitala(s.nationalIdWithName.nationalId),
+    ]),
   }
 }
 
