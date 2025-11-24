@@ -108,10 +108,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const appealExpirationInfo = useMemo(() => {
     const { verdictAppealDeadline, isVerdictAppealDeadlineExpired } = defendant
     const { deadlineDate, isDeadlineExpired } =
-      verdictAppealDeadline && isVerdictAppealDeadlineExpired
+      verdictAppealDeadline != null
         ? {
             deadlineDate: verdictAppealDeadline,
-            isDeadlineExpired: isVerdictAppealDeadlineExpired,
+            isDeadlineExpired: !!isVerdictAppealDeadlineExpired,
           }
         : dates.serviceDate
         ? getIndictmentAppealDeadline({

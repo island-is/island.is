@@ -132,7 +132,11 @@ const transformCaseRepresentatives = (theCase: Case) => {
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants({ defendants: theCase.defendants }),
+    defendants: transformDefendants({
+      defendants: theCase.defendants,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+    }),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
