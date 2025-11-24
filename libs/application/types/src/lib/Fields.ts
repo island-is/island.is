@@ -767,6 +767,7 @@ export interface NationalIdWithNameField extends InputField {
   phoneLabel?: StaticText
   emailLabel?: StaticText
   titleVariant?: TitleVariants
+  readonly?: boolean
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R

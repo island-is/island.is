@@ -47,6 +47,7 @@ import {
   EducationType,
   EmploymentStatus,
   EmploymentStatusIds,
+  EducationHistoryInAnswers,
 } from '@island.is/application/templates/unemployment-benefits'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -214,28 +215,24 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       )
     })
 
-    // Staðfesting á námi/prófgráðu - menntun
-    const educationAnswers = getValueViaPath<EducationInAnswers>(
+    //Staðfesting á námi/prófgráðu - menntun
+    const educationAnswers = getValueViaPath<EducationHistoryInAnswers>(
       answers,
-      'education',
+      'educationHistory',
     )
-    educationAnswers?.currentEducation?.degreeFile?.forEach((file) => {
-      let fileTypeId: string
+    educationAnswers?.currentStudies?.degreeFile?.forEach((file) => {
+      const fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
+      attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+    })
 
-      // We need to return a specific type of file depending on how the user answered the education questions
-      if (educationAnswers.typeOfEducation === EducationType.LAST_YEAR) {
-        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
-      } else if (educationAnswers.typeOfEducation === EducationType.CURRENT) {
-        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
-      } else {
-        // only option left is LAST_SEMESTER
-        if (educationAnswers.didFinishLastSemester === YES) {
-          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_WITH_DEGREE
-        } else {
-          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_LAST_SEMESTER
-        }
-      }
+    educationAnswers?.lastSemester?.degreeFile?.forEach((file) => {
+      const fileTypeId =
+        FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_LAST_SEMESTER
+      attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+    })
 
+    educationAnswers?.finishedEducation?.degreeFile?.forEach((file) => {
+      const fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
       attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
     })
 
@@ -397,7 +394,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               personalInformation: personalInformation,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
-              educationHistory: educationInformation,
+              // educationHistory: educationInformation,
               jobCareer: jobCareer,
               drivingLicense: licenseInformation,
               attachments: {
