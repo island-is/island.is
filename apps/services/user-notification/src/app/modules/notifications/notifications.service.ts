@@ -114,6 +114,7 @@ export class NotificationsService {
         externalBody: formattedTemplate.externalBody,
         internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
+        scope: notification.scope,
         created: notification.created,
         updated: notification.updated,
         read: notification.read,
@@ -296,7 +297,14 @@ export class NotificationsService {
           [Op.in]: scopes || [DocumentsScope.main],
         },
       },
-      attributes: ['id', 'messageId', 'senderId', 'created', 'updated'],
+      attributes: [
+        'id',
+        'messageId',
+        'senderId',
+        'scope',
+        'created',
+        'updated',
+      ],
     })
   }
 
@@ -442,19 +450,12 @@ export class NotificationsService {
   }
 
   /**
-   * Finds actor notifications for a specific recipient and optionally onBehalfOf national ID
+   * Finds actor notifications for a specific recipient
    */
   findActorNotifications(
     recipient: string,
-    onBehalfOfNationalId?: string,
     query?: ExtendedPaginationDto,
   ): Promise<PaginatedActorNotificationDto> {
-    const whereClause: any = { recipient }
-
-    if (onBehalfOfNationalId) {
-      whereClause.onBehalfOfNationalId = onBehalfOfNationalId
-    }
-
     return paginate({
       Model: this.actorNotificationModel,
       limit: query?.limit || 10,
@@ -462,13 +463,15 @@ export class NotificationsService {
       before: query?.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: whereClause,
+      where: { recipient },
       attributes: [
         'id',
         'messageId',
         'rootMessageId',
+        'userNotificationId',
         'recipient',
         'onBehalfOfNationalId',
+        'scope',
         'created',
         'updated',
       ],

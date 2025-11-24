@@ -11,10 +11,15 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
-import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
+import {
+  OrganizationLogoByNationalIdLoader,
+  OrganizationTitleByNationalIdLoader,
+} from '@island.is/cms'
 import type {
   LogoUrl,
   OrganizationLogoByNationalIdDataLoader,
+  OrganizationTitleByNationalIdDataLoader,
+  ShortTitle,
 } from '@island.is/cms'
 import { NotificationsService } from './notifications.service'
 import {
@@ -92,6 +97,15 @@ export class NotificationsListResolver {
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationSender)
 export class NotificationSenderResolver {
+  @ResolveField('title', () => String, { nullable: true })
+  async resolveOrganisationTitle(
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Parent() sender: NotificationSender,
+  ): Promise<ShortTitle | undefined> {
+    return organizationTitleLoader.load(sender?.id ?? '')
+  }
+
   @ResolveField('logoUrl', () => String, { nullable: true })
   async resolveOrganisationLogoUrl(
     @Loader(OrganizationLogoByNationalIdLoader)

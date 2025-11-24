@@ -25,6 +25,7 @@ import type { Locale } from '@island.is/shared/types'
 import {
   ExtendedPaginationDto,
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
 } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
@@ -110,6 +111,21 @@ export class NotificationsController {
       query,
       notificationScopes,
     )
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/actor')
+  @Documentation({
+    summary:
+      'Returns a paginated list of actor notifications for a national id',
+    response: { status: HttpStatus.OK, type: PaginatedActorNotificationDto },
+  })
+  findActorNotifications(
+    @Headers('X-Query-National-Id') nationalId: string,
+    @Query() query: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    return this.notificationsService.findActorNotifications(nationalId, query)
   }
 
   @Documentation({

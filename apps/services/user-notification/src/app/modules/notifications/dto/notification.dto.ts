@@ -107,6 +107,10 @@ export class RenderedNotificationDto {
   @IsOptional()
   clickActionUrl?: string
 
+  @ApiProperty({ example: '@island.is/documents' })
+  @IsString()
+  scope!: string
+
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
   created!: Date
@@ -207,6 +211,10 @@ export class ActorNotificationDto {
   @IsOptional()
   rootMessageId?: string
 
+  @ApiProperty({ example: 456 })
+  @IsInt()
+  userNotificationId!: number
+
   @ApiProperty({ example: '1234567890' })
   @IsString()
   recipient!: string
@@ -214,6 +222,10 @@ export class ActorNotificationDto {
   @ApiProperty({ example: '0987654321' })
   @IsString()
   onBehalfOfNationalId!: string
+
+  @ApiProperty({ example: '@island.is/documents' })
+  @IsString()
+  scope!: string
 
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
