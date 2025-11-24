@@ -901,6 +901,181 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Request meeting with the school',
     },
 
+    // Special Education Support
+    specialEducationSupportDescription: {
+      id: 'nps.application:different.needs.special.education.support.description',
+      defaultMessage:
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur í skólanum og nýta styrkleika sína sem best í námi. Stuðningur við barn hefur það að markmiði að styðja við þroska þess, efla færni og þar með lífsgæði. Til að skólinn geti mætt námslegum þörfum barnsins er því mikilvægt að hann hafi upplýsingar um hvaða stuðning og þjónustu barnið hefur notið fram til þessa.',
+      description:
+        'Children are as different as they come. Some children need encouragement to do well in school and to make the most of their abilities. The purpose of child support is to support a child’s development, develop skills and thus improve their quality of life. In order for the school to meet the child’s educational needs, it is therefore important that it has information about the support and services that the child has received so far.',
+    },
+    specialEducationHasWelfareContact: {
+      id: 'nps.application:different.needs.special.education.has.welfare.contact',
+      defaultMessage: 'Er barnið með tengilið farsældar?',
+      description: 'Does your child have a welfare contact person?',
+    },
+    specialEducationHasCaseManager: {
+      id: 'nps.application:different.needs.special.education.has.case.manager',
+      defaultMessage: 'Er barnið með málastjóra?',
+      description: 'Does your child have a case manager?',
+    },
+    specialEducationHasIntegratedServices: {
+      id: 'nps.application:different.needs.special.education.has.integrated.services',
+      defaultMessage: 'Er barnið með samþætta þjónustu í þágu farsældar?',
+      description: 'Does your child have integrated welfare services?',
+    },
+    hasAssessmentOfSupportNeeds: {
+      id: 'nps.application:different.needs.has.assessment.of.support.needs',
+      defaultMessage: 'Liggur fyrir staðlað mat á stuðningsþörf barns?',
+      description:
+        'Is there a standardised assessment of the child’s support needs?',
+    },
+    hasAssessmentOfSupportNeedsDescription: {
+      id: 'nps.application:different.needs.has.assessment.of.support.needs.description',
+      defaultMessage:
+        'Sérfræðingar Ráðgjafar- og greiningarstöðvar sjá um framkvæmd SIS-mats fyrir börn á landinu öllu nema þau sem eru með lögheimili í Reykjavík. Í Reykjavík framkvæma sérfræðingar matið á þjónustumiðstöðvum, hjá Barnavernd Reykjavíkur, á heimili og/eða á öðrum vettvangi barns.',
+      description:
+        'Specialists from the Consulting and Analysis Centre are responsible for the implementation of the SIS-evaluation for children nationwide, except for those whose legal domicile is in Reykjavík. In Reykjavík, specialists carry out the assessment at service centres, at the offices of Reykjavík Child Protection Services, in the child’s home and/or different venues suitable for the child.',
+    },
+    isAssessmentOfSupportNeedsInProgress: {
+      id: 'nps.application:different.needs.is.assessment.of.support.needs.in.progress',
+      defaultMessage: 'Er mat á stuðningsþörf barns í ferli?',
+      description:
+        'Is an assessment of the child’s need for support in progress?',
+    },
+    supportNeedsAssessmentBy: {
+      id: 'nps.application:different.needs.support.needs.assessment.by',
+      defaultMessage: 'Hver framkvæmdi matið á stuðningsþörf barns?',
+      description:
+        'Who carried out the assessment of the child’s support needs?',
+    },
+    evaluationProvider: {
+      id: 'nps.application:different.needs.evaluation.provider',
+      defaultMessage: 'Matsaðili',
+      description: 'Evaluation provider',
+    },
+    hasConfirmedDiagnosis: {
+      id: 'nps.application:different.needs.has.confirmed.diagnosis',
+      defaultMessage:
+        'Liggur fyrir staðfest greining á vanda barns eða fötlun frá viðurkenndum greiningaraðila?',
+      description:
+        'Does the child have a confirmed diagnosis of a problem or disability from an authorised diagnostician?',
+    },
+    isDiagnosisInProgress: {
+      id: 'nps.application:different.needs.is.diagnosis.in.progress',
+      defaultMessage:
+        'Er barn í greiningarferli hjá viðurkenndum greiningaraðila?',
+      description:
+        'Is the child in the process of diagnosis with an authorised diagnostician?',
+    },
+    atWhichDiagnostician: {
+      id: 'nps.application:different.needs.at.which.diagnostician',
+      defaultMessage: 'Hjá hvaða greiningaraðila?',
+      description: 'At which diagnostician?',
+    },
+    diagnostician: {
+      id: 'nps.application:different.needs.diagnostician',
+      defaultMessage: 'Greiningaraðili',
+      description: 'Diagnostician',
+    },
+    hasOtherSpecialists: {
+      id: 'nps.application:different.needs.has.other.specialists',
+      defaultMessage: 'Hafa aðrir fagaðilar komið að stuðningi við barnið?',
+      description:
+        'Have other specialists been involved in the child’s support?',
+    },
+    hasOtherSpecialistsDescription: {
+      id: 'nps.application:different.needs.has.other.specialists.description',
+      defaultMessage:
+        'Með fagaðilum er átt við sérfræðinga, innan eða utan skólaþjónustu sveitarfélagsins, sem veitt hafa barninu eða foreldrum stuðning og sem þekkja því sérstaklega til stöðu þess.',
+      description:
+        'Specialists refer to professionals, within or outside the municipality’s school service, who have provided support to the child or their parents and who have a special knowledge of the child’s situation.',
+    },
+    atWhichSpecialist: {
+      id: 'nps.application:different.needs.at.which.specialist',
+      defaultMessage: 'Hjá hvaða fagaðila?',
+      description: 'At which specialist?',
+    },
+    specialists: {
+      id: 'nps.application:different.needs.specialists',
+      defaultMessage: 'Fagaðilar',
+      description: 'Specialists',
+    },
+    hasReceivedServicesFromMunicipality: {
+      id: 'nps.application:different.needs.has.received.services.from.municipality',
+      defaultMessage:
+        'Hefur barnið eða fjölskyldan þegið þjónustu frá sveitarfélaginu þar sem lögheimilið er skráð?',
+      description:
+        'Has your child or the family received services from the municipality in which your legal domicile is registered?',
+    },
+    hasReceivedServicesFromMunicipalityDescription: {
+      id: 'nps.application:different.needs.has.received.services.from.municipality.description',
+      defaultMessage:
+        'Með þjónustu er átt við úrræði sem þjónustumiðstöð, velferðarþjónusta eða barnavernd fer með.',
+      description:
+        'Services refer to resources provided by a service centre, welfare services or child protective services',
+    },
+    whichService: {
+      id: 'nps.application:different.needs.which.service',
+      defaultMessage: 'Hvaða þjónustu?',
+      description: 'Which service?',
+    },
+    hasReceivedChildAndAdolescentPsychiatryServices: {
+      id: 'nps.application:different.needs.has.received.child.and.adolescent.psychiatry.services',
+      defaultMessage:
+        'Hefur barnið fengið þjónustu hjá Barna- og unglingageðdeild?',
+      description:
+        'Has the child received services at the Child and Adolescent Psychiatry Department?',
+    },
+    whichChildAndAdolescentPsychiatryDepartment: {
+      id: 'nps.application:different.needs.which.child.and.adolescent.psychiatry.department',
+      defaultMessage: 'Hvaða barna- og unglingageðdeild?',
+      description: 'Which Child and Adolescent Psychiatry Department?',
+    },
+    childAndAdolescentPsychiatryDepartment: {
+      id: 'nps.application:different.needs.child.and.adolescent.psychiatry.department',
+      defaultMessage: 'Barna og unglingageðdeild',
+      description: 'Child and Adolescent Psychiatry Department',
+    },
+    childAndAdolescentPsychiatryServicesReceived: {
+      id: 'nps.application:different.needs.child.and.adolescent.psychiatry.services.received',
+      defaultMessage:
+        'Hvernig þjónustu hefur barnið fengið hjá Barna- og unglingageðdeild?',
+      description:
+        'What kind of services has the child received at the Child and Adolescent Psychiatry Department?',
+    },
+    isOnWaitlistForServices: {
+      id: 'nps.application:different.needs.is.on.waitlist.for.services',
+      defaultMessage: 'Er barnið á biðlista eftir þjónustu?',
+      description: 'Is the child currently on a waitlist for services?',
+    },
+    hasBeenReportedToChildProtectiveServices: {
+      id: 'nps.application:different.needs.has.been.reported.to.child.protective.services',
+      defaultMessage: 'Hafa mál barnsins verið tilkynnt til barnaverndar?',
+      description:
+        'Has the child’s case been reported to the child protective services?',
+    },
+    isCaseOpenWithChildProtectiveServices: {
+      id: 'nps.application:different.needs.is.case.open.with.child.protective.services',
+      defaultMessage: 'Er málið opið hjá barnavernd í dag?',
+      description: 'Is the case currently open with child protective services?',
+    },
+    selectAllThatAppliesPlaceholder: {
+      id: 'nps.application:different.needs.select.all.that.applies.placeholder',
+      defaultMessage: 'Veldu allt það sem á við',
+      description: 'Select all that applies',
+    },
+    selectWhatIsppropriatePlaceholder: {
+      id: 'nps.application:different.needs.select.what.is.appropriate.placeholder',
+      defaultMessage: 'Veldu það sem á við',
+      description: 'Select what is appropriate',
+    },
+    service: {
+      id: 'nps.application:different.needs.service',
+      defaultMessage: 'Þjónusta',
+      description: 'Service',
+    },
+
     // Terms
     termsSubSectionTitle: {
       id: 'nps.application:different.needs.terms.sub.section.title',
