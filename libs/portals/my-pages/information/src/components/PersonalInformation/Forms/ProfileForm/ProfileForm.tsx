@@ -239,73 +239,71 @@ export const ProfileForm = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
-          {!isCompanyUser && (
-            <>
-              {!isCheckingFeatureFlag &&
-                (isDelegationTypeEnabled ? (
-                  <InputSection
-                    title={formatMessage(emailsMsg.emails)}
-                    text={
-                      <FormattedMessage
-                        {...emailsMsg.emailListText}
-                        values={{
-                          link: (
-                            <Link
-                              to={InformationPaths.SettingsNotifications}
-                              className={s.link}
-                            >
-                              {formatMessage(emailsMsg.emailListTextLink)}
-                            </Link>
-                          ),
-                        }}
-                      />
-                    }
-                    divider={hasUserProfileWriteScope}
-                  >
-                    {userLoading && emails ? (
-                      <SkeletonLoader
-                        repeat={3}
-                        height={80}
-                        space={2}
-                        borderRadius="large"
+          {!isCheckingFeatureFlag &&
+            (isDelegationTypeEnabled && !isCompanyUser ? (
+              <InputSection
+                title={formatMessage(emailsMsg.emails)}
+                text={
+                  <FormattedMessage
+                    {...emailsMsg.emailListText}
+                    values={{
+                      link: (
+                        <Link
+                          to={InformationPaths.SettingsNotifications}
+                          className={s.link}
+                        >
+                          {formatMessage(emailsMsg.emailListTextLink)}
+                        </Link>
+                      ),
+                    }}
+                  />
+                }
+                divider={hasUserProfileWriteScope}
+              >
+                {userLoading && emails ? (
+                  <SkeletonLoader
+                    repeat={3}
+                    height={80}
+                    space={2}
+                    borderRadius="large"
+                  />
+                ) : (
+                  <Box display="flex" flexDirection="column" rowGap={2}>
+                    {emails.length > 0 && <EmailsList items={emails} />}
+                    {emails.length === 0 || showEmailForm ? (
+                      <ProfileEmailForm
+                        onAddSuccess={() => setShowEmailForm(false)}
                       />
                     ) : (
-                      <Box display="flex" flexDirection="column" rowGap={2}>
-                        {emails.length > 0 && <EmailsList items={emails} />}
-                        {emails.length === 0 || showEmailForm ? (
-                          <ProfileEmailForm
-                            onAddSuccess={() => setShowEmailForm(false)}
-                          />
-                        ) : (
-                          <Box marginTop={1}>
-                            <Button
-                              variant="text"
-                              size="small"
-                              icon="add"
-                              onClick={() => setShowEmailForm(true)}
-                            >
-                              {formatMessage(emailsMsg.addEmail)}
-                            </Button>
-                          </Box>
-                        )}
+                      <Box marginTop={1}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          icon="add"
+                          onClick={() => setShowEmailForm(true)}
+                        >
+                          {formatMessage(emailsMsg.addEmail)}
+                        </Button>
                       </Box>
                     )}
-                  </InputSection>
-                ) : (
-                  hasUserProfileWriteScope && (
-                    <Box marginTop={2}>
-                      <InputEmail
-                        buttonText={formatMessage(msg.saveEmail)}
-                        email={userProfile?.email || ''}
-                        emailDirty={(isDirty) => setEmailDirty(isDirty)}
-                        emailVerified={userProfile?.emailVerified}
-                        disabled={deleteLoading}
-                      />
-                    </Box>
-                  )
-                ))}
-            </>
-          )}
+                  </Box>
+                )}
+              </InputSection>
+            ) : (
+              !isDelegationTypeEnabled &&
+              hasUserProfileWriteScope && (
+                <Box marginTop={2}>
+                  <InputEmail
+                    buttonText={formatMessage(msg.saveEmail)}
+                    email={userProfile?.email || ''}
+                    emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                    emailVerified={userProfile?.emailVerified}
+                    disabled={deleteLoading}
+                  />
+                </Box>
+              )
+            ))}
+
           {hasUserProfileWriteScope && (
             <>
               <InputSection
