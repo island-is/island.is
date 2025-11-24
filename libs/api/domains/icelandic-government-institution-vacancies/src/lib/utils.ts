@@ -103,10 +103,22 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
         intro: '',
         fieldOfWork: item.jobTitle ?? undefined,
         institutionName: item.orgName ?? undefined,
-        institutionReferenceIdentifier:
-          typeof item.orgNr === 'number' && item.orgNr !== null
-            ? String(item.orgNr)
-            : item.orgNr ?? undefined,
+        institutionReferenceIdentifier: (() => {
+          const orgNrStr =
+            typeof item.orgNr === 'number' && item.orgNr !== null
+              ? String(item.orgNr)
+              : item.orgNr ?? undefined
+
+          if (!orgNrStr) {
+            return undefined
+          }
+
+          if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+            return `0${orgNrStr}`
+          }
+
+          return orgNrStr
+        })(),
         logoUrl: item.logoUrl ?? undefined,
         locations,
       })
