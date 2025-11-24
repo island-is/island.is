@@ -171,6 +171,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:no-inspection',
     defaultMessage: 'Óskoðuð',
   },
+  notAllowedBulkMileage: {
+    id: 'sp.work-machines:not-allowed-bulk-mileage',
+    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu. Vinsamlegast hafðu samband við Samgöngustofu fyrir frekari aðstoð.',
+  },
 })
 
 export const vehicleMessage = defineMessages({
