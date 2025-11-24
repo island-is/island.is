@@ -774,4 +774,6 @@ export const en: TranslatedMessages = {
   'health.prescriptions.issueInformation': 'Útgáfa',
   'health.prescriptions.dispensations': 'Afgreiðslusaga',
   'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
+
+  'health.medicineHistory.title': 'Medicine history',
 }

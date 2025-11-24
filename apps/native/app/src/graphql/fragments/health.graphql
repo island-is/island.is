@@ -1,0 +1,16 @@
+fragment Dispensation on HealthDirectorateMedicineHistoryDispensation {
+  id
+  name
+  agentName
+  date
+  strength
+  quantity
+  unit
+  type
+  indication
+  dosageInstructions
+  issueDate
+  prescriberName
+  expirationDate
+  isExpired
+}

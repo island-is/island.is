@@ -191,7 +191,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                 ))}
             </>
           )}
-          {prescription?.dispensations?.length && (
+          {!prescription?.dispensations?.length ? null : (
             <>
               <TableHeader style={{ marginTop: theme.spacing[3] }}>
                 <Typography variant="eyebrow">

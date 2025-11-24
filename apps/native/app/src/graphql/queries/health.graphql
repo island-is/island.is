@@ -152,3 +152,31 @@ query GetDrugCertificates {
     }
   }
 }
+
+query GetMedicineHistory($locale: String) {
+  healthDirectorateMedicineHistory(locale: $locale) {
+    medicineHistory {
+      id
+      name
+      strength
+      atcCode
+      indication
+      lastDispensationDate
+      dispensationCount
+      dispensations {
+        ...Dispensation
+      }
+    }
+  }
+}
+
+query GetMedicineDispensationForATC(
+  $locale: String
+  $input: MedicineDispensationsATCInput!
+) {
+  healthDirectorateMedicineDispensationsATC(locale: $locale, input: $input) {
+    dispensations {
+      ...Dispensation
+    }
+  }
+}

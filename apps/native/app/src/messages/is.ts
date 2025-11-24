@@ -773,4 +773,6 @@ export const is = {
   'health.prescriptions.issueInformation': 'Útgáfa',
   'health.prescriptions.dispensations': 'Afgreiðslusaga',
   'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
+
+  'health.medicineHistory.title': 'Lyfjasaga',
 }
