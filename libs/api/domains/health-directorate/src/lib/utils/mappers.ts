@@ -114,6 +114,23 @@ export const mapPermitStatus = (
   }
 }
 
+export const mapCountryPermitStatus = (
+  status: string,
+): EuPatientConsentStatus => {
+  switch (status) {
+    case PermitStatusEnum.active:
+      return EuPatientConsentStatus.ACTIVE
+    case PermitStatusEnum.expired:
+      return EuPatientConsentStatus.EXPIRED
+    case PermitStatusEnum.inactive:
+      return EuPatientConsentStatus.INACTIVE
+    case PermitStatusEnum.awaitingApproval:
+      return EuPatientConsentStatus.PENDING
+    default:
+      return EuPatientConsentStatus.INACTIVE
+  }
+}
+
 export const mapDelegationStatus = (
   status: PrescriptionCommissionStatus,
 ): PermitStatusEnum => {

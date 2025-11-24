@@ -81,7 +81,7 @@ const mapAnswerType = (
     case 'datetime':
       return AnswerOptionType.datetime
     case 'table':
-      return AnswerOptionType.scale
+      return AnswerOptionType.table
     default:
       return AnswerOptionType.text
   }
@@ -263,6 +263,20 @@ const mapItemToQuestion = (
         : '',
     multiline: 'multiline' in item && item.multiline,
     decimal: 'decimals' in item && item.decimals ? true : false,
+    // Table-specific fields
+    numRows: 'numRows' in item ? item.numRows : undefined,
+    maxRows: 'maxRows' in item ? item.maxRows : undefined,
+    columns:
+      'items' in item && item.items
+        ? item.items.map((subItem) => ({
+            id: subItem.id,
+            label: subItem.label,
+            type: subItem.type,
+            required: 'required' in subItem ? subItem.required : false,
+            multiline: 'multiline' in subItem ? subItem.multiline : undefined,
+            maxLength: 'maxLength' in subItem ? subItem.maxLength : undefined,
+          }))
+        : undefined,
   }
 
   return {

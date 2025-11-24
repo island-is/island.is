@@ -37,4 +37,5 @@ export {
   EuPatientConsentDto,
   EuPatientConsentStatus,
   PrescriptionCommissionStatus,
+  SubmitQuestionnaireDto,
 } from './lib/clients'

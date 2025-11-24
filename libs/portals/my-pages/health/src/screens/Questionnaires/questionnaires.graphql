@@ -97,6 +97,16 @@ query GetQuestionnaireWithQuestions(
           minLabel
           decimal
           formula
+          numRows
+          maxRows
+          columns {
+            id
+            label
+            type
+            required
+            multiline
+            maxLength
+          }
           options {
             __typename
             id

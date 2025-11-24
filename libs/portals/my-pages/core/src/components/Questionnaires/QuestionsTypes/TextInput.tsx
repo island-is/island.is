@@ -17,6 +17,8 @@ export interface TextInputProps {
   min?: string
   max?: string
   step?: number
+  backgroundColor?: 'white' | 'blue'
+  inputLabel?: boolean
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -34,6 +36,8 @@ export const TextInput: React.FC<TextInputProps> = ({
   type = 'text',
   min,
   max,
+  backgroundColor = 'blue',
+  inputLabel = false,
   step: _step,
 }) => {
   const handleChange = (
@@ -65,14 +69,17 @@ export const TextInput: React.FC<TextInputProps> = ({
   }
   return (
     <>
-      <Text variant="h5" marginBottom={2}>
-        {label}
-        {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
-      </Text>
+      {!inputLabel && (
+        <Text variant="h5" marginBottom={2}>
+          {label}
+          {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
+        </Text>
+      )}
       <Box width={type === 'number' || type === 'decimal' ? 'half' : 'full'}>
         <Input
+          label={inputLabel ? label : undefined}
           size="xs"
-          backgroundColor="blue"
+          backgroundColor={backgroundColor}
           id={id}
           name={id}
           placeholder={placeholder}

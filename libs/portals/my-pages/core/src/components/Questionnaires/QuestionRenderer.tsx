@@ -3,7 +3,7 @@ import {
   QuestionnaireOptionsLabelValue,
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
-import { Box, DatePicker, Divider, Text } from '@island.is/island-ui/core'
+import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import HtmlParser from 'react-html-parser'
 import { QuestionAnswer } from '../../types/questionnaire'
@@ -13,6 +13,7 @@ import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { Scale } from './QuestionsTypes/Scale'
+import { Table } from './QuestionsTypes/Table'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -32,7 +33,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   error,
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const _isMobile = width < theme.breakpoints.md
 
   const handleValueChange = (
     value: string | string[] | number,
@@ -259,10 +260,13 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         const dateValue = answer?.answers?.[0]?.value
         return (
           <Box width="half">
+            <Text variant="h5" marginBottom={2}>
+              {question.label}
+            </Text>
             <DatePicker
+              label=""
               locale="is"
               id={question.id}
-              label={question.label}
               placeholderText={
                 question.answerOptions.placeholder || 'Veldu dagsetningu'
               }
@@ -270,7 +274,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               handleChange={(date: Date) =>
                 handleValueChange(
                   date
-                    ? QuestionnaireAnswerOptionType.datetime
+                    ? question.answerOptions.type ===
+                      QuestionnaireAnswerOptionType.datetime
                       ? date.toISOString()
                       : date.toISOString().split('T')[0]
                     : '',
@@ -286,6 +291,35 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               size="xs"
             />
           </Box>
+        )
+      }
+
+      case QuestionnaireAnswerOptionType.table: {
+        const columns = question.answerOptions.columns
+        if (!columns) {
+          console.error('Table question missing columns:', question)
+          return null
+        }
+        return (
+          <Table
+            id={question.id}
+            label={question.label}
+            columns={columns}
+            value={answer}
+            onChange={onAnswerChange}
+            disabled={disabled}
+            error={error}
+            numRows={
+              question.answerOptions.numRows
+                ? Number(question.answerOptions.numRows)
+                : 1
+            }
+            maxRows={
+              question.answerOptions.maxRows
+                ? Number(question.answerOptions.maxRows)
+                : 10
+            }
+          />
         )
       }
 

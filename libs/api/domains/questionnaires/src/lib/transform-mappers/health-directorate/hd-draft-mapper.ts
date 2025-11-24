@@ -65,7 +65,7 @@ const mapAnswerType = (
     case 'datetime':
       return AnswerOptionType.datetime
     case 'table':
-      return AnswerOptionType.scale
+      return AnswerOptionType.table
     default:
       return AnswerOptionType.text
   }
@@ -102,7 +102,62 @@ export const mapDraftRepliesToAnswers = (
     let answerValue: Array<{ label?: string; value: string }>
 
     // Handle different reply types
-    if ('values' in reply && Array.isArray(reply.values)) {
+    if ('rows' in reply && Array.isArray(reply.rows)) {
+      // TableReplyDto - convert rows to "columnId:type:value" format
+      answerValue = []
+
+      // Get column information from the table question
+      const tableQuestion = question as TableQuestionDto
+      const columns = tableQuestion.items || []
+
+      reply.rows.forEach((row) => {
+        row.forEach((cell) => {
+          // Find the column definition for this cell
+          const column = columns.find((col) => col.id === cell.questionId)
+          if (!column) return
+
+          // Determine the type based on the answer value type
+          let cellType = 'string'
+          let cellValue = ''
+
+          // Handle different cell reply types based on the structure
+          if ('answer' in cell) {
+            const cellAnswer = cell.answer
+
+            if (typeof cellAnswer === 'boolean') {
+              cellType = 'boolean'
+              cellValue = String(cellAnswer)
+            } else if (typeof cellAnswer === 'number') {
+              cellType = 'number'
+              cellValue = String(cellAnswer)
+            } else if (column.type === 'date') {
+              cellType = 'date'
+              // Format date as YYYY-MM-DD
+              if (cellAnswer instanceof Date) {
+                cellValue = cellAnswer.toISOString().split('T')[0]
+              } else if (typeof cellAnswer === 'string' && cellAnswer) {
+                try {
+                  const date = new Date(cellAnswer)
+                  cellValue = date.toISOString().split('T')[0]
+                } catch {
+                  cellValue = String(cellAnswer)
+                }
+              } else {
+                cellValue = cellAnswer ? String(cellAnswer) : ''
+              }
+            } else {
+              // String type
+              cellValue = cellAnswer ? String(cellAnswer) : ''
+            }
+          }
+
+          answerValue.push({
+            label: column.label,
+            value: `${cell.questionId}:${cellType}:${cellValue}`,
+          })
+        })
+      })
+    } else if ('values' in reply && Array.isArray(reply.values)) {
       // ListReplyDto (checkbox/multi-select)
       // The reply.values array contains objects with { id: optionId, answer: labelText }
       answerValue = reply.values.map((v) => ({
@@ -111,7 +166,24 @@ export const mapDraftRepliesToAnswers = (
       }))
     } else if ('answer' in reply) {
       // Single value replies (String, Number, Boolean, Date)
-      const value = String(reply.answer)
+      let value: string
+
+      // Handle date formatting specifically
+      if (question.type === 'date' && reply.answer instanceof Date) {
+        // Format date as YYYY-MM-DD for DatePicker
+        value = reply.answer.toISOString().split('T')[0]
+      } else if (question.type === 'date' && typeof reply.answer === 'string') {
+        // If it's already a string, ensure it's in ISO format
+        try {
+          const date = new Date(reply.answer)
+          value = date.toISOString().split('T')[0]
+        } catch {
+          value = String(reply.answer)
+        }
+      } else {
+        value = String(reply.answer)
+      }
+
       answerValue = [
         {
           label: getOptionLabel(value),
@@ -119,7 +191,7 @@ export const mapDraftRepliesToAnswers = (
         },
       ]
     } else {
-      // Skip invalid or unsupported replies (e.g., Attachment, Table)
+      // Skip invalid or unsupported replies (e.g., Attachment)
       return
     }
 
