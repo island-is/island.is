@@ -428,7 +428,17 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
 
     console.log('--------------------------------')
-    console.log('childrenNationalIds')
+    console.log(
+      'childrenCustodyInformation auth nationalId: ',
+      parentUser.nationalId,
+    )
+    console.log('--------------------------------')
+    console.log('childrenCustodyInformation params')
+    console.dir(params, { depth: null })
+    console.log('--------------------------------')
+
+    console.log('--------------------------------')
+    console.log('childrenCustodyInformation childrenNationalIds')
     console.dir(childrenNationalIds, { depth: null })
     console.log('--------------------------------')
 
