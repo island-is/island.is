@@ -60,7 +60,7 @@ export class ApplicationHistory {
 }
 
 @ObjectType()
-class ActionCardMetaData {
+export class ActionCardMetaData {
   @Field(() => String, { nullable: true })
   title?: string
 
