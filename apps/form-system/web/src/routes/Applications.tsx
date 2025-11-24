@@ -48,7 +48,7 @@ export const Applications = () => {
           input: {
             slug: slug,
             createApplicationDto: {
-              isTest: false,
+              isTest: true,
             },
           },
         },

@@ -1041,4 +1041,24 @@ export const m = defineMessages({
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
   },
+  previewField: {
+    id: 'form.system:preview-field',
+    defaultMessage: 'Sýnishorn',
+    description: 'Preview',
+  },
+  largeCheckbox: {
+    id: 'form.system.large-checkbox',
+    defaultMessage: 'Stórt hakbox',
+    description: 'Large checkbox',
+  },
+  hasSublabel: {
+    id: 'form.system.has-sublabel',
+    defaultMessage: 'Hefur undirtexta',
+    description: 'Has sublabel',
+  },
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
+  },
 })

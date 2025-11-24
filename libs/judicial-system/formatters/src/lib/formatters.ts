@@ -22,6 +22,7 @@ import {
   ServiceRequirement,
   ServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -540,8 +541,25 @@ export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
     : 'Í birtingarferli' // This should never happen
 }
 
+export const getVerdictServiceStatusText = (
+  serviceStatus: VerdictServiceStatus,
+) => {
+  return serviceStatus === VerdictServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === VerdictServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === VerdictServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === VerdictServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+    ? 'Birt í Lögbirtingarblaðinu'
+    : 'Í birtingarferli' // This should never happen
+}
+
 export const getRulingInstructionItems = (
   serviceInformationForDefendant: InformationForDefendant[],
+  lang?: string,
 ) =>
   pipe(
     serviceInformationForDefendant ?? [],
@@ -550,10 +568,13 @@ export const getRulingInstructionItems = (
       if (!value) {
         return option.none
       }
+      const language = lang === 'en' ? 'en' : 'is'
+      const label = value.label[language]
+      const description = value.description[language]
 
       return option.some({
-        label: value.label,
-        value: value.description.replace(/\n/g, ''),
+        label,
+        value: description.replace(/\n/g, ''),
         type: 'accordion',
       })
     }),

@@ -1,13 +1,13 @@
 import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
-import Logo from '../../assets/Logo'
 import { application as applicationMessages } from '../../lib/messages'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const completedForm = buildForm({
   id: 'completedForm',
   mode: FormModes.COMPLETED,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildFormConclusionSection({
       alertTitle: applicationMessages.successSubmissionTitle,

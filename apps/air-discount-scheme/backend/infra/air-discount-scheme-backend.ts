@@ -38,10 +38,10 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .migrations()
     .redis({
       host: {
-        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        dev: 'clustercfg.ads-valkey-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        prod: 'clustercfg.ads-valkey-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
     .ingress({

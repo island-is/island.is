@@ -283,6 +283,7 @@ export type RepeaterItem = {
       errorTitle?: FormText
       fallbackErrorMessage?: FormText
       validationFailedErrorMessage?: FormText
+      isTrailer?: boolean
     }
   | {
       component: 'description'
@@ -705,6 +706,10 @@ export interface PaymentChargeOverviewField extends BaseField {
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
   totalLabel: StaticText
+  unitPriceLabel?: StaticText
+  quantityLabel?: StaticText
+  quantityUnitLabel?: StaticText
+  totalPerUnitLabel?: StaticText
   getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
@@ -1095,6 +1100,7 @@ export interface VehiclePermnoWithInfoField extends InputField {
   errorTitle?: FormText
   fallbackErrorMessage?: FormText
   validationFailedErrorMessage?: FormText
+  isTrailer: boolean
 }
 
 export type Field =
