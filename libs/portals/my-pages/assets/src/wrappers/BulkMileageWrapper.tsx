@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useLoaderData } from 'react-router-dom'
-import { messages as m} from '../lib/messages'
+import { vehicleMessage as m } from '../lib/messages'
 
 interface Props {
   children: React.ReactNode
