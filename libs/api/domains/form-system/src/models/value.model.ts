@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Month } from './month.model'
 import { ApplicationEventDto } from './applications.model'
+import { Month } from './month.model'
 
 @ObjectType('FormSystemValue')
 export class Value {
@@ -76,8 +76,8 @@ export class Value {
   @Field(() => String, { nullable: true })
   time?: string
 
-  @Field(() => String, { nullable: true })
-  s3Key?: string
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  s3Key?: string[]
 
   @Field(() => String, { nullable: true })
   s3Url?: string

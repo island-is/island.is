@@ -19,6 +19,7 @@ import {
 
 import { Case } from './case.model'
 import { CourtDocument } from './courtDocument.model'
+import { CourtSessionString } from './courtSessionString.model'
 import { User } from './user.model'
 
 @Table({
@@ -131,6 +132,13 @@ export class CourtSession extends Model {
   })
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   mergedFiledDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtSessionString, {
+    foreignKey: 'courtSessionId',
+    as: 'courtSessionStrings',
+  })
+  @ApiPropertyOptional({ type: () => [CourtSessionString] })
+  courtSessionStrings?: CourtSessionString[]
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

@@ -353,7 +353,7 @@ export const employment = {
       },
       lastJobRepeater: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobRepeater',
-        defaultMessage: 'Starf',
+        defaultMessage: 'Starf {value}',
         description: 'Last jobs repeater label',
       },
       radioEesLabel: {

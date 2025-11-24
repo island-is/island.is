@@ -18,6 +18,7 @@ import { sharedModuleConfig } from '../../shared'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ConfigType } from '@nestjs/config'
 import {
+  getAcknowledgements,
   getBankinPensionUnion,
   getEducationalQuestions,
   getEducationInformation,
@@ -156,7 +157,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const educationInformation = getEducationInformation(answers)
 
     //jobCareer
-    const jobCareer = getJobCareer(answers, jobCodes)
+    const jobCareer = getJobCareer(answers, jobCodes, externalData)
 
     //drivingLicense
     const licenseInformation = getLicenseInformation(answers)
@@ -300,7 +301,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //pensionAndOtherPayments
     const pensionAndOtherPayments = otherBenefits
-      ? getPensionAndOtherPayments(otherBenefits)
+      ? getPensionAndOtherPayments(otherBenefits, answers, externalData)
       : undefined
 
     //previousOccupation
@@ -327,6 +328,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //educationalQuestions
     const educationalQuestions = getEducationalQuestions(answers)
+
+    //Acknowledgements
+    const acknowledgements = getAcknowledgements(answers)
 
     const submitAttachment = async (
       file: GaldurDomainModelsAttachmentsCreateAttachmentRequest,
@@ -413,6 +417,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               euresInformation: euresInformation,
               educationalQuestions: educationalQuestions,
               applicantId: null,
+              acknowledgements: acknowledgements,
             },
             save: true,
             finalize: true,

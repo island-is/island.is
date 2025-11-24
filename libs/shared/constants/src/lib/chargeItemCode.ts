@@ -33,5 +33,5 @@ export enum ChargeItemCode {
   ID_CARD_OTHERS_EXPRESS = 'AY158', //Nafnskírteini aðrir skyndiútgáfa
   HEALTHCARE_WORK_PERMIT = 'L6101',
   FIRE_COMPENSATION_APPRAISAL = 'FB201', // Endurmat brunabótamats fasteignar
-  REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'FB202', // Skráning nýrra fasteignanúmera TODO - Verify code
+  REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'FB202', // Skráning nýrra fasteignanúmera
 }

@@ -69,6 +69,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: false,
         },
         trailer: {
           component: 'vehiclePermnoWithInfo',
@@ -82,6 +83,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: true,
         },
         dollyType: {
           component: 'hiddenInput',

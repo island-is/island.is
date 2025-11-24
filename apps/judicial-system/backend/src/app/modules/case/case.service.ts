@@ -41,6 +41,7 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
+  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -79,6 +80,7 @@ import {
   CivilClaimant,
   CourtDocument,
   CourtSession,
+  CourtSessionString,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -273,6 +275,13 @@ export const include: Includeable[] = [
         order: [['mergedDocumentOrder', 'ASC']],
         separate: true,
       },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -383,6 +392,13 @@ export const include: Includeable[] = [
             as: 'mergedFiledDocuments',
             required: false,
             order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
             separate: true,
           },
         ],
@@ -587,13 +603,13 @@ export class CaseService {
   private async createCase(
     caseToCreate: CreateCaseDto,
     transaction: Transaction,
-  ): Promise<string> {
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.create(
       {
         ...caseToCreate,
-        state: isRequestCase(caseToCreate.type)
-          ? CaseState.NEW
-          : CaseState.DRAFT,
+        ...(isRequestCase(caseToCreate.type)
+          ? { state: CaseState.NEW }
+          : { state: CaseState.DRAFT, withCourtSessions: true }),
       },
       { transaction },
     )
@@ -606,7 +622,7 @@ export class CaseService {
       )
     }
 
-    return theCase.id
+    return theCase
   }
 
   private async handlePoliceCaseNumbersUpdate(
@@ -1844,7 +1860,7 @@ export class CaseService {
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const caseId = await this.createCase(
+        const theCase = await this.createCase(
           {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
@@ -1862,9 +1878,13 @@ export class CaseService {
           transaction,
         )
 
-        await this.defendantService.createForNewCase(caseId, {}, transaction)
+        await this.defendantService.createForNewCase(
+          theCase.id,
+          {},
+          transaction,
+        )
 
-        return caseId
+        return theCase.id
       })
       .then((caseId) => this.findById(caseId))
   }
@@ -2348,6 +2368,29 @@ export class CaseService {
               caseId: theCase.id,
               transaction,
             })
+            const caseSentToCourt = EventLog.getEventLogDateByEventType(
+              [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+              theCase.eventLogs,
+            )
+            await this.courtSessionService.createOrUpdateCourtSessionString({
+              caseId: parentCaseId,
+              courtSessionId,
+              mergedCaseId: theCase.id,
+              update: {
+                stringType: CourtSessionStringType.ENTRIES,
+                value: `Mál nr. ${
+                  theCase.courtCaseNumber
+                } sem var höfðað á hendur ákærða${
+                  caseSentToCourt
+                    ? ` með ákæru útgefinni ${formatDate(
+                        caseSentToCourt,
+                        'PPP',
+                      )}`
+                    : ''
+                }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+              },
+              transaction,
+            })
           }
         }
 
@@ -2567,63 +2610,61 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const caseId = await this.createCase(
-          {
-            origin: theCase.origin,
-            type: theCase.type,
-            description: theCase.description,
-            policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            leadInvestigator: theCase.leadInvestigator,
-            courtId: theCase.courtId,
-            translator: theCase.translator,
-            lawsBroken: theCase.lawsBroken,
-            legalBasis: theCase.legalBasis,
-            legalProvisions: theCase.legalProvisions,
-            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-            caseFacts: theCase.caseFacts,
-            legalArguments: theCase.legalArguments,
-            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
-            parentCaseId: theCase.id,
-            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-            creatingProsecutorId: user.id,
-            prosecutorId: user.id,
-            prosecutorsOfficeId: user.institution?.id,
-            demands: isInvestigationCase(theCase.type)
-              ? theCase.demands
-              : undefined,
-          } as CreateCaseDto,
-          transaction,
-        )
+    return this.sequelize.transaction(async (transaction) => {
+      const extendedCase = await this.createCase(
+        {
+          origin: theCase.origin,
+          type: theCase.type,
+          description: theCase.description,
+          policeCaseNumbers: theCase.policeCaseNumbers,
+          defenderName: theCase.defenderName,
+          defenderNationalId: theCase.defenderNationalId,
+          defenderEmail: theCase.defenderEmail,
+          defenderPhoneNumber: theCase.defenderPhoneNumber,
+          leadInvestigator: theCase.leadInvestigator,
+          courtId: theCase.courtId,
+          translator: theCase.translator,
+          lawsBroken: theCase.lawsBroken,
+          legalBasis: theCase.legalBasis,
+          legalProvisions: theCase.legalProvisions,
+          requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
+          caseFacts: theCase.caseFacts,
+          legalArguments: theCase.legalArguments,
+          requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
+          prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+          parentCaseId: theCase.id,
+          initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          creatingProsecutorId: user.id,
+          prosecutorId: user.id,
+          prosecutorsOfficeId: user.institution?.id,
+          demands: isInvestigationCase(theCase.type)
+            ? theCase.demands
+            : undefined,
+        } as CreateCaseDto,
+        transaction,
+      )
 
-        if (theCase.defendants && theCase.defendants?.length > 0) {
-          await Promise.all(
-            theCase.defendants?.map((defendant) =>
-              this.defendantService.createForNewCase(
-                caseId,
-                {
-                  noNationalId: defendant.noNationalId,
-                  nationalId: defendant.nationalId,
-                  name: defendant.name,
-                  gender: defendant.gender,
-                  address: defendant.address,
-                  citizenship: defendant.citizenship,
-                },
-                transaction,
-              ),
+      if (theCase.defendants && theCase.defendants?.length > 0) {
+        await Promise.all(
+          theCase.defendants?.map((defendant) =>
+            this.defendantService.createForNewCase(
+              extendedCase.id,
+              {
+                noNationalId: defendant.noNationalId,
+                nationalId: defendant.nationalId,
+                name: defendant.name,
+                gender: defendant.gender,
+                address: defendant.address,
+                citizenship: defendant.citizenship,
+              },
+              transaction,
             ),
-          )
-        }
+          ),
+        )
+      }
 
-        return caseId
-      })
-      .then((caseId) => this.findById(caseId))
+      return extendedCase
+    })
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {

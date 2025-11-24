@@ -395,6 +395,7 @@ export const Item = ({
       errorTitle: item.errorTitle,
       fallbackErrorMessage: item.fallbackErrorMessage,
       validationFailedErrorMessage: item.validationFailedErrorMessage,
+      isTrailer: item.isTrailer ?? false,
     }
   }
 
@@ -540,7 +541,7 @@ export const Item = ({
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'
-              ? { maxDate: maxDateVal, minDate: minDateVal }
+              ? { maxDate: maxDateVal, minDate: minDateVal, locale: lang }
               : {})}
             {...(component === 'nationalIdWithName'
               ? {

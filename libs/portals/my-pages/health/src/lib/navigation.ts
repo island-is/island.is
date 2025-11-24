@@ -25,6 +25,12 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
+      name: messages.myHealthOverview,
+      searchHide: true,
+      navHide: true,
+      path: HealthPaths.HealthBasicOld,
+    },
+    {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
