@@ -39,7 +39,6 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { AuthDelegationType } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import type { Locale } from '@island.is/shared/types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class ApplicationsService {
@@ -412,7 +411,6 @@ export class ApplicationsService {
   async findAllBySlugAndUser(
     slug: string,
     user: User,
-    isTest: boolean,
   ): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
@@ -427,11 +425,7 @@ export class ApplicationsService {
       return responseDto
     }
 
-    const existingApplications = await this.findAllByUserAndForm(
-      user,
-      form.id,
-      (isTest = false),
-    )
+    const existingApplications = await this.findAllByUserAndForm(user, form.id)
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -444,7 +438,6 @@ export class ApplicationsService {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
 
     const applications = await this.applicationModel.findAll({
       where: {
@@ -500,10 +493,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
-    isTest: boolean,
   ): Promise<ApplicationDto[]> {
-    // TODO: Check if form is published
-
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
@@ -513,7 +503,6 @@ export class ApplicationsService {
         nationalId,
         formId,
         status: { [Op.in]: [ApplicationStatus.DRAFT] },
-        isTest,
         pruned: false,
       },
       include: [{ model: Value, as: 'values' }],

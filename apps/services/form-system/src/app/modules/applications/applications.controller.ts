@@ -9,7 +9,6 @@ import {
   Query,
   UseGuards,
   VERSION_NEUTRAL,
-  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -107,15 +106,10 @@ export class ApplicationsController {
   @Get(':slug')
   async findAllBySlugAndUser(
     @Param('slug') slug: string,
-    @Query('isTest') isTest: boolean,
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllBySlugAndUser(
-      slug,
-      user,
-      isTest,
-    )
+    return await this.applicationsService.findAllBySlugAndUser(slug, user)
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })

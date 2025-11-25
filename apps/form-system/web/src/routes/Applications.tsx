@@ -73,7 +73,6 @@ export const Applications = () => {
         variables: {
           input: {
             slug: slug,
-            isTest: true,
           },
         },
       })
