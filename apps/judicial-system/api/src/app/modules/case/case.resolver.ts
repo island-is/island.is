@@ -66,16 +66,6 @@ export class CaseResolver {
     )
   }
 
-  @ResolveField(() => String, { name: 'penalties', nullable: true })
-  getPenalties(@Parent() theCase: Case, @CurrentGraphQlUser() user: User) {
-    // TODO: Move role base access control to the backend
-    if (isProsecutionUser(user)) {
-      return theCase.penalties
-    }
-
-    return null
-  }
-
   @Query(() => [Case], { nullable: true })
   async connectedCases(
     @Args('input', { type: () => CaseQueryInput })
