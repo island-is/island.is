@@ -28,7 +28,6 @@ interface Params {
 }
 
 export const Applications = () => {
-  console.log('Applications component rendered')
   useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
@@ -99,7 +98,9 @@ export const Applications = () => {
     const run = async () => {
       const responseDto = await fetchApplications()
       if (!isMounted || !responseDto) {
-        setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
         return
       }
       const apps = responseDto.applications || []
@@ -116,7 +117,7 @@ export const Applications = () => {
     return () => {
       isMounted = false
     }
-  }, [slug, createApplication, fetchApplications])
+  }, [slug, createApplication, fetchApplications, loginAllowed])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
