@@ -81,8 +81,7 @@ const mapImpairmentRating = (data: TrWebContractsExternalServicePortalQuestionna
             ? 'Missing answer'
             : 'Svar vantar'),
       }
-    })
-  }).filter(isDefined)
+    }).filter(isDefined)
 }
 
 const mapMedicationAndSupportsUsed = (data: TrWebContractsExternalServicePortalDisabilityPensionCertificate): MedicationAndSupportsUsed | undefined => {
