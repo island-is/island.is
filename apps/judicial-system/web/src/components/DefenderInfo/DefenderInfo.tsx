@@ -146,16 +146,19 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
         />
         {isProsecutionUser(user) && (
           <>
-            <Text variant="h4" marginTop={2} marginBottom={2}>
-              {`${formatMessage(
+            <SectionHeading
+              title={formatMessage(
                 isRestrictionCase(workingCase.type)
                   ? defenderInfo.restrictionCases.sections.defenderRequestAccess
                       .title
                   : defenderInfo.investigationCases.sections
                       .defenderRequestAccess.title,
-              )} `}
-              {workingCase.defenderName && <RequiredStar />}
-            </Text>
+              )}
+              heading="h4"
+              marginTop={2}
+              marginBottom={2}
+              required={!!workingCase.defenderName}
+            />
             <Box>
               <RadioButton
                 name="defender-access"
