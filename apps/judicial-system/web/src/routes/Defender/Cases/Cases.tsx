@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Tabs } from '@island.is/island-ui/core'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -17,6 +17,7 @@ import useFilterCases, { Filters } from './hooks/useFilterCases'
 import { useDefenderCasesQuery } from './defenderCases.generated'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import SectionHeading from '../../../components/SectionHeading/SectionHeading'
 
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
@@ -86,18 +87,13 @@ export const Cases: FC = () => {
           />
         </div>
       ) : (
-        <Box marginBottom={5}>
-          <Text as="h1" variant="h1" marginBottom={1}>
-            {formatMessage(m.casesTitle)}
-          </Text>
-          <Text as="h4">
-            Hér er yfirlit yfir mál sem þú átt aðild að í umboði skjólstæðinga.
-          </Text>
-          <Text as="h4">
-            Eins og stendur eru einungis umferðarlagabrot í sakamálum í
-            Réttarvörslugátt.
-          </Text>
-        </Box>
+        <SectionHeading
+          heading="h1"
+          variant="h1"
+          title="Málin þín"
+          description="Hér er yfirlit yfir mál sem þú átt aðild að í umboði skjólstæðinga."
+          marginBottom={5}
+        />
       )}
 
       <Tabs
