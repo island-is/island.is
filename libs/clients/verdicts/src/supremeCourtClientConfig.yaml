@@ -272,10 +272,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getVerdicts:
     post:
@@ -337,10 +333,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgendas:
     post:
@@ -376,74 +368,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '400':
-          description: Invalid request format
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items: {}
-                  total:
-                    type: string
-                  currentPage:
-                    type: integer
-                  itemsPerPage:
-                    type: integer
-                  succeeded:
-                    type: boolean
-                  returnCode:
-                    type: integer
-                  message:
-                    type: string
-        '404':
-          description: No verdicts found matching criteria
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items: {}
-                  total:
-                    type: string
-                  currentPage:
-                    type: integer
-                  itemsPerPage:
-                    type: integer
-                  succeeded:
-                    type: boolean
-                  returnCode:
-                    type: integer
-                  message:
-                    type: string
-        '405':
-          description: Method not allowed - POST requests only
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items: {}
-                  total:
-                    type: string
-                  currentPage:
-                    type: integer
-                  itemsPerPage:
-                    type: integer
-                  succeeded:
-                    type: boolean
-                  returnCode:
-                    type: integer
-                  message:
-                    type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDetermination/{id}:
     get:
@@ -470,10 +394,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDeterminations:
     get:
@@ -516,8 +436,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
   /api/v2/Verdict/getAppeal/{id}:
     get:
       summary: Get a specific appeal by ID
@@ -543,10 +461,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAppeals:
     get:
@@ -589,8 +503,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getLawyers:
     get:
@@ -633,5 +545,3 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'

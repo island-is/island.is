@@ -407,6 +407,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              lawyer: input.lawyer ? input.lawyer : undefined,
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -493,9 +494,10 @@ export class VerdictsClientService {
         if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
           lawyerNameSet.add(lawyer.name as string)
 
-    if (supremeCourtResponse.status === 'fulfilled')
+    if (supremeCourtResponse.status === 'fulfilled') {
       for (const lawyer of supremeCourtResponse.value.items ?? [])
         if (lawyer?.name) lawyerNameSet.add(lawyer.name as string)
+    }
 
     const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
