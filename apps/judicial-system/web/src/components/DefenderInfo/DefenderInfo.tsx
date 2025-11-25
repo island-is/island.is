@@ -110,6 +110,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       ...(isDistrictCourtUser(user)
         ? { requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED }
         : {}),
+      ...(!defenderName ? { requestSharedWithDefender: null } : {}),
       force: true,
     })
   }
@@ -153,7 +154,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   : defenderInfo.investigationCases.sections
                       .defenderRequestAccess.title,
               )} `}
-              <RequiredStar />
+              {workingCase.defenderName && <RequiredStar />}
             </Text>
             <Box>
               <RadioButton
