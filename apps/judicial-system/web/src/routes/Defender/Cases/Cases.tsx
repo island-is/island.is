@@ -11,13 +11,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import SectionHeading from '../../../components/SectionHeading/SectionHeading'
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
 import { useDefenderCasesQuery } from './defenderCases.generated'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import SectionHeading from '../../../components/SectionHeading/SectionHeading'
 
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
