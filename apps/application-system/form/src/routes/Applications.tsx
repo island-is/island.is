@@ -68,18 +68,16 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
 
   useApplicationNamespaces(type)
 
-  const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useLocalizedQuery(APPLICATION_CARDS, {
-    variables: {
-      input: { typeId: type },
+  const { data, loading, error, refetch } = useLocalizedQuery(
+    APPLICATION_CARDS,
+    {
+      variables: {
+        input: { typeId: type },
+      },
+      skip: !type && !delegationsChecked,
+      fetchPolicy: 'cache-and-network',
     },
-    skip: !type && !delegationsChecked,
-    fetchPolicy: 'cache-and-network',
-  })
+  )
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
