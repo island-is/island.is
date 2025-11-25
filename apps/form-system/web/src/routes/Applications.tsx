@@ -47,7 +47,7 @@ export const Applications = () => {
           input: {
             slug: slug,
             createApplicationDto: {
-              isTest: false,
+              isTest: true,
             },
           },
         },
@@ -72,7 +72,6 @@ export const Applications = () => {
         variables: {
           input: {
             slug: slug,
-            isTest: true,
           },
         },
       })
@@ -94,11 +93,14 @@ export const Applications = () => {
   useEffect(() => {
     if (hasInitializedRef.current) return
     hasInitializedRef.current = true
+    let isMounted = true
 
     const run = async () => {
       const responseDto = await fetchApplications()
-      if (!responseDto) {
-        setLoading(false)
+      if (!isMounted || !responseDto) {
+        if (isMounted) {
+          setLoading(false)
+        }
         return
       }
       const apps = responseDto.applications || []
@@ -111,6 +113,10 @@ export const Applications = () => {
       }
     }
     run()
+
+    return () => {
+      isMounted = false
+    }
   }, [slug, createApplication, fetchApplications, loginAllowed])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)

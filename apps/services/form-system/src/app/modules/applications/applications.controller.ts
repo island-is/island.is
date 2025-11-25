@@ -18,6 +18,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
@@ -31,6 +32,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -52,6 +54,24 @@ export class ApplicationsController {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.getApplication(id, user)
+  }
+
+  @ApiOperation({
+    summary: 'Get all applications belonging to a user to display on my pages',
+  })
+  @ApiOkResponse({
+    type: [MyPagesApplicationResponseDto],
+    description:
+      'Get all applications belonging to a user to display on my pages',
+  })
+  @ApiQuery({ name: 'locale', type: String, required: true })
+  @Get('user')
+  async findAllByUser(
+    @Query('locale') locale: Locale,
+    @CurrentUser()
+    user: User,
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    return await this.applicationsService.findAllByNationalId(locale, user)
   }
 
   @ApiOperation({ summary: 'Create new application' })
@@ -87,15 +107,10 @@ export class ApplicationsController {
   @Get(':slug')
   async findAllBySlugAndUser(
     @Param('slug') slug: string,
-    @Query('isTest') isTest: boolean,
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllBySlugAndUser(
-      slug,
-      user,
-      isTest,
-    )
+    return await this.applicationsService.findAllBySlugAndUser(slug, user)
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })
@@ -158,35 +173,35 @@ export class ApplicationsController {
     )
   }
 
-  @ApiOperation({
-    summary: 'Get all applications belonging to a user to display on my pages',
-  })
-  @ApiOkResponse({
-    type: [MyPagesApplicationResponseDto],
-    description:
-      'Get all applications belonging to a user to display on my pages',
-  })
-  @ApiParam({ name: 'nationalId', type: String })
-  @ApiParam({ name: 'locale', type: String })
-  @Get('user/:nationalId/:locale')
-  async findAllByUser(
-    @Param('nationalId') nationalId: string,
-    @Param('locale') locale: string,
-    @CurrentUser()
-    user: User,
-  ): Promise<MyPagesApplicationResponseDto[]> {
-    const actorNationalId = user.actor ? user.actor.nationalId : user.nationalId
-    if (nationalId !== actorNationalId) {
-      throw new ForbiddenException(
-        'You are not allowed to access applications for this user',
-      )
-    }
-    return await this.applicationsService.findAllByNationalId(
-      nationalId,
-      locale,
-      user,
-    )
-  }
+  // @ApiOperation({
+  //   summary: 'Get all applications belonging to a user to display on my pages',
+  // })
+  // @ApiOkResponse({
+  //   type: [MyPagesApplicationResponseDto],
+  //   description:
+  //     'Get all applications belonging to a user to display on my pages',
+  // })
+  // @ApiParam({ name: 'nationalId', type: String })
+  // @ApiParam({ name: 'locale', type: String })
+  // @Get('user/:nationalId/:locale')
+  // async findAllByUser(
+  //   @Param('nationalId') nationalId: string,
+  //   @Param('locale') locale: string,
+  //   @CurrentUser()
+  //   user: User,
+  // ): Promise<MyPagesApplicationResponseDto[]> {
+  //   const actorNationalId = user.actor ? user.actor.nationalId : user.nationalId
+  //   if (nationalId !== actorNationalId) {
+  //     throw new ForbiddenException(
+  //       'You are not allowed to access applications for this user',
+  //     )
+  //   }
+  //   return await this.applicationsService.findAllByNationalId(
+  //     nationalId,
+  //     locale,
+  //     user,
+  //   )
+  // }
 
   @ApiOperation({ summary: 'Save screen data' })
   @ApiCreatedResponse({

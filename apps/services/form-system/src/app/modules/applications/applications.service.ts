@@ -38,6 +38,7 @@ import { SectionTypes } from '@island.is/form-system/shared'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 import { AuthDelegationType } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class ApplicationsService {
@@ -386,7 +387,7 @@ export class ApplicationsService {
       const loginTypes = await this.getLoginTypes(user)
       if (
         !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
-        !this.doesUserMatchApplication(application, user!, loginTypes)
+        !this.doesUserMatchApplication(application, user, loginTypes)
       ) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isLoginTypeAllowed = false
@@ -410,7 +411,6 @@ export class ApplicationsService {
   async findAllBySlugAndUser(
     slug: string,
     user: User,
-    isTest: boolean,
   ): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
@@ -425,24 +425,19 @@ export class ApplicationsService {
       return responseDto
     }
 
-    const existingApplications = await this.findAllByUserAndForm(
-      user,
-      form.id,
-      isTest,
-    )
+    const existingApplications = await this.findAllByUserAndForm(user, form.id)
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
   }
 
   async findAllByNationalId(
-    nationalId: string,
-    locale: string,
+    locale: Locale,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
 
     const applications = await this.applicationModel.findAll({
       where: {
@@ -498,23 +493,21 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
-    isTest: boolean,
   ): Promise<ApplicationDto[]> {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
 
     const applications = await this.applicationModel.findAll({
       where: {
         nationalId,
         formId,
         status: { [Op.in]: [ApplicationStatus.DRAFT] },
-        isTest,
         pruned: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
+
     const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
@@ -540,6 +533,69 @@ export class ApplicationsService {
 
     return applicationDtos
   }
+
+  // private isLoginAllowed(
+  //   loginTypes: string[],
+  //   allowedLoginTypes: string[],
+  // ): boolean {
+  //   return (
+  //     loginTypes.length > 0 &&
+  //     loginTypes.every((type) => allowedLoginTypes.includes(type))
+  //   )
+  // }
+
+  // private doesUserMatchApplication(
+  //   application: Application,
+  //   user: User,
+  //   loginTypes: string[],
+  // ): boolean {
+  //   const hasDelegation =
+  //     Array.isArray(user.delegationType) && user.delegationType.length > 0
+  //   const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+  //   const delegatorNationalId = hasDelegation ? user.nationalId : null
+
+  //   const applications = await this.applicationModel.findAll({
+  //     where: {
+  //       nationalId,
+  //       formId,
+  //       status: { [Op.in]: [ApplicationStatus.DRAFT] },
+  //       isTest,
+  //       pruned: false,
+  //     },
+  //     include: [{ model: Value, as: 'values' }],
+  //   })
+  //   const loginTypes = await this.getLoginTypes(user)
+  //   const applicationsByUser = await this.getApplicationsByUser(
+  //     applications,
+  //     user,
+  //     loginTypes,
+  //   )
+
+  //   const delegator = delegatorNationalId
+  //     ? application.values?.find(
+  //         (value) =>
+  //           value.fieldType === FieldTypesEnum.APPLICANT &&
+  //           value.json?.nationalId === delegatorNationalId &&
+  //           loginTypes.includes(value.json?.applicantType ?? ''),
+  //       )
+  //     : null
+
+  //   for (const application of applicationsByUser) {
+  //     const applicationResponseDto = await this.getApplication(
+  //       application.id,
+  //       null,
+  //     )
+  //     if (!applicationResponseDto.application) {
+  //       throw new NotFoundException(
+  //         `Application DTO with id '${application.id}' not found.`,
+  //       )
+  //     }
+  //     const applicationDto = applicationResponseDto.application
+  //     applicationDtos.push(applicationDto)
+  //   }
+
+  //   return applicationDtos
+  // }
 
   private isLoginAllowed(
     loginTypes: string[],

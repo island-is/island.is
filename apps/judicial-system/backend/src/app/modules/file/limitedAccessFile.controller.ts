@@ -115,8 +115,8 @@ export class LimitedAccessFileController {
   // limit file creation to defendant's and spokesperson's clients
   @UseGuards(
     new CaseTypeGuard([...indictmentCases]),
-    CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CivilClaimantExistsGuard,
     LimitedAccessWriteCaseFileGuard,
     CreateCivilClaimantCaseFileGuard,
   )
