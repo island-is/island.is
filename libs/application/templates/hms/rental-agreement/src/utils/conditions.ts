@@ -130,3 +130,12 @@ export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
 
   return applicantRole === ApplicantsRole.REPRESENTATIVE
 }
+
+export const applicantIsCompany = (application: Application) => {
+  const identityType = getValueViaPath<string>(
+    application.externalData,
+    'identity.data.type',
+  )
+
+  return identityType === 'company'
+}
