@@ -146,6 +146,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              caseContact: input.caseContact,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -406,6 +407,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              lawyer: input.lawyer ? input.lawyer : undefined,
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -476,27 +478,63 @@ export class VerdictsClientService {
     }
   }
 
-  private isLawyerValid(lawyer: {
-    isRemovedFromLawyersList?: boolean
-    name?: string
-    idNumber?: string
-  }): lawyer is {
-    isRemovedFromLawyersList?: boolean
-    name: string
-  } {
-    return !lawyer?.isRemovedFromLawyersList && Boolean(lawyer.name)
+  private async getSupremeCourtLawyers(lawyerNameSet: Set<string>) {
+    const pageSize = 1000
+    let page = 1
+
+    let response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+      limit: pageSize,
+      page,
+    })
+    for (const lawyer of response.items ?? [])
+      if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+
+    while (
+      typeof response.total === 'number' &&
+      response.total > pageSize * page
+    ) {
+      page += 1
+      response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+        limit: pageSize,
+        page,
+      })
+      for (const lawyer of response.items ?? [])
+        if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+    }
+
+    return lawyerNameSet
   }
 
   async getLawyers() {
     const { goproLawyersApi } = await this.getAuthenticatedGoproApis()
-    const response = await goproLawyersApi.getLawyersV2()
-    const lawyerNames = (response.items ?? [])
-      .filter(this.isLawyerValid)
-      .map((lawyer) => lawyer.name)
-    const lawyers = Array.from(new Set(lawyerNames)).map((name) => ({
+
+    const lawyerNameSet = new Set<string>()
+
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
+      goproLawyersApi.getLawyersV2(),
+      this.getSupremeCourtLawyers(lawyerNameSet),
+    ])
+
+    if (goproResponse.status === 'fulfilled')
+      for (const lawyer of goproResponse.value.items ?? [])
+        if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
+          lawyerNameSet.add(lawyer.name as string)
+
+    if (goproResponse.status === 'rejected')
+      this.logger.error('Failed to fetch gopro lawyers', {
+        error: goproResponse.reason,
+      })
+
+    if (supremeCourtResponse.status === 'rejected')
+      this.logger.error('Failed to fetch supreme court lawyers', {
+        error: supremeCourtResponse.reason,
+      })
+
+    const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
       name,
     }))
+
     lawyers.sort(sortAlpha('name'))
     return lawyers
   }
