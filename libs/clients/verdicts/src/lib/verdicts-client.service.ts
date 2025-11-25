@@ -487,7 +487,7 @@ export class VerdictsClientService {
       page,
     })
     for (const lawyer of response.items ?? [])
-      lawyerNameSet.add(lawyer.name as string)
+      if (lawyer?.name) lawyerNameSet.add(lawyer.name)
 
     while (
       typeof response.total === 'number' &&
@@ -499,7 +499,7 @@ export class VerdictsClientService {
         page,
       })
       for (const lawyer of response.items ?? [])
-        lawyerNameSet.add(lawyer.name as string)
+        if (lawyer?.name) lawyerNameSet.add(lawyer.name)
     }
 
     return lawyerNameSet
