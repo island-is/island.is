@@ -35,14 +35,10 @@ export const generateRawUploadData = (
   externalData: EstateSchema['estate'],
   application: ApplicationWithAttachments,
 ) => {
-  // Use registrant data if provided (for permitForUndividedEstate),
-  // otherwise fall back to finding relation in estateMembers
   const relation =
-    answers.registrant?.relation ??
     externalData?.estateMembers?.find(
       (member) => member.nationalId === application.applicant,
-    )?.relation ??
-    'Óþekkt'
+    )?.relation ?? 'Óþekkt'
 
   const processedAssets = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['assets']
@@ -113,11 +109,11 @@ export const generateRawUploadData = (
       value: answers.estate?.moneyAndDeposit?.value ?? '',
     },
     notifier: {
-      email: answers.registrant?.email ?? answers.applicant.email ?? '',
-      name: answers.registrant?.name ?? answers.applicant.name,
-      phoneNumber: answers.registrant?.phone ?? answers.applicant.phone,
+      email: answers.applicant.email ?? '',
+      name: answers.applicant.name,
+      phoneNumber: answers.applicant.phone,
       relation: relation ?? '',
-      ssn: answers.registrant?.nationalId ?? answers.applicant.nationalId,
+      ssn: answers.applicant.nationalId,
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
     otherAssets: expandOtherAssets(processedOtherAssets),

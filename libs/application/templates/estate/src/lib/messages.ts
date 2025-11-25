@@ -306,7 +306,7 @@ export const m = defineMessages({
   },
   registrantTitle: {
     id: 'es.application:registrantTitle',
-    defaultMessage: 'Tilkynnandi',
+    defaultMessage: 'Skráningaraðili',
     description: 'Registrant section title',
   },
   name: {
