@@ -19,6 +19,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',
@@ -26,8 +29,17 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       },
       FORM_SYSTEM_BUCKET: {
         dev: 'island-is-dev-storage-form-system',
-        staging: '', // Still need to get buckets created
-        prod: '',
+        staging: 'island-is-staging-storage-form-system',
+        prod: 'island-is-prod-storage-form-system',
+      },
+      REDIS_URL_NODE_01: {
+        dev: JSON.stringify([
+          'localhost:7010',
+          'localhost:7011',
+          'localhost:7012',
+        ]),
+        staging: '/k8s/shared/redis/REDIS_URL_NODE_01',
+        prod: '/k8s/shared/redis/REDIS_URL_NODE_01',
       },
     })
     .secrets({
