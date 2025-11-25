@@ -1159,6 +1159,18 @@ export const m = defineMessages({
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
   },
+  lastQuestion: {
+    id: 'service.portal:last-question',
+    defaultMessage: 'Fyrri spurning',
+  },
+  nextQuestion: {
+    id: 'service.portal:next-question',
+    defaultMessage: 'Næsta spurning',
+  },
+  requiredQuestion: {
+    id: 'service.portal:required-question',
+    defaultMessage: 'Þessari spurningu er nauðsynlegt að svara',
+  },
   confirmation: {
     id: 'service.portal:confirmation',
     defaultMessage: 'Staðfesting',
@@ -1982,9 +1994,42 @@ export const m = defineMessages({
     id: 'service.portal:copied',
     defaultMessage: 'Afritað!',
   },
+  maxSelections: {
+    id: 'service.portal:max-selections',
+    defaultMessage: 'Hámark {count} valkostir',
+  },
+  questionnaires: {
+    id: 'service.portal:questionnaires',
+    defaultMessage: 'Spurningalistar',
+  },
+  questionnaire: {
+    id: 'service.portal:questionnaire',
+    defaultMessage: 'Spurningalisti',
+  },
   forward: {
     id: 'service.portal:forward',
     defaultMessage: 'Áfram',
+  },
+  rowOf: {
+    id: 'service.portal:row-of',
+    defaultMessage: '{count} af {total} röðum',
+  },
+  addRow: {
+    id: 'service.portal:add-row',
+    defaultMessage: 'Bæta við röð',
+  },
+  add: {
+    id: 'service.portal:add',
+    defaultMessage: 'Bæta við',
+  },
+  maxRowsReached: {
+    id: 'service.portal:max-rows-reached',
+    defaultMessage:
+      'Ekki er hægt að bæta við fleiri röðum. Hámarksfjöldi er {count}.',
+  },
+  deleteRow: {
+    id: 'service.portal:delete-row',
+    defaultMessage: 'Eyða röð',
   },
 })
 
@@ -2106,7 +2151,7 @@ export const searchTagsMessages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
   },
   healthInsuranceEhicCardLong: {
-    id: 'sp.search.tags:health-insurance-ehic-card',
+    id: 'sp.search.tags:health-insurance-ehic-card-long',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   healthPaymentParticipation: {

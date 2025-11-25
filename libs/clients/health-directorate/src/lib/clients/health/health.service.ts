@@ -32,14 +32,24 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
+  questionnaireControllerGetAllQuestionnairesV1,
+  questionnaireControllerGetQuestionnaireDetailV1,
+  questionnaireControllerGetQuestionnaireSubmissionV1,
+  questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
+
 import {
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
   PrescriptionCommissionDto,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+  QuestionnaireSubmissionDetailDto,
+  SubmitQuestionnaireDto,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -266,6 +276,119 @@ export class HealthDirectorateHealthService {
     return donationExceptions
   }
 
+  public async getQuestionnaires(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(questionnaireControllerGetAllQuestionnairesV1()),
+    )
+
+    if (!questionnaires) {
+      this.logger.debug('No questionnaires data returned')
+      return null
+    }
+
+    return questionnaires
+  }
+
+  public async getQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<QuestionnaireDetailDto | null> {
+    const questionnaire = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerGetQuestionnaireDetailV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    if (!questionnaire) {
+      this.logger.debug('No questionnaire data returned')
+      return null
+    }
+
+    return questionnaire
+  }
+
+  public async getQuestionnaireAnswered(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    submissionId: string,
+  ): Promise<QuestionnaireSubmissionDetailDto | null> {
+    try {
+      this.logger.debug(
+        `Fetching answered questionnaire - id: ${id}, submissionId: ${submissionId}`,
+      )
+
+      const questionnaires = await withAuthContext(auth, () =>
+        data(
+          questionnaireControllerGetQuestionnaireSubmissionV1({
+            path: {
+              id,
+              submissionId,
+            },
+          }),
+        ),
+      )
+
+      if (!questionnaires) {
+        this.logger.debug(
+          'No answered questionnaire data returned for id: ' +
+            id +
+            ' and submissionId: ' +
+            submissionId,
+        )
+        return null
+      }
+
+      // Ensure the response is an array
+      if (!Array.isArray(questionnaires)) {
+        this.logger.warn(
+          'Unexpected response format for getQuestionnaireAnswered',
+        )
+      }
+
+      return JSON.parse(JSON.stringify(questionnaires))
+    } catch (error) {
+      this.logger.error(
+        `Error fetching questionnaire answered data for id: ${id}, submissionId: ${submissionId}`,
+        error,
+      )
+      return null
+    }
+  }
+
+  public async submitQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    input: SubmitQuestionnaireDto,
+  ): Promise<string | null> {
+    const submission = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerSubmitQuestionnaireV1({
+          path: {
+            id: id,
+          },
+          body: input,
+        }),
+      ),
+    )
+
+    if (!submission) {
+      this.logger.debug('No questionnaire submission data returned')
+      return null
+    }
+
+    return submission
+  }
+
   /** Medicine Delegation */
 
   public async getMedicineDelegations(
@@ -279,12 +402,10 @@ export class HealthDirectorateHealthService {
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
             status: status,
-            active: active,
           },
         }),
       ),
     )
-
     if (!medicineDelegations) {
       return null
     }
@@ -307,10 +428,12 @@ export class HealthDirectorateHealthService {
     )
   }
 
+  /* Patient Data Permits */
+
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: string[],
+    status: EuPatientConsentStatus[],
     dateFrom?: Date | undefined,
     dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {
