@@ -46,6 +46,7 @@ export const registrant = buildSection({
           title: m.address,
           width: 'half',
           required: true,
+          marginBottom: 'containerGutter',
           defaultValue: ({ externalData }: Application) =>
             getValueViaPath(
               externalData,
