@@ -82,7 +82,7 @@ interface Props {
 }
 
 interface CourtSessionLabelProps {
-  index: number
+  label: string
   isConfirmed?: CourtSessionResponse['isConfirmed']
 }
 
@@ -126,11 +126,11 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
 
 const CourtSessionLabel = forwardRef(
   (props: CourtSessionLabelProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const { index, isConfirmed = true } = props
+    const { label, isConfirmed = true } = props
 
     return (
       <Box ref={ref} display="flex" alignItems="flexEnd" columnGap={1}>
-        <Text variant="h4">{`Þinghald ${index + 1}`}</Text>
+        <Text variant="h4">{label}</Text>
         {!isConfirmed && (
           <Tooltip placement="top" as="span" text="Óstaðfest þinghald">
             <span>
@@ -726,7 +726,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         id={`courtRecordAccordionItem-${courtSession.id}`}
         label={
           <CourtSessionLabel
-            index={index}
+            label={`Þinghald ${index + 1}`}
             ref={ref}
             isConfirmed={courtSession.isConfirmed}
           />
