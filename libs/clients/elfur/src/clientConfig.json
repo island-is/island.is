@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API",
-    "description": "<h2>API's to fetch and send data to FJS</h2><h3>Account</h3><p>This is currently not used.</p><h3>Employee</h3><p>Fetch information about employees from Orri.</p><h3>Organization</h3><p>This controller is used to fetch information about organizations. In icelandic 'Stofnanir'.</p><p>Here you can find which Organization Units belong to an organization and get details about an organization.</p><h3>Organization Employee</h3><p>This controller is used to fetch information about employees in organizations or in organization units. In icelandic 'Stofnanir' or 'deildir / stofnunareiningar'.</p><p>Here you can find which employees belong to an organization or an organization unit.</p><h3>OrganizationUnit</h3><p>This controller gives more details about an organization unit. In icelandic 'deildir / stofnunareiningar'.</p><h3>TimeRegistration</h3><p>This controller contains endpoints to import, create, read, update and delete time registrations and import groups. One endpoint is used to send a batch of timeregistrations from Elfur to Orri.</p><h4>Import time registration processes explained:</h4><p>First the timeregistrations are saved to Elfur database. When the time registration \"batch\", called \"Import Group\" in Elfur, is ready, they are sent to Orri as a batch.</p><p>There are two ways to import time registrations to Elfur database. Via excel file or manually adding them to an import group.</p><p><strong>Importing time registrations from an excel file, then process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>import_from_excel</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n - We get the importGroupId from step 1, the excel import.\r\n\r\n<strong>Create an import group and add time registrations to it. When all time registrations are added, process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>create_import_group</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>add_timeregistrations_to_import_group/{importGroupId}/{isFinalized}</strong>\r\n - Add time registrations to the import group. One or more at a time.\r\n - When last time registration is added, set isFinalized to true.\r\n 3. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n\r\n<p>Time registrations are now in Orri.</p><h3>Vacancy</h3><p>This controller contains endpoints to create, fetch, and modify vacancies and submit vacancy statistics.</p><p>Refer to the <strong>NewVacancyDto</strong> schema at the bottom of this page for what fields are available when creating a vacancy.<br>Refer to the <strong>UpdateVacancyDto</strong> schema at the bottom of this page for what fields are available when updating a vacancy.</p><p>When updating a vacancy, any number of fields can be included - only those included will be changed. However, the <strong>\"updatedBy\"</strong> field must always be included.</p><p><strong><strong>When creating a vacancy, the following fields are required and must not be empty:</strong></strong></p><ul><li><strong>\"heading\"</strong>: \"string\"</li><li><strong>\"jobTitle\"</strong>: \"string\"</li><li><strong>\"publishDate\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"openTo\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"introduction\"</strong>: \"string\"</li><li><strong>\"assignments\"</strong>: \"string\"</li><li><strong>\"qualifications\"</strong>: \"string\"</li><li><strong>\"moreInfo\"</strong>: \"string\"</li><li><strong>\"orgName\"</strong>: \"string\"</li><li><strong>\"contact1Name\"</strong>: \"string\"</li><li><strong>\"contact1JobTitle\"</strong>: \"string\"</li><li><strong>\"contact1EmailAddress\"</strong>: \"string\"</li><li><strong>\"contact1PhoneNumber\"</strong>: \"string\"</li><li><strong>\"webLinkUrl\"</strong>: \"string\"</li><li><strong>\"hoursRatio\"</strong>: \"string\"</li><li><strong>\"unionName\"</strong>: \"string\"</li><li><strong>\"locations\"</strong>: \"string\"</li><li><strong>\"createdBy\"</strong>: \"string\"</li><li><strong>\"sourceSystem\"</strong>: \"string\"</li></ul><p><strong><strong>When updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"openTo\"</strong> must be at least 10 days later from when the vacancy is updated.</ul><p><strong><strong>When creating OR updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"publishDate\"</strong> and<strong> \"openTo\"</strong> must be in the future</li><li><strong>\"publishDate\"</strong> must be at least 10 days earlier than <strong>\"openTo\"</strong></li><li><strong>\"openTo\"</strong> must be a working day (not a weekend day nor an Icelandic holiday (rauður dagur))</li><li>If <strong>\"contact2Name\"</strong> is provided then <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> must be provided as well <ul><li><i>When updating, this only applies if <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> do not already exist in the vacancy</i></li></ul><li><strong>\"contact1PhoneNumber\"</strong> and <strong>\"contact2PhoneNumber\"</strong> can only contain numbers and optionally phone number related characters (\"-\", \"+\", \"(\", \")\", or whitespace)</li><li><strong>\"webLinkUrl\"</strong> must be a valid URL that returns a valid response</li></ul><p>There is also an endpoint to add vacancy statistics which users are <strong><strong>required</strong></strong> to use to once the hiring process for the corresponding vacancy is finished.<br>Refer to the <strong>NewVacancyStatsDto</strong> schema at the bottom of this page for what fields should be included when submitting.</p><h3>OpenInvoices</h3><p>This controller provides endpoints to fetch data related to open invoices.</p>",
+    "description": "<h2>API's to fetch and send data to FJS</h2><h3>Account</h3><p>This is currently not used.</p><h3>Employee</h3><p>Fetch information about employees from Orri.</p><h3>Organization</h3><p>This controller is used to fetch information about organizations. In icelandic 'Stofnanir'.</p><p>Here you can find which Organization Units belong to an organization and get details about an organization.</p><h3>Organization Employee</h3><p>This controller is used to fetch information about employees in organizations or in organization units. In icelandic 'Stofnanir' or 'deildir / stofnunareiningar'.</p><p>Here you can find which employees belong to an organization or an organization unit.</p><h3>OrganizationUnit</h3><p>This controller gives more details about an organization unit. In icelandic 'deildir / stofnunareiningar'.</p><h3>TimeRegistration</h3><p>This controller contains endpoints to import, create, read, update and delete time registrations and import groups. One endpoint is used to send a batch of timeregistrations from Elfur to Orri.</p><h4>Import time registration processes explained:</h4><p>First the timeregistrations are saved to Elfur database. When the time registration \"batch\", called \"Import Group\" in Elfur, is ready, they are sent to Orri as a batch.</p><p>There are two ways to import time registrations to Elfur database. Via excel file or manually adding them to an import group.</p><p><strong>Importing time registrations from an excel file, then process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>import_from_excel</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n - We get the importGroupId from step 1, the excel import.\r\n\r\n<strong>Create an import group and add time registrations to it. When all time registrations are added, process the time registrations to Orri.</strong>\r\n 1. {ServerURL}/v1/time_registration/<strong>create_import_group</strong>\r\n - Returns an importGroupId.\r\n 2. {ServerURL}/v1/time_registration/<strong>add_timeregistrations_to_import_group/{importGroupId}/{isFinalized}</strong>\r\n - Add time registrations to the import group. One or more at a time.\r\n - When last time registration is added, set isFinalized to true.\r\n 3. {ServerURL}/v1/time_registration/<strong>process_time_registrations_import_group?importGroupId={importGroupId}</strong>\r\n\r\n<p>Time registrations are now in Orri.</p><h3>Vacancy</h3><p>This controller contains endpoints to create, fetch, and modify vacancies and submit vacancy statistics.</p><p>Refer to the <strong>NewVacancyDto</strong> schema at the bottom of this page for what fields are available when creating a vacancy.<br>Refer to the <strong>UpdateVacancyDto</strong> schema at the bottom of this page for what fields are available when updating a vacancy.</p><p>When updating a vacancy, any number of fields can be included - only those included will be changed. However, the <strong>\"updatedBy\"</strong> field must always be included.</p><p><strong><strong>When creating a vacancy, the following fields are required and must not be empty:</strong></strong></p><ul><li><strong>\"heading\"</strong>: \"string\"</li><li><strong>\"jobTitle\"</strong>: \"string\"</li><li><strong>\"publishDate\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"openTo\"</strong>: \"2025-05-13T15:12:42.200Z\"</li><li><strong>\"introduction\"</strong>: \"string\"</li><li><strong>\"assignments\"</strong>: \"string\"</li><li><strong>\"qualifications\"</strong>: \"string\"</li><li><strong>\"moreInfo\"</strong>: \"string\"</li><li><strong>\"orgName\"</strong>: \"string\"</li><li><strong>\"contact1Name\"</strong>: \"string\"</li><li><strong>\"contact1JobTitle\"</strong>: \"string\"</li><li><strong>\"contact1EmailAddress\"</strong>: \"string\"</li><li><strong>\"contact1PhoneNumber\"</strong>: \"string\"</li><li><strong>\"webLinkUrl\"</strong>: \"string\"</li><li><strong>\"hoursRatio\"</strong>: \"string\"</li><li><strong>\"unionName\"</strong>: \"string\"</li><li><strong>\"locations\"</strong>: \"string\"</li><li><strong>\"createdBy\"</strong>: \"string\"</li><li><strong>\"sourceSystem\"</strong>: \"string\"</li></ul><p><strong><strong>When updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"openTo\"</strong> must be at least 10 days later from when the vacancy is updated.</ul><p><strong><strong>When creating OR updating a vacancy, the following restrictions apply:</strong></strong></p><ul><li><strong>\"publishDate\"</strong> and<strong> \"openTo\"</strong> must be in the future</li><li><strong>\"publishDate\"</strong> must be at least 10 days earlier than <strong>\"openTo\"</strong></li><li><strong>\"openTo\"</strong> must be a working day (not a weekend day nor an Icelandic holiday (rauður dagur))</li><li>If <strong>\"contact2Name\"</strong> is provided then <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> must be provided as well <ul><li><i>When updating, this only applies if <strong>\"contact2JobTitle\"</strong>, <strong>\"contact2EmailAddress\"</strong> and <strong>\"contact2PhoneNumber\"</strong> do not already exist in the vacancy</i></li></ul><li><strong>\"contact1PhoneNumber\"</strong> and <strong>\"contact2PhoneNumber\"</strong> can only contain numbers and optionally phone number related characters (\"-\", \"+\", \"(\", \")\", or whitespace)</li><li><strong>\"webLinkUrl\"</strong> must be a valid URL that returns a valid response</li></ul><p>There is also an endpoint to add vacancy statistics which users are <strong><strong>required</strong></strong> to use to once the hiring process for the corresponding vacancy is finished.<br>Refer to the <strong>NewVacancyStatsDto</strong> schema at the bottom of this page for what fields should be included when submitting.</p><h3>OpenInvoices</h3><p>This controller provides endpoints to fetch data related to open invoices.</p><p>The <strong>/v1/openinvoices/invoices</strong> endpoint supports the following filter parameters:</p><ul><li><strong>limit</strong>: Maximum number of invoices to return (default: 50, max: 100)</li><li><strong>after</strong>: Cursor for next page (pagination)</li><li><strong>before</strong>: Cursor for previous page (pagination)</li><li><strong>dateFrom</strong>: Optional start date for filtering invoices (inclusive, DateOnly format). If not set, defaults to one month ago.</li><li><strong>dateTo</strong>: Optional end date for filtering invoices (inclusive, DateOnly format). If not set, defaults to today.</li><li><strong>types</strong>: Optional list of invoice type IDs to filter by. Use the IDs returned by the <strong>/types</strong> endpoint. If left empty, all types are included.</li><li><strong>suppliers</strong>: Optional list of supplier IDs to filter by. Use the IDs returned by the <strong>/suppliers</strong> endpoint. If left empty, all suppliers are included.</li><li><strong>customers</strong>: Optional list of customer IDs to filter by. Use the IDs returned by the <strong>/customers</strong> endpoint. If left empty, all customers are included.</li></ul><p><strong>Note:</strong> To get the available filter values, use the following helper endpoints:</p><ul><li><strong>/v1/openinvoices/types</strong> - Returns available invoice types with their IDs</li><li><strong>/v1/openinvoices/suppliers</strong> - Returns available suppliers with their IDs</li><li><strong>/v1/openinvoices/customers</strong> - Returns available customers with their IDs</li></ul><p><strong>Filter Syntax:</strong> When providing multiple IDs for types, suppliers, or customers, repeat the parameter name for each value:</p><ul><li>Single ID: <code>/v1/openinvoices/invoices?suppliers=123</code></li><li>Multiple IDs: <code>/v1/openinvoices/invoices?suppliers=123&suppliers=456&suppliers=789</code></li><li>Combined filters: <code>/v1/openinvoices/invoices?types=1&types=2&suppliers=123&customers=456&customers=789</code></li></ul>",
     "version": "1.0"
   },
   "paths": {
@@ -86,6 +86,102 @@
     "/v1/account/live": {
       "get": {
         "tags": ["Account"],
+        "summary": "[GET] Basic check to see if controller is living.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/accountingmasterdata/get_expenditure_types": {
+      "get": {
+        "tags": ["AccountingMasterData"],
+        "summary": "[GET] Get a list of expenditure types.\r\nThis endpoint fetches data from FJS database.",
+        "parameters": [
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(Optional) Offset for pagination. Row where to start fetching from.",
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenditureTypesDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenditureTypesDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenditureTypesDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/v1/accountingmasterdata/live": {
+      "get": {
+        "tags": ["AccountingMasterData"],
         "summary": "[GET] Basic check to see if controller is living.",
         "responses": {
           "200": {
@@ -672,7 +768,7 @@
           {
             "name": "types",
             "in": "query",
-            "description": "Optional list of invoice type IDs to filter by.",
+            "description": "Optional list of invoice type IDs to filter by. by. Corresponds to the supplier id returned by the /types endpoint.",
             "schema": {
               "type": "array",
               "items": { "type": "integer", "format": "int32" }
@@ -681,7 +777,7 @@
           {
             "name": "suppliers",
             "in": "query",
-            "description": "Optional list of seller (supplier) IDs to filter by.",
+            "description": "Optional list of supplier IDs to filter by. Corresponds to the supplier id returned by the /suppliers endpoint.",
             "schema": {
               "type": "array",
               "items": { "type": "integer", "format": "int32" }
@@ -690,7 +786,7 @@
           {
             "name": "customers",
             "in": "query",
-            "description": "Optional list of buyer (customer) IDs to filter by.",
+            "description": "Optional list of customer IDs to filter by. Corresponds to the customer id returned by the /customers endpoint.",
             "schema": {
               "type": "array",
               "items": { "type": "integer", "format": "int32" }
@@ -2044,18 +2140,6 @@
         "summary": "[GET] Get a list of vacancies (i.e. laus störf).\r\nThis endpoint fetches data from FJS database.",
         "parameters": [
           {
-            "name": "openFrom",
-            "in": "query",
-            "description": "(Optional) Filter by date. The start date of the application period.",
-            "schema": { "type": "string", "format": "date-time" }
-          },
-          {
-            "name": "openTo",
-            "in": "query",
-            "description": "(Optional) Filter by date. The end date of the application period.",
-            "schema": { "type": "string", "format": "date-time" }
-          },
-          {
             "name": "filter",
             "in": "query",
             "description": "(Optional) Filter to filter down the vacancy list.",
@@ -2822,6 +2906,38 @@
         "additionalProperties": false,
         "description": "Paginated result of type T"
       },
+      "ExpenditureTypesDto": {
+        "type": "object",
+        "properties": {
+          "expenditureTypeCode": {
+            "type": "string",
+            "description": "Gets or sets the Expenditure Type Code.\r\nMaps to v_TegundAccount.tegundAccount.",
+            "nullable": true
+          },
+          "term": {
+            "type": "string",
+            "description": "Gets or sets the Term.\r\nMaps to v_TegundAccount.accountDescription",
+            "nullable": true
+          },
+          "validPostingCodes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Gets or sets the Term.\r\nMaps to v_TegundAccount.validPostingCodes",
+            "nullable": true
+          },
+          "defaultPostingCode": {
+            "type": "string",
+            "description": "Gets or sets the Term.\r\nMaps to v_TegundAccount.defaultpostingCodeOnExpenditureRevenueAccount",
+            "nullable": true
+          },
+          "workInProgress": {
+            "type": "string",
+            "description": "Gets or sets the Term.\r\nMaps to v_TegundAccount.workInProgress",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ImportGroup": {
         "type": "object",
         "properties": {
@@ -3266,11 +3382,6 @@
             "description": "Gets or sets the Invoice Surrogate Key.",
             "format": "int32"
           },
-          "customerSupplierRelationshipId": {
-            "type": "string",
-            "description": "Gets or sets the Customer-Supplier relationship id",
-            "nullable": true
-          },
           "erpInvoiceId": {
             "type": "number",
             "description": "Gets or sets the ERP Invoice ID.",
@@ -3514,7 +3625,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Represents a comprehensive data transfer object for an open invoice with all dimension data.\r\nData is mapped from the fact_Invoice table with LEFT JOINs to dimension tables.\r\nCustom properties include; CustomerSupplierRelationshipId"
+        "description": "Represents a comprehensive data transfer object for an open invoice with all dimension data.\r\nData is mapped from the fact_Invoice table with LEFT JOINs to dimension tables."
       },
       "OrganizationResponseDto": {
         "type": "object",
@@ -4487,19 +4598,39 @@
       }
     },
     "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter: Bearer {JWT token}.",
+        "name": "Authorization",
+        "in": "header"
+      },
       "ExecuteAsUsername": {
         "type": "apiKey",
         "description": "Enter: Username base64 encoded token.",
         "name": "X-ExecuteAsUsername",
         "in": "header"
+      },
+      "ExecuteAsPassword": {
+        "type": "apiKey",
+        "description": "Enter: Password base64 encoded token.",
+        "name": "X-ExecuteAsPassword",
+        "in": "header"
       }
     }
   },
-  "security": [{ "ExecuteAsUsername": [] }],
+  "security": [
+    { "Bearer": [] },
+    { "ExecuteAsUsername": [] },
+    { "ExecuteAsPassword": [] }
+  ],
   "tags": [
     {
       "name": "Account",
       "description": "Account controller, fetch data from Orri. Used for account verification."
+    },
+    {
+      "name": "AccountingMasterData",
+      "description": "Accounting Master Data controller, used to get information about accounting master data.\r\nAccounting Master Data is equivalent to Bókhaldsstofngögn in Icelandic."
     },
     {
       "name": "Employee",

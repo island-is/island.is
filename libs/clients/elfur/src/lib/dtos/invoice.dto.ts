@@ -20,7 +20,6 @@ export const mapInvoiceDto = (
 ): InvoiceDto | null => {
   if (
     !invoice.erpInvoiceId ||
-    !invoice.customerSupplierRelationshipId ||
     !invoice.invoiceNum ||
     !invoice.erpInvoiceAmountISK ||
     !invoice.invoiceCurrencyCode ||
@@ -37,7 +36,7 @@ export const mapInvoiceDto = (
 
   return {
     id: invoice.erpInvoiceId,
-    groupId: invoice.customerSupplierRelationshipId,
+    groupId: `${invoice.customerId}-${invoice.supplierId}`,
     number: invoice.invoiceNum,
     currency: invoice.invoiceCurrencyCode,
     amount: invoice.erpInvoiceAmountISK,
