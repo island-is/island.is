@@ -40,14 +40,13 @@ import { DefendantService } from './defendant.service'
 
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
@@ -65,7 +64,7 @@ export class DefendantController {
     return this.defendantService.create(theCase, defendantToCreate, user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(DefendantExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -97,7 +96,7 @@ export class DefendantController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(DefendantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })

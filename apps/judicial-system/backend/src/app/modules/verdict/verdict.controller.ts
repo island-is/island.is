@@ -37,6 +37,7 @@ import {
 import {
   CaseCompletedGuard,
   CaseExistsGuard,
+  CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
@@ -51,6 +52,7 @@ import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { VerdictService } from './verdict.service'
+
 @Controller('api/case/:caseId')
 @ApiTags('verdicts')
 @UseGuards(
@@ -58,7 +60,6 @@ import { VerdictService } from './verdict.service'
   RolesGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
-  CaseWriteGuard,
 )
 export class VerdictController {
   constructor(
@@ -69,6 +70,7 @@ export class VerdictController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -93,7 +95,12 @@ export class VerdictController {
     )
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseWriteGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -123,7 +130,12 @@ export class VerdictController {
     )
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseReadGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(publicProsecutorStaffRule, prisonSystemStaffRule)
   @Get('defendant/:defendantId/verdict/serviceCertificate')
   @Header('Content-Type', 'application/pdf')
@@ -160,7 +172,12 @@ export class VerdictController {
     res.end(pdf)
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseReadGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -199,7 +216,7 @@ export class VerdictController {
     return currentVerdict
   }
 
-  @UseGuards(CaseCompletedGuard)
+  @UseGuards(CaseWriteGuard, CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

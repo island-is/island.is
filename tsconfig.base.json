@@ -162,6 +162,9 @@
       "@island.is/api/domains/municipalities-financial-aid": [
         "libs/api/domains/municipalities-financial-aid/src/index.ts"
       ],
+      "@island.is/api/domains/my-pages": [
+        "libs/api/domains/my-pages/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -747,6 +750,9 @@
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
+      "@island.is/clients/financial-management-authority": [
+        "libs/clients/financial-management-authority/src/index.ts"
+      ],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
@@ -1282,7 +1288,8 @@
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
-      ]
+      ],
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
   }
