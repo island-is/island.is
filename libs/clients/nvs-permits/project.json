@@ -1,7 +1,7 @@
 {
   "name": "clients-nvs-permits",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "clients-nvs-permits/src",
+  "sourceRoot": "libs/clients/nvs-permits/src",
   "projectType": "library",
   "tags": ["lib:client", "scope:client"],
   "targets": {
@@ -12,7 +12,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "clients-nvs-permits/jest.config.ts"
+        "jestConfig": "libs/clients/nvs-permits/jest.config.ts"
       }
     },
     "update-openapi-document": {

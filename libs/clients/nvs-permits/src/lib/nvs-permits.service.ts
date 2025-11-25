@@ -1,7 +1,6 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { PermitHunting, permitHunting, PermitRanger, permitRanger, PermitRangerData } from '../../gen/fetch'
-import { LOGGER_PROVIDER, type Logger } from "@island.is/logging";
+import { PermitHunting, permitHunting, PermitRanger, permitRanger } from '../../gen/fetch'
 import { CodeOwners } from "@island.is/shared/constants";
 import { CodeOwner } from '@island.is/nest/core'
 import { dataOr404Null } from "@island.is/clients/middlewares";
@@ -10,8 +9,6 @@ import { dataOr404Null } from "@island.is/clients/middlewares";
 @Injectable()
 @CodeOwner(CodeOwners.Hugsmidjan)
 export class NvsPermitsClientService {
-  constructor(){}
-
   public async getHuntingPermits(auth: Auth): Promise<PermitHunting | null> {
     return dataOr404Null(withAuthContext(auth, () => {
       return permitHunting({

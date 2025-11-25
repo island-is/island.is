@@ -7,7 +7,7 @@ export enum LicensePaths {
   FirearmLicensesDetail = '/skirteini/rikislogreglustjori/skotvopnaleyfi',
   MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
   DisabilityLicense = '/skirteini/tryggingastofnun/ororkuskirteini',
-  HuntingLicense = '/skirteini/umhverfisstofnun/veidikort',
+  HuntingLicense = '/skirteini/natturuverndarstofnun/veidikort',
   PCardDetail = '/skirteini/syslumenn/pkort',
   EhicDetail = '/skirteini/sjukratryggingar/ehic',
 
