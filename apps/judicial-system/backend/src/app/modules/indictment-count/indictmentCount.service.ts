@@ -131,7 +131,7 @@ export class IndictmentCountService {
       ? updateWithTransaction(transaction)
       : updateWithInternalTransaction()
 
-    const [numberOfAffectedRows] = await promisedUpdate
+    const [numberOfAffectedRows, updatedIndictmentCounts] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -144,27 +144,7 @@ export class IndictmentCountService {
       )
     }
 
-    const indictmentCount = await this.indictmentCountModel.findOne({
-      where: { id: indictmentCountId, caseId },
-      include: [
-        {
-          model: Offense,
-          as: 'offenses',
-          required: false,
-          order: [['created', 'ASC']],
-          separate: true,
-        },
-      ],
-      transaction,
-    })
-
-    if (!indictmentCount) {
-      throw new InternalServerErrorException(
-        `Could not find indictment count ${indictmentCountId} of case ${caseId}`,
-      )
-    }
-
-    return indictmentCount
+    return updatedIndictmentCounts[0]
   }
 
   async delete(
