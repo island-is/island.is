@@ -1,6 +1,6 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { ListItem } from './listItem.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
+import { ListItem } from './listItem.model'
 
 @ObjectType('FormSystemFieldSettings')
 export class FieldSettings {
@@ -78,4 +78,7 @@ export class FieldSettings {
 
   @Field(() => String, { nullable: true })
   applicantType?: string
+
+  @Field(() => Boolean, { nullable: true })
+  hasDescription?: boolean
 }
