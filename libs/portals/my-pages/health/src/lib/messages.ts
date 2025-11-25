@@ -1995,8 +1995,13 @@ export const messages = defineMessages({
     id: 'sp.health:no-permit',
   },
   noPermitsRegistered: {
-    defaultMessage: 'Þú ert ekki með neinar heimildir',
+    defaultMessage: 'Þú ert ekki með neinar heimildir.',
     id: 'sp.health:no-permits-registered',
+  },
+  noActivePermitsRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+    id: 'sp.health:no-active-permits-registered',
   },
   active: {
     defaultMessage: 'Virk',

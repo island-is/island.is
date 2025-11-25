@@ -45,6 +45,7 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapCountryPermitStatus,
   mapDelegationStatus,
   mapDispensationItem,
   mapPermit,
@@ -417,7 +418,6 @@ export class HealthDirectorateService {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      input.active,
       input.status.map((status) =>
         status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
       ),
@@ -504,9 +504,7 @@ export class HealthDirectorateService {
     const permits = await this.healthApi.getPermits(
       auth,
       locale,
-      input.status.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status.map((status) => mapCountryPermitStatus(status)),
     )
 
     if (!permits) {
