@@ -28,7 +28,6 @@ interface Params {
 }
 
 export const Applications = () => {
-  console.log('Applications component rendered')
   useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
