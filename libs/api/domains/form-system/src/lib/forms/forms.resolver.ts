@@ -25,7 +25,10 @@ import {
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusInput,
+} from '@island.is/form-system/shared'
 import { Form, FormResponse } from '../../models/form.model'
 import {
   type OrganizationTitleByNationalIdDataLoader,
@@ -72,6 +75,18 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.formsService.publishForm(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'updateFormSystemFormStatus',
+    nullable: true,
+  })
+  async updateFormStatus(
+    @Args('input', { type: () => UpdateFormStatusInput })
+    input: UpdateFormStatusInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.formsService.updateFormStatus(user, input)
   }
 
   @Query(() => FormResponse, {

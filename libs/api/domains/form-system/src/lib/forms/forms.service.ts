@@ -12,8 +12,12 @@ import {
   FormsControllerFindOneRequest,
   FormsControllerPublishRequest,
   FormsControllerUpdateFormRequest,
+  FormsControllerUpdateStatusRequest,
 } from '@island.is/clients/form-system'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusInput,
+} from '@island.is/form-system/shared'
 import {
   CreateFormInput,
   DeleteFormInput,
@@ -65,6 +69,15 @@ export class FormsService {
     )
   }
 
+  async updateFormStatus(
+    auth: User,
+    input: UpdateFormStatusInput,
+  ): Promise<void> {
+    await this.formsApiWithAuth(auth).formsControllerUpdateStatus(
+      input as FormsControllerUpdateStatusRequest,
+    )
+  }
+
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth).formsControllerFindOne(
       input as FormsControllerFindOneRequest,
@@ -76,7 +89,6 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth).formsControllerFindAll(
       input as FormsControllerFindAllRequest,
     )
-
     return response as FormResponse
   }
 

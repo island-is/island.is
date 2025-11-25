@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
@@ -12,6 +17,7 @@ import {
   UpdateFormError,
   UpdateFormResponse,
   UrlMethods,
+  UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
 import { jwtDecode } from 'jwt-decode'
@@ -340,14 +346,14 @@ export class FormsService {
       await form.save()
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
+        const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = error.errors.map(
-          (err) =>
-            ({
-              field: err.path,
-              message: err.message,
-            } as UpdateFormError),
-        )
+        response.errors = [
+          {
+            field: 'slug',
+            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+          } as UpdateFormError,
+        ]
       } else {
         throw error
       }
@@ -356,29 +362,118 @@ export class FormsService {
     return response
   }
 
-  async delete(id: string): Promise<void> {
+  async updateStatus(
+    id: string,
+    updateFormStatusDto: UpdateFormStatusDto,
+  ): Promise<void> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found.`)
+      throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
-    const hasApplications =
+    const newStatus = updateFormStatusDto.newStatus
+    const currentStatus = form.status
+
+    switch (currentStatus) {
+      case FormStatus.IN_DEVELOPMENT:
+        if (newStatus === FormStatus.PUBLISHED) {
+          await this.publishFormInDevelopment(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          await this.deleteForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED:
+        if (newStatus === FormStatus.ARCHIVED) {
+          await this.archiveForm(id, form)
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
+          await this.changePublishedForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED_BEING_CHANGED:
+        if (newStatus === FormStatus.PUBLISHED) {
+          await this.publishFormBeingChanged(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          await this.deleteForm(id, form)
+        }
+        break
+      default:
+        throw new Error(
+          `Cannot change status from '${currentStatus}' to '${newStatus}'`,
+        )
+    }
+  }
+
+  private async publishFormInDevelopment(
+    id: string,
+    form: Form,
+  ): Promise<void> {
+    return this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
+
+        form.status = FormStatus.PUBLISHED
+        form.beenPublished = true
+        await form.save({ transaction })
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
+  }
+
+  private async archiveForm(id: string, form: Form): Promise<void> {}
+  private async publishFormBeingChanged(
+    id: string,
+    form: Form,
+  ): Promise<void> {}
+  private async changePublishedForm(id: string, form: Form): Promise<void> {}
+
+  private async deleteForm(id: string, form: Form): Promise<void> {
+    const hasLiveApplications =
+      form.beenPublished &&
       (await this.applicationModel.count({
         where: { formId: id, isTest: false },
       })) > 0
 
-    if (form.beenPublished && hasApplications) {
-      throw new Error(
-        `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+    if (hasLiveApplications) {
+      throw new ConflictException(
+        `Form '${id}' cannot be deleted because it has been published and has applications tied to it.`,
       )
     }
 
     try {
       await form.destroy()
     } catch (error) {
-      console.error(`Error deleting form with id '${id}':`, error)
+      throw new InternalServerErrorException(
+        `Unexpected error deleting form '${id}'.`,
+      )
     }
+  }
+
+  async delete(id: string): Promise<void> {
+    // const form = await this.formModel.findByPk(id)
+    // if (!form) {
+    //   throw new NotFoundException(`Form with id '${id}' not found.`)
+    // }
+    // const hasApplications =
+    //   (await this.applicationModel.count({
+    //     where: { formId: id, isTest: false },
+    //   })) > 0
+    // if (form.beenPublished && hasApplications) {
+    //   throw new Error(
+    //     `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+    //   )
+    // }
+    // try {
+    //   await form.destroy()
+    // } catch (error) {
+    //   console.error(`Error deleting form with id '${id}':`, error)
+    // }
   }
 
   private async findById(id: string): Promise<Form> {
@@ -794,7 +889,7 @@ export class FormsService {
 
     if (existingForm.status === FormStatus.PUBLISHED_BEING_CHANGED) {
       throw new Error(
-        `Cannot change form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
+        `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
 
