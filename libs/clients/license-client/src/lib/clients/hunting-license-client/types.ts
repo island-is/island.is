@@ -1,4 +1,3 @@
-
 export type Validity = 'active' | 'expired' | 'unknown'
 
 export type HuntingLicenseDto = {

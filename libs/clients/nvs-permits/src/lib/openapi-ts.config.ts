@@ -1,8 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input:
-    './libs/clients/nvs-permits/src/clientConfig.json',
+  input: './libs/clients/nvs-permits/src/clientConfig.json',
   output: {
     path: './libs/clients/nvs-permits/gen/fetch',
     format: 'prettier',

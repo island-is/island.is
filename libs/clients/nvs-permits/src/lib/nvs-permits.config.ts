@@ -5,9 +5,7 @@ const schema = z.object({
   xroadPath: z.string(),
 })
 
-export const NvsPermitsClientConfig = defineConfig<
-  z.infer<typeof schema>
->({
+export const NvsPermitsClientConfig = defineConfig<z.infer<typeof schema>>({
   name: 'NvsPermitsClientConfig',
   schema,
   load(env) {
