@@ -17,8 +17,8 @@ describe('LimitedAccessCaseController - Transition guards', () => {
     'transition',
     [
       JwtAuthUserGuard,
-      RolesGuard,
       LimitedAccessCaseExistsGuard,
+      RolesGuard,
       CaseTypeGuard,
       CaseWriteGuard,
       CaseCompletedGuard,
