@@ -47,8 +47,8 @@ export const undividedEstateForm: Form = buildForm({
   children: [
     dataCollection,
     applicationDescription,
-    announcerInfo,
     registrant,
+    announcerInfo,
     estateMembers,
     testamentInfo,
     reminderInfoForAssetsAndDebts,
