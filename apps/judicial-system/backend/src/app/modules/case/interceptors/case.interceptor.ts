@@ -11,9 +11,9 @@ import {
   CaseFileCategory,
   DefendantEventType,
   EventType,
+  isProsecutionUser,
   User,
   UserRole,
-  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 
 import {
