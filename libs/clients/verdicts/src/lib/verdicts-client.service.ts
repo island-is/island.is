@@ -510,7 +510,7 @@ export class VerdictsClientService {
 
     const lawyerNameSet = new Set<string>()
 
-    const [goproResponse] = await Promise.allSettled([
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       goproLawyersApi.getLawyersV2(),
       this.getSupremeCourtLawyers(lawyerNameSet),
     ])
@@ -519,6 +519,16 @@ export class VerdictsClientService {
       for (const lawyer of goproResponse.value.items ?? [])
         if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
           lawyerNameSet.add(lawyer.name as string)
+
+    if (goproResponse.status === 'rejected')
+      this.logger.error('Failed to fetch gopro lawyers', {
+        error: goproResponse.reason,
+      })
+
+    if (supremeCourtResponse.status === 'rejected')
+      this.logger.error('Failed to fetch supreme court lawyers', {
+        error: supremeCourtResponse.reason,
+      })
 
     const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
