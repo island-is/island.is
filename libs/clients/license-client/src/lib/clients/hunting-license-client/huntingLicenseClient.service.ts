@@ -17,10 +17,9 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import {
-  HuntingLicenseClientService,
-  HuntingLicenseDto,
-} from '@island.is/clients/hunting-license'
+import { NvsPermitsClientService } from '@island.is/clients/nvs-permits'
+import { mapHuntingLicenseDto } from './mapper'
+import { HuntingLicenseDto } from './types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'hunting-license-service'
@@ -31,7 +30,7 @@ export class HuntingLicenseClient
 {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private huntingService: HuntingLicenseClientService,
+    private huntingService: NvsPermitsClientService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
@@ -52,8 +51,8 @@ export class HuntingLicenseClient
     user: User,
   ): Promise<Result<HuntingLicenseDto | null>> {
     try {
-      const licenseInfo = await this.huntingService.getPermits(user)
-      return { ok: true, data: licenseInfo }
+      const licenseInfo = await this.huntingService.getHuntingPermits(user)
+      return { ok: true, data: mapHuntingLicenseDto(licenseInfo ?? undefined) }
     } catch (e) {
       //404 - no license for user, still ok!
       let error

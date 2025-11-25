@@ -3,7 +3,7 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "clients-nvs-permits/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -30,8 +30,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-ts -f libs/clients/nvs-permits/src/lib/openapi-ts.config.ts"
-      },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      }
     }
   }
 }

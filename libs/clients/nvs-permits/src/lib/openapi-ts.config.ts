@@ -4,7 +4,7 @@ export default defineConfig({
   input:
     './libs/clients/nvs-permits/src/clientConfig.json',
   output: {
-    path: './libs/clients/nvs-permits/src/lib/clients/nvs-permits/gen/fetch',
+    path: './libs/clients/nvs-permits/gen/fetch',
     format: 'prettier',
     lint: 'eslint',
   },
