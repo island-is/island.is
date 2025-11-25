@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
-  APPLICATION_APPLICATIONS,
+  APPLICATION_CARDS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -30,7 +30,7 @@ import {
 } from '@island.is/shared/problem'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
-  Application,
+  ApplicationCard,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTemplate,
@@ -68,18 +68,16 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
 
   useApplicationNamespaces(type)
 
-  const {
-    data,
-    loading,
-    error: applicationsError,
-    refetch,
-  } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
-    variables: {
-      input: { typeId: type },
+  const { data, loading, error, refetch } = useLocalizedQuery(
+    APPLICATION_CARDS,
+    {
+      variables: {
+        input: { typeId: type },
+      },
+      skip: !type && !delegationsChecked,
+      fetchPolicy: 'cache-and-network',
     },
-    skip: !type && !delegationsChecked,
-    fetchPolicy: 'cache-and-network',
-  })
+  )
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -119,7 +117,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     if (
       type &&
       data &&
-      isEmpty(data.applicationApplications) &&
+      isEmpty(data.ApplicationSystemCard) &&
       delegationsChecked
     ) {
       createApplication()
@@ -134,8 +132,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     return <ErrorShell errorType="notExist" />
   }
 
-  if (!type || applicationsError) {
-    const foundError = findProblemInApolloError(applicationsError as any, [
+  if (!type || error) {
+    const foundError = findProblemInApolloError(error as any, [
       ProblemType.BAD_SUBJECT,
     ])
 
@@ -174,8 +172,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
-    (x: Application) => x.state === 'draft',
+  const numberOfApplicationsInDraft = data?.ApplicationSystemCard.filter(
+    (x: ApplicationCard) => x.status === 'draft',
   ).length
 
   const shouldRenderNewApplicationButton =
@@ -187,7 +185,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <Page>
       <GridContainer>
-        {!loading && !isEmpty(data?.applicationApplications) && (
+        {!loading && !isEmpty(data?.ApplicationSystemCard) && (
           <Box marginBottom={5}>
             <Box
               marginTop={5}
@@ -215,9 +213,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
               ) : null}
             </Box>
 
-            {data?.applicationApplications && (
+            {data?.ApplicationSystemCard && (
               <ApplicationList
-                applications={data.applicationApplications}
+                applications={data.ApplicationSystemCard}
                 onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
               />
