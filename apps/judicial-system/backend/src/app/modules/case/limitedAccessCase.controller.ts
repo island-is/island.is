@@ -155,8 +155,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     LimitedAccessCaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseCompletedGuard,
@@ -236,8 +236,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     MergedCaseExistsGuard,
@@ -342,8 +342,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
     CaseCompletedGuard,
@@ -405,8 +405,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     MergedCaseExistsGuard,
