@@ -98,7 +98,7 @@ export const estateSchema = z.object({
       }),
       email: customZodError(z.string().email(), m.errorEmail),
       address: z.string(),
-      relation: z.string(),
+      relation: customZodError(z.string().min(1), m.errorRelation),
     })
     .optional(),
 
