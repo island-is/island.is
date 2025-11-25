@@ -167,7 +167,7 @@ export class ValueType {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  delegationType?: string
+  applicantType?: string
 
   @IsOptional()
   @IsBoolean()
