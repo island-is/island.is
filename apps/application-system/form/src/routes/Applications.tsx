@@ -69,10 +69,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   useApplicationNamespaces(type)
 
   const {
-    data: data,
-    loading: loading,
-    error: error,
-    refetch: refetch,
+    data,
+    loading,
+    error,
+    refetch,
   } = useLocalizedQuery(APPLICATION_CARDS, {
     variables: {
       input: { typeId: type },
