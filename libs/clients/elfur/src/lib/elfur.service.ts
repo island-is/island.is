@@ -118,13 +118,11 @@ export class ElfurClientService {
       return null
     }
 
-    const returnObjc = {
+    return {
       invoiceTypes:
         data.invoiceTypesList?.map(mapInvoiceTypeDto).filter(isDefined) ?? [],
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
-
-    return returnObjc
   }
 }
