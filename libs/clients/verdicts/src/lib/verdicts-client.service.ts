@@ -478,26 +478,47 @@ export class VerdictsClientService {
     }
   }
 
+  private async getSupremeCourtLawyers(lawyerNameSet: Set<string>) {
+    const pageSize = 1000
+    let page = 1
+
+    let response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+      limit: pageSize,
+      page,
+    })
+    for (const lawyer of response.items ?? [])
+      lawyerNameSet.add(lawyer.name as string)
+
+    while (
+      typeof response.total === 'number' &&
+      response.total > pageSize * page
+    ) {
+      page += 1
+      response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+        limit: pageSize,
+        page,
+      })
+      for (const lawyer of response.items ?? [])
+        lawyerNameSet.add(lawyer.name as string)
+    }
+
+    return lawyerNameSet
+  }
+
   async getLawyers() {
     const { goproLawyersApi } = await this.getAuthenticatedGoproApis()
-    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      goproLawyersApi.getLawyersV2(),
-      this.supremeCourtApi.apiV2VerdictGetLawyersGet({
-        limit: 10000,
-      }),
-    ])
 
     const lawyerNameSet = new Set<string>()
+
+    const [goproResponse] = await Promise.allSettled([
+      goproLawyersApi.getLawyersV2(),
+      this.getSupremeCourtLawyers(lawyerNameSet),
+    ])
 
     if (goproResponse.status === 'fulfilled')
       for (const lawyer of goproResponse.value.items ?? [])
         if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
           lawyerNameSet.add(lawyer.name as string)
-
-    if (supremeCourtResponse.status === 'fulfilled') {
-      for (const lawyer of supremeCourtResponse.value.items ?? [])
-        if (lawyer?.name) lawyerNameSet.add(lawyer.name as string)
-    }
 
     const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
