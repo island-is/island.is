@@ -91,4 +91,43 @@ export class ApplicationV2Service {
       (a, b) => b.modified.getTime() - a.modified.getTime(),
     )
   }
+
+  async getApplicationSystemCards(
+    user: User,
+    locale: Locale,
+    input: ApplicationCardsInput,
+  ): Promise<ApplicationCard[]> {
+    const applications = await this.applicationApiWithAuth(
+      user,
+    ).applicationControllerFindAll({
+      nationalId: user.nationalId,
+      locale,
+      typeId: input?.typeId?.join(','),
+      status: input?.status?.join(','),
+      scopeCheck: input?.scopeCheck,
+    })
+
+    const appSystemCards = applications.map((application): ApplicationCard => {
+      return {
+        id: application.id,
+        created: application.created,
+        modified: application.modified,
+        typeId: application.typeId,
+        status: application.status,
+        name: application.name,
+        progress: application.progress,
+        slug: ApplicationConfigurations[application.typeId]?.slug,
+        org: institutionMapper[application.typeId].slug,
+        applicationPath: `umsoknir/${
+          ApplicationConfigurations[application.typeId]?.slug
+        }/${application.id}`,
+        orgContentfulId: institutionMapper[application.typeId].contentfulId,
+        nationalId: institutionMapper[application.typeId].nationalId,
+        actionCard: application.actionCard,
+      }
+    })
+    return appSystemCards.sort(
+      (a, b) => b.modified.getTime() - a.modified.getTime(),
+    )
+  }
 }

@@ -29,4 +29,21 @@ export class ApplicationV2Resolver {
   ): Promise<ApplicationCard[] | null> {
     return this.applicationV2Service.getApplicationCards(user, locale, input)
   }
+
+  @Query(() => [ApplicationCard], {
+    nullable: true,
+    name: 'ApplicationSystemCard',
+  })
+  async applicationSystemCards(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input', { nullable: true }) input: ApplicationCardsInput,
+  ): Promise<ApplicationCard[] | null> {
+    return this.applicationV2Service.getApplicationSystemCards(
+      user,
+      locale,
+      input,
+    )
+  }
 }
