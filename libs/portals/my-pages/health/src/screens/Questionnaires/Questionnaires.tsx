@@ -1,6 +1,7 @@
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
+  QuestionnairesBaseItem,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
 } from '@island.is/api/schema'
 import {
@@ -21,7 +22,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -47,6 +48,7 @@ const Questionnaires: React.FC = () => {
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
+  const [filteredData, setFilteredData] = useState<QuestionnairesBaseItem[]>([])
 
   const { data, loading, error } = useGetQuestionnairesQuery({
     variables: {
@@ -88,6 +90,32 @@ const Questionnaires: React.FC = () => {
   const handleSearchChange = (value: string) => {
     debouncedSetSearchQuery(value)
   }
+
+  useEffect(() => {
+    setFilteredData(
+      data?.questionnairesList?.questionnaires?.filter((item) => {
+        // Search filter
+        const searchLower = filterValues.searchQuery.toLowerCase()
+        const matchesSearch =
+          !searchLower ||
+          item.organization?.toLowerCase().includes(searchLower) ||
+          item.title?.toLowerCase().includes(searchLower)
+
+        // Status filter
+        const matchesStatus =
+          filterValues.status.length === 0 ||
+          (item.status && filterValues.status.includes(item.status))
+
+        // Organization filter
+        const matchesOrganization =
+          filterValues.organization.length === 0 ||
+          (item.organization &&
+            filterValues.organization.includes(item.organization))
+
+        return matchesSearch && matchesStatus && matchesOrganization
+      }) || [],
+    )
+  }, [filterValues, data])
 
   return (
     <IntroWrapper
@@ -211,76 +239,69 @@ const Questionnaires: React.FC = () => {
       <Box marginTop={5}>
         <Stack space={3}>
           {loading && <CardLoader />}
-          {data?.questionnairesList?.questionnaires
-            ?.filter((item) => {
-              // Search filter
-              const searchLower = filterValues.searchQuery.toLowerCase()
-              const matchesSearch =
-                !searchLower ||
-                item.organization?.toLowerCase().includes(searchLower) ||
-                item.title?.toLowerCase().includes(searchLower)
+          {filteredData?.map((questionnaire) => {
+            const status = questionnaire.status
+            const isAnswered = status === QuestionnairesStatusEnum.answered
+            const isDraft = status === QuestionnairesStatusEnum.draft
+            const isExpired = status === QuestionnairesStatusEnum.expired
+            return (
+              <ActionCard
+                key={questionnaire.id}
+                heading={questionnaire.title}
+                headingVariant="h4"
+                subText={questionnaire.description ?? ''}
+                eyebrow={
+                  questionnaire.organization ===
+                  QuestionnaireQuestionnairesOrganizationEnum.EL
+                    ? 'Embætti Landlæknis'
+                    : 'Landspítali'
+                }
+                eyebrowColor="purple400"
+                text={formatDate(questionnaire.sentDate)}
+                tag={{
+                  label: isAnswered
+                    ? formatMessage(messages.answeredQuestionnaire)
+                    : isExpired
+                    ? formatMessage(messages.expiredQuestionnaire)
+                    : isDraft
+                    ? formatMessage(messages.draftQuestionnaire)
+                    : formatMessage(messages.unAnsweredQuestionnaire),
 
-              // Status filter
-              const matchesStatus =
-                filterValues.status.length === 0 ||
-                (item.status && filterValues.status.includes(item.status))
-
-              // Organization filter
-              const matchesOrganization =
-                filterValues.organization.length === 0 ||
-                (item.organization &&
-                  filterValues.organization.includes(item.organization))
-
-              return matchesSearch && matchesStatus && matchesOrganization
-            })
-            ?.map((questionnaire) => {
-              const status = questionnaire.status
-              const isAnswered = status === QuestionnairesStatusEnum.answered
-              const isDraft = status === QuestionnairesStatusEnum.draft
-              const isExpired = status === QuestionnairesStatusEnum.expired
-              return (
-                <ActionCard
-                  key={questionnaire.id}
-                  heading={questionnaire.title}
-                  headingVariant="h4"
-                  subText={questionnaire.description ?? ''}
-                  eyebrow={
-                    questionnaire.organization ===
-                    QuestionnaireQuestionnairesOrganizationEnum.EL
-                      ? 'Embætti Landlæknis'
-                      : 'Landspítali'
-                  }
-                  eyebrowColor="purple400"
-                  text={formatDate(questionnaire.sentDate)}
-                  tag={{
-                    label: isAnswered
-                      ? formatMessage(messages.answeredQuestionnaire)
-                      : isExpired
-                      ? formatMessage(messages.expiredQuestionnaire)
-                      : isDraft
-                      ? formatMessage(messages.draftQuestionnaire)
-                      : formatMessage(messages.unAnsweredQuestionnaire),
-
-                    outlined: false,
-                    variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
-                  }}
-                  cta={{
-                    label: formatMessage(messages.seeMore),
-                    variant: 'text',
-                    icon: 'arrowForward',
-                    onClick: () =>
-                      navigate(
-                        HealthPaths.HealthQuestionnairesDetail.replace(
-                          ':org',
-                          questionnaire.organization?.toLocaleLowerCase() ?? '',
-                        ).replace(':id', questionnaire.id),
-                      ),
-                  }}
-                />
-              )
-            })}
+                  outlined: false,
+                  variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
+                }}
+                cta={{
+                  label: formatMessage(messages.seeMore),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () =>
+                    navigate(
+                      HealthPaths.HealthQuestionnairesDetail.replace(
+                        ':org',
+                        questionnaire.organization?.toLocaleLowerCase() ?? '',
+                      ).replace(':id', questionnaire.id),
+                    ),
+                }}
+              />
+            )
+          })}
         </Stack>
       </Box>
+      {!loading &&
+        (filterValues.status.length > 0 ||
+          filterValues.searchQuery.length > 0) &&
+        filteredData.length === 0 && (
+          <Box marginTop={3}>
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.questionnairesNotFound)}
+              message={formatMessage(messages.questionnaireNotFoundWithFilters)}
+              imgAlt=""
+              imgSrc="./assets/images/empty_flower.svg"
+            />
+          </Box>
+        )}
     </IntroWrapper>
   )
 }

@@ -65,16 +65,12 @@ export const Table: React.FC<TableProps> = ({
         answer.value.startsWith(`${col.id}:`),
       )
       if (column) {
-        // Handle both formats: "columnId:type:value" (new) and "columnId:value" (old)
+        //Format: columnId:type:value
         const parts = answer.value.split(':')
         let rowValue = ''
 
         if (parts.length >= 3) {
-          // New format: columnId:type:value
-          rowValue = parts.slice(2).join(':') // In case value contains ':'
-        } else if (parts.length === 2) {
-          // Old format: columnId:value
-          rowValue = parts[1]
+          rowValue = parts.slice(2).join(':')
         }
 
         if (!answersByColumn[column.id]) {
@@ -345,9 +341,9 @@ export const Table: React.FC<TableProps> = ({
                   columns.length === 1
                     ? '12/12'
                     : columns.length === 2
-                    ? '6/12'
+                    ? ['12/12', '12/12', '12/12', '6/12']
                     : columns.length === 3
-                    ? '4/12'
+                    ? ['12/12', '12/12', '12/12', '4/12']
                     : '12/12'
                 }
               >

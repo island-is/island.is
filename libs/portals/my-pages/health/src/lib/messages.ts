@@ -1827,6 +1827,15 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalisti fannst ekki',
     id: 'sp.health:questionnaire-not-found',
   },
+  questionnairesNotFound: {
+    defaultMessage: 'Ekkert fannst',
+    id: 'sp.health:questionnaires-not-found',
+  },
+  questionnaireNotFoundWithFilters: {
+    defaultMessage:
+      'Engir spurningalistar fundust með þessum skilyrðum. Hreinsaðu síurnar og reyndu aftur.',
+    id: 'sp.health:questionnaire-not-found-with-filters',
+  },
   questionnaireNotFoundDetail: {
     defaultMessage:
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',

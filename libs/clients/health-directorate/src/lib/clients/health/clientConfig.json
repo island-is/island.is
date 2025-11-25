@@ -578,15 +578,6 @@
                 "type": "string"
               }
             }
-          },
-          {
-            "name": "active",
-            "required": true,
-            "in": "query",
-            "description": "Whether to only include active commissions",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {

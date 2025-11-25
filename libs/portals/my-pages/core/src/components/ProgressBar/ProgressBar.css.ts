@@ -28,15 +28,34 @@ export const dot = style({
   backgroundColor: 'white',
   border: '2px solid transparent',
   zIndex: 10,
+  position: 'relative',
 })
 
 export const dotSelected = style({})
 
-export const selectedIndicator = style({
-  width: '20px',
-  height: '20px',
+export const hoverIndicator = style({
+  width: '26px',
+  height: '26px',
   borderRadius: '50%',
-  backgroundColor: '#0061FF', // blue400
+  backgroundColor: theme.color.mint400,
+  position: 'absolute',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  zIndex: 5,
+  pointerEvents: 'none',
+  opacity: 0,
+  transition: 'opacity 0.2s ease',
+})
+
+export const hoverIndicatorVisible = style({
+  opacity: 1,
+})
+
+export const selectedIndicator = style({
+  width: '26px',
+  height: '26px',
+  borderRadius: '50%',
+  backgroundColor: theme.color.blue400,
   position: 'absolute',
   top: '50%',
   transform: 'translate(-50%, -50%)',

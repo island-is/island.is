@@ -1,7 +1,15 @@
 import { QuestionnaireOptionsLabelValue } from '@island.is/api/schema'
 import { Box, Hyphen, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import React, { FC, useEffect, useMemo, useRef } from 'react'
+import React, {
+  FC,
+  MouseEventHandler,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import HtmlParser from 'react-html-parser'
 import * as styles from './ProgressBar.css'
 
@@ -38,7 +46,8 @@ export const ProgressBar: FC<Props> = ({
   const ref = useRef<HTMLElement>(null)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
   const shouldFocusAfterSelection = useRef(false)
-  const uniqueId = React.useId()
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const uniqueId = useId()
   const labelId = `progress-label-${uniqueId}`
   const descriptionId = `progress-description-${uniqueId}`
 
@@ -83,7 +92,7 @@ export const ProgressBar: FC<Props> = ({
     return null
   }
 
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     if (!onClick) {
@@ -192,6 +201,10 @@ export const ProgressBar: FC<Props> = ({
                   aria-checked={isSelected}
                   aria-label={option.label}
                   tabIndex={isTabbable ? 0 : -1}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onFocus={() => setHoveredIndex(index)}
+                  onBlur={() => setHoveredIndex(null)}
                   onClick={(e) => {
                     e.stopPropagation()
                     onOptionClick?.(option.value)
@@ -246,6 +259,35 @@ export const ProgressBar: FC<Props> = ({
             })}
           </Box>
         )}
+        {/* Hover indicator - positioned outside overflow hidden container */}
+        {options && options.length > 0 && hoveredIndex !== null && (
+          <Box className={styles.selectedIndicatorContainer}>
+            {options.map((option, index) => {
+              if (hoveredIndex !== index) return null
+              // Don't show hover indicator on the selected item
+              if (selectedValue?.value === option.value) return null
+
+              const isLast = index === options.length - 1
+              const isFirst = index === 0
+              const position =
+                (index / (options.length - 1)) * 100 +
+                (isLast ? -1 : isFirst ? 1 : 0)
+
+              return (
+                <Box
+                  key={`hover-${option.value}`}
+                  className={cn(
+                    styles.hoverIndicator,
+                    styles.hoverIndicatorVisible,
+                  )}
+                  style={{
+                    left: `${position}%`,
+                  }}
+                />
+              )
+            })}
+          </Box>
+        )}
       </Box>
 
       {options && options.length > 0 && (
@@ -274,12 +316,13 @@ export const ProgressBar: FC<Props> = ({
                   [styles.textLast]: isLast,
                 })}
                 textAlign={isMiddle ? 'center' : textAlign}
+                marginTop={1}
                 style={{
                   left: `${position}%`,
                   maxWidth: `${maxWidthPercent}%`,
                 }}
               >
-                <Text variant="small" color="blue400" fontWeight="medium">
+                <Text variant="small" color="blue400" fontWeight="semiBold">
                   <Hyphen>{option.label}</Hyphen>
                 </Text>
               </Box>

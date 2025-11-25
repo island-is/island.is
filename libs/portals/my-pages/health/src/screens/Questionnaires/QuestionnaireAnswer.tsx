@@ -123,6 +123,11 @@ const QuestionnaireAnswer: React.FC = () => {
                 ':submissionId',
                 response.data?.submitQuestionnaire.message || '',
               ),
+            {
+              state: {
+                submissionId: response.data?.submitQuestionnaire.message || '',
+              },
+            },
           )
         } else {
           toast.error(
