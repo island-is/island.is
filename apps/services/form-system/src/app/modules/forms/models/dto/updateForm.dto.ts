@@ -59,7 +59,7 @@ export class UpdateFormDto {
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional()
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @IsBoolean()
   @IsOptional()
