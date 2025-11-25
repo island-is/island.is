@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -15,7 +15,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UpdateCase, useCase } from '../../utils/hooks'
-import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, InputAdvocate, SectionHeading } from '..'
 import { defenderInfo } from './DefenderInfo.strings'
