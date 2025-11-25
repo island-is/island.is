@@ -94,10 +94,11 @@ export const Applications = () => {
   useEffect(() => {
     if (hasInitializedRef.current) return
     hasInitializedRef.current = true
+    let isMounted = true
 
     const run = async () => {
       const responseDto = await fetchApplications()
-      if (!responseDto) {
+      if (!isMounted || !responseDto) {
         setLoading(false)
         return
       }
@@ -111,7 +112,11 @@ export const Applications = () => {
       }
     }
     run()
-  }, [slug, createApplication, fetchApplications, loginAllowed])
+
+    return () => {
+      isMounted = false
+    }
+  }, [slug, createApplication, fetchApplications])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
