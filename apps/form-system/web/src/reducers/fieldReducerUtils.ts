@@ -159,6 +159,22 @@ const applyVisibilityToSections = (
           }))
         }
 
+        if (
+          fieldHidden &&
+          (field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+            field.fieldType === FieldTypesEnum.DROPDOWN_LIST)
+        ) {
+          newValues = field.values?.map((v) => ({
+            ...v,
+            json: v?.json
+              ? {
+                  ...v.json,
+                  listValue: undefined,
+                }
+              : { listValue: undefined as unknown as string },
+          }))
+        }
+
         return {
           ...field,
           isHidden: fieldHidden,
