@@ -403,6 +403,7 @@ export const PoliceCaseList = () => {
 
       let place: string | undefined = undefined
       let date: Date | undefined = undefined
+      let subtypes: IndictmentSubtype[] | undefined = undefined
 
       if (!policeCase.place && policeCaseInfo.place) {
         place = policeCaseInfo.place
@@ -410,6 +411,13 @@ export const PoliceCaseList = () => {
 
       if (!policeCase.date && policeCaseInfo.date) {
         date = new Date(policeCaseInfo.date)
+      }
+
+      if (
+        (!policeCase.subtypes || policeCase.subtypes?.length === 0) &&
+        policeCaseInfo.subtypes
+      ) {
+        subtypes = policeCaseInfo.subtypes
       }
 
       if (place || date) {
@@ -420,6 +428,15 @@ export const PoliceCaseList = () => {
               place: place ?? policeCase.place,
               date: date ?? policeCase.date,
             },
+          },
+        })
+      }
+
+      if (subtypes) {
+        updates.push({
+          index: idx,
+          update: {
+            subtypes,
           },
         })
       }

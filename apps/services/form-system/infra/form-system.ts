@@ -1,8 +1,21 @@
 import {
   CodeOwners,
+  json,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
+
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
 
 const serviceName = 'services-form-system-api'
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
@@ -32,15 +45,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-storage-form-system',
         prod: 'island-is-prod-storage-form-system',
       },
-      REDIS_URL_NODE_01: {
-        dev: JSON.stringify([
-          'localhost:7010',
-          'localhost:7011',
-          'localhost:7012',
-        ]),
-        staging: '/k8s/shared/redis/REDIS_URL_NODE_01',
-        prod: '/k8s/shared/redis/REDIS_URL_NODE_01',
-      },
+      REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
