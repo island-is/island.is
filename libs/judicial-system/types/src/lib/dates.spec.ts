@@ -2,19 +2,22 @@ import endOfDay from 'date-fns/endOfDay'
 
 import {
   getAppealDeadlineDate,
-  getIndictmentAppealDeadlineDate,
+  getIndictmentAppealDeadline,
   hasDatePassed,
   hasTimestamp,
 } from './dates'
 
-describe('getIndictmentAppealDeadlineDate', () => {
+describe('getIndictmentAppealDeadline', () => {
   test('should return fine appeal deadline', () => {
     // Arrange
     const baseDate = new Date(2024, 1, 1)
     const isFine = true
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
+    const { deadlineDate: actualDate } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine,
+    })
 
     // Assert
     expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 4)))
@@ -26,7 +29,10 @@ describe('getIndictmentAppealDeadlineDate', () => {
     const isFine = false
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
+    const { deadlineDate: actualDate } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine,
+    })
 
     // Assert
     expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 29)))

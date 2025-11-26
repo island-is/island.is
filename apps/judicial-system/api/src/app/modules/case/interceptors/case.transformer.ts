@@ -2,7 +2,7 @@ import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   getAppealDeadlineDate,
-  getIndictmentAppealDeadlineDate,
+  getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   hasDatePassed,
@@ -163,10 +163,10 @@ export const getIndictmentInfo = ({
   }
 
   const theRulingDate = new Date(rulingDate)
-  const indictmentAppealDeadline = getIndictmentAppealDeadlineDate({
+  const indictmentAppealDeadline = getIndictmentAppealDeadline({
     baseDate: theRulingDate,
     isFine,
-  }).toISOString()
+  }).deadlineDate.toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
@@ -193,35 +193,6 @@ export const getIndictmentInfo = ({
   }
 }
 
-export const getIndictmentDefendantsInfo = (theCase: Case) => {
-  return theCase.defendants?.map((defendant) => {
-    const { verdict } = defendant
-    const isServiceRequired =
-      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-
-    const baseDate = isServiceRequired
-      ? verdict.serviceDate
-      : theCase.rulingDate
-    const verdictAppealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate({
-          baseDate: new Date(baseDate),
-          isFine,
-        })
-      : undefined
-    const isVerdictAppealDeadlineExpired =
-      !!verdictAppealDeadline && hasDatePassed(verdictAppealDeadline)
-
-    return {
-      ...defendant,
-      // represents both verdicts and fines
-      verdictAppealDeadline: verdictAppealDeadline?.toISOString(),
-      isVerdictAppealDeadlineExpired,
-    }
-  })
-}
-
 const transformIndictmentCase = (theCase: Case): Case => {
   const { rulingDate, defendants, indictmentRulingDecision } = theCase
 
@@ -232,7 +203,6 @@ const transformIndictmentCase = (theCase: Case): Case => {
       rulingDate,
       defendants,
     }),
-    defendants: getIndictmentDefendantsInfo(theCase),
   }
 }
 
