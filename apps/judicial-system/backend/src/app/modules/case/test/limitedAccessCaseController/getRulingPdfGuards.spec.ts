@@ -17,8 +17,8 @@ describe('LimitedAccessCaseController - Get ruling pdf guards', () => {
     'getRulingPdf',
     [
       JwtAuthUserGuard,
-      RolesGuard,
       CaseExistsGuard,
+      RolesGuard,
       CaseTypeGuard,
       CaseReadGuard,
       CaseCompletedGuard,
