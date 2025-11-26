@@ -1083,6 +1083,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     value={courtTags.find(
                       (tag) => tag.value === queryState[QueryParam.COURT],
                     )}
+                    isSearchable={false}
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
                       if (option) {
@@ -1238,22 +1239,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                 flexDirection="row"
                                 alignItems="center"
                                 justifyContent="center"
-                                style={{
-                                  paddingLeft: !isActive ? '4px' : '0px',
-                                  paddingRight: !isActive ? '4px' : '0px',
-                                }}
                               >
                                 {tag.label}
                                 {isActive && (
                                   <span
-                                    style={{
-                                      marginLeft: '4px',
-                                      fontSize: '0.75rem',
-                                      fontWeight: 'normal',
-                                      visibility: isActive
-                                        ? 'visible'
-                                        : 'hidden',
-                                    }}
+                                    className={styles.crossmark}
                                     aria-hidden="true"
                                   >
                                     &#10005;
@@ -1272,6 +1262,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         label={formatMessage(
                           m.listPage.districtCourtSelectLabel,
                         )}
+                        isSearchable={false}
+                        isClearable={false}
                         value={districtCourtTagsForSelect.filter((tag) => {
                           if (
                             queryState[QueryParam.DISTRICT_COURTS]?.length > 0
