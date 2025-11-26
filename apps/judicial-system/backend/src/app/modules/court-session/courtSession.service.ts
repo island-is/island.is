@@ -32,8 +32,6 @@ export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly courtDocumentService: CourtDocumentService,
-    // TODO: Move to a repository service - models should only be used in repository services
-    // It would be best to hide the details of the court sesssion model from all but the backend
     @InjectModel(CourtSessionString)
     private readonly courtSessionStringModel: typeof CourtSessionString,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,

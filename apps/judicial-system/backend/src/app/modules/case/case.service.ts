@@ -603,7 +603,7 @@ export class CaseService {
   private async createCase(
     caseToCreate: CreateCaseDto,
     transaction: Transaction,
-  ): Promise<Case> {
+  ): Promise<string> {
     const theCase = await this.caseRepositoryService.create(
       {
         ...caseToCreate,
@@ -622,7 +622,7 @@ export class CaseService {
       )
     }
 
-    return theCase
+    return theCase.id
   }
 
   private async handlePoliceCaseNumbersUpdate(
@@ -1860,7 +1860,7 @@ export class CaseService {
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const theCase = await this.createCase(
+        const caseId = await this.createCase(
           {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
@@ -1878,13 +1878,9 @@ export class CaseService {
           transaction,
         )
 
-        await this.defendantService.createForNewCase(
-          theCase.id,
-          {},
-          transaction,
-        )
+        await this.defendantService.createForNewCase(caseId, {}, transaction)
 
-        return theCase.id
+        return caseId
       })
       .then((caseId) => this.findById(caseId))
   }
@@ -2610,61 +2606,63 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
-    return this.sequelize.transaction(async (transaction) => {
-      const extendedCase = await this.createCase(
-        {
-          origin: theCase.origin,
-          type: theCase.type,
-          description: theCase.description,
-          policeCaseNumbers: theCase.policeCaseNumbers,
-          defenderName: theCase.defenderName,
-          defenderNationalId: theCase.defenderNationalId,
-          defenderEmail: theCase.defenderEmail,
-          defenderPhoneNumber: theCase.defenderPhoneNumber,
-          leadInvestigator: theCase.leadInvestigator,
-          courtId: theCase.courtId,
-          translator: theCase.translator,
-          lawsBroken: theCase.lawsBroken,
-          legalBasis: theCase.legalBasis,
-          legalProvisions: theCase.legalProvisions,
-          requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-          caseFacts: theCase.caseFacts,
-          legalArguments: theCase.legalArguments,
-          requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-          prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
-          parentCaseId: theCase.id,
-          initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-          creatingProsecutorId: user.id,
-          prosecutorId: user.id,
-          prosecutorsOfficeId: user.institution?.id,
-          demands: isInvestigationCase(theCase.type)
-            ? theCase.demands
-            : undefined,
-        } as CreateCaseDto,
-        transaction,
-      )
-
-      if (theCase.defendants && theCase.defendants?.length > 0) {
-        await Promise.all(
-          theCase.defendants?.map((defendant) =>
-            this.defendantService.createForNewCase(
-              extendedCase.id,
-              {
-                noNationalId: defendant.noNationalId,
-                nationalId: defendant.nationalId,
-                name: defendant.name,
-                gender: defendant.gender,
-                address: defendant.address,
-                citizenship: defendant.citizenship,
-              },
-              transaction,
-            ),
-          ),
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          {
+            origin: theCase.origin,
+            type: theCase.type,
+            description: theCase.description,
+            policeCaseNumbers: theCase.policeCaseNumbers,
+            defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.courtId,
+            translator: theCase.translator,
+            lawsBroken: theCase.lawsBroken,
+            legalBasis: theCase.legalBasis,
+            legalProvisions: theCase.legalProvisions,
+            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
+            caseFacts: theCase.caseFacts,
+            legalArguments: theCase.legalArguments,
+            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
+            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            parentCaseId: theCase.id,
+            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+            creatingProsecutorId: user.id,
+            prosecutorId: user.id,
+            prosecutorsOfficeId: user.institution?.id,
+            demands: isInvestigationCase(theCase.type)
+              ? theCase.demands
+              : undefined,
+          } as CreateCaseDto,
+          transaction,
         )
-      }
 
-      return extendedCase
-    })
+        if (theCase.defendants && theCase.defendants?.length > 0) {
+          await Promise.all(
+            theCase.defendants?.map((defendant) =>
+              this.defendantService.createForNewCase(
+                caseId,
+                {
+                  noNationalId: defendant.noNationalId,
+                  nationalId: defendant.nationalId,
+                  name: defendant.name,
+                  gender: defendant.gender,
+                  address: defendant.address,
+                  citizenship: defendant.citizenship,
+                },
+                transaction,
+              ),
+            ),
+          )
+        }
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
