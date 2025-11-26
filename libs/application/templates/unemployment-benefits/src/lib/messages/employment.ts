@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+import type { MessageDescriptor } from 'react-intl'
 
 export const employment = {
   general: defineMessages({
@@ -664,3 +665,20 @@ export const employment = {
     },
   }),
 }
+
+export const employmentContentfulMapper = {
+  onYesIdTventy: employment.reasonForJobSearch.labels.onYesIdTventy,
+}
+
+export const contentfulIdMapReasonsForJobSearch: Record<
+  string,
+  MessageDescriptor
+> = Object.values(employment.reasonForJobSearch.labels).reduce(
+  (acc, descriptor) => {
+    if (descriptor.id) {
+      acc[descriptor.id] = descriptor
+    }
+    return acc
+  },
+  {} as Record<string, MessageDescriptor>,
+)

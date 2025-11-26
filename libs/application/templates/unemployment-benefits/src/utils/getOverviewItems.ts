@@ -21,7 +21,6 @@ import {
   FileSchemaInAnswers,
   LanguagesInAnswers,
   EducationType,
-  // CurrentEducationInAnswers,
   PreviousEducationInAnswers,
   EmploymentHistoryInAnswers,
   RepeatableRequiredEducationInAnswers,
@@ -44,7 +43,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { StaticText } from '@island.is/shared/types'
 
-import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsSelectItem,
+  GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO,
+  GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO,
+  GaldurDomainModelsSettingsPostcodesPostcodeDTO,
+} from '@island.is/clients/vmst-unemployment'
 import {
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
@@ -53,7 +57,7 @@ import { getEmploymentFromRsk } from './getEmploymenInfo'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { formatMessage } = useLocale()
   const children = getValueViaPath<FamilyInformationInAnswers>(
@@ -99,12 +103,20 @@ export const useApplicantOverviewItems = (
   ]
 
   if (differentResidence?.includes(YES)) {
+    const nameAndPostcode = getValueViaPath<
+      GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
+    >(externalData, 'unemploymentApplication.data.supportData.postCodes')
+    const otherPostCodeId =
+      getValueViaPath<string>(answers, 'applicant.otherPostcode') ?? ''
+    const otherPostCodeName = nameAndPostcode?.find(
+      (x) => x.id === otherPostCodeId,
+    )?.nameAndCode
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.applicantOverview.differentResidence,
       valueText: [
         getValueViaPath<string>(answers, 'applicant.otherAddress') ?? '',
-        getValueViaPath<string>(answers, 'applicant.otherPostcode') ?? '',
+        otherPostCodeName,
       ],
     })
   }
@@ -353,7 +365,7 @@ export const useEducationHistoryOverviewItems = (
   if (lastSemesterEducation) {
     let thisEducationItem = lastSemesterEducation
     if (
-      lastSemesterEducation.sameAsCurrentEducation?.includes(YES) &&
+      lastSemesterEducation.sameAsAboveEducation?.includes(YES) &&
       currentEducation
     ) {
       thisEducationItem = currentEducation
@@ -393,8 +405,15 @@ export const useEducationHistoryOverviewItems = (
   }
 
   if (graduationLastTwelveMonthsEducation) {
+    let thisEducationItem = graduationLastTwelveMonthsEducation
+    if (
+      graduationLastTwelveMonthsEducation.sameAsAboveEducation?.includes(YES) &&
+      lastSemesterEducation
+    ) {
+      thisEducationItem = lastSemesterEducation
+    }
     const educationStrings = getEducationStrings(
-      graduationLastTwelveMonthsEducation,
+      thisEducationItem,
       externalData,
       locale,
     )
@@ -461,8 +480,23 @@ export const useEducationHistoryOverviewItems = (
 
 export const useLicenseOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const drivingLicenseTypes =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.drivingLicenses',
+    ) || []
+
+  const heavyMachineryLicenses =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.heavyMachineryLicenses',
+    ) || []
   const hasDriversLicense = getValueViaPath<Array<YesOrNoEnum>>(
     answers,
     'licenses.hasDrivingLicense',
@@ -474,23 +508,32 @@ export const useLicenseOverviewItems = (
 
   const overviewItems: Array<KeyValueItem> = []
   if (hasDriversLicense && hasDriversLicense[0] === YES) {
+    const ids = getValueViaPath<Array<string>>(
+      answers,
+      'licenses.drivingLicenseTypes',
+    )
+    const name = ids
+      ?.map((id) => drivingLicenseTypes.find((x) => x.id === id)?.name)
+      .filter(Boolean)
+
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.drivingLicense,
-      valueText: getValueViaPath<string>(
-        answers,
-        'licenses.drivingLicenseTypes',
-      ),
+      valueText: name,
     })
   }
   if (hasHeavyMachineryLicense && hasHeavyMachineryLicense[0] === YES) {
+    const ids = getValueViaPath<Array<string>>(
+      answers,
+      'licenses.heavyMachineryLicensesTypes',
+    )
+    const name = ids
+      ?.map((id) => heavyMachineryLicenses.find((x) => x.id === id)?.name)
+      .filter(Boolean)
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
-      valueText: getValueViaPath<string[]>(
-        answers,
-        'licenses.heavyMachineryLicensesTypes',
-      ),
+      valueText: name,
     })
   }
   return overviewItems

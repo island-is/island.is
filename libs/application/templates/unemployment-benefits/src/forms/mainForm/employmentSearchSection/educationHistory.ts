@@ -23,7 +23,9 @@ import {
   getDegreeOptions,
   getLevelsOfStudyOptions,
   isCurrentlyStudying,
-  sameEducationAsLastSemester,
+  sameEducationAsCurrent,
+  showFinishedEducationDateField,
+  showFinishedEducationField,
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
 } from '../../../utils/educationInformation'
@@ -122,7 +124,7 @@ export const educationHistorySubSection = buildSubSection({
           condition: wasStudyingLastSemester,
         }),
         buildCheckboxField({
-          id: 'educationHistory.lastSemester.sameAsCurrentEducation',
+          id: 'educationHistory.lastSemester.sameAsAboveEducation',
           width: 'full',
           backgroundColor: 'white',
           large: false,
@@ -131,6 +133,9 @@ export const educationHistorySubSection = buildSubSection({
               value: YES,
               label: educationMessages.labels.sameAsCurrentEducationCheckbox,
             },
+          ],
+          clearOnChange: [
+            `educationHistory.finishedEducation.sameAsAboveEducation`,
           ],
           condition: (answers) =>
             wasStudyingLastSemester(answers) && isCurrentlyStudying(answers),
@@ -143,7 +148,7 @@ export const educationHistorySubSection = buildSubSection({
             getLevelsOfStudyOptions(application, locale),
           condition: (answers) =>
             wasStudyingLastSemester(answers) &&
-            !sameEducationAsLastSemester(answers),
+            !sameEducationAsCurrent(answers),
         }),
         buildSelectField({
           id: 'educationHistory.lastSemester.degree',
@@ -160,7 +165,7 @@ export const educationHistorySubSection = buildSubSection({
           },
           condition: (answers) =>
             wasStudyingLastSemester(answers) &&
-            !sameEducationAsLastSemester(answers),
+            !sameEducationAsCurrent(answers),
         }),
         buildSelectField({
           id: 'educationHistory.lastSemester.courseOfStudy',
@@ -183,7 +188,7 @@ export const educationHistorySubSection = buildSubSection({
           },
           condition: (answers) =>
             wasStudyingLastSemester(answers) &&
-            !sameEducationAsLastSemester(answers),
+            !sameEducationAsCurrent(answers),
         }),
         buildTextField({
           id: 'educationHistory.lastSemester.units',
@@ -204,7 +209,7 @@ export const educationHistorySubSection = buildSubSection({
           },
           condition: (answers) =>
             wasStudyingLastSemester(answers) &&
-            !sameEducationAsLastSemester(answers),
+            !sameEducationAsCurrent(answers),
         }),
         buildCheckboxField({
           id: 'educationHistory.lastSemester.unfinishedStudy',
@@ -220,7 +225,7 @@ export const educationHistorySubSection = buildSubSection({
           clearOnChange: [`educationHistory.lastSemester.endDate`],
           condition: (answers) =>
             wasStudyingLastSemester(answers) &&
-            !sameEducationAsLastSemester(answers),
+            !sameEducationAsCurrent(answers),
         }),
         buildAlertMessageField({
           id: 'educationHistory.lastSemester.schoolAlert',
@@ -249,13 +254,30 @@ export const educationHistorySubSection = buildSubSection({
           titleVariant: 'h5',
           condition: wasStudyingInTheLastYear,
         }),
+        buildCheckboxField({
+          id: 'educationHistory.finishedEducation.sameAsAboveEducation',
+          width: 'full',
+          backgroundColor: 'white',
+          large: false,
+          options: [
+            {
+              value: YES,
+              label:
+                educationMessages.labels.sameAsLastSemesterEducationCheckbox,
+            },
+          ],
+          condition: (answers) =>
+            wasStudyingLastSemester(answers) &&
+            wasStudyingInTheLastYear(answers) &&
+            !sameEducationAsCurrent(answers), // if last semester education is the same as current, then it's not finished and this checkmark is not relevant
+        }),
         buildSelectField({
           id: 'educationHistory.finishedEducation.levelOfStudy',
           title: educationMessages.labels.levelOfStudyLabel,
           required: true,
           options: (application, _, locale) =>
             getLevelsOfStudyOptions(application, locale),
-          condition: wasStudyingInTheLastYear,
+          condition: showFinishedEducationField,
         }),
         buildSelectField({
           id: 'educationHistory.finishedEducation.degree',
@@ -270,7 +292,7 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return getDegreeOptions(application, locale, levelOfStudy)
           },
-          condition: wasStudyingInTheLastYear,
+          condition: showFinishedEducationField,
         }),
         buildSelectField({
           id: 'educationHistory.finishedEducation.courseOfStudy',
@@ -291,7 +313,7 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return getCourseOfStudy(application, levelOfStudy, degreeAnswer)
           },
-          condition: wasStudyingInTheLastYear,
+          condition: showFinishedEducationField,
         }),
         buildTextField({
           id: 'educationHistory.finishedEducation.units',
@@ -302,6 +324,7 @@ export const educationHistorySubSection = buildSubSection({
         buildSelectField({
           id: 'educationHistory.finishedEducation.endDate',
           title: educationMessages.labels.previousSchoolEndDate,
+          required: true,
           options: () => {
             const currentYear = new Date().getFullYear()
             const years = Array.from({ length: 51 }, (_, i) => {
@@ -310,26 +333,13 @@ export const educationHistorySubSection = buildSubSection({
             })
             return years
           },
-          condition: wasStudyingInTheLastYear,
-        }),
-        buildCheckboxField({
-          id: 'educationHistory.finishedEducation.unfinishedStudy',
-          backgroundColor: 'white',
-          width: 'full',
-          options: [
-            {
-              value: YES,
-              label: educationMessages.labels.endOfStudiesPlaceholder,
-            },
-          ],
-          clearOnChange: [`educationHistory.finishedEducation.endDate`],
-          condition: wasStudyingInTheLastYear,
+          condition: showFinishedEducationDateField, // if education is the same but the user did not fill out yearFinished in lastSemester column
         }),
         buildAlertMessageField({
           id: 'educationHistory.finishedEducation.educationAlert',
           message: educationMessages.labels.graduatedSchoolDegreeInformation,
           alertType: 'info',
-          condition: wasStudyingInTheLastYear,
+          condition: (answers) => wasStudyingInTheLastYear(answers),
         }),
         buildFileUploadField({
           id: 'educationHistory.finishedEducation.degreeFile',
@@ -337,7 +347,7 @@ export const educationHistorySubSection = buildSubSection({
           uploadHeader:
             educationMessages.labels.graduatedSchoolDegreeFileNameLabel,
           uploadDescription: applicationMessages.fileUploadAcceptFiles,
-          condition: wasStudyingInTheLastYear,
+          condition: (answers) => wasStudyingInTheLastYear(answers),
           uploadAccept: UPLOAD_ACCEPT,
           maxSize: FILE_SIZE_LIMIT,
           uploadMultiple: true,

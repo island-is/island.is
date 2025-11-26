@@ -394,7 +394,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               personalInformation: personalInformation,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
-              // educationHistory: educationInformation,
+              educationHistory: educationInformation,
               jobCareer: jobCareer,
               drivingLicense: licenseInformation,
               attachments: {
@@ -420,6 +420,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             finalize: true,
           },
       }
+
     const response = await this.vmstUnemploymentClientService.submitApplication(
       auth,
       submitResponse,

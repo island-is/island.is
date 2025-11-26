@@ -4,7 +4,12 @@ import { FileSchema } from './fileSchema'
 
 export const requiredStudies = z
   .object({
-    sameAsCurrentEducation: z.array(z.enum([YES])).optional(),
+    sameAsAboveEducation: z.preprocess((val) => {
+      if (!val) {
+        return []
+      }
+      return val
+    }, z.array(z.enum([YES])).optional()),
     levelOfStudy: z
       .preprocess((val) => {
         if (!val) {
@@ -32,6 +37,6 @@ export const previousEducationSchema = z.object({
 export const educationHistorySchema = z.object({
   currentStudies: requiredStudies,
   lastSemester: requiredStudies,
-  finishedEducation: requiredStudies,
+  finishedEducation: requiredStudies.refine((x) => x?.endDate),
   educationHistory: z.array(previousEducationSchema),
 })

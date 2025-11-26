@@ -1,4 +1,4 @@
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { EducationType } from '../shared'
 import { Application, FormValue } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -33,37 +33,50 @@ export const wasStudyingLastSemester = (answers: FormValue) => {
   return wasStudying && educationType.includes(EducationType.LAST_SEMESTER)
 }
 
-export const sameEducationAsLastSemester = (answers: FormValue) => {
+export const sameEducationAsCurrent = (answers: FormValue) => {
   const hasCheckedSame =
     getValueViaPath<Array<string>>(
       answers,
-      'educationHistory.lastSemester.sameAsCurrentEducation',
+      'educationHistory.lastSemester.sameAsAboveEducation',
     ) || []
 
   return hasCheckedSame.includes(YES)
 }
 
-// export const hasCurrentOrRecentEducation = (answers: FormValue) => {
-//   const lastTwelve = wasStudyingLastTwelveMonths(answers)
-//   const educationType =
-//     getValueViaPath<Array<string>>(answers, 'education.typeOfEducation') || []
+export const sameEducationAsLastSemester = (answers: FormValue) => {
+  const hasCheckedSame =
+    getValueViaPath<Array<string>>(
+      answers,
+      'educationHistory.finishedEducation.sameAsAboveEducation',
+    ) || []
 
-//   // const lastSemester = didYouFinishLastSemester(answers)
-//   const appliedForNext = appliedForNextSemester(answers)
+  return hasCheckedSame.includes(YES)
+}
 
-//   return (
-//     lastTwelve &&
-//     (educationType.includes(EducationType.CURRENT) ||
-//       (educationType.includes(EducationType.LAST_SEMESTER) &&
-//         (lastSemester === YES ||
-//           (lastSemester === NO && appliedForNext === YES))) ||
-//       educationType.includes(EducationType.LAST_YEAR))
-//   )
-// }
+export const lastSemesterEducationFinsihed = (answers: FormValue) => {
+  const lastSemesterEndDate = getValueViaPath<string>(
+    answers,
+    'educationHistory.lastSemester.endDate',
+  )
 
-// export const didYouFinishLastSemester = (answers: FormValue) => {
-//   return getValueViaPath<string>(answers, 'education.didFinishLastSemester')
-// }
+  return !!lastSemesterEndDate
+}
+
+export const showFinishedEducationField = (answers: FormValue) => {
+  if (sameEducationAsLastSemester(answers)) {
+    return wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)
+  } else {
+    return wasStudyingInTheLastYear(answers)
+  }
+}
+
+export const showFinishedEducationDateField = (answers: FormValue) => {
+  if (showFinishedEducationField(answers)) {
+    return showFinishedEducationField(answers)
+  } else {
+    return !lastSemesterEducationFinsihed(answers)
+  }
+}
 
 export const appliedForNextSemester = (answers: FormValue) => {
   return getValueViaPath<string>(answers, 'education.appliedForNextSemester')
@@ -72,16 +85,6 @@ export const appliedForNextSemester = (answers: FormValue) => {
 export const showAppliedForNextSemester = (answers: FormValue) => {
   return wasStudyingLastSemester(answers) || isCurrentlyStudying(answers)
 }
-
-// export const showCurrentEducationFields = (answers: FormValue) => {
-//   return (
-//     wasStudyingLastTwelveMonths(answers) &&
-//     (isCurrentlyStudying(answers) ||
-//       wasStudyingInTheLastYear(answers) ||
-//       (wasStudyingLastSemester(answers) &&
-//       appliedForNextSemester(answers) === YES)
-//   )
-// }
 
 export const getLevelsOfStudyOptions = (
   application: Application,

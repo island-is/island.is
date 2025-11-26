@@ -170,6 +170,11 @@ export const education = {
       defaultMessage: 'Sama og núverandi nám',
       description: 'Same as current education checkbox label',
     },
+    sameAsLastSemesterEducationCheckbox: {
+      id: 'vmst.ub.application:education.labels.sameAsLastSemesterEducationCheckbox',
+      defaultMessage: 'Sama og nám síðustu annar',
+      description: 'Same as last semester education checkbox label',
+    },
     addItemButtonText: {
       id: 'vmst.ub.application:education.labels.addItemButtonText',
       defaultMessage: 'Bæta við námi',

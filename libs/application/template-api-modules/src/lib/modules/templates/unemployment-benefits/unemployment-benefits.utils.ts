@@ -30,6 +30,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer,
+  GaldurDomainModelsApplicantsApplicantProfileDTOsEducation,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
@@ -109,24 +110,52 @@ export const getEducationInformation = (answers: FormValue) => {
     educationId: currentEducationInAnswers?.levelOfStudy,
     educationSubCategoryId: currentEducationInAnswers?.degree,
     educationSubSubCategoryId: currentEducationInAnswers?.courseOfStudy,
-    //TODO add units
+    credits: parseInt(currentEducationInAnswers?.units || ''),
   }
 
-  const lastSemesterEducation = {
-    educationId: lastSemesterEducationInAnswers?.levelOfStudy,
-    educationSubCategoryId: lastSemesterEducationInAnswers?.degree,
-    educationSubSubCategoryId: lastSemesterEducationInAnswers?.courseOfStudy,
-    yearFinished: lastSemesterEducationInAnswers?.endDate,
-    //TODO add units
+  let lastSemesterEducation
+  if (lastSemesterEducationInAnswers) {
+    if (
+      lastSemesterEducationInAnswers.sameAsAboveEducation?.includes(YES) &&
+      currentEducation
+    ) {
+      lastSemesterEducation = currentEducation
+    } else {
+      lastSemesterEducation = {
+        educationId: lastSemesterEducationInAnswers?.levelOfStudy,
+        educationSubCategoryId: lastSemesterEducationInAnswers?.degree,
+        educationSubSubCategoryId:
+          lastSemesterEducationInAnswers?.courseOfStudy,
+        yearFinished: parseInt(lastSemesterEducationInAnswers?.endDate || ''),
+        credits: parseInt(lastSemesterEducationInAnswers?.units || ''),
+      }
+    }
   }
 
-  const graduationLastTwelveMonthsEducation = {
-    educationId: graduationLastTwelveMonthsEducationInAnswers?.levelOfStudy,
-    educationSubCategoryId:
-      graduationLastTwelveMonthsEducationInAnswers?.degree,
-    educationSubSubCategoryId:
-      graduationLastTwelveMonthsEducationInAnswers?.courseOfStudy,
-    //TODO add units
+  let graduationLastTwelveMonthsEducation
+  if (graduationLastTwelveMonthsEducationInAnswers) {
+    if (
+      graduationLastTwelveMonthsEducationInAnswers.sameAsAboveEducation?.includes(
+        YES,
+      ) &&
+      lastSemesterEducation
+    ) {
+      graduationLastTwelveMonthsEducation = lastSemesterEducation
+    } else {
+      graduationLastTwelveMonthsEducation = {
+        educationId: graduationLastTwelveMonthsEducationInAnswers?.levelOfStudy,
+        educationSubCategoryId:
+          graduationLastTwelveMonthsEducationInAnswers?.degree,
+        educationSubSubCategoryId:
+          graduationLastTwelveMonthsEducationInAnswers?.courseOfStudy,
+        yearFinished: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.endDate || '',
+        ),
+        credits: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.units || '',
+        ),
+      }
+    }
   }
 
   const educationHistory =
@@ -135,17 +164,19 @@ export const getEducationInformation = (answers: FormValue) => {
         educationId: education.levelOfStudy,
         educationSubCategoryId: education.degree,
         educationSubSubCategoryId: education.courseOfStudy,
-        yearFinished: education.endDate,
+        yearFinished: parseInt(education.endDate || ''),
       }
     }) || []
 
+  const allEducation: Array<GaldurDomainModelsApplicantsApplicantProfileDTOsEducation> =
+    []
+  if (currentEducation) allEducation.push(currentEducation)
+  if (lastSemesterEducation) allEducation.push(lastSemesterEducation)
+  if (graduationLastTwelveMonthsEducation)
+    allEducation.push(graduationLastTwelveMonthsEducation)
+  allEducation.push(...educationHistory)
   return {
-    education: [
-      currentEducation,
-      lastSemesterEducation,
-      graduationLastTwelveMonthsEducation,
-      ...educationHistory,
-    ],
+    education: allEducation,
   }
 }
 
@@ -629,6 +660,8 @@ export const getPreviousOccupationInformation = (
       : unemploymentReasonCategories.find(
           (x) => x.id === unemploymentReasons?.mainReason,
         )?.name,
+    unemploymentReasonQuestionResponse:
+      unemploymentReasons?.reasonQuestion === YES,
     additionalDetails: unemploymentReasons?.additionalReasonText,
     agreementConfirmation:
       unemploymentReasons?.agreementConfirmation?.includes(YES),
