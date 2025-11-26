@@ -78,21 +78,24 @@ const reviewStatePendingAction = (
         displayStatus: 'warning',
       }
     } else {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: {
-          ...corePendingActionMessages.whoNeedsToReviewDescription,
-          values: {
-            value: getReviewers(application.answers)
-              .filter((x) => !x.hasApproved)
-              .map((x) =>
-                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
-              )
-              .join(', '),
+      const pendingReviewers = getReviewers(application.answers).filter(
+        (x) => !x.hasApproved,
+      )
+      if (pendingReviewers.length > 0)
+        return {
+          title: corePendingActionMessages.waitingForReviewTitle,
+          content: {
+            ...corePendingActionMessages.whoNeedsToReviewDescription,
+            values: {
+              value: pendingReviewers
+                .map((x) =>
+                  x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+                )
+                .join(', '),
+            },
           },
-        },
-        displayStatus: 'info',
-      }
+          displayStatus: 'info',
+        }
     }
   }
   return {
