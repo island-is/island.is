@@ -1,35 +1,32 @@
 import { Injectable } from '@nestjs/common'
-import { OpenInvoicesApi, OrganizationEmployeeApi } from '../../gen/fetch'
-import { EmployeeDto } from './dtos/employee.dto'
-import { SearchRequestDto } from './dtos/searchRequest.dto'
-import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
-import { OpenInvoicesDto } from './dtos/openInvoices.dto'
-import { isDefined } from '@island.is/shared/utils'
-import { mapInvoiceDto } from './dtos/invoice.dto'
-import { SuppliersDto } from './dtos/suppliers.dto'
-import { mapSupplierDto } from './dtos/supplier.dto'
-import { CustomersDto } from './dtos/customers.dto'
+import { getV1OpeninvoicesCustomers, getV1OpeninvoicesInvoices, getV1OpeninvoicesSuppliers, getV1OpeninvoicesTypes, getV1OrganizationEmployeeGetEmployeesForOrganization } from '../gen/fetch'
+import { data } from '@island.is/clients/middlewares'
 import { mapCustomerDto } from './dtos/customer.dto'
-import { InvoiceTypesDto } from './dtos/invoiceTypes.dto'
+import { CustomersDto } from './dtos/customers.dto'
+import { EmployeeDto } from './dtos/employee.dto'
+import { mapInvoiceDto } from './dtos/invoice.dto'
+import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
 import { mapInvoiceTypeDto } from './dtos/invoiceType.dto'
+import { InvoiceTypesDto } from './dtos/invoiceTypes.dto'
+import { OpenInvoicesDto } from './dtos/openInvoices.dto'
+import { SearchRequestDto } from './dtos/searchRequest.dto'
+import { mapSupplierDto } from './dtos/supplier.dto'
+import { SuppliersDto } from './dtos/suppliers.dto'
 import { mapPageInfo } from './utils/pageInfo.util'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class ElfurClientService {
-  constructor(
-    private readonly employeeApi: OrganizationEmployeeApi,
-    private readonly invoicesApi: OpenInvoicesApi,
-  ) {}
-
   public async getOrganizationEmployees(
     organizationId: string,
   ): Promise<Array<EmployeeDto>> {
-    const employees =
-      await this.employeeApi.v1OrganizationEmployeeGetEmployeesForOrganizationGet(
-        {
+    const employees = await data(getV1OrganizationEmployeeGetEmployeesForOrganization(
+      {
+        query: {
           organizationNumber: organizationId,
-        },
-      )
+        }
+      }
+    ))
 
     return employees.map((employee) => ({
       employeeName: employee.employeeName ?? undefined,
@@ -46,11 +43,18 @@ export class ElfurClientService {
   public async getOpenInvoices(
     requestParams?: InvoiceRequestDto,
   ): Promise<OpenInvoicesDto | null> {
-    const {
-      invoices = [],
-      pageInfo,
-      totalCount,
-    } = await this.invoicesApi.v1OpeninvoicesInvoicesGet(requestParams ?? {})
+    const { invoices, pageInfo, totalCount} = await data(getV1OpeninvoicesInvoices({
+      query: {
+        limit: requestParams?.limit ?? undefined,
+        after: requestParams?.after ?? undefined,
+        before: requestParams?.before ?? undefined,
+        dateFrom: requestParams?.dateFrom ? requestParams.dateFrom.toDateString() : undefined,
+        dateTo: requestParams?.dateTo ? requestParams.dateTo.toDateString() : undefined,
+        types: requestParams?.types ?? undefined,
+        suppliers: requestParams?.sellers ?? undefined,
+        customers: requestParams?.buyers ?? undefined,
+      }
+    }))
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -66,11 +70,14 @@ export class ElfurClientService {
   public async getSuppliers(
     requestParams?: SearchRequestDto,
   ): Promise<SuppliersDto | null> {
-    const {
-      suppliers = [],
-      pageInfo,
-      totalCount,
-    } = await this.invoicesApi.v1OpeninvoicesSuppliersGet(requestParams ?? {})
+    const { suppliers, pageInfo, totalCount} = await data(getV1OpeninvoicesSuppliers({
+      query: {
+        search: requestParams?.search ?? undefined,
+        limit: requestParams?.limit ?? undefined,
+        after: requestParams?.after ?? undefined,
+        before: requestParams?.before ?? undefined,
+      }
+    }))
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -86,11 +93,14 @@ export class ElfurClientService {
   public async getCustomers(
     requestParams?: SearchRequestDto,
   ): Promise<CustomersDto | null> {
-    const {
-      customersList = [],
-      pageInfo,
-      totalCount,
-    } = await this.invoicesApi.v1OpeninvoicesCustomersGet(requestParams ?? {})
+    const { customersList, pageInfo, totalCount} = await data(getV1OpeninvoicesCustomers({
+      query: {
+        search: requestParams?.search ?? undefined,
+        limit: requestParams?.limit ?? undefined,
+        after: requestParams?.after ?? undefined,
+        before: requestParams?.before ?? undefined,
+      }
+    }))
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -106,23 +116,28 @@ export class ElfurClientService {
   public async getInvoiceTypes(
     requestParams?: SearchRequestDto,
   ): Promise<InvoiceTypesDto | null> {
-    const data = await this.invoicesApi.v1OpeninvoicesTypesGet(
-      requestParams ?? {},
-    )
+    const { invoiceTypesList, pageInfo, totalCount} = await data(getV1OpeninvoicesTypes({
+      query: {
+        search: requestParams?.search ?? undefined,
+        limit: requestParams?.limit ?? undefined,
+        after: requestParams?.after ?? undefined,
+        before: requestParams?.before ?? undefined,
+      }
+    }))
 
     if (
-      !data.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      !data.totalCount
+      !pageInfo ||
+      pageInfo.hasNextPage === undefined ||
+      !totalCount
     ) {
       return null
     }
 
     return {
       invoiceTypes:
-        data.invoiceTypesList?.map(mapInvoiceTypeDto).filter(isDefined) ?? [],
-      pageInfo: mapPageInfo(data.pageInfo),
-      totalCount: data.totalCount,
+        invoiceTypesList?.map(mapInvoiceTypeDto).filter(isDefined) ?? [],
+      pageInfo: mapPageInfo(pageInfo),
+      totalCount: totalCount,
     }
   }
 }

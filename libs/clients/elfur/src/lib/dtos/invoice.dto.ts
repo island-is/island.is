@@ -1,4 +1,4 @@
-import { OpenInvoiceDetailResponseDto } from '../../../gen/fetch'
+import { OpenInvoiceDetailResponseDto } from '../../gen/fetch'
 
 export interface InvoiceDto {
   id: number

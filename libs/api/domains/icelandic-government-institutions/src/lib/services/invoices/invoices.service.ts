@@ -19,6 +19,7 @@ export class InvoicesService implements IInvoicesService {
   constructor(private elfurService: ElfurClientService) {}
 
   async getOpenInvoices(input?: InvoicesInput): Promise<Invoices | null> {
+    console.log('in open invocies')
     const data = await this.elfurService.getOpenInvoices(input)
 
     if (!data) {

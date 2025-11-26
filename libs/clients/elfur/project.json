@@ -20,7 +20,6 @@
       "options": {
         "commands": [
           "curl https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net/swagger/v1/swagger.json > src/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
@@ -30,7 +29,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/elfur/gen/fetch -i libs/clients/elfur/src/clientConfig.json"
+        "command": "yarn openapi-ts -f libs/clients/elfur/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

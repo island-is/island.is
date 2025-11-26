@@ -1,5 +1,5 @@
 import { PageInfoDto } from '@island.is/nest/pagination'
-import { PageInfo } from '../../../gen/fetch'
+import { PageInfo } from '../../gen/fetch'
 
 export const mapPageInfo = (pageInfo: PageInfo): PageInfoDto => {
   return {
