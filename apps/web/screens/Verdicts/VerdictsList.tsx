@@ -1254,6 +1254,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                         ? 'visible'
                                         : 'hidden',
                                     }}
+                                    aria-hidden="true"
                                   >
                                     &#10005;
                                   </span>
