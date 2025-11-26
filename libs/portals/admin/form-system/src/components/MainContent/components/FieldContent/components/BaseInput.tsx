@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Checkbox,
@@ -37,6 +38,21 @@ export const BaseInput = () => {
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
+  console.log('fieldTypes', currentItem.fieldType)
+
+  const renderDescription = () => {
+    if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    return false
+  }
+
   return (
     <Stack space={2}>
       <Row>
@@ -122,77 +138,71 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['MESSAGE'].includes(currentItem?.fieldType ?? '') ||
-        (currentItem?.fieldType === 'CHECKBOX' &&
-          currentItem?.fieldSettings?.hasDescription && (
-            <>
-              <Row>
-                <Column span="10/10">
-                  <Input
-                    label={formatMessage(m.description)}
-                    name="description"
-                    value={currentItem?.description?.is ?? ''}
-                    textarea
-                    backgroundColor="blue"
-                    onFocus={(e) => setFocus(e.target.value)}
-                    onBlur={(e) =>
-                      e.target.value !== focus && updateActiveItem()
-                    }
-                    onChange={(e) =>
-                      controlDispatch({
-                        type: 'CHANGE_DESCRIPTION',
-                        payload: {
-                          lang: 'is',
-                          newValue: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </Column>
-              </Row>
-              <Row>
-                <Column span="10/10">
-                  <Input
-                    label={formatMessage(m.descriptionEnglish)}
-                    name="description"
-                    value={currentItem?.description?.en ?? ''}
-                    textarea
-                    backgroundColor="blue"
-                    onFocus={async (e) => {
-                      if (
-                        !currentItem?.description?.en &&
-                        currentItem?.description?.is !== ''
-                      ) {
-                        const translation = await getTranslation(
-                          currentItem?.description?.is ?? '',
-                        )
-                        controlDispatch({
-                          type: 'CHANGE_DESCRIPTION',
-                          payload: {
-                            lang: 'en',
-                            newValue: translation.translation,
-                          },
-                        })
-                      }
-                      setFocus(e.target.value)
-                    }}
-                    onBlur={(e) =>
-                      e.target.value !== focus && updateActiveItem()
-                    }
-                    onChange={(e) =>
-                      controlDispatch({
-                        type: 'CHANGE_DESCRIPTION',
-                        payload: {
-                          lang: 'en',
-                          newValue: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </Column>
-              </Row>
-            </>
-          ))}
+      {renderDescription() && (
+        <>
+          <Row>
+            <Column span="10/10">
+              <Input
+                label={formatMessage(m.description)}
+                name="description"
+                value={currentItem?.description?.is ?? ''}
+                textarea
+                backgroundColor="blue"
+                onFocus={(e) => setFocus(e.target.value)}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'is',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+          <Row>
+            <Column span="10/10">
+              <Input
+                label={formatMessage(m.descriptionEnglish)}
+                name="description"
+                value={currentItem?.description?.en ?? ''}
+                textarea
+                backgroundColor="blue"
+                onFocus={async (e) => {
+                  if (
+                    !currentItem?.description?.en &&
+                    currentItem?.description?.is !== ''
+                  ) {
+                    const translation = await getTranslation(
+                      currentItem?.description?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_DESCRIPTION',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'en',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+        </>
+      )}
       <Row>
         {/* Required checkbox */}
         <Column span="5/10">
