@@ -1,5 +1,9 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
@@ -131,9 +135,12 @@ export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
   return applicantRole === ApplicantsRole.REPRESENTATIVE
 }
 
-export const applicantIsCompany = (application: Application) => {
+export const applicantIsIndividual = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
   const identityType = getValueViaPath<string>(
-    application.externalData,
+    externalData,
     'identity.data.type',
   )
 
