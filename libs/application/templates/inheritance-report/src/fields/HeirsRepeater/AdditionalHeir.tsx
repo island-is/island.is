@@ -285,7 +285,7 @@ export const AdditionalHeir = ({
                     disabled={isDisabledField}
                     label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
-                      updateValues(fieldIndex, val, customFieldIndex)
+                      updateValues(fieldIndex, val, index)
                     }}
                     hasError={!!error?.heirsPercentage}
                     required
