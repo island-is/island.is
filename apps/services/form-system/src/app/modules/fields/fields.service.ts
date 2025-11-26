@@ -94,9 +94,7 @@ export class FieldsService {
         currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
         currentFieldType === FieldTypesEnum.RADIO_BUTTONS
       ) {
-        // If the field is a dropdown or radio buttons, we need to remove any dependencies that reference its options
         listItemIds = field.list?.map((item) => item.id) || []
-
         // TODO: listItems should be deleted from the database as well
       }
 

@@ -14,6 +14,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { ControlContext } from '../../../../../context/ControlContext'
 import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
   const {
@@ -24,6 +25,7 @@ export const BaseInput = () => {
     fieldTypes,
     updateActiveItem,
     getTranslation,
+    selectStatus,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
@@ -47,6 +49,7 @@ export const BaseInput = () => {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
+            isDisabled={selectStatus === NavbarSelectStatus.NORMAL}
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',

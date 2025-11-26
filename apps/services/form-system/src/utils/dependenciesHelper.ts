@@ -41,7 +41,7 @@ export const filterOnlyParents = (
   if (!dependencies) return []
 
   if (Array.isArray(ids)) {
-    return dependencies.filter((dep) => ids.includes(dep.parentProp))
+    return dependencies.filter((dep) => !ids.includes(dep.parentProp))
   }
-  return dependencies.filter((dep) => dep.parentProp === ids)
+  return dependencies.filter((dep) => dep.parentProp !== ids)
 }

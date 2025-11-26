@@ -1,6 +1,7 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import {
+  FormSystemDependency,
   FormSystemField,
   FormSystemFieldSettings,
   FormSystemForm,
@@ -12,6 +13,7 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { removeParentDependency } from '../lib/utils/dependencyHelper'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
 
@@ -440,6 +442,12 @@ export const controlReducer = (
         },
         form: {
           ...form,
+          dependencies: removeParentDependency(
+            (form?.dependencies ?? []).filter(
+              (dep) => dep !== null && dep !== undefined,
+            ) as FormSystemDependency[],
+            currentItem,
+          ),
           fields: newFields,
         },
       }
@@ -455,12 +463,19 @@ export const controlReducer = (
           fieldSettings: removeTypename(fieldSettings),
         },
       }
+
       update(newActive)
       return {
         ...state,
         activeItem: newActive,
         form: {
           ...form,
+          dependencies: removeParentDependency(
+            (form?.dependencies ?? []).filter(
+              (dep) => dep !== null && dep !== undefined,
+            ) as FormSystemDependency[],
+            currentData,
+          ),
           fields: fields?.map((f) =>
             f?.id === activeItem.data?.id ? newActive.data : f,
           ),
