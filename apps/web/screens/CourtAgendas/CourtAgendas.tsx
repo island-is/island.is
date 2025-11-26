@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsIsoDateTime,
@@ -580,7 +581,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   ])
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndex) && (
           <meta name="robots" content="noindex, nofollow" />
@@ -698,7 +699,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
         <Box
           background="blue100"
           paddingTop={[3, 3, 0]}
-          className={styles.mainContainer}
+          className={cn(styles.mainContainer, 'rs_read')}
         >
           <SidebarLayout
             fullWidthContent={false}

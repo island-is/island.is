@@ -20,6 +20,7 @@ interface Props {
   marginBottom?: ResponsiveProp<Space | 'auto'>
   heading?: Heading
   variant?: Heading
+  marginTop?: ResponsiveProp<Space | 'auto'>
 }
 
 const SectionHeading: FC<Props> = ({
@@ -30,8 +31,9 @@ const SectionHeading: FC<Props> = ({
   marginBottom = 3,
   heading = 'h3',
   variant = 'h3',
+  marginTop = 0,
 }) => (
-  <Box marginBottom={marginBottom}>
+  <Box marginBottom={marginBottom} marginTop={marginTop}>
     <Text as={heading} variant={variant}>
       {title}
       {required && ' '}
