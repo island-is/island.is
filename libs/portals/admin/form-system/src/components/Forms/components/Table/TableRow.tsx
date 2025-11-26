@@ -74,6 +74,30 @@ export const TableRow = ({
     //   title: formatMessage(m.copy),
     // }
 
+    const changePublishedForm = {
+      title: formatMessage(m.edit),
+      onClick: async () => {
+        try {
+          const { data } = await updateFormStatus({
+            variables: {
+              input: {
+                id,
+                updateFormStatusDto: {
+                  newStatus: FormStatus.PUBLISHED_BEING_CHANGED,
+                },
+              },
+            },
+          })
+          setFormsState((prevForms) => {
+            const returnedForm = data.updateFormSystemFormStatus.form
+            return [...prevForms, returnedForm]
+          })
+        } catch (error) {
+          console.error('Error publishing form:', error)
+        }
+      },
+    }
+
     const publish = {
       title: formatMessage(m.publish),
       onClick: async () => {
@@ -174,7 +198,7 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [del]
+      return [del, changePublishedForm]
     }
 
     return [/*copy*/ test, publish, del]
@@ -215,11 +239,15 @@ export const TableRow = ({
         <Column span="2/12">
           <ColumnText text={status ?? ''} />
         </Column>
+
         <Column span="1/12">
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Box marginRight={1} onClick={goToForm} cursor="pointer">
-              <Icon icon="pencil" color="blue400" type="filled" />
-            </Box>
+          <Box display="flex" justifyContent="flexEnd" alignItems="center">
+            {(status === FormStatus.IN_DEVELOPMENT ||
+              status === FormStatus.PUBLISHED_BEING_CHANGED) && (
+              <Box marginRight={1} onClick={goToForm} cursor="pointer">
+                <Icon icon="pencil" color="blue400" type="filled" />
+              </Box>
+            )}
             <DropdownMenu
               menuLabel={`${formatMessage(m.actions)} ${name}`}
               disclosure={

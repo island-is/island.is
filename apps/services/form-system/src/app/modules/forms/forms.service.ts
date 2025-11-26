@@ -239,29 +239,22 @@ export class FormsService {
   }
 
   async changePublished(id: string): Promise<FormResponseDto> {
-    const exists = await this.formModel.count({
-      where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
-    })
-
-    if (exists > 0) {
-      throw new Error('Form is already being changed')
-    }
-
-    const form = await this.formModel.findByPk(id)
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
-    }
-
-    const newForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
-
-    const formResponse = await this.buildFormResponse(newForm)
-
-    if (!formResponse) {
-      throw new Error('Error generating form response.')
-    }
-
-    return formResponse
+    // const exists = await this.formModel.count({
+    //   where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
+    // })
+    // if (exists > 0) {
+    //   throw new Error('Form is already being changed')
+    // }
+    // const form = await this.formModel.findByPk(id)
+    // if (!form) {
+    //   throw new NotFoundException(`Form with id '${id}' not found`)
+    // }
+    // const newForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    // const formResponse = await this.buildFormResponse(newForm)
+    // if (!formResponse) {
+    //   throw new Error('Error generating form response.')
+    // }
+    return new FormResponseDto()
   }
 
   async publish(id: string): Promise<void> {
@@ -452,7 +445,14 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    return new FormResponseDto()
+    const copyForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
   }
 
   private async deleteForm(id: string, form: Form): Promise<FormResponseDto> {
@@ -1033,7 +1033,6 @@ export class FormsService {
         await this.formUrlModel.bulkCreate(formUrls, { transaction })
       })
     } catch (error) {
-      console.log('Error copying form:', error)
       throw new InternalServerErrorException(
         `Unexpected error copying form '${id}'.`,
       )
