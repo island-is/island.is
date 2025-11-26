@@ -38,7 +38,6 @@ export const BaseInput = () => {
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
-  console.log('fieldTypes', currentItem.fieldType)
 
   const renderDescription = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
