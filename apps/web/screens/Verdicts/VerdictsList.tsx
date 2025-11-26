@@ -1290,7 +1290,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             )
                             updateQueryState(QueryParam.DISTRICT_COURTS, null)
                           } else {
-                            updateQueryState(QueryParam.COURT, null)
                             updateQueryState(
                               QueryParam.DISTRICT_COURTS,
                               options
