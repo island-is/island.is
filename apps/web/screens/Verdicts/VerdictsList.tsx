@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useDebounce } from 'react-use'
+import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
@@ -1030,7 +1031,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
           <meta name="robots" content="noindex, nofollow" />
@@ -1313,7 +1314,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         <Box
           background="blue100"
           paddingTop={[3, 3, 0]}
-          className={styles.mainContainer}
+          className={cn(styles.mainContainer, 'rs_read')}
         >
           <SidebarLayout
             fullWidthContent={false}
