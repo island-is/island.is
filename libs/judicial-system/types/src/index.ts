@@ -150,7 +150,7 @@ export {
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
 export {
-  getIndictmentAppealDeadline,
+  getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,
