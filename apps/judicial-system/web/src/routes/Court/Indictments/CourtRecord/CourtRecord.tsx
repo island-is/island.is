@@ -84,7 +84,7 @@ const CourtRecord: FC = () => {
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.withCourtSessions ? (
-          <Box>
+          <>
             <Accordion dividerOnTop={false} singleExpand>
               {workingCase.courtSessions?.map((courtSession, index) => (
                 <CourtSessionAccordionItem
@@ -122,7 +122,7 @@ const CourtRecord: FC = () => {
                 disabled={!hasGeneratedCourtRecord}
               />
             </Box>
-          </Box>
+          </>
         ) : (
           <Box width="half" marginBottom={10}>
             <AlertMessage
