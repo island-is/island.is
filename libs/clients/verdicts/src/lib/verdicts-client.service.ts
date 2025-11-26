@@ -378,6 +378,15 @@ export class VerdictsClientService {
     }
   }
 
+  private getDefaultDateFrom() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return {
+      date: today,
+      dateString: today.toISOString(),
+    }
+  }
+
   async getCourtAgendas(input: {
     page?: number
     court?: string
@@ -397,11 +406,15 @@ export class VerdictsClientService {
             agendaSearchRequest: {
               page: pageNumber,
               limit: itemsPerPage,
-              dateFrom: safelyConvertStringToDate(
-                input.dateFrom,
-                'dateFrom',
-                this.logger,
-              ),
+              dateFrom: input.dateFrom
+                ? safelyConvertStringToDate(
+                    input.dateFrom,
+                    'dateFrom',
+                    this.logger,
+                  )
+                : !input.dateTo
+                ? this.getDefaultDateFrom().date
+                : undefined,
               dateTo: safelyConvertStringToDate(
                 input.dateTo,
                 'dateTo',
@@ -417,7 +430,11 @@ export class VerdictsClientService {
             pageNumber: pageNumber,
             courts: input.court ? input.court.split(',') : [],
             itemsPerPage,
-            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateFrom: input.dateFrom
+              ? input.dateFrom
+              : !input.dateTo
+              ? this.getDefaultDateFrom().dateString
+              : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
             lawyer: input.lawyer ? input.lawyer : undefined,
           }),
