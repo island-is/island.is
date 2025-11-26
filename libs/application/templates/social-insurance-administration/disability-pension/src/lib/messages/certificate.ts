@@ -143,7 +143,7 @@ export const certificate = defineMessages({
   physicalImpairmentEffect: {
     id: 'dp.application:certificate.physical.impairment.effect',
     defaultMessage: 'Líkamsstarfsemi sem röskun/fötlun veldur skerðingu á.',
-    description: 'TODO',
+    description: 'Physical impairment effect',
   },
 
   // cognitive impairment
@@ -155,6 +155,6 @@ export const certificate = defineMessages({
   cognitiveImpairmentEffect: {
     id: 'dp.application:certificate.cognitive.impairment.effect',
     defaultMessage: 'Mat á vitrænni skerðingu',
-    description: 'TODO',
+    description: 'Cognitive impairment effect',
   },
 })
