@@ -6,7 +6,7 @@ import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/s
 import { strings } from './DefendantInfo.strings'
 
 export const getAppealExpirationInfo = (
-  verdictAppealDeadline?: Date | string | null,
+  verdictAppealDeadline?: string | null,
   isVerdictAppealDeadlineExpired?: boolean | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
