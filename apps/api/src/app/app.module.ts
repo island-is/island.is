@@ -122,7 +122,7 @@ import {
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
-import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
@@ -278,6 +278,7 @@ const environment = getConfig
     EducationV2Module,
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
+      formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
     DirectorateOfLabourModule,
@@ -457,7 +458,7 @@ const environment = getConfig
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
-        IcelandicGovernmentInstitutionVacanciesClientConfig,
+        FinancialManagementAuthorityClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,
