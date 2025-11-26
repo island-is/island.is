@@ -86,7 +86,7 @@ const buildControllerParentsByFieldId = (
 
 const collectCascadeOffParents = (
   dependencies: Dependency[],
-  initiallyOffParents: string[],
+  initiallyOff: string[],
   fieldsById: Record<string, FormSystemField>,
 ): Set<string> => {
   const graph = buildGraph(dependencies)
@@ -95,15 +95,20 @@ const collectCascadeOffParents = (
     dependencies,
   )
 
-  const off = new Set<string>(initiallyOffParents)
-  const queue: string[] = [...initiallyOffParents]
+  const off = new Set(initiallyOff)
+  const queue = [...initiallyOff]
 
   while (queue.length > 0) {
-    const parentId = queue.shift() as string
-    const children = graph[parentId] ?? []
+    const parent = queue.shift() as string
+    const children = graph[parent] ?? []
 
-    for (const childId of children) {
-      const controllerParents = controllerParentsByFieldId[childId]
+    for (const child of children) {
+      if (!off.has(child)) {
+        off.add(child)
+        queue.push(child)
+      }
+
+      const controllerParents = controllerParentsByFieldId[child]
       if (controllerParents) {
         for (const cp of controllerParents) {
           if (!off.has(cp)) {
@@ -123,9 +128,18 @@ const isHiddenByDependencies = (
   dependencies: Dependency[],
 ): boolean => {
   if (!id) return false
-  return dependencies.some(
-    (dep) => dep.childProps?.includes(id) && !dep.isSelected,
+
+  const relevantDeps = dependencies.filter((dep) =>
+    dep.childProps?.includes(id),
   )
+
+  if (relevantDeps.length === 0) {
+    return false
+  }
+
+  const anySelected = relevantDeps.some((dep) => dep.isSelected)
+
+  return !anySelected
 }
 
 const applyVisibilityToSections = (
@@ -380,8 +394,12 @@ export const setFieldValue = (
     updatedSectionsBeforeDeps,
     depsArray,
   )
-
-  return {
+  console.log('Updated sections after applying dependencies:', updatedSections)
+  console.log(
+    'new currentScreen',
+    updatedSections[state.currentSection.index]?.screens?.[currentScreen.index],
+  )
+  const updatedState = {
     ...state,
     application: {
       ...state.application,
@@ -398,4 +416,7 @@ export const setFieldValue = (
     },
     errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
   }
+
+  console.log('Updated state after setting field value:', updatedState)
+  return updatedState
 }

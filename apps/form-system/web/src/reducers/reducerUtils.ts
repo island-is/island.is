@@ -73,8 +73,15 @@ export const incrementWithScreens = (
     DefaultContext,
     ApolloCache<any>
   >,
+  updateDependenciesMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
+  const [updateDependencies] = updateDependenciesMutation
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
@@ -99,6 +106,18 @@ export const incrementWithScreens = (
     }).catch((error) => {
       console.error('Error submitting screen:', error)
     })
+    if (currentSectionData.sectionType === SectionTypes.INPUT) {
+      updateDependencies({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      })
+    }
   }
 
   const sections = state.sections ?? []
@@ -191,13 +210,40 @@ export const decrementWithScreens = (
   state: ApplicationState,
   currentSectionIndex: number,
   currentScreenIndex: number,
+  submitScreenMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const sections = state.sections ?? []
   const section = sections[currentSectionIndex] as FormSystemSection | undefined
 
+  const [submitScreen] = submitScreenMutation
+
   const prevScreenIdx = prevVisibleScreenInSection(section, currentScreenIndex)
   if (prevScreenIdx !== -1) {
     const prevScreen = section!.screens![prevScreenIdx] as FormSystemScreen
+
+    // Set current screen as completed to false before decrementing
+    submitScreen({
+      variables: {
+        input: {
+          screenId: state.currentScreen?.data?.id,
+          submitScreenDto: {
+            applicationId: state.application.id,
+            screenDto: {
+              ...state.currentScreen?.data,
+              isCompleted: false,
+            } as FormSystemScreen,
+          },
+        },
+      },
+    }).catch((error) => {
+      console.error('Error submitting screen:', error)
+    })
+
     return {
       ...state,
       currentScreen: { data: prevScreen, index: prevScreenIdx },
