@@ -34,7 +34,6 @@ const MedicineDelegation = () => {
     variables: {
       locale: lang,
       input: {
-        active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
         status: [
           HealthDirectoratePermitStatus.active,
           HealthDirectoratePermitStatus.expired,

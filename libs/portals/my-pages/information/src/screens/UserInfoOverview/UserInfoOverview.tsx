@@ -4,6 +4,7 @@ import {
   CardLoader,
   FootNote,
   IntroHeader,
+  IntroWrapper,
   m,
   THJODSKRA_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -85,13 +86,12 @@ const UserInfoOverview = () => {
   }, [data, userInfo.profile.nationalId])
 
   return (
-    <>
-      <IntroHeader
-        title={m.myInfo}
-        intro={spmm.userInfoDesc}
-        serviceProviderSlug={THJODSKRA_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+    <IntroWrapper
+      title={m.myInfo}
+      intro={spmm.userInfoDesc}
+      serviceProviderSlug={THJODSKRA_SLUG}
+      serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.nationalRegistryPerson && (
         <Problem
@@ -130,7 +130,7 @@ const UserInfoOverview = () => {
           <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
         </Stack>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 export default UserInfoOverview
