@@ -4,6 +4,8 @@ import { ApplicationLoading } from '@island.is/form-system/ui'
 import { NotFound } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 import { ApplicationProvider } from '../context/ApplicationProvider'
+import { ErrorShell } from '@island.is/application/ui-shell'
+
 
 type UseParams = {
   slug: string
@@ -19,20 +21,20 @@ export const Application = () => {
   })
 
   if (!id || !slug) {
-    return <NotFound />
+    return <ErrorShell errorType="notFound" />
   }
 
   if (loading) {
     return <ApplicationLoading />
   }
 
-  if (error) {
-    return <div>Error</div>
+  const formSystemApp = data?.formSystemApplication
+  const isLoginTypeAllowed = formSystemApp?.isLoginTypeAllowed
+  const application = removeTypename(formSystemApp?.application)
+
+  if (error || isLoginTypeAllowed === false || !application) {
+    return <ErrorShell errorType="idNotFound" />
   }
 
-  return (
-    <ApplicationProvider
-      application={removeTypename(data?.formSystemApplication)}
-    />
-  )
+  return <ApplicationProvider application={application} />
 }
