@@ -62,6 +62,7 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
+import { ca } from 'date-fns/locale'
 
 @Injectable()
 export class FormsService {
@@ -238,15 +239,21 @@ export class FormsService {
   }
 
   async changePublished(id: string): Promise<FormResponseDto> {
-    const form = await this.formModel.findOne({
+    const exists = await this.formModel.count({
       where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
     })
 
-    if (form) {
+    if (exists > 0) {
       throw new Error('Form is already being changed')
     }
 
-    const newForm = await this.copyForm(id, true)
+    const form = await this.formModel.findByPk(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const newForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
 
     const formResponse = await this.buildFormResponse(newForm)
 
@@ -258,55 +265,44 @@ export class FormsService {
   }
 
   async publish(id: string): Promise<void> {
-    const form = await this.formModel.findByPk(id)
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
-    }
-
-    if (form.status === FormStatus.PUBLISHED) {
-      return
-    }
-
-    const existingPublishedForm = await this.formModel.findOne({
-      where: {
-        slug: form.slug,
-        status: FormStatus.PUBLISHED,
-        id: { [Op.ne]: form.derivedFrom },
-      },
-    })
-
-    if (existingPublishedForm) {
-      throw new Error(
-        `A published form with the slug '${form.slug}' already exists`,
-      )
-    }
-
-    form.status = FormStatus.PUBLISHED
-    form.beenPublished = true
-
-    if (
-      form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
-      form.derivedFrom
-    ) {
-      const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
-
-      if (!derivedFromForm) {
-        throw new NotFoundException(`Form with id '${id}' not found`)
-      }
-
-      derivedFromForm.status = FormStatus.ARCHIVED
-
-      // TODO: When form is archived we should maybe delete applications that are in progress
-
-      await this.sequelize.transaction(async (transaction) => {
-        await form.save({ transaction })
-        await derivedFromForm.save({ transaction })
-      })
-    } else {
-      await form.save()
-    }
-
+    // const form = await this.formModel.findByPk(id)
+    // if (!form) {
+    //   throw new NotFoundException(`Form with id '${id}' not found`)
+    // }
+    // if (form.status === FormStatus.PUBLISHED) {
+    //   return
+    // }
+    // const existingPublishedForm = await this.formModel.findOne({
+    //   where: {
+    //     slug: form.slug,
+    //     status: FormStatus.PUBLISHED,
+    //     id: { [Op.ne]: form.derivedFrom },
+    //   },
+    // })
+    // if (existingPublishedForm) {
+    //   throw new Error(
+    //     `A published form with the slug '${form.slug}' already exists`,
+    //   )
+    // }
+    // form.status = FormStatus.PUBLISHED
+    // form.beenPublished = true
+    // if (
+    //   form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
+    //   form.derivedFrom
+    // ) {
+    //   const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
+    //   if (!derivedFromForm) {
+    //     throw new NotFoundException(`Form with id '${id}' not found`)
+    //   }
+    //   derivedFromForm.status = FormStatus.ARCHIVED
+    //   // TODO: When form is archived we should maybe delete applications that are in progress
+    //   await this.sequelize.transaction(async (transaction) => {
+    //     await form.save({ transaction })
+    //     await derivedFromForm.save({ transaction })
+    //   })
+    // } else {
+    //   await form.save()
+    // }
     // return this.findAll(user, user.nationalId)
   }
 
@@ -365,36 +361,36 @@ export class FormsService {
   async updateStatus(
     id: string,
     updateFormStatusDto: UpdateFormStatusDto,
-  ): Promise<void> {
+  ): Promise<FormResponseDto> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
-    const newStatus = updateFormStatusDto.newStatus
+    const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
-          await this.publishFormInDevelopment(id, form)
+          return await this.publishFormInDevelopment(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
-          await this.deleteForm(id, form)
+          return await this.deleteForm(id, form)
         }
         break
       case FormStatus.PUBLISHED:
         if (newStatus === FormStatus.ARCHIVED) {
-          await this.archiveForm(id, form)
+          return await this.archiveForm(id, form)
         } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
-          await this.changePublishedForm(id, form)
+          return await this.changePublishedForm(id, form)
         }
         break
       case FormStatus.PUBLISHED_BEING_CHANGED:
         if (newStatus === FormStatus.PUBLISHED) {
-          await this.publishFormBeingChanged(id, form)
+          return await this.publishFormBeingChanged(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
-          await this.deleteForm(id, form)
+          return await this.deleteForm(id, form)
         }
         break
       default:
@@ -402,13 +398,14 @@ export class FormsService {
           `Cannot change status from '${currentStatus}' to '${newStatus}'`,
         )
     }
+    return new FormResponseDto()
   }
 
   private async publishFormInDevelopment(
     id: string,
     form: Form,
-  ): Promise<void> {
-    return this.sequelize.transaction(async (transaction) => {
+  ): Promise<FormResponseDto> {
+    await this.sequelize.transaction(async (transaction) => {
       try {
         await this.applicationModel.destroy({
           where: { formId: id },
@@ -424,16 +421,41 @@ export class FormsService {
         )
       }
     })
+
+    return new FormResponseDto()
   }
 
-  private async archiveForm(id: string, form: Form): Promise<void> {}
+  private async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
+    const slug = form.slug
+    form.status = FormStatus.ARCHIVED
+    form.slug = `${form.slug}-archived-${Date.now()}`
+    await form.save()
+
+    const copyForm = await this.copyForm(id, false, slug)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
   private async publishFormBeingChanged(
     id: string,
     form: Form,
-  ): Promise<void> {}
-  private async changePublishedForm(id: string, form: Form): Promise<void> {}
+  ): Promise<FormResponseDto> {
+    return new FormResponseDto()
+  }
 
-  private async deleteForm(id: string, form: Form): Promise<void> {
+  private async changePublishedForm(
+    id: string,
+    form: Form,
+  ): Promise<FormResponseDto> {
+    return new FormResponseDto()
+  }
+
+  private async deleteForm(id: string, form: Form): Promise<FormResponseDto> {
     const hasLiveApplications =
       form.beenPublished &&
       (await this.applicationModel.count({
@@ -453,6 +475,8 @@ export class FormsService {
         `Unexpected error deleting form '${id}'.`,
       )
     }
+
+    return new FormResponseDto()
   }
 
   async delete(id: string): Promise<void> {
@@ -880,9 +904,12 @@ export class FormsService {
     } as Screen)
   }
 
-  private async copyForm(id: string, isDerived: boolean): Promise<Form> {
+  private async copyForm(
+    id: string,
+    isDerived: boolean,
+    slug: string,
+  ): Promise<Form> {
     const existingForm = await this.findById(id)
-
     if (!existingForm) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
@@ -898,9 +925,10 @@ export class FormsService {
     newForm.status = isDerived
       ? FormStatus.PUBLISHED_BEING_CHANGED
       : FormStatus.IN_DEVELOPMENT
+    newForm.slug = slug
     newForm.created = new Date()
     newForm.modified = new Date()
-    newForm.derivedFrom = isDerived ? existingForm.id : ''
+    newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
@@ -989,17 +1017,27 @@ export class FormsService {
       }
     }
 
-    await this.sequelize.transaction(async (transaction) => {
-      await this.formModel.create(newForm, { transaction })
-      await this.sectionModel.bulkCreate(sections, { transaction })
-      await this.screenModel.bulkCreate(screens, { transaction })
-      await this.fieldModel.bulkCreate(fields, { transaction })
-      await this.listItemModel.bulkCreate(listItems, { transaction })
-      await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
-        transaction,
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        await this.formModel.create(newForm, { transaction })
+        await this.sectionModel.bulkCreate(sections, { transaction })
+        await this.screenModel.bulkCreate(screens, { transaction })
+        await this.fieldModel.bulkCreate(fields, { transaction })
+        await this.listItemModel.bulkCreate(listItems, { transaction })
+        await this.formCertificationTypeModel.bulkCreate(
+          formCertificationTypes,
+          {
+            transaction,
+          },
+        )
+        await this.formUrlModel.bulkCreate(formUrls, { transaction })
       })
-      await this.formUrlModel.bulkCreate(formUrls, { transaction })
-    })
+    } catch (error) {
+      console.log('Error copying form:', error)
+      throw new InternalServerErrorException(
+        `Unexpected error copying form '${id}'.`,
+      )
+    }
 
     return newForm
   }

@@ -1018,8 +1018,13 @@ export const m = defineMessages({
   },
   deleteFormWarning: {
     id: 'form.system:delete-form-warning',
-    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
-    description: 'Are you sure you want to delete the form: {formName}?',
+    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}',
+    description: 'Are you sure you want to delete the form: {formName}',
+  },
+  unpublishFormWarning: {
+    id: 'form.system:unpublish-form-warning',
+    defaultMessage: 'Ertu viss að þú viljir taka úr útgáfu formið: {formName}',
+    description: 'Are you sure you want to unpublish the form: {formName}',
   },
   previewField: {
     id: 'form.system:preview-field',

@@ -121,13 +121,17 @@ export class FormsController {
   @ApiNoContentResponse({
     description: 'Update form status',
   })
+  @ApiOkResponse({
+    type: FormResponseDto,
+    description: 'Update form status',
+  })
   @ApiBody({ type: UpdateFormStatusDto })
   @ApiParam({ name: 'id', type: String })
   @Put('updateStatus/:id')
   async updateStatus(
     @Param('id') id: string,
     @Body() updateFormStatusDto: UpdateFormStatusDto,
-  ): Promise<void> {
+  ): Promise<FormResponseDto> {
     return await this.formsService.updateStatus(id, updateFormStatusDto)
   }
 

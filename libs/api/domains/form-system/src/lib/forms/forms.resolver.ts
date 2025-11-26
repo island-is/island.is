@@ -77,7 +77,7 @@ export class FormsResolver {
     return this.formsService.publishForm(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => FormResponse, {
     name: 'updateFormSystemFormStatus',
     nullable: true,
   })
@@ -85,7 +85,7 @@ export class FormsResolver {
     @Args('input', { type: () => UpdateFormStatusInput })
     input: UpdateFormStatusInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<FormResponse> {
     return this.formsService.updateFormStatus(user, input)
   }
 

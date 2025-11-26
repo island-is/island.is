@@ -72,10 +72,11 @@ export class FormsService {
   async updateFormStatus(
     auth: User,
     input: UpdateFormStatusInput,
-  ): Promise<void> {
-    await this.formsApiWithAuth(auth).formsControllerUpdateStatus(
-      input as FormsControllerUpdateStatusRequest,
-    )
+  ): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerUpdateStatus(input as FormsControllerUpdateStatusRequest)
+    return response as FormResponse
   }
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {

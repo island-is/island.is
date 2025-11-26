@@ -117,10 +117,18 @@ export const TableRow = ({
       title: formatMessage(m.delete),
       render: () => (
         <DialogPrompt
-          title={formatMessage(m.delete)}
+          title={
+            status === FormStatus.PUBLISHED
+              ? formatMessage(m.unpublish)
+              : formatMessage(m.delete)
+          }
           baseId={`delete-form-${id}`}
           ariaLabel={`delete-form-${id}`}
-          description={formatMessage(m.deleteFormWarning, { formName: name })}
+          description={
+            status === FormStatus.PUBLISHED
+              ? formatMessage(m.unpublishFormWarning, { formName: name })
+              : formatMessage(m.deleteFormWarning, { formName: name })
+          }
           disclosureElement={
             <Box
               display="flex"
@@ -137,10 +145,14 @@ export const TableRow = ({
             </Box>
           }
           buttonTextCancel={formatMessage(m.cancel)}
-          buttonTextConfirm={formatMessage(m.delete)}
+          buttonTextConfirm={
+            status === FormStatus.PUBLISHED
+              ? formatMessage(m.unpublish)
+              : formatMessage(m.delete)
+          }
           onConfirm={async () => {
             try {
-              await updateFormStatus({
+              const { data } = await updateFormStatus({
                 variables: {
                   input: {
                     id,
@@ -148,9 +160,11 @@ export const TableRow = ({
                   },
                 },
               })
-              setFormsState((prevForms) =>
-                prevForms.filter((form) => form.id !== id),
-              )
+              setFormsState((prevForms) => {
+                const filtered = prevForms.filter((form) => form.id !== id)
+                const returnedForm = data.updateFormSystemFormStatus.form
+                return returnedForm ? [...filtered, returnedForm] : filtered
+              })
             } catch (error) {
               console.error('Error deleting form:', error)
             }
