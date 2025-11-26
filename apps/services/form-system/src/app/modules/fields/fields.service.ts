@@ -1,6 +1,5 @@
 import { FieldTypesEnum } from '@island.is/form-system/shared'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
@@ -31,7 +30,6 @@ export class FieldsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(id: string): Promise<Field> {

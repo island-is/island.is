@@ -1,9 +1,9 @@
 import {
-  useSensors,
-  useSensor,
-  PointerSensor,
-  DragStartEvent,
   DragOverEvent,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core'
 import { useContext } from 'react'
 import { ControlContext, IControlContext } from '../../context/ControlContext'

@@ -35,3 +35,35 @@ export const removeParentDependency = (
 
   return dependencies
 }
+
+export const removeAllDependencies = (
+  dependencies: FormSystemDependency[],
+  field: FormSystemField,
+): FormSystemDependency[] => {
+  const { fieldType } = field
+  if (fieldType === FieldTypesEnum.CHECKBOX) {
+    return dependencies
+      .filter((dep) => dep.parentProp !== field.id)
+      .map((dep) => ({
+        ...dep,
+        childProps: dep.childProps?.filter((child) => child !== field.id),
+      }))
+      .filter((dep) => dep.childProps && dep.childProps.length > 0)
+  }
+  if (
+    fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+    fieldType === FieldTypesEnum.RADIO_BUTTONS
+  ) {
+    const listItemIds = field.list?.map((item) => item?.id) || []
+    return dependencies
+      .filter((dep) => !listItemIds.includes(dep.parentProp as string))
+      .map((dep) => ({
+        ...dep,
+        childProps: dep.childProps?.filter(
+          (child) => child && !listItemIds.includes(child),
+        ),
+      }))
+      .filter((dep) => dep.childProps && dep.childProps.length > 0)
+  }
+  return dependencies
+}

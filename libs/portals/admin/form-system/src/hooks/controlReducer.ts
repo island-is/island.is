@@ -12,8 +12,11 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/enums'
-import { removeParentDependency } from '../lib/utils/dependencyHelper'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  removeAllDependencies,
+  removeParentDependency,
+} from '../lib/utils/dependencyHelper'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
 
@@ -442,7 +445,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          dependencies: removeParentDependency(
+          dependencies: removeAllDependencies(
             (form?.dependencies ?? []).filter(
               (dep) => dep !== null && dep !== undefined,
             ) as FormSystemDependency[],
@@ -1245,17 +1248,30 @@ export const controlReducer = (
     case 'REMOVE_DEPENDENCIES': {
       const { activeId, update } = action.payload
       const id = String(activeId)
+      const field = form.fields?.find((field) => field?.id === id)
+      const isList =
+        field &&
+        (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+          field.fieldType === FieldTypesEnum.CHECKBOX)
+
       const source = (form.dependencies ?? []).filter(
         (dep) => dep !== null && dep !== undefined,
       ) as NonNullable<typeof form.dependencies>
 
-      const updatedDependencies = source
-        .filter((dep) => dep?.parentProp !== id)
-        .map((dep) => ({
-          ...dep,
-          childProps: dep?.childProps?.filter((child) => child !== id),
-        }))
-        .filter((dep) => (dep.childProps?.length ?? 0) > 0)
+      const updatedDependencies = isList
+        ? removeAllDependencies(
+            (form?.dependencies ?? []).filter(
+              (dep) => dep !== null && dep !== undefined,
+            ) as FormSystemDependency[],
+            field,
+          )
+        : source
+            .filter((dep) => dep?.parentProp !== id)
+            .map((dep) => ({
+              ...dep,
+              childProps: dep?.childProps?.filter((child) => child !== id),
+            }))
+            .filter((dep) => (dep.childProps?.length ?? 0) > 0)
 
       const updatedForm = {
         ...form,
