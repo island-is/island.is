@@ -1234,7 +1234,31 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                 )
                               }}
                             >
-                              {tag.label}
+                              <Box
+                                flexDirection="row"
+                                alignItems="center"
+                                justifyContent="center"
+                                style={{
+                                  paddingLeft: !isActive ? '4px' : '0px',
+                                  paddingRight: !isActive ? '4px' : '0px',
+                                }}
+                              >
+                                {tag.label}
+                                {isActive && (
+                                  <span
+                                    style={{
+                                      marginLeft: '4px',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 'normal',
+                                      visibility: isActive
+                                        ? 'visible'
+                                        : 'hidden',
+                                    }}
+                                  >
+                                    &#10005;
+                                  </span>
+                                )}
+                              </Box>
                             </Tag>
                           )
                         })}
