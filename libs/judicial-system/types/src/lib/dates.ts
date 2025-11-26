@@ -8,7 +8,7 @@ const APPEAL_WINDOW_DAYS = 3
 
 export const hasDatePassed = (deadline: Date) => Date.now() > deadline.getTime()
 
-export const getIndictmentAppealDeadline = ({
+export const getIndictmentAppealDeadlineDate = ({
   baseDate,
   isFine,
 }: {
@@ -20,10 +20,7 @@ export const getIndictmentAppealDeadline = ({
     : VERDICT_APPEAL_WINDOW_DAYS
   const deadlineDate = addDays(baseDate, windowDays)
 
-  return {
-    deadlineDate: endOfDay(deadlineDate),
-    isDeadlineExpired: !!deadlineDate && hasDatePassed(deadlineDate),
-  }
+  return endOfDay(deadlineDate)
 }
 
 export const getAppealDeadlineDate = (baseDate: Date) =>

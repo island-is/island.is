@@ -14,7 +14,7 @@ import {
   formatDate,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import { getIndictmentAppealDeadline } from '@island.is/judicial-system/types'
+import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -106,22 +106,23 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const appealExpirationInfo = useMemo(() => {
-    const { verdictAppealDeadline, isVerdictAppealDeadlineExpired } = defendant
-    const { deadlineDate, isDeadlineExpired } =
-      verdictAppealDeadline != null
-        ? {
-            deadlineDate: verdictAppealDeadline,
-            isDeadlineExpired: !!isVerdictAppealDeadlineExpired,
-          }
-        : dates.serviceDate
-        ? getIndictmentAppealDeadline({
-            baseDate: dates.serviceDate,
-            isFine: false,
-          })
-        : {}
+    const deadline =
+      defendant.verdictAppealDeadline ||
+      (dates.serviceDate &&
+        getIndictmentAppealDeadlineDate({
+          baseDate: dates.serviceDate,
+          isFine: false,
+        }).toISOString())
 
-    return getAppealExpirationInfo(deadlineDate, isDeadlineExpired)
-  }, [dates.serviceDate, defendant])
+    return getAppealExpirationInfo(
+      deadline,
+      defendant.isVerdictAppealDeadlineExpired,
+    )
+  }, [
+    dates.serviceDate,
+    defendant.isVerdictAppealDeadlineExpired,
+    defendant.verdictAppealDeadline,
+  ])
 
   const serviceRequirementText = useMemo(
     () =>

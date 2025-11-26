@@ -22,7 +22,7 @@ import {
   DateType,
   DefendantEventType,
   EventType,
-  getIndictmentAppealDeadline,
+  getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
@@ -951,7 +951,7 @@ const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const { deadlineDate } = getIndictmentAppealDeadline({
+    const deadlineDate = getIndictmentAppealDeadlineDate({
       baseDate: c.rulingDate,
       isFine: c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
     })
