@@ -1207,14 +1207,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                             districtCourt !== tag.value,
                                         )
 
-                                      if (updatedDistrictCourts.length === 0)
-                                        updateQueryState(
-                                          QueryParam.COURT,
-                                          DEFAULT_DISTRICT_COURT_TAG,
-                                        )
-                                      else
-                                        updateQueryState(QueryParam.COURT, null)
-
                                       return {
                                         ...previousState,
                                         [QueryParam.DISTRICT_COURTS]:
@@ -1280,6 +1272,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           }
                         })}
                         onChange={(options) => {
+                          if (options.length === 0) {
+                            updateQueryState(QueryParam.COURT, ALL_COURTS_TAG)
+                            updateQueryState(QueryParam.DISTRICT_COURTS, null)
+                            return
+                          }
                           if (
                             options[options.length - 1]?.value ===
                             DEFAULT_DISTRICT_COURT_TAG
