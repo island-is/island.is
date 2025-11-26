@@ -15,9 +15,9 @@ import {
   DefaultApi,
 } from '../../gen/fetch/supreme-court'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { VerdictsClientConfig } from './verdicts-client.config'
 import type { ConfigType } from '@nestjs/config'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
