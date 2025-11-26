@@ -183,6 +183,7 @@ async function main() {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
+    execSync('yarn codegen')
   }
 
   console.log(
