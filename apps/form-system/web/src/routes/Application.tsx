@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom'
 import { ApplicationProvider } from '../context/ApplicationProvider'
 import { ErrorShell } from '@island.is/application/ui-shell'
 
-
 type UseParams = {
   slug: string
   id: string
