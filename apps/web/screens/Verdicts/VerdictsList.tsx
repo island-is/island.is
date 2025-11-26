@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useDebounce } from 'react-use'
+import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
@@ -128,6 +129,7 @@ enum QueryParam {
   DATE_FROM = 'dateFrom',
   DATE_TO = 'dateTo',
   CASE_CONTACT = 'caseContact',
+  DISTRICT_COURTS = 'districtCourts',
 }
 
 interface VerdictsListProps {
@@ -228,6 +230,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
           clearOnDefault: true,
         })
         .withDefault(ALL_COURTS_TAG),
+      [QueryParam.DISTRICT_COURTS]: parseAsArrayOf(parseAsString)
+        .withOptions({ clearOnDefault: true })
+        .withDefault([]),
       [QueryParam.KEYWORD]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
@@ -300,7 +305,10 @@ const useVerdictListState = (props: VerdictsListProps) => {
       return {
         page,
         searchTerm: queryParams[QueryParam.SEARCH_TERM],
-        courtLevel: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
+        courtLevel:
+          queryParams[QueryParam.DISTRICT_COURTS]?.length > 0
+            ? queryParams[QueryParam.DISTRICT_COURTS].join(',')
+            : extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         caseNumber: queryParams[QueryParam.CASE_NUMBER],
         keywords: keyword ? [keyword] : null,
         caseCategories: queryParams[QueryParam.CASE_CATEGORIES],
@@ -1007,6 +1015,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
 
   const districtCourtTags = useMemo(() => {
+    return [...DISTRICT_COURT_TAGS]
+  }, [])
+
+  const districtCourtTagsForSelect = useMemo(() => {
     return [
       {
         label: formatMessage(m.listPage.showAllDistrictCourts),
@@ -1019,7 +1031,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
           <meta name="robots" content="noindex, nofollow" />
@@ -1072,6 +1084,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     value={courtTags.find(
                       (tag) => tag.value === queryState[QueryParam.COURT],
                     )}
+                    isSearchable={false}
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
                       if (option) {
@@ -1089,6 +1102,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         }
 
                         updateQueryState(QueryParam.COURT, option.value)
+                        updateQueryState(QueryParam.DISTRICT_COURTS, null)
                       }
                     }}
                     size="sm"
@@ -1126,6 +1140,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                               updateRenderKey()
                             }
                             updateQueryState(QueryParam.COURT, tag.value)
+                            updateQueryState(QueryParam.DISTRICT_COURTS, null)
                           }}
                         >
                           {tag.label}
@@ -1134,73 +1149,159 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     })}
                   </Inline>
                 </Hidden>
-                {districtCourtTagValues.includes(
-                  queryState[QueryParam.COURT],
-                ) && (
+                {(queryState[QueryParam.COURT] === DEFAULT_DISTRICT_COURT_TAG ||
+                  (queryState[QueryParam.DISTRICT_COURTS]?.length ?? 0) >
+                    0) && (
                   <>
                     <Hidden below="sm">
                       <Inline alignY="center" space={2}>
-                        {districtCourtTags.map((tag) => (
-                          <Tag
-                            key={tag.value}
-                            active={queryState[QueryParam.COURT] === tag.value}
-                            onClick={() => {
-                              const topLevel = mapCourtToTopLevelCourt(
-                                tag.value,
+                        <Tag
+                          key={DEFAULT_DISTRICT_COURT_TAG}
+                          active={
+                            queryState[QueryParam.COURT] ===
+                              DEFAULT_DISTRICT_COURT_TAG &&
+                            (queryState[QueryParam.DISTRICT_COURTS]?.length ??
+                              0) === 0
+                          }
+                          onClick={() => {
+                            if (
+                              queryState[QueryParam.DISTRICT_COURTS].length > 0
+                            ) {
+                              updateQueryState(
+                                QueryParam.COURT,
+                                DEFAULT_DISTRICT_COURT_TAG,
                               )
-                              const previousTopLevel = mapCourtToTopLevelCourt(
-                                queryState[QueryParam.COURT],
-                              )
-                              if (
-                                topLevel !== previousTopLevel &&
-                                topLevel !== 'all'
-                              ) {
+                              updateQueryState(QueryParam.DISTRICT_COURTS, null)
+                            }
+                          }}
+                        >
+                          {formatMessage(m.listPage.showAllDistrictCourts)}
+                        </Tag>
+                        {districtCourtTags.map((tag) => {
+                          const isActive =
+                            (queryState[QueryParam.COURT] === tag.value &&
+                              tag.value === DEFAULT_DISTRICT_COURT_TAG) ||
+                            (queryState[QueryParam.DISTRICT_COURTS].includes(
+                              tag.value,
+                            ) &&
+                              tag.value !== DEFAULT_DISTRICT_COURT_TAG)
+                          return (
+                            <Tag
+                              key={tag.value}
+                              active={isActive}
+                              onClick={() => {
                                 updateQueryState(
-                                  QueryParam.CASE_CATEGORIES,
-                                  null,
+                                  QueryParam.DISTRICT_COURTS,
+                                  (previousState) => {
+                                    const previousDistrictCourts =
+                                      previousState[QueryParam.DISTRICT_COURTS]
+
+                                    if (
+                                      previousDistrictCourts.some(
+                                        (districtCourt) =>
+                                          districtCourt === tag.value,
+                                      )
+                                    ) {
+                                      const updatedDistrictCourts =
+                                        previousDistrictCourts.filter(
+                                          (districtCourt) =>
+                                            districtCourt !== tag.value,
+                                        )
+
+                                      return {
+                                        ...previousState,
+                                        [QueryParam.DISTRICT_COURTS]:
+                                          updatedDistrictCourts.length > 0
+                                            ? updatedDistrictCourts
+                                            : [],
+                                      }
+                                    }
+
+                                    return {
+                                      ...previousState,
+                                      [QueryParam.DISTRICT_COURTS]:
+                                        previousDistrictCourts.concat(
+                                          tag.value,
+                                        ),
+                                    }
+                                  },
                                 )
-                                updateQueryState(QueryParam.CASE_TYPES, null)
-                                updateRenderKey()
-                              }
-                              updateQueryState(QueryParam.COURT, tag.value)
-                            }}
-                          >
-                            {tag.label}
-                          </Tag>
-                        ))}
+                              }}
+                            >
+                              <Box
+                                flexDirection="row"
+                                alignItems="center"
+                                justifyContent="center"
+                              >
+                                {tag.label}
+                                {isActive && (
+                                  <span
+                                    className={styles.crossmark}
+                                    aria-hidden="true"
+                                  >
+                                    &#10005;
+                                  </span>
+                                )}
+                              </Box>
+                            </Tag>
+                          )
+                        })}
                       </Inline>
                     </Hidden>
                     <Hidden above="xs">
                       <Select
                         key={renderKey}
-                        options={districtCourtTags}
-                        value={districtCourtTags.find(
-                          (tag) => tag.value === queryState[QueryParam.COURT],
-                        )}
+                        options={districtCourtTagsForSelect}
                         label={formatMessage(
                           m.listPage.districtCourtSelectLabel,
                         )}
-                        onChange={(option) => {
-                          if (option) {
-                            const topLevel = mapCourtToTopLevelCourt(
-                              option.value,
+                        isSearchable={false}
+                        isClearable={false}
+                        value={districtCourtTagsForSelect.filter((tag) => {
+                          if (
+                            queryState[QueryParam.DISTRICT_COURTS]?.length > 0
+                          ) {
+                            return queryState[
+                              QueryParam.DISTRICT_COURTS
+                            ]?.includes(tag.value)
+                          } else {
+                            return (
+                              queryState[QueryParam.COURT] ===
+                                DEFAULT_DISTRICT_COURT_TAG &&
+                              tag.value === DEFAULT_DISTRICT_COURT_TAG
                             )
-                            const previousTopLevel = mapCourtToTopLevelCourt(
-                              queryState[QueryParam.COURT],
+                          }
+                        })}
+                        onChange={(options) => {
+                          if (options.length === 0) {
+                            updateQueryState(QueryParam.COURT, ALL_COURTS_TAG)
+                            updateQueryState(QueryParam.DISTRICT_COURTS, null)
+                            return
+                          }
+                          if (
+                            options[options.length - 1]?.value ===
+                            DEFAULT_DISTRICT_COURT_TAG
+                          ) {
+                            updateQueryState(
+                              QueryParam.COURT,
+                              DEFAULT_DISTRICT_COURT_TAG,
                             )
-                            if (
-                              topLevel !== previousTopLevel &&
-                              topLevel !== 'all'
-                            ) {
-                              updateQueryState(QueryParam.CASE_CATEGORIES, null)
-                              updateQueryState(QueryParam.CASE_TYPES, null)
-                              updateRenderKey()
-                            }
-                            updateQueryState(QueryParam.COURT, option.value)
+                            updateQueryState(QueryParam.DISTRICT_COURTS, null)
+                          } else {
+                            updateQueryState(
+                              QueryParam.DISTRICT_COURTS,
+                              options
+                                .map((option) => option.value)
+                                .filter(
+                                  (value) =>
+                                    value !== DEFAULT_DISTRICT_COURT_TAG,
+                                ),
+                            )
                           }
                         }}
                         size="sm"
                         backgroundColor="blue"
+                        isMulti={true}
                       />
                     </Hidden>
                   </>
@@ -1213,7 +1314,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         <Box
           background="blue100"
           paddingTop={[3, 3, 0]}
-          className={styles.mainContainer}
+          className={cn(styles.mainContainer, 'rs_read')}
         >
           <SidebarLayout
             fullWidthContent={false}
@@ -1425,6 +1526,10 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const caseContact = parseAsString.parseServerSide(
     query[QueryParam.CASE_CONTACT],
   )
+  const districtCourts =
+    parseAsArrayOf(parseAsString).parseServerSide(
+      query[QueryParam.DISTRICT_COURTS],
+    ) ?? []
 
   const [
     verdictListResponse,
@@ -1440,7 +1545,10 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           caseTypes,
           keywords,
           page: 1,
-          courtLevel: extractCourtLevelFromState(court),
+          courtLevel:
+            districtCourts.length > 0
+              ? districtCourts.join(',')
+              : extractCourtLevelFromState(court),
           laws: laws?.map(normalizeLawReference),
           caseNumber,
           dateFrom,
