@@ -12,6 +12,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -31,6 +32,7 @@ import {
   CaseState,
   CaseType,
   getServiceDateFromSupplements,
+  IndictmentCaseSubtypes,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -40,7 +42,7 @@ import {
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
-import { Case, DateLog, Defendant } from '../repository'
+import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -143,6 +145,7 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
+    artalNrGreinLidur: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -184,6 +187,8 @@ export class PoliceService {
   })
 
   constructor(
+    @InjectModel(IndictmentSubtype)
+    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -477,38 +482,62 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
-            (info: {
-              upprunalegtMalsnumer: string
-              vettvangur?: string
-              brotFra?: string
-              licencePlate?: string
-              gotuHeiti?: string | null
-              gotuNumer?: string | null
-              sveitafelag?: string | null
-            }) => {
-              const policeCaseNumber = info.upprunalegtMalsnumer
+          await Promise.all(
+            (response.malseinings ?? []).map(
+              async (info: {
+                upprunalegtMalsnumer: string
+                vettvangur?: string
+                brotFra?: string
+                licencePlate?: string
+                gotuHeiti?: string | null
+                gotuNumer?: string | null
+                sveitafelag?: string | null
+                artalNrGreinLidur?: string | null
+              }) => {
+                const policeCaseNumber = info.upprunalegtMalsnumer
+                const article = info.artalNrGreinLidur
+                const subtype = await this.getSubtypeByArticle(article)
+                const key = Object.keys(IndictmentCaseSubtypes).find(
+                  (k) =>
+                    IndictmentCaseSubtypes[
+                      k as keyof typeof IndictmentCaseSubtypes
+                    ] === subtype?.offenseType,
+                )
 
-              const place = formatCrimeScenePlace(
-                info.gotuHeiti,
-                info.gotuNumer,
-                info.sveitafelag,
-              )
-              const date = info.brotFra ? new Date(info.brotFra) : undefined
-              const licencePlate = info.licencePlate
+                const place = formatCrimeScenePlace(
+                  info.gotuHeiti,
+                  info.gotuNumer,
+                  info.sveitafelag,
+                )
+                const date = info.brotFra ? new Date(info.brotFra) : undefined
+                const licencePlate = info.licencePlate
 
-              const foundCase = cases.find(
-                (item) => item.policeCaseNumber === policeCaseNumber,
-              )
+                const foundCase = cases.find(
+                  (item) => item.policeCaseNumber === policeCaseNumber,
+                )
 
-              if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date, licencePlate })
-              } else if (date && (!foundCase.date || date > foundCase.date)) {
-                foundCase.place = place
-                foundCase.date = date
-                foundCase.licencePlate = licencePlate
-              }
-            },
+                if (!foundCase) {
+                  cases.push({
+                    policeCaseNumber,
+                    place,
+                    date,
+                    licencePlate,
+                    subtypes: key ? [key] : [],
+                  })
+                } else {
+                  if (date && (!foundCase.date || date > foundCase.date)) {
+                    foundCase.place = place
+                    foundCase.date = date
+                    foundCase.licencePlate = licencePlate
+                    foundCase.subtypes = []
+                  }
+
+                  if (key && !foundCase.subtypes?.includes(key)) {
+                    foundCase.subtypes?.push(key)
+                  }
+                }
+              },
+            ),
           )
 
           return cases
@@ -920,5 +949,13 @@ export class PoliceService {
 
       return false
     }
+  }
+
+  getSubtypeByArticle(
+    article?: string | null,
+  ): Promise<IndictmentSubtype | null> {
+    return this.indictmentSubtypeModel.findOne({
+      where: { article },
+    })
   }
 }

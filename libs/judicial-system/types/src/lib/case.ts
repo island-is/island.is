@@ -75,6 +75,104 @@ export enum IndictmentSubtype {
   BODILY_INJURY = 'BODILY_INJURY',
 }
 
+type TIndictmentSubtype = IndictmentSubtype
+type TRestrictionCaseSubtype = Exclude<CaseType, CaseType.INDICTMENT>
+export type Subtype = TIndictmentSubtype | TRestrictionCaseSubtype
+
+type CourtIndictmentSubtypes = {
+  [c in TIndictmentSubtype]: string
+}
+type CourtRestrictionCaseSubtypes = {
+  [c in TRestrictionCaseSubtype]: string | [string, string]
+}
+
+// Maps case types to subtypes in the court system
+export const IndictmentCaseSubtypes: CourtIndictmentSubtypes = {
+  ALCOHOL_LAWS: 'Áfengislagabrot',
+  CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
+  INDECENT_EXPOSURE: 'Blygðunarsemisbrot',
+  LEGAL_ENFORCEMENT_LAWS: 'Brot gegn lögreglulögum',
+  POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
+  INTIMATE_RELATIONS: 'Brot í nánu sambandi',
+  ANIMAL_PROTECTION: 'Brot á lögum um dýravernd',
+  FOREIGN_NATIONALS: 'Brot á lögum um útlendinga',
+  PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
+  PROPERTY_DAMAGE: 'Eignaspjöll',
+  NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
+  EMBEZZLEMENT: 'Fjárdráttur',
+  FRAUD: 'Fjársvik',
+  LOOTING: 'Gripdeild',
+  OTHER_CRIMINAL_OFFENSES: 'Hegningarlagabrot önnur',
+  DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
+  THREAT: 'Hótun',
+  BREAKING_AND_ENTERING: 'Húsbrot',
+  COVER_UP: 'Hylming',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Kynferðisbrot önnur en nauðgun',
+  MAJOR_ASSAULT: 'Líkamsárás - meiriháttar',
+  MINOR_ASSAULT: 'Líkamsárás - minniháttar',
+  AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
+  ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
+  MEDICINES_OFFENSE: 'Lyfjalög',
+  MURDER: 'Manndráp',
+  RAPE: 'Nauðgun',
+  UTILITY_THEFT: 'Nytjastuldur',
+  MONEY_LAUNDERING: 'Peningaþvætti',
+  OTHER_OFFENSES: 'Sérrefsilagabrot önnur',
+  NAVAL_LAW_VIOLATION: 'Siglingalagabrot',
+  TAX_VIOLATION: 'Skattalagabrot',
+  ATTEMPTED_MURDER: 'Tilraun til manndráps',
+  CUSTOMS_VIOLATION: 'Tollalagabrot',
+  TRAFFIC_VIOLATION: 'Umferðarlagabrot',
+  WEPONS_VIOLATION: 'Vopnalagabrot',
+  THEFT: 'Þjófnaður',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY: 'Hegningarlagabrot önnur',
+}
+
+const RestrictionCaseSubtypes: CourtRestrictionCaseSubtypes = {
+  // TODO: replace with appropriate type when it has been created in the court system
+  VIDEO_RECORDING_EQUIPMENT: 'Annað',
+  // 'Afhending gagna',
+  // 'Afturköllun á skipun verjanda',
+  OTHER: 'Annað',
+  TRACKING_EQUIPMENT: 'Eftirfararbúnaður',
+  TRAVEL_BAN: ['Farbann', 'Framlenging farbanns'],
+  // 'Framlenging frests',
+  // 'Framsalsmál',
+  // 'Frestur',
+  CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
+  PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
+  // 'Handtaka',
+  SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
+  SEARCH_WARRANT: 'Húsleit',
+  AUTOPSY: 'Krufning',
+  // 'Lausn út öryggisgæslu',
+  BODY_SEARCH: 'Leit og líkamsrannsókn',
+  // 'Lögmæti rannsóknarathafna',
+  RESTRAINING_ORDER: 'Nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is intended
+  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
+  // 'Réttarstaða afplánunarfanga',
+  // 'Réttarstaða gæsluvarðhaldsfanga',
+  PAROLE_REVOCATION: 'Rof á reynslulausn',
+  BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
+  // 'Sekt vitnis',
+  // 'Sektir málflytjenda',
+  PHONE_TAPPING: 'Símhlerun',
+  // 'Skýrslutaka brotaþola eldri en 18 ára',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
+  TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
+  INTERNET_USAGE: 'Upplýsingar um vefnotkun',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+}
+
+export const courtSubtypes = {
+  ...RestrictionCaseSubtypes,
+  ...IndictmentCaseSubtypes,
+}
+
 export const deprecatedIndictmentSubtypes: IndictmentSubtype[] = [
   IndictmentSubtype.BODILY_INJURY,
 ]
