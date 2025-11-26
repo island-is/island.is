@@ -1,8 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input:
-    './libs/clients/elfur/src/clientConfig.json',
+  input: './libs/clients/elfur/src/clientConfig.json',
   output: {
     path: './libs/clients/elfur/src/gen/fetch',
     format: 'prettier',

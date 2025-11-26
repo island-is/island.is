@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { getV1OpeninvoicesCustomers, getV1OpeninvoicesInvoices, getV1OpeninvoicesSuppliers, getV1OpeninvoicesTypes, getV1OrganizationEmployeeGetEmployeesForOrganization } from '../gen/fetch'
+import {
+  getV1OpeninvoicesCustomers,
+  getV1OpeninvoicesInvoices,
+  getV1OpeninvoicesSuppliers,
+  getV1OpeninvoicesTypes,
+  getV1OrganizationEmployeeGetEmployeesForOrganization,
+} from '../gen/fetch'
 import { data } from '@island.is/clients/middlewares'
 import { mapCustomerDto } from './dtos/customer.dto'
 import { CustomersDto } from './dtos/customers.dto'
@@ -20,13 +26,13 @@ export class ElfurClientService {
   public async getOrganizationEmployees(
     organizationId: string,
   ): Promise<Array<EmployeeDto>> {
-    const employees = await data(getV1OrganizationEmployeeGetEmployeesForOrganization(
-      {
+    const employees = await data(
+      getV1OrganizationEmployeeGetEmployeesForOrganization({
         query: {
           organizationNumber: organizationId,
-        }
-      }
-    ))
+        },
+      }),
+    )
 
     return employees.map((employee) => ({
       employeeName: employee.employeeName ?? undefined,
@@ -43,18 +49,24 @@ export class ElfurClientService {
   public async getOpenInvoices(
     requestParams?: InvoiceRequestDto,
   ): Promise<OpenInvoicesDto | null> {
-    const { invoices, pageInfo, totalCount} = await data(getV1OpeninvoicesInvoices({
-      query: {
-        limit: requestParams?.limit ?? undefined,
-        after: requestParams?.after ?? undefined,
-        before: requestParams?.before ?? undefined,
-        dateFrom: requestParams?.dateFrom ? requestParams.dateFrom.toDateString() : undefined,
-        dateTo: requestParams?.dateTo ? requestParams.dateTo.toDateString() : undefined,
-        types: requestParams?.types ?? undefined,
-        suppliers: requestParams?.sellers ?? undefined,
-        customers: requestParams?.buyers ?? undefined,
-      }
-    }))
+    const { invoices, pageInfo, totalCount } = await data(
+      getV1OpeninvoicesInvoices({
+        query: {
+          limit: requestParams?.limit ?? undefined,
+          after: requestParams?.after ?? undefined,
+          before: requestParams?.before ?? undefined,
+          dateFrom: requestParams?.dateFrom
+            ? requestParams.dateFrom.toDateString()
+            : undefined,
+          dateTo: requestParams?.dateTo
+            ? requestParams.dateTo.toDateString()
+            : undefined,
+          types: requestParams?.types ?? undefined,
+          suppliers: requestParams?.sellers ?? undefined,
+          customers: requestParams?.buyers ?? undefined,
+        },
+      }),
+    )
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -70,14 +82,16 @@ export class ElfurClientService {
   public async getSuppliers(
     requestParams?: SearchRequestDto,
   ): Promise<SuppliersDto | null> {
-    const { suppliers, pageInfo, totalCount} = await data(getV1OpeninvoicesSuppliers({
-      query: {
-        search: requestParams?.search ?? undefined,
-        limit: requestParams?.limit ?? undefined,
-        after: requestParams?.after ?? undefined,
-        before: requestParams?.before ?? undefined,
-      }
-    }))
+    const { suppliers, pageInfo, totalCount } = await data(
+      getV1OpeninvoicesSuppliers({
+        query: {
+          search: requestParams?.search ?? undefined,
+          limit: requestParams?.limit ?? undefined,
+          after: requestParams?.after ?? undefined,
+          before: requestParams?.before ?? undefined,
+        },
+      }),
+    )
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -93,14 +107,16 @@ export class ElfurClientService {
   public async getCustomers(
     requestParams?: SearchRequestDto,
   ): Promise<CustomersDto | null> {
-    const { customersList, pageInfo, totalCount} = await data(getV1OpeninvoicesCustomers({
-      query: {
-        search: requestParams?.search ?? undefined,
-        limit: requestParams?.limit ?? undefined,
-        after: requestParams?.after ?? undefined,
-        before: requestParams?.before ?? undefined,
-      }
-    }))
+    const { customersList, pageInfo, totalCount } = await data(
+      getV1OpeninvoicesCustomers({
+        query: {
+          search: requestParams?.search ?? undefined,
+          limit: requestParams?.limit ?? undefined,
+          after: requestParams?.after ?? undefined,
+          before: requestParams?.before ?? undefined,
+        },
+      }),
+    )
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
@@ -116,20 +132,18 @@ export class ElfurClientService {
   public async getInvoiceTypes(
     requestParams?: SearchRequestDto,
   ): Promise<InvoiceTypesDto | null> {
-    const { invoiceTypesList, pageInfo, totalCount} = await data(getV1OpeninvoicesTypes({
-      query: {
-        search: requestParams?.search ?? undefined,
-        limit: requestParams?.limit ?? undefined,
-        after: requestParams?.after ?? undefined,
-        before: requestParams?.before ?? undefined,
-      }
-    }))
+    const { invoiceTypesList, pageInfo, totalCount } = await data(
+      getV1OpeninvoicesTypes({
+        query: {
+          search: requestParams?.search ?? undefined,
+          limit: requestParams?.limit ?? undefined,
+          after: requestParams?.after ?? undefined,
+          before: requestParams?.before ?? undefined,
+        },
+      }),
+    )
 
-    if (
-      !pageInfo ||
-      pageInfo.hasNextPage === undefined ||
-      !totalCount
-    ) {
+    if (!pageInfo || pageInfo.hasNextPage === undefined || !totalCount) {
       return null
     }
 

@@ -7,7 +7,7 @@ import { client } from '../gen/fetch/client.gen'
 import { ElfurClientConfig } from './elfur.config'
 
 @Module({
-  providers: [ElfurClientService,],
+  providers: [ElfurClientService],
   exports: [ElfurClientService],
 })
 export class ElfurClientModule {
