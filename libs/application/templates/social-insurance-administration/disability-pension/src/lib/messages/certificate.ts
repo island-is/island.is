@@ -35,11 +35,6 @@ export const certificate = defineMessages({
     defaultMessage: 'Nafn',
     description: 'The name of the managing person',
   },
-  job: {
-    id: 'dp.application:certificate.job',
-    defaultMessage: 'Starfsheiti ',
-    description: 'The job title of the managing person',
-  },
   residence: {
     id: 'dp.application:certificate.residence',
     defaultMessage: 'Starfsstöð',
@@ -100,12 +95,7 @@ export const certificate = defineMessages({
     id: 'dp.application:certificate.information.medical.implements.usage',
     defaultMessage:
       'Hvaða lyf, hjálpartæki eða önnur inngrip notar skjólstæðingur?',
-   medicalImplementsUsage: {
-     id: 'dp.application:certificate.information.medical.implements.usage',
-     defaultMessage:
-       'Hvaða lyf, hjálpartæki eða önnur inngrip notar skjólstæðingur?',
      description: 'What medicine, aids or other implements does the client use?',
-   },
   },
   employmentCapability: {
     id: 'dp.application:certificate.information.employment.capability',
