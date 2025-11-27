@@ -30,7 +30,8 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-ts -f libs/clients/nvs-permits/src/lib/openapi-ts.config.ts"
-      }
+      },
+      "outputs": ["{sourceRoot}/gen/fetch"]
     }
   }
 }
