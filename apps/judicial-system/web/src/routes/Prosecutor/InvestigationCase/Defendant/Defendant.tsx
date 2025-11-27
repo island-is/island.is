@@ -70,8 +70,7 @@ const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
-
+        } as TDefendant
         return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
