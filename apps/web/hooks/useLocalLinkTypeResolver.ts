@@ -1,14 +1,16 @@
 import { useContext, useEffect } from 'react'
 
 import { GlobalContext } from '../context'
+import type { LinkType } from './useLinkResolver'
 
-export const useLocalLinkTypeResolver = () => {
-  const { setResolveLinkTypeLocally } = useContext(GlobalContext)
+export const useLocalLinkTypeResolver = (linkType?: LinkType) => {
+  const { setResolveLinkTypeLocally, setLinkType } = useContext(GlobalContext)
 
   useEffect(() => {
-    setResolveLinkTypeLocally(true)
+    setResolveLinkTypeLocally(Boolean(linkType))
+    setLinkType(linkType ?? null)
     return () => setResolveLinkTypeLocally(false)
-  }, [])
+  }, [linkType])
 }
 
 export default useLocalLinkTypeResolver
