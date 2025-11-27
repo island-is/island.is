@@ -29,12 +29,8 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/police-cases/gen/fetch -i libs/clients/police-cases/src/clientConfig.yml"
-      },
-      "outputs": [
-        "{projectRoot}/gen/fetch",
-        "{projectRoot}/src/clientConfig.json"
-      ]
+        "command": "yarn openapi-ts -f libs/clients/police-cases/src/lib/openapi-ts.config.ts"
+      }
     }
   }
 }
