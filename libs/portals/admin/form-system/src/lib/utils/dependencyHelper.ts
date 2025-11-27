@@ -56,11 +56,16 @@ export const removeAllDependencies = (
   ) {
     const listItemIds = field.list?.map((item) => item?.id) || []
     return dependencies
-      .filter((dep) => !listItemIds.includes(dep.parentProp as string))
+      .filter(
+        (dep) =>
+          !listItemIds.includes(dep.parentProp as string) ||
+          dep.parentProp !== field.id,
+      )
       .map((dep) => ({
         ...dep,
         childProps: dep.childProps?.filter(
-          (child) => child && !listItemIds.includes(child),
+          (child) =>
+            child && (!listItemIds.includes(child) || child !== field.id),
         ),
       }))
       .filter((dep) => dep.childProps && dep.childProps.length > 0)

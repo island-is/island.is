@@ -12,7 +12,7 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/enums'
 import {
   removeAllDependencies,
   removeParentDependency,
@@ -103,6 +103,13 @@ type DndActions =
       type: 'REMOVE_DEPENDENCIES'
       payload: {
         activeId: UniqueIdentifier
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
+      type: 'REMOVE_LIST_DEPENDENCIES'
+      payload: {
+        field: FormSystemField
         update: (updatedForm: FormSystemForm) => void
       }
     }
@@ -1248,30 +1255,18 @@ export const controlReducer = (
     case 'REMOVE_DEPENDENCIES': {
       const { activeId, update } = action.payload
       const id = String(activeId)
-      const field = form.fields?.find((field) => field?.id === id)
-      const isList =
-        field &&
-        (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
-          field.fieldType === FieldTypesEnum.CHECKBOX)
 
       const source = (form.dependencies ?? []).filter(
         (dep) => dep !== null && dep !== undefined,
       ) as NonNullable<typeof form.dependencies>
 
-      const updatedDependencies = isList
-        ? removeAllDependencies(
-            (form?.dependencies ?? []).filter(
-              (dep) => dep !== null && dep !== undefined,
-            ) as FormSystemDependency[],
-            field,
-          )
-        : source
-            .filter((dep) => dep?.parentProp !== id)
-            .map((dep) => ({
-              ...dep,
-              childProps: dep?.childProps?.filter((child) => child !== id),
-            }))
-            .filter((dep) => (dep.childProps?.length ?? 0) > 0)
+      const updatedDependencies = source
+        .filter((dep) => dep?.parentProp !== id)
+        .map((dep) => ({
+          ...dep,
+          childProps: dep?.childProps?.filter((child) => child !== id),
+        }))
+        .filter((dep) => (dep.childProps?.length ?? 0) > 0)
 
       const updatedForm = {
         ...form,
@@ -1280,6 +1275,22 @@ export const controlReducer = (
       update(updatedForm)
       return { ...state, form: updatedForm }
     }
+    case 'REMOVE_LIST_DEPENDENCIES': {
+      const { field, update } = action.payload
+      const updatedDependencies = removeAllDependencies(
+        (form?.dependencies ?? []).filter(
+          (dep) => dep !== null && dep !== undefined,
+        ) as FormSystemDependency[],
+        field,
+      )
+      const updatedForm = {
+        ...form,
+        dependencies: updatedDependencies,
+      }
+      update(updatedForm)
+      return { ...state, form: updatedForm }
+    }
+
     case 'SET_COMPLETED_TITLE': {
       const { lang, newValue } = action.payload
       const updatedForm = {
