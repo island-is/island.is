@@ -106,11 +106,14 @@ export const getEducationInformation = (answers: FormValue) => {
   const educationHistoryInAnswers = getValueViaPath<
     Array<PreviousEducationInAnswers>
   >(answers, 'educationHistory.educationHistory')
-  const currentEducation = {
-    educationId: currentEducationInAnswers?.levelOfStudy,
-    educationSubCategoryId: currentEducationInAnswers?.degree,
-    educationSubSubCategoryId: currentEducationInAnswers?.courseOfStudy,
-    credits: parseInt(currentEducationInAnswers?.units || ''),
+  let currentEducation
+  if (currentEducationInAnswers?.levelOfStudy) {
+    currentEducation = {
+      educationId: currentEducationInAnswers?.levelOfStudy,
+      educationSubCategoryId: currentEducationInAnswers?.degree,
+      educationSubSubCategoryId: currentEducationInAnswers?.courseOfStudy,
+      credits: parseInt(currentEducationInAnswers?.units || ''),
+    }
   }
 
   let lastSemesterEducation
