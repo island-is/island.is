@@ -738,9 +738,7 @@ export const getPensionAndOtherPayments = (
                 incomeTypeId: payment.subType,
                 periodFrom: payment.dateFrom,
                 periodTo: payment.dateTo,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
               }
             }),
           pensionPayments: otherBenefits.payments
@@ -750,9 +748,7 @@ export const getPensionAndOtherPayments = (
             .map((payment) => {
               return {
                 incomeTypeId: payment.subType,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
                 pensionFundId: payment.pensionFund,
               }
             }),
@@ -764,9 +760,7 @@ export const getPensionAndOtherPayments = (
             .map((payment) => {
               return {
                 incomeTypeId: payment.subType,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
                 privatePensionFundId: payment.pensionFund,
               }
             }),
