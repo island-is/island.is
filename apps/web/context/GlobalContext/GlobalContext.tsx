@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, FC, useState } from 'react'
 
 import type { LinkType } from '@island.is/web/hooks'
 
 export type NamespaceType = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
 
