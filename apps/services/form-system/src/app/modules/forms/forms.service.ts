@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -62,7 +63,6 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
-import { ca } from 'date-fns/locale'
 
 @Injectable()
 export class FormsService {
@@ -436,9 +436,39 @@ export class FormsService {
 
   private async publishFormBeingChanged(
     id: string,
-    form: Form,
+    formToBePublished: Form,
   ): Promise<FormResponseDto> {
-    return new FormResponseDto()
+    const derivedFromId = formToBePublished.derivedFrom
+    if (!derivedFromId) {
+      throw new BadRequestException(
+        `derivedFromId not found on form with id '${id}'`,
+      )
+    }
+
+    const formToBeArchived = await this.formModel.findByPk(derivedFromId)
+    if (!formToBeArchived) {
+      throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
+    }
+
+    const slugToBeArchived = formToBeArchived.slug
+    formToBeArchived.status = FormStatus.ARCHIVED
+    formToBeArchived.slug = `${formToBeArchived.slug}-archived-${Date.now()}`
+    await formToBeArchived.save()
+
+    formToBePublished.slug =
+      formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
+        ? slugToBeArchived
+        : formToBePublished.slug
+    formToBePublished.status = FormStatus.PUBLISHED
+    await formToBePublished.save()
+
+    const formResponse = await this.buildFormResponse(formToBeArchived)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
   }
 
   private async changePublishedForm(
@@ -812,7 +842,7 @@ export class FormsService {
       'isRequired',
       'fieldSettings',
     ]
-    form.sections.map((section) => {
+    form.sections?.map((section) => {
       formDto.sections?.push(
         defaults(
           pick(section, sectionKeys),

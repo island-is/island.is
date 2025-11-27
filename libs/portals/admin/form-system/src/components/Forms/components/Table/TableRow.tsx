@@ -121,6 +121,35 @@ export const TableRow = ({
       },
     }
 
+    const publishChanged = {
+      title: formatMessage(m.publish),
+      onClick: async () => {
+        try {
+          const { data } = await updateFormStatus({
+            variables: {
+              input: {
+                id,
+                updateFormStatusDto: { newStatus: FormStatus.PUBLISHED },
+              },
+            },
+          })
+          setFormsState((prevForms) => {
+            const returnedForm = data.updateFormSystemFormStatus.form
+
+            return prevForms
+              .map((form) =>
+                form.id === id
+                  ? { ...form, status: FormStatus.PUBLISHED }
+                  : form,
+              )
+              .filter((form) => form.id !== returnedForm.id)
+          })
+        } catch (error) {
+          console.error('Error publishing form:', error)
+        }
+      },
+    }
+
     const test = {
       title: formatMessage(m.tryOut),
       onClick: () => {
@@ -198,10 +227,12 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [del, changePublishedForm]
+      return [changePublishedForm, del]
+    } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
+      return [test, publishChanged, del]
     }
 
-    return [/*copy*/ test, publish, del]
+    return [test, publish, del]
   }, [id, slug, status, formatMessage, deleteForm, publishForm, setFormsState])
 
   const goToForm = () => {
