@@ -185,20 +185,21 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage: (application, subjectNationalId) => {
-                  if (subjectNationalId) {
-                    const role = getReviewerRole(
-                      application.answers,
-                      subjectNationalId,
-                    )
-                    if (role === 'buyer')
-                      return applicationMessage.historyLogApprovedByBuyer
-                    else if (role === 'buyerCoOwners')
-                      return applicationMessage.historyLogApprovedByBuyerCoOwner
-                    else if (role === 'buyerOperators')
-                      return applicationMessage.historyLogApprovedByBuyerOperator
-                    else if (role === 'sellerCoOwners')
-                      return applicationMessage.historyLogApprovedBySellerCoOwner
-                  }
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogApprovedByBuyer
+                  else if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogApprovedByBuyerCoOwner
+                  else if (role === 'buyerOperators')
+                    return applicationMessage.historyLogApprovedByBuyerOperator
+                  else if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogApprovedBySellerCoOwner
                   return coreHistoryMessages.applicationApprovedBy
                 },
                 includeSubjectAndActor: true,
@@ -206,20 +207,21 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: (application, subjectNationalId) => {
-                  if (subjectNationalId) {
-                    const role = getReviewerRole(
-                      application.answers,
-                      subjectNationalId,
-                    )
-                    if (role === 'buyer')
-                      return applicationMessage.historyLogRejectedByBuyer
-                    else if (role === 'buyerCoOwners')
-                      return applicationMessage.historyLogRejectedByBuyerCoOwner
-                    else if (role === 'buyerOperators')
-                      return applicationMessage.historyLogRejectedByBuyerOperator
-                    else if (role === 'sellerCoOwners')
-                      return applicationMessage.historyLogRejectedBySellerCoOwner
-                  }
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogRejectedByBuyer
+                  if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogRejectedByBuyerCoOwner
+                  if (role === 'buyerOperators')
+                    return applicationMessage.historyLogRejectedByBuyerOperator
+                  if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogRejectedBySellerCoOwner
                   return coreHistoryMessages.applicationRejected
                 },
                 includeSubjectAndActor: true,

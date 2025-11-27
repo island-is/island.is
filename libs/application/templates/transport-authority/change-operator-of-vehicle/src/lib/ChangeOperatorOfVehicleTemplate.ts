@@ -183,16 +183,17 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage: (application, subjectNationalId) => {
-                  if (subjectNationalId) {
-                    const role = getReviewerRole(
-                      application.answers,
-                      subjectNationalId,
-                    )
-                    if (role === 'ownerCoOwner')
-                      return applicationMessage.historyLogApprovedByCoOwner
-                    else if (role === 'operators')
-                      return applicationMessage.historyLogApprovedByNewOperator
-                  }
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogApprovedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogApprovedByNewOperator
                   return coreHistoryMessages.applicationApprovedBy
                 },
                 includeSubjectAndActor: true,
@@ -200,16 +201,17 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: (application, subjectNationalId) => {
-                  if (subjectNationalId) {
-                    const role = getReviewerRole(
-                      application.answers,
-                      subjectNationalId,
-                    )
-                    if (role === 'ownerCoOwner')
-                      return applicationMessage.historyLogRejectedByCoOwner
-                    else if (role === 'operators')
-                      return applicationMessage.historyLogRejectedByNewOperator
-                  }
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogRejectedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogRejectedByNewOperator
                   return coreHistoryMessages.applicationRejected
                 },
                 includeSubjectAndActor: true,
