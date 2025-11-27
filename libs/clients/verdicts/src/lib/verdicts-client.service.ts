@@ -18,6 +18,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@nestjs/config'
 import { VerdictsClientConfig } from './verdicts-client.config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import { CaseFilterOptionType } from './types'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
@@ -97,6 +98,7 @@ export class VerdictsClientService {
     laws?: string[]
     dateFrom?: string
     dateTo?: string
+    caseContact?: string
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
 
@@ -118,6 +120,7 @@ export class VerdictsClientService {
               laws: input.laws,
               dateFrom: input.dateFrom ? input.dateFrom : undefined,
               dateTo: input.dateTo ? input.dateTo : undefined,
+              caseContact: input.caseContact,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -143,6 +146,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              caseContact: input.caseContact,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -262,57 +266,76 @@ export class VerdictsClientService {
     return null
   }
 
-  async getCaseTypes() {
+  async getCaseFilterOptionsPerCourt() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseTypesV2(),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-    ])
+    const [courtOfAppealResponse, supremeCourtResponse, districtCourtResponse] =
+      await Promise.allSettled([
+        goproVerdictApi.getCaseTypesV2(),
+        this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+        goproVerdictApi.getCaseCategoriesV2(),
+      ])
 
-    const caseTypeSet = new Set<string>()
+    const mapOfAll = new Map<string, CaseFilterOptionType>()
 
-    if (goproResponse.status === 'fulfilled') {
-      for (const caseType of goproResponse.value.items ?? []) {
-        if (caseType.label) caseTypeSet.add(caseType.label)
-      }
-    }
-    if (supremeCourtResponse.status === 'fulfilled') {
-      for (const caseType of supremeCourtResponse.value.items ?? []) {
-        if (caseType.label) caseTypeSet.add(caseType.label)
-      }
-    }
+    const courtOfAppealSet = new Set<string>()
+    if (courtOfAppealResponse.status === 'fulfilled')
+      for (const caseType of courtOfAppealResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          courtOfAppealSet.add(caseType.label)
+        }
 
-    const caseTypes = Array.from(caseTypeSet).map((caseType) => ({
-      label: caseType,
+    const supremeCourtSet = new Set<string>()
+    if (supremeCourtResponse.status === 'fulfilled')
+      for (const caseType of supremeCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          supremeCourtSet.add(caseType.label)
+        }
+
+    const districtCourtSet = new Set<string>()
+    if (districtCourtResponse.status === 'fulfilled')
+      for (const caseType of districtCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseCategory)
+          districtCourtSet.add(caseType.label)
+        }
+
+    const courtOfAppealOptions = Array.from(courtOfAppealSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
     }))
-    caseTypes.sort(sortAlpha('label'))
+    courtOfAppealOptions.sort(sortAlpha('label'))
+    const supremeCourtOptions = Array.from(supremeCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
+    }))
+    supremeCourtOptions.sort(sortAlpha('label'))
+    const districtCourtOptions = Array.from(districtCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseCategory,
+    }))
+    districtCourtOptions.sort(sortAlpha('label'))
+
+    const allOptions = Array.from(mapOfAll, ([label, typeOfOption]) => ({
+      label,
+      typeOfOption,
+    }))
+    allOptions.sort(sortAlpha('label'))
 
     return {
-      caseTypes,
-    }
-  }
-
-  async getCaseCategories() {
-    const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [goproResponse] = await Promise.allSettled([
-      goproVerdictApi.getCaseCategoriesV2(),
-    ])
-
-    const caseCategorySet = new Set<string>()
-
-    if (goproResponse.status === 'fulfilled') {
-      for (const caseCategory of goproResponse.value.items ?? []) {
-        if (caseCategory.label) caseCategorySet.add(caseCategory.label)
-      }
-    }
-
-    const caseCategories = Array.from(caseCategorySet).map((caseCategory) => ({
-      label: caseCategory,
-    }))
-    caseCategories.sort(sortAlpha('label'))
-
-    return {
-      caseCategories,
+      courtOfAppeal: {
+        options: courtOfAppealOptions,
+      },
+      supremeCourt: {
+        options: supremeCourtOptions,
+      },
+      districtCourt: {
+        options: districtCourtOptions,
+      },
+      all: {
+        options: allOptions,
+      },
     }
   }
 
@@ -384,6 +407,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              lawyer: input.lawyer ? input.lawyer : undefined,
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -454,27 +478,63 @@ export class VerdictsClientService {
     }
   }
 
-  private isLawyerValid(lawyer: {
-    isRemovedFromLawyersList?: boolean
-    name?: string
-    idNumber?: string
-  }): lawyer is {
-    isRemovedFromLawyersList?: boolean
-    name: string
-  } {
-    return !lawyer?.isRemovedFromLawyersList && Boolean(lawyer.name)
+  private async getSupremeCourtLawyers(lawyerNameSet: Set<string>) {
+    const pageSize = 1000
+    let page = 1
+
+    let response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+      limit: pageSize,
+      page,
+    })
+    for (const lawyer of response.items ?? [])
+      if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+
+    while (
+      typeof response.total === 'number' &&
+      response.total > pageSize * page
+    ) {
+      page += 1
+      response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+        limit: pageSize,
+        page,
+      })
+      for (const lawyer of response.items ?? [])
+        if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+    }
+
+    return lawyerNameSet
   }
 
   async getLawyers() {
     const { goproLawyersApi } = await this.getAuthenticatedGoproApis()
-    const response = await goproLawyersApi.getLawyersV2()
-    const lawyerNames = (response.items ?? [])
-      .filter(this.isLawyerValid)
-      .map((lawyer) => lawyer.name)
-    const lawyers = Array.from(new Set(lawyerNames)).map((name) => ({
+
+    const lawyerNameSet = new Set<string>()
+
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
+      goproLawyersApi.getLawyersV2(),
+      this.getSupremeCourtLawyers(lawyerNameSet),
+    ])
+
+    if (goproResponse.status === 'fulfilled')
+      for (const lawyer of goproResponse.value.items ?? [])
+        if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
+          lawyerNameSet.add(lawyer.name as string)
+
+    if (goproResponse.status === 'rejected')
+      this.logger.error('Failed to fetch gopro lawyers', {
+        error: goproResponse.reason,
+      })
+
+    if (supremeCourtResponse.status === 'rejected')
+      this.logger.error('Failed to fetch supreme court lawyers', {
+        error: supremeCourtResponse.reason,
+      })
+
+    const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
       name,
     }))
+
     lawyers.sort(sortAlpha('name'))
     return lawyers
   }

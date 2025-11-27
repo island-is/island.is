@@ -8,10 +8,7 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import {
-  Application,
-  ApplicationResponse,
-} from '../../models/applications.model'
+import { ApplicationResponse } from '../../models/applications.model'
 import {
   ApplicationsInput,
   CreateApplicationInput,
@@ -29,14 +26,14 @@ import { Screen } from '../../models/screen.model'
 export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @Query(() => Application, {
+  @Query(() => ApplicationResponse, {
     name: 'formSystemApplication',
   })
   async getApplication(
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
   }
 
@@ -62,14 +59,14 @@ export class ApplicationsResolver {
     return this.applicationsService.getAllApplications(user, input)
   }
 
-  @Mutation(() => Application, {
+  @Mutation(() => ApplicationResponse, {
     name: 'createFormSystemApplication',
   })
   async createApplication(
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     return this.applicationsService.createApplication(user, input)
   }
 
