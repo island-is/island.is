@@ -3,7 +3,7 @@ import { PoliceCasesClientService } from '@island.is/clients/police-cases'
 import type { User } from '@island.is/auth-nest-tools'
 import { mapPoliceCase } from '../mappers/policeCaseMapper'
 import { isDefined } from '@island.is/shared/utils'
-import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
+import { PaginatedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
 import { IntlService } from '@island.is/cms-translations'
 import {
   NAMESPACE,
@@ -24,7 +24,7 @@ export class PoliceCasesService {
   async getCases(
     user: User,
     locale: Locale,
-  ): Promise<PaginantedCaseCollection> {
+  ): Promise<PaginatedCaseCollection> {
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const cases = await this.policeApi.getCases(user)

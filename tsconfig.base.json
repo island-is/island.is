@@ -1286,10 +1286,6 @@
       "delegation-admin": [
         "libs/portals/admin/delegation-admin/src/index.ts"
       ],
-      "@island.is/application/templates/hms/registration-of-new-property-numbers": [
-        "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
-      ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],

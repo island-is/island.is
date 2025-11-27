@@ -13,7 +13,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCasesQuery } from './PoliceCases.generated'
-import { messages as m } from '../../lib/messages'
 
 const PoliceCases = () => {
   useNamespaces('sp.law-and-order')
@@ -35,15 +34,15 @@ const PoliceCases = () => {
       buttonGroup={[
         <LinkButton
           key="link-button-1"
-          to={formatMessage(m.policeCasesHeaderLinkButton1Url)}
-          text={formatMessage(m.policeCasesHeaderLinkButton1Text)}
+          to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
+          text={formatMessage(messages.policeCasesHeaderLinkButton1Text)}
           icon="open"
           variant="utility"
         />,
         <LinkButton
           key="link-button-2"
-          to={formatMessage(m.policeCasesHeaderLinkButton2Url)}
-          text={formatMessage(m.policeCasesHeaderLinkButton2Text)}
+          to={formatMessage(messages.policeCasesHeaderLinkButton2Url)}
+          text={formatMessage(messages.policeCasesHeaderLinkButton2Text)}
           icon="open"
           variant="utility"
         />,
@@ -60,21 +59,21 @@ const PoliceCases = () => {
       {!loading &&
         cases.length > 0 &&
         cases.map((c) => (
-          <Box marginTop={2}>
+          <Box key={c.number} marginTop={2}>
             <ActionCard
-              heading={formatMessage(m.policeCaseCardTitle, { arg: c.number })}
+              heading={formatMessage(messages.policeCaseCardTitle, { arg: c.number })}
               text={
                 c.modified
-                  ? formatMessage(m.policeCaseCardText, {
+                  ? formatMessage(messages.policeCaseCardText, {
                       arg: formatDate(c.modified),
                     })
                   : undefined
               }
-              eyebrow={'Ríkislögreglustjóri'}
-              tag={{
-                label: c.status?.headerDisplayString ?? 'no status',
+              eyebrow={formatMessage(messages.policeCaseCardEyebrow)}
+              tag={ c.status?.headerDisplayString ? {
+                label: c.status?.headerDisplayString,
                 variant: 'blue',
-              }}
+              } : undefined}
               cta={{
                 label: formatMessage(messages.seeInfo),
                 variant: 'text',

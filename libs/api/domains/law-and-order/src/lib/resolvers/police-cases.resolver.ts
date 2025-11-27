@@ -14,7 +14,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
+import { PaginatedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
 import { Case } from '../models/police-cases/case.model'
 import { GetPoliceCaseInput } from '../dto/getPoliceCaseInput'
 import type { Locale } from '@island.is/shared/types'
@@ -29,7 +29,7 @@ import { CaseTimelineStructure } from '../models/police-cases/caseTimelineStruct
 export class PoliceCasesResolver {
   constructor(private readonly policeCasesService: PoliceCasesService) {}
 
-  @Query(() => PaginantedCaseCollection, {
+  @Query(() => PaginatedCaseCollection, {
     name: 'lawAndOrderPoliceCasesPaginatedCollection',
     nullable: true,
   })

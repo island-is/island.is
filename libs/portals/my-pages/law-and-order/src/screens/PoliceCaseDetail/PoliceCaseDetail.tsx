@@ -40,22 +40,6 @@ const PoliceCaseDetail = () => {
   })
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
-  if (!loading && !error && !policeCase) {
-    return (
-      <Problem
-        type="no_data"
-        noBorder={false}
-        title={formatMessage(coreMessages.noData)}
-        message={formatMessage(coreMessages.noDataFoundDetail)}
-        imgSrc="./assets/images/sofa.svg"
-      />
-    )
-  }
-
-  if (error && !loading) {
-    return <Problem error={error} noBorder={false} />
-  }
-
   const currentCaseProgress = policeCase?.status?.timelineStep ?? -1
 
   return (
@@ -171,11 +155,11 @@ const PoliceCaseDetail = () => {
                           step ===
                           (data?.lawAndOrderPoliceCaseTimelineStructure
                             ?.milestones.length ?? 0) -
-                            1
+                          1
                         }
                         description={
                           isActiveStep &&
-                          policeCase?.status?.descriptionDisplayString ? (
+                            policeCase?.status?.descriptionDisplayString ? (
                             <Text>
                               {policeCase?.status?.descriptionDisplayString}
                             </Text>

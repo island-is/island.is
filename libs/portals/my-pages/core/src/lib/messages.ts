@@ -1928,7 +1928,7 @@ export const m = defineMessages({
   },
   myCasesIntro: {
     id: 'service.portal:my-cases-intro',
-    defaultMessage: 'Lorem ipsum etc',
+    defaultMessage: 'Mín mál',
   },
   myPoliceCases: {
     id: 'service.portal:my-police-cases',
