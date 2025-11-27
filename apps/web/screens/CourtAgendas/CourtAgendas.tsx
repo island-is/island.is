@@ -841,6 +841,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                     key={agenda.id}
                     caseNumber={agenda.caseNumber}
                     type={agenda.type}
+                    caseSubtype={agenda.caseSubtype}
                     judgesString={
                       agenda.judges.length > 0
                         ? `${formatMessage(

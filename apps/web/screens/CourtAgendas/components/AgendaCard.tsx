@@ -22,6 +22,7 @@ type AgendaCardProps = {
   courtRoom: string
   addToCalendarButton: React.ReactNode
   closedHearingText: string
+  caseSubtype?: string | null
 }
 
 export const AgendaCard = ({
@@ -35,6 +36,7 @@ export const AgendaCard = ({
   courtRoom,
   closedHearingText,
   addToCalendarButton,
+  caseSubtype,
 }: AgendaCardProps) => {
   const detailLines: { text: string }[] = []
 
@@ -59,6 +61,12 @@ export const AgendaCard = ({
   if (closedHearingText) {
     detailLines.push({
       text: closedHearingText,
+    })
+  }
+
+  if (caseSubtype) {
+    detailLines.push({
+      text: caseSubtype,
     })
   }
 
