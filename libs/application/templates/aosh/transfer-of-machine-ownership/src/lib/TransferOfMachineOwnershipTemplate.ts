@@ -8,7 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
@@ -32,7 +31,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItems, getReviewers, canReviewerApprove } from '../utils'
+import { getChargeItems, reviewStatePendingAction } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -57,46 +56,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: regNumber ? `- ${regNumber}` : '',
-  }
-}
-
-const reviewStatePendingAction = (
-  application: Application,
-  _role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId) {
-    if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
-      }
-    } else {
-      const pendingReviewers = getReviewers(application.answers).filter(
-        (x) => !x.hasApproved,
-      )
-      if (pendingReviewers.length > 0)
-        return {
-          title: corePendingActionMessages.waitingForReviewTitle,
-          content: {
-            ...corePendingActionMessages.whoNeedsToReviewDescription,
-            values: {
-              value: pendingReviewers
-                .map((x) =>
-                  x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
-                )
-                .join(', '),
-            },
-          },
-          displayStatus: 'info',
-        }
-    }
-  }
-  return {
-    title: corePendingActionMessages.waitingForReviewTitle,
-    content: corePendingActionMessages.waitingForReviewDescription,
-    displayStatus: 'info',
   }
 }
 
@@ -279,7 +238,8 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) =>
+              reviewStatePendingAction(application, nationalId),
           },
           lifecycle: {
             shouldBeListed: true,

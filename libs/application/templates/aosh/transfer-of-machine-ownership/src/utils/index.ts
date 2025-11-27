@@ -20,6 +20,7 @@ export * from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
 export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'
+export * from './pendingAction'
 
 export const getChargeItems = (
   application: Application<FormValue>,
