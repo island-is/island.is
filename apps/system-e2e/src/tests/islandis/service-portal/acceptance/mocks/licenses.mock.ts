@@ -414,7 +414,7 @@ export const loadLicensesXroadMocks = async () => {
     prefixType: 'only-base-path',
     config: NVSPermits,
     prefix: 'XROAD_NVS_PERMITS_PATH',
-    apiPath: '/permit_hunting/',
+    apiPath: '/permit_hunting',
     response: [
       new Response().withJSONBody({
         personid: '123',
