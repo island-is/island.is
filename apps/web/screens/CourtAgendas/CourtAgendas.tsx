@@ -246,11 +246,15 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
 
           courtAgendas.sort((a, b) => {
             if (!a.dateFrom && !b.dateFrom) return 0
-            if (!b.dateFrom) return -1
-            if (!a.dateFrom) return 1
-            return (
-              new Date(b.dateFrom).getTime() - new Date(a.dateFrom).getTime()
-            )
+            if (!b.dateFrom) return 1
+            if (!a.dateFrom) return -1
+            const dateFromDiff =
+              new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+            if (dateFromDiff !== 0) return dateFromDiff
+            if (!a.dateTo && !b.dateTo) return 0
+            if (!b.dateTo) return 1
+            if (!a.dateTo) return -1
+            return new Date(a.dateTo).getTime() - new Date(b.dateTo).getTime()
           })
 
           return {
