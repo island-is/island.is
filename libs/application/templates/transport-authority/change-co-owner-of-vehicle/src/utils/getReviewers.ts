@@ -9,11 +9,8 @@ export const getReviewers = (
     []
 
   // Old co-owner
-  const oldCoOwners = getValueViaPath(
-    answers,
-    'ownerCoOwners',
-    [],
-  ) as OwnerCoOwnersInformation[]
+  const oldCoOwners =
+    getValueViaPath<OwnerCoOwnersInformation[]>(answers, 'ownerCoOwners') || []
   oldCoOwners.forEach((item) => {
     if (item?.nationalId)
       result.push({
@@ -25,7 +22,7 @@ export const getReviewers = (
 
   // New co-owner
   const newCoOwners = (
-    getValueViaPath(answers, 'coOwners', []) as CoOwnersInformation[]
+    getValueViaPath<CoOwnersInformation[]>(answers, 'coOwners') || []
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   newCoOwners.forEach((item) => {
     if (item?.nationalId)

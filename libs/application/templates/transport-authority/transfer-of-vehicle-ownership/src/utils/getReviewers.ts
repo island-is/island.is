@@ -9,7 +9,7 @@ export const getReviewers = (
     []
 
   // Buyer
-  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
+  const buyer = getValueViaPath<UserInformation>(answers, 'buyer')
   if (buyer?.nationalId)
     result.push({
       nationalId: buyer.nationalId,
@@ -19,11 +19,8 @@ export const getReviewers = (
 
   // Buyer's co-owner / Buyer's operator
   const buyerCoOwnersAndOperators = (
-    getValueViaPath(
-      answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
+    getValueViaPath<CoOwnerAndOperator[]>(answers, 'buyerCoOwnerAndOperator') ||
+    []
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   buyerCoOwnersAndOperators.forEach((item) => {
     if (item?.nationalId)
@@ -35,11 +32,8 @@ export const getReviewers = (
   })
 
   // Seller's co-owner
-  const sellerCoOwners = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as CoOwnerAndOperator[]
+  const sellerCoOwners =
+    getValueViaPath<CoOwnerAndOperator[]>(answers, 'sellerCoOwner') || []
   sellerCoOwners.forEach((item) => {
     if (item?.nationalId)
       result.push({
@@ -62,7 +56,7 @@ export const getReviewerRole = (
   | 'sellerCoOwners'
   | undefined => {
   // Buyer
-  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
+  const buyer = getValueViaPath<UserInformation>(answers, 'buyer')
   if (buyer?.nationalId === nationalId) return 'buyer'
 
   // Buyer's co-owner
