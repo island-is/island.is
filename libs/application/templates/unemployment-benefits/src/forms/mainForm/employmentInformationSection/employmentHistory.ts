@@ -18,7 +18,6 @@ import {
   isEmployed,
   isOccasionallyEmployed,
   isEmployedPartTime,
-  isUnemployed,
   hasDataFromCurrentStatusItem,
   getDefaultFromCurrentStatus,
   hasEmployer,

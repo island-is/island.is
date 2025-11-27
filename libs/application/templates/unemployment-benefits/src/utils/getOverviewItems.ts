@@ -220,7 +220,7 @@ export const useEducationOverviewItems = (
     ) ?? []
 
   const educationStrings: Array<StaticText> = []
-  educationAnswer?.map((answer) => {
+  educationAnswer?.forEach((answer) => {
     const edAnswer = getLastTvelveMonthsEducationString(answer)
     educationStrings.push(edAnswer)
   })
