@@ -24,6 +24,7 @@ import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -102,6 +103,7 @@ type TableRepeaterOptions =
       application: Application,
       activeField?: Record<string, string>,
       locale?: Locale,
+      formatMessage?: FormatMessage,
     ) => RepeaterOption[] | [])
 
 type MaybeWithApplicationAndActiveField<T> =

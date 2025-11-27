@@ -11,7 +11,6 @@ import {
 import { employment as employmentMessages } from '../../../lib/messages'
 import { EmploymentStatus } from '../../../shared'
 import {
-  getEmploymentFromRsk,
   hasEmployer,
   isEmployed,
   isEmployedAtAll,
@@ -20,6 +19,7 @@ import {
 } from '../../../utils'
 import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
+import { getRskOptions } from '../../../utils/getRskOptions'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -105,21 +105,8 @@ export const currentSituationSubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.lastJobRepeater,
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
-                )
-
-                return employmentList
-                  .filter((x) => !!x.employerSSN)
-                  .map((job) => ({
-                    value: job.employerSSN ?? '',
-                    label:
-                      job.employerSSN !== '-'
-                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
-                        : job.employer || '',
-                  }))
-              },
+              options: (application, _, locale, formatMessage) =>
+                getRskOptions(application, formatMessage),
             },
             employer: {
               component: 'nationalIdWithName',

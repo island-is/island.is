@@ -149,7 +149,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         buildRadioField({
           id: 'reasonForJobSearch.reasonQuestion',
           width: 'half',
-          title: (application, locale, formatMessage) => {
+          title: (application, _, formatMessage) => {
             let title = ''
             if (typeof formatMessage === 'function') {
               const reasonBasedOnChoice = getReasonBasedOnChoice(
