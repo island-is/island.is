@@ -175,6 +175,9 @@ components:
           type: string
           format: date
           description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
         page:
           type: integer
           default: 1
