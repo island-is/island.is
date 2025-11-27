@@ -8,7 +8,7 @@ import {
   EHIC,
   Firearm,
   HealthInsurance,
-  NVSPermits,
+  Hunting,
   Passports,
 } from '../../../../../../../../infra/src/dsl/xroad'
 
@@ -412,8 +412,8 @@ export const loadLicensesXroadMocks = async () => {
   //Hunting license
   await addXroadMock({
     prefixType: 'only-base-path',
-    config: NVSPermits,
-    prefix: 'XROAD_NVS_PERMITS_PATH',
+    config: Hunting,
+    prefix: 'XROAD_HUNTING_LICENSE_PATH',
     apiPath: '/permit_hunting/',
     response: [
       new Response().withJSONBody({
