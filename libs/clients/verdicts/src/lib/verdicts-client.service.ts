@@ -421,6 +421,7 @@ export class VerdictsClientService {
                 this.logger,
               ),
               lawyer: input.lawyer ? input.lawyer : undefined,
+              orderBy: 'verdictDate ASC',
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -437,6 +438,8 @@ export class VerdictsClientService {
               : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
             lawyer: input.lawyer ? input.lawyer : undefined,
+            orderBy: 'StartDateTime',
+            orderDirection: 'ASC',
           }),
     ])
 
@@ -488,6 +491,13 @@ export class VerdictsClientService {
         error: goproResponse.reason,
       })
     }
+
+    items.sort((a, b) => {
+      if (!a.dateFrom && !b.dateFrom) return 0
+      if (!b.dateFrom) return 1
+      if (!a.dateFrom) return -1
+      return new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+    })
 
     return {
       items,
