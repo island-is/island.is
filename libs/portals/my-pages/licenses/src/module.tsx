@@ -10,7 +10,7 @@ import { Navigate } from 'react-router-dom'
 const LicensesOverview = lazy(() =>
   import('./screens/LicensesOverview/LicensesOverview'),
 )
-const LicenseDetail= lazy(() =>
+const LicenseDetail = lazy(() =>
   import('./screens/LicenseDetail/LicenseDetail'),
 )
 

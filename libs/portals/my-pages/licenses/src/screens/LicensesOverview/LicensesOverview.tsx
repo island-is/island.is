@@ -35,7 +35,7 @@ export const LicensesOverview = () => {
           GenericLicenseType.PCard,
           GenericLicenseType.Passport,
           GenericLicenseType.IdentityDocument,
-        ]
+        ],
       },
     },
   })
