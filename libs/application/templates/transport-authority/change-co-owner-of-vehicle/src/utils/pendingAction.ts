@@ -9,9 +9,7 @@ const getPendingReviewersText = (application: Application) => {
   )
   if (pending.length === 0) return null
 
-  const names = pending
-    .map((x) => (x.name ? `${x.name} (${x.nationalId})` : x.nationalId))
-    .join(', ')
+  const names = pending.map((x) => (x.name ? x.name : x.nationalId)).join(', ')
 
   return {
     ...corePendingActionMessages.whoNeedsToReviewDescription,
