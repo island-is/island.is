@@ -378,6 +378,15 @@ export class VerdictsClientService {
     }
   }
 
+  private getDefaultDateFrom() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return {
+      date: today,
+      dateString: today.toISOString(),
+    }
+  }
+
   async getCourtAgendas(input: {
     page?: number
     court?: string
@@ -397,17 +406,22 @@ export class VerdictsClientService {
             agendaSearchRequest: {
               page: pageNumber,
               limit: itemsPerPage,
-              dateFrom: safelyConvertStringToDate(
-                input.dateFrom,
-                'dateFrom',
-                this.logger,
-              ),
+              dateFrom: input.dateFrom
+                ? safelyConvertStringToDate(
+                    input.dateFrom,
+                    'dateFrom',
+                    this.logger,
+                  )
+                : !input.dateTo
+                ? this.getDefaultDateFrom().date
+                : undefined,
               dateTo: safelyConvertStringToDate(
                 input.dateTo,
                 'dateTo',
                 this.logger,
               ),
               lawyer: input.lawyer ? input.lawyer : undefined,
+              orderBy: 'verdictDate ASC',
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -417,9 +431,15 @@ export class VerdictsClientService {
             pageNumber: pageNumber,
             courts: input.court ? input.court.split(',') : [],
             itemsPerPage,
-            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateFrom: input.dateFrom
+              ? input.dateFrom
+              : !input.dateTo
+              ? this.getDefaultDateFrom().dateString
+              : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
             lawyer: input.lawyer ? input.lawyer : undefined,
+            orderBy: 'StartDateTime',
+            orderDirection: 'ASC',
           }),
     ])
 
@@ -471,6 +491,21 @@ export class VerdictsClientService {
         error: goproResponse.reason,
       })
     }
+
+    items.sort((a, b) => {
+      if (!a.dateFrom && !b.dateFrom) return 0
+      if (!b.dateFrom) return 1
+      if (!a.dateFrom) return -1
+
+      const dateFromDiff =
+        new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+      if (dateFromDiff !== 0) return dateFromDiff
+
+      if (!a.dateTo && !b.dateTo) return 0
+      if (!b.dateTo) return 1
+      if (!a.dateTo) return -1
+      return new Date(a.dateTo).getTime() - new Date(b.dateTo).getTime()
+    })
 
     return {
       items,
