@@ -14,6 +14,7 @@ import { Application } from '@island.is/application/types'
 import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
+  RegistrationApplicationInputApplicationTypeEnum,
 } from '@island.is/clients/mms/frigg'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -207,9 +208,22 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         },
       }),
     },
+    applicationType: mapApplicationType(applicationType),
   }
 
   return newPrimarySchoolDTO
+}
+
+export const mapApplicationType = (
+  applicationType: ApplicationType | undefined,
+) => {
+  if (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL)
+    return RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+  if (applicationType === ApplicationType.CONTINUING_ENROLLMENT)
+    return RegistrationApplicationInputApplicationTypeEnum.Continuation
+
+  return RegistrationApplicationInputApplicationTypeEnum.Enrollment
 }
 
 export const pathToAsset = (file: string) => {
