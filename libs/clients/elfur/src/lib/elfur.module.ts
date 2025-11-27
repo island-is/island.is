@@ -3,7 +3,7 @@ import { ElfurClientService } from './elfur.service'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { IdsClientConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
-import { client } from '../gen/fetch/client.gen'
+import { client } from '../../gen/fetch/client.gen'
 import { ElfurClientConfig } from './elfur.config'
 
 @Module({

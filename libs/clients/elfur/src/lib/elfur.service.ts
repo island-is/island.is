@@ -5,7 +5,7 @@ import {
   getV1OpeninvoicesSuppliers,
   getV1OpeninvoicesTypes,
   getV1OrganizationEmployeeGetEmployeesForOrganization,
-} from '../gen/fetch'
+} from '../../gen/fetch'
 import { data } from '@island.is/clients/middlewares'
 import { mapCustomerDto } from './dtos/customer.dto'
 import { CustomersDto } from './dtos/customers.dto'

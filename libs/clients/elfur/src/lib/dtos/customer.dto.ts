@@ -1,4 +1,4 @@
-import { CustomerResponseDto } from '../../gen/fetch'
+import { CustomerResponseDto } from '../../../gen/fetch'
 
 export interface CustomerDto {
   id: number

@@ -3,7 +3,7 @@ import { defineConfig } from '@hey-api/openapi-ts'
 export default defineConfig({
   input: './libs/clients/elfur/src/clientConfig.json',
   output: {
-    path: './libs/clients/elfur/src/gen/fetch',
+    path: './libs/clients/elfur/gen/fetch',
     format: 'prettier',
     lint: 'eslint',
   },
