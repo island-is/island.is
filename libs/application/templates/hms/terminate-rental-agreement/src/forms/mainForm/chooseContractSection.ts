@@ -9,10 +9,6 @@ import { rentalContractOptions } from '../../utils/options'
 export const chooseContractSection = buildSection({
   id: 'chooseContractSection',
   title: m.chooseContractMessages.title,
-  condition: (answers, externalData) => {
-    console.log(answers, externalData)
-    return true
-  },
   children: [
     buildMultiField({
       id: 'chooseContract',
