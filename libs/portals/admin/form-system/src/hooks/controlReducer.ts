@@ -1277,7 +1277,7 @@ export const controlReducer = (
     }
     case 'REMOVE_LIST_DEPENDENCIES': {
       const { field, update } = action.payload
-      const updatedDependencies = removeAllDependencies(
+      const updatedDependencies = removeParentDependency(
         (form?.dependencies ?? []).filter(
           (dep) => dep !== null && dep !== undefined,
         ) as FormSystemDependency[],
@@ -1290,7 +1290,6 @@ export const controlReducer = (
       update(updatedForm)
       return { ...state, form: updatedForm }
     }
-
     case 'SET_COMPLETED_TITLE': {
       const { lang, newValue } = action.payload
       const updatedForm = {
