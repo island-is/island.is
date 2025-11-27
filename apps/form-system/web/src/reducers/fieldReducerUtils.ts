@@ -394,11 +394,6 @@ export const setFieldValue = (
     updatedSectionsBeforeDeps,
     depsArray,
   )
-  console.log('Updated sections after applying dependencies:', updatedSections)
-  console.log(
-    'new currentScreen',
-    updatedSections[state.currentSection.index]?.screens?.[currentScreen.index],
-  )
   const updatedState = {
     ...state,
     application: {
@@ -417,6 +412,5 @@ export const setFieldValue = (
     errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
   }
 
-  console.log('Updated state after setting field value:', updatedState)
   return updatedState
 }

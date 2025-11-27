@@ -106,6 +106,8 @@ export const incrementWithScreens = (
             },
           },
         },
+      }).catch((error) => {
+        console.error('Error updating dependencies:', error)
       })
     }
   }
