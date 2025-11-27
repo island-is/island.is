@@ -7,7 +7,7 @@
   },
   "servers": [{ "url": "/gatt/api/islandisdev" }],
   "paths": {
-    "/permit_hunting/": {
+    "/permit_hunting": {
       "get": {
         "tags": ["permits"],
         "operationId": "permit_hunting",
@@ -35,7 +35,7 @@
         }
       }
     },
-    "/permit_ranger/": {
+    "/permit_ranger": {
       "get": {
         "tags": ["permits"],
         "operationId": "permit_ranger",
