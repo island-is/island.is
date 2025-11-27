@@ -95,7 +95,7 @@ export const certificate = defineMessages({
     id: 'dp.application:certificate.information.medical.implements.usage',
     defaultMessage:
       'Hvaða lyf, hjálpartæki eða önnur inngrip notar skjólstæðingur?',
-     description: 'What medicine, aids or other implements does the client use?',
+    description: 'What medicine, aids or other implements does the client use?',
   },
   employmentCapability: {
     id: 'dp.application:certificate.information.employment.capability',

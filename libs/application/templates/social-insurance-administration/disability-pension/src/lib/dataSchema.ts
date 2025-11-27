@@ -506,10 +506,12 @@ export const dataSchema = z.object({
       .array(
         z.object({
           id: z.string(),
-          answer: z.string().min(1)
-          .refine((v) => !!v && v.trim().length > 0, {
-            params: errorMessages.selfAssessmentQuestionRequired,
-          }),
+          answer: z
+            .string()
+            .min(1)
+            .refine((v) => !!v && v.trim().length > 0, {
+              params: errorMessages.selfAssessmentQuestionRequired,
+            }),
         }),
       )
       .optional()
