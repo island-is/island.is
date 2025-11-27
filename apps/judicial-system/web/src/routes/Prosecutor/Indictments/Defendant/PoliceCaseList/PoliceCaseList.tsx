@@ -268,6 +268,7 @@ export const PoliceCaseList = () => {
       number: policeCaseInfo.policeCaseNumber || '',
       place: policeCaseInfo.place || undefined,
       date: policeCaseInfo.date ? new Date(policeCaseInfo.date) : undefined,
+      subtypes: policeCaseInfo.subtypes || undefined,
     }))
 
     handleCreatePoliceCases(policeCases)
