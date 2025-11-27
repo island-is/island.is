@@ -173,33 +173,33 @@ export const employment = {
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 19 -> from Galdur',
       },
-      onYesIdTventy: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTventy',
+      onYesIdTwenty: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwenty',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 20 -> from Galdur',
       },
-      onYesIdTveentyOne: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTveentyOne',
+      onYesIdTwentyOne: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwentyOne',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 21 -> from Galdur',
       },
-      onYesIdTveentyTwo: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTveentyTwo',
+      onYesIdTwentyTwo: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwentyTwo',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 22 -> from Galdur',
       },
-      onYesIdTveentyThree: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTveentyThree',
+      onYesIdTwentyThree: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwentyThree',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 23 -> from Galdur',
       },
-      onYesIdTveentyFour: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTveentyFour',
+      onYesIdTwentyFour: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwentyFour',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 24 -> from Galdur',
       },
-      onYesIdTveentyFive: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTveentyFive',
+      onYesIdTwentyFive: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwentyFive',
         defaultMessage: 'Vantar texta',
         description: 'On yes Id 25 -> from Galdur',
       },
@@ -298,23 +298,23 @@ export const employment = {
         defaultMessage: 'Vantar texta',
         description: 'On no Id 19 -> from Galdur',
       },
-      onNoIdTventy: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTventy',
+      onNoIdTwenty: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwenty',
         defaultMessage: 'Vantar texta',
         description: 'On no Id 20 -> from Galdur',
       },
-      onNoIdTveentyOne: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTveentyOne',
+      onNoIdTwentyOne: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwentyOne',
         defaultMessage: 'Vantar texta',
         description: 'On no Id 21 -> from Galdur',
       },
-      onNoIdTveentyTwo: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTveentyTwo',
+      onNoIdTwentyTwo: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwentyTwo',
         defaultMessage: 'Vantar texta',
         description: 'On no Id 22 -> from Galdur',
       },
-      onNoIdTveentyThree: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTveentyThree',
+      onNoIdTwentyThree: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwentyThree',
         defaultMessage: 'Vantar texta',
         description: 'On no Id 23 -> from Galdur',
       },
@@ -323,8 +323,8 @@ export const employment = {
         defaultMessage: 'Vantar texta',
         description: 'On no Id 24 -> from Galdur',
       },
-      onNoIdTveentyFive: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTveentyFive',
+      onNoIdTwentyFive: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwentyFive',
         defaultMessage: 'Vantar texta',
         description: 'On no Id 25 -> from Galdur',
       },
@@ -664,10 +664,6 @@ export const employment = {
       description: 'Loss of rights agreementpage description',
     },
   }),
-}
-
-export const employmentContentfulMapper = {
-  onYesIdTventy: employment.reasonForJobSearch.labels.onYesIdTventy,
 }
 
 export const contentfulIdMapReasonsForJobSearch: Record<
