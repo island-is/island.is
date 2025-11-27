@@ -1,7 +1,7 @@
 import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
-import {
+import type {
   TrWebContractsExternalServicePortalDisabilityDiagnosis,
   TrWebContractsExternalServicePortalDisabilityPensionCertificate,
   TrWebContractsExternalServicePortalDoctorInfo,
