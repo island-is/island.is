@@ -40,11 +40,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   errorMsgs,
   FileSchemaInAnswers,
-  EducationInAnswers,
   WorkingAbilityInAnswers,
   OtherBenefitsInAnswers,
   ResumeInAnswers,
-  EducationType,
   EmploymentStatus,
   EmploymentStatusIds,
   EducationHistoryInAnswers,
