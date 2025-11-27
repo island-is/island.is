@@ -75,7 +75,7 @@ const mapImpairmentRating = (
       const answerValue = scale.find(
         (s) => s.value?.toString() === answerData.answer,
       )
-      if (!answerValue?.value || !answerData.questionTitle) {
+      if (!answerValue || answerValue.value === undefined  || !answerData.questionTitle) {
         return undefined
       }
 
