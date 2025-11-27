@@ -1,4 +1,4 @@
-import type { EditorClasses } from '@island.is/regulations-tools/Editor'
+import type { EditorClasses } from '@dmr.is/regulations-tools/Editor'
 import { style, globalStyle, keyframes, StyleRule } from '@vanilla-extract/css'
 import { spacing, theme } from '@island.is/island-ui/theme'
 import {
