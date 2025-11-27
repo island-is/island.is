@@ -9,7 +9,10 @@ export const useLocalLinkTypeResolver = (linkType?: LinkType) => {
   useEffect(() => {
     setResolveLinkTypeLocally(Boolean(linkType))
     setLinkType(linkType ?? null)
-    return () => setResolveLinkTypeLocally(false)
+    return () => {
+      setResolveLinkTypeLocally(false)
+      setLinkType(null)
+    }
   }, [linkType])
 }
 
