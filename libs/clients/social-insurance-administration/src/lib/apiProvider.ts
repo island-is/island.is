@@ -24,11 +24,11 @@ import {
   MedicalDocumentsApi,
   QuestionnairesApi,
   Configuration,
-} from '../../generated/v1/gen/fetch'
+} from '../../gen/fetch/v1'
 import {
   ApplicationApi as ApplicationWriteApiV2,
   Configuration as ConfigurationV2,
-} from '../../generated/v2/gen/fetch'
+} from '../../gen/fetch/v2'
 import { Provider } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'

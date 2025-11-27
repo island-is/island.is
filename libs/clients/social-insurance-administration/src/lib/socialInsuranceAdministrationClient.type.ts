@@ -10,7 +10,7 @@ import {
   TestApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
-} from '../../generated/v1/gen/fetch'
+} from '../../gen/fetch/v1'
 
 export type Scope =
   | '@tr.is/umsaekjandi:read'

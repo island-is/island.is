@@ -41,8 +41,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/social-insurance-administration/generated/v1/gen/fetch -i libs/clients/social-insurance-administration/src/lib/config/clientConfig.json",
-          "yarn openapi-generator -o libs/clients/social-insurance-administration/generated/v2/gen/fetch -i libs/clients/social-insurance-administration/src/lib/config/clientConfig-v2.json"
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch/v1 -i libs/clients/social-insurance-administration/src/lib/config/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch/v2 -i libs/clients/social-insurance-administration/src/lib/config/clientConfig-v2.json"
         ]
       }
     }

@@ -23,7 +23,7 @@ import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ApplicationApi as ApplicationWriteApiV2 } from '../../generated/v2/gen/fetch'
+import { ApplicationApi as ApplicationWriteApiV2 } from '../../gen/fetch/v2'
 import {
   ApplicationApi,
   ApplicantApi,
@@ -64,7 +64,7 @@ import {
   TrWebContractsExternalServicePortalConfirmationOfIllHealth,
   TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
   TrWebContractsExternalServicePortalNationalRegistryAddress,
-} from '../../generated/v1/gen/fetch'
+} from '../../gen/fetch/v1'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
