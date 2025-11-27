@@ -28,12 +28,12 @@ export class PoliceCasesClientModule {
         organizationSlug: 'rikislogreglustjori',
         autoAuth: idsClientConfig.isConfigured
           ? {
-            mode: 'tokenExchange',
-            issuer: idsClientConfig.issuer,
-            clientId: idsClientConfig.clientId,
-            clientSecret: idsClientConfig.clientSecret,
-            scope: [],
-          }
+              mode: 'tokenExchange',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: [],
+            }
           : undefined,
       }),
       baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
@@ -41,7 +41,7 @@ export class PoliceCasesClientModule {
         'X-Road-Client': xroadConfig.xRoadClient,
         'x-api-key': config.xRoadPoliceCasesApiKey,
         Accept: 'application/json',
-      }
+      },
     })
   }
 }

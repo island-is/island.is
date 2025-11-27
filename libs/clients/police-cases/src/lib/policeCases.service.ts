@@ -11,8 +11,8 @@ export class PoliceCasesClientService {
       dataOr404Null(
         getApiGetcasesBySocialsecuritynumber({
           path: { socialsecuritynumber: user.nationalId },
-        })
-      )
+        }),
+      ),
     )
 
     if (!response || !response.cases) {

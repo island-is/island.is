@@ -1,8 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input:
-    './libs/clients/police-cases/src/clientConfig.yml',
+  input: './libs/clients/police-cases/src/clientConfig.yml',
   output: {
     path: './libs/clients/police-cases/gen/fetch',
     format: 'prettier',
