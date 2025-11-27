@@ -44,8 +44,7 @@
           "yarn openapi-generator -o libs/clients/social-insurance-administration/generated/v1/gen/fetch -i libs/clients/social-insurance-administration/src/lib/config/clientConfig.json",
           "yarn openapi-generator -o libs/clients/social-insurance-administration/generated/v2/gen/fetch -i libs/clients/social-insurance-administration/src/lib/config/clientConfig-v2.json"
         ]
-      },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      }
     }
   }
 }
