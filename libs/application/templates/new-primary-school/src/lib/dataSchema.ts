@@ -150,6 +150,10 @@ export const dataSchema = z.object({
       preferredLanguage: z.string().optional().nullable(),
     })
     .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      // LanguageEnvironment is stored as <id>::<option> in the DB
+      const selectedLanguageEnvironment =
+        languageEnvironment.split('::')[1] ?? ''
+
       const checkAndAddIssue = (index: number) => {
         // If required 2 languages but the second language field is still hidden
         // else check if applicant has selected a languages
@@ -169,12 +173,13 @@ export const dataSchema = z.object({
       }
 
       if (
-        languageEnvironment ===
+        selectedLanguageEnvironment ===
         LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
       ) {
         checkAndAddIssue(0)
       } else if (
-        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        selectedLanguageEnvironment ===
+        LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
       ) {
         checkAndAddIssue(0)
         checkAndAddIssue(1)
@@ -182,12 +187,16 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
+        // LanguageEnvironment is stored as <id>::<option> in the DB
+        const selectedLanguageEnvironment =
+          languageEnvironment.split('::')[1] ?? ''
+
         if (
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 1) ||
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 2)
@@ -248,14 +257,14 @@ export const dataSchema = z.object({
       hasWelfareContact: z.string().optional(),
       welfareContact: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
@@ -273,7 +282,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact && welfareContact.name.length > 0
+          ? welfareContact && !!welfareContact.name?.trim()
           : true,
       { path: ['welfareContact', 'name'] },
     )
@@ -281,9 +290,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact &&
-            welfareContact.email &&
-            welfareContact.email.length > 0
+          ? welfareContact && !!welfareContact.email?.trim()
           : true,
       { path: ['welfareContact', 'email'] },
     )
@@ -306,7 +313,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.name.length > 0
+          ? caseManager && !!caseManager.name?.trim()
           : true,
       { path: ['caseManager', 'name'] },
     )
@@ -321,7 +328,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.email && caseManager.email.length > 0
+          ? caseManager && !!caseManager.email?.trim()
           : true,
       {
         path: ['caseManager', 'email'],
