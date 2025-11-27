@@ -23,6 +23,7 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { TranslationTag } from '../../../TranslationTag/TranslationTag'
+import { StatusTag } from '../../../StatusTag/StatusTag'
 
 interface Props {
   id?: string | null
@@ -242,6 +243,7 @@ export const TableRow = ({
       },
     })
   }
+
   return (
     <Box
       paddingTop={2}
@@ -268,7 +270,9 @@ export const TableRow = ({
           </Box>
         </Column>
         <Column span="2/12">
-          <ColumnText text={status ?? ''} />
+          <Box display="flex">
+            <StatusTag status={status ?? ''} />
+          </Box>
         </Column>
 
         <Column span="1/12">

@@ -111,7 +111,10 @@ export class FormsService {
     }
 
     const forms = await this.formModel.findAll({
-      where: { organizationId: organization.id },
+      where: {
+        organizationId: organization.id,
+        status: { [Op.ne]: FormStatus.ARCHIVED },
+      },
     })
 
     const keys = [
