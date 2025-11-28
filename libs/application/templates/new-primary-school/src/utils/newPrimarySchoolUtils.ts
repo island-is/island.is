@@ -37,6 +37,7 @@ import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  OrganizationSubType,
   PayerOption,
   ReasonForApplicationOptions,
   Roles,
@@ -212,6 +213,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const selectedSchoolId = getValueViaPath<string>(answers, 'newSchool.school')
 
+  const alternativeSpecialEducationDepartment =
+    getValueViaPath<Array<{ department: string }>>(
+      answers,
+      'newSchool.alternativeSpecialEducationDepartment',
+    ) ?? []
+
   const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
     'currentNursery.municipality',
@@ -273,6 +280,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     expectedEndDate,
     schoolMunicipality,
     selectedSchoolId,
+    alternativeSpecialEducationDepartment,
     currentNurseryMunicipality,
     currentNursery,
     applyForPreferredSchool,
@@ -705,4 +713,28 @@ export const otherGuardianApprovalStatePendingAction = (
       displayStatus: 'info',
     }
   }
+}
+
+export const getSpecialEducationDepartmentsInMunicipality = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { schoolMunicipality } = getApplicationAnswers(answers)
+  const { schools, childGradeLevel } = getApplicationExternalData(externalData)
+
+  const specialEducationSubtypes = [
+    OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+    OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+  ]
+
+  return schools.filter(
+    ({ subType, address, gradeLevels }) =>
+      address?.municipalityId === schoolMunicipality &&
+      specialEducationSubtypes.includes(subType) &&
+      (childGradeLevel
+        ? gradeLevels.some((grade) =>
+            getCurrentAndNextGrade(childGradeLevel).includes(grade),
+          )
+        : true),
+  )
 }
