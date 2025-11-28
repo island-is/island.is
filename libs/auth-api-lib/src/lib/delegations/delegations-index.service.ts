@@ -302,12 +302,12 @@ export class DelegationsIndexService {
               ),
             },
           },
-        ]
+        ] as Array<Record<string, unknown>>
 
         if (scopeSupportsCustom) {
           orConditions.push({
             ...where,
-            type: AuthDelegationType.Custom,
+            type: { [Op.in]: [AuthDelegationType.Custom] },
             customDelegationScopes: { [Op.contains]: [scope.name] },
           })
         }
@@ -325,12 +325,25 @@ export class DelegationsIndexService {
       })
 
       // Wait for all scope queries to complete
-      const delegations = (await Promise.all(scopePromises)).flat()
+      const allDelegations = (await Promise.all(scopePromises)).flat()
+
+      // Deduplicate delegations that may appear in multiple scope queries
+      // A delegation is unique by (fromNationalId, toNationalId, type)
+      const uniqueDelegations = allDelegations.filter(
+        (delegation, index, self) =>
+          index ===
+          self.findIndex(
+            (d) =>
+              d.fromNationalId === delegation.fromNationalId &&
+              d.toNationalId === delegation.toNationalId &&
+              d.type === delegation.type,
+          ),
+      )
 
       // For now, we don't implement pagination but still return the paginated response
       return {
-        data: delegations,
-        totalCount: delegations.length,
+        data: uniqueDelegations,
+        totalCount: uniqueDelegations.length,
         pageInfo: {
           hasNextPage: false,
         },
