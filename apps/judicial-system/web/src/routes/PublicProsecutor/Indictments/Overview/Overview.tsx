@@ -177,7 +177,9 @@ export const Overview = () => {
                 </Box>
                 {verdict &&
                   (isServiceNotApplicable ||
-                    (isServiceRequired && verdict.serviceDate)) && (
+                    (isServiceRequired &&
+                      verdict.serviceDate &&
+                      !verdict.isDefaultJudgement)) && (
                     <Box component="section">
                       <BlueBox>
                         <SectionHeading
