@@ -1,5 +1,6 @@
 import { Action, ApplicationState } from '@island.is/form-system/ui'
-import { setError, setFieldValue } from './reducerUtils'
+import { setFieldValue } from './fieldReducerUtils'
+import { setError } from './reducerUtils'
 
 export const fieldReducer = (
   state: ApplicationState,

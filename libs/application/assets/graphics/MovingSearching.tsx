@@ -1,6 +1,11 @@
-import React from 'react'
+/*
+ ** Ísland.is graphic that depicts two persons packing boxes, a moving truck,
+ ** comfortable chair, and a large house plant.
+ */
 
-const MovingSearching: React.FC<React.PropsWithChildren<unknown>> = () => (
+import React, { FC } from 'react'
+
+export const MovingSearching: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="794"
     height="337"
@@ -3822,5 +3827,3 @@ const MovingSearching: React.FC<React.PropsWithChildren<unknown>> = () => (
     </defs>
   </svg>
 )
-
-export default MovingSearching
