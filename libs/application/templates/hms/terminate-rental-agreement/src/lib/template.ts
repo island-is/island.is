@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -25,6 +26,7 @@ import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -76,6 +78,20 @@ const template: ApplicationTemplate<
               delete: true,
             },
             {
+              id: Roles.PROCURER,
+              formLoader: () =>
+                import('../forms/prerequisitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, rentalAgreementsApi],
+              delete: true,
+            },
+            {
               id: Roles.NOCONTRACTS,
               formLoader: () =>
                 import('../forms/prerequisitesForm').then((module) =>
@@ -106,6 +122,19 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.PROCURER,
               formLoader: () =>
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.MainForm),
@@ -205,14 +234,12 @@ const template: ApplicationTemplate<
               read: 'all',
             },
             {
-              // This state is set for development purposes, shouldn't be reachable on prod
-              id: Roles.NOCONTRACTS,
+              id: Roles.PROCURER,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },
@@ -229,6 +256,10 @@ const template: ApplicationTemplate<
     )
     if (contracts?.length === 0) {
       return Roles.NOCONTRACTS
+    }
+
+    if (isCompany(nationalId)) {
+      return Roles.PROCURER
     }
 
     if (nationalId === application.applicant) {

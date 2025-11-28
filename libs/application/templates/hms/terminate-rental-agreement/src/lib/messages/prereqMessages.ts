@@ -49,4 +49,9 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
   },
+  companyRegistryTitle: {
+    id: 'tra.application:prereq.companyRegistryTitle',
+    defaultMessage: 'Fyrirtækjaskrá',
+    description: 'Company registry title',
+  },
 })
