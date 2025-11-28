@@ -43,7 +43,6 @@ export class PoliceCasesClientModule {
 
     client.interceptors.request.use((request) => {
       request.headers.set('X-API-KEY', config.xRoadPoliceCasesApiKey);
-      console.log('config', config.xRoadPoliceCasesApiKey)
       return request;
     });
   }

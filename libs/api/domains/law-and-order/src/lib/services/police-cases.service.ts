@@ -47,14 +47,13 @@ export class PoliceCasesService {
           .filter(isDefined) ?? [],
       totalCount: cases.length,
       pageInfo: {
-        //temporary
         hasNextPage: false,
         hasPreviousPage: false,
       },
     }
   }
 
-  async getCase(user: User, caseNumber: string, locale: Locale) {
+  async getCase(user: User, caseNumber: string, locale: Locale): Promise<Case | undefined> {
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const cases = await this.policeApi.getCases(user)
 
