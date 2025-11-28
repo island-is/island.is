@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationContext,
   ApplicationStateSchema,
   FormatMessage,
@@ -7,7 +8,10 @@ import { Injectable } from '@nestjs/common'
 import { EventObject } from 'xstate'
 import { HistoryResponseDto } from './dto/history.dto'
 import { History } from './history.model'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import { IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
@@ -21,6 +25,7 @@ export class HistoryBuilder {
     history: History[],
     formatMessage: FormatMessage,
     templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>,
+    application: Application,
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
@@ -29,8 +34,8 @@ export class HistoryBuilder {
         entryTimestamp,
         stateKey,
         exitEvent,
-        exitEventSubjectNationalId,
-        exitEventActorNationalId,
+        exitEventSubjectNationalId: subjectNationalId,
+        exitEventActorNationalId: actorNationalId,
       } = entry
 
       if (!exitEvent) continue
@@ -38,42 +43,56 @@ export class HistoryBuilder {
       const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
       if (historyLog) {
-        if (typeof historyLog.logMessage === 'function') {
-          const [subject, actor] = await Promise.all([
-            exitEventSubjectNationalId
-              ? this.identityService.tryToGetNameFromNationalId(
-                  exitEventSubjectNationalId,
-                )
+        // Only fetch subject/actor name by nationalId if necessary
+        let subjectName: string | undefined
+        let actorName: string | undefined
+        if (
+          historyLog.includeSubjectAndActor &&
+          (subjectNationalId || actorNationalId)
+        ) {
+          ;[subjectName, actorName] = await Promise.all([
+            subjectNationalId
+              ? this.identityService
+                  .tryToGetNameFromNationalId(subjectNationalId)
+                  .then((name) => name ?? subjectNationalId)
               : Promise.resolve(undefined),
 
-            exitEventActorNationalId
-              ? this.identityService.tryToGetNameFromNationalId(
-                  exitEventActorNationalId,
-                )
+            actorNationalId
+              ? this.identityService
+                  .tryToGetNameFromNationalId(actorNationalId)
+                  .then((name) => name ?? actorNationalId)
               : Promise.resolve(undefined),
           ])
-
-          const values = { subject, actor }
-
-          const message = historyLog.logMessage(values)
-
-          result.push(
-            new HistoryResponseDto(
-              entryTimestamp,
-              message,
-              formatMessage,
-              values,
-            ),
-          )
-        } else {
-          result.push(
-            new HistoryResponseDto(
-              entryTimestamp,
-              historyLog.logMessage,
-              formatMessage,
-            ),
-          )
         }
+
+        const message =
+          typeof historyLog.logMessage === 'function'
+            ? historyLog.logMessage(application, subjectNationalId)
+            : historyLog.logMessage
+
+        let subjectAndActorText: string | undefined
+        if (subjectName) {
+          if (actorName && subjectNationalId !== actorNationalId) {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewerWithActor,
+              { subject: subjectName, actor: actorName },
+            )
+          } else {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewer,
+              { subject: subjectName },
+            )
+          }
+        }
+
+        result.push(
+          new HistoryResponseDto(
+            entryTimestamp,
+            message,
+            formatMessage,
+            subjectAndActorText,
+          ),
+        )
       }
     }
 

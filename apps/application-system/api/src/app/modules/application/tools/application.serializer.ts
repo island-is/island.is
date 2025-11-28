@@ -122,6 +122,7 @@ export class ApplicationSerializer
           historyModel,
           intl.formatMessage,
           helper,
+          application,
         )
       : undefined
 

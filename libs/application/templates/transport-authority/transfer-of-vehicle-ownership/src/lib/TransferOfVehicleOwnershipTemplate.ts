@@ -8,17 +8,13 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
-  getHistoryLogRejectedWithSubjectAndActor,
-  getHistoryLogApprovedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
@@ -39,8 +35,8 @@ import {
 import {
   getChargeItems,
   getExtraData,
-  canReviewerApprove,
-  getReviewers,
+  getReviewerRole,
+  reviewStatePendingAction,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -63,43 +59,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
-  }
-}
-
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: {
-          ...corePendingActionMessages.whoNeedsToReviewDescription,
-          values: {
-            value: getReviewers(application.answers)
-              .filter((x) => !x.hasApproved)
-              .map((x) =>
-                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
-              )
-              .join(', '),
-          },
-        },
-        displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
-      }
-    }
-  }
-  return {
-    title: corePendingActionMessages.waitingForReviewTitle,
-    content: corePendingActionMessages.waitingForReviewDescription,
-    displayStatus: 'info',
   }
 }
 
@@ -225,18 +184,55 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogApprovedByBuyer
+                  else if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogApprovedByBuyerCoOwner
+                  else if (role === 'buyerOperators')
+                    return applicationMessage.historyLogApprovedByBuyerOperator
+                  else if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogApprovedBySellerCoOwner
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogRejectedByBuyer
+                  if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogRejectedByBuyerCoOwner
+                  if (role === 'buyerOperators')
+                    return applicationMessage.historyLogRejectedByBuyerOperator
+                  if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogRejectedBySellerCoOwner
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) =>
+              reviewStatePendingAction(application, nationalId),
           },
           lifecycle: {
             shouldBeListed: true,

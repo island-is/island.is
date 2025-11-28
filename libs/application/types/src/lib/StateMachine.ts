@@ -88,7 +88,11 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
   onEvent: Event<T> | string
   logMessage:
     | StaticText
-    | ((values: { subject?: string; actor?: string }) => StaticText)
+    | ((application: Application, subjectNationalId?: string) => StaticText)
+  /**
+   * Whether subject and actor should be added to history log
+   */
+  includeSubjectAndActor?: boolean
 }
 
 export interface ApplicationStateMeta<
