@@ -3,7 +3,7 @@ import { ApplicationProvider } from '../context/ApplicationProvider'
 import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
 import { ApplicationLoading } from '@island.is/form-system/ui'
-import { NotFound } from '@island.is/portals/core'
+import { ErrorShell } from '@island.is/application/ui-shell'
 
 type UseParams = {
   slug: string
@@ -19,20 +19,20 @@ export const Application = () => {
   })
 
   if (!id || !slug) {
-    return <NotFound />
+    return <ErrorShell errorType="notFound" />
   }
 
   if (loading) {
     return <ApplicationLoading />
   }
 
-  if (error) {
-    return <div>Error</div>
+  const formSystemApp = data?.formSystemApplication
+  const isLoginTypeAllowed = formSystemApp?.isLoginTypeAllowed
+  const application = removeTypename(formSystemApp?.application)
+
+  if (error || isLoginTypeAllowed === false || !application) {
+    return <ErrorShell errorType="idNotFound" />
   }
 
-  return (
-    <ApplicationProvider
-      application={removeTypename(data?.formSystemApplication)}
-    />
-  )
+  return <ApplicationProvider application={application} />
 }

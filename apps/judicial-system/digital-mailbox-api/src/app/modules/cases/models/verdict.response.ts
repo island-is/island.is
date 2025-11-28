@@ -44,14 +44,17 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
+    const verdict = defendant?.verdict
+
     const isServiceRequired =
-      defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+
     const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
     const baseDate = isServiceRequired
-      ? defendant?.verdict?.serviceDate
+      ? verdict?.serviceDate
       : internalCase.rulingDate
 
     const {
@@ -65,14 +68,14 @@ export class VerdictResponse {
       : {}
 
     const rulingInstructionsItems = getRulingInstructionItems(
-      defendant?.verdict?.serviceInformationForDefendant ?? [],
+      verdict?.serviceInformationForDefendant ?? [],
       lang,
     )
 
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      appealDecision: defendant?.verdict?.appealDecision,
+      appealDecision: verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -89,13 +92,12 @@ export class VerdictResponse {
               t.appealDeadline,
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
-            ...(isAppealDeadlineExpired
+            // Default judgements can't be appealed
+            ...(!verdict?.isDefaultJudgement && isAppealDeadlineExpired
               ? [
                   [
                     t.appealDecision,
-                    getVerdictAppealDecision(
-                      defendant?.verdict?.appealDecision,
-                    ),
+                    getVerdictAppealDecision(verdict?.appealDecision),
                   ],
                 ]
               : []),
@@ -118,7 +120,8 @@ export class VerdictResponse {
             },
           ],
         },
-        ...(!isAppealDeadlineExpired
+        // Default judgements can't be appealed
+        ...(!verdict?.isDefaultJudgement && !isAppealDeadlineExpired
           ? [
               {
                 label: t.appealDecision,
