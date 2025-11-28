@@ -1,4 +1,4 @@
-import { InvoiceItem } from '../models/invoiceItem.model'
+import { InvoiceLine } from '../models/invoiceLine.model'
 
 const MOCK_ITEM_LABELS = [
   '[MOCK] Office Supplies - Lorem Ipsum',
@@ -14,7 +14,7 @@ const MOCK_ITEM_LABELS = [
 export const generateMockItemization = (
   invoiceId: number,
   totalAmount: number,
-): InvoiceItem[] => {
+): InvoiceLine[] => {
   const numItems = Math.floor(Math.random() * 3) + 2 // 2-4 items
   const selectedItems = MOCK_ITEM_LABELS.sort(() => 0.5 - Math.random()).slice(
     0,

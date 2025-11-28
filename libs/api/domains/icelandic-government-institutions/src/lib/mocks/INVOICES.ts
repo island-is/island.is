@@ -20,7 +20,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1001,
           date: '2024-01-10T00:00:00Z',
           totalItemizationAmount: 2450000,
-          itemization: [
+          lines: [
             {
               id: 'item-1001-1',
               label: 'Ráðgjöf um byggingarverkefni',
@@ -58,7 +58,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1002,
           date: '2024-01-15T00:00:00Z',
           totalItemizationAmount: 340000,
-          itemization: [
+          lines: [
             {
               id: 'item-1002-1',
               label: 'Rafmagnsframleiðsla',
@@ -75,7 +75,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1003,
           date: '2024-01-20T00:00:00Z',
           totalItemizationAmount: 550000,
-          itemization: [
+          lines: [
             {
               id: 'item-1003-1',
               label: 'Rafmagnsframleiðsla',
@@ -108,7 +108,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1004,
           date: '2024-01-18T00:00:00Z',
           totalItemizationAmount: 1250000,
-          itemization: [
+          lines: [
             {
               id: 'item-1004-1',
               label: 'Aðgöngumiðar',
@@ -146,7 +146,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1005,
           date: '2024-01-22T00:00:00Z',
           totalItemizationAmount: 5675000,
-          itemization: [
+          lines: [
             {
               id: 'item-1005-1',
               label: 'Flugvallarsgjöld',
@@ -184,7 +184,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1006,
           date: '2024-02-01T00:00:00Z',
           totalItemizationAmount: 1800000,
-          itemization: [
+          lines: [
             {
               id: 'item-1006-1',
               label: 'Flutningsgjald',
@@ -206,7 +206,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1007,
           date: '2024-02-05T00:00:00Z',
           totalItemizationAmount: 1400000,
-          itemization: [
+          lines: [
             {
               id: 'item-1007-1',
               label: 'Geymslugjald',
@@ -244,7 +244,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1008,
           date: '2024-02-03T00:00:00Z',
           totalItemizationAmount: 780000,
-          itemization: [
+          lines: [
             {
               id: 'item-1008-1',
               label: 'Raforkuframleiðsla',
@@ -282,7 +282,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1009,
           date: '2024-02-08T00:00:00Z',
           totalItemizationAmount: 4500000,
-          itemization: [
+          lines: [
             {
               id: 'item-1009-1',
               label: 'Vélar og tæki',
@@ -320,7 +320,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1010,
           date: '2024-02-12T00:00:00Z',
           totalItemizationAmount: 650000,
-          itemization: [
+          lines: [
             {
               id: 'item-1010-1',
               label: 'Hugbúnaðarleyfi',
@@ -358,7 +358,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1011,
           date: '2024-02-15T00:00:00Z',
           totalItemizationAmount: 8900000,
-          itemization: [
+          lines: [
             {
               id: 'item-1011-1',
               label: 'Fasteignakaup',
@@ -396,7 +396,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1012,
           date: '2024-01-25T00:00:00Z',
           totalItemizationAmount: 180000,
-          itemization: [
+          lines: [
             {
               id: 'item-1012-1',
               label: 'Coca Cola',
@@ -418,7 +418,7 @@ export const MOCK_INVOICES: Invoices = {
           id: 1013,
           date: '2024-01-28T00:00:00Z',
           totalItemizationAmount: 240000,
-          itemization: [
+          lines: [
             {
               id: 'item-1013-1',
               label: 'Coca Cola',

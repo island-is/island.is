@@ -1,5 +1,5 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-import { InvoiceItem } from './invoiceItem.model'
+import { InvoiceLine } from './invoiceLine.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoice')
 export class Invoice {
@@ -9,8 +9,8 @@ export class Invoice {
   @Field({ description: 'ISO8601' })
   date!: string
 
-  @Field(() => [InvoiceItem])
-  itemization!: InvoiceItem[]
+  @Field(() => [InvoiceLine])
+  lines!: InvoiceLine[]
 
   @Field(() => Int)
   totalItemizationAmount!: number

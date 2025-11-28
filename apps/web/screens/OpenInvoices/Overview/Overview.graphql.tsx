@@ -64,7 +64,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES = gql`
         invoices {
           id
           date
-          itemization {
+          lines {
             id
             label
             amount

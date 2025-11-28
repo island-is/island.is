@@ -103,13 +103,13 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                       </Box>
                       <T.Table>
                         <T.Body>
-                          {invoice.itemization?.map((invoiceItem, i) => {
+                          {invoice.lines?.map((line, i) => {
                             const background = i % 2 === 0 ? 'white' : undefined
                             const isLastRow =
-                              i === invoice.itemization.length - 1
+                              i === invoice.lines.length - 1
                             return (
                               <>
-                                <T.Row key={invoiceItem.id}>
+                                <T.Row key={line.id}>
                                   <T.Data
                                     box={{
                                       textAlign: 'left',
@@ -118,7 +118,7 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                                     }}
                                   >
                                     <Text variant="small">
-                                      {invoiceItem.label}
+                                      {line.label}
                                     </Text>
                                   </T.Data>
                                   <T.Data
@@ -129,7 +129,7 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                                     }}
                                   >
                                     <Text variant="small">
-                                      {formatCurrency(invoiceItem.amount)}
+                                      {formatCurrency(line.amount)}
                                     </Text>
                                   </T.Data>
                                 </T.Row>
@@ -158,7 +158,7 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                                         fontWeight="semiBold"
                                         variant="small"
                                       >
-                                        {formatCurrency(invoiceItem.amount)}
+                                        {formatCurrency(line.amount)}
                                       </Text>
                                     </T.Data>
                                   </T.Row>

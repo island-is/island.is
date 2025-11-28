@@ -10,8 +10,8 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
   const groupedInvoices = new Map<
     string,
     {
-      seller: Entity
-      buyer: Entity
+      supplier: Entity
+      customer: Entity
       invoices: Invoice[]
       totalAmount: number
     }
@@ -22,12 +22,12 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
 
     if (!groupedInvoices.has(groupKey)) {
       groupedInvoices.set(groupKey, {
-        seller: {
+        supplier: {
           id: invoice.supplierId,
           name: invoice.supplierName,
           legalId: invoice.supplierNationalid,
         },
-        buyer: {
+        customer: {
           id: invoice.customerId,
           name: invoice.customerName,
           legalId: invoice.customerNationalId,
@@ -43,7 +43,7 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
     group.invoices.push({
       id: invoice.id,
       date: invoice.date.toISOString(),
-      itemization: generateMockItemization(invoice.id, invoice.amount),
+      lines: generateMockItemization(invoice.id, invoice.amount),
       totalItemizationAmount: invoice.amount,
     })
     group.totalAmount += invoice.amount
@@ -53,8 +53,8 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
     groupedInvoices.entries(),
   ).map(([key, group]) => ({
     id: key,
-    supplier: group.seller,
-    customer: group.buyer,
+    supplier: group.supplier,
+    customer: group.customer,
     totalAmount: group.totalAmount,
     invoices: group.invoices,
   }))
