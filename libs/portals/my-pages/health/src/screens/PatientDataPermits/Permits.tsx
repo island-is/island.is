@@ -14,19 +14,19 @@ import {
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import React from 'react'
+import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { permitTagSelector } from '../../utils/tagSelector'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
 import * as styles from './Permits.css'
-import { permitTagSelector } from '../../utils/tagSelector'
 
-const PatientDataPermits: React.FC = () => {
+const PatientDataPermits: FC = () => {
   useNamespaces('sp.health')
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
-  const [showExpiredPermits, setShowExpiredPermits] = React.useState(false)
+  const [showExpiredPermits, setShowExpiredPermits] = useState(false)
 
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: {
@@ -74,7 +74,7 @@ const PatientDataPermits: React.FC = () => {
                 {formatMessage(messages.readAboutPermit)}
               </Button>,
               <Button
-                key={'addNewPermit'}
+                key="addNewPermit"
                 variant="utility"
                 colorScheme="primary"
                 icon="arrowForward"
@@ -90,34 +90,58 @@ const PatientDataPermits: React.FC = () => {
           : undefined
       }
     >
-      {!loading && showExpiredPermits && dataLength === 0 && !error && (
+      {loading && !error && (
+        <Box marginY={3}>
+          <ActionCardLoader repeat={3} />
+        </Box>
+      )}
+
+      {!loading && !error && dataLength === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
+          imgAlt=""
           title={formatMessage(messages.noPermit)}
           message={formatMessage(messages.noPermitsRegistered)}
           imgSrc="./assets/images/empty_flower.svg"
         />
       )}
-      {loading && <ActionCardLoader repeat={3} />}
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      <Box>
-        <Box justifyContent="spaceBetween" alignItems="center" display="flex">
-          <Text variant="medium">
-            {filteredData?.length === 1
-              ? formatMessage(messages.singlePermit)
-              : formatMessage(messages.numberOfPermits, {
-                  number: filteredData?.length,
-                })}
-          </Text>
-          <ToggleSwitchButton
-            className={styles.toggleButton}
-            label={formatMessage(messages.showExpiredPermits)}
-            onChange={() => setShowExpiredPermits(!showExpiredPermits)}
-            checked={showExpiredPermits}
-          />
-        </Box>
-        {!error && !loading && dataLength > 0 && (
+      {!loading && error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && dataLength > 0 && (
+        <Box>
+          <Box
+            justifyContent="spaceBetween"
+            alignItems="center"
+            display="flex"
+            marginBottom={2}
+            className={styles.toggleBox}
+          >
+            <Text variant="medium">
+              {filteredData?.length === 1
+                ? formatMessage(messages.singlePermit)
+                : formatMessage(messages.numberOfPermits, {
+                    number: filteredData?.length,
+                  })}
+            </Text>
+            <ToggleSwitchButton
+              className={styles.toggleButton}
+              label={formatMessage(messages.showExpiredPermits)}
+              onChange={() => setShowExpiredPermits(!showExpiredPermits)}
+              checked={showExpiredPermits}
+            />
+          </Box>
+          {dataLength > 0 &&
+            filteredData?.length === 0 &&
+            !showExpiredPermits && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(messages.noData)}
+                message={formatMessage(messages.noActivePermitsRegistered)}
+                imgSrc="./assets/images/empty_flower.svg"
+                imgAlt=""
+              />
+            )}
           <Stack space={2}>
             {filteredData?.map((permit) => (
               <ActionCard
@@ -152,8 +176,8 @@ const PatientDataPermits: React.FC = () => {
               />
             ))}
           </Stack>
-        )}
-      </Box>
+        </Box>
+      )}
     </IntroWrapper>
   )
 }

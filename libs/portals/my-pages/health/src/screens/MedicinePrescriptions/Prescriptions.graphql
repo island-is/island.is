@@ -3,6 +3,7 @@ query GetMedicinePrescriptions($locale: String) {
     prescriptions {
       id
       name
+      strength
       type
       form
       url
@@ -24,6 +25,12 @@ query GetMedicinePrescriptions($locale: String) {
         agentName
         date
         count
+        items {
+          id
+          name
+          strength
+          amount
+        }
       }
     }
   }

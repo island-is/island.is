@@ -3,10 +3,6 @@ import { IsBoolean, IsDate, IsString } from 'class-validator'
 
 @InputType('HealthDirectorateMedicineDelegationInput')
 export class MedicineDelegationInput {
-  @Field()
-  @IsBoolean()
-  active!: boolean
-
   @Field(() => [String])
   @IsString({ each: true })
   status!: string[]
