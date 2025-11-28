@@ -11,15 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import {
-  ApiScope,
-  DocumentsScope,
-  UserProfileScope,
-} from '@island.is/auth/scopes'
-import {
-  hasNotificationScopes,
-  isCompany,
-} from '@island.is/portals/my-pages/core'
+import { notificationScopes, UserProfileScope } from '@island.is/auth/scopes'
+import { isCompany } from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -63,7 +56,9 @@ export const UserDropdown = ({
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = isCompany(user)
-  const userHasNotificationScopes = hasNotificationScopes(user?.scopes)
+  const userHasNotificationScopes = user?.scopes
+    ? notificationScopes.some((scope) => user.scopes.includes(scope))
+    : false
   const hasAccessToUserProfileInfo = isDelegationCompany
     ? user?.scopes?.includes(UserProfileScope.write)
     : userHasNotificationScopes
