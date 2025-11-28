@@ -50,8 +50,8 @@ export class CourtSessionService {
       return courtSession
     }
 
-    const caseSentToCourtDate = EventLog.getEventLogDateByEventType(
-      [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
       theCase.eventLogs,
     )
     // Start with the generated indictment PDF
@@ -61,7 +61,9 @@ export class CourtSessionService {
       {
         documentType: CourtDocumentType.GENERATED_DOCUMENT,
         name: `Ákæra${
-          caseSentToCourtDate ? ` ${formatDate(caseSentToCourtDate)}` : ''
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
         }`,
         generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
       },
