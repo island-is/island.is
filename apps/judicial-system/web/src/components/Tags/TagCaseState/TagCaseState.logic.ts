@@ -100,6 +100,7 @@ export const mapCaseStateToTagVariant = (
     case CaseState.DISMISSED:
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     case CaseState.COMPLETED:
+    case CaseState.CORRECTING:
       return {
         color: 'darkerBlue',
         text: formatMessage(strings.completed, {

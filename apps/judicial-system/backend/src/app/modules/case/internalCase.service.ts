@@ -31,6 +31,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  completedIndictmentCaseStates,
   CourtSessionRulingType,
   courtSubtypes,
   DefendantEventType,
@@ -627,16 +628,16 @@ export class InternalCaseService {
           where: {
             id: {
               [Op.notIn]: Sequelize.literal(`
-                                      (SELECT defendant_id
-                                        FROM defendant_event_log
-                                        WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
-                                    `),
+                (SELECT defendant_id
+                  FROM defendant_event_log
+                  WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
+              `),
             },
           },
         },
       ],
       where: {
-        state: { [Op.eq]: CaseState.COMPLETED },
+        state: { [Op.eq]: completedIndictmentCaseStates },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       },
@@ -1434,8 +1435,8 @@ export class InternalCaseService {
         // Make sure we don't send cases that are in deleted or other inaccessible states
         state: [
           CaseState.RECEIVED,
-          CaseState.COMPLETED,
           CaseState.WAITING_FOR_CANCELLATION,
+          ...completedIndictmentCaseStates,
         ],
         // The national id could be without a hyphen or with a hyphen so we need to
         // search for both

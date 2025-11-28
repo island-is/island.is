@@ -3,7 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Accordion, Box } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -17,10 +17,12 @@ import {
   IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
+  ReopenModal,
   RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
@@ -45,29 +47,27 @@ import { DefendantServiceRequirement } from './DefendantServiceRequirement'
 import { InformationForDefendant } from './InformationForDefendant'
 import strings from './Completed.strings'
 
+type modal = 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' | 'REOPEN'
+
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
-  const { deliverCaseVerdict } = useVerdict()
-  const [isLoading, setIsLoading] = useState(false)
-
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-
+  const { deliverCaseVerdict } = useVerdict()
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
-
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const [modalVisible, setModalVisible] =
-    useState<'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'>()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [modalVisible, setModalVisible] = useState<modal>()
 
   const isSentToPublicProsecutor = Boolean(
     workingCase.indictmentSentToPublicProsecutorDate,
   )
-
   const handleCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
     const uploadResult = await handleUpload(
@@ -165,6 +165,20 @@ const Completed: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map(
           (defendant) =>
             defendant.verdict && (
@@ -282,6 +296,11 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}
+          actionButtonText="Leiðrétta mál"
+          actionButtonColorScheme="default"
+          actionButtonIcon="pencil"
+          actionButtonVariant="primary"
+          onActionButtonClick={() => setModalVisible('REOPEN')}
           hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
@@ -298,13 +317,16 @@ const Completed: FC = () => {
             text: 'Staðfesta',
             icon: 'checkmark',
             isLoading: isLoading,
-            onClick: () => handleCaseConfirmation(),
+            onClick: handleCaseConfirmation,
           }}
           secondaryButton={{
             text: 'Hætta við',
             onClick: () => setModalVisible(undefined),
           }}
         />
+      )}
+      {modalVisible === 'REOPEN' && (
+        <ReopenModal onClose={() => setModalVisible(undefined)} />
       )}
     </PageLayout>
   )

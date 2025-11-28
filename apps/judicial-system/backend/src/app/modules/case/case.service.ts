@@ -40,6 +40,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  completedIndictmentCaseStates,
   CourtDocumentType,
   CourtSessionStringType,
   DateType,
@@ -350,7 +351,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: Defendant,
@@ -1144,45 +1145,51 @@ export class CaseService {
 
   private addMessagesForCompletedIndictmentCaseToQueue(
     theCase: Case,
+    updatedCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: Message[] =
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
-            caseFile.category &&
-            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
-              caseFile.category,
-            ),
-        )
-        .map((caseFile) => ({
+    const messages: Message[] = []
+
+    // No need to deliver case files if cempleting after corection
+    if (theCase.state !== CaseState.CORRECTING) {
+      for (const caseFile of updatedCase.caseFiles?.filter(
+        (caseFile) =>
+          caseFile.state === CaseFileState.STORED_IN_RVG &&
+          caseFile.key &&
+          caseFile.category &&
+          [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+            caseFile.category,
+          ),
+      ) ?? []) {
+        messages.push({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
-          caseId: theCase.id,
+          caseId: updatedCase.id,
           elementId: caseFile.id,
-        })) ?? []
+        })
+      }
+    }
+
     messages.push({
       type: MessageType.NOTIFICATION,
       user,
-      caseId: theCase.id,
+      caseId: updatedCase.id,
       body: { type: CaseNotificationType.RULING },
     })
 
-    if (theCase.withCourtSessions) {
+    if (updatedCase.withCourtSessions) {
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
       })
     }
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    if (updatedCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
       })
     }
 
@@ -1580,6 +1587,7 @@ export class CaseService {
         if (isIndictment) {
           if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
             await this.addMessagesForCompletedIndictmentCaseToQueue(
+              theCase,
               updatedCase,
               user,
             )
@@ -2156,7 +2164,10 @@ export class CaseService {
       isReceivingCase && isIndictmentCase(theCase.type)
 
     const completingIndictmentCase =
-      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.COMPLETED &&
+      // Not true when closing again after correcting an indictment case
+      theCase.state !== CaseState.CORRECTING
 
     const completingIndictmentCaseWithoutRuling =
       completingIndictmentCase &&

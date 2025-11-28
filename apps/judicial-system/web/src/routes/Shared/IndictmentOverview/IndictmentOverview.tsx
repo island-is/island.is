@@ -27,6 +27,7 @@ import {
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -173,6 +174,20 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (

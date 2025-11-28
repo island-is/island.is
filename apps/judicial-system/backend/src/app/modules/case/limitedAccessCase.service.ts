@@ -16,6 +16,7 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
+  completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
   eventTypes,
@@ -342,7 +343,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: CaseFile,

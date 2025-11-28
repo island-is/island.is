@@ -53,11 +53,12 @@ const caseEvent: Record<CaseEvent, string> = {
   CREATE: ':new: Mál stofnað',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
+  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
   [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað aftur',
+  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
@@ -66,7 +67,6 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæra afturkölluð',
-  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
   VERDICT_SERVICE_STATUS:
     ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
 }
@@ -83,15 +83,15 @@ export type CaseEvent =
   | 'VERDICT_SERVICE_STATUS'
 
 const caseEventsToLog = [
+  'ACCEPT',
   'CREATE',
   'CREATE_XRD',
+  'COMPLETE',
+  'DISMISS',
+  'REJECT',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
   'VERDICT_SERVICE_STATUS',
-  'COMPLETE',
-  'ACCEPT',
-  'REJECT',
-  'DISMISS',
 ]
 
 @Injectable()

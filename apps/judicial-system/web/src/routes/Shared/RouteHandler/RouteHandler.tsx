@@ -60,10 +60,17 @@ const routes: Partial<
   },
 }
 
-const getCaseStatus = (state?: CaseState | null): CaseStatus =>
-  isCompletedCase(state) ? 'completed' : 'ongoing'
+const getCaseStatus = (
+  state: CaseState | undefined | null,
+  userType?: UserType | null,
+): CaseStatus =>
+  isCompletedCase(state)
+    ? userType === 'districtCourt' && state === CaseState.CORRECTING
+      ? 'ongoing'
+      : 'completed'
+    : 'ongoing'
 
-const getRoute = (caseToOpen?: Case, user?: User): string => {
+const getRoute = (caseToOpen: Case, user: User): string => {
   if (!caseToOpen || !user) {
     return '/'
   }
@@ -77,7 +84,7 @@ const getRoute = (caseToOpen?: Case, user?: User): string => {
     : isPrisonSystemUser(user)
     ? 'prisonSystem'
     : null
-  const caseStatus = getCaseStatus(caseToOpen.state)
+  const caseStatus = getCaseStatus(caseToOpen.state, userType)
 
   const route =
     caseToOpen.type &&
