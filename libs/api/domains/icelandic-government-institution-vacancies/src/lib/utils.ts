@@ -73,6 +73,19 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
 
     const introPromises: Promise<string>[] = []
 
+    // Debug: Log raw API data to see what Fjársýslan is sending
+    console.log('🔍 Raw Fjársýslan API Data (first 3 items):', {
+      totalItems: data.length,
+      samples: data.slice(0, 3).map((item) => ({
+        heading: item.heading,
+        orgName: item.orgName,
+        locations: item.locations,
+        address: item.address,
+        department: item.department,
+        postCode: item.postCode,
+      })),
+    })
+
     for (const item of data) {
       const introHtml = item.introduction ?? ''
       introPromises.push(convertHtmlToPlainText(introHtml))
@@ -90,6 +103,8 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
         locations.push({
           postalCode: item.postCode ?? undefined,
           title,
+          address: item.address ?? undefined,
+          department: item.department ?? undefined,
         })
       }
 
@@ -152,6 +167,8 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       locations.push({
         postalCode: vacancy.postCode ?? undefined,
         title,
+        address: vacancy.address ?? undefined,
+        department: vacancy.department ?? undefined,
       })
     }
 

@@ -12,6 +12,12 @@ class IcelandicGovernmentInstitutionVacancyLocation {
 
   @Field({ nullable: true })
   postalCode?: number
+
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  department?: string
 }
 
 @ObjectType()

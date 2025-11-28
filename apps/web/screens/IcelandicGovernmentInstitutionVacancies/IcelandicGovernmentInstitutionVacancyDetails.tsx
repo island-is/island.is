@@ -78,9 +78,15 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
                     : n('locations', 'Staðsetningar')}
                 </Text>
                 {vacancy.locations.map((location, index) => (
-                  <Text key={index} variant="small">
-                    {location.title}
-                  </Text>
+                  <Box key={index}>
+                    <Text variant="small">{location.title}</Text>
+                    {location.department && (
+                      <Text variant="small">{location.department}</Text>
+                    )}
+                    {location.address && (
+                      <Text variant="small">{location.address}</Text>
+                    )}
+                  </Box>
                 ))}
               </Box>
             )}
@@ -394,6 +400,14 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
   if (!vacancy) {
     throw new CustomNextError(404, 'Vacancy was not found')
   }
+
+  // Debug: Log vacancy data to verify address/department fields
+  console.log('📄 Starfatorg Detail - Full vacancy data:', {
+    id: vacancy.id,
+    title: vacancy.title,
+    locations: vacancy.locations,
+    fullVacancy: vacancy,
+  })
 
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',

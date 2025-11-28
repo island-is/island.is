@@ -18,6 +18,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
         locations {
           title
           postalCode
+          address
+          department
         }
       }
     }
@@ -48,6 +50,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         locations {
           title
           postalCode
+          address
+          department
         }
         contacts {
           name
