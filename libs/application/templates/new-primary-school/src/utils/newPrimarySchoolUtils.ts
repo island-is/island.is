@@ -173,6 +173,124 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const specialEducationHasWelfareContact = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasWelfareContact',
+  )
+
+  const specialEducationWelfareContactName = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.welfareContact.name',
+  )
+
+  const specialEducationWelfareContactEmail = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.welfareContact.email',
+  )
+
+  const specialEducationHasCaseManager = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasCaseManager',
+  )
+
+  const specialEducationCaseManagerName = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.caseManager.name',
+  )
+
+  const specialEducationCaseManagerEmail = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.caseManager.email',
+  )
+
+  const specialEducationHasIntegratedServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasIntegratedServices',
+  )
+
+  const hasAssessmentOfSupportNeeds = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasAssessmentOfSupportNeeds',
+  )
+
+  const isAssessmentOfSupportNeedsInProgress = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isAssessmentOfSupportNeedsInProgress',
+  )
+
+  const supportNeedsAssessmentBy = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.supportNeedsAssessmentBy',
+  )
+
+  const hasConfirmedDiagnosis = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasConfirmedDiagnosis',
+  )
+
+  const isDiagnosisInProgress = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isDiagnosisInProgress',
+  )
+
+  const diagnosticians = getValueViaPath<string[]>(
+    answers,
+    'specialEducationSupport.diagnosticians',
+  )
+
+  const hasOtherSpecialists = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasOtherSpecialists',
+  )
+
+  const specialists = getValueViaPath<string[]>(
+    answers,
+    'specialEducationSupport.specialists',
+  )
+
+  const hasReceivedServicesFromMunicipality = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasReceivedServicesFromMunicipality',
+  )
+
+  const servicesFromMunicipality = getValueViaPath<string[]>(
+    answers,
+    'specialEducationSupport.servicesFromMunicipality',
+  )
+
+  const hasReceivedChildAndAdolescentPsychiatryServices =
+    getValueViaPath<YesOrNo>(
+      answers,
+      'specialEducationSupport.hasReceivedChildAndAdolescentPsychiatryServices',
+    )
+
+  const isOnWaitlistForServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isOnWaitlistForServices',
+  )
+
+  const childAndAdolescentPsychiatryDepartment = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
+  )
+
+  const childAndAdolescentPsychiatryServicesReceived = getValueViaPath<
+    string[]
+  >(
+    answers,
+    'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
+  )
+
+  const hasBeenReportedToChildProtectiveServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasBeenReportedToChildProtectiveServices',
+  )
+
+  const isCaseOpenWithChildProtectiveServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isCaseOpenWithChildProtectiveServices',
+  )
+
   const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
 
   const payerName = getValueViaPath<string>(answers, 'payer.other.name')
@@ -263,6 +381,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    specialEducationHasWelfareContact,
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationHasCaseManager,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
     payer,
     payerName,
     payerNationalId,

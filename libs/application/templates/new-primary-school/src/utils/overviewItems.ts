@@ -4,7 +4,7 @@ import {
   OrganizationTypeEnum,
   Query,
 } from '@island.is/api/schema'
-import { YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import {
   ExternalData,
   FormValue,
@@ -28,6 +28,18 @@ import {
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
+  hasBehaviorSchoolOrDepartmentSubType,
+  hasSpecialEducationCaseManager,
+  hasSpecialEducationWelfareContact,
+  shouldShowChildAndAdolescentPsychiatryDepartment,
+  shouldShowChildAndAdolescentPsychiatryServicesReceived,
+  shouldShowDiagnosticians,
+  shouldShowExpectedEndDate,
+  shouldShowServicesFromMunicipality,
+  shouldShowSpecialists,
+  shouldShowSupportNeedsAssessmentBy,
+} from './conditionUtils'
+import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
@@ -47,7 +59,6 @@ import {
   getSelectedSchoolSector,
   getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
-import { shouldShowExpectedEndDate } from './conditionUtils'
 
 const getFriggOptions = async (
   apolloClient: ApolloClient<object>,
@@ -750,6 +761,358 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...caseManagerItems,
     ...welfareContactItems2,
     ...baseItems2,
+  ]
+}
+
+export const specialEducationSupportItems = async (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  _apolloClient: ApolloClient<object>,
+  _locale: Locale,
+): Promise<KeyValueItem[]> => {
+  const {
+    specialEducationHasWelfareContact,
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationHasCaseManager,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
+  } = getApplicationAnswers(answers)
+
+  const baseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds
+          .specialEducationHasWelfareContact,
+      valueText:
+        specialEducationHasWelfareContact === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const welfareContactItems: Array<KeyValueItem> =
+    hasSpecialEducationWelfareContact(answers)
+      ? [
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.differentNeeds.welfareContactName,
+            valueText: specialEducationWelfareContactName,
+          },
+          {
+            width: 'half',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+            valueText: specialEducationWelfareContactEmail,
+          },
+        ]
+      : []
+
+  const baseItems2: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds.specialEducationHasCaseManager,
+      valueText:
+        specialEducationHasCaseManager === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const caseManagerItems: Array<KeyValueItem> = hasSpecialEducationCaseManager(
+    answers,
+  )
+    ? [
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+          valueText: specialEducationCaseManagerName,
+        },
+        {
+          width: 'half',
+          keyText: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+          valueText: specialEducationCaseManagerEmail,
+        },
+      ]
+    : []
+
+  const baseItems3: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds
+          .specialEducationHasIntegratedServices,
+      valueText:
+        specialEducationHasIntegratedServices === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds.hasAssessmentOfSupportNeeds,
+      valueText:
+        hasAssessmentOfSupportNeeds === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const isAssessmentOfSupportNeedsInProgressItems: Array<KeyValueItem> =
+    hasAssessmentOfSupportNeeds === NO
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds
+                .isAssessmentOfSupportNeedsInProgress,
+            valueText:
+              isAssessmentOfSupportNeedsInProgress === YES
+                ? newPrimarySchoolMessages.shared.yes
+                : newPrimarySchoolMessages.shared.no,
+          },
+        ]
+      : []
+
+  // TODO: Update when data is ready
+  const supportNeedsAssessmentByItems: Array<KeyValueItem> =
+    shouldShowSupportNeedsAssessmentBy(answers)
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds.supportNeedsAssessmentBy,
+            valueText: supportNeedsAssessmentBy,
+          },
+        ]
+      : []
+
+  const baseItems4: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: newPrimarySchoolMessages.differentNeeds.hasConfirmedDiagnosis,
+      valueText:
+        hasConfirmedDiagnosis === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const isDiagnosisInProgressItems: Array<KeyValueItem> =
+    hasConfirmedDiagnosis === NO
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds.isDiagnosisInProgress,
+            valueText: isDiagnosisInProgress
+              ? newPrimarySchoolMessages.shared.yes
+              : newPrimarySchoolMessages.shared.no,
+          },
+        ]
+      : []
+
+  // TODO: Update when data is ready
+  const diagnosticiansItems: Array<KeyValueItem> = shouldShowDiagnosticians(
+    answers,
+  )
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.atWhichDiagnostician,
+          valueText: diagnosticians?.join(', '),
+        },
+      ]
+    : []
+
+  const baseItems5: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: newPrimarySchoolMessages.differentNeeds.hasOtherSpecialists,
+      valueText:
+        hasOtherSpecialists === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  // TODO: Update when data is ready
+  const specialistsItems: Array<KeyValueItem> = shouldShowSpecialists(answers)
+    ? [
+        {
+          width: 'full',
+          keyText: newPrimarySchoolMessages.differentNeeds.atWhichSpecialist,
+          valueText: specialists?.join(', '),
+        },
+      ]
+    : []
+
+  const baseItems6: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds
+          .hasReceivedServicesFromMunicipality,
+      valueText:
+        hasReceivedServicesFromMunicipality === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  // TODO: Update when data is ready
+  const servicesFromMunicipalityItems: Array<KeyValueItem> =
+    shouldShowServicesFromMunicipality(answers)
+      ? [
+          {
+            width: 'full',
+            keyText: newPrimarySchoolMessages.differentNeeds.whichService,
+            valueText: servicesFromMunicipality?.join(', '),
+          },
+        ]
+      : []
+
+  const baseItems7: Array<KeyValueItem> = hasBehaviorSchoolOrDepartmentSubType(
+    answers,
+    externalData,
+  )
+    ? [
+        {
+          width: 'full',
+          keyText:
+            newPrimarySchoolMessages.differentNeeds
+              .hasReceivedChildAndAdolescentPsychiatryServices,
+          valueText:
+            hasReceivedChildAndAdolescentPsychiatryServices === YES
+              ? newPrimarySchoolMessages.shared.yes
+              : newPrimarySchoolMessages.shared.no,
+        },
+      ]
+    : []
+
+  const isOnWaitlistForServicesItems: Array<KeyValueItem> =
+    hasBehaviorSchoolOrDepartmentSubType(answers, externalData) &&
+    hasReceivedChildAndAdolescentPsychiatryServices === NO
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds.isOnWaitlistForServices,
+            valueText:
+              isOnWaitlistForServices === YES
+                ? newPrimarySchoolMessages.shared.yes
+                : newPrimarySchoolMessages.shared.no,
+          },
+        ]
+      : []
+
+  // TODO: Update when data is ready
+  const childAndAdolescentPsychiatryDepartmentItems: Array<KeyValueItem> =
+    shouldShowChildAndAdolescentPsychiatryDepartment(answers, externalData)
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds
+                .whichChildAndAdolescentPsychiatryDepartment,
+            valueText: childAndAdolescentPsychiatryDepartment,
+          },
+        ]
+      : []
+
+  // TODO: Update when data is ready
+  const childAndAdolescentPsychiatryServicesReceivedItems: Array<KeyValueItem> =
+    shouldShowChildAndAdolescentPsychiatryServicesReceived(
+      answers,
+      externalData,
+    )
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds
+                .childAndAdolescentPsychiatryServicesReceived,
+            valueText: childAndAdolescentPsychiatryServicesReceived?.join(', '),
+          },
+        ]
+      : []
+
+  const baseItems8: Array<KeyValueItem> = hasBehaviorSchoolOrDepartmentSubType(
+    answers,
+    externalData,
+  )
+    ? [
+        {
+          width: 'full',
+          keyText:
+            newPrimarySchoolMessages.differentNeeds
+              .hasBeenReportedToChildProtectiveServices,
+          valueText:
+            hasBeenReportedToChildProtectiveServices === YES
+              ? newPrimarySchoolMessages.shared.yes
+              : newPrimarySchoolMessages.shared.no,
+        },
+      ]
+    : []
+
+  const isCaseOpenWithChildProtectiveServicesItems: Array<KeyValueItem> =
+    hasBehaviorSchoolOrDepartmentSubType(answers, externalData) &&
+    hasBeenReportedToChildProtectiveServices === YES
+      ? [
+          {
+            width: 'full',
+            keyText:
+              newPrimarySchoolMessages.differentNeeds
+                .isCaseOpenWithChildProtectiveServices,
+            valueText:
+              isCaseOpenWithChildProtectiveServices === YES
+                ? newPrimarySchoolMessages.shared.yes
+                : newPrimarySchoolMessages.shared.no,
+          },
+        ]
+      : []
+
+  return [
+    ...baseItems,
+    ...welfareContactItems,
+    ...baseItems2,
+    ...caseManagerItems,
+    ...baseItems3,
+    ...isAssessmentOfSupportNeedsInProgressItems,
+    ...supportNeedsAssessmentByItems,
+    ...baseItems4,
+    ...isDiagnosisInProgressItems,
+    ...diagnosticiansItems,
+    ...baseItems5,
+    ...specialistsItems,
+    ...baseItems6,
+    ...servicesFromMunicipalityItems,
+    ...baseItems7,
+    ...isOnWaitlistForServicesItems,
+    ...childAndAdolescentPsychiatryDepartmentItems,
+    ...childAndAdolescentPsychiatryServicesReceivedItems,
+    ...baseItems8,
+    ...isCaseOpenWithChildProtectiveServicesItems,
   ]
 }
 
