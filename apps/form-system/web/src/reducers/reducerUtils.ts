@@ -4,18 +4,8 @@ import {
   MutationTuple,
   OperationVariables,
 } from '@apollo/client'
-import {
-  FormSystemDependency,
-  FormSystemField,
-  FormSystemScreen,
-  FormSystemSection,
-  Maybe,
-} from '@island.is/api/schema'
-import {
-  ApplicationState,
-  FieldTypesEnum,
-  SectionTypes,
-} from '@island.is/form-system/ui'
+import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
 import {
   firstVisibleScreenIndex,
   hasScreens,
@@ -73,8 +63,15 @@ export const incrementWithScreens = (
     DefaultContext,
     ApolloCache<any>
   >,
+  updateDependenciesMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
+  const [updateDependencies] = updateDependenciesMutation
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
@@ -99,6 +96,20 @@ export const incrementWithScreens = (
     }).catch((error) => {
       console.error('Error submitting screen:', error)
     })
+    if (currentSectionData.sectionType === SectionTypes.INPUT) {
+      updateDependencies({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      }).catch((error) => {
+        console.error('Error updating dependencies:', error)
+      })
+    }
   }
 
   const sections = state.sections ?? []
@@ -191,13 +202,40 @@ export const decrementWithScreens = (
   state: ApplicationState,
   currentSectionIndex: number,
   currentScreenIndex: number,
+  submitScreenMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const sections = state.sections ?? []
   const section = sections[currentSectionIndex] as FormSystemSection | undefined
 
+  const [submitScreen] = submitScreenMutation
+
   const prevScreenIdx = prevVisibleScreenInSection(section, currentScreenIndex)
   if (prevScreenIdx !== -1) {
     const prevScreen = section!.screens![prevScreenIdx] as FormSystemScreen
+
+    // Set current screen as completed to false before decrementing
+    submitScreen({
+      variables: {
+        input: {
+          screenId: state.currentScreen?.data?.id,
+          submitScreenDto: {
+            applicationId: state.application.id,
+            screenDto: {
+              ...state.currentScreen?.data,
+              isCompleted: false,
+            } as FormSystemScreen,
+          },
+        },
+      },
+    }).catch((error) => {
+      console.error('Error submitting screen:', error)
+    })
+
     return {
       ...state,
       currentScreen: { data: prevScreen, index: prevScreenIdx },
@@ -303,203 +341,4 @@ export const setError = (
     ? [...errorArray, fieldId]
     : errorArray.filter((id) => id !== fieldId)
   return { ...state, errors: filteredArray }
-}
-
-export const setFieldValue = (
-  state: ApplicationState,
-  fieldProperty: string,
-  fieldId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-): ApplicationState => {
-  const { currentScreen } = state
-  if (!currentScreen || !currentScreen.data) {
-    return state
-  }
-  const screen = currentScreen.data
-  const updatedFields = screen.fields?.map((field) => {
-    if (field?.id === fieldId) {
-      let newValue = field?.values?.[0] ?? {}
-      newValue = {
-        ...newValue,
-        json: {
-          ...newValue.json,
-          [fieldProperty]: value,
-        },
-      }
-      return {
-        ...field,
-        values: [newValue],
-      }
-    } else {
-      return field
-    }
-  })
-
-  const updatedScreen = {
-    ...screen,
-    fields: updatedFields,
-  }
-
-  const updatedSections: FormSystemSection[] = state.sections.map((section) => {
-    if (section.screens) {
-      return {
-        ...section,
-        screens: section.screens.map((screen) => {
-          if (screen?.id === updatedScreen.id) {
-            return updatedScreen
-          }
-          return screen
-        }),
-      }
-    }
-    return section
-  })
-
-  const currentField = screen.fields?.find((field) => field?.id === fieldId)
-  let { dependencies: newDependencies } = state.application
-
-  const parentId =
-    currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-    currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
-      ? currentField?.list?.find((item) => item?.label?.is === value)?.id
-      : fieldId
-
-  const isController = isControllerField(currentField, newDependencies)
-
-  if (isController) {
-    if (
-      currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-      currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
-    ) {
-      newDependencies = newDependencies?.map((dependency) => {
-        if (!dependency) return dependency
-        const listItemIds = currentField?.list
-          ?.map((item) => item?.id)
-          .filter(Boolean)
-        if (dependency?.parentProp === parentId) {
-          return {
-            ...dependency,
-            isSelected: true,
-          }
-        } else if (
-          listItemIds?.includes(dependency?.parentProp ?? '') &&
-          dependency?.parentProp !== parentId
-        ) {
-          return {
-            ...dependency,
-            isSelected: false,
-          }
-        }
-        return dependency
-      })
-    } else {
-      newDependencies = newDependencies?.map((dependency) => {
-        if (!dependency) return dependency
-        if (dependency?.parentProp === parentId) {
-          return {
-            ...dependency,
-            isSelected: !dependency.isSelected,
-          }
-        }
-        return dependency
-      })
-    }
-
-    const updatedSectionsWithDependencies = updatedSections.map((section) => {
-      const isSectionHidden = newDependencies?.some(
-        (dependency) =>
-          dependency?.childProps?.includes(section?.id ?? '') &&
-          !dependency?.isSelected,
-      )
-
-      return {
-        ...section,
-        id: section?.id ?? '',
-        isHidden: isSectionHidden ?? section?.isHidden,
-        screens: section.screens?.map((screen) => {
-          const isScreenHidden = newDependencies?.some(
-            (dependency) =>
-              dependency?.childProps?.includes(screen?.id ?? '') &&
-              !dependency?.isSelected,
-          )
-
-          return {
-            ...screen,
-            id: screen?.id ?? '',
-            isHidden: isScreenHidden ?? screen?.isHidden,
-            fields: screen?.fields?.map((field) => {
-              const isFieldHidden = newDependencies?.some(
-                (dependency) =>
-                  dependency?.childProps?.includes(field?.id ?? '') &&
-                  !dependency?.isSelected,
-              )
-              return {
-                ...field,
-                id: field?.id ?? '',
-                isHidden: isFieldHidden ?? field?.isHidden,
-              } as FormSystemField
-            }) as FormSystemField[] | undefined,
-          } as FormSystemScreen
-        }) as FormSystemScreen[] | undefined,
-      } as FormSystemSection
-    })
-
-    return {
-      ...state,
-      application: {
-        ...state.application,
-        sections: updatedSectionsWithDependencies,
-        dependencies: newDependencies,
-      },
-      sections: updatedSectionsWithDependencies,
-      currentScreen: {
-        ...currentScreen,
-        data:
-          updatedSectionsWithDependencies[state.currentSection.index]
-            ?.screens?.[currentScreen.index] ?? undefined,
-      },
-      errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
-    }
-  }
-
-  return {
-    ...state,
-    application: {
-      ...state.application,
-      sections: updatedSections,
-    },
-    sections: updatedSections,
-    currentScreen: {
-      ...currentScreen,
-      data: updatedScreen,
-    },
-    errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
-  }
-}
-
-const isControllerField = (
-  field: Maybe<FormSystemField> | undefined,
-  dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
-): boolean => {
-  if (field?.fieldType === FieldTypesEnum.CHECKBOX) {
-    return (
-      dependencies?.some((dependency) => {
-        return dependency?.parentProp === field?.id
-      }) ?? false
-    )
-  }
-  if (
-    field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-    field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
-  ) {
-    const listItemIds =
-      field?.list?.map((item) => item?.id).filter(Boolean) ?? []
-    return (
-      dependencies?.some((dependency) => {
-        return listItemIds.includes(dependency?.parentProp ?? '')
-      }) ?? false
-    )
-  }
-  return false
 }

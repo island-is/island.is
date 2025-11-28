@@ -9,9 +9,5 @@ export const mainColumn = style({
   borderTop: 'none',
   borderRadius: '0 0 8px 8px',
   minHeight: '800px',
-})
-
-export const mainContentContainer = style({
-  minHeight: '500px',
-  maxHeight: '70vh',
+  height: 'auto',
 })
