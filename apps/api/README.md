@@ -1,5 +1,5 @@
 # API
-touch
+
 ## Quickstart
 
 Ensure docker is running, then run the following when running for the first time:
