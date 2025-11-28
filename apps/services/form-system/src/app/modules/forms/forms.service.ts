@@ -115,6 +115,7 @@ export class FormsService {
         organizationId: organization.id,
         status: { [Op.ne]: FormStatus.ARCHIVED },
       },
+      order: [['modified', 'DESC']],
     })
 
     const keys = [

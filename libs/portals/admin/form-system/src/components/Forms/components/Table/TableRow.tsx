@@ -91,7 +91,7 @@ export const TableRow = ({
           })
           setFormsState((prevForms) => {
             const returnedForm = data.updateFormSystemFormStatus.form
-            return [...prevForms, returnedForm]
+            return [returnedForm, ...prevForms]
           })
         } catch (error) {
           console.error('Error publishing form:', error)

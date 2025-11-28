@@ -1066,4 +1066,19 @@ export const m = defineMessages({
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
   },
+  inProgress: {
+    id: 'form.system:in-progress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  publishedInProgress: {
+    id: 'form.system:published-in-progress',
+    defaultMessage: 'Útgefið í vinnslu',
+    description: 'Published in progress',
+  },
+  published: {
+    id: 'form.system:published',
+    defaultMessage: 'Útgefið',
+    description: 'Published',
+  },
 })
