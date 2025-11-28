@@ -20,6 +20,7 @@ The license service returns a generic license that consists of the following par
 - Machine License
 - ADR License
 - Disability License
+- Hunting license
 
 ### Usage
 

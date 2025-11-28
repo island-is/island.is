@@ -7,7 +7,7 @@
   },
   "servers": [{ "url": "/gatt/api/islandisdev" }],
   "paths": {
-    "/permit_hunting/": {
+    "/permit_hunting": {
       "get": {
         "tags": ["permits"],
         "operationId": "permit_hunting",
@@ -26,6 +26,34 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/PermitHunting" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ID supplied" },
+          "404": { "description": "No permit found" },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/permit_ranger": {
+      "get": {
+        "tags": ["permits"],
+        "operationId": "permit_ranger",
+        "parameters": [
+          {
+            "name": "X-Query-National-Id",
+            "in": "header",
+            "description": "Auðkenni einstaklings",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Landvarðaréttindi",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PermitRanger" }
               }
             }
           },
@@ -124,6 +152,71 @@
           "benefit_land": { "type": "string", "example": "Brák" },
           "benefits_number": { "type": "string", "example": "25225" }
         }
+      },
+      "PermitRanger": {
+        "title": "Ranger Permit",
+        "description": "Ranger Permits in Iceland",
+        "properties": {
+          "personid": {
+            "type": "string",
+            "example": "0101305069",
+            "readOnly": true
+          },
+          "personname": {
+            "type": "string",
+            "example": "Gervimaður Bandaríkin",
+            "readOnly": true
+          },
+          "address": {
+            "type": "string",
+            "example": "Bandaríkin",
+            "readOnly": true
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "000",
+            "readOnly": true
+          },
+          "postal_address": {
+            "type": "string",
+            "example": "Ótilgreint",
+            "readOnly": true
+          },
+          "permit_number": {
+            "type": "string",
+            "example": "LV-101003",
+            "readOnly": true
+          },
+          "permit_validity": {
+            "type": "string",
+            "enum": ["Í gildi", "Ekki í gildi", "Valid", "Expired"],
+            "readOnly": true
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "readOnly": true
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2123-12-31T00:00:00Z",
+            "readOnly": true
+          },
+          "permit_issued": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T16:45:00Z",
+            "readOnly": true
+          },
+          "permit_for": {
+            "type": "string",
+            "example": "Landvarðaréttindi",
+            "readOnly": true
+          }
+        },
+        "type": "object"
       }
     }
   }

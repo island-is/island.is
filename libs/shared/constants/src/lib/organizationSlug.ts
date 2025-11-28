@@ -41,7 +41,7 @@ export type OrganizationSlugType =
   | 'utlendingastofnun'
   | 'urvinnslusjodur'
   | 'midstod-menntunar-og-skolathjonustu'
-  | 'umhverfisstofnun'
+  | 'natturuverndarstofnun'
   | 'vegagerdin'
   | 'landlaeknir'
   | 'hugverkastofan'

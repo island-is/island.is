@@ -1,8 +1,8 @@
 import format from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 import capitalize from 'lodash/capitalize'
+import { HuntingLicenseDto } from './types'
 
 export const createPkPassDataInput = (
   license: HuntingLicenseDto,

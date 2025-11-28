@@ -401,12 +401,12 @@ export const Firearm = new XroadConf({
   },
 })
 
-export const Hunting = new XroadConf({
+export const NVSPermits = new XroadConf({
   env: {
-    XROAD_HUNTING_LICENSE_PATH: {
-      dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
-      staging: 'IS-TEST/GOV/10009/Umhverfisstofnun-Protected/api',
-      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
+    XROAD_NVS_PERMITS_PATH: {
+      dev: 'IS-DEV/GOV/10085/NVS-Protected/api',
+      staging: 'IS-TEST/GOV/10085/NVS-Protected/api',
+      prod: 'IS/GOV/7009241570/NVS-Protected/api',
     },
   },
 })

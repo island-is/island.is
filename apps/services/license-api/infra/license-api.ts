@@ -10,7 +10,7 @@ import {
   Disability,
   DrivingLicense,
   Firearm,
-  Hunting,
+  NVSPermits,
 } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
@@ -75,7 +75,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
-    .xroad(Base, Client, Firearm, Disability, DrivingLicense, Hunting)
+    .xroad(Base, Client, Firearm, Disability, DrivingLicense, NVSPermits)
     .ingress({
       primary: {
         host: {
