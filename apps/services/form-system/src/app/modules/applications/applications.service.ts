@@ -95,6 +95,9 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
+          pruneAt: new Date(
+            Date.now() + form.daysUntilApplicationPrune * 24 * 60 * 60 * 1000,
+          ),
         } as Application,
         { transaction },
       )
