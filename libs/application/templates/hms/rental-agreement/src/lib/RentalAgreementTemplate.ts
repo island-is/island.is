@@ -31,10 +31,12 @@ import {
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
 
 enum TemplateApiActions {
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
   consumerIndex = 'consumerIndex',
+  companyProcurationHolders = 'companyProcurationHolders',
   sendDraft = 'sendDraft',
 }
 
@@ -110,6 +112,24 @@ const RentalAgreementTemplate: ApplicationTemplate<
               api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
               delete: true,
             },
+            {
+              id: Roles.PROCURATION,
+              formLoader: () =>
+                import('../forms/prerequsitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
+              delete: true,
+            },
           ],
         },
         on: {
@@ -121,9 +141,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: TemplateApiActions.consumerIndex,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.consumerIndex,
+            }),
+            defineTemplateApi({
+              action: TemplateApiActions.companyProcurationHolders,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -145,6 +170,24 @@ const RentalAgreementTemplate: ApplicationTemplate<
             },
             {
               id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/draftForm').then((module) =>
+                  Promise.resolve(module.draftForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: application.goToOverviewButton,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [UserProfileApi, IdentityApi],
+            },
+            {
+              id: Roles.PROCURATION,
               formLoader: () =>
                 import('../forms/draftForm').then((module) =>
                   Promise.resolve(module.draftForm),
@@ -205,6 +248,29 @@ const RentalAgreementTemplate: ApplicationTemplate<
             },
             {
               id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewApplicantForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: application.goToSigningButton,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: application.backToOverviewButton,
+                  type: 'signGhost',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [UserProfileApi, IdentityApi],
+            },
+            {
+              id: Roles.PROCURATION,
               formLoader: () =>
                 import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.inReviewApplicantForm),
@@ -358,6 +424,10 @@ const RentalAgreementTemplate: ApplicationTemplate<
 
     if (id === InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN) {
       return Roles.INSTITUTION
+    }
+
+    if (applicantActors.length > 0 && isCompany(applicant)) {
+      return Roles.PROCURATION
     }
 
     if (applicantActors.length > 0) {

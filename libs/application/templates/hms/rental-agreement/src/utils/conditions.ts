@@ -144,5 +144,17 @@ export const applicantIsIndividual = (
     'identity.data.type',
   )
 
+  return identityType !== 'company'
+}
+
+export const applicantIsCompany = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const identityType = getValueViaPath<string>(
+    externalData,
+    'identity.data.type',
+  )
+
   return identityType === 'company'
 }
