@@ -31,7 +31,7 @@
       "options": {
         "command": "yarn openapi-ts -f libs/clients/nvs-permits/src/lib/openapi-ts.config.ts"
       },
-      "outputs": ["{sourceRoot}/gen/fetch"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
 }
