@@ -1995,8 +1995,13 @@ export const messages = defineMessages({
     id: 'sp.health:no-permit',
   },
   noPermitsRegistered: {
-    defaultMessage: 'Þú ert ekki með neinar heimildir',
+    defaultMessage: 'Þú ert ekki með neinar heimildir.',
     id: 'sp.health:no-permits-registered',
+  },
+  noActivePermitsRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+    id: 'sp.health:no-active-permits-registered',
   },
   active: {
     defaultMessage: 'Virk',
@@ -2050,5 +2055,41 @@ export const messages = defineMessages({
   dispensationPlaces: {
     id: 'sp.health:dispensation-places',
     defaultMessage: 'Afgreiðslustaðir',
+  },
+  prescriptionBlockedIsRegiment: {
+    defaultMessage: 'Ekki er hægt að endurnýja lyfjakúr',
+    id: 'sp.health:prescription-blocked-is-regiment',
+  },
+  prescriptionBlockedNoMedCard: {
+    defaultMessage: 'Ekkert lyfjakort skráð',
+    id: 'sp.health:prescription-blocked-no-med-card',
+  },
+  prescriptionBlockedNoHealthClinic: {
+    defaultMessage: 'Engin heilsugæslustöð skráð',
+    id: 'sp.health:prescription-blocked-no-health-clinic',
+  },
+  prescriptionBlockedNotFullyDispensed: {
+    defaultMessage: 'Ekki öll lyf sótt',
+    id: 'sp.health:prescription-blocked-not-fully-dispensed',
+  },
+  prescriptionBlockedPendingRequest: {
+    defaultMessage: 'Beiðni um endurnýjun í vinnslu',
+    id: 'sp.health:prescription-blocked-pending-request',
+  },
+  prescriptionBlockedRejectedRequest: {
+    defaultMessage: 'Beiðni um endurnýjun hafnað',
+    id: 'sp.health:prescription-blocked-rejected-request',
+  },
+  prescriptionBlockedDismissedRequest: {
+    defaultMessage: 'Beiðni um endurnýjun vísað frá',
+    id: 'sp.health:prescription-blocked-dismissed-request',
+  },
+  prescriptionBlockedAlreadyRequested: {
+    defaultMessage: 'Endurnýjun þegar í vinnslu',
+    id: 'sp.health:prescription-blocked-already-requested',
+  },
+  prescriptionBlockedOther: {
+    defaultMessage: 'Óþekkt ástæða',
+    id: 'sp.health:prescription-blocked-other',
   },
 })

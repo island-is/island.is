@@ -34,7 +34,6 @@ const MedicineDelegation = () => {
     variables: {
       locale: lang,
       input: {
-        active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
         status: [
           HealthDirectoratePermitStatus.active,
           HealthDirectoratePermitStatus.expired,
@@ -45,6 +44,8 @@ const MedicineDelegation = () => {
       },
     },
   })
+  const dataLength =
+    data?.healthDirectorateMedicineDelegations?.items?.length ?? 0
 
   const filteredData =
     data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
@@ -85,16 +86,22 @@ const MedicineDelegation = () => {
         </>,
       ]}
     >
-      {!loading && error && (
-        <Problem type="internal_service_error" noBorder={false} />
+      {!loading && !error && dataLength === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.noPermit)}
+          message={formatMessage(messages.noPermitsRegistered)}
+          imgSrc="./assets/images/empty_flower.svg"
+        />
       )}
-
+      {!loading && error && <Problem error={error} noBorder={false} />}
       {loading && !error && (
         <Box marginY={3}>
-          <ActionCardLoader />
+          <ActionCardLoader repeat={3} />
         </Box>
       )}
-      {!loading && !error && filteredData && (
+      {!loading && !error && dataLength > 0 && (
         <>
           <Box justifyContent="spaceBetween" alignItems="center" display="flex">
             <Text variant="medium">
@@ -111,10 +118,17 @@ const MedicineDelegation = () => {
               checked={showExpiredPermits}
             />
           </Box>
-          {!loading &&
-            !error &&
-            (!filteredData || filteredData.length === 0) && (
-              <Problem type="no_data" noBorder={false} />
+          {dataLength > 0 &&
+            filteredData?.length === 0 &&
+            !showExpiredPermits && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(messages.noData)}
+                message={formatMessage(messages.noActivePermitsRegistered)}
+                imgSrc="./assets/images/empty_flower.svg"
+                imgAlt=""
+              />
             )}
           <Stack space={2}>
             {filteredData?.map((item) => {
