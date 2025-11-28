@@ -62,10 +62,7 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     })
   }
 
-  const { currentSection, currentScreen } = getCurrentSectionAndScreen(
-    sections,
-    screens,
-  )
+  const { currentSection, currentScreen } = getCurrentSectionAndScreen(sections)
   return {
     ...state,
     sections,
@@ -75,12 +72,9 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
   }
 }
 
-const getCurrentSectionAndScreen = (
-  sections: FormSystemSection[],
-  screens: FormSystemScreen[],
-) => {
+const getCurrentSectionAndScreen = (sections: FormSystemSection[]) => {
   const currentSectionIndex = sections.findIndex(
-    (section) => section.isCompleted === false,
+    (section) => section.isCompleted === false && section.isHidden === false,
   )
   const currentSection = {
     data: sections[currentSectionIndex],
@@ -94,12 +88,19 @@ const getCurrentSectionAndScreen = (
     }
   }
 
-  const currentScreenIndex = screens.findIndex(
-    (screen) => screen.isCompleted === false,
+  const currentScreenIndex = currentSection.data.screens?.findIndex(
+    (screen) => screen?.isCompleted === false && screen?.isHidden === false,
   )
-  const currentScreen = {
-    data: screens[currentScreenIndex],
-    index: currentScreenIndex,
+
+  let currentScreen = undefined
+
+  if (currentScreenIndex !== undefined) {
+    currentScreen = {
+      index: currentScreenIndex,
+      data: currentSection.data.screens?.[
+        currentScreenIndex
+      ] as FormSystemScreen,
+    }
   }
 
   return {
@@ -133,7 +134,7 @@ export const applicationReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'INCREMENT': {
-      const { submitScreen, submitSection } = action.payload
+      const { submitScreen, submitSection, updateDependencies } = action.payload
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
 
@@ -143,6 +144,7 @@ export const applicationReducer = (
           currentSectionData,
           currentScreenIndex,
           submitScreen,
+          updateDependencies,
         )
       }
       return incrementWithoutScreens(state, submitSection)
@@ -150,11 +152,13 @@ export const applicationReducer = (
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
+      const { submitScreen } = action.payload
       if (hasScreens(currentSectionData)) {
         return decrementWithScreens(
           state,
           currentSectionIndex,
           currentScreenIndex,
+          submitScreen,
         )
       }
 
