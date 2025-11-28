@@ -953,6 +953,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Núverandi leikskóli',
       description: 'Current nursery',
     },
+    expectedStartDate: {
+      id: 'nps.application:overview.expected.start.date',
+      defaultMessage: 'Áætlaður upphafsdagur',
+      description: 'Expected start date',
+    },
     expectedEndDate: {
       id: 'nps.application:overview.expected.end.date',
       defaultMessage: 'Áætlaður lokadagur',
