@@ -155,11 +155,11 @@ const PoliceCaseDetail = () => {
                           step ===
                           (data?.lawAndOrderPoliceCaseTimelineStructure
                             ?.milestones.length ?? 0) -
-                          1
+                            1
                         }
                         description={
                           isActiveStep &&
-                            policeCase?.status?.descriptionDisplayString ? (
+                          policeCase?.status?.descriptionDisplayString ? (
                             <Text>
                               {policeCase?.status?.descriptionDisplayString}
                             </Text>

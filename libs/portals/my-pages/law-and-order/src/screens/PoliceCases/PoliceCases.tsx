@@ -61,7 +61,9 @@ const PoliceCases = () => {
         cases.map((c) => (
           <Box key={c.number} marginTop={2}>
             <ActionCard
-              heading={formatMessage(messages.policeCaseCardTitle, { arg: c.number })}
+              heading={formatMessage(messages.policeCaseCardTitle, {
+                arg: c.number,
+              })}
               text={
                 c.modified
                   ? formatMessage(messages.policeCaseCardText, {
@@ -70,10 +72,14 @@ const PoliceCases = () => {
                   : undefined
               }
               eyebrow={formatMessage(messages.policeCaseCardEyebrow)}
-              tag={ c.status?.headerDisplayString ? {
-                label: c.status?.headerDisplayString,
-                variant: 'blue',
-              } : undefined}
+              tag={
+                c.status?.headerDisplayString
+                  ? {
+                      label: c.status?.headerDisplayString,
+                      variant: 'blue',
+                    }
+                  : undefined
+              }
               cta={{
                 label: formatMessage(messages.seeInfo),
                 variant: 'text',

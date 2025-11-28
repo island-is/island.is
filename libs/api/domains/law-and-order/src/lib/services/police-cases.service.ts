@@ -22,10 +22,7 @@ export class PoliceCasesService {
     private readonly intlService: IntlService,
   ) {}
 
-  async getCases(
-    user: User,
-    locale: Locale,
-  ): Promise<PaginatedCaseCollection> {
+  async getCases(user: User, locale: Locale): Promise<PaginatedCaseCollection> {
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const cases = await this.policeApi.getCases(user)
@@ -55,7 +52,11 @@ export class PoliceCasesService {
     }
   }
 
-  async getCase(user: User, caseNumber: string, locale: Locale): Promise<Case | undefined> {
+  async getCase(
+    user: User,
+    caseNumber: string,
+    locale: Locale,
+  ): Promise<Case | undefined> {
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const cases = await this.policeApi.getCases(user)
 
@@ -64,7 +65,9 @@ export class PoliceCasesService {
     }
 
     const policeCase = cases.find((c) => c.caseNumber === caseNumber)
-    return policeCase ? mapPoliceCase(policeCase, locale, formatMessage) ?? undefined : undefined
+    return policeCase
+      ? mapPoliceCase(policeCase, locale, formatMessage) ?? undefined
+      : undefined
   }
 
   async getCaseTimelineStructure(
