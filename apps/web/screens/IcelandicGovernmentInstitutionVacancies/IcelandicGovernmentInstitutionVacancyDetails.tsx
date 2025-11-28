@@ -401,14 +401,6 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
-  // Debug: Log vacancy data to verify address/department fields
-  console.log('📄 Starfatorg Detail - Full vacancy data:', {
-    id: vacancy.id,
-    title: vacancy.title,
-    locations: vacancy.locations,
-    fullVacancy: vacancy,
-  })
-
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>

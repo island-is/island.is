@@ -848,47 +848,6 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   const { vacancies, fetchErrorOccurred } =
     vacanciesResponse.data.icelandicGovernmentInstitutionVacancies
 
-  // Debug: Log first vacancy to verify address/department fields
-  console.log('📊 Starfatorg List - Sample vacancy data:', {
-    totalVacancies: vacancies.length,
-    firstVacancy: vacancies[0],
-    firstVacancyLocations: vacancies[0]?.locations,
-  })
-
-  // Debug: Scan ALL vacancies to find which ones have address/department data
-  const vacanciesWithLocationData = vacancies.filter((v) =>
-    v.locations?.some((loc) => loc.address || loc.department || loc.postalCode),
-  )
-  const vacanciesWithAddress = vacancies.filter((v) =>
-    v.locations?.some((loc) => loc.address),
-  )
-  const vacanciesWithDepartment = vacancies.filter((v) =>
-    v.locations?.some((loc) => loc.department),
-  )
-  const vacanciesWithPostalCode = vacancies.filter((v) =>
-    v.locations?.some((loc) => loc.postalCode),
-  )
-
-  console.log('🔍 Location Data Analysis:', {
-    totalVacancies: vacancies.length,
-    withAnyLocationData: vacanciesWithLocationData.length,
-    withAddress: vacanciesWithAddress.length,
-    withDepartment: vacanciesWithDepartment.length,
-    withPostalCode: vacanciesWithPostalCode.length,
-    examplesWithAddress: vacanciesWithAddress.slice(0, 3).map((v) => ({
-      id: v.id,
-      title: v.title,
-      institution: v.institutionName,
-      locations: v.locations,
-    })),
-    examplesWithDepartment: vacanciesWithDepartment.slice(0, 3).map((v) => ({
-      id: v.id,
-      title: v.title,
-      institution: v.institutionName,
-      locations: v.locations,
-    })),
-  })
-
   return {
     vacancies,
     namespace,
