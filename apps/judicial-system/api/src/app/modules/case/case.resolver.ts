@@ -1,13 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,7 +12,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { isProsecutionUser, type User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
@@ -64,15 +56,6 @@ export class CaseResolver {
       backendService.getCase(input.id),
       input.id,
     )
-  }
-
-  @ResolveField(() => String, { name: 'penalties', nullable: true })
-  getPenalties(@Parent() theCase: Case, @CurrentGraphQlUser() user: User) {
-    if (isProsecutionUser(user)) {
-      return theCase.penalties
-    }
-
-    return null
   }
 
   @Query(() => [Case], { nullable: true })
