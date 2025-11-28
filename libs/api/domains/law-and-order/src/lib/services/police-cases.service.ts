@@ -41,12 +41,13 @@ export class PoliceCasesService {
       }
     }
 
+    const mappedCases = cases
+      .map((item) => mapPoliceCase(item, locale, formatMessage))
+      .filter(isDefined)
+
     return {
-      data:
-        cases
-          .map((item) => mapPoliceCase(item, locale, formatMessage))
-          .filter(isDefined) ?? [],
-      totalCount: cases.length,
+      data: mappedCases,
+      totalCount: mappedCases.length,
       pageInfo: {
         hasNextPage: false,
         hasPreviousPage: false,
