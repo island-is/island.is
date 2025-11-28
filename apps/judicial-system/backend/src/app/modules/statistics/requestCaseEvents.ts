@@ -1,4 +1,8 @@
 import {
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import {
   CaseAppealRulingDecision,
   CaseDecision,
   CaseOrigin,
@@ -33,8 +37,8 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   if (caseType === CaseType.INDICTMENT) {
     return 'Ákæra'
   }
-  const subtypes = courtSubtypes[caseType]
-  return Array.isArray(subtypes) ? subtypes[0] : subtypes
+  const subtypes = formatCaseType(caseType)
+  return capitalize(Array.isArray(subtypes) ? subtypes[0] : subtypes)
 }
 
 const commonFields = (c: Case) => {
