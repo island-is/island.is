@@ -14,7 +14,6 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
-  CurrentActor,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -51,7 +50,6 @@ export class MeNotificationsController {
   })
   findMany(
     @CurrentUser() user: User,
-    @CurrentActor() actor: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
     return this.notificationService.findManyWithTemplate(

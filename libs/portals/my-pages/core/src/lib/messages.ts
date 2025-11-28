@@ -577,6 +577,11 @@ export const m = defineMessages({
     defaultMessage:
       'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
   },
+  companyIntro: {
+    id: 'service.portal:company-intro',
+    defaultMessage:
+      'Hér eru gögn um fyrirtækið sem sótt eru til Fyrirtækjaskrár.',
+  },
   detailInfo: {
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',

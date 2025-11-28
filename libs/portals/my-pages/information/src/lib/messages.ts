@@ -225,7 +225,7 @@ export const msg = defineMessages({
   },
   companysSettingsIntro: {
     id: 'sp.settings:company-settings-intro-text',
-    defaultMessage: `TODO: Add company settings intro text`,
+    defaultMessage: `Hér getur þú breytt upplýsingum um fyrirtækið`,
   },
   dropModalAllTitle: {
     id: 'sp.settings:dropmodal-all-title',

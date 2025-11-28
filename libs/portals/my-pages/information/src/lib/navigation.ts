@@ -131,7 +131,7 @@ export const informationNavigation: PortalNavigationItem = {
 
 export const companyInformationNavigation: PortalNavigationItem = {
   name: m.companyInfo,
-  description: m.userInfoDescription,
+  description: m.companyDescription,
   searchTags: [],
   path: InformationPaths.Company,
   icon: {
@@ -140,7 +140,7 @@ export const companyInformationNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.companyData,
-      description: m.userInfoIntro,
+      description: m.companyIntro,
       path: InformationPaths.Company,
     },
     {

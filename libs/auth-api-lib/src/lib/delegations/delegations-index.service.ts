@@ -293,26 +293,29 @@ export class DelegationsIndexService {
           AuthDelegationType.Custom,
         )
 
+        const orConditions = [
+          {
+            ...where,
+            type: {
+              [Op.in]: scopeDelegationTypes.filter(
+                (d) => d !== AuthDelegationType.Custom,
+              ),
+            },
+          },
+        ]
+
+        if (scopeSupportsCustom) {
+          orConditions.push({
+            ...where,
+            type: AuthDelegationType.Custom,
+            customDelegationScopes: { [Op.contains]: [scope.name] },
+          })
+        }
+
         const delegations = await this.delegationIndexModel
           .findAll({
             where: {
-              [Op.or]: [
-                {
-                  ...where,
-                  type: {
-                    [Op.in]: scopeDelegationTypes.filter(
-                      (d) => d !== AuthDelegationType.Custom,
-                    ),
-                  },
-                },
-                scopeSupportsCustom
-                  ? {
-                      ...where,
-                      type: AuthDelegationType.Custom,
-                      customDelegationScopes: { [Op.contains]: [scope.name] },
-                    }
-                  : {},
-              ],
+              [Op.or]: orConditions,
             },
           })
           .then((d) => d.flat().map((d) => d.toDTO()))
