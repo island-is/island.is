@@ -85,14 +85,14 @@ const DispensingItem: React.FC<DispensingItemProps> = ({
         </GridColumn>
       )}
       {strength && (
-        <GridColumn span={'2/12'} className={styles.text}>
+        <GridColumn span={'1/12'} className={styles.text}>
           <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
             {strength}
           </Text>
         </GridColumn>
       )}
       {quantity && (
-        <GridColumn span={'2/12'} className={styles.text}>
+        <GridColumn span={'1/12'} className={styles.text}>
           <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
             {quantity}
           </Text>
