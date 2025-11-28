@@ -8,6 +8,7 @@ import { NotificationsAdminService } from './notificationsAdmin.service'
 import {
   NotificationsInput,
   AdminNotificationsResponse,
+  ActorNotificationsResponse,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -56,5 +57,35 @@ export class NotificationsAdminResolver {
     }
 
     return notifications
+  }
+
+  @Query(() => ActorNotificationsResponse, {
+    name: 'adminActorNotifications',
+    nullable: true,
+  })
+  @Audit()
+  async getActorNotifications(
+    @Args('nationalId') nationalId: string,
+    @Args('input', { type: () => NotificationsInput, nullable: true })
+    input: NotificationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorNotificationsResponse | null> {
+    let actorNotifications: ActorNotificationsResponse | null
+
+    try {
+      actorNotifications = await this.service.getActorNotifications(
+        nationalId,
+        user,
+        input,
+      )
+    } catch (e) {
+      this.logger.error('failed to get admin actor notifications', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
+
+    return actorNotifications
   }
 }

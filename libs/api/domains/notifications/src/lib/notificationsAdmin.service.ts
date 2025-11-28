@@ -6,9 +6,13 @@ import { NotificationsApi } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
 import {
   AdminNotificationsResponse,
+  ActorNotificationsResponse,
   NotificationsInput,
 } from './notifications.model'
-import { adminNotificationMapper } from '../utils/helpers'
+import {
+  adminNotificationMapper,
+  actorNotificationMapper,
+} from '../utils/helpers'
 
 @Injectable()
 export class NotificationsAdminService {
@@ -47,6 +51,34 @@ export class NotificationsAdminService {
       data: notifications.data.map((item) => adminNotificationMapper(item)),
       totalCount: notifications.totalCount,
       pageInfo: notifications.pageInfo,
+    }
+  }
+
+  async getActorNotifications(
+    nationalId: string,
+    user: User,
+    input?: NotificationsInput,
+  ): Promise<ActorNotificationsResponse | null> {
+    const actorNotifications = await this.notificationsWAuth(
+      user,
+    ).notificationsControllerFindActorNotifications({
+      xQueryNationalId: nationalId,
+      limit: input?.limit,
+      before: input?.before,
+      after: input?.after,
+    })
+
+    if (!actorNotifications.data) {
+      this.logger.debug('no admin actor notifications found')
+      return null
+    }
+
+    return {
+      data: actorNotifications.data.map((item) =>
+        actorNotificationMapper(item),
+      ),
+      totalCount: actorNotifications.totalCount,
+      pageInfo: actorNotifications.pageInfo,
     }
   }
 }

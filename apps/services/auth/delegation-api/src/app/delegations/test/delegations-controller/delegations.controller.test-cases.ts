@@ -269,7 +269,7 @@ export const invalidTestCases: Record<
 > = {
   nonExistingApiScope: {
     message: 'Should return 400 status for non-existing api scope',
-    errorMessage: 'Invalid scope',
+    errorMessage: 'Invalid scope(s): non-existing-scope',
     testCase: new TestCase({
       requestUser: {
         nationalId: company1,

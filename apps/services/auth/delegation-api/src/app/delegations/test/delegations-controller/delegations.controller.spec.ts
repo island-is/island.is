@@ -90,17 +90,19 @@ describe('DelegationsController', () => {
 
       it(message, async () => {
         // Act
+        console.log(testCase.scopes.map((s) => s.name).join(','))
         const response = await server
           .get(path)
           .set('X-Query-National-Id', testCase.requestUser.nationalId)
           .query({
-            scope: testCase.requestUser.scope,
+            scopes: testCase.scopes.map((s) => s.name).join(','),
             direction: testCase.requestUser.direction,
           })
 
         // Assert
         expect(response.status).toBe(200)
 
+        console.log(response.body)
         if (testCase.expectedTo) {
           expect(response.body.totalCount).toEqual(testCase.expectedTo?.length)
           response.body.data.forEach((record: DelegationRecordDTO) => {
@@ -147,7 +149,7 @@ describe('DelegationsController', () => {
           .get(path)
           .set('X-Query-National-Id', testCase.requestUser.nationalId)
           .query({
-            scope: testCase.requestUser.scope,
+            scopes: testCase.scopes.map((s) => s.name).join(','),
             direction: testCase.requestUser.direction,
           })
 
@@ -178,7 +180,7 @@ describe('DelegationsController', () => {
         .get(path)
         .set('X-Query-National-Id', user.nationalId)
         .query({
-          scope: testCase.requestUser.scope,
+          scopes: testCase.scopes.map((s) => s.name).join(','),
           direction: testCase.requestUser.direction,
         })
 

@@ -18,6 +18,7 @@ import {
   ServicePortalPaths,
   m,
   useScrollPosition,
+  hasNotificationScopes,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -45,9 +46,8 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
 
   const user = useUserInfo()
 
-  const hasNotificationsDelegationAccess = user?.scopes?.includes(
-    DocumentsScope.main,
-  )
+  const hasNotificationsDelegationAccess = hasNotificationScopes(user?.scopes)
+
   const [show, setShow] = useState<boolean>(true)
 
   const [hide, setHide] = useState<boolean>(true)
