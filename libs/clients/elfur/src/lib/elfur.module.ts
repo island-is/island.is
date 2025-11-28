@@ -27,7 +27,12 @@ export class ElfurClientModule {
               issuer: 'https://identity-server.staging01.devland.is',
               clientId: config.clientId,
               clientSecret: config.clientSecret,
-              scope: [],
+              scope:  [
+                '@fjs.is/elfur_employee_read',
+                '@fjs.is/elfur_organization_read',
+                '@fjs.is/elfur_openinvoices_read',
+                '@fjs.is/elfur_organization_read',
+              ],
             }
           : undefined,
       }),
