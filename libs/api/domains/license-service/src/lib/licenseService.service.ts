@@ -532,6 +532,18 @@ export class LicenseService {
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
 
+      if (
+        'licenseType' in tokenData &&
+        tokenData.licenseType !== GenericLicenseType.DriversLicense
+      ) {
+        return {
+          barcodeType: VerifyLicenseBarcodeType.V2,
+          licenseType: tokenData.licenseType,
+          valid: false,
+          error: VerifyLicenseBarcodeError.ERROR,
+        }
+      }
+
       return {
         barcodeType: VerifyLicenseBarcodeType.V2,
         ...tokenData,
