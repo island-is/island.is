@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PoliceCasesClientService } from '@island.is/clients/police-cases'
 import type { User } from '@island.is/auth-nest-tools'
+import { Case } from '../models/police-cases/case.model'
 import { mapPoliceCase } from '../mappers/policeCaseMapper'
 import { isDefined } from '@island.is/shared/utils'
 import { PaginatedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
