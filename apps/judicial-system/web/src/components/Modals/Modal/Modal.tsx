@@ -142,6 +142,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             background="white"
             position="sticky"
             bottom={0}
+            zIndex={10}
           >
             {footerCheckbox && (
               <Checkbox
