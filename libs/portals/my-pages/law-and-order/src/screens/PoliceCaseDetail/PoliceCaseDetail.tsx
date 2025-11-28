@@ -122,7 +122,7 @@ const PoliceCaseDetail = () => {
               </Text>
               <HistoryStepper
                 sections={data?.lawAndOrderPoliceCaseTimelineStructure?.milestones.map(
-                  ({ label, step }, index) => {
+                  ({ label, step }) => {
                     const isActiveStep = currentCaseProgress === step
                     const stepIsCompleted = step <= currentCaseProgress
 
@@ -146,7 +146,7 @@ const PoliceCaseDetail = () => {
                     )
                     return (
                       <HistorySection
-                        key={`milestone-${index}`}
+                        key={`milestone-${step}`}
                         section={formatMessage(label)}
                         customSection={section}
                         sectionIndex={step}

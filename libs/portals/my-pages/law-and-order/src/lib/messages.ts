@@ -29,7 +29,7 @@ export const messages = defineMessages({
   policeCaseDetailDescription: {
     id: 'sp.law-and-order:police-cases-detail-description',
     defaultMessage:
-      'Í þjónustugátt lögreglunnar geta getur þú fylgst með stöðu mála sem eru til rannsóknar hjá lögreglu. Gáttin veitir yfirsýn yfir framvindu málsins á meðan það er í rannsókn hjá lögreglu og í úrvinnslu hjá dómstólum.',
+      'Í þjónustugátt lögreglunnar getur þú fylgst með stöðu mála sem eru til rannsóknar hjá lögreglu. Gáttin veitir yfirsýn yfir framvindu málsins á meðan það er í rannsókn hjá lögreglu og í úrvinnslu hjá dómstólum.',
   },
   policeCases: {
     id: 'sp.law-and-order:police-cases',
