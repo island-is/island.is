@@ -22,14 +22,6 @@ export const employmentHistorySchema = z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
     independentOwnSsn: z.nativeEnum(YesOrNoEnum).optional(),
-    ownSSNJob: z
-      .object({
-        title: z.string().optional(),
-        percentage: z.string().optional(),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-      })
-      .optional(),
     lastJobs: z.array(lastJobSchema).optional(),
     currentJobs: z.array(lastJobSchema).optional(),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),

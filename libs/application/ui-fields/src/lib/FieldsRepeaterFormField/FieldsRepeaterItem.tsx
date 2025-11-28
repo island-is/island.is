@@ -197,7 +197,7 @@ export const Item = ({
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues, lang)
+    translatedOptions = options(application, activeValues, lang, formatMessage)
   } else {
     translatedOptions =
       options?.map((option) => ({

@@ -113,6 +113,7 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
+    clearOnChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -123,6 +124,7 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
+    clearOnChange,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -885,6 +887,7 @@ export const buildNationalIdWithNameField = (
     emailLabel,
     titleVariant,
     description,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -911,6 +914,7 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
+    readOnly,
   }
 }
 
