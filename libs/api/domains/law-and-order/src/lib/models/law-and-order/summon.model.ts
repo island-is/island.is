@@ -21,6 +21,9 @@ export class Text {
 @ObjectType('LawAndOrderSubpoenaData')
 export class Data {
   @Field(() => ID)
+  cacheId!: string
+
+  @Field()
   id!: string
 
   @Field({ nullable: true })

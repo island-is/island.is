@@ -1,6 +1,6 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
-import { AppealDecision } from '../models/verdict.model'
+import { AppealDecision } from '../models/law-and-order/verdict.model'
 
 @InputType('LawAndOrderAppealDecisionInput')
 export class PostAppealDecisionInput {

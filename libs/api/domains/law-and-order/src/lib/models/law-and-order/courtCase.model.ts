@@ -14,6 +14,9 @@ export class Text {
 @ObjectType('LawAndOrderCourtCaseData')
 export class Data {
   @Field(() => ID)
+  cacheId!: string
+
+  @Field()
   id!: string
 
   @Field({ nullable: true })

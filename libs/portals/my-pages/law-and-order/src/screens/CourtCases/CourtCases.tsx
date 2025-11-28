@@ -4,7 +4,7 @@ import {
   ActionCard,
   CardLoader,
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
+  IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -26,13 +26,12 @@ const CourtCases = () => {
   const cases = data?.lawAndOrderCourtCasesList?.cases
 
   return (
-    <>
-      <IntroHeader
-        title={messages.courtCases}
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
+    <IntroWrapper
+      title={messages.courtCases}
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       {loading && !error && (
         <Box width="full">
           <CardLoader />
@@ -75,7 +74,7 @@ const CourtCases = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-    </>
+    </IntroWrapper>
   )
 }
 export default CourtCases

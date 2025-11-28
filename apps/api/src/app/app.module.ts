@@ -86,6 +86,7 @@ import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { PoliceCasesClientConfig } from '@island.is/clients/police-cases'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AuthIdsApiClientConfig } from '@island.is/clients/auth/ids-api'
@@ -391,6 +392,7 @@ const environment = getConfig
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         NationalRegistryV3ClientConfig,
+        PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
