@@ -120,7 +120,7 @@ export const addConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(24)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const institutionWidth = calculatePt(160)
+  const institutionWidth = calculatePt(297)
   const confirmedByWidth = institutionWidth + calculatePt(48)
   const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleWidth = institutionWidth + confirmedByWidth
@@ -152,7 +152,7 @@ export const addConfirmation = (
   doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
   doc.text(
     formatDate(confirmation.date) ?? '',
-    shaddowWidth - calculatePt(24),
+    calculatePt(710),
     pageMargin + calculatePt(9),
   )
 
