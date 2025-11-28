@@ -169,7 +169,6 @@ export class NotificationsService {
    */
   validate(template: HnippTemplate, args: ArgumentDto[]): void {
     const providedKeys = args.map((arg) => arg.key)
-    console.log('providedKeys', providedKeys)
 
     // Filter out 'subject' from template args since it's optional and not used in template replacement
     const requiredArgs = template.args.filter((arg) => arg !== 'subject')

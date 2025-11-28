@@ -335,9 +335,6 @@ export class NotificationsWorkerService {
       actorProfile.locale as Locale,
     )
 
-    console.log('=====TEMPLATE SCOPE=====', template.scope)
-    console.log('=====NOTIFICATION SCOPES=====', notificationScopes)
-
     const scope = template.scope || DocumentsScope.main
     const dbNotification = await this.createActorNotificationDbRecord(
       args,
@@ -361,7 +358,6 @@ export class NotificationsWorkerService {
     args: CreateHnippNotificationDto & { messageId: string },
     scope: string,
   ) {
-    console.log('ACTOR createActorNotificationDbRecord')
     const { messageId, ...message } = args
 
     // find user notification by messageId
@@ -420,9 +416,6 @@ export class NotificationsWorkerService {
       locale,
     )
 
-    console.log('=====template=====', template)
-
-    console.log('=====TEMPLATE SCOPE=====', template.scope)
     const scope = template.scope || DocumentsScope.main
     const notification = await this.createUserNotificationDbRecord(args, scope)
 
@@ -451,10 +444,6 @@ export class NotificationsWorkerService {
     templateScope: string,
     actorNationalId?: string,
   ) {
-    console.log(
-      '=====handleSendingNotificationsToDelegations=====',
-      actorNationalId,
-    )
     const { messageId, ...message } = args
 
     // Only proceed if the template scope is in the allowed notification scopes
@@ -612,7 +601,6 @@ export class NotificationsWorkerService {
         if (message.onBehalfOf && message.rootMessageId) {
           return await this.handleActorNotification(notification)
         } else if (message.onBehalfOf && !message.rootMessageId) {
-          console.log('===HANDLE DIRECT NOTIFICATION=====')
           return await this.handleUserNotification(
             {
               recipient: message.onBehalfOf.nationalId,

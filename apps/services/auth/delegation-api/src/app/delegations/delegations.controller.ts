@@ -79,16 +79,6 @@ export class DelegationsController {
     scopes: string[],
     @Query('direction') direction = DelegationDirection.OUTGOING,
   ): Promise<PaginatedDelegationRecordDTO> {
-    console.log('🔧 Delegation API - Request received:', {
-      nationalId,
-      scopes,
-      direction,
-      auth: {
-        nationalId: auth.nationalId,
-        scope: auth.scope,
-        client: auth.client,
-      },
-    })
     return this.auditService.auditPromise(
       {
         auth,

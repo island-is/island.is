@@ -54,8 +54,6 @@ export class MeNotificationsController {
     @CurrentActor() actor: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    console.log('actor.scope', actor.scope)
-    console.log('user.scope', user.scope)
     return this.notificationService.findManyWithTemplate(
       user.nationalId,
       query,
