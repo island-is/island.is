@@ -1,7 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('LawAndOrderLawyerChoices')
 export class Choice {
+  @Field(() => ID)
+  cacheId!: string
+
   @Field({ nullable: true })
   id?: string
 
