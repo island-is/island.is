@@ -74,7 +74,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
+        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -91,7 +91,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
+        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
