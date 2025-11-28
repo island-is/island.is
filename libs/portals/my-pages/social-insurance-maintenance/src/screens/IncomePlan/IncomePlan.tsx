@@ -161,6 +161,7 @@ const IncomePlan = () => {
       serviceProviderTooltip={formatMessage(
         coreMessages.socialInsuranceTooltip,
       )}
+      childrenWidthFull={false}
     >
       {renderContent()}
     </IntroWrapper>
