@@ -94,7 +94,6 @@ export const buildFormConclusionSection = ({
   infoAlertMessage = undefined,
   image,
 }: Props) => {
-
   const expandableDescriptionField = accordion
     ? [
         buildExpandableDescriptionField({
