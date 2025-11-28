@@ -1,5 +1,5 @@
 import { defineTemplateApi } from '@island.is/application/types'
-import { NationalRegistryUserApi } from '@island.is/application/types'
+import { NationalRegistryV3UserApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/types'
 
 export interface MyParameterType {
@@ -24,6 +24,6 @@ export const EphemeralApi = defineTemplateApi({
   shouldPersistToExternalData: false,
 })
 
-export const NationalRegistryApi = NationalRegistryUserApi.configure({
+export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
   order: 1,
 })
