@@ -296,6 +296,10 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}
+          hideActionButton={
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.WITHDRAWAL
+          }
           actionButtonText="Leiðrétta mál"
           actionButtonColorScheme="default"
           actionButtonIcon="pencil"
