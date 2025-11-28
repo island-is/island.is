@@ -32,7 +32,9 @@ export const navWrapper = style({
       gridTemplateColumns: 'repeat(2, 1fr)',
     },
     xs: {
-      gridTemplateColumns: '1fr',
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      paddingBottom: theme.spacing[2],
+      paddingTop: theme.spacing[2],
     },
   }),
 })
