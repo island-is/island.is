@@ -27,6 +27,9 @@ export class CreateApplicationInput {
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 }
 
 @InputType('FormSystemApplicationsInput')

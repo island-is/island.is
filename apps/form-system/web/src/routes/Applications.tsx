@@ -34,6 +34,7 @@ export const Applications = () => {
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [loginAllowed, setLoginAllowed] = useState(true)
+  const [isValidSlug, setIsValidSlug] = useState(true)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const { formatMessage } = useIntl()
@@ -74,7 +75,10 @@ export const Applications = () => {
           },
         },
       })
-
+      if (!app.data) {
+        setIsValidSlug(false)
+        return null
+      }
       const dto = app.data?.formSystemGetApplications
       if (dto?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
@@ -82,6 +86,7 @@ export const Applications = () => {
       }
       return dto
     } catch (error) {
+      console.error('Error fetching applications:', error)
       return null
     }
   }, [getApplications, slug])
@@ -120,6 +125,16 @@ export const Applications = () => {
     },
     [deleteApplicationMutation],
   )
+
+  if (!isValidSlug) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.slugNotFound)}
+        subTitle={formatMessage(m.checkUrlPlease)}
+        description=""
+      />
+    )
+  }
 
   if (loading) return <ApplicationLoading />
 

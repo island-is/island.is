@@ -1081,4 +1081,14 @@ export const m = defineMessages({
     defaultMessage: 'Útgefið',
     description: 'Published',
   },
+  slugNotFound: {
+    id: 'form.system:slug-not-found',
+    defaultMessage: 'Tegund umsóknar fannst ekki',
+    description: 'Application type not found',
+  },
+  checkUrlPlease: {
+    id: 'form.system:check-url-please',
+    defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
+    description: 'Please check the URL.',
+  },
 })
