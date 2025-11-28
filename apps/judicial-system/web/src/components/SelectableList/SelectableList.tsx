@@ -35,7 +35,6 @@ interface Props {
   items?: SelectableItem[]
   CTAButton?: CTAButtonAttributes
   isLoading: boolean
-  isDisabled?: boolean
   errorMessage?: string
   successMessage?: string
   warningMessage?: string
@@ -78,7 +77,6 @@ const SelectableList: FC<Props> = (props) => {
     items,
     CTAButton,
     isLoading,
-    isDisabled,
     errorMessage,
     successMessage,
     warningMessage,
@@ -147,9 +145,7 @@ const SelectableList: FC<Props> = (props) => {
                 onChange(update)
               }
             }}
-            disabled={
-              isHandlingCTA || validSelectableItems.length === 0 || isDisabled
-            }
+            disabled={isHandlingCTA || validSelectableItems.length === 0}
             strong
           />
         </Box>
@@ -233,7 +229,7 @@ const SelectableList: FC<Props> = (props) => {
                           onChange(update)
                         }
                       }}
-                      disabled={item.invalid || isHandlingCTA || isDisabled}
+                      disabled={item.invalid || isHandlingCTA}
                     />
                     {item.invalid && (
                       <Box display="flex" alignItems="center">
@@ -260,7 +256,6 @@ const SelectableList: FC<Props> = (props) => {
             disabled={
               items?.length === 0 ||
               isLoading ||
-              isDisabled ||
               selectableItems.every((p) => !p.checked)
             }
           >

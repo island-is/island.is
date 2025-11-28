@@ -736,7 +736,6 @@ const Conclusion: FC = () => {
               <SelectableList
                 selectAllText="Útivistardómur"
                 items={defendantsWithDefaultJudgments}
-                isDisabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(selectableItems: SelectableItem[]) => {
                   setDefendantsWithDefaultJudgments(selectableItems)
                 }}
