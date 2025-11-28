@@ -360,7 +360,22 @@ export class NotificationsWorkerService {
   ) {
     const { messageId, ...message } = args
 
-    // find user notification by messageId
+    const existing = await this.actorNotificationModel.findOne({
+      where: { messageId },
+      attributes: ['id'],
+    })
+
+    if (existing) {
+      this.logger.info(
+        'actor notification with messageId already exists in db',
+        {
+          messageId,
+        },
+      )
+      return existing
+    }
+
+    // find user notification by rootMessageId
     const userNotification = await this.notificationModel.findOne({
       where: {
         messageId: message.rootMessageId,
@@ -374,14 +389,26 @@ export class NotificationsWorkerService {
       return null
     }
 
-    return this.actorNotificationModel.create({
-      messageId,
-      rootMessageId: message.rootMessageId,
-      userNotificationId: userNotification.id,
-      onBehalfOfNationalId: message.onBehalfOf!.nationalId,
-      recipient: message.recipient,
-      scope,
-    })
+    try {
+      const created = await this.actorNotificationModel.create({
+        messageId,
+        rootMessageId: message.rootMessageId,
+        userNotificationId: userNotification.id,
+        onBehalfOfNationalId: message.onBehalfOf!.nationalId,
+        recipient: message.recipient,
+        scope,
+      })
+      this.logger.info('actor notification written to db', {
+        messageId,
+      })
+      return created
+    } catch (e) {
+      this.logger.error('error writing actor notification to db', {
+        e,
+        messageId,
+      })
+      return null
+    }
   }
 
   private async handleUserNotification(
@@ -460,6 +487,8 @@ export class NotificationsWorkerService {
         await this.delegationsApi.delegationsControllerGetDelegationRecords({
           xQueryNationalId: message.recipient,
           scopes: templateScope,
+          direction:
+            DelegationsControllerGetDelegationRecordsDirectionEnum.outgoing,
         })
 
       let recipientName = ''
