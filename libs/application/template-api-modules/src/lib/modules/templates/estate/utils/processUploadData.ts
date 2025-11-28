@@ -86,6 +86,9 @@ export const generateRawUploadData = (
     districtCommissionerHasWill: trueOrHasYes(
       answers.estate?.testament?.wills ?? 'false',
     ),
+    knowledgeOfOtherWills: trueOrHasYes(
+      answers.estate?.testament?.knowledgeOfOtherWills ?? 'false',
+    ),
     settlement: trueOrHasYes(answers.estate?.testament?.agreement ?? 'false'),
     dividedEstate: trueOrHasYes(answers.estate?.testament?.dividedEstate ?? ''),
     remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',

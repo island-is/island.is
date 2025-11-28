@@ -281,12 +281,12 @@ interface EstateCommon {
   otherDebts?: Array<EstateAsset & { debtType: DebtTypes }>
   estateMembers: EstateMember[]
   caseNumber: string
-  districtCommissionerHasWill: boolean
-  marriageSettlement: boolean
+  districtCommissionerHasWill?: boolean
+  marriageSettlement?: boolean
   dateOfDeath: Date
   nameOfDeceased: string
   nationalIdOfDeceased: string
-  knowledgeOfOtherWills: 'Yes' | 'No'
+  knowledgeOfOtherWills?: 'Yes' | 'No'
 }
 
 interface EstateCommonWithBankAccounts extends EstateCommon {

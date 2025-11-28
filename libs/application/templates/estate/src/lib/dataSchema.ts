@@ -432,7 +432,6 @@ export const estateSchema = z.object({
       )
       .array()
       .optional(),
-    knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
@@ -442,6 +441,7 @@ export const estateSchema = z.object({
     testament: z
       .object({
         wills: z.enum([YES, NO]),
+        knowledgeOfOtherWills: z.enum([YES, NO]),
         agreement: z.enum([YES, NO]),
         dividedEstate: z.enum([YES, NO]).optional(),
         additionalInfo: z.string().optional(),
