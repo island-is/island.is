@@ -1073,7 +1073,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
 const indictmentRulingDecision: CaseTableCellGenerator<
   TagValue | TagPairValue
 > = {
-  attributes: ['indictmentRulingDecision'],
+  attributes: ['state', 'indictmentRulingDecision'],
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
     generateIndictmentRulingDecisionTag(c, user),
 }
