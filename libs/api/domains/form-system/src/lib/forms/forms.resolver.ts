@@ -19,8 +19,6 @@ import {
 import { FormsService } from './forms.service'
 import {
   CreateFormInput,
-  DeleteFormInput,
-  PublishFormInput,
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
@@ -55,28 +53,6 @@ export class FormsResolver {
     return this.formsService.createForm(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'deleteFormSystemForm',
-    nullable: true,
-  })
-  async deleteForm(
-    @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formsService.deleteForm(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'publishFormSystemForm',
-    nullable: true,
-  })
-  async publishForm(
-    @Args('input', { type: () => PublishFormInput }) input: PublishFormInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formsService.publishForm(user, input)
-  }
-
   @Mutation(() => FormResponse, {
     name: 'updateFormSystemFormStatus',
     nullable: true,
@@ -87,6 +63,17 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
     return this.formsService.updateFormStatus(user, input)
+  }
+
+  @Mutation(() => FormResponse, {
+    name: 'copyFormSystemForm',
+    nullable: true,
+  })
+  async copyForm(
+    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.copyForm(user, id)
   }
 
   @Query(() => FormResponse, {

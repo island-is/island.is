@@ -1,11 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import {
-  DELETE_FORM,
-  PUBLISH_FORM,
-  UPDATE_FORM_STATUS,
-} from '@island.is/form-system/graphql'
+import { UPDATE_FORM_STATUS, COPY_FORM } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -66,14 +62,31 @@ export const TableRow = ({
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
-  const [deleteForm] = useMutation(DELETE_FORM)
-  const [publishForm] = useMutation(PUBLISH_FORM)
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
+  const [copyForm] = useMutation(COPY_FORM)
 
   const dropdownItems = useMemo(() => {
-    // const copy = {
-    //   title: formatMessage(m.copy),
-    // }
+    const copy = {
+      title: formatMessage(m.copy),
+      onClick: async () => {
+        try {
+          const { data } = await copyForm({
+            variables: {
+              input: {
+                id,
+              },
+            },
+          })
+          console.log('Data from copy form:', data)
+          setFormsState((prevForms) => {
+            const returnedForm = data.copyFormSystemForm.form
+            return [returnedForm, ...prevForms]
+          })
+        } catch (error) {
+          console.error('Error copying form:', error)
+        }
+      },
+    }
 
     const changePublishedForm = {
       title: formatMessage(m.edit),
@@ -228,13 +241,13 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [changePublishedForm, del]
+      return [changePublishedForm, copy, del]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
       return [test, publishChanged, del]
     }
 
-    return [test, publish, del]
-  }, [id, slug, status, formatMessage, deleteForm, publishForm, setFormsState])
+    return [test, copy, publish, del]
+  }, [id, slug, status, formatMessage, updateFormStatus, setFormsState])
 
   const goToForm = () => {
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {

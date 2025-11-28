@@ -7,10 +7,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   FormsApi,
   FormsControllerCreateRequest,
-  FormsControllerDeleteRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
-  FormsControllerPublishRequest,
   FormsControllerUpdateFormRequest,
   FormsControllerUpdateStatusRequest,
 } from '@island.is/clients/form-system'
@@ -20,10 +18,8 @@ import {
 } from '@island.is/form-system/shared'
 import {
   CreateFormInput,
-  DeleteFormInput,
   GetFormInput,
   GetFormsInput,
-  PublishFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -57,16 +53,11 @@ export class FormsService {
     return response as FormResponse
   }
 
-  async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth).formsControllerDelete(
-      input as FormsControllerDeleteRequest,
+  async copyForm(auth: User, input: GetFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerCopy(
+      input as FormsControllerFindOneRequest,
     )
-  }
-
-  async publishForm(auth: User, input: PublishFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth).formsControllerPublish(
-      input as FormsControllerPublishRequest,
-    )
+    return response as FormResponse
   }
 
   async updateFormStatus(
