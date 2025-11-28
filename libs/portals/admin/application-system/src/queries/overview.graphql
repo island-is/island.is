@@ -1,4 +1,4 @@
-query getApplications($input: ApplicationApplicationsAdminInput!) {
+query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   applicationApplicationsAdmin(input: $input) {
     id
     typeId
@@ -39,8 +39,8 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
   }
 }
 
-query getInstitutionApplications(
-  $input: ApplicationApplicationsInstitutionAdminInput!
+query getApplicationsInstitutionAdmin(
+  $input: ApplicationsAdminFilters!
 ) {
   applicationApplicationsInstitutionAdmin(input: $input) {
     rows {
@@ -115,7 +115,7 @@ query getOrganizations($input: GetOrganizationsInput) {
 }
 
 query getApplicationStatistics(
-  $input: ApplicationApplicationsAdminStatisticsInput!
+  $input: ApplicationsAdminStatisticsInput!
 ) {
   applicationApplicationsAdminStatistics(input: $input) {
     typeid

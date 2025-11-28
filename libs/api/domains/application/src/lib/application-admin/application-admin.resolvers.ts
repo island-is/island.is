@@ -10,11 +10,11 @@ import type { Locale } from '@island.is/shared/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Scopes } from '@island.is/auth-nest-tools'
 import {
-  ApplicationApplicationsAdminInput,
-  ApplicationApplicationsAdminStatisticsInput,
-  ApplicationApplicationsInstitutionAdminInput,
+  ApplicationsAdminFilters,
+  ApplicationsSuperAdminFilters,
+  ApplicationsAdminStatisticsInput,
   ApplicationTypesInstitutionAdminInput,
-} from './dto/applications-applications-admin-input'
+} from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
@@ -35,9 +35,9 @@ export class ApplicationAdminResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
-    input: ApplicationApplicationsAdminInput,
+    input: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdmin[] | null> {
-    return this.applicationService.findAllAdmin(user, locale, input)
+    return this.applicationService.findAllSuperAdmin(user, locale, input)
   }
 
   @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
@@ -47,7 +47,7 @@ export class ApplicationAdminResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
-    input: ApplicationApplicationsInstitutionAdminInput,
+    input: ApplicationsAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
   }
@@ -74,7 +74,7 @@ export class ApplicationAdminResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
-    input: ApplicationApplicationsAdminStatisticsInput,
+    input: ApplicationsAdminStatisticsInput,
   ) {
     return this.applicationService.getApplicationCountByTypeIdAndStatus(
       user,

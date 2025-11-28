@@ -7,7 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetApplicationsQuery,
+  useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import invertBy from 'lodash/invertBy'
@@ -54,16 +54,33 @@ const Overview = () => {
     defaultMultiChoiceFilters,
   )
 
-  const nationalId = filters.nationalId?.replace('-', '') ?? ''
+  const applicantNationalId = filters.nationalId?.replace('-', '') ?? ''
 
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
 
-  const { data, loading: queryLoading } = useGetApplicationsQuery({
+  const useAdvancedSearch = !!filters.typeId
+
+  const { data, loading: queryLoading } = useGetApplicationsSuperAdminQuery({
     ssr: false,
     variables: {
-      input: { nationalId },
+      input: {
+        page: page,
+        count: pageSize,
+        applicantNationalId:
+          !useAdvancedSearch && filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
+        from: filters.period.from?.toISOString(),
+        to: filters.period.to?.toISOString(),
+        typeId: filters.typeId,
+        searchStr:
+          useAdvancedSearch && filters.searchStr
+            ? filters.searchStr.replace('-', '')
+            : undefined,
+        status: multiChoiceFilters?.status,
+      },
     },
     onCompleted: (q) => {
       // Initialize available applications from the initial response
@@ -177,14 +194,14 @@ const Overview = () => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={applicationAdminList?.length}
       />
-      {isLoading && nationalId.length === 10 ? (
+      {isLoading && applicantNationalId.length === 10 ? (
         <SkeletonLoader
           height={60}
           repeat={10}
           space={2}
           borderRadius="large"
         />
-      ) : nationalId === '' ? (
+      ) : applicantNationalId === '' ? (
         <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
           <Text variant="h4">
             {formatMessage(m.pleaseEnterValueToBeingSearch)}

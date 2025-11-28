@@ -65,16 +65,16 @@ export class ApplicationService {
     startDate: string,
     endDate: string,
   ): Promise<ApplicationsStatistics[]> {
-    const query = `SELECT 
-        type_id as typeid, 
-        COUNT(*) as count, 	
+    const query = `SELECT
+        type_id as typeid,
+        COUNT(*) as count,
         COUNT(*) FILTER (WHERE status = 'draft') AS draft,
-        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,    
-        COUNT(*) FILTER (WHERE status = 'completed') AS completed,	
-        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
-        COUNT(*) FILTER (WHERE status = 'approved') AS approved 
-      FROM public.application 
-      WHERE modified BETWEEN :startDate AND :endDate 
+        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,
+        COUNT(*) FILTER (WHERE status = 'completed') AS completed,
+        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
+        COUNT(*) FILTER (WHERE status = 'approved') AS approved
+      FROM public.application
+      WHERE modified BETWEEN :startDate AND :endDate
       GROUP BY typeid;`
 
     return this.sequelize.query<ApplicationsStatistics>(query, {
@@ -140,53 +140,58 @@ export class ApplicationService {
     })
   }
 
-  async findAllByInstitutionAndFilters(
-    nationalId: string,
+  async findAllByAdminFilters(
     page: number,
     count: number,
     status?: string,
     applicantNationalId?: string,
+    institutionNationalId?: string,
     from?: string,
     to?: string,
-    typeIdValue?: string,
-    searchStrValue?: string,
+    typeId?: string,
+    searchStr?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
-    const institutionTypeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    const filteredInstitutionTypeIds = typeIdValue
-      ? institutionTypeIds.filter((t) => typeIdValue === t)
-      : institutionTypeIds
+    let applicationTypeIds: string[] = []
 
-    // No applications for this institution ID
-    if (filteredInstitutionTypeIds.length < 1) {
-      return {
-        rows: [],
-        count: 0,
+    if (institutionNationalId) {
+      getTypeIdsForInstitution(institutionNationalId).forEach((applicationTypeId) => {applicationTypeIds.push(applicationTypeId)})
+
+      if (typeId) {
+        applicationTypeIds = applicationTypeIds.filter(applicationTypeId => applicationTypeId === typeId)
       }
+      if (applicationTypeIds.length < 1) {
+        return {
+          rows: [],
+          count: 0,
+        }
+      }
+    } else if (typeId) {
+      applicationTypeIds.push(typeId)
     }
 
     return this.applicationModel.findAndCountAll({
       where: {
-        ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
-        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
+          statuses ? { status: { [Op.in]: statuses } } : {},
+          applicationTypeIds?.length ? { typeId: { [Op.in]: applicationTypeIds } } : {},
           fromDate ? { created: { [Op.gte]: fromDate } } : {},
           toDate ? { created: { [Op.lte]: toDate } } : {},
           applicantNationalId
             ? { applicant: { [Op.eq]: applicantNationalId } }
             : {},
-          searchStrValue
+          searchStr
             ? {
                 [Op.or]: [
-                  { applicant: { [Op.eq]: searchStrValue } },
-                  { assignees: { [Op.contains]: [searchStrValue] } },
+                  { applicant: { [Op.eq]: searchStr } },
+                  { assignees: { [Op.contains]: [searchStr] } },
                   Sequelize.where(
                     Sequelize.cast(Sequelize.col('answers'), 'text'),
                     {
-                      [Op.iLike]: `%${escapeLike(searchStrValue)}%`,
+                      [Op.iLike]: `%${escapeLike(searchStr)}%`,
                     },
                   ),
                 ],

@@ -7,7 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetInstitutionApplicationsQuery,
+  useGetApplicationsInstitutionAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
@@ -55,7 +55,7 @@ const InstitutionOverview = () => {
     data: response,
     loading: queryLoading,
     refetch,
-  } = useGetInstitutionApplicationsQuery({
+  } = useGetApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: {
       input: {
@@ -67,8 +67,8 @@ const InstitutionOverview = () => {
             : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeIdValue: filters.typeId,
-        searchStrValue:
+        typeId: filters.typeId,
+        searchStr:
           useAdvancedSearch && filters.searchStr
             ? filters.searchStr.replace('-', '')
             : undefined,

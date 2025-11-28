@@ -16,11 +16,11 @@ import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 import {
-  ApplicationApplicationsAdminInput,
-  ApplicationApplicationsAdminStatisticsInput,
-  ApplicationApplicationsInstitutionAdminInput,
+  ApplicationsSuperAdminFilters,
+  ApplicationsAdminStatisticsInput,
+  ApplicationsAdminFilters,
   ApplicationTypesInstitutionAdminInput,
-} from './application-admin/dto/applications-applications-admin-input'
+} from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
 export class ApplicationService {
@@ -81,36 +81,41 @@ export class ApplicationService {
     )
   }
 
-  async findAllAdmin(
+  async findAllSuperAdmin(
     user: User,
     locale: Locale,
-    input: ApplicationApplicationsAdminInput,
+    filters: ApplicationsSuperAdminFilters,
   ) {
-    return this.applicationApiWithAuth(user).adminControllerFindAllAdmin({
-      nationalId: input.nationalId,
+    return this.applicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
+      count: filters.count,
+      page: filters.page,
+      applicantNationalId: filters.applicantNationalId,
       locale,
-      typeId: input.typeId?.join(','),
-      status: input.status?.join(','),
+      status: filters.status?.join(','),
+      from: filters.from,
+      to: filters.to,
+      typeId: filters.typeId,
+      searchStr: filters.searchStr,
     })
   }
 
   async findAllInstitutionAdmin(
     user: User,
     locale: Locale,
-    input: ApplicationApplicationsInstitutionAdminInput,
+    filters: ApplicationsAdminFilters,
   ) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerFindAllInstitutionAdmin({
-      page: input.page,
-      count: input.count,
+      page: filters.page,
+      count: filters.count,
       locale,
-      status: input.status?.join(','),
-      applicantNationalId: input.applicantNationalId,
-      from: input.from,
-      to: input.to,
-      typeIdValue: input.typeIdValue,
-      searchStrValue: input.searchStrValue,
+      status: filters.status?.join(','),
+      applicantNationalId: filters.applicantNationalId,
+      from: filters.from,
+      to: filters.to,
+      typeId: filters.typeId,
+      searchStr: filters.searchStr,
     })
   }
 
@@ -136,7 +141,7 @@ export class ApplicationService {
   async getApplicationCountByTypeIdAndStatus(
     user: User,
     locale: Locale,
-    input: ApplicationApplicationsAdminStatisticsInput,
+    input: ApplicationsAdminStatisticsInput,
   ) {
     return this.applicationApiWithAuth(
       user,
