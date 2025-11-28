@@ -152,9 +152,14 @@ export const addConfirmation = (
   doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
   doc.text(
     formatDate(confirmation.date) ?? '',
-    calculatePt(710),
+    0,
     pageMargin + calculatePt(9),
+    {
+      align: 'right',
+      width: 575,
+    },
   )
+  doc.moveDown(0)
 
   // Draw the institution
   doc
