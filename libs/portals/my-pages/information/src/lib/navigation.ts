@@ -132,14 +132,7 @@ export const informationNavigation: PortalNavigationItem = {
 export const companyInformationNavigation: PortalNavigationItem = {
   name: m.companyInfo,
   description: m.userInfoDescription,
-  searchTags: [
-    searchTagsMessages.informationMe,
-    searchTagsMessages.informationWife,
-    searchTagsMessages.informationHusband,
-    searchTagsMessages.informationSpouse,
-    searchTagsMessages.informationChild,
-    searchTagsMessages.informationFamily,
-  ],
+  searchTags: [],
   path: InformationPaths.Company,
   icon: {
     icon: 'business',

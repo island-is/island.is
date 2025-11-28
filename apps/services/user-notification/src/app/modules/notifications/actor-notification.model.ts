@@ -23,7 +23,7 @@ import { Notification } from './notification.model'
     { fields: ['user_notification_id'] },
     { fields: ['message_id'] },
     { fields: ['recipient'] },
-    { fields: ['onBehalfOfNationalId'] },
+    { fields: ['on_behalf_of_national_id'] },
   ],
 })
 export class ActorNotification extends Model<

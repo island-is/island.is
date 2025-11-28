@@ -60,6 +60,7 @@ describe('NotificationsController', () => {
           externalBody: 'New document from {{organization}}',
           clickActionUrl: 'https://island.is/minarsidur/postholf',
           args: ['arg1', 'arg2'],
+          scope: '@island.is/documents',
         },
       ]
 
@@ -83,6 +84,7 @@ describe('NotificationsController', () => {
         externalBody: 'Body',
         clickActionUrl: 'https://island.is/minarsidur/postholf',
         args: ['arg1'],
+        scope: '@island.is/documents',
       }
 
       jest

@@ -33,6 +33,7 @@ const mockHnippTemplate: HnippTemplate = {
   internalBody: 'Demo data copy',
   clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
+  scope: '@island.is/documents',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
