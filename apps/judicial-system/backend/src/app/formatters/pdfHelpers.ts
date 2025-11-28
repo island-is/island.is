@@ -363,7 +363,7 @@ export const addIndictmentCourtRecordConfirmation = (
   const coatOfArmsWidth = calculatePt(105)
   const coatOfArmsHeight = calculatePt(90)
   const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleWidth = calculatePt(370)
+  const titleWidth = calculatePt(642)
   const titleHeight = calculatePt(32)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
 
