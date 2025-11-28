@@ -414,6 +414,7 @@ export const is = {
   'finance.links.payments': 'Greiðslur',
   'finance.links.loans': 'Lán',
   'finance.links.transactions': 'Hreyfingar',
+  'finance.links.status': 'Staða',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',
