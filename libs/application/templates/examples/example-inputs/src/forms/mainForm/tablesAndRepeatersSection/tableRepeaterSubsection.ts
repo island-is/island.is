@@ -1,3 +1,4 @@
+import { Query } from '@island.is/api/schema'
 import {
   buildDescriptionField,
   buildMultiField,
@@ -5,8 +6,7 @@ import {
   buildTableRepeaterField,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/sampleQuery'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
@@ -125,15 +125,14 @@ export const tableRepeaterSubsection = buildSubSection({
               placeholder: 'Placeholder...',
               loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
-                const { data } =
-                  await apolloClient.query<FriggSchoolsByMunicipality>({
-                    query: friggSchoolsByMunicipalityQuery,
-                  })
+                const { data } = await apolloClient.query<Query>({
+                  query: friggOrganizationsByTypeQuery,
+                })
 
                 return (
-                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name}`,
-                    label: `${municipality.name}`,
+                  data?.friggOrganizationsByType?.map((organization) => ({
+                    value: `${organization.name}`,
+                    label: `${organization.name}`,
                   })) ?? []
                 )
               },
@@ -145,17 +144,16 @@ export const tableRepeaterSubsection = buildSubSection({
               loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient, selectedValues }) => {
                 try {
-                  const { data } =
-                    await apolloClient.query<FriggSchoolsByMunicipality>({
-                      query: friggSchoolsByMunicipalityQuery,
-                    })
+                  const { data } = await apolloClient.query<Query>({
+                    query: friggOrganizationsByTypeQuery,
+                  })
 
                   return (
-                    data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                      value: `${municipality.name} ${
+                    data?.friggOrganizationsByType?.map((organization) => ({
+                      value: `${organization.name} ${
                         selectedValues?.[0] || ''
                       }`,
-                      label: `${municipality.name} ${
+                      label: `${organization.name} ${
                         selectedValues?.[0] || ''
                       }`,
                     })) ?? []
@@ -165,6 +163,12 @@ export const tableRepeaterSubsection = buildSubSection({
                   return []
                 }
               },
+            },
+            inputWithIndexinLabel: {
+              component: 'input',
+              label: (index) => `Regular input with index in label: ${index}`,
+              width: 'full',
+              type: 'text',
             },
           },
           table: {

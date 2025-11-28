@@ -1,3 +1,4 @@
+import { Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
   buildCheckboxField,
@@ -8,12 +9,11 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildRadioField,
-  buildSelectField,
   buildSection,
+  buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
-import { FriggSchoolsByMunicipality } from '../../utils/types'
-import { friggSchoolsByMunicipalityQuery } from '../../graphql/sample'
+import { friggOrganizationsByTypeQuery } from '../../graphql/sample'
 
 export const clearOnChangeSection = buildSection({
   id: 'clearOnChangeSubsection',
@@ -40,15 +40,14 @@ export const clearOnChangeSection = buildSection({
           loadingError: 'Loading error',
           clearOnChange: ['clearableTextField'],
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: organization.name,
+                label: organization.name,
               })) ?? []
             )
           },

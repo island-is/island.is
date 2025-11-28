@@ -145,7 +145,7 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: StaticText
+  label?: MaybeWithIndex<StaticText>
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
