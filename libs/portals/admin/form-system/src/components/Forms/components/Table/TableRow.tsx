@@ -1,7 +1,11 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { DELETE_FORM, PUBLISH_FORM } from '@island.is/form-system/graphql'
+import {
+  DELETE_FORM,
+  PUBLISH_FORM,
+  UPDATE_FORM_STATUS,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -63,22 +67,24 @@ export const TableRow = ({
   const { formatMessage, formatDate } = useIntl()
   const [deleteForm] = useMutation(DELETE_FORM)
   const [publishForm] = useMutation(PUBLISH_FORM)
+  const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
 
   const dropdownItems = useMemo(() => {
-    const copy = {
-      title: formatMessage(m.copy),
-    }
-
-    const json = {
-      title: 'Json',
-    }
+    // const copy = {
+    //   title: formatMessage(m.copy),
+    // }
 
     const publish = {
       title: formatMessage(m.publish),
       onClick: async () => {
         try {
-          await publishForm({
-            variables: { input: { id } },
+          await updateFormStatus({
+            variables: {
+              input: {
+                id,
+                updateFormStatusDto: { newStatus: FormStatus.PUBLISHED },
+              },
+            },
           })
           setFormsState((prevForms) =>
             prevForms.map((form) =>
@@ -89,10 +95,6 @@ export const TableRow = ({
           console.error('Error publishing form:', error)
         }
       },
-    }
-
-    const unPublish = {
-      title: formatMessage(m.unpublish),
     }
 
     const test = {
@@ -118,7 +120,9 @@ export const TableRow = ({
           title={formatMessage(m.delete)}
           baseId={`delete-form-${id}`}
           ariaLabel={`delete-form-${id}`}
-          description={formatMessage(m.deleteFormWarning, { formName: name })}
+          description={formatMessage(m.deleteFormWarning, {
+            formName: name,
+          })}
           disclosureElement={
             <Box
               display="flex"
@@ -128,20 +132,40 @@ export const TableRow = ({
               cursor="pointer"
             >
               <Text variant="eyebrow" color="red600">
-                {formatMessage(m.delete)}
+                {status === FormStatus.PUBLISHED
+                  ? formatMessage(m.unpublish)
+                  : formatMessage(m.delete)}
               </Text>
             </Box>
           }
           buttonTextCancel={formatMessage(m.cancel)}
           buttonTextConfirm={formatMessage(m.delete)}
+          onConfirm={async () => {
+            try {
+              await updateFormStatus({
+                variables: {
+                  input: {
+                    id,
+                    updateFormStatusDto: { newStatus: FormStatus.ARCHIVED },
+                  },
+                },
+              })
+              setFormsState((prevForms) =>
+                prevForms.filter((form) => form.id !== id),
+              )
+            } catch (error) {
+              console.error('Error deleting form:', error)
+            }
+          }}
         />
       ),
     }
 
-    const publishUnpublish =
-      status === FormStatus.PUBLISHED ? unPublish : publish
+    if (status === FormStatus.PUBLISHED) {
+      return [del]
+    }
 
-    return [copy, json, test, publishUnpublish, del]
+    return [/*copy*/ test, publish, del]
   }, [id, slug, status, formatMessage, deleteForm, publishForm, setFormsState])
 
   const goToForm = () => {

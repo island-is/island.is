@@ -24,6 +24,7 @@ export const updateFormFn = async (
   updatedForm?: FormSystemForm,
 ): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
+  console.log('Updating form with data:', updatedForm)
   try {
     const response = await updateForm({
       variables: {
@@ -70,7 +71,7 @@ export const updateFormFn = async (
         },
       },
     })
-    return response.data.formSystemUpdateForm as UpdateFormResponse
+    return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
     throw err

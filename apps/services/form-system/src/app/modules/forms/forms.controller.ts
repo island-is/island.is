@@ -21,7 +21,10 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusDto,
+} from '@island.is/form-system/shared'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -112,6 +115,20 @@ export class FormsController {
   @Put('publish/:id')
   async publish(@Param('id') id: string): Promise<void> {
     return await this.formsService.publish(id)
+  }
+
+  @ApiOperation({ summary: 'Update form status' })
+  @ApiNoContentResponse({
+    description: 'Update form status',
+  })
+  @ApiBody({ type: UpdateFormStatusDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put('updateStatus/:id')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateFormStatusDto: UpdateFormStatusDto,
+  ): Promise<void> {
+    return await this.formsService.updateStatus(id, updateFormStatusDto)
   }
 
   @ApiOperation({ summary: 'Delete form' })
