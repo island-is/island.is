@@ -29,4 +29,15 @@ export const conclusionMessages = defineMessages({
       'Umsókn um uppsögn húsaleigusamnings hefur verið send inn til Húsnæðis og mannvirkja stofnunar.',
     description: 'Conclusion alert message termination',
   },
+  multiFieldTitle: {
+    id: 'tra.application:conclusion.multiFieldTitle',
+    defaultMessage: 'Tilkynning móttekin!',
+    description: 'Conclusion multi field title',
+  },
+  descriptionFieldDescription: {
+    id: 'tra.application:conclusion.descriptionFieldDescription',
+    defaultMessage:
+      'Tilkynningin hefur verið móttekin og skráð í Leiguskrá HMS.',
+    description: 'Conclusion description field description',
+  },
 })
