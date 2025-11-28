@@ -1,18 +1,11 @@
 import { S3Service } from '@island.is/nest/aws'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { FileResponse } from './types'
-import {
-  getValueViaPath,
-  NO,
-  YES,
-  YesOrNoEnum,
-} from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantInAnswers,
-  CurrentEducationInAnswers,
   CurrentEmploymentInAnswers,
   CurrentSituationInAnswers,
-  EducationHistoryInAnswers,
   EducationInAnswers,
   EducationType,
   EmploymentHistoryInAnswers,
@@ -27,7 +20,9 @@ import {
   OtherBenefitsInAnswers,
   PaymentTypeIds,
   PayoutInAnswers,
+  PreviousEducationInAnswers,
   ReasonsForJobSearchInAnswers,
+  RepeatableRequiredEducationInAnswers,
   TaxDiscountInAnswers,
   VacationInAnswers,
   errorMsgs,
@@ -35,6 +30,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer,
+  GaldurDomainModelsApplicantsApplicantProfileDTOsEducation,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
@@ -58,15 +54,15 @@ export const getPersonalInformation = (answers: FormValue) => {
     passCode: applicant?.password,
     currentAddressDifferent:
       applicant?.otherAddressCheckbox &&
-      applicant?.otherAddressCheckbox[0] === 'YES',
+      applicant?.otherAddressCheckbox[0] === YES,
     currentAddress:
       applicant?.otherAddressCheckbox &&
-      applicant?.otherAddressCheckbox[0] === 'YES'
+      applicant?.otherAddressCheckbox[0] === YES
         ? applicant?.otherAddress
         : '',
     currentPostCodeId:
       applicant?.otherAddressCheckbox &&
-      applicant?.otherAddressCheckbox[0] === 'YES'
+      applicant?.otherAddressCheckbox[0] === YES
         ? applicant?.otherPostcode
         : '',
     postalCode: applicant?.postalCode,
@@ -90,32 +86,100 @@ export const getJobWishes = (answers: FormValue) => {
 }
 
 export const getEducationInformation = (answers: FormValue) => {
-  const currentEducationAnswers = getValueViaPath<CurrentEducationInAnswers>(
-    answers,
-    'education.currentEducation',
-  )
-  const educationHistoryInAnswers =
-    getValueViaPath<Array<EducationHistoryInAnswers>>(
+  const currentEducationInAnswers =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
       answers,
-      'educationHistory.educationHistory',
-    ) || []
-  const currentEducation = {
-    educationId: currentEducationAnswers?.levelOfStudy,
-    educationSubCategoryId: currentEducationAnswers?.degree,
-    educationSubSubCategoryId: currentEducationAnswers?.courseOfStudy,
+      'educationHistory.currentStudies',
+    )
+
+  const lastSemesterEducationInAnswers =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
+      answers,
+      'educationHistory.lastSemester',
+    )
+
+  const graduationLastTwelveMonthsEducationInAnswers =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
+      answers,
+      'educationHistory.finishedEducation',
+    )
+  const educationHistoryInAnswers = getValueViaPath<
+    Array<PreviousEducationInAnswers>
+  >(answers, 'educationHistory.educationHistory')
+  let currentEducation
+  if (currentEducationInAnswers?.levelOfStudy) {
+    currentEducation = {
+      educationId: currentEducationInAnswers?.levelOfStudy,
+      educationSubCategoryId: currentEducationInAnswers?.degree,
+      educationSubSubCategoryId: currentEducationInAnswers?.courseOfStudy,
+      credits: parseInt(currentEducationInAnswers?.units || ''),
+    }
   }
 
-  const educationHistory = educationHistoryInAnswers.map((education) => {
-    return {
-      educationId: education.levelOfStudy,
-      educationSubCategoryId: education.degree,
-      educationSubSubCategoryId: education.courseOfStudy,
-      yearFinished: education.endOfStudy,
+  let lastSemesterEducation
+  if (lastSemesterEducationInAnswers) {
+    if (
+      lastSemesterEducationInAnswers.sameAsAboveEducation?.includes(YES) &&
+      currentEducation
+    ) {
+      lastSemesterEducation = currentEducation
+    } else {
+      lastSemesterEducation = {
+        educationId: lastSemesterEducationInAnswers?.levelOfStudy,
+        educationSubCategoryId: lastSemesterEducationInAnswers?.degree,
+        educationSubSubCategoryId:
+          lastSemesterEducationInAnswers?.courseOfStudy,
+        yearFinished: parseInt(lastSemesterEducationInAnswers?.endDate || ''),
+        credits: parseInt(lastSemesterEducationInAnswers?.units || ''),
+      }
     }
-  })
+  }
 
+  let graduationLastTwelveMonthsEducation
+  if (graduationLastTwelveMonthsEducationInAnswers) {
+    if (
+      graduationLastTwelveMonthsEducationInAnswers.sameAsAboveEducation?.includes(
+        YES,
+      ) &&
+      lastSemesterEducation
+    ) {
+      graduationLastTwelveMonthsEducation = lastSemesterEducation
+    } else {
+      graduationLastTwelveMonthsEducation = {
+        educationId: graduationLastTwelveMonthsEducationInAnswers?.levelOfStudy,
+        educationSubCategoryId:
+          graduationLastTwelveMonthsEducationInAnswers?.degree,
+        educationSubSubCategoryId:
+          graduationLastTwelveMonthsEducationInAnswers?.courseOfStudy,
+        yearFinished: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.endDate || '',
+        ),
+        credits: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.units || '',
+        ),
+      }
+    }
+  }
+
+  const educationHistory =
+    educationHistoryInAnswers?.map((education) => {
+      return {
+        educationId: education.levelOfStudy,
+        educationSubCategoryId: education.degree,
+        educationSubSubCategoryId: education.courseOfStudy,
+        yearFinished: parseInt(education.endDate || ''),
+      }
+    }) || []
+
+  const allEducation: Array<GaldurDomainModelsApplicantsApplicantProfileDTOsEducation> =
+    []
+  if (currentEducation) allEducation.push(currentEducation)
+  if (lastSemesterEducation) allEducation.push(lastSemesterEducation)
+  if (graduationLastTwelveMonthsEducation)
+    allEducation.push(graduationLastTwelveMonthsEducation)
+  allEducation.push(...educationHistory)
   return {
-    education: [currentEducation, ...educationHistory],
+    education: allEducation,
   }
 }
 
@@ -215,12 +279,9 @@ export const getJobCareer = (
 export const getLicenseInformation = (answers: FormValue) => {
   const licenses = getValueViaPath<LicensesInAnswers>(answers, 'licenses')
 
-  const hasHeavyMachineryLicense = licenses?.hasHeavyMachineryLicense?.includes(
-    YesOrNoEnum.YES,
-  )
-  const hasDrivingLicenses = licenses?.hasDrivingLicense?.includes(
-    YesOrNoEnum.YES,
-  )
+  const hasHeavyMachineryLicense =
+    licenses?.hasHeavyMachineryLicense?.includes(YES)
+  const hasDrivingLicenses = licenses?.hasDrivingLicense?.includes(YES)
 
   return {
     hasHeavyMachineryLicense: hasHeavyMachineryLicense,
@@ -422,16 +483,18 @@ export const getLanguageSkills = (answers: FormValue) => {
 export const getEducationalQuestions = (answers: FormValue) => {
   const education = getValueViaPath<EducationInAnswers>(answers, 'education')
   return {
-    educationRegisteredNow:
-      education?.typeOfEducation === EducationType.CURRENT,
-    educationRegisteredLastSemester:
-      education?.typeOfEducation === EducationType.LAST_SEMESTER,
-    educationFinishedWithDiploma:
-      education?.didFinishLastSemester === YES ||
-      education?.typeOfEducation === EducationType.LAST_YEAR,
-    educationFinishedWithinLast12Months:
-      education?.didFinishLastSemester === YES ||
-      education?.typeOfEducation === EducationType.LAST_YEAR,
+    educationRegisteredNow: education?.typeOfEducation?.includes(
+      EducationType.CURRENT,
+    ),
+    educationRegisteredLastSemester: education?.typeOfEducation?.includes(
+      EducationType.LAST_SEMESTER,
+    ),
+    educationFinishedWithDiploma: education?.typeOfEducation?.includes(
+      EducationType.LAST_YEAR,
+    ),
+    educationFinishedWithinLast12Months: education?.typeOfEducation?.includes(
+      EducationType.LAST_YEAR,
+    ),
     educationRegisteredNextSemester: education?.appliedForNextSemester === YES,
   }
 }
@@ -600,6 +663,8 @@ export const getPreviousOccupationInformation = (
       : unemploymentReasonCategories.find(
           (x) => x.id === unemploymentReasons?.mainReason,
         )?.name,
+    unemploymentReasonQuestionResponse:
+      unemploymentReasons?.reasonQuestion === YES,
     additionalDetails: unemploymentReasons?.additionalReasonText,
     agreementConfirmation:
       unemploymentReasons?.agreementConfirmation?.includes(YES),
@@ -676,9 +741,7 @@ export const getPensionAndOtherPayments = (
                 incomeTypeId: payment.subType,
                 periodFrom: payment.dateFrom,
                 periodTo: payment.dateTo,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
               }
             }),
           pensionPayments: otherBenefits.payments
@@ -688,9 +751,7 @@ export const getPensionAndOtherPayments = (
             .map((payment) => {
               return {
                 incomeTypeId: payment.subType,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
                 pensionFundId: payment.pensionFund,
               }
             }),
@@ -702,9 +763,7 @@ export const getPensionAndOtherPayments = (
             .map((payment) => {
               return {
                 incomeTypeId: payment.subType,
-                estimatedIncome: payment.paymentAmount
-                  ? parseInt(payment.paymentAmount)
-                  : 0,
+                estimatedIncome: parseInt(payment.paymentAmount || '1'),
                 privatePensionFundId: payment.pensionFund,
               }
             }),
@@ -762,7 +821,9 @@ export const getPensionAndOtherPayments = (
                     (x) => x.ssn === job.nationalIdWithName,
                   )?.ssn
                 : job.employer?.nationalId,
-            estimatedIncome: job.salary ? parseInt(job.salary) : 0,
+            estimatedIncome: job.estimatedSalary
+              ? parseInt(job.estimatedSalary)
+              : 0,
           }
         })
       : []
