@@ -3,6 +3,7 @@ import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { m, hasNotificationScopes } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
+import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { Navigate } from 'react-router-dom'
 
 const UserInfoOverview = lazy(() =>
@@ -147,6 +148,19 @@ export const companyInformationModule: PortalModule = {
         path: InformationPaths.CompanyNotifications,
         enabled: hasNotificationsAccess,
         element: <Notifications />,
+      },
+      {
+        name: m.lists,
+        path: InformationPaths.CompanyLists,
+        enabled: scopes.includes(ApiScope.signatureCollection),
+        element: (
+          <Navigate
+            to={
+              SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists
+            }
+            replace
+          />
+        ),
       },
       {
         name: m.companyTitle,
