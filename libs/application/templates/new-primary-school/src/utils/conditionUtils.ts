@@ -13,6 +13,7 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getSpecialEducationDepartmentsInMunicipality,
   getOtherGuardian,
   getSelectedSchoolData,
   getSelectedSchoolSubType,
@@ -165,5 +166,29 @@ export const hasSpecialEducationSubType = (
       OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
     selectedSchoolSubType ===
       OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
+  )
+}
+
+export const shouldShowAlternativeSpecialEducationDepartment = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { schoolMunicipality } = getApplicationAnswers(answers)
+
+  const specialEducationSubtypes = [
+    OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+    OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+  ]
+
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  const specialEducationDepartmentsInMunicipality =
+    getSpecialEducationDepartmentsInMunicipality(answers, externalData)
+
+  return (
+    !!schoolMunicipality &&
+    selectedSchoolSubType !== '' &&
+    specialEducationSubtypes.includes(selectedSchoolSubType) &&
+    specialEducationDepartmentsInMunicipality.length > 1
   )
 }

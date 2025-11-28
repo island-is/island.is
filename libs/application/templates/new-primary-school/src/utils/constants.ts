@@ -5,6 +5,8 @@ export const TENTH_GRADE_AGE = 16
 
 export const NU_UNIT_ID = 'G-2236-A'
 
+export const RVK_MUNICIPALITY_ID = '0000'
+
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
 }
