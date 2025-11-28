@@ -171,6 +171,7 @@ env:
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   XROAD_TR_PATH: 'IS/GOV/5012130120/TR-Protected/external-v1'
+  XROAD_TR_PATH_V2: 'IS/GOV/5012130120/TR-Protected/external-v2'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS/EDU/5206871229/UNAK-Protected/brautskraning-v1'
   XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
   XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'

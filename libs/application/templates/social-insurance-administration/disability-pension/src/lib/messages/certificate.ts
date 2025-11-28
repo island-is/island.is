@@ -1,158 +1,150 @@
 import { defineMessages } from 'react-intl'
 
 export const certificate = defineMessages({
-  sectionTitle: {
-    id: 'dp.application:disability.pension.certificate.section.title',
-    defaultMessage: 'Grunnvottorð / Vottorð um örorku',
-    description: 'Certificate for Disability Pension',
+  title: {
+    id: 'dp.application:certificate.title',
+    defaultMessage: 'Vottorð um örorku',
+    description: 'Disability certificate',
   },
-
   description: {
-    id: 'dp.application:disability.pension.certificate.description',
+    id: 'dp.application:certificate.description',
     defaultMessage:
       'Forsenda fyrir greiðslum er að heilsubrestur einstaklings sé afleiðing af sjúkdómi, slysi eða áfalli. Grunnvottorð þarf að innihalda staðfestingu þess efnis.',
     description:
       'The prerequisite for payments is that the person’s health issues is the result of illness, accident or trauma. The Certificate for Sickness and Rehabilitation must contain confirmation to that effect.',
   },
+  available: {
+    id: 'dp.application:certificate.available',
+    defaultMessage: 'Til staðar er vottorð um örorku',
+    description: 'Disability certificate is available',
+  },
+  notAvailable: {
+    id: 'dp.application:certificate.not.available',
+    defaultMessage: 'Ekki er til staðar vottorð um örorku',
+    description: 'Disability certificate is not available',
+  },
 
   // Managed by
   managedBy: {
-    id: 'dp.application:disability.pension.certificate.managed.by',
+    id: 'dp.application:certificate.managed.by',
     defaultMessage: 'Utanumhaldandi',
-    description: 'Managed by',
+    description: 'Managed by section title',
+  },
+  name: {
+    id: 'dp.application:certificate.name',
+    defaultMessage: 'Nafn',
+    description: 'The name of the managing person',
   },
   residence: {
-    id: 'dp.application:disability.pension.certificate.residence',
-    defaultMessage: 'Aðsetur',
-    description: 'Residence',
-  },
-  doctorNumber: {
-    id: 'dp.application:disability.pension.certificate.doctor.number',
-    defaultMessage: 'Læknisnúmer',
-    description: 'Doctor number',
-  },
-  email: {
-    id: 'dp.application:disability.pension.certificate.email',
-    defaultMessage: 'Netfang',
-    description: 'Email',
-  },
-  phoneNumber: {
-    id: 'dp.application:disability.pension.certificate.phone.number',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone number',
+    id: 'dp.application:certificate.residence',
+    defaultMessage: 'Starfsstöð',
+    description: 'The job site of the managing person',
   },
   address: {
-    id: 'dp.application:disability.pension.certificate.address',
+    id: 'dp.application:certificate.address',
     defaultMessage: 'Heimilisfang',
-    description: 'Address',
+    description: 'Address of the job site',
   },
 
   // Information
-  information: {
-    id: 'dp.application:disability.pension.certificate.information',
+  informationTitle: {
+    id: 'dp.application:certificate.information',
     defaultMessage: 'Upplýsingar',
-    description: 'Information',
+    description: 'Information section title',
   },
-  informationDateOfLastExamination: {
-    id: 'dp.application:disability.pension.certificate.information.date.of.last.examination',
-    defaultMessage: 'Dagsetning síðustu skoðunar',
-    description: 'Date of last examination',
-  },
-  informationDateOfCertificate: {
-    id: 'dp.application:disability.pension.certificate.information.date.of.certificate',
-    defaultMessage: 'Dagsetning vottorðs',
-    description: 'Date of certificate',
-  },
-  informationIncapacitatedDate: {
-    id: 'dp.application:disability.pension.certificate.information.incapacitated.date',
+  incapacityDate: {
+    id: 'dp.application:certificate.information.incapacitated.date',
     defaultMessage:
       'Dagsetning þegar umsækjandi varð óvinnufær að hluta eða öllu leyti vegna núverandi heilsubrests',
     description:
       'Date when the applicant became incapacitated due to current health problems',
   },
-  informationICDAnalysis: {
-    id: 'dp.application:disability.pension.certificate.information.ICD.analysis',
+  iCDAnalysis: {
+    id: 'dp.application:certificate.information.ICD.analysis',
     defaultMessage: 'ICD greiningar sem valda megin heilsuvanda / óvinnufærni',
     description: 'ICD analysis causing the main health issue / incapacitation',
   },
-  informationOtherICDAnalysis: {
-    id: 'dp.application:disability.pension.certificate.information.other.ICD.analysis',
+  otherICDAnalysis: {
+    id: 'dp.application:certificate.information.other.ICD.analysis',
     defaultMessage: 'Aðrar ICD greiningar sem valda heilsuvanda / óvinnufærni',
     description: 'Other ICD analysis causing health issue / incapacitation',
   },
-  informationMedicalHistory: {
-    id: 'dp.application:disability.pension.certificate.information.medical.history',
+  medicalHistory: {
+    id: 'dp.application:certificate.information.medical.history',
     defaultMessage: 'Fyrri heilsufarssaga',
     description: 'Previous medical history',
   },
-  informationMedicalImpairmentCause: {
-    id: 'dp.application:disability.pension.certificate.information.medical.impairment.cause',
+  impairmentCause: {
+    id: 'dp.application:certificate.information.impairment.cause',
     defaultMessage:
       'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
-    description: 'Certificate cause',
+    description:
+      'Impairment causing impaired capability for work participation',
   },
-  informationMedicalImpairmentStability: {
-    id: 'dp.application:disability.pension.certificate.information.medical.impairment.stability',
+  impairmentStability: {
+    id: 'dp.application:certificate.information.impairment.stability',
     defaultMessage: 'Stöðuleiki sjúkdómsgangs með tilliti til ICD greininga',
-    description: 'TODO',
+    description: 'Impairment stability',
   },
-  informationMedicalImpairmentProjectedImprovement: {
-    id: 'dp.application:disability.pension.certificate.information.medical.impairment.projected.improvement',
+  impairmentProjectedImprovement: {
+    id: 'dp.application:certificate.information.impairment.projected.improvement',
     defaultMessage: 'Hvenær er talið að færni muni aukast',
-    description: 'TODO',
+    description: 'Estimated rate of improvement',
   },
-  informationMedicalMedicalImplementsUsage: {
-    id: 'dp.application:disability.pension.certificate.information.medical.medical.implements.usage',
+  medicalImplementsUsage: {
+    id: 'dp.application:certificate.information.medical.implements.usage',
     defaultMessage:
-      'Er einstaklingur að nota lyf vegna heilsubrests, hjálpartæki eða önnur inngrip í daglegu lífi',
-    description: 'TODO',
+      'Hvaða lyf, hjálpartæki eða önnur inngrip notar skjólstæðingur?',
+    description: 'What medicine, aids or other implements does the client use?',
   },
-  informationCurrentStatus: {
-    id: 'dp.application:disability.pension.certificate.information.current.status',
-    defaultMessage: 'Staða umsækjanda í dag',
-    description: 'Applicant current status',
+  employmentCapability: {
+    id: 'dp.application:certificate.information.employment.capability',
+    defaultMessage: 'Starfsgeta',
+    description: 'Employment capability',
+  },
+  previousTherapies: {
+    id: 'dp.application:certificate.information.previous.therapies',
+    defaultMessage: 'Hvaða endurhæfing hefur verið reynd?',
+    description: 'What therapies have been tried?',
+  },
+  medicine: {
+    id: 'dp.application:certificate.information.medicine',
+    defaultMessage: 'Lyf',
+  },
+  otherInterventions: {
+    id: 'dp.application:certificate.information.other.interventions',
+    defaultMessage: 'Önnur inngrip',
+  },
+  supports: {
+    id: 'dp.application:certificate.information.supports',
+    defaultMessage: 'Hjálpartæki',
+  },
+  noMedicationAndSupportsUsed: {
+    id: 'dp.application:certificate.information.no.medication.and.supports.used',
+    defaultMessage: 'Engin lyf eða hjálpartæki eru notuð',
   },
 
   // Physical impairment
   physicalImpairment: {
-    id: 'dp.application:disability.pension.certificate.physical.impairment',
+    id: 'dp.application:certificate.physical.impairment',
     defaultMessage: 'Líkamlegar skerðingar',
     description: 'Physical impairment',
   },
-  physicalImpairmentTooltip: {
-    id: 'dp.application:disability.pension.certificate.physical.impairment.tooltip',
-    defaultMessage:
-      'Líkamlegur vandi vísar til skerðinga eða truflana á líkamlegri starfsemi eða uppbyggingu líkamans. Vandinn getur stafað af sjúkdómum, meiðslum eða öðrum líkamlegum áföllum. Slíkur vandi getur haft áhrif á hreyfigetu, líkamsstöðu, skynjun, kraft, verki eða aðra líkamlega eiginleika og þannig takmarkað getu einstaklings til að sinna daglegum athöfnum.',
-    description:
-      'A physical impairment refers to problem or disruption of the physical function or body structure. The impairment may be caused by illness, injury or other physical trauma. Such impairment may affect mobility, posture, sensation, strength, pain or other physical abilities and thus limit the person’s ability to perform daily activities.',
-  },
   physicalImpairmentEffect: {
-    id: 'dp.application:disability.pension.certificate.physical.impairment.effect',
+    id: 'dp.application:certificate.physical.impairment.effect',
     defaultMessage: 'Líkamsstarfsemi sem röskun/fötlun veldur skerðingu á.',
-    description: 'TODO',
+    description: 'Physical impairment effect',
   },
 
   // cognitive impairment
   cognitiveImpairment: {
-    id: 'dp.application:disability.pension.certificate.cognitive.impairment',
+    id: 'dp.application:certificate.cognitive.impairment',
     defaultMessage: 'Vitrænar skerðingar',
     description: 'Cognitive impairment',
   },
   cognitiveImpairmentEffect: {
-    id: 'dp.application:disability.pension.certificate.cognitive.impairment.effect',
+    id: 'dp.application:certificate.cognitive.impairment.effect',
     defaultMessage: 'Mat á vitrænni skerðingu',
-    description: 'TODO',
-  },
-
-  // function assessment
-  functionalAssessment: {
-    id: 'dp.application:disability.pension.certificate.functional.assessment',
-    defaultMessage: 'Mat á færni',
-    description: 'Functional assessment',
-  },
-  functionalAssessmentDescription: {
-    id: 'dp.application:disability.pension.certificate.functional.assessment.description',
-    defaultMessage: 'Mat á færni einstaklinga.',
-    description: 'TODO',
+    description: 'Cognitive impairment effect',
   },
 })

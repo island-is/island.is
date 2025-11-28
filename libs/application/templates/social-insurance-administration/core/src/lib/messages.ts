@@ -762,6 +762,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
     description: 'You must add at least one income type',
   },
+  selfAssessmentQuestionRequired: {
+    id: 'sia.application:error.self.assessment.questionnaire.required',
+    defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
+    description: 'You have to fill in a field on this page.',
+  },
 })
 
 export const statesMessages = defineMessages({

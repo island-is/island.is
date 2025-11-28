@@ -171,6 +171,7 @@ env:
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
+  XROAD_TR_PATH_V2: 'IS-TEST/GOV/5012130120/TR-Protected/external-v2'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-TEST/EDU/10054/UNAK-Protected/brautskraning-v1'
   XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10010/HI-Protected/brautskraning-v1'
   XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
