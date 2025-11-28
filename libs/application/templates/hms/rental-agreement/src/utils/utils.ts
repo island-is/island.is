@@ -285,7 +285,7 @@ export const staticPartyTableData = (
   application: Application,
   role: ApplicantsRole,
 ) => {
-  const { answers } = application
+  const { answers, externalData } = application
   const aplicantRole = getValueViaPath<string>(
     answers,
     'assignApplicantParty.applicantsRole',
@@ -295,6 +295,21 @@ export const staticPartyTableData = (
   const email = getValueViaPath<string>(answers, 'applicant.email')
   const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
   const address = getValueViaPath<string>(answers, 'applicant.address')
+
+  if (
+    getValueViaPath<string>(externalData, 'identity.data.type') === 'company' &&
+    role === ApplicantsRole.LANDLORD
+  ) {
+    return [
+      {
+        name: fullName ?? '',
+        phone: formatPhoneNumber(phone ?? ''),
+        nationalId: formatNationalId(nationalId ?? ''),
+        email: email ?? '',
+        address: address ?? '',
+      },
+    ]
+  }
 
   if (aplicantRole !== role) {
     return []

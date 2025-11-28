@@ -15,10 +15,14 @@ import {
   FinancialIndexationEntry,
   errorMapper,
 } from './utils/utils'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
-  constructor(private readonly homeApi: HomeApi) {
+  constructor(
+    private readonly homeApi: HomeApi,
+    private readonly companyRegistryClientService: CompanyRegistryClientService,
+  ) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
   }
 
@@ -31,6 +35,23 @@ export class RentalAgreementService extends BaseTemplateApiService {
     const months = listOfLastMonths(numberOfMonths)
 
     return await fetchFinancialIndexationForMonths(months)
+  }
+
+  async companyProcurationHolders({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { applicant } = application
+
+    const company = await this.companyRegistryClientService.getCompany(
+      applicant,
+    )
+
+    console.log('--------------------------------')
+    console.log('getCompanyProcurationHolders')
+    console.dir(company, { depth: null })
+    console.log('--------------------------------')
+
+    return company?.relatedParty ?? []
   }
 
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {

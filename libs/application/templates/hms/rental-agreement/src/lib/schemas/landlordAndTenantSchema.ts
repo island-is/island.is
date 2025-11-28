@@ -125,6 +125,14 @@ export const partiesSchema = z
   .superRefine((data, ctx) => {
     const { landlordInfo, tenantInfo, applicantsRole, applicant } = data
 
+    console.log('--------------------------------')
+    console.log('landlordAndTenantSchema superRefine')
+    console.log('landlordInfo', landlordInfo)
+    console.log('tenantInfo', tenantInfo)
+    console.log('applicantsRole', applicantsRole)
+    console.log('applicant', applicant)
+    console.log('--------------------------------')
+
     const landlordTable = landlordInfo.table || []
     const representativeTable = landlordInfo.representativeTable || []
     const tenantTable = tenantInfo.table || []
