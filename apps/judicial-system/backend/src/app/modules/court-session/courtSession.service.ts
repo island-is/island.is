@@ -14,6 +14,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CourtDocumentType,
+  EventType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -22,6 +23,7 @@ import {
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
+  EventLog,
 } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
@@ -48,13 +50,21 @@ export class CourtSessionService {
       return courtSession
     }
 
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
     // Start with the generated indictment PDF
     await this.courtDocumentService.createInCourtSession(
       theCase.id,
       courtSession.id,
       {
         documentType: CourtDocumentType.GENERATED_DOCUMENT,
-        name: 'Ákæra',
+        name: `Ákæra${
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
+        }`,
         generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
       },
       transaction,

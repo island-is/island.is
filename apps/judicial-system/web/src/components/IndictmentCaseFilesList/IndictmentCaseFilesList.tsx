@@ -271,7 +271,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
               connectedCaseParentId={connectedCaseParentId}
               title={prefixGeneratedDocumentNameWithDocumentOrder(
                 'indictment',
-                formatMessage(caseFiles.indictmentTitle),
+                `Ákæra${
+                  workingCase.caseSentToCourtDate
+                    ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
+                    : ''
+                }.pdf`,
                 workingCase.id,
               )}
               pdfType="indictment"
