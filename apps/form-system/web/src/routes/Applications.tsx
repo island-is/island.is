@@ -52,7 +52,6 @@ export const Applications = () => {
           },
         },
       })
-
       if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
       } else if (app.data?.createFormSystemApplication?.application?.id) {
@@ -83,40 +82,23 @@ export const Applications = () => {
       }
       return dto
     } catch (error) {
-      console.error('Error fetching applications:', error)
       return null
     }
   }, [getApplications, slug])
 
-  const hasInitializedRef = useRef(false)
-
   useEffect(() => {
-    if (hasInitializedRef.current) return
-    hasInitializedRef.current = true
-    let isMounted = true
-
     const run = async () => {
       const responseDto = await fetchApplications()
-      if (!isMounted || !responseDto) {
-        if (isMounted) {
-          setLoading(false)
-        }
-        return
-      }
-      const apps = responseDto.applications || []
+      const apps = responseDto?.applications || []
       if (apps.length > 0) {
         setApplications(apps)
         setLoading(false)
-      } else if (loginAllowed) {
+      } else if (loginAllowed !== false) {
         await createApplication()
         setLoading(false)
       }
     }
     run()
-
-    return () => {
-      isMounted = false
-    }
   }, [slug, createApplication, fetchApplications, loginAllowed])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)

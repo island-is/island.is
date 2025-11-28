@@ -173,6 +173,7 @@ export class ApplicationsService {
       newApplicationId = newApplication.id
     })
     const applicationDto = await this.getApplication(newApplicationId, null)
+
     return applicationDto
   }
 
@@ -431,6 +432,7 @@ export class ApplicationsService {
     const existingApplications = await this.findAllByUserAndForm(user, form.id)
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
+    responseDto.isLoginTypeAllowed = true
     return responseDto
   }
 
