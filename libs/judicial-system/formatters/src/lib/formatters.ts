@@ -177,7 +177,7 @@ export const getRoleTitleFromCaseFileCategory = (
   }
 }
 
-type CaseTypes = { [c in CaseType]: string }
+type CaseTypes = { [c in CaseType as string]: string }
 const caseTypes: CaseTypes = {
   // Indictment cases
   INDICTMENT: 'ákæra',
@@ -208,7 +208,7 @@ const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
-export const formatCaseType = (type?: CaseType | null): string => {
+export const formatCaseType = (type?: string | null): string => {
   if (!type) {
     return 'óþekkt'
   }

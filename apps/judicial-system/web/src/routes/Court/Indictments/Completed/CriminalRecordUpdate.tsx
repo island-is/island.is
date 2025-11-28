@@ -7,13 +7,16 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { CaseFileCategory, EventType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import {
+  CaseFileCategory,
+  EventType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useFileList,

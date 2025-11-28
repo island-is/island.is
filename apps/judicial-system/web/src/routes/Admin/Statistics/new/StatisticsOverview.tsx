@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { useRouter } from 'next/router'
 
-import { CaseTableType } from '@island.is/judicial-system/types'
 import {
   CasesLayout,
   PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
+import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const StatisticsOverview: FC = () => {
   const router = useRouter()
