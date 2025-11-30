@@ -44,6 +44,7 @@ import { Notification } from '../notification.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
+import { mapToLocale } from '../utils'
 
 type HandleNotification = {
   profile: {
@@ -330,9 +331,13 @@ export class NotificationsWorkerService {
       return
     }
 
+    const locale: Locale = actorProfile.locale
+      ? mapToLocale(actorProfile.locale)
+      : 'is'
+
     const template = await this.notificationsService.getTemplate(
       args.templateId,
-      actorProfile.locale as Locale,
+      locale,
     )
 
     const scope = template.scope || DocumentsScope.main
