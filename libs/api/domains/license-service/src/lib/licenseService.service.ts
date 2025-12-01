@@ -540,9 +540,11 @@ export class LicenseService {
       })
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
+
       this.logger.info('[verifyLicenseBarcode:535] tokenData', {
         tokenData,
       })
+
       return {
         barcodeType: VerifyLicenseBarcodeType.V2,
         ...tokenData,
