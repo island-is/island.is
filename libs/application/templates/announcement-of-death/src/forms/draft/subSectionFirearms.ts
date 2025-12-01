@@ -22,7 +22,7 @@ export const subSectionFirearms = buildSubSection({
           title: m.firearmsHadFirearms,
           width: 'full',
           largeButtons: false,
-          defaultValue: NO,
+          defaultValue: '',
           options: [
             {
               value: NO,
@@ -33,6 +33,11 @@ export const subSectionFirearms = buildSubSection({
               label: m.firearmsYes,
             },
           ],
+        }),
+        buildCustomField({
+          id: 'hadFirearms.validation',
+          component: 'RadioValidation',
+          doesNotRequireAnswer: true,
         }),
         buildCustomField({
           id: 'firearmApplicant',

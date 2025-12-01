@@ -2,6 +2,7 @@ import {
   buildMultiField,
   buildSubSection,
   buildRadioField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -18,8 +19,9 @@ export const subSectionWillAndTrade = buildSubSection({
           id: 'knowledgeOfOtherWills',
           title: m.testamentKnowledgeOfOtherTestament,
           width: 'full',
-          largeButtons: false,
-          defaultValue: 'no',
+          marginBottom: 'gutter',
+          largeButtons: true,
+          defaultValue: '',
           options: [
             {
               value: 'yes',
@@ -30,6 +32,11 @@ export const subSectionWillAndTrade = buildSubSection({
               label: m.testamentKnowledgeOfOtherTestamentNo,
             },
           ],
+        }),
+        buildCustomField({
+          id: 'knowledgeOfOtherWills.validation',
+          component: 'RadioValidation',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

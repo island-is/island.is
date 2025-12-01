@@ -47,8 +47,8 @@ export type Answers = {
     encountered?: boolean
   }
   financesDataCollectionPermission?: boolean
-  knowledgeOfOtherWills: 'yes' | 'no'
-  hadFirearms: 'yes' | 'no'
+  knowledgeOfOtherWills?: string
+  hadFirearms?: string
   firearmApplicant: FirearmApplicant
   marriageSettlement: boolean
   occupationRightViaCondominium: boolean

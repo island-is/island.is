@@ -181,11 +181,11 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
           email: answers.applicantEmail,
           relation: answers.applicantRelation,
         }),
-        knowledgeOfOtherWill: answers.knowledgeOfOtherWills,
+        knowledgeOfOtherWill: answers.knowledgeOfOtherWills ?? '',
         estateMembers: JSON.stringify(
           answers.estateMembers.members.filter((member) => !member?.dummy),
         ),
-        hadFirearms: answers.hadFirearms,
+        hadFirearms: answers.hadFirearms ?? '',
         firearm:
           answers.hadFirearms === YES
             ? JSON.stringify(answers.firearmApplicant)

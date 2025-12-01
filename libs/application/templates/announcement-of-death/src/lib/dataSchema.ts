@@ -5,7 +5,7 @@ import { m } from './messages'
 import { RoleConfirmationEnum } from '../types'
 
 import { customZodError } from './utils/customZodError'
-import { NO, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -77,7 +77,7 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().min(1), m.errorRelation),
-  hadFirearms: z.enum([YES, NO]),
+  hadFirearms: z.string().optional(),
   firearmApplicant: z
     .object({
       nationalId: z.string().refine((v) => nationalId.isPerson(v)),
@@ -138,6 +138,7 @@ export const dataSchema = z.object({
     encountered: z.boolean().optional(),
     confirmation: z.array(z.enum([YES])).length(1),
   }),
+  knowledgeOfOtherWills: z.string().optional(),
   flyers: asset,
   ships: asset,
   vehicles: z.object({
