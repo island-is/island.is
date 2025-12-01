@@ -455,6 +455,9 @@
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
       ],
+      "@island.is/application/templates/hms/namskeid-hh": [
+        "libs/application/templates/hms/namskeid-hh/src/index.ts"
+      ],
       "@island.is/application/templates/hms/rental-agreement": [
         "libs/application/templates/hms/rental-agreement/src/index.ts"
       ],
