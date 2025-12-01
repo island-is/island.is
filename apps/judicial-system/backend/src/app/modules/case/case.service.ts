@@ -853,6 +853,20 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForPublicProsecutorReviewerAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED },
+      },
+    ])
+  }
+
   private addMessagesForReceivedCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -1609,6 +1623,16 @@ export class CaseService {
         )
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         await this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
+      } else if (
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.FINE &&
+        updatedCase.indictmentReviewerId &&
+        isIndictment
+      ) {
+        await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
+          updatedCase,
+          user,
+        )
       }
     }
 

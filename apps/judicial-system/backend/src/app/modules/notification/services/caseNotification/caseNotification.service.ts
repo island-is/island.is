@@ -109,7 +109,6 @@ export class CaseNotificationService extends BaseNotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly defendantService: DefendantService,
-    private readonly messageService: MessageService,
   ) {
     super(
       notificationModel,
