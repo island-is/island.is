@@ -52,7 +52,7 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack }) => {
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        marginTop={3}
+        marginTop={4}
         flexWrap="nowrap"
         columnGap={2}
       >
