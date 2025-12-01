@@ -1282,7 +1282,10 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "@island.is/clients/police-cases": ["libs/clients/police-cases/src/index.ts"],
+      "delegation-admin": [
+        "libs/portals/admin/delegation-admin/src/index.ts"
+      ],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],

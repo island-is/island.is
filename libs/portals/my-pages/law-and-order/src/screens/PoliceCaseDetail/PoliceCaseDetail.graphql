@@ -1,0 +1,34 @@
+query GetPoliceCaseDetail(
+  $input: LawAndOrderPoliceCaseInput!
+  $locale: String
+) {
+  lawAndOrderPoliceCase(input: $input) {
+    __typename
+    cacheId
+    number
+    type
+    status {
+      __typename
+      value
+      statusGroup
+      timelineStep
+      headerDisplayString
+      descriptionDisplayString
+    }
+    contact
+    courtAdvocate
+    department
+    received
+    receivedLocation
+    modified
+  }
+  lawAndOrderPoliceCaseTimelineStructure(locale: $locale) {
+    milestones {
+      __typename
+      cacheId
+      label
+      statusGroup
+      step
+    }
+  }
+}
