@@ -11,6 +11,7 @@ import {
   CaseFileCategory,
   DefendantEventType,
   EventType,
+  isProsecutionUser,
   User,
   UserRole,
   isProsecutionUser,

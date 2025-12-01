@@ -38,6 +38,7 @@ import {
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
   PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
@@ -271,7 +272,6 @@ export class HealthDirectorateHealthService {
   public async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
     status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
@@ -279,7 +279,6 @@ export class HealthDirectorateHealthService {
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
             status: status,
-            active: active,
           },
         }),
       ),
@@ -310,7 +309,7 @@ export class HealthDirectorateHealthService {
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: string[],
+    status: EuPatientConsentStatus[],
     dateFrom?: Date | undefined,
     dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {

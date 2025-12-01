@@ -86,8 +86,8 @@ export const overviewFields = (editable?: boolean) => {
         return [
           {
             width: 'full',
-            keyText: m.customFields.certificate,
-            valueText: m.disabilityCertificate.certificateAvailable,
+            keyText: m.certificate.title,
+            valueText: m.certificate.available,
           },
         ]
       },

@@ -24,6 +24,7 @@ import {
   Case,
   CaseOrigin,
   CaseType,
+  Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -72,7 +73,7 @@ export const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as TDefendant
 
         return { ...prevWorkingCase, defendants: newDefendants }
       })
