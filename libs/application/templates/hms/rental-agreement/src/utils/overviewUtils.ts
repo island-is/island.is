@@ -85,21 +85,9 @@ const getApplicantsItem = (
   externalData: ExternalData,
   role: ApplicantsRole,
 ) => {
-  const applicantsRole = getValueViaPath<string>(
-    answers,
-    'assignApplicantParty.applicantsRole',
-  )
-
   const partyRole = getValueViaPath<string>(answers, 'parties.applicantsRole')
 
-  console.log('--------------------------------')
-  console.log('applicantsRole', applicantsRole)
-  console.log('partyRole', partyRole)
-  console.log('role', role)
-  console.log('--------------------------------')
-
-  if (applicantsRole !== role && partyRole !== role) {
-    console.log('returning empty array')
+  if (partyRole !== role) {
     return []
   }
 
@@ -162,11 +150,6 @@ export const landlordOverview = (
     externalData,
     ApplicantsRole.LANDLORD,
   )
-
-  console.log('--------------------------------')
-  console.log('landlords', landlords)
-  console.log('applicantLandlords', applicantLandlords)
-  console.log('--------------------------------')
 
   if (!landlords && applicantLandlords.length === 0) {
     return []
