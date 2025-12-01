@@ -1,9 +1,9 @@
+import { useQuery } from '@apollo/client'
+import { ErrorShell } from '@island.is/application/ui-shell'
+import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
+import { ApplicationLoading } from '@island.is/form-system/ui'
 import { useParams } from 'react-router-dom'
 import { ApplicationProvider } from '../context/ApplicationProvider'
-import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
-import { useQuery } from '@apollo/client'
-import { ApplicationLoading } from '@island.is/form-system/ui'
-import { ErrorShell } from '@island.is/application/ui-shell'
 
 type UseParams = {
   slug: string
