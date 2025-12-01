@@ -57,15 +57,15 @@ export class VerdictResponse {
       ? verdict?.serviceDate
       : internalCase.rulingDate
 
-    const {
-      deadlineDate: appealDeadline,
-      isDeadlineExpired: isAppealDeadlineExpired,
-    } = baseDate
+    const appealDeadlineResult = baseDate
       ? getIndictmentAppealDeadline({
           baseDate: new Date(baseDate),
           isFine,
         })
-      : {}
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
 
     const rulingInstructionsItems = getRulingInstructionItems(
       verdict?.serviceInformationForDefendant ?? [],

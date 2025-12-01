@@ -42,12 +42,15 @@ export const transformDefendants = ({
       indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
     const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
-    const { deadlineDate, isDeadlineExpired } = baseDate
+    const appealDeadlineResult = baseDate
       ? getIndictmentAppealDeadline({
           baseDate: new Date(baseDate),
           isFine,
         })
-      : {}
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
 
     return {
       ...defendant.toJSON(),
@@ -63,8 +66,8 @@ export const transformDefendants = ({
             },
           }
         : {}),
-      verdictAppealDeadline: deadlineDate,
-      isVerdictAppealDeadlineExpired: isDeadlineExpired,
+      verdictAppealDeadline: appealDeadline,
+      isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
