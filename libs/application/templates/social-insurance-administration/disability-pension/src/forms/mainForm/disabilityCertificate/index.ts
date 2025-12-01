@@ -8,13 +8,12 @@ import { SectionRouteEnum } from '../../../types/routes'
 
 export const disabilityCertificateSection = buildSection({
   id: SectionRouteEnum.DISABILITY_CERTIFICATE,
-  title: m.disabilityCertificate.tabTitle,
-  tabTitle: m.disabilityCertificate.tabTitle,
+  title: m.certificate.title,
   children: [
     buildMultiField({
       id: SectionRouteEnum.DISABILITY_CERTIFICATE,
-      title: m.disabilityCertificate.title,
-      description: m.disabilityCertificate.description,
+      title: m.certificate.title,
+      description: m.certificate.description,
       children: [
         //sensitive data, can't be stored in state
         buildCustomField({
