@@ -516,6 +516,6 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
 
-  // Do not expose field directly, use resolver to control access
+  @Field(() => String, { nullable: true })
   readonly penalties?: string
 }
