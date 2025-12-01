@@ -108,7 +108,7 @@ export class LawyerRegistryService {
         name: lawyer.Name,
         nationalId: lawyer.SSN,
         email: lawyer.Email,
-        phoneNumber: lawyer.Phone,
+        phoneNumber: lawyer.GSM ?? lawyer.Phone,
         practice: lawyer.Practice,
         isLitigator: litigatorNationalIds.has(lawyer.SSN),
       }))

@@ -2,6 +2,7 @@ import {
   EducationType,
   EmploymentStatus,
   PreviousEducationInAnswers,
+  RepeatableRequiredEducationInAnswers,
 } from '../shared'
 import { employment as employmentMessages } from '../lib/messages'
 import { education as educationMessages } from '../lib/messages'
@@ -181,7 +182,9 @@ export const getLocationString = (
 }
 
 export const getEducationStrings = (
-  historyItem: PreviousEducationInAnswers,
+  educationItem:
+    | PreviousEducationInAnswers
+    | RepeatableRequiredEducationInAnswers,
   externalData: ExternalData,
   locale: string,
 ): PreviousEducationInAnswers => {
@@ -192,10 +195,10 @@ export const getEducationStrings = (
     ) ?? []
 
   const educationItemLevel1 = education?.filter(
-    (item) => item.id === historyItem.levelOfStudy,
+    (item) => item.id === educationItem?.levelOfStudy,
   )[0]
   const educationItemLevel2 = educationItemLevel1?.degrees?.filter(
-    (item) => item.id === historyItem.degree,
+    (item) => item.id === educationItem?.degree,
   )[0]
 
   const degreeString =
@@ -209,12 +212,12 @@ export const getEducationStrings = (
       : educationItemLevel1?.english ?? educationItemLevel1?.name) || ''
 
   const courseOfStudy = educationItemLevel2?.subjects?.find(
-    (level) => level.id === historyItem.courseOfStudy,
+    (level) => level.id === educationItem?.courseOfStudy,
   )
 
   const courseOfStudyString = courseOfStudy?.name ?? ''
   return {
-    ...historyItem,
+    ...educationItem,
     degree: degreeString,
     levelOfStudy: levelOfStudyString,
     courseOfStudy: courseOfStudyString,

@@ -21,6 +21,10 @@ import {
   DE,
 } from '../../../assets/drivingLicenses'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import {
+  GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO,
+  GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO,
+} from '@island.is/clients/vmst-unemployment'
 
 export const licensesSubSection = buildSubSection({
   id: 'licensesSubSection',
@@ -48,7 +52,9 @@ export const licensesSubSection = buildSubSection({
           required: true,
           options: (application) => {
             const drivingLicenseTypes =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
+              >(
                 application.externalData,
                 'unemploymentApplication.data.supportData.drivingLicenses',
               ) || []
@@ -68,10 +74,12 @@ export const licensesSubSection = buildSubSection({
                 DE,
               }
 
-              const LicenseIconComponent = licenseComponents[type.name]
+              const LicenseIconComponent = type.name
+                ? licenseComponents[type.name]
+                : undefined
               return {
-                value: type.name,
-                label: type.name,
+                value: type.id || '',
+                label: type.name || '',
                 rightContent: LicenseIconComponent ? (
                   <LicenseIconComponent />
                 ) : null,
@@ -105,13 +113,15 @@ export const licensesSubSection = buildSubSection({
           isMulti: true,
           options: (application) => {
             const heavyMachineryLicenses =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO>
+              >(
                 application.externalData,
                 'unemploymentApplication.data.supportData.heavyMachineryLicenses',
               ) || []
             return heavyMachineryLicenses.map((right) => ({
-              value: right.name,
-              label: right.name,
+              value: right.id || '',
+              label: right.name || '',
             }))
           },
           condition: (answers) => {

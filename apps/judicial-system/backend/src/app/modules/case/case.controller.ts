@@ -113,7 +113,7 @@ import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -144,6 +144,7 @@ export class CaseController {
     }
   }
 
+  @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -161,7 +162,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -304,7 +305,7 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseTransitionGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -344,6 +345,7 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
+  @UseGuards(RolesGuard)
   @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
@@ -358,7 +360,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseReadGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -379,7 +381,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -408,6 +410,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -442,6 +445,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -489,6 +493,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([
       ...restrictionCases,
@@ -562,6 +567,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -594,6 +600,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
@@ -633,6 +640,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -669,7 +677,12 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases), CaseReadGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
   @RolesRules(publicProsecutorStaffRule)
   @Get('case/:caseId/rulingSentToPrisonAdmin')
   @Header('Content-Type', 'application/pdf')
@@ -709,6 +722,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -752,6 +766,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -786,6 +801,7 @@ export class CaseController {
 
   @UseGuards(
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -821,6 +837,7 @@ export class CaseController {
 
   @UseGuards(
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -847,6 +864,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -876,7 +894,7 @@ export class CaseController {
     return extendedCase
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsIsoDateTime,
@@ -245,11 +246,15 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
 
           courtAgendas.sort((a, b) => {
             if (!a.dateFrom && !b.dateFrom) return 0
-            if (!b.dateFrom) return -1
-            if (!a.dateFrom) return 1
-            return (
-              new Date(b.dateFrom).getTime() - new Date(a.dateFrom).getTime()
-            )
+            if (!b.dateFrom) return 1
+            if (!a.dateFrom) return -1
+            const dateFromDiff =
+              new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+            if (dateFromDiff !== 0) return dateFromDiff
+            if (!a.dateTo && !b.dateTo) return 0
+            if (!b.dateTo) return 1
+            if (!a.dateTo) return -1
+            return new Date(a.dateTo).getTime() - new Date(b.dateTo).getTime()
           })
 
           return {
@@ -580,7 +585,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   ])
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndex) && (
           <meta name="robots" content="noindex, nofollow" />
@@ -698,7 +703,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
         <Box
           background="blue100"
           paddingTop={[3, 3, 0]}
-          className={styles.mainContainer}
+          className={cn(styles.mainContainer, 'rs_read')}
         >
           <SidebarLayout
             fullWidthContent={false}
