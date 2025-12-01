@@ -14,10 +14,7 @@ import {
   applicantTableConfig,
   applicantTableFields,
 } from '../../../utils/utils'
-import {
-  applicantIsIndividual,
-  shouldShowRepresentativeStaticTable,
-} from '../../../utils/conditions'
+import { shouldShowRepresentativeStaticTable } from '../../../utils/conditions'
 import { shouldShowRepresentativeTable } from '../../../utils/conditions'
 import { buildCheckboxField } from '@island.is/application/core'
 import { buildDescriptionField } from '@island.is/application/core'
