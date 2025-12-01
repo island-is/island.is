@@ -292,7 +292,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
           <GridRow>
             <GridColumn span="6/12">
               <CategoryCard
-                href={formatMessage(m.home.categoryCardOneLink)}
+                href={linkResolver('openinvoicesoverview', [], locale).href}
                 heading={formatMessage(m.home.categoryCardOneTitle)}
                 src={formatMessage(m.home.featuredImage)}
                 alt={formatMessage(m.home.featuredImageAlt)}
@@ -301,7 +301,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             </GridColumn>
             <GridColumn span="6/12">
               <CategoryCard
-                href={formatMessage(m.home.categoryCardTwoLink)}
+                href={linkResolver('openinvoicestotals', [], locale).href}
                 heading={formatMessage(m.home.categoryCardTwoTitle)}
                 src={formatMessage(m.home.featuredImage)}
                 alt={formatMessage(m.home.featuredImageAlt)}
