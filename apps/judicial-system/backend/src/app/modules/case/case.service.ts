@@ -862,7 +862,9 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED },
+        body: {
+          type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        },
       },
     ])
   }
