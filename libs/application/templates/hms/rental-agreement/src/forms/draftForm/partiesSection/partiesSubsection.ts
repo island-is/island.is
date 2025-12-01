@@ -5,19 +5,19 @@ import {
   buildStaticTableField,
   buildSubSection,
   buildTableRepeaterField,
-  buildSelectField,
 } from '@island.is/application/core'
 import {
   landLordInfoTableFields,
   staticPartyTableData,
 } from '../../../utils/utils'
 import {
-  applicantIsCompany,
+  applicantTableConfig,
+  applicantTableFields,
+} from '../../../utils/utils'
+import {
   applicantIsIndividual,
+  shouldShowRepresentativeStaticTable,
 } from '../../../utils/conditions'
-import { applicantTableConfig } from '../../../utils/utils'
-import { applicantTableFields } from '../../../utils/utils'
-import { shouldShowRepresentativeStaticTable } from '../../../utils/conditions'
 import { shouldShowRepresentativeTable } from '../../../utils/conditions'
 import { buildCheckboxField } from '@island.is/application/core'
 import { buildDescriptionField } from '@island.is/application/core'
@@ -39,6 +39,7 @@ export const partiesSubsection = buildSubSection({
       children: [
         buildHiddenInputWithWatchedValue({
           id: 'parties.applicantsRole',
+          defaultValue: ApplicantsRole.LANDLORD,
           watchValue: 'assignApplicantParty.applicantsRole',
         }),
         buildHiddenInputWithWatchedValue({
@@ -79,44 +80,8 @@ export const partiesSubsection = buildSubSection({
             ])
           },
         }),
-        // buildSelectField({
-        //   id: 'parties.landlordInfo.companyProcurationHolders',
-        //   title: 'Umbar',
-        //   options: [
-        //     {
-        //       label: 'Umbi 1',
-        //       value: 'umbi1',
-        //     },
-        //     {
-        //       label: 'Umbi 2',
-        //       value: 'umbi2',
-        //     },
-        //     {
-        //       label: 'Umbi 3',
-        //       value: 'umbi3',
-        //     },
-        //   ],
-        // }),
         buildCheckboxField({
-          condition: (answers, externalData) => {
-            // console.log('--------------------------------')
-            // console.log(
-            //   'applicantIsIndividual',
-            //   applicantIsIndividual(answers, externalData),
-            // )
-            // console.log(
-            //   'not shouldShowRepresentativeStaticTable',
-            //   !shouldShowRepresentativeStaticTable(answers),
-            // )
-            // console.log(
-            //   'together',
-            //   !shouldShowRepresentativeStaticTable(answers) &&
-            //     applicantIsIndividual(answers, externalData),
-            // )
-            // console.log('--------------------------------')
-            return !shouldShowRepresentativeStaticTable(answers) //&&
-            // applicantIsIndividual(answers, externalData)
-          },
+          condition: (answers) => !shouldShowRepresentativeStaticTable(answers),
           id: 'parties.landlordInfo.shouldShowRepresentativeTable',
           marginTop: 6,
           large: false,

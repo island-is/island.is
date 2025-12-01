@@ -286,7 +286,7 @@ export const staticPartyTableData = (
   role: ApplicantsRole,
 ) => {
   const { answers, externalData } = application
-  const aplicantRole = getValueViaPath<string>(
+  const applicantRole = getValueViaPath<string>(
     answers,
     'assignApplicantParty.applicantsRole',
   )
@@ -311,7 +311,7 @@ export const staticPartyTableData = (
     ]
   }
 
-  if (aplicantRole !== role) {
+  if (applicantRole !== role) {
     return []
   }
 
