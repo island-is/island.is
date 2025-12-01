@@ -25,6 +25,6 @@ export const apiConfigFactory = (
     basePath: config.basePath,
     headers: {
       Accept: 'application/json',
-      "X-ExecuteAsUsername": config.apiUsernameKey
+      'X-ExecuteAsUsername': config.apiUsernameKey,
     },
   })

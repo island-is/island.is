@@ -4618,10 +4618,7 @@
       }
     }
   },
-  "security": [
-    { "Bearer": [] },
-    { "ExecuteAsUsername": [] }
-  ],
+  "security": [{ "Bearer": [] }, { "ExecuteAsUsername": [] }],
   "tags": [
     {
       "name": "Account",
