@@ -223,6 +223,7 @@ const IdCardTemplate: ApplicationTemplate<
               {
                 logMessage: applicationMessage.historyWaitingForParentB,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: reviewStatePendingAction,
