@@ -4620,8 +4620,7 @@
   },
   "security": [
     { "Bearer": [] },
-    { "ExecuteAsUsername": [] },
-    { "ExecuteAsPassword": [] }
+    { "ExecuteAsUsername": [] }
   ],
   "tags": [
     {
