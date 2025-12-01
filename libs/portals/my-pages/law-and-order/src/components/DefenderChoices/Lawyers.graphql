@@ -5,6 +5,7 @@ query GetLawyers($locale: String!) {
       nationalId
     }
     choices {
+      cacheId
       id
       label
     }
