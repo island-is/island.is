@@ -502,7 +502,11 @@ export class LicenseService {
       return COMMON_VERIFY_ERROR
     }
 
+    this.logger.info('[getDataFromToken:505] code', { code })
+
     const data = await this.barcodeService.getCache(code)
+
+    this.logger.info('[getDataFromToken:509] data', { data })
 
     if (!data) {
       this.logWarn('No data found in cache')
@@ -511,6 +515,8 @@ export class LicenseService {
     }
 
     const licenseType = this.mapGenericLicenseType(data.licenseType)
+
+    console.log('[getDataFromToken:519] licenseType', licenseType)
 
     return {
       valid: true,
@@ -529,9 +535,14 @@ export class LicenseService {
     data: string,
   ): Promise<VerifyLicenseBarcodeResult> {
     if (isJWT(data)) {
+      this.logger.info('[verifyLicenseBarcode:532] data', {
+        data,
+      })
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
-
+      this.logger.info('[verifyLicenseBarcode:535] tokenData', {
+        tokenData,
+      })
       return {
         barcodeType: VerifyLicenseBarcodeType.V2,
         ...tokenData,
