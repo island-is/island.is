@@ -64,8 +64,10 @@ const populateError = (
       // No errors on the current screen
       return undefined
     }
+    console.info(relevantErrors)
     return relevantErrors
   }
+  console.info(errorObject)
   return errorObject
 }
 
