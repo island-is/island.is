@@ -1,5 +1,5 @@
 export const generateYearsAndMonths = (
-  numberOfMonths = 23,
+  numberOfMonths = 24,
 ): Record<number, Array<number>> => {
   const result: Record<number, Array<number>> = {}
   const currentDate = new Date()
