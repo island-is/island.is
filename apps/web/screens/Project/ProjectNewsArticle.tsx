@@ -48,7 +48,7 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(projectPage.id, newsItem?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('projectnews')
 
   const overviewPath: string = Router.asPath.substring(
     0,
