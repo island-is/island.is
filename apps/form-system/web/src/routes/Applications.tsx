@@ -92,18 +92,28 @@ export const Applications = () => {
   }, [getApplications, slug])
 
   useEffect(() => {
+    let cancelled = false
+
     const run = async () => {
       const responseDto = await fetchApplications()
+      if (cancelled) return
+
       const apps = responseDto?.applications || []
       if (apps.length > 0) {
         setApplications(apps)
         setLoading(false)
       } else if (loginAllowed !== false) {
         await createApplication()
+        if (cancelled) return
         setLoading(false)
       }
     }
+
     run()
+
+    return () => {
+      cancelled = true
+    }
   }, [slug, createApplication, fetchApplications, loginAllowed])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
