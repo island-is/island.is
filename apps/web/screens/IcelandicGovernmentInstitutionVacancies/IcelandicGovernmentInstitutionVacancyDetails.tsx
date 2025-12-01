@@ -86,6 +86,9 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
                     {location.address && (
                       <Text variant="small">{location.address}</Text>
                     )}
+                    {location.postalCode && (
+                      <Text variant="small">{location.postalCode}</Text>
+                    )}
                   </Box>
                 ))}
               </Box>

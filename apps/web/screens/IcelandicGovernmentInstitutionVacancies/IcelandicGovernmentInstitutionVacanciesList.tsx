@@ -289,6 +289,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       const displayLogoUrl =
         !vacancy.institutionName && vacancyComesFromCms ? '' : logoUrl
 
+      console.log(vacancy)
       const detailLines = [
         vacancy.locations && vacancy.locations.length > 0
           ? {
@@ -296,16 +297,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               text: vacancy.locations
                 .filter((location) => location.title)
                 .map((location) => {
-                  // Show department and/or address if available for more specific location info
-                  return (
-                    location.title +
-                    ' - ' +
-                    location.address +
-                    ' - ' +
-                    location.postalCode +
-                    ' - ' +
-                    location.department
-                  )
+                  const parts = [location.title]
+
+                  if (location.department) parts.push(location.department)
+
+                  if (location.postalCode)
+                    parts.push(location.postalCode.toString())
+
+                  if (location.address) parts.push(location.address)
+
+                  return parts.join(', ')
                 })
                 .join(', '),
             }
