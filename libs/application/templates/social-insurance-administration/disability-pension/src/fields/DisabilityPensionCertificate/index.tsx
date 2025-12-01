@@ -1,4 +1,3 @@
-import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Label } from '@island.is/application/ui-components'
 import {
@@ -22,10 +21,11 @@ import { Query } from '@island.is/api/schema'
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const { data, loading } = useQuery<Query>(
     siaDisabilityPensionCertificateQuery,
+    { variables: { locale: lang } },
   )
 
   setBeforeSubmitCallback?.(async () => {
@@ -45,17 +45,10 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <Text variant="h3">{formatMessage(m.certificate.managedBy)}</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(sm.confirm.name)}</Label>
+          <Label>{formatMessage(m.certificate.name)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name ??
               '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.doctorNumber)}</Label>
-          <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor
-              ?.doctorNumber ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
@@ -65,24 +58,6 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
               ?.residence ?? '-'}
           </Text>
         </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.phoneNumber)}</Label>
-          <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor
-              ?.phoneNumber ?? '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.email)}</Label>
-          <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.email ??
-              '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.address)}</Label>
-          <Text>{'-'}</Text>
-        </GridColumn>
       </GridRow>
     </Stack>
   )
@@ -91,13 +66,12 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
     <Stack space={3}>
       <GridRow rowGap={3}>
         <GridColumn span="1/1">
-          <Text variant="h3">{formatMessage(m.certificate.information)}</Text>
+          <Text variant="h3">
+            {formatMessage(m.certificate.informationTitle)}
+          </Text>
         </GridColumn>
         <GridColumn span={'1/1'}>
-          <Label>
-            {formatMessage(m.certificate.informationIncapacitatedDate)}
-          </Label>
-          <Text></Text>
+          <Label>{formatMessage(m.certificate.incapacityDate)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
               .dateOfWorkIncapacity
@@ -111,7 +85,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>{formatMessage(m.certificate.informationICDAnalysis)}</Label>
+          <Label>{formatMessage(m.certificate.iCDAnalysis)}</Label>
           <Markdown>
             {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnoses
               ?.map(
@@ -122,9 +96,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.informationOtherICDAnalysis)}
-          </Label>
+          <Label>{formatMessage(m.certificate.otherICDAnalysis)}</Label>
           <Markdown>
             {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.otherDiagnoses
               ?.map(
@@ -135,59 +107,102 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.informationMedicalHistory)}
-          </Label>
-          <Text></Text>
+          <Label>{formatMessage(m.certificate.medicalHistory)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
               .healthHistorySummary ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(m.certificate.informationMedicalImpairmentCause)}
-          </Label>
-          <Text></Text>
+          <Label>{formatMessage(m.certificate.impairmentCause)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
               .participationLimitationCause ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
+          <Label>{formatMessage(m.certificate.impairmentStability)}</Label>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate.stabilityOfHealth
+              ?.description ?? '-'}
+          </Text>
+          {data?.socialInsuranceDisabilityPensionCertificate?.stabilityOfHealth
+            ?.furtherDetails && (
+            <Text>
+              {
+                data.socialInsuranceDisabilityPensionCertificate
+                  .stabilityOfHealth.furtherDetails
+              }
+            </Text>
+          )}
+        </GridColumn>
+        <GridColumn span="1/1">
           <Label>
-            {formatMessage(m.certificate.informationMedicalImpairmentStability)}
+            {formatMessage(m.certificate.impairmentProjectedImprovement)}
           </Label>
-          <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
               ?.abilityChangePotential ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              m.certificate.informationMedicalImpairmentProjectedImprovement,
-            )}
-          </Label>
-          <Text></Text>
-          <Text>{'Gögn vantar - bíður eftir TR'}</Text>
+          <Label>{formatMessage(m.certificate.medicalImplementsUsage)}</Label>
+          {medicationAndSupportsUsed()}
         </GridColumn>
         <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              m.certificate.informationMedicalMedicalImplementsUsage,
-            )}
-          </Label>
-          <Text></Text>
+          <Label>{formatMessage(m.certificate.employmentCapability)}</Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
-              .medicationAndSupports ?? '-'}
+              ?.capacityForWork ?? '-'}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>{formatMessage(m.certificate.previousTherapies)}</Label>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate
+              ?.previousRehabilitation ?? '-'}
           </Text>
         </GridColumn>
       </GridRow>
     </Stack>
   )
+
+  const medicationAndSupportsUsed = () => {
+    if (
+      !data?.socialInsuranceDisabilityPensionCertificate
+        ?.medicationAndSupportsUsed
+    ) {
+      return (
+        <Text>{formatMessage(m.certificate.noMedicationAndSupportsUsed)}</Text>
+      )
+    }
+
+    return (
+      <>
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.medicationUsed && (
+          <Text>{`${formatMessage(m.certificate.medicine)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.medicationUsed
+          }`}</Text>
+        )}
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.supportsUsed && (
+          <Text>{`${formatMessage(m.certificate.supports)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.supportsUsed
+          }`}</Text>
+        )}
+        {data?.socialInsuranceDisabilityPensionCertificate
+          ?.medicationAndSupportsUsed.interventionsUsed && (
+          <Text>{`${formatMessage(m.certificate.otherInterventions)}: ${
+            data?.socialInsuranceDisabilityPensionCertificate
+              ?.medicationAndSupportsUsed.interventionsUsed
+          }`}</Text>
+        )}
+      </>
+    )
+  }
 
   const physicalImpairments = () => (
     <AccordionItem
@@ -200,14 +215,14 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <GridColumn span="1/1">
             <Text>{formatMessage(m.certificate.physicalImpairmentEffect)}</Text>
           </GridColumn>
-          {data?.socialInsuranceDisabilityPensionCertificate?.physicalAbilityRatings?.map(
+          {data?.socialInsuranceDisabilityPensionCertificate?.physicalImpairments?.map(
             (rating, idx) => (
               <GridColumn
-                key={`${rating.type ?? 'physical'}-${idx}`}
+                key={`${rating.title ?? 'physical'}-${idx}`}
                 span={['1/1', '1/1', '1/1', '1/2']}
               >
-                <Label>{rating.type?.toString()}</Label>
-                <Text>{rating.score?.toString()}</Text>
+                <Label>{rating.title}</Label>
+                <Text>{rating.value}</Text>
               </GridColumn>
             ),
           )}
@@ -229,14 +244,14 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
               {formatMessage(m.certificate.cognitiveImpairmentEffect)}
             </Text>
           </GridColumn>
-          {data?.socialInsuranceDisabilityPensionCertificate?.cognitiveAndMentalAbilityRatings?.map(
+          {data?.socialInsuranceDisabilityPensionCertificate?.mentalImpairments?.map(
             (rating, idx) => (
               <GridColumn
-                key={`${rating.type ?? 'physical'}-${idx}`}
+                key={`${rating.title ?? 'mental'}-${idx}`}
                 span={['1/1', '1/1', '1/1', '1/2']}
               >
-                <Label>{rating.type?.toString()}</Label>
-                <Text>{rating.score?.toString()}</Text>
+                <Label>{rating.title}</Label>
+                <Text>{rating.value}</Text>
               </GridColumn>
             ),
           )}

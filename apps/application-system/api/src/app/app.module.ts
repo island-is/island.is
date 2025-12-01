@@ -34,7 +34,10 @@ import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombud
 import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
 import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
 import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
-import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientConfig,
+  SocialInsuranceAdministrationClientConfigV2,
+} from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
@@ -110,6 +113,7 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         CarRecyclingClientConfig,
         ArborgWorkpoinClientConfig,
         SocialInsuranceAdministrationClientConfig,
+        SocialInsuranceAdministrationClientConfigV2,
         SignatureCollectionClientConfig,
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,

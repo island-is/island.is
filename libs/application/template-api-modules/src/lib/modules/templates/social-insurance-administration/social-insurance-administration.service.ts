@@ -17,12 +17,12 @@ import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/app
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
-  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
-  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  type TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+  type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

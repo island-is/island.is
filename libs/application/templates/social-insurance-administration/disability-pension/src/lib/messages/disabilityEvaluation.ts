@@ -17,11 +17,7 @@ export const disabilityEvaluation = defineMessages({
     defaultMessage: 'Hefur þú sótt um örorkumat hjá lífeyrissjóði?',
     description: 'Have you applied for disability evaluation at pension fund?',
   },
-  fileUploadTitle: {
-    id: 'dp.application:disabilityEvaluation.fileUploadTitle',
-    defaultMessage: 'Hlaða inn staðfestingu',
-    description: 'Upload confirmation',
-  },
+
   tabTitle: {
     id: 'dp.application:disabilityEvaluation.tabTitle',
     defaultMessage: 'Örorkumat',
