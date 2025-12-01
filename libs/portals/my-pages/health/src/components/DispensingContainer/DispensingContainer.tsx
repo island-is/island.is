@@ -56,6 +56,16 @@ const DispensingContainer: React.FC<Props> = ({
             </Box>
             <Box className={styles.text} marginBottom={'smallGutter'}>
               <Text fontWeight="regular">
+                {[
+                  item.medicine,
+                  item.strength,
+                  formatMessage(messages.medicineAmount),
+                  item.quantity,
+                ].join('  ')}
+              </Text>
+            </Box>
+            <Box className={styles.text} marginBottom={'smallGutter'}>
+              <Text fontWeight="regular">
                 {formatMessage(messages.pickedUpInPharmacy, {
                   arg: item.pharmacy,
                   date: item.date,
@@ -91,6 +101,7 @@ const DispensingContainer: React.FC<Props> = ({
                   ? formatMessage(messages.medicineTitle)
                   : undefined
               }
+              strength={formatMessage(messages.medicineStrength)}
               bold
               icon={undefined}
             />
@@ -99,6 +110,7 @@ const DispensingContainer: React.FC<Props> = ({
                 date={item.date}
                 icon={item.icon}
                 number={item.number}
+                strength={item.strength}
                 pharmacy={item.pharmacy}
                 quantity={item.quantity}
                 medicine={item.medicine}

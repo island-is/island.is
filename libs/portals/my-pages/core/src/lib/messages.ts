@@ -1627,6 +1627,11 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
+  nationalPoliceCommissionerTooltip: {
+    id: 'service.portal:national-police-commissioner-tooltip',
+    defaultMessage:
+      'Ríkislögreglustjóri hefur umsjón með gögnum um dómsmál og þeim tengt.',
+  },
   domsmalaraduneytidTooltip: {
     id: 'service.portal:dmr-tooltip',
     defaultMessage:
@@ -1917,6 +1922,27 @@ export const m = defineMessages({
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
   },
+  myCases: {
+    id: 'service.portal:my-cases',
+    defaultMessage: 'Mín mál',
+  },
+  myCasesIntro: {
+    id: 'service.portal:my-cases-intro',
+    defaultMessage: 'Mín mál',
+  },
+  myPoliceCases: {
+    id: 'service.portal:my-police-cases',
+    defaultMessage: 'Mín lögreglumál',
+  },
+  myPoliceCasesIntro: {
+    id: 'service.portal:my-police-cases-intro',
+    defaultMessage:
+      'Hér getur þú fundið upplýsingar yfir stöðu þinna mála hjá lögreglunni',
+  },
+  policeCases: {
+    id: 'service.portal:police-cases',
+    defaultMessage: 'Lögreglumál',
+  },
   subpoena: {
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
@@ -1961,6 +1987,10 @@ export const m = defineMessages({
   bloodtype: {
     id: 'service.portal:bloodtype',
     defaultMessage: 'Blóðflokkur',
+  },
+  type: {
+    id: 'service.portal:type',
+    defaultMessage: 'Tegund',
   },
   sjukratryggingar: {
     id: 'service.portal:sjukratryggingar',

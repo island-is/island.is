@@ -1,6 +1,7 @@
 query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
   lawAndOrderSubpoena(input: $input, locale: $locale) {
     data {
+      cacheId
       id
       hasBeenServed
       chosenDefender

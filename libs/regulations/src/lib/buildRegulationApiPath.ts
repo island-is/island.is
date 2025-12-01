@@ -1,4 +1,4 @@
-import { ISODate, RegQueryName } from '@island.is/regulations-tools/types'
+import { ISODate, RegQueryName } from '@dmr.is/regulations-tools/types'
 import { RegulationViewTypes, RegulationOriginalDates } from './types-web'
 
 export const buildRegulationApiPath = (opts: {
