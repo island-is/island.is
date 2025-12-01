@@ -8,7 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
@@ -22,7 +21,7 @@ import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -32,7 +31,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItems, hasReviewerApproved } from '../utils'
+import { getChargeItems, reviewStatePendingAction } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -60,25 +59,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -101,6 +81,22 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
+  adminDataConfig: {
+    answers: [
+      {
+        key: 'machine.plate',
+        isListed: true,
+        label: information.labels.pickMachine.vehicle,
+      },
+      {
+        key: 'buyer.nationalId',
+        isListed: true,
+        isNationalId: true,
+        label: information.labels.buyer.title,
+      },
+      { key: 'buyer.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -229,18 +225,21 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: applicationMessage.historyLogApprovedByBuyer,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: applicationMessage.historyLogRejectedByBuyer,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) =>
+              reviewStatePendingAction(application, nationalId),
           },
           lifecycle: {
             shouldBeListed: true,

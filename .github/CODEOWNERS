@@ -219,6 +219,7 @@ codemagic.yaml                                                                  
 /libs/clients/vehicles-mileage/                                                                                              @island-is/hugsmidjan
 /libs/clients/user-notification/                                                                                             @island-is/hugsmidjan
 /libs/clients/passports/                                                                                                     @island-is/hugsmidjan
+/libs/clients/police-cases/                                                                                                  @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                                        @island-is/hugsmidjan
 /libs/clients/assets/                                                                                                        @island-is/hugsmidjan
 /libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
