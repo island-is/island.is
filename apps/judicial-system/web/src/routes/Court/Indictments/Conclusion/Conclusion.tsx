@@ -58,6 +58,7 @@ import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
+import * as styles from './Conclusion.css'
 
 const courtSessionOptions = [
   {
@@ -391,61 +392,53 @@ const Conclusion: FC = () => {
             title={formatMessage(strings.decisionTitle)}
             required
           />
-          <BlueBox>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="conclusion-postponing"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.POSTPONING}
-                onChange={() => {
-                  setSelectedAction(IndictmentDecision.POSTPONING)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.postponing)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="conclusion-scheduling"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.SCHEDULING}
-                onChange={() => {
-                  setSelectedAction(IndictmentDecision.SCHEDULING)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.scheduling)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="conclusion-postponing-until-verdict"
-                name="conclusion-decision"
-                checked={
-                  selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
-                }
-                onChange={() => {
-                  setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.postponingUntilVerdict)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="conclusion-completing"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.COMPLETING}
-                onChange={() => {
-                  setSelectedAction(IndictmentDecision.COMPLETING)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.completing)}
-              />
-            </Box>
+          <BlueBox className={styles.grid}>
+            <RadioButton
+              id="conclusion-postponing"
+              name="conclusion-decision"
+              checked={selectedAction === IndictmentDecision.POSTPONING}
+              onChange={() => {
+                setSelectedAction(IndictmentDecision.POSTPONING)
+              }}
+              large
+              backgroundColor="white"
+              label={formatMessage(strings.postponing)}
+            />
+            <RadioButton
+              id="conclusion-scheduling"
+              name="conclusion-decision"
+              checked={selectedAction === IndictmentDecision.SCHEDULING}
+              onChange={() => {
+                setSelectedAction(IndictmentDecision.SCHEDULING)
+              }}
+              large
+              backgroundColor="white"
+              label={formatMessage(strings.scheduling)}
+            />
+            <RadioButton
+              id="conclusion-postponing-until-verdict"
+              name="conclusion-decision"
+              checked={
+                selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
+              }
+              onChange={() => {
+                setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+              }}
+              large
+              backgroundColor="white"
+              label={formatMessage(strings.postponingUntilVerdict)}
+            />
+            <RadioButton
+              id="conclusion-completing"
+              name="conclusion-decision"
+              checked={selectedAction === IndictmentDecision.COMPLETING}
+              onChange={() => {
+                setSelectedAction(IndictmentDecision.COMPLETING)
+              }}
+              large
+              backgroundColor="white"
+              label={formatMessage(strings.completing)}
+            />
             <RadioButton
               id="conclusion-redistributing"
               name="conclusion-redistribute"
@@ -516,70 +509,59 @@ const Conclusion: FC = () => {
                 title={formatMessage(strings.completingTitle)}
                 required
               />
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    id="decision-ruling"
-                    name="decision"
-                    checked={
-                      selectedDecision === CaseIndictmentRulingDecision.RULING
-                    }
-                    onChange={() => {
-                      setSelectedDecision(CaseIndictmentRulingDecision.RULING)
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.ruling)}
-                  />
-                </Box>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    id="decision-fine"
-                    name="decision"
-                    checked={
-                      selectedDecision === CaseIndictmentRulingDecision.FINE
-                    }
-                    onChange={() => {
-                      setSelectedDecision(CaseIndictmentRulingDecision.FINE)
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.fine)}
-                  />
-                </Box>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    id="decision-dismissal"
-                    name="decision"
-                    checked={
-                      selectedDecision ===
-                      CaseIndictmentRulingDecision.DISMISSAL
-                    }
-                    onChange={() => {
-                      setSelectedDecision(
-                        CaseIndictmentRulingDecision.DISMISSAL,
-                      )
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.dismissal)}
-                  />
-                </Box>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    id="decision-merge"
-                    name="decision"
-                    checked={
-                      selectedDecision === CaseIndictmentRulingDecision.MERGE
-                    }
-                    onChange={() => {
-                      setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.merge)}
-                  />
-                </Box>
+              <BlueBox className={styles.grid}>
+                <RadioButton
+                  id="decision-ruling"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.RULING)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.ruling)}
+                />
+                <RadioButton
+                  id="decision-fine"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.FINE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.fine)}
+                />
+                <RadioButton
+                  id="decision-dismissal"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.DISMISSAL
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.DISMISSAL)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.dismissal)}
+                />
+                <RadioButton
+                  id="decision-merge"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.MERGE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.merge)}
+                />
                 <RadioButton
                   id="decision-cancellation"
                   name="decision"
@@ -604,14 +586,12 @@ const Conclusion: FC = () => {
                   title={formatMessage(strings.connectedCaseNumbersTitle)}
                   required
                 />
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <SelectConnectedCase
-                      workingCase={workingCase}
-                      setWorkingCase={setWorkingCase}
-                      mergeCaseNumber={mergeCaseNumber}
-                    />
-                  </Box>
+                <BlueBox className={styles.grid}>
+                  <SelectConnectedCase
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    mergeCaseNumber={mergeCaseNumber}
+                  />
                   <Input
                     name="mergeCaseNumber"
                     label={formatMessage(strings.mergeCaseNumberLabel)}
