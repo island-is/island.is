@@ -1,18 +1,17 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   VinnuvelaApi,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
-import {
-  createPkPassDataInput,
-  findLatestExpirationDate,
-} from './machineLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Locale } from '@island.is/shared/types'
+import { Inject, Injectable } from '@nestjs/common'
+import compareAsc from 'date-fns/compareAsc'
+import { PkPassService } from '../../helpers/pk-pass-service/pkPass.service'
 import {
+  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -22,8 +21,10 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import compareAsc from 'date-fns/compareAsc'
-import { PkPassService } from '../../helpers/pk-pass-service/pkPass.service'
+import {
+  createPkPassDataInput,
+  findLatestExpirationDate,
+} from './machineLicenseMapper'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -297,6 +298,21 @@ export class MachineLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+    if (!license.data.fulltNafn) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.kennitala ?? '',
+      name: license.data.fulltNafn,
     }
   }
 }

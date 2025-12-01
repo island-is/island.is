@@ -37,6 +37,11 @@ export const VerifyLicenseBarcodeDataUnion = createUnionType({
   resolveType: (value) => {
     switch (value.type) {
       case GenericLicenseType.DriversLicense:
+      case GenericLicenseType.AdrLicense:
+      case GenericLicenseType.MachineLicense:
+      case GenericLicenseType.DisabilityLicense:
+      case GenericLicenseType.FirearmLicense:
+      case GenericLicenseType.HuntingLicense:
         return DriverLicenseData
 
       default:

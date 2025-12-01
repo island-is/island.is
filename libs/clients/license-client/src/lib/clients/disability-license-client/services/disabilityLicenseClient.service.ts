@@ -15,6 +15,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import {
+  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -255,6 +256,22 @@ export class DisabilityLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.nafn) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.kennitala ?? '',
+      name: license.data.nafn,
     }
   }
 }

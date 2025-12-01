@@ -11,6 +11,7 @@ import {
 } from '@island.is/clients/smartsolutions'
 import compareAsc from 'date-fns/compareAsc'
 import {
+  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -311,6 +312,23 @@ export class FirearmLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const license = await this.fetchLicenseData(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.licenseInfo?.name) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.licenseInfo?.ssn ?? '',
+      name: license.data.licenseInfo.name,
+      picture: license.data.licenseInfo?.licenseImgBase64 ?? '',
     }
   }
 }
