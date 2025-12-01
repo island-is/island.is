@@ -84,10 +84,12 @@ const handleVehiclePermnoWithInfoItem = <T>(
 
 export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
   items
-    .map((item) =>
+    .map((item, index) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
       item.component === 'nationalIdWithName'
         ? [coreMessages.name, coreMessages.nationalId]
+        : typeof item.label === 'function'
+        ? item.label(index)
         : item.label,
     )
     .flat(2)

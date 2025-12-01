@@ -18,6 +18,7 @@ import {
   RepeaterItem,
   RepeaterOptionValue,
   VehiclePermnoWithInfoField,
+  StaticText,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -301,6 +302,13 @@ export const Item = ({
     suffixVal = formatText(item.suffix, application, formatMessage)
   }
 
+  let labelVal: StaticText | undefined
+  if (typeof label === 'function') {
+    labelVal = label(activeIndex)
+  } else {
+    labelVal = label
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -325,7 +333,7 @@ export const Item = ({
   if (component === 'selectAsync') {
     selectAsyncProps = {
       id: id,
-      title: label,
+      title: labelVal,
       placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
@@ -461,9 +469,9 @@ export const Item = ({
           : undefined
       }
     >
-      {component === 'radio' && label && (
+      {component === 'radio' && labelVal && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
-          {formatText(label, application, formatMessage)}
+          {formatText(labelVal, application, formatMessage)}
         </Text>
       )}
       {component === 'selectAsync' && selectAsyncProps && (
@@ -530,7 +538,7 @@ export const Item = ({
           <Component
             id={id}
             name={id}
-            label={formatText(label, application, formatMessage)}
+            label={formatText(labelVal, application, formatMessage)}
             options={translatedOptions}
             placeholder={formatText(placeholder, application, formatMessage)}
             split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
