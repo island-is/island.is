@@ -139,6 +139,13 @@ const template: ApplicationTemplate<
               label: m.application.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
+              },
+            ],
           },
           lifecycle: DefaultStateLifeCycle,
           roles: [
