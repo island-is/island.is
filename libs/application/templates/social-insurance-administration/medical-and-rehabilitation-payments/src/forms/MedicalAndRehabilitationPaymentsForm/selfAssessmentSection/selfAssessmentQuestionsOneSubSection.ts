@@ -24,7 +24,7 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           .sectionDescription,
       children: [
         buildRadioField({
-          id: 'selfAssessment.hadAssistance',
+          id: 'selfAssessmentQuestionsOne.hadAssistance',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .hadAssistance,
@@ -33,7 +33,7 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'selfAssessment.educationLevelDescriptionField',
+          id: 'selfAssessmentQuestionsOne.educationLevelDescriptionField',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .educationLevelDescription,
@@ -41,13 +41,13 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           space: 4,
         }),
         buildSelectField({
-          id: 'selfAssessment.educationalLevel',
+          id: 'selfAssessmentQuestionsOne.educationalLevel',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .levelOfEducationTitle,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .levelOfEducationPlaceholder,
+              .levelOfEducationPlaceholder, 
           options: (application: Application) => {
             const { educationLevels } = getApplicationExternalData(
               application.externalData,
