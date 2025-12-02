@@ -13,10 +13,7 @@ import {
   EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import {
-  UserProfileDto,
-  V2UsersApi,
-} from '@island.is/clients/user-profile'
+import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
