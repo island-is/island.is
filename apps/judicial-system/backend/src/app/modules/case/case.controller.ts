@@ -113,6 +113,7 @@ import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
+@UseGuards(JwtAuthUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -143,7 +144,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -161,7 +162,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -304,13 +305,7 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(
-    JwtAuthUserGuard,
-    CaseExistsGuard,
-    RolesGuard,
-    CaseWriteGuard,
-    CaseTransitionGuard,
-  )
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -350,7 +345,7 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
@@ -365,7 +360,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -386,7 +381,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, CaseExistsGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -415,7 +410,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -451,7 +445,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -500,7 +493,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([
@@ -555,6 +547,7 @@ export class CaseController {
         !hasGeneratedCourtRecordPdf(
           theCase.state,
           theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
           theCase.courtSessions,
           user,
         )
@@ -574,7 +567,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -608,7 +600,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
@@ -649,7 +640,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -688,7 +678,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -733,7 +722,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -778,7 +766,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -813,7 +800,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -850,7 +836,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -879,7 +864,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -910,7 +894,7 @@ export class CaseController {
     return extendedCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

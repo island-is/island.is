@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes, YES, NO, SPOUSE } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -97,6 +97,12 @@ export const estateSchema = z.object({
 
   estateInfoSelection: z.string().min(1),
 
+  // Undivided estate reminder screen
+  reminderInfo: z.object({
+    assetsAndDebtsCheckbox: z.array(z.enum([YES])).length(1),
+    attachmentsCheckbox: z.array(z.enum([YES])).length(1),
+  }),
+
   // Eignir
   estate: z.object({
     inventory: z
@@ -192,6 +198,18 @@ export const estateSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (members) => {
+          // Check for multiple spouses - only allowed one spouse in heirs list
+          const spouseCount = members?.filter(
+            (member) => member.enabled && member.relation === SPOUSE,
+          ).length
+          return spouseCount <= 1
+        },
+        {
+          message: 'Only one spouse is allowed in the heirs list',
+        },
+      )
       .optional(),
     assets: asset,
     flyers: asset,
@@ -203,6 +221,7 @@ export const estateSchema = z.object({
         accountNumber: z.string(),
         accruedInterest: z.string(),
         balance: z.string(),
+        foreignBankAccount: z.array(z.enum([YES])).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
       })
@@ -688,6 +707,8 @@ export const estateSchema = z.object({
       file: z.array(fileSchema),
     }),
   }),
+
+  additionalComments: z.string().max(1800).optional(),
 
   // is: Eignalaust bú
   estateWithoutAssets: z

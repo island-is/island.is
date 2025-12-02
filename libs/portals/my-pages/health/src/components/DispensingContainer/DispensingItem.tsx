@@ -16,6 +16,7 @@ export interface DispensingItemProps {
   pharmacy: string
   quantity: string
   medicine?: string
+  strength?: string
   icon: ReactNode
   bold?: boolean
   backgroundColor?: 'blue' | 'white'
@@ -31,6 +32,7 @@ const DispensingItem: React.FC<DispensingItemProps> = ({
   pharmacy,
   quantity,
   medicine,
+  strength,
   icon,
   bold,
   button,
@@ -77,13 +79,20 @@ const DispensingItem: React.FC<DispensingItemProps> = ({
       )}
       {medicine && (
         <GridColumn span={'2/12'} className={styles.text}>
-          <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2" truncate>
+          <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
             {medicine}
           </Text>
         </GridColumn>
       )}
+      {strength && (
+        <GridColumn span={'1/12'} className={styles.text}>
+          <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
+            {strength}
+          </Text>
+        </GridColumn>
+      )}
       {quantity && (
-        <GridColumn span={'2/12'} className={styles.text}>
+        <GridColumn span={'1/12'} className={styles.text}>
           <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
             {quantity}
           </Text>

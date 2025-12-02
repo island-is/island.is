@@ -1,18 +1,24 @@
-import {
-  FormSystemForm,
-  FormSystemScreen,
-  FormSystemField,
-  FormSystemListItem,
-  FormSystemSection,
-  FormSystemFieldSettings,
-  FormSystemFormCertificationTypeDto,
-  FormSystemFormApplicant,
-} from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { removeTypename } from '../lib/utils/removeTypename'
-import { ActiveItem } from '../lib/utils/interfaces'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemFieldSettings,
+  FormSystemForm,
+  FormSystemFormApplicant,
+  FormSystemFormCertificationTypeDto,
+  FormSystemLanguageType,
+  FormSystemListItem,
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
+import {
+  removeAllDependencies,
+  removeParentDependency,
+} from '../lib/utils/dependencyHelper'
+import { ActiveItem } from '../lib/utils/interfaces'
+import { removeTypename } from '../lib/utils/removeTypename'
 
 // TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
@@ -100,6 +106,13 @@ type DndActions =
         update: (updatedForm: FormSystemForm) => void
       }
     }
+  | {
+      type: 'REMOVE_LIST_DEPENDENCIES'
+      payload: {
+        field: FormSystemField
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
 
 type ChangeActions =
   | {
@@ -123,7 +136,7 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
+  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -192,7 +205,7 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge'
+        property: 'isLarge' | 'hasDescription'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -241,6 +254,34 @@ type InputSettingsActions =
       payload: {
         listType: string
         update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_COMPLETED_TITLE'
+      payload: {
+        lang: 'is' | 'en'
+        newValue: string
+      }
+    }
+  | {
+      type: 'SET_COMPLETED_CONFIRMATION_HEADER'
+      payload: {
+        lang: 'is' | 'en'
+        newValue: string
+      }
+    }
+  | {
+      type: 'SET_COMPLETED_TEXT'
+      payload: {
+        lang: 'is' | 'en'
+        newValue: string
+      }
+    }
+  | {
+      type: 'SET_COMPLETED_ADDITIONAL_INFO'
+      payload: {
+        newValue: FormSystemLanguageType[]
+        update: (updatedForm: FormSystemForm) => void
       }
     }
 
@@ -411,6 +452,12 @@ export const controlReducer = (
         },
         form: {
           ...form,
+          dependencies: removeAllDependencies(
+            (form?.dependencies ?? []).filter(
+              (dep) => dep !== null && dep !== undefined,
+            ) as FormSystemDependency[],
+            currentItem,
+          ),
           fields: newFields,
         },
       }
@@ -426,12 +473,19 @@ export const controlReducer = (
           fieldSettings: removeTypename(fieldSettings),
         },
       }
+
       update(newActive)
       return {
         ...state,
         activeItem: newActive,
         form: {
           ...form,
+          dependencies: removeParentDependency(
+            (form?.dependencies ?? []).filter(
+              (dep) => dep !== null && dep !== undefined,
+            ) as FormSystemDependency[],
+            currentData,
+          ),
           fields: fields?.map((f) =>
             f?.id === activeItem.data?.id ? newActive.data : f,
           ),
@@ -619,12 +673,12 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_APPLICATION_DAYS_TO_REMOVE': {
+    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
       return {
         ...state,
         form: {
           ...form,
-          applicationDaysToRemove: action.payload.value,
+          daysUntilApplicationPrune: action.payload.value,
         },
       }
     }
@@ -1201,6 +1255,7 @@ export const controlReducer = (
     case 'REMOVE_DEPENDENCIES': {
       const { activeId, update } = action.payload
       const id = String(activeId)
+
       const source = (form.dependencies ?? []).filter(
         (dep) => dep !== null && dep !== undefined,
       ) as NonNullable<typeof form.dependencies>
@@ -1219,6 +1274,121 @@ export const controlReducer = (
       }
       update(updatedForm)
       return { ...state, form: updatedForm }
+    }
+    case 'REMOVE_LIST_DEPENDENCIES': {
+      const { field, update } = action.payload
+      const updatedDependencies = removeParentDependency(
+        (form?.dependencies ?? []).filter(
+          (dep) => dep !== null && dep !== undefined,
+        ) as FormSystemDependency[],
+        field,
+      )
+      const updatedForm = {
+        ...form,
+        dependencies: updatedDependencies,
+      }
+      update(updatedForm)
+      return { ...state, form: updatedForm }
+    }
+    case 'SET_COMPLETED_TITLE': {
+      const { lang, newValue } = action.payload
+      const updatedForm = {
+        ...form,
+        completedSectionInfo: {
+          ...(form.completedSectionInfo ?? {}),
+          title: {
+            ...(form.completedSectionInfo?.title ?? { is: '', en: '' }),
+            [lang]: newValue,
+          },
+          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+            is: '',
+            en: '',
+          },
+          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+            is: '',
+            en: '',
+          },
+          additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+        },
+      }
+      return {
+        ...state,
+        form: updatedForm,
+      }
+    }
+    case 'SET_COMPLETED_TEXT': {
+      const { lang, newValue } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          completedSectionInfo: {
+            ...(form.completedSectionInfo ?? {}),
+            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+            confirmationHeader: form.completedSectionInfo
+              ?.confirmationHeader ?? {
+              is: '',
+              en: '',
+            },
+            confirmationText: {
+              ...(form.completedSectionInfo?.confirmationText ?? {
+                is: '',
+                en: '',
+              }),
+              [lang]: newValue,
+            },
+            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          },
+        },
+      }
+    }
+    case 'SET_COMPLETED_CONFIRMATION_HEADER': {
+      const { lang, newValue } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          completedSectionInfo: {
+            ...(form.completedSectionInfo ?? {}),
+            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+            confirmationHeader: {
+              ...(form.completedSectionInfo?.confirmationHeader ?? {
+                is: '',
+                en: '',
+              }),
+              [lang]: newValue,
+            },
+            confirmationText: form.completedSectionInfo?.confirmationText ?? {
+              is: '',
+              en: '',
+            },
+            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          },
+        },
+      }
+    }
+    case 'SET_COMPLETED_ADDITIONAL_INFO': {
+      const newForm = {
+        ...form,
+        completedSectionInfo: {
+          ...(form.completedSectionInfo ?? {}),
+          title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+            is: '',
+            en: '',
+          },
+          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+            is: '',
+            en: '',
+          },
+          additionalInfo: action.payload.newValue,
+        },
+      }
+      action.payload.update(newForm)
+      return {
+        ...state,
+        form: newForm,
+      }
     }
     default:
       return state

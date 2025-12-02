@@ -24,7 +24,7 @@ const UPDATE_HELP_DESK_MUTATION = gql`
 
 export type HelpDeskInput = Pick<Helpdesk, 'id' | 'email' | 'phoneNumber'>
 
-export function useUpdateHelpDesk(organisationId: string) {
+export const useUpdateHelpDesk = (organisationId: string) => {
   const [updateHelpDeskMutation, { called, loading, error }] = useMutation(
     UPDATE_HELP_DESK_MUTATION,
   )

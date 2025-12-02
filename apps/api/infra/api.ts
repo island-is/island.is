@@ -22,6 +22,7 @@ import {
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
+  PoliceCases,
   HousingBenefitCalculator,
   Hunting,
   IcelandicGovernmentInstitutionVacancies,
@@ -324,6 +325,7 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -356,6 +358,16 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENTID',
+      DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL',
+      DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH',
+      DOCUMENT_PROVIDER_DASHBOARD_SCOPE:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_SCOPE',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
@@ -384,6 +396,7 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY',
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -442,11 +455,24 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      LANDSPITALI_PAYMENT_ORGANISATION_ID:
+        '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
+      FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
+      FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
       Hunting,
+      PoliceCases,
       Firearm,
       Disability,
       Base,
@@ -519,15 +545,20 @@ export const serviceSetup = (services: {
       },
     })
     .readiness('/health')
-    .liveness('/liveness')
+    .liveness({
+      path: '/liveness',
+      initialDelaySeconds: 10,
+      timeoutSeconds: 5,
+    })
     .resources({
-      limits: { cpu: '1200m', memory: '3200Mi' },
-      requests: { cpu: '400m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '2500Mi' },
+      requests: { cpu: '800m', memory: '1500Mi' },
     })
     .replicaCount({
-      default: 2,
+      default: 3,
       max: 50,
-      min: 2,
+      min: 3,
+      cpuAverageUtilization: 75,
     })
     .grantNamespaces(
       'nginx-ingress-external',

@@ -5,7 +5,6 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -20,6 +19,7 @@ import {
   ApplicationRole,
   defineTemplateApi,
   InstitutionNationalIds,
+  IdentityApi,
 } from '@island.is/application/types'
 import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
@@ -30,6 +30,7 @@ import {
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 
 enum TemplateApiActions {
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
@@ -48,8 +49,18 @@ const RentalAgreementTemplate: ApplicationTemplate<
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.RentalAgreement.translation,
   dataSchema,
-  featureFlag: Features.rentalAgreement,
-  allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -80,6 +91,24 @@ const RentalAgreementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
               ],
+            },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/prerequsitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
+              delete: true,
             },
           ],
         },
@@ -113,6 +142,24 @@ const RentalAgreementTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [UserProfileApi, NationalRegistryUserApi],
+            },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/draftForm').then((module) =>
+                  Promise.resolve(module.draftForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: application.goToOverviewButton,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [UserProfileApi, IdentityApi],
             },
           ],
         },
@@ -156,6 +203,29 @@ const RentalAgreementTemplate: ApplicationTemplate<
               delete: true,
               api: [UserProfileApi, NationalRegistryUserApi],
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewApplicantForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: application.goToSigningButton,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: application.backToOverviewButton,
+                  type: 'signGhost',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [UserProfileApi, IdentityApi],
+            },
           ],
         },
         on: {
@@ -180,6 +250,16 @@ const RentalAgreementTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/signingForm').then((module) =>
+                  Promise.resolve(module.SigningForm),
+                ),
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/signingForm').then((module) =>
                   Promise.resolve(module.SigningForm),
@@ -217,6 +297,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completed').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/completed').then((module) =>
                   Promise.resolve(module.completedForm),
@@ -266,10 +354,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const { applicant, assignees } = application
+    const { applicant, assignees, applicantActors = [] } = application
 
     if (id === InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN) {
       return Roles.INSTITUTION
+    }
+
+    if (applicantActors.length > 0) {
+      return Roles.DELEGATE
     }
 
     if (id === applicant) {

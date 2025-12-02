@@ -1,12 +1,12 @@
 import { Text, Pagination, Box } from '@island.is/island-ui/core'
 import { ApplicationList as List } from '@island.is/application/ui-components'
-import { Application } from '@island.is/application/types'
+import { ApplicationCard } from '@island.is/application/types'
 import { FC, useCallback, useState } from 'react'
 
 const pageSize = 3
 
 interface Props {
-  applications: Application[]
+  applications: ApplicationCard[]
   label: string
   organizations: any[]
   refetch: () => void

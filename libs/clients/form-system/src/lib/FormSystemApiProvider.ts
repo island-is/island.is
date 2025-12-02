@@ -1,17 +1,18 @@
 import {
-  Configuration,
   ApplicationsApi,
+  Configuration,
   FieldsApi,
-  FormsApi,
-  ListItemsApi,
-  OrganizationsApi,
-  ScreensApi,
-  SectionsApi,
+  FilesApi,
   FormApplicantTypesApi,
   FormCertificationTypesApi,
-  OrganizationPermissionsApi,
-  OrganizationUrlsApi,
+  FormsApi,
   FormUrlsApi,
+  ListItemsApi,
+  OrganizationPermissionsApi,
+  OrganizationsApi,
+  OrganizationUrlsApi,
+  ScreensApi,
+  SectionsApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
 
@@ -28,6 +29,7 @@ const apis = [
   OrganizationPermissionsApi,
   OrganizationUrlsApi,
   FormUrlsApi,
+  FilesApi,
 ]
 
 export const exportedApis = apis.map((Api) => ({

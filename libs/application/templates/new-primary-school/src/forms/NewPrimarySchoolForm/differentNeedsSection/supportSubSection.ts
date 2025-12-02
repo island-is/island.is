@@ -18,13 +18,14 @@ import {
 import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
-  SchoolType,
+  OrganizationSubType,
 } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getDefaultSupportCaseworker,
   getDefaultYESNOValue,
+  getSelectedSchoolSubType,
   hasDefaultSupportCaseworker,
 } from '../../../utils/newPrimarySchoolUtils'
 
@@ -221,7 +222,7 @@ export const supportSubSection = buildSubSection({
             getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )?.name || '',
+            )?.name,
         }),
         buildTextField({
           id: 'support.caseManager.email',
@@ -233,7 +234,7 @@ export const supportSubSection = buildSubSection({
             getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )?.email || '',
+            )?.email,
         }),
         buildRadioField({
           id: 'support.hasIntegratedServices',
@@ -270,20 +271,28 @@ export const supportSubSection = buildSubSection({
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
           title: (application) => {
-            const { applicationType, selectedSchoolType } =
-              getApplicationAnswers(application.answers)
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
 
             return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+              getSelectedSchoolSubType(
+                application.answers,
+                application.externalData,
+              ) === OrganizationSubType.INTERNATIONAL_SCHOOL
               ? newPrimarySchoolMessages.shared.alertTitle.description
               : newPrimarySchoolMessages.shared.alertTitle
           },
           message: (application) => {
-            const { applicationType, selectedSchoolType } =
-              getApplicationAnswers(application.answers)
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
 
             return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+              getSelectedSchoolSubType(
+                application.answers,
+                application.externalData,
+              ) === OrganizationSubType.INTERNATIONAL_SCHOOL
               ? newPrimarySchoolMessages.differentNeeds
                   .internationalSchoolSupportAlertMessage
               : newPrimarySchoolMessages.differentNeeds.supportAlertMessage

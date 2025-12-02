@@ -102,6 +102,7 @@ export const partiesSubsection = buildSubSection({
           condition: shouldShowRepresentativeTable,
           id: 'parties.landlordInfo.representativeTable.0.nationalIdWithName',
           marginBottom: 2,
+          searchCompanies: false,
         }),
         buildPhoneField({
           condition: shouldShowRepresentativeTable,

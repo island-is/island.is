@@ -1,12 +1,15 @@
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import {
   errorMessages,
-  FIRST_GRADE_AGE,
+  // FIRST_GRADE_AGE,
   getApplicationAnswers,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
-import { FriggClientService } from '@island.is/clients/mms/frigg'
+import {
+  FriggClientService,
+  GetOrganizationsByTypeTypeEnum,
+} from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -39,7 +42,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
     const currentYear = new Date().getFullYear()
-    const firstGradeYear = currentYear - FIRST_GRADE_AGE
+    const firstGradeYear = currentYear - 1 //FIRST_GRADE_AGE // temporary change so that children aged 1 to 16 can apply (not just 6 to 16)
     const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
@@ -89,6 +92,20 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
+  async getPreferredSchool({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getPreferredSchool(
+      auth,
+      childNationalId,
+    )
+  }
+
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
@@ -97,5 +114,11 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       auth,
       newPrimarySchoolDTO,
     )
+  }
+
+  async getSchools({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getOrganizationsByType(auth, {
+      type: GetOrganizationsByTypeTypeEnum.School,
+    })
   }
 }

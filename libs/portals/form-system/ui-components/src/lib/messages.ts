@@ -526,6 +526,11 @@ export const m = defineMessages({
     defaultMessage: '+ Bæta við gildi',
     description: 'Add list item',
   },
+  add: {
+    id: 'form.system:add',
+    defaultMessage: 'Bæta við',
+    description: 'Add',
+  },
   finish: {
     id: 'form.system:finish',
     defaultMessage: 'Ljúka',
@@ -971,9 +976,89 @@ export const m = defineMessages({
       'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið ',
     description: 'If you need further information, you can email us at ',
   },
+  completedTitleLabel: {
+    id: 'form.system:completed-title-label',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu',
+    description: 'Completed page title',
+  },
+  completedTitleLabelEnglish: {
+    id: 'form.system:completed-title-label-english',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu á ensku',
+    description: 'Completed page title in English',
+  },
+  confirmationHeaderLabel: {
+    id: 'form.system:confirmation-header-label',
+    defaultMessage: 'Yfirskrift fyrir græna kassann',
+    description: 'Confirmation header',
+  },
+  confirmationHeaderLabelEnglish: {
+    id: 'form.system:confirmation-header-label-english',
+    defaultMessage: 'Yfirskrift fyrir græna kassann á ensku',
+    description: 'Confirmation header in English',
+  },
+  confirmationTextLabel: {
+    id: 'form.system:confirmation-text-label',
+    defaultMessage: 'Texti fyrir græna kassann',
+    description: 'Confirmation text',
+  },
+  confirmationTextLabelEnglish: {
+    id: 'form.system:confirmation-text-label-english',
+    defaultMessage: 'Texti fyrir græna kassann á ensku',
+    description: 'Confirmation text in English',
+  },
+  icelandic: {
+    id: 'form.system:icelandic',
+    defaultMessage: 'Íslenska',
+    description: 'Icelandic',
+  },
+  english: {
+    id: 'form.system:english',
+    defaultMessage: 'Enska',
+    description: 'English',
+  },
   deleteFormWarning: {
     id: 'form.system:delete-form-warning',
     defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
     description: 'Are you sure you want to delete the form: {formName}?',
+  },
+  previewField: {
+    id: 'form.system:preview-field',
+    defaultMessage: 'Sýnishorn',
+    description: 'Preview',
+  },
+  largeCheckbox: {
+    id: 'form.system.large-checkbox',
+    defaultMessage: 'Stórt hakbox',
+    description: 'Large checkbox',
+  },
+  hasSublabel: {
+    id: 'form.system.has-sublabel',
+    defaultMessage: 'Hefur undirtexta',
+    description: 'Has sublabel',
+  },
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
+  },
+  switchLoginToCreateApplication: {
+    id: 'form.system:switch-login-to-create-application',
+    defaultMessage: 'Skipta þarf um notanda.',
+    description: 'You must change your login.',
+  },
+  applicationDoesNotPermitLogin: {
+    id: 'form.system:application-does-not-permit-login',
+    defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
+    description: 'This application does not support this type of login.',
+  },
+  errorFetchingApplication: {
+    id: 'form.system:error-fetching-application',
+    defaultMessage: 'Villa kom upp við að sækja umsóknina.',
+    description: 'An error occurred while fetching the application.',
+  },
+  createApplication: {
+    id: 'form.system:create-application',
+    defaultMessage: 'Stofna nýja umsókn',
+    description: 'Create new application',
   },
 })

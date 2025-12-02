@@ -951,10 +951,10 @@ const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const deadlineDate = getIndictmentAppealDeadlineDate(
-      c.rulingDate,
-      c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
-    )
+    const deadlineDate = getIndictmentAppealDeadlineDate({
+      baseDate: c.rulingDate,
+      isFine: c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+    })
 
     return generateDate(deadlineDate)
   },

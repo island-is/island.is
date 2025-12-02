@@ -51,8 +51,8 @@ export const getAllContentTypesInAscendingOrder = async () => {
     contentTypes.length < contentfulTypesResponse.total
   ) {
     contentfulTypesResponse = await client.contentType.getMany({
-      limit: 100,
       query: {
+        limit: 100,
         skip: contentTypes.length,
       },
     })
@@ -67,7 +67,9 @@ export const getAllContentTypesInAscendingOrder = async () => {
 export const getAllTags = async () => {
   const client = getContentfulManagementApiClient()
   const response = await client.tag.getMany({
-    limit: 1000,
+    query: {
+      limit: 1000,
+    },
   })
   const tags = response.items
   return tags

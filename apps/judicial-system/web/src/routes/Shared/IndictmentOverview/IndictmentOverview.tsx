@@ -7,9 +7,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -19,7 +19,6 @@ import {
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -36,6 +35,7 @@ import {
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
@@ -107,9 +107,8 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -176,7 +175,6 @@ const IndictmentOverview: FC = () => {
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.defendants?.map(
             (defendant) =>
-              features?.includes(Feature.VERDICT_DELIVERY) &&
               defendant.verdict && (
                 <Box
                   key={`${defendant.id}${defendant.verdict.id}`}
@@ -332,6 +330,14 @@ const IndictmentOverview: FC = () => {
               <ZipButton
                 caseId={workingCase.id}
                 courtCaseNumber={workingCase.courtCaseNumber}
+              />
+            </Box>
+          )}
+          {isProsecutionUser(user) && (
+            <Box component="section">
+              <InputPenalties
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
               />
             </Box>
           )}

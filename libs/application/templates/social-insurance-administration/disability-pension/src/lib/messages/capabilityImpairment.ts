@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const capabilityImpairment = defineMessages({
-  tabTitle: {
-    id: 'dp.application:capabilityImpairment.tabTitle',
-    defaultMessage: 'Skerðing á færni',
-    description: 'Work capability impairment',
-  },
   title: {
     id: 'dp.application:capabilityImpairment.title',
     defaultMessage: 'Færni í daglegu lífi',

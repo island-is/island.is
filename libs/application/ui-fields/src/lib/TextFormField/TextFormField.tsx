@@ -54,6 +54,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     onChange = () => undefined,
     clearOnChange,
     setOnChange,
+    allowNegative,
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -82,6 +83,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           )}
           disabled={disabled}
           readOnly={buildFieldReadOnly(application, readOnly)}
+          allowNegative={allowNegative}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
@@ -117,11 +119,11 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           maxLength={maxLength}
           textarea={variant === 'textarea'}
           currency={variant === 'currency'}
+          thousandSeparator={thousandSeparator}
           type={
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          thousandSeparator={thousandSeparator}
           suffix={
             suffix &&
             formatTextWithLocale(
@@ -131,7 +133,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
               formatMessage,
             )
           }
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application, locale)}
           backgroundColor={backgroundColor}
           rows={rows}
           required={buildFieldRequired(application, required)}
