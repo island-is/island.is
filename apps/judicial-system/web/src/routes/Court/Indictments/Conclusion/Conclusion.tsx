@@ -26,6 +26,7 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
+  DefendantSelector,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -630,6 +631,11 @@ const Conclusion: FC = () => {
                 </Box>
               )}
             </>
+          )}
+          {selectedAction === IndictmentDecision.SPLITTING && (
+            <Box component="section">
+              <DefendantSelector defendants={workingCase.defendants} />
+            </Box>
           )}
           {selectedAction && !workingCase.withCourtSessions && (
             <Box component="section">
