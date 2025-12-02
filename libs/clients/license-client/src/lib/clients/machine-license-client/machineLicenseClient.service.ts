@@ -11,7 +11,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import compareAsc from 'date-fns/compareAsc'
 import { PkPassService } from '../../helpers/pk-pass-service/pkPass.service'
 import {
-  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -25,6 +24,7 @@ import {
   createPkPassDataInput,
   findLatestExpirationDate,
 } from './machineLicenseMapper'
+import { GeneralLicenseVerifyExtraData } from '../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'

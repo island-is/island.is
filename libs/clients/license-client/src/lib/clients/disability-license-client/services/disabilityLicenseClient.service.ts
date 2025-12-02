@@ -15,7 +15,6 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import {
-  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -23,6 +22,7 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../../licenseClient.type'
+import { GeneralLicenseVerifyExtraData } from '../../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'

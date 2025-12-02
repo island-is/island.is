@@ -21,6 +21,7 @@ import {
   HuntingLicenseClientService,
   HuntingLicenseDto,
 } from '@island.is/clients/hunting-license'
+import { HuntingLicenseVerifyExtraData } from './huntingLicenseExtraData.types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'hunting-license-service'
@@ -260,6 +261,23 @@ export class HuntingLicenseClient
     return {
       ok: true,
       data: result.data,
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<HuntingLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.holderName) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.holderNationalId ?? '',
+      name: license.data.holderName,
+      picture: license.data.holderPhoto,
     }
   }
 }

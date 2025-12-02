@@ -1,7 +1,4 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
 import { FirearmApi } from '@island.is/clients/firearm-license'
 import {
   Pass,
@@ -9,9 +6,11 @@ import {
   Result,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import compareAsc from 'date-fns/compareAsc'
 import {
-  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -20,7 +19,7 @@ import {
 } from '../../../licenseClient.type'
 import { FirearmLicenseDto } from '../firearmLicenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
-
+import { FirearmLicenseVerifyExtraData } from '../firearmLicensExtraData.types'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 
@@ -315,7 +314,7 @@ export class FirearmLicenseClient
     }
   }
 
-  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+  async verifyExtraData(user: User): Promise<FirearmLicenseVerifyExtraData> {
     const license = await this.fetchLicenseData(user)
     if (!license.ok || !license.data) {
       throw new Error('No license found')

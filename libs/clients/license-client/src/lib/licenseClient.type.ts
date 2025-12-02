@@ -12,8 +12,13 @@ import {
 } from '@island.is/clients/passports'
 import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
+import { GeneralLicenseVerifyExtraData } from './clients/base'
 import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
-import { FirearmLicenseDto } from './clients/firearm-license-client'
+import {
+  FirearmLicenseDto,
+  FirearmLicenseVerifyExtraData,
+} from './clients/firearm-license-client'
+import { HuntingLicenseVerifyExtraData } from './clients/hunting-license-client'
 
 export type LicenseLabelsObject = {
   [x: string]: string
@@ -32,12 +37,6 @@ export enum LicenseType {
   HuntingLicense = 'HuntingLicense',
 }
 
-export interface GeneralLicenseVerifyExtraData {
-  nationalId: string
-  name: string
-  picture?: string
-}
-
 export interface LicenseResults {
   [LicenseType.AdrLicense]: FlattenedAdrDto
   [LicenseType.DisabilityLicense]: OrorkuSkirteini
@@ -54,10 +53,10 @@ export interface LicenseResults {
 export interface VerifyExtraDataResult {
   [LicenseType.AdrLicense]: GeneralLicenseVerifyExtraData
   [LicenseType.DisabilityLicense]: GeneralLicenseVerifyExtraData
-  [LicenseType.DrivingLicense]: GeneralLicenseVerifyExtraData
-  [LicenseType.HuntingLicense]: GeneralLicenseVerifyExtraData
+  [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
+  [LicenseType.HuntingLicense]: HuntingLicenseVerifyExtraData
   [LicenseType.Ehic]: void
-  [LicenseType.FirearmLicense]: GeneralLicenseVerifyExtraData
+  [LicenseType.FirearmLicense]: FirearmLicenseVerifyExtraData
   [LicenseType.MachineLicense]: GeneralLicenseVerifyExtraData
   [LicenseType.PCard]: void
   [LicenseType.Passport]: void

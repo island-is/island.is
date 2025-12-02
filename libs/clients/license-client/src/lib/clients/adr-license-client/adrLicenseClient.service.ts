@@ -12,7 +12,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import compareAsc from 'date-fns/compareAsc'
 import { format } from 'kennitala'
 import {
-  GeneralLicenseVerifyExtraData,
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
@@ -25,6 +24,7 @@ import {
   createPkPassDataInput,
   parseAdrLicenseResponse,
 } from './adrLicenseClientMapper'
+import { GeneralLicenseVerifyExtraData } from '../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
