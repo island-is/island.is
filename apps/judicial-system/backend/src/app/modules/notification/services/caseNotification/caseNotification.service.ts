@@ -1880,7 +1880,7 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
-  //#region INDICTMENT_RETURNED notifications
+  //#region PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notifications
   private async sendPublicProsecutorReviewerAssignedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
