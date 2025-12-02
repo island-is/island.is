@@ -30,15 +30,16 @@ import {
   getHumanReadableCaseIndictmentRulingDecision,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { MessageService } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseState,
   CaseType,
   DefenderSubRole,
+  getIndictmentAppealDeadlineDate,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -1879,6 +1880,46 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_RETURNED notifications
+  private async sendPublicProsecutorReviewerAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const rulingDate = theCase.rulingDate
+    if (!rulingDate) {
+      return { delivered: true }
+    }
+    const subject = `Úthlutun máls ${theCase.courtCaseNumber} til yfirlestrar`
+
+    const deadline = getIndictmentAppealDeadlineDate({
+      baseDate: rulingDate,
+      isFine:
+        theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+    })
+    const html = `Þér hefur verið úthlutað máli ${
+      theCase.courtCaseNumber
+    } til yfirlestrar. Áfrýjunarfrestur er til ${formatDate(
+      deadline,
+    )}. Sjá nánar á <a href="${
+      this.config.clientUrl
+    }${INDICTMENTS_OVERVIEW_ROUTE}/${
+      theCase.id
+    }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.indictmentReviewer?.name,
+      recipientEmail: theCase.indictmentReviewer?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region CASE_FILES_UPDATED notifications
   private sendCaseFilesUpdatedNotification(
     courtCaseNumber?: string,
@@ -2886,6 +2927,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendIndictmentReturnedNotifications(theCase)
       case CaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
+      case CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
+        return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,

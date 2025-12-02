@@ -862,7 +862,9 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED },
+        body: {
+          type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        },
       },
     ])
   }
@@ -1629,6 +1631,7 @@ export class CaseService {
         updatedCase.indictmentReviewerId &&
         isIndictment
       ) {
+        // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
         await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
           updatedCase,
           user,
