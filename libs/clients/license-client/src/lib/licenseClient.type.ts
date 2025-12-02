@@ -9,11 +9,11 @@ import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
 import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import {
   IdentityDocument,
   IdentityDocumentChild,
 } from '@island.is/clients/passports'
+import { HuntingLicenseDto } from './clients/hunting-license-client'
 
 export type LicenseLabelsObject = {
   [x: string]: string
