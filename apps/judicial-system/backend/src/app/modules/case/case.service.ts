@@ -2709,8 +2709,9 @@ export class CaseService {
       'hasCivilClaims',
     ]
 
+    const transaction = await this.sequelize.transaction()
+
     try {
-      const transaction = await this.sequelize.transaction()
       const splitCase = await this.createCase(
         pick(theCase, copiedSplitIndictmentCaseFields),
         transaction,
@@ -2719,6 +2720,8 @@ export class CaseService {
 
       return splitCase
     } catch (error) {
+      await transaction.rollback()
+
       this.logger.error(
         `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
         { error },
