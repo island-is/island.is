@@ -6,7 +6,7 @@ import { Entity } from '../models/entity.model'
 import { generateMockItemization } from '../mocks/INVOICE_ITEMS'
 
 export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
-  // Group invoices by buyer-seller relationship
+  // Group invoices by buyer-seller relationship, and date.
   const groupedInvoices = new Map<
     string,
     {
@@ -40,12 +40,26 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
     const group = groupedInvoices.get(groupKey)
     if (!group) return
 
-    group.invoices.push({
-      id: invoice.id,
-      date: invoice.date.toISOString(),
-      itemization: generateMockItemization(invoice.id, invoice.amount),
-      totalItemizationAmount: invoice.amount,
-    })
+    const invoiceDateGroup = group.invoices.find(i => i.date === invoice.date.toISOString())
+    if (invoiceDateGroup) {
+      invoiceDateGroup.itemization.push({
+        id: invoice.id.toString(),
+        label: invoice.id.toString(),
+        amount: invoice.amount,
+      })
+      invoiceDateGroup.totalItemizationAmount += invoice.amount
+    } else {
+      group.invoices.push({
+        id: invoice.id,
+        date: invoice.date.toISOString(),
+        itemization: [{
+          id: invoice.id.toString(),
+          label: invoice.id.toString(),
+          amount: invoice.amount,
+        }],
+        totalItemizationAmount: invoice.amount,
+      })
+    }
     group.totalAmount += invoice.amount
   })
 

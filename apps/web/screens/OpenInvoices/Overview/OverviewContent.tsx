@@ -17,7 +17,7 @@ interface Props {
 }
 
 export const OverviewContent = ({ invoiceGroups, error }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, formatDate } = useIntl()
 
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
@@ -96,7 +96,11 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                       <Box marginBottom={2} display="flex">
                         <Box marginRight={2}>
                           <Text variant="small" fontWeight="semiBold">
-                            {invoice.date}
+                            {formatDate(new Date(invoice.date), {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
                           </Text>
                         </Box>
                         <Text variant="small">{invoice.id}</Text>
