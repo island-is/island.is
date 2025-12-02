@@ -155,7 +155,7 @@ const transformCase = (theCase: Case, user?: User) => {
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user = request.user.currentUser as User
+    const user = request.user?.currentUser as User | undefined
 
     return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
