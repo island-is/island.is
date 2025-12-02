@@ -392,7 +392,7 @@ const Conclusion: FC = () => {
             title={formatMessage(strings.decisionTitle)}
             required
           />
-          <BlueBox className={styles.grid}>
+          <BlueBox className={styles.grid({ gap: 2 })}>
             <RadioButton
               id="conclusion-postponing"
               name="conclusion-decision"
@@ -520,7 +520,7 @@ const Conclusion: FC = () => {
                 title={formatMessage(strings.completingTitle)}
                 required
               />
-              <BlueBox className={styles.grid}>
+              <BlueBox className={styles.grid({ gap: 2 })}>
                 <RadioButton
                   id="decision-ruling"
                   name="decision"
@@ -597,7 +597,7 @@ const Conclusion: FC = () => {
                   title={formatMessage(strings.connectedCaseNumbersTitle)}
                   required
                 />
-                <BlueBox className={styles.grid}>
+                <BlueBox className={styles.grid({ gap: 2 })}>
                   <SelectConnectedCase
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
