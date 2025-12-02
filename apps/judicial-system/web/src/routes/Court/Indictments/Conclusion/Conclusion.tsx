@@ -54,11 +54,11 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
-import * as styles from './Conclusion.css'
 
 const courtSessionOptions = [
   {
@@ -387,13 +387,13 @@ const Conclusion: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box className={styles.grid({ gap: 5, marginBottom: 10 })}>
+        <Box className={grid({ gap: 5, marginBottom: 10 })}>
           <Box component="section">
             <SectionHeading
               title={formatMessage(strings.decisionTitle)}
               required
             />
-            <BlueBox className={styles.grid({ gap: 2 })}>
+            <BlueBox className={grid({ gap: 2 })}>
               <RadioButton
                 id="conclusion-postponing"
                 name="conclusion-decision"
@@ -521,7 +521,7 @@ const Conclusion: FC = () => {
                   title={formatMessage(strings.completingTitle)}
                   required
                 />
-                <BlueBox className={styles.grid({ gap: 2 })}>
+                <BlueBox className={grid({ gap: 2 })}>
                   <RadioButton
                     id="decision-ruling"
                     name="decision"
@@ -601,7 +601,7 @@ const Conclusion: FC = () => {
                     title={formatMessage(strings.connectedCaseNumbersTitle)}
                     required
                   />
-                  <BlueBox className={styles.grid({ gap: 2 })}>
+                  <BlueBox className={grid({ gap: 2 })}>
                     <SelectConnectedCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
