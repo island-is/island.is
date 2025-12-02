@@ -26,7 +26,6 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 export { getReviewers, getReviewerRole } from './getReviewers'
-export * from './pendingAction'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

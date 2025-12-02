@@ -16,6 +16,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getReviewStatePendingAction,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -35,7 +36,8 @@ import {
   getChargeItems,
   getExtraData,
   getReviewerRole,
-  reviewStatePendingAction,
+  canReviewerApprove,
+  getReviewers,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -221,8 +223,14 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: (application, _role, nationalId) =>
-              reviewStatePendingAction(application, nationalId),
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId
+                  ? canReviewerApprove(nationalId, application.answers)
+                  : false,
+                getReviewers(application.answers),
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,

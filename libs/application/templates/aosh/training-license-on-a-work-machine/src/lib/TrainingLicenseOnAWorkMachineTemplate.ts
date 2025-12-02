@@ -13,6 +13,7 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -37,7 +38,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
-import { reviewStatePendingAction } from '../utils'
+import { canReviewerApprove, getReviewers } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -206,8 +207,14 @@ const template: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
-            pendingAction: (application, _role, nationalId) =>
-              reviewStatePendingAction(application, nationalId),
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId
+                  ? canReviewerApprove(application.answers, nationalId)
+                  : false,
+                getReviewers(application.answers),
+              )
+            },
           },
           lifecycle: {
             pruneMessage: {

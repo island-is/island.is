@@ -1,15 +1,15 @@
-import { Application, PendingAction } from '@island.is/application/types'
-import { corePendingActionMessages } from '@island.is/application/core'
-import { getReviewers } from './getReviewers'
-import { canReviewerApprove } from './canReviewerApprove'
+import { PendingAction } from '@island.is/application/types'
+import { corePendingActionMessages } from './messages'
 
-const getPendingReviewersText = (application: Application) => {
-  const pending = getReviewers(application.answers).filter(
-    (x) => !x.hasApproved,
-  )
-  if (pending.length === 0) return null
+const getPendingReviewersText = (
+  reviewers: { nationalId: string; name: string; hasApproved: boolean }[],
+) => {
+  const pendingReviewers = reviewers.filter((x) => !x.hasApproved)
+  if (pendingReviewers.length === 0) return null
 
-  const names = pending.map((x) => (x.name ? x.name : x.nationalId)).join(', ')
+  const names = pendingReviewers
+    .map((x) => (x.name ? x.name : x.nationalId))
+    .join(', ')
 
   return {
     ...corePendingActionMessages.whoNeedsToReviewDescription,
@@ -17,12 +17,12 @@ const getPendingReviewersText = (application: Application) => {
   }
 }
 
-export const reviewStatePendingAction = (
-  application: Application,
-  nationalId: string,
+export const getReviewStatePendingAction = (
+  canReviewerApprove: boolean,
+  reviewers: { nationalId: string; name: string; hasApproved: boolean }[],
 ): PendingAction => {
   // If the user can approve, return "you need to review" message
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
+  if (canReviewerApprove) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -31,8 +31,8 @@ export const reviewStatePendingAction = (
   }
 
   // If someone else needs to review, return message with list of reviewers that need to review
-  const pendingReviewersContent = getPendingReviewersText(application)
-  if (nationalId && pendingReviewersContent) {
+  const pendingReviewersContent = getPendingReviewersText(reviewers)
+  if (pendingReviewersContent) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: pendingReviewersContent,

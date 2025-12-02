@@ -15,7 +15,6 @@ export * from './updateAnswers'
 export * from './isChild'
 export * from './isAvailableForApplication'
 export * from './getPriceList'
-export * from './pendingAction'
 export * from './getReviewers'
 
 export const formatPhoneNumber = (phoneNumber: string): string => {

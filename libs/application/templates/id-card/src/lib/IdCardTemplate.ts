@@ -1,6 +1,7 @@
 import {
   coreHistoryMessages,
   EphemeralStateLifeCycle,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -33,7 +34,12 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItems, hasReviewer, reviewStatePendingAction } from '../utils'
+import {
+  canReviewerApprove,
+  getChargeItems,
+  getReviewers,
+  hasReviewer,
+} from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
@@ -212,7 +218,14 @@ const IdCardTemplate: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, role, nationalId) => {
+              return getReviewStatePendingAction(
+                role === Roles.ASSIGNEE && nationalId
+                  ? canReviewerApprove(application.answers, nationalId)
+                  : false,
+                getReviewers(application.answers),
+              )
+            },
           },
         },
         on: {

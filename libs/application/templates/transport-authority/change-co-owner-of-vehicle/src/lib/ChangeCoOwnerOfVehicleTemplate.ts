@@ -14,6 +14,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -36,10 +37,11 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
+  canReviewerApprove,
   getChargeItems,
   getExtraData,
   getReviewerRole,
-  reviewStatePendingAction,
+  getReviewers,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -218,8 +220,14 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: (application, _role, nationalId) =>
-              reviewStatePendingAction(application, nationalId),
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId
+                  ? canReviewerApprove(nationalId, application.answers)
+                  : false,
+                getReviewers(application.answers),
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,
