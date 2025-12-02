@@ -12,7 +12,7 @@ export const cleanString = (str: string): string =>
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,
   locale: Locale,
-  fallback: string = '',
+  fallback = '',
 ): string => {
   if (!field) return fallback
   if (typeof field === 'string') return field
