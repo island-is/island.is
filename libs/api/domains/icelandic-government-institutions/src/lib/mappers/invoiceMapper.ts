@@ -3,7 +3,6 @@ import { Invoices } from '../models/invoices.model'
 import { InvoiceGroup } from '../models/invoiceGroup.model'
 import { Invoice } from '../models/invoice.model'
 import { Entity } from '../models/entity.model'
-import { generateMockItemization } from '../mocks/INVOICE_ITEMS'
 
 export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
   // Group invoices by buyer-seller relationship, and date.
