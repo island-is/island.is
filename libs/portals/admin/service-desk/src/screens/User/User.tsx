@@ -422,10 +422,12 @@ const User = () => {
                                 </T.Data>
                                 <T.Data>{notification.messageId}</T.Data>
                                 <T.Data>
-                                  {formatNationalId(
-                                    notification.onBehalfOfNationalId
-                                      .nationalId,
-                                  )}
+                                  {notification.onBehalfOfNationalId?.nationalId
+                                    ? formatNationalId(
+                                        notification.onBehalfOfNationalId
+                                          .nationalId,
+                                      )
+                                    : ''}
                                 </T.Data>
                                 <T.Data>{notification.scope}</T.Data>
                               </T.Row>
