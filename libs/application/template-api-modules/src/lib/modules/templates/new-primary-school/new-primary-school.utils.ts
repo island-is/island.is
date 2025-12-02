@@ -102,7 +102,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applyForPreferredSchool,
     payerName,
     payerNationalId,
-    attachmentsAnswer
+    attachmentsAnswer,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -213,7 +213,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     applicationType: mapApplicationType(applicationType),
     files: attachmentFiles,
-    fileUploadType: attachmentsAnswer as RegistrationApplicationInputFileUploadTypeEnum,
+    fileUploadType:
+      attachmentsAnswer as RegistrationApplicationInputFileUploadTypeEnum,
   }
 
   return newPrimarySchoolDTO
