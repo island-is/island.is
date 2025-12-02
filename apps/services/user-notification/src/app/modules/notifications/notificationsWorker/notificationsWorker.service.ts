@@ -1,11 +1,10 @@
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
 import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
-import { DocumentsScope, notificationScopes } from '@island.is/auth/scopes'
-import { ArgumentDto } from '../dto/createHnippNotification.dto'
+import { notificationScopes } from '@island.is/auth/scopes'
 import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
@@ -15,7 +14,6 @@ import {
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
-  ActorProfileDto,
   UserProfileDto,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
