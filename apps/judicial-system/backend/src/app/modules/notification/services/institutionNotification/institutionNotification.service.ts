@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+
 import {
   Inject,
   Injectable,
@@ -10,6 +12,7 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../../../case'
@@ -88,6 +91,45 @@ export class InstitutionNotificationService extends BaseNotificationService {
     )
   }
 
+  // for each reviewer filter all cases that have deadline in 7 days
+  private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
+    prosecutorsOfficeId: string,
+  ) {
+    const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
+
+    const targetDate = addDays(Date.now(), 7)
+    for (const prosecutorUser of users) {
+      const cases =
+        await this.internalCaseService.getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
+          prosecutorUser.id,
+          targetDate,
+        )
+
+      if (!cases.length) {
+        continue
+      }
+      const areMultipleCases = cases.length > 1
+      const curtCaseNumbers = cases
+        .map((theCase) => theCase.courtCaseNumber)
+        .join(', ')
+
+      const subject = 'Áminning um yfirlestur'
+      const html = `Áminning um yfirlestur á mál${
+        areMultipleCases ? 'um' : 'i'
+      } ${curtCaseNumbers}. Áfrýjunarfrestur er til ${formatDate(
+        targetDate,
+      )}. Sjá nánar í <a href="${this.config.clientUrl}
+      }">Réttarvörslugátt.</a>`
+
+      this.sendEmail({
+        subject,
+        html,
+        recipientName: prosecutorUser.name,
+        recipientEmail: prosecutorUser.email,
+      })
+    }
+  }
+
   async sendNotification(
     type: InstitutionNotificationType,
     prosecutorsOfficeId: string,
@@ -96,6 +138,11 @@ export class InstitutionNotificationService extends BaseNotificationService {
       switch (type) {
         case InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.sendIndictmentsWaitingForConfirmationNotification(
+            prosecutorsOfficeId,
+          )
+          break
+        case InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER:
+          await this.sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
             prosecutorsOfficeId,
           )
           break
