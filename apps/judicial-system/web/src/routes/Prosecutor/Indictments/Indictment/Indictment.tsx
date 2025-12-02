@@ -118,6 +118,7 @@ const Indictment = () => {
     isLoadingWorkingCase,
     caseNotFound,
     isCaseUpToDate,
+    refreshCase,
   } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -155,7 +156,9 @@ const Indictment = () => {
   const stepIsValid = isIndictmentStepValid(workingCase)
 
   const handleNavigationTo = useCallback(
-    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    async (destination: string) => {
+      router.push(`${destination}/${workingCase.id}`)
+    },
     [workingCase.id],
   )
 
