@@ -12,7 +12,6 @@ export enum Roles {
   ASSIGNEE = 'assignee',
   INSTITUTION = 'institution',
   DELEGATE = 'delegate',
-  PROCURATION = 'procuration',
 }
 
 export enum Routes {
