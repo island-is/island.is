@@ -37,6 +37,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
+import { reviewStatePendingAction } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -66,6 +67,13 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
+  adminDataConfig: {
+    answers: [
+      // fields that we need to keep after pruning for pending action to work properly
+      { key: 'assigneeInformation.$.assignee.nationalId', isListed: false },
+      { key: 'approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -198,6 +206,8 @@ const template: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
+            pendingAction: (application, _role, nationalId) =>
+              reviewStatePendingAction(application, nationalId),
           },
           lifecycle: {
             pruneMessage: {
