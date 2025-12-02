@@ -893,7 +893,7 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    this.eventService.postEvent('EXTEND', extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
   }
@@ -924,7 +924,7 @@ export class CaseController {
 
     const newCase = await this.caseService.split(theCase, theDefendant, user)
 
-    this.eventService.postEvent('SPLIT', newCase as Case)
+    this.eventService.postEvent('SPLIT', newCase)
 
     return newCase
   }
