@@ -30,7 +30,7 @@ export const getReviewStatePendingAction = (
     }
   }
 
-  // If someone else needs to review, return message with list of reviewers that need to review
+  // If the user has approved and someone else needs to review, return message with list of reviewers that need to review
   const pendingReviewersContent = getPendingReviewersText(reviewers)
   if (pendingReviewersContent) {
     return {
