@@ -14,7 +14,10 @@ import {
   applicantTableConfig,
   applicantTableFields,
 } from '../../../utils/utils'
-import { shouldShowRepresentativeStaticTable } from '../../../utils/conditions'
+import {
+  applicantIsCompany,
+  shouldShowRepresentativeStaticTable,
+} from '../../../utils/conditions'
 import { shouldShowRepresentativeTable } from '../../../utils/conditions'
 import { buildCheckboxField } from '@island.is/application/core'
 import { buildDescriptionField } from '@island.is/application/core'
@@ -54,6 +57,40 @@ export const partiesSubsection = buildSubSection({
             return staticPartyTableData(application, ApplicantsRole.LANDLORD)
           },
         }),
+
+        buildDescriptionField({
+          condition: applicantIsCompany,
+          id: 'parties.signatory.companySignatoryDescription',
+          title: m.partiesDetails.companySignatoryTitle,
+          titleVariant: 'h4',
+          description: m.partiesDetails.companySignatoryDescription,
+          marginBottom: 2,
+        }),
+        buildNationalIdWithNameField({
+          condition: applicantIsCompany,
+          id: 'parties.signatory.nationalIdWithName',
+          marginBottom: 2,
+          searchCompanies: false,
+          required: true,
+        }),
+        buildPhoneField({
+          condition: applicantIsCompany,
+          id: 'parties.signatory.phone',
+          enableCountrySelector: true,
+          required: true,
+          title: m.misc.phoneNumber,
+          width: 'half',
+        }),
+        buildTextField({
+          condition: applicantIsCompany,
+          id: 'parties.signatory.email',
+          variant: 'email',
+          title: m.misc.email,
+          width: 'half',
+          required: true,
+          marginBottom: 2,
+        }),
+
         buildStaticTableField({
           condition: shouldShowRepresentativeStaticTable,
           title: m.landlordAndTenantDetails.representativeTableTitle,
