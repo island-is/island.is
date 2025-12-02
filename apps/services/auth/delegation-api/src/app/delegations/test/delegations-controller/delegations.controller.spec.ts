@@ -149,7 +149,7 @@ describe('DelegationsController', () => {
           .get(path)
           .set('X-Query-National-Id', testCase.requestUser.nationalId)
           .query({
-            scopes: testCase.scopes.map((s) => s.name).join(','),
+            scopes: testCase.requestUser.scope,
             direction: testCase.requestUser.direction,
           })
 
