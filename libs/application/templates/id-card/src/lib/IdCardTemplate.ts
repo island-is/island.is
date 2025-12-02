@@ -35,10 +35,10 @@ import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import {
-  canReviewerApprove,
   getChargeItems,
   getReviewers,
   hasReviewer,
+  hasReviewerApproved,
 } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
@@ -220,9 +220,8 @@ const IdCardTemplate: ApplicationTemplate<
             ],
             pendingAction: (application, role, nationalId) => {
               return getReviewStatePendingAction(
-                role === Roles.ASSIGNEE && nationalId
-                  ? canReviewerApprove(application.answers, nationalId)
-                  : false,
+                role === Roles.ASSIGNEE &&
+                  hasReviewerApproved(application.answers, nationalId),
                 getReviewers(application.answers),
               )
             },

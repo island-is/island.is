@@ -31,12 +31,13 @@ export const getReviewers = (
   return result
 }
 
-export const canReviewerApprove = (
+export const hasReviewerApproved = (
   answers: FormValue,
   reviewerNationalId: string,
 ): boolean => {
   const reviewers = getReviewers(answers)
+
   const reviewer = reviewers.find((x) => x.nationalId === reviewerNationalId)
 
-  return reviewer !== undefined && reviewer.hasApproved === false
+  return !!reviewer?.hasApproved
 }

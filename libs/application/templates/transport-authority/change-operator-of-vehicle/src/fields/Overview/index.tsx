@@ -18,9 +18,9 @@ import {
 } from './sections'
 import {
   getApproveAnswers,
-  canReviewerApprove,
   isLastReviewer,
-  canReviewerReApprove,
+  hasReviewerApproved,
+  hasEveryReviewerApproved,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
 import {
@@ -176,7 +176,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {canReviewerApprove(reviewerNationalId, application.answers) && (
+            {!hasReviewerApproved(application.answers, reviewerNationalId) && (
               <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                 <Box marginLeft={3}>
                   <Button
@@ -198,7 +198,7 @@ export const Overview: FC<
                 </Box>
               </Box>
             )}
-            {canReviewerReApprove(reviewerNationalId, application.answers) &&
+            {hasEveryReviewerApproved(application.answers) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                   <Button

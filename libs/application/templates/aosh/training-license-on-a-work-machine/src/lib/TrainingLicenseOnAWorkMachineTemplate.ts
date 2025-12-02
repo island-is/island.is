@@ -38,7 +38,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
-import { canReviewerApprove, getReviewers } from '../utils'
+import { getReviewers, hasReviewerApproved } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -209,9 +209,7 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                nationalId
-                  ? canReviewerApprove(application.answers, nationalId)
-                  : false,
+                hasReviewerApproved(application.answers, nationalId),
                 getReviewers(application.answers),
               )
             },

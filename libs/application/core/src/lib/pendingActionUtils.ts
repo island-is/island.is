@@ -18,11 +18,11 @@ const getPendingReviewersText = (
 }
 
 export const getReviewStatePendingAction = (
-  canReviewerApprove: boolean,
+  hasReviewerApproved: boolean,
   reviewers: { nationalId: string; name: string; hasApproved: boolean }[],
 ): PendingAction => {
-  // If the user can approve, return "you need to review" message
-  if (canReviewerApprove) {
+  // If the user has not yet approved, return "you need to review" message
+  if (!hasReviewerApproved) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
