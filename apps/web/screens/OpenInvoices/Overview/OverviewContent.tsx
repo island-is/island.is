@@ -99,7 +99,7 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                             {formatDate(new Date(invoice.date), {
                               year: 'numeric',
                               month: 'long',
-                              day: 'numeric'
+                              day: 'numeric',
                             })}
                           </Text>
                         </Box>

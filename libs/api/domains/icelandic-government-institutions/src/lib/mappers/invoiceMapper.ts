@@ -40,7 +40,9 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
     const group = groupedInvoices.get(groupKey)
     if (!group) return
 
-    const invoiceDateGroup = group.invoices.find(i => i.date === invoice.date.toISOString())
+    const invoiceDateGroup = group.invoices.find(
+      (i) => i.date === invoice.date.toISOString(),
+    )
     if (invoiceDateGroup) {
       invoiceDateGroup.itemization.push({
         id: invoice.id.toString(),
@@ -52,11 +54,13 @@ export const mapInvoices = (data: OpenInvoicesDto): Invoices => {
       group.invoices.push({
         id: invoice.id,
         date: invoice.date.toISOString(),
-        itemization: [{
-          id: invoice.id.toString(),
-          label: invoice.id.toString(),
-          amount: invoice.amount,
-        }],
+        itemization: [
+          {
+            id: invoice.id.toString(),
+            label: invoice.id.toString(),
+            amount: invoice.amount,
+          },
+        ],
         totalItemizationAmount: invoice.amount,
       })
     }
