@@ -102,9 +102,9 @@ export enum CaseWorkerInputTypeEnum {
 }
 
 export enum AttachmentOptions {
-  ONLY_ELECTRONIC = 'onlyElectronic',
-  ONLY_ON_PAPER = 'onlyOnPaper',
-  ELECTRONIC_AND_PAPER = 'electronicAndPaper',
+  ATTACHMENTS = 'attachments', // only electronic
+  PHYSICAL = 'physical', // only on paper
+  ATTACHMENTS_AND_PHYSICAL = 'attachmentsAndPhysical', // electronic and on paper
 }
 
 export enum OrganizationSubType {

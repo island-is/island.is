@@ -29,18 +29,18 @@ export const attachmentSubSection = buildSubSection({
           id: 'attachments.answer',
           options: [
             {
-              value: AttachmentOptions.ONLY_ELECTRONIC,
+              value: AttachmentOptions.ATTACHMENTS,
               label:
                 newPrimarySchoolMessages.differentNeeds
                   .electronicAttachmentOption,
             },
             {
-              value: AttachmentOptions.ONLY_ON_PAPER,
+              value: AttachmentOptions.PHYSICAL,
               label:
                 newPrimarySchoolMessages.differentNeeds.paperAttachmentOption,
             },
             {
-              value: AttachmentOptions.ELECTRONIC_AND_PAPER,
+              value: AttachmentOptions.ATTACHMENTS_AND_PHYSICAL,
               label:
                 newPrimarySchoolMessages.differentNeeds
                   .electronicAndPaperAttachmentOption,

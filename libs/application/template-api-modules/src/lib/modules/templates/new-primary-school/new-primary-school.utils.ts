@@ -15,6 +15,7 @@ import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
   RegistrationApplicationInputApplicationTypeEnum,
+  RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -70,6 +71,7 @@ export const getSocialProfile = (application: Application) => {
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
+  attachmentFiles: string[],
 ): RegistrationApplicationInput => {
   const {
     applicationType,
@@ -100,6 +102,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applyForPreferredSchool,
     payerName,
     payerNationalId,
+    attachmentsAnswer
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -209,6 +212,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       }),
     },
     applicationType: mapApplicationType(applicationType),
+    files: attachmentFiles,
+    fileUploadType: attachmentsAnswer as RegistrationApplicationInputFileUploadTypeEnum,
   }
 
   return newPrimarySchoolDTO

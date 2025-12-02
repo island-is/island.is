@@ -342,9 +342,9 @@ export const dataSchema = z.object({
     ),
   attachments: z.object({
     answer: z.enum([
-      AttachmentOptions.ONLY_ELECTRONIC,
-      AttachmentOptions.ONLY_ON_PAPER,
-      AttachmentOptions.ELECTRONIC_AND_PAPER,
+      AttachmentOptions.ATTACHMENTS,
+      AttachmentOptions.PHYSICAL,
+      AttachmentOptions.ATTACHMENTS_AND_PHYSICAL,
     ]),
   }),
   acceptTerms: z.array(z.enum([YES])).nonempty(),

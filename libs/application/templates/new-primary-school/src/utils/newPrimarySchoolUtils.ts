@@ -233,10 +233,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
-  const attachments = getValueViaPath(
+  const attachmentsFiles = getValueViaPath(
     answers,
     'attachments.files',
   ) as FileType[]
+
+  const attachmentsAnswer = getValueViaPath<string>(
+    answers,
+    'attachments.answer',
+  )
 
   return {
     applicationType,
@@ -283,7 +288,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
-    attachments,
+    attachmentsFiles,
+    attachmentsAnswer,
   }
 }
 
