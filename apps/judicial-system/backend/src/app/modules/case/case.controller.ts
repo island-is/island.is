@@ -64,9 +64,13 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CivilClaimantService } from '../defendant'
+import {
+  CivilClaimantService,
+  CurrentDefendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { EventService } from '../event'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -892,6 +896,37 @@ export class CaseController {
     this.eventService.postEvent('EXTEND', extendedCase as Case)
 
     return extendedCase
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(districtCourtJudgeRule)
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/split/:defendantId')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new case by splitting off a defendant from an existing case',
+  })
+  async split(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() theDefendant: Defendant,
+  ): Promise<Case> {
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
+
+    const newCase = await this.caseService.split(theCase, theDefendant, user)
+
+    this.eventService.postEvent('SPLIT', newCase as Case)
+
+    return newCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)

@@ -199,6 +199,10 @@ describe('CaseController - Extend rules', () => {
   verifyRolesRules(CaseController, 'extend', [prosecutorRule])
 })
 
+describe('CaseController - Extend rules', () => {
+  verifyRolesRules(CaseController, 'extend', [districtCourtJudgeRule])
+})
+
 describe('CaseController - Create court case rules', () => {
   verifyRolesRules(CaseController, 'createCourtCase', [
     districtCourtJudgeRule,
