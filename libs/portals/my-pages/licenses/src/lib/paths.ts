@@ -10,6 +10,8 @@ export enum LicensePaths {
   HuntingLicense = '/skirteini/natturuverndarstofnun/veidikort',
   PCardDetail = '/skirteini/syslumenn/pkort',
   EhicDetail = '/skirteini/sjukratryggingar/ehic',
+  LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
+
 
   LicensesDetail = '/skirteini/:type/:id',
 }
