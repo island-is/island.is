@@ -260,7 +260,7 @@ describe('CaseController - Extend guards', () => {
   )
 })
 
-describe('CaseController - Extend guards', () => {
+describe('CaseController - Split guards', () => {
   verifyGuards(
     CaseController,
     'extend',
