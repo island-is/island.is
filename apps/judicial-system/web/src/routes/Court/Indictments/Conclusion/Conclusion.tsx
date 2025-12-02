@@ -450,6 +450,17 @@ const Conclusion: FC = () => {
               backgroundColor="white"
               label={formatMessage(strings.redistributing)}
             />
+            <RadioButton
+              id="conclusion-splitting"
+              name="conclusion-splitting"
+              checked={selectedAction === IndictmentDecision.SPLITTING}
+              onChange={() => {
+                setSelectedAction(IndictmentDecision.SPLITTING)
+              }}
+              large
+              backgroundColor="white"
+              label="Kljúfa mál"
+            />
           </BlueBox>
         </Box>
         {selectedAction === IndictmentDecision.POSTPONING && (
