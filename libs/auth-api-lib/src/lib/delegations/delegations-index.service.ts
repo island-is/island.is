@@ -78,12 +78,6 @@ type SortedDelegations = {
   deleted: DelegationIndexInfo[]
 }
 
-type FetchDelegationRecordsArgs = {
-  scope: ApiScope
-  nationalId: string
-  direction: DelegationDirection
-}
-
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
   if (!validateDelegationTypeAndProvider(delegation)) {
     throw new BadRequestException(
@@ -275,81 +269,76 @@ export class DelegationsIndexService {
       validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
     }
 
-    try {
-      // Process each scope individually since different scopes might support different delegation types
-      // Use Promise.all to run all scope queries in parallel for better performance
-      const scopePromises = apiScopes.map(async (scope) => {
-        // Get delegation types supported by this specific scope
-        const scopeDelegationTypes = await this.apiScopeDelegationTypeModel
-          .findAll({
-            where: {
-              apiScopeName: scope.name,
-            },
-          })
-          .then((x) => x.map((d) => d.delegationType))
-
-        // Check if this scope supports Custom delegations
-        const scopeSupportsCustom = scopeDelegationTypes.includes(
-          AuthDelegationType.Custom,
-        )
-
-        const orConditions = [
-          {
-            ...where,
-            type: {
-              [Op.in]: scopeDelegationTypes.filter(
-                (d) => d !== AuthDelegationType.Custom,
-              ),
-            },
+    // Process each scope individually since different scopes might support different delegation types
+    const scopePromises = apiScopes.map(async (scope) => {
+      // Get delegation types supported by this specific scope
+      const scopeDelegationTypes = await this.apiScopeDelegationTypeModel
+        .findAll({
+          where: {
+            apiScopeName: scope.name,
           },
-        ] as Array<Record<string, unknown>>
+        })
+        .then((x) => x.map((d) => d.delegationType))
 
-        if (scopeSupportsCustom) {
-          orConditions.push({
-            ...where,
-            type: { [Op.in]: [AuthDelegationType.Custom] },
-            customDelegationScopes: { [Op.contains]: [scope.name] },
-          })
-        }
-
-        const delegations = await this.delegationIndexModel
-          .findAll({
-            where: {
-              [Op.or]: orConditions,
-            },
-          })
-          .then((d) => d.flat().map((d) => d.toDTO()))
-          .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
-
-        return delegations
-      })
-
-      // Wait for all scope queries to complete
-      const allDelegations = (await Promise.all(scopePromises)).flat()
-
-      // Deduplicate delegations that may appear in multiple scope queries
-      // A delegation is unique by (fromNationalId, toNationalId, type)
-      const uniqueDelegations = allDelegations.filter(
-        (delegation, index, self) =>
-          index ===
-          self.findIndex(
-            (d) =>
-              d.fromNationalId === delegation.fromNationalId &&
-              d.toNationalId === delegation.toNationalId &&
-              d.type === delegation.type,
-          ),
+      // Check if this scope supports Custom delegations
+      const scopeSupportsCustom = scopeDelegationTypes.includes(
+        AuthDelegationType.Custom,
       )
 
-      // For now, we don't implement pagination but still return the paginated response
-      return {
-        data: uniqueDelegations,
-        totalCount: uniqueDelegations.length,
-        pageInfo: {
-          hasNextPage: false,
+      const orConditions = [
+        {
+          ...where,
+          type: {
+            [Op.in]: scopeDelegationTypes.filter(
+              (d) => d !== AuthDelegationType.Custom,
+            ),
+          },
         },
+      ] as Array<Record<string, unknown>>
+
+      if (scopeSupportsCustom) {
+        orConditions.push({
+          ...where,
+          type: { [Op.in]: [AuthDelegationType.Custom] },
+          customDelegationScopes: { [Op.contains]: [scope.name] },
+        })
       }
-    } catch (error) {
-      throw error
+
+      const delegations = await this.delegationIndexModel
+        .findAll({
+          where: {
+            [Op.or]: orConditions,
+          },
+        })
+        .then((d) => d.flat().map((d) => d.toDTO()))
+        .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+
+      return delegations
+    })
+
+    // Wait for all scope queries to complete
+    const allDelegations = (await Promise.all(scopePromises)).flat()
+
+    // Deduplicate delegations that may appear in multiple scope queries
+    // A delegation is unique by (fromNationalId, toNationalId, type)
+    const uniqueDelegations = allDelegations.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId &&
+            d.type === delegation.type,
+        ),
+    )
+
+    // For now, we don't implement pagination but still return the paginated response
+    return {
+      data: uniqueDelegations,
+      totalCount: uniqueDelegations.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
     }
   }
 
