@@ -1,52 +1,17 @@
 import { FormValue } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
-import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { applicationHasPendingApproval } from './isLastReviewer'
+import { getReviewers } from './getReviewers'
 
 // Function to check if the reviewer is authorized to approve and hasn't done that yet
 export const canReviewerApprove = (
   reviewerNationalId: string,
   answers: FormValue,
 ): boolean => {
-  // Check if reviewer is buyer and has not approved
-  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
-  if (buyer?.nationalId === reviewerNationalId && !buyer.approved) {
-    return true
-  }
+  const reviewers = getReviewers(answers)
 
-  // Check if reviewer is buyer's co-owner or operator and has not approved
-  const buyerCoOwnersAndOperators = (
-    getValueViaPath(
-      answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  if (
-    buyerCoOwnersAndOperators.some(
-      ({ nationalId, approved }) =>
-        nationalId === reviewerNationalId && !approved,
-    )
-  ) {
-    return true
-  }
+  const reviewer = reviewers.find((x) => x.nationalId === reviewerNationalId)
 
-  // Check if reviewer is seller's co-owner and has not approved
-  const sellerCoOwners = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as CoOwnerAndOperator[]
-  if (
-    sellerCoOwners.some(
-      ({ nationalId, approved }) =>
-        nationalId === reviewerNationalId && !approved,
-    )
-  ) {
-    return true
-  }
-
-  return false
+  return reviewer !== undefined && reviewer.hasApproved === false
 }
 
 // Special case to allow seller (or any reviewer) to trigger an external API call to complete owner change
@@ -56,38 +21,13 @@ export const canReviewerReApprove = (
   reviewerNationalId: string,
   answers: FormValue,
 ): boolean => {
-  const sellerNationalId = getValueViaPath(
-    answers,
-    'seller.nationalId',
-    '',
-  ) as string
-  const buyerNationalId = getValueViaPath(
-    answers,
-    'buyer.nationalId',
-    '',
-  ) as string
-  const buyerCoOwnersAndOperators = (
-    getValueViaPath(
-      answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  const sellerCoOwners = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as CoOwnerAndOperator[]
+  const reviewers = getReviewers(answers)
 
-  const isReviewerAuthorized = [
-    sellerNationalId === reviewerNationalId,
-    buyerNationalId === reviewerNationalId,
-    buyerCoOwnersAndOperators.some(
-      ({ nationalId }) => nationalId === reviewerNationalId,
-    ),
-    sellerCoOwners.some(({ nationalId }) => nationalId === reviewerNationalId),
-  ].some(Boolean)
+  // Check if this national ID is one of the reviewers
+  const isReviewerAuthorized = reviewers.some(
+    (x) => x.nationalId === reviewerNationalId,
+  )
 
-  // Check if the reviewer is authorized and if all required approvals have been completed
+  // Allowed only when all approvals are completed
   return isReviewerAuthorized && !applicationHasPendingApproval(answers)
 }
