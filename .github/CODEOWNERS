@@ -219,6 +219,7 @@ codemagic.yaml                                                                  
 /libs/clients/vehicles-mileage/                                                                                              @island-is/hugsmidjan
 /libs/clients/user-notification/                                                                                             @island-is/hugsmidjan
 /libs/clients/passports/                                                                                                     @island-is/hugsmidjan
+/libs/clients/police-cases/                                                                                                  @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                                        @island-is/hugsmidjan
 /libs/clients/assets/                                                                                                        @island-is/hugsmidjan
 /libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
@@ -339,7 +340,6 @@ codemagic.yaml                                                                  
 /libs/clients/fiskistofa/                                                                                                    @island-is/stefna
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
-/libs/clients/icelandic-government-institution-vacancies/                                                                    @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna

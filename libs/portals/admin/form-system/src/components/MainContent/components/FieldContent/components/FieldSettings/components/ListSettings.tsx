@@ -1,18 +1,18 @@
-import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../../../../context/ControlContext'
+import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { m } from '@island.is/form-system/ui'
 import {
+  Box,
+  Button,
   GridColumn as Column,
+  RadioButton,
   GridRow as Row,
   Select,
   Stack,
-  Box,
-  Button,
-  RadioButton,
 } from '@island.is/island-ui/core'
-import { FormSystemField } from '@island.is/api/schema'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { useLocale } from '@island.is/localization'
+import { useContext, useState } from 'react'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 
 const predeterminedLists = [
   {
@@ -41,9 +41,9 @@ export const ListSettings = () => {
   const { control, setInListBuilder, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
   const { activeItem } = control
+  const { dependencies } = control.form
   const currentItem = activeItem.data as FormSystemField
   const [radio, setRadio] = useState([true, false, false])
-
   const radioHandler = (index: number) => {
     setRadio((prev) =>
       prev.map((_, i) => {
@@ -52,7 +52,7 @@ export const ListSettings = () => {
     )
   }
 
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const listTypes = [
     'sveitarfelog',
     'lond',
@@ -71,6 +71,25 @@ export const ListSettings = () => {
         update: updateActiveItem,
       },
     })
+  }
+
+  const hasDependency = (): boolean => {
+    const listItemIds = Array.from(
+      new Set(
+        currentItem.list
+          ?.map((item) => item?.id)
+          .filter((id) => id !== undefined),
+      ),
+    ) as string[]
+    return (
+      dependencies?.some(
+        (dep) =>
+          listItemIds.includes(dep?.parentProp as string) ||
+          dep?.childProps?.some((child) =>
+            listItemIds.includes(child as string),
+          ),
+      ) ?? false
+    )
   }
 
   return (

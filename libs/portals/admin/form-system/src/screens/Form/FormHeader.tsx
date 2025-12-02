@@ -64,7 +64,7 @@ export const FormHeader = () => {
   }
 
   return (
-    <Box marginBottom={4}>
+    <Box>
       <Row>
         <Column offset="3/12" span="9/12">
           <Box
