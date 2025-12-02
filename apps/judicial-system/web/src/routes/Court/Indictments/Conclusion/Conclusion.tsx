@@ -26,7 +26,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefendantSelector,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -44,6 +43,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CourtSessionType,
+  Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -134,6 +134,9 @@ const Conclusion: FC = () => {
     useState<string>()
   const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
     useState<SelectableItem[]>([])
+  const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
+    null,
+  )
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -310,7 +313,7 @@ const Conclusion: FC = () => {
   }
 
   const stepIsValid = () => {
-    // Do not leave any downloads unfinished
+    // Do not leave any uploads unfinished
     if (!allFilesDoneOrError) {
       return false
     }
@@ -328,6 +331,8 @@ const Conclusion: FC = () => {
         return Boolean(postponementReason)
       case IndictmentDecision.SCHEDULING:
         return Boolean(selectedCourtSessionType && courtDate?.date)
+      case IndictmentDecision.SPLITTING:
+        return Boolean(selectedDefendant)
       case IndictmentDecision.COMPLETING:
         switch (selectedDecision) {
           case CaseIndictmentRulingDecision.RULING:
@@ -634,7 +639,32 @@ const Conclusion: FC = () => {
           )}
           {selectedAction === IndictmentDecision.SPLITTING && (
             <Box component="section">
-              <DefendantSelector defendants={workingCase.defendants} />
+              <SectionHeading title="Hvern á að kljúfa frá málinu?" />
+              <Select
+                name="defendant"
+                options={workingCase.defendants?.map((defendant) => ({
+                  label: defendant.name ?? 'Nafn ekki skráð',
+                  value: defendant.id,
+                }))}
+                label="Ákærði"
+                placeholder="Veldu ákærða"
+                value={
+                  selectedDefendant
+                    ? {
+                        label: selectedDefendant.name ?? 'Nafn ekki skráð',
+                        value: selectedDefendant.id,
+                      }
+                    : null
+                }
+                onChange={(option) => {
+                  const defendant = workingCase.defendants?.find(
+                    (defendant) => defendant.id === option?.value,
+                  )
+                  setSelectedDefendant(defendant ?? null)
+                }}
+                noOptionsMessage="Enginn ákærði er skráður í málinu"
+                isClearable
+              />
             </Box>
           )}
           {selectedAction && !workingCase.withCourtSessions && (
