@@ -388,13 +388,7 @@ export class HealthDirectorateHealthService {
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
     if (!input.validTo || !input.validFrom) {
-      return null
-    }
-    const validFrom = new Date(input.validFrom)
-    const validTo = new Date(input.validTo)
-
-    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
-      this.logger.debug('Invalid date values provided to createPermit')
+      this.logger.debug('Missing validTo or validFrom in createPermit input')
       return null
     }
 
@@ -404,8 +398,8 @@ export class HealthDirectorateHealthService {
           body: {
             codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
             countryCodes: input.countryCodes,
-            validFrom: validFrom,
-            validTo: validTo,
+            validFrom: input.validFrom,
+            validTo: input.validTo,
           },
         }),
       ),
