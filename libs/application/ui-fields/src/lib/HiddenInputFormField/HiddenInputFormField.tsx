@@ -5,6 +5,7 @@ import {
   HiddenInputField,
   FieldBaseProps,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 
 type Field = HiddenInputWithWatchedValueField | HiddenInputField
 
@@ -50,7 +51,7 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   // than string (e.g. boolean or number) then it will be defaulted to
   // empty string and fail in zod validation
   useEffect(() => {
-    const oldValue = getValues(id)
+    const oldValue = getValueViaPath(application.answers, id) ?? getValues(id)
     if (getDefaultValue === undefined && oldValue === '') {
       setValue(id, undefined)
     }
