@@ -5,7 +5,6 @@ import {
   HiddenInputField,
   FieldBaseProps,
 } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 
 type Field = HiddenInputWithWatchedValueField | HiddenInputField
 
@@ -18,7 +17,13 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   field,
 }) => {
   const { register, setValue, getValues, watch } = useFormContext()
-  const { watchValue, defaultValue: getDefaultValue, id, valueModifier } = field
+  const {
+    watchValue,
+    defaultValue: getDefaultValue,
+    id,
+    valueModifier,
+    dontDefaultToEmptyString,
+  } = field
   const defaultValue =
     typeof getDefaultValue === 'function'
       ? getDefaultValue(application, field)
@@ -46,13 +51,20 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
     getDefaultValue,
   ])
 
-  // Initalize field with undefined if getDefaultValue is undefined
-  // and current value is empty string, otherwise if field has a type other
-  // than string (e.g. boolean or number) then it will be defaulted to
-  // empty string and fail in zod validation
+  // Initialize field with undefined when:
+  // - getDefaultValue is undefined, and
+  //   - the current value is an empty string, OR
+  //   - the field has dontDefaultToEmptyString enabled.
+  //
+  // This prevents non-string types (e.g. boolean or number) from being defaulted
+  // to an empty string by react-hook-form, which would otherwise cause validation
+  // issues (e.g. with Zod).
   useEffect(() => {
-    const oldValue = getValueViaPath(application.answers, id) ?? getValues(id)
-    if (getDefaultValue === undefined && oldValue === '') {
+    const oldValue = getValues(id)
+    if (
+      getDefaultValue === undefined &&
+      (oldValue === '' || dontDefaultToEmptyString)
+    ) {
       setValue(id, undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
