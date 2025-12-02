@@ -1,4 +1,4 @@
-import { NationalRegistryOtherIndividual } from './individual'
+import { NationalRegistryIndividual } from './individual'
 
 export interface ApplicantChildCustodyInformation {
   nationalId: string
@@ -8,7 +8,7 @@ export interface ApplicantChildCustodyInformation {
   genderCode: string
   livesWithApplicant: boolean
   livesWithBothParents: boolean
-  otherParent?: NationalRegistryOtherIndividual | null
+  otherParent?: NationalRegistryIndividual | null
   citizenship: {
     code: string | null
     name: string | null

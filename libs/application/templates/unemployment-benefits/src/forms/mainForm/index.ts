@@ -4,17 +4,18 @@ import { overviewSection } from './overview'
 import { firstSectionInformation } from './firstSectionInformation'
 import { applicantSection } from './applicantSection'
 import { secondSectionInformation } from './secondSectionInformation'
-import Logo from '../../assets/Logo'
 import { employmentSearchSection } from './employmentSearchSection'
 import { educationSection } from './educationSection'
 import { payoutSection } from './payoutSection'
 import { employmentInformationSection } from './employmentInformationSection'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     firstSectionInformation,
     applicantSection,

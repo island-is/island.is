@@ -5,22 +5,28 @@ import {
   YES,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getSelectedSchoolSubType } from '../../../utils/newPrimarySchoolUtils'
-import { OrganizationSubType } from '../../../utils/constants'
-import { hasSpecialEducationSubType } from '../../../utils/conditionUtils'
+import { ApplicationFeatureKey } from '../../../utils/constants'
+import { shouldShowPage } from '../../../utils/conditionUtils'
 
 export const childCircumstancesSubSection = buildSubSection({
   id: 'childCircumstancesSubSection',
   title:
     newPrimarySchoolMessages.differentNeeds.childCircumstancesSubSectionTitle,
   condition: (answers, externalData) =>
-    hasSpecialEducationSubType(answers, externalData),
+    shouldShowPage(
+      answers,
+      externalData,
+      ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+    ),
   children: [
     buildMultiField({
       id: 'childCircumstances',
       title:
         newPrimarySchoolMessages.differentNeeds
           .childCircumstancesSubSectionTitle,
+      description:
+        newPrimarySchoolMessages.differentNeeds
+          .childCircumstancesSubSectionDescription,
       children: [
         buildCheckboxField({
           id: 'childCircumstances.onSiteObservation',
@@ -61,20 +67,10 @@ export const childCircumstancesSubSection = buildSubSection({
                 newPrimarySchoolMessages.differentNeeds.approveCallInExpert,
             },
           ],
-          condition: (answers, externalData) => {
-            const subType = getSelectedSchoolSubType(answers, externalData)
-
-            return (
-              subType ===
-                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL ||
-              subType === OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
-            )
-          },
         }),
         buildCheckboxField({
           id: 'childCircumstances.childViews',
           title: newPrimarySchoolMessages.differentNeeds.childViews,
-
           options: [
             {
               value: YES,

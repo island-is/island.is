@@ -17,6 +17,7 @@ import {
   INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CourtSessionRulingType,
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
@@ -359,6 +360,19 @@ const Conclusion: FC = () => {
         return false
     }
   }
+
+  const hasJudgementRuling =
+    workingCase.courtSessions?.some(
+      (courtSession) =>
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
+        Boolean(courtSession.ruling),
+    ) ?? false
+
+  const missingRulingInCourtSessions =
+    !!workingCase.withCourtSessions &&
+    selectedAction === IndictmentDecision.COMPLETING &&
+    selectedDecision === CaseIndictmentRulingDecision.RULING &&
+    !hasJudgementRuling
 
   return (
     <PageLayout
@@ -743,6 +757,12 @@ const Conclusion: FC = () => {
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
+          hideNextButton={missingRulingInCourtSessions}
+          infoBoxText={
+            missingRulingInCourtSessions
+              ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
+              : ''
+          }
         />
       </FormContentContainer>
     </PageLayout>
