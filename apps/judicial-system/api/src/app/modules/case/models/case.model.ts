@@ -333,6 +333,9 @@ export class Case {
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
 
+  @Field(() => Boolean, { nullable: true })
+  readonly withCourtSessions?: boolean
+
   @Field(() => [CourtSessionResponse], { nullable: true })
   readonly courtSessions?: CourtSessionResponse[]
 
@@ -512,4 +515,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
 }

@@ -1310,6 +1310,14 @@ export const m = defineMessages({
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  datepickPeriodLabel: {
+    id: 'service.portal:datepicker-period-placeholder',
+    defaultMessage: 'Veldu tímabil',
+  },
+  datepickPeriod: {
+    id: 'service.portal:datepicker-period',
+    defaultMessage: 'Tímabil',
+  },
   pick: {
     id: 'service.portal:pick',
     defaultMessage: 'Velja',
@@ -1481,7 +1489,7 @@ export const m = defineMessages({
   },
   medicineDelegation: {
     id: 'service.portal:medicine-delegation',
-    defaultMessage: 'Lyfjaumboð',
+    defaultMessage: 'Lyfjaheimildir',
   },
   medicinePaymentParticipation: {
     id: 'service.portal:medicine-payment-participation',
@@ -1639,6 +1647,11 @@ export const m = defineMessages({
   mmsTooltipSecondary: {
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
+  },
+  nationalPoliceCommissionerTooltip: {
+    id: 'service.portal:national-police-commissioner-tooltip',
+    defaultMessage:
+      'Ríkislögreglustjóri hefur umsjón með gögnum um dómsmál og þeim tengt.',
   },
   domsmalaraduneytidTooltip: {
     id: 'service.portal:dmr-tooltip',
@@ -1930,9 +1943,34 @@ export const m = defineMessages({
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
   },
+  myCases: {
+    id: 'service.portal:my-cases',
+    defaultMessage: 'Mín mál',
+  },
+  myCasesIntro: {
+    id: 'service.portal:my-cases-intro',
+    defaultMessage: 'Mín mál',
+  },
+  myPoliceCases: {
+    id: 'service.portal:my-police-cases',
+    defaultMessage: 'Mín lögreglumál',
+  },
+  myPoliceCasesIntro: {
+    id: 'service.portal:my-police-cases-intro',
+    defaultMessage:
+      'Hér getur þú fundið upplýsingar yfir stöðu þinna mála hjá lögreglunni',
+  },
+  policeCases: {
+    id: 'service.portal:police-cases',
+    defaultMessage: 'Lögreglumál',
+  },
   subpoena: {
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
+  },
+  case: {
+    id: 'service.portal:case',
+    defaultMessage: 'Dómur',
   },
   urgent: {
     id: 'service.portal:urgent',
@@ -1971,6 +2009,10 @@ export const m = defineMessages({
     id: 'service.portal:bloodtype',
     defaultMessage: 'Blóðflokkur',
   },
+  type: {
+    id: 'service.portal:type',
+    defaultMessage: 'Tegund',
+  },
   sjukratryggingar: {
     id: 'service.portal:sjukratryggingar',
     defaultMessage: 'Sjúkratryggingar',
@@ -1990,6 +2032,10 @@ export const m = defineMessages({
   copied: {
     id: 'service.portal:copied',
     defaultMessage: 'Afritað!',
+  },
+  forward: {
+    id: 'service.portal:forward',
+    defaultMessage: 'Áfram',
   },
 })
 
@@ -2122,6 +2168,10 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
   },
+  healthPatientData: {
+    id: 'sp.search.tags:health-patient-data',
+    defaultMessage: 'Sjúkraupplýsingar',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',
@@ -2137,5 +2187,13 @@ export const searchTagsMessages = defineMessages({
   assetsMachines: {
     id: 'sp.search.tags:assets-machines',
     defaultMessage: 'Vélar',
+  },
+  medicineDelegationOther: {
+    id: 'sp.search.tags:medicine-delegation-other',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicineDelegationOtherNew: {
+    id: 'sp.search.tags:medicine-delegation-other-new',
+    defaultMessage: 'Nýtt lyfjaumboð',
   },
 })

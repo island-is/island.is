@@ -89,12 +89,14 @@ export enum ApplicationTypes {
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
+  REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
 }
 
 export const ApplicationConfigurations = {
@@ -462,6 +464,10 @@ export const ApplicationConfigurations = {
     slug: 'framhaldsskoli',
     translation: ['ss.application', 'uiForms.application'],
   },
+  [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
+    slug: 'atvinnuleysisbaetur',
+    translation: ['vmst.ub.application', 'uiForms.application'],
+  },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',
     translation: ['aa.application', 'uiForms.application'],
@@ -485,5 +491,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
     slug: 'undanthaga-vegna-flutnings',
     translation: ['ta.eft.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
+    slug: 'skraning-fasteignanumera',
+    translation: ['ronp.application', 'uiForms.application'],
   },
 }

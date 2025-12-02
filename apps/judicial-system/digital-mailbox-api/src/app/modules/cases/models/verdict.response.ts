@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   formatDate,
   getRulingInstructionItems,
+  getVerdictAppealDecision,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -27,11 +28,11 @@ export class VerdictResponse {
   @ApiProperty({ type: String })
   subtitle?: string
 
-  @ApiProperty({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
-
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
+
+  @ApiProperty({ type: String })
+  appealDecision?: VerdictAppealDecision
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
@@ -44,33 +45,42 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
+    const verdict = defendant?.verdict
+
     const isServiceRequired =
-      defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFineCase =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+
+    const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
     const baseDate = isServiceRequired
-      ? defendant?.verdict?.serviceDate
+      ? verdict?.serviceDate
       : internalCase.rulingDate
 
     const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFineCase)
+      ? getIndictmentAppealDeadlineDate({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
       : null
 
     const isAppealDeadlineExpired = appealDeadline
       ? hasDatePassed(appealDeadline)
       : false
 
+    // Default judgements can't be appealed
+    const canBeAppealed = !!verdict && !verdict.isDefaultJudgement
+
     const rulingInstructionsItems = getRulingInstructionItems(
-      defendant?.verdict?.serviceInformationForDefendant ?? [],
+      verdict?.serviceInformationForDefendant ?? [],
+      lang,
     )
 
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      // subtitle: 'TODO subtitle (if needed)',
-      appealDecision: defendant?.verdict?.appealDecision,
+      appealDecision: verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -83,28 +93,44 @@ export class VerdictResponse {
             ],
             [t.court, internalCase.court?.name || t.notAvailable],
             [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
-            [
-              t.appealDeadline,
-              appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
-            ],
+            ...(canBeAppealed
+              ? [
+                  [
+                    t.appealDeadline,
+                    appealDeadline
+                      ? formatDate(appealDeadline)
+                      : t.notAvailable,
+                  ],
+                ]
+              : []),
+            ...(canBeAppealed && isAppealDeadlineExpired
+              ? [
+                  [
+                    t.appealDecision,
+                    getVerdictAppealDecision(verdict?.appealDecision),
+                  ],
+                ]
+              : []),
           ].map((item) => ({
             label: item[0],
             value: item[1],
           })),
         },
-        // Ruling text
         {
           label: t.ruling,
           items: [
             {
-              // This should be replaced with the actual ruling text
-              // but we don't have that stored right now.
-              value: 'TODO Ruling text goes here',
+              // there should only be one ruling judgement over all court sessions
+              // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
+              value:
+                internalCase.courtSessions?.[0]?.ruling ??
+                internalCase.ruling ??
+                '',
               type: 'text',
             },
           ],
         },
-        ...(!isAppealDeadlineExpired
+        ...(canBeAppealed && !isAppealDeadlineExpired
           ? [
               {
                 label: t.appealDecision,

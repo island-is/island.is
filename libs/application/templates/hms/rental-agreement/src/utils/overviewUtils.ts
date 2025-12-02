@@ -94,17 +94,25 @@ const getApplicantsItem = (
     return []
   }
 
-  const fullName = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.fullName',
-  )
-  const nationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
+  const fullName =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName') ??
+    getValueViaPath<string>(externalData, 'identity.data.name')
+  const nationalId =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+    getValueViaPath<string>(externalData, 'identity.data.nationalId')
   const userProfile = getValueViaPath<UserProfile>(
     externalData,
     'userProfile.data',
+  )
+
+  const email =
+    getValueViaPath<string>(answers, 'applicant.email') ??
+    userProfile?.email ??
+    ''
+  const phone = formatPhoneNumber(
+    getValueViaPath<string>(answers, 'applicant.phoneNumber') ??
+      userProfile?.mobilePhoneNumber ??
+      '',
   )
 
   return [
@@ -121,12 +129,12 @@ const getApplicantsItem = (
     {
       width: 'half' as const,
       keyText: m.misc.email,
-      valueText: userProfile?.email ?? '',
+      valueText: email,
     },
     {
       width: 'half' as const,
       keyText: m.misc.phoneNumber,
-      valueText: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
+      valueText: phone,
     },
   ]
 }
@@ -252,7 +260,6 @@ export const propertyRegistrationOverview = (
             valueText: getOptionLabel(
               propertyInfo.categoryClassGroup || '',
               getPropertyClassGroupOptions,
-              '',
             ),
           },
         ]
@@ -265,7 +272,6 @@ export const propertyRegistrationOverview = (
       valueText: getOptionLabel(
         propertyInfo?.categoryType || '',
         getPropertyTypeOptions,
-        '',
       ),
     },
     {
@@ -390,13 +396,12 @@ export const fireProtectionsOverview = (
     {
       width: 'half',
       keyText: m.overview.fireProtectionsFireBlanketLabel,
-      valueText: getOptionLabel(fireBlanket || '', getYesNoOptions, '') || '-',
+      valueText: getOptionLabel(fireBlanket || '', getYesNoOptions) || '-',
     },
     {
       width: 'half',
       keyText: m.overview.fireProtectionsEmergencyExitsLabel,
-      valueText:
-        getOptionLabel(emergencyExits || '', getYesNoOptions, '') || '-',
+      valueText: getOptionLabel(emergencyExits || '', getYesNoOptions) || '-',
     },
   ]
 }
@@ -510,7 +515,6 @@ export const otherCostsOverview = (
       valueText: getOptionLabel(
         otherFees.housingFund || '',
         getOtherFeesPayeeOptions,
-        '',
       ),
     },
     ...houseFundAmount,
@@ -521,7 +525,6 @@ export const otherCostsOverview = (
       valueText: getOptionLabel(
         otherFees.electricityCost || '',
         getOtherFeesPayeeOptions,
-        '',
       ),
     },
     ...electricityCostMeterNumber,
@@ -532,7 +535,6 @@ export const otherCostsOverview = (
       valueText: getOptionLabel(
         otherFees.heatingCost || '',
         getOtherFeesPayeeOptions,
-        '',
       ),
     },
     ...heatingCostMeterNumber,
@@ -604,7 +606,6 @@ export const priceOverview = (
       valueText: getOptionLabel(
         rentalAmount?.paymentDateOptions ?? '',
         getRentalAmountPaymentDateOptions,
-        '',
       ),
     },
     {
@@ -616,7 +617,6 @@ export const priceOverview = (
           : getOptionLabel(
               rentalAmount?.paymentMethodOptions || '',
               getPaymentMethodOptions,
-              '',
             ),
     },
     ...paymentBankInfo,
@@ -662,7 +662,7 @@ export const depositOverview = (
     [SecurityDepositTypeOptions.INSURANCE_COMPANY]:
       deposit?.insuranceCompanyInfo || '-',
     [SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND]:
-      deposit?.landlordsMutualFundInfo || '-',
+      deposit?.mutualFundInfo || '-',
   }
 
   const securityName =
@@ -694,7 +694,6 @@ export const depositOverview = (
       valueText: getOptionLabel(
         deposit?.securityType ?? '',
         getSecurityDepositTypeOptions,
-        '',
       ),
     },
     ...securityName,

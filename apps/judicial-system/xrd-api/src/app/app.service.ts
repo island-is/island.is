@@ -18,12 +18,16 @@ import {
 import { getRulingInstructionItems } from '@island.is/judicial-system/formatters'
 import {
   DefenderChoice,
+  DocumentDeliverySupplementCode,
+  getServiceDateFromSupplements,
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -280,32 +284,14 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    const getPoliceDocumentDeliveryStatus = ({
-      delivered,
-      deliveredToDefendant,
-      deliveredOnPaper,
-      deliveredOnIslandis,
-      deliveredToLawyer,
-    }: UpdatePoliceDocumentDeliveryDto) => {
-      if (delivered) {
-        if (deliveredOnPaper || deliveredToDefendant) {
-          return ServiceStatus.IN_PERSON
-        }
-        if (deliveredOnIslandis) {
-          return ServiceStatus.ELECTRONICALLY
-        }
-        if (deliveredToLawyer) {
-          return ServiceStatus.DEFENDER
-        }
-        return ServiceStatus.FAILED
-      }
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.supplements?.find(
+        (supplement) =>
+          supplement.code === DocumentDeliverySupplementCode.APPEAL_DECISION,
+      )
 
-      return undefined
-    }
-
-    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
-      const appealDecision =
-        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision?.value
 
       if (
         !Object.values(VerdictAppealDecision).includes(
@@ -320,19 +306,38 @@ export class AppService {
       }
     }
 
+    const serviceStatus = mapPoliceVerdictDeliveryStatus({
+      delivered: updatePoliceDocumentDelivery.delivered,
+      deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+      deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+      deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
+    })
+
+    // Ideally we would want to always get the service date from servedAt, but for legal paper
+    // deliveries, the service date is (for now) sent as a supplement, so we need to check there first
+    const legalPaperServiceDate =
+      serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        ? getServiceDateFromSupplements(
+            updatePoliceDocumentDelivery.supplements,
+          )
+        : undefined
+
     const parsedPoliceUpdate = {
-      serviceDate: updatePoliceDocumentDelivery.servedAt,
+      serviceDate:
+        legalPaperServiceDate ?? updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
-      serviceStatus: getPoliceDocumentDeliveryStatus(
-        updatePoliceDocumentDelivery,
-      ),
+      serviceStatus: serviceStatus,
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
-      appealDecision:
-        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
-        undefined,
+      appealDecision: deliveredAppealDecision?.value,
     }
+    this.logger.info(
+      `Parsed update request ${JSON.stringify(parsedPoliceUpdate)}`,
+    )
+
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
@@ -345,8 +350,6 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
-      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
-      // once service date has been recorded for the verdict
 
       const response = await res.json()
 

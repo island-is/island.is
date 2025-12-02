@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsIsoDateTime,
@@ -60,7 +61,42 @@ const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
 
 const ALL_COURTS_TAG = ''
-const DEFAULT_DISTRICT_COURT_TAG = 'hd-reykjavik'
+const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
+
+const DISTRICT_COURT_TAGS = [
+  {
+    label: 'Reykjavík',
+    value: 'hd-reykjavik',
+  },
+  {
+    label: 'Vesturland',
+    value: 'hd-vesturland',
+  },
+  {
+    label: 'Vestfirðir',
+    value: 'hd-vestfirdir',
+  },
+  {
+    label: 'Norðurland vestra',
+    value: 'hd-nordurland-vestra',
+  },
+  {
+    label: 'Norðurland eystra',
+    value: 'hd-nordurland-eystra',
+  },
+  {
+    label: 'Austurland',
+    value: 'hd-austurland',
+  },
+  {
+    label: 'Suðurland',
+    value: 'hd-sudurland',
+  },
+  {
+    label: 'Reykjanes',
+    value: 'hd-reykjanes',
+  },
+]
 
 enum QueryParam {
   COURT = 'court',
@@ -78,8 +114,12 @@ interface CourtAgendasProps {
   lawyers: GetVerdictLawyersQuery['webVerdictLawyers']['lawyers']
 }
 
-const extractCourtLevelFromState = (court: string | null | undefined) =>
-  court || ALL_COURTS_TAG
+const extractCourtLevelFromState = (court: string | null | undefined) => {
+  if (court === DEFAULT_DISTRICT_COURT_TAG) {
+    return DISTRICT_COURT_TAGS.map((tag) => tag.value).join(',')
+  }
+  return court || ALL_COURTS_TAG
+}
 
 const useCourtAgendasState = (props: CourtAgendasProps) => {
   const initialRender = useRef(true)
@@ -206,11 +246,15 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
 
           courtAgendas.sort((a, b) => {
             if (!a.dateFrom && !b.dateFrom) return 0
-            if (!b.dateFrom) return -1
-            if (!a.dateFrom) return 1
-            return (
-              new Date(b.dateFrom).getTime() - new Date(a.dateFrom).getTime()
-            )
+            if (!b.dateFrom) return 1
+            if (!a.dateFrom) return -1
+            const dateFromDiff =
+              new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+            if (dateFromDiff !== 0) return dateFromDiff
+            if (!a.dateTo && !b.dateTo) return 0
+            if (!b.dateTo) return 1
+            if (!a.dateTo) return -1
+            return new Date(a.dateTo).getTime() - new Date(b.dateTo).getTime()
           })
 
           return {
@@ -470,39 +514,12 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   const districtCourtTags = useMemo(() => {
     return [
       {
-        label: 'Reykjavík',
+        label: formatMessage(m.listPage.showAllDistrictCourts),
         value: DEFAULT_DISTRICT_COURT_TAG,
       },
-      {
-        label: 'Vesturland',
-        value: 'hd-vesturland',
-      },
-      {
-        label: 'Vestfirðir',
-        value: 'hd-vestfirdir',
-      },
-      {
-        label: 'Norðurland vestra',
-        value: 'hd-nordurland-vestra',
-      },
-      {
-        label: 'Norðurland eystra',
-        value: 'hd-nordurland-eystra',
-      },
-      {
-        label: 'Austurland',
-        value: 'hd-austurland',
-      },
-      {
-        label: 'Suðurland',
-        value: 'hd-sudurland',
-      },
-      {
-        label: 'Reykjanes',
-        value: 'hd-reykjanes',
-      },
+      ...DISTRICT_COURT_TAGS,
     ]
-  }, [])
+  }, [formatMessage])
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
@@ -568,7 +585,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   ])
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndex) && (
           <meta name="robots" content="noindex, nofollow" />
@@ -686,7 +703,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
         <Box
           background="blue100"
           paddingTop={[3, 3, 0]}
-          className={styles.mainContainer}
+          className={cn(styles.mainContainer, 'rs_read')}
         >
           <SidebarLayout
             fullWidthContent={false}
@@ -934,7 +951,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       variables: {
         input: {
           page: 1,
-          court,
+          court: extractCourtLevelFromState(court),
           dateFrom,
           dateTo,
           lawyer,

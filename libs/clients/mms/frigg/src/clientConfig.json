@@ -8,7 +8,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RegistrationApplicationInput"
               }
@@ -157,6 +157,22 @@
             }
           },
           {
+            "name": "municipalityCode",
+            "required": false,
+            "in": "query",
+            "description": "Search by municipality code",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "gradeLevels",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated grade levels (e.g. gradeLevels=01,02,03)",
+            "style": "form",
+            "explode": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "sort",
             "required": false,
             "in": "query",
@@ -256,10 +272,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/OrganizationModel" }
-                }
+                "schema": { "$ref": "#/components/schemas/OrganizationModel" }
               }
             }
           }
@@ -423,6 +436,14 @@
           "languages": { "type": "array", "items": { "type": "string" } }
         }
       },
+      "PayerInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" }
+        },
+        "required": ["name", "nationalId"]
+      },
       "RegistrationInput": {
         "type": "object",
         "properties": {
@@ -444,10 +465,6 @@
           "health": { "$ref": "#/components/schemas/HealthInput" },
           "social": { "$ref": "#/components/schemas/SocialInput" },
           "language": { "$ref": "#/components/schemas/LanguageInput" },
-          "preRegisteredId": {
-            "type": "string",
-            "description": "If a user has an open ongoing registration, for example first year students submit the id here"
-          },
           "defaultOrganizationId": {
             "type": "string",
             "description": "The school a student should or does belong to, pre registered school or current school"
@@ -459,16 +476,11 @@
           "requestingMeeting": { "type": "boolean" },
           "expectedStartDate": { "format": "date-time", "type": "string" },
           "expectedEndDate": { "format": "date-time", "type": "string" },
+          "payer": { "$ref": "#/components/schemas/PayerInput" },
           "reasonId": {
             "type": "string",
             "description": "Reason ID for application",
             "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
-          },
-          "additionalRequesters": {
-            "description": "national IDs of additional requesters",
-            "example": ["1234567890", "2345678901"],
-            "type": "array",
-            "items": { "type": "string" }
           }
         },
         "required": ["applicant", "selectedOrganizationId", "expectedStartDate"]
@@ -476,13 +488,19 @@
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
-          "files": {
+          "registration": { "$ref": "#/components/schemas/RegistrationInput" },
+          "additionalRequesters": {
+            "description": "national IDs of additional requesters",
+            "example": ["1234567890", "2345678901"],
             "type": "array",
-            "items": { "type": "string", "format": "binary" }
+            "items": { "type": "string" }
           },
-          "registration": { "$ref": "#/components/schemas/RegistrationInput" }
+          "approvalRequester": {
+            "type": "string",
+            "description": "national ID of the approval requester"
+          }
         },
-        "required": ["registration"]
+        "required": ["registration", "approvalRequester"]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
@@ -544,31 +562,6 @@
         },
         "required": ["type", "options"]
       },
-      "AddressModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "address": { "type": "string" },
-          "municipality": { "type": "string", "nullable": true },
-          "postCode": { "type": "string" },
-          "country": { "type": "string", "nullable": true },
-          "houseNumber": { "type": "number", "nullable": true },
-          "streetNumber": { "type": "number", "nullable": true },
-          "apartmentNumber": { "type": "number", "nullable": true },
-          "municipalityId": { "type": "string", "nullable": true }
-        },
-        "required": [
-          "id",
-          "address",
-          "municipality",
-          "postCode",
-          "country",
-          "houseNumber",
-          "streetNumber",
-          "apartmentNumber",
-          "municipalityId"
-        ]
-      },
       "ApplicationFeatureModel": {
         "type": "object",
         "properties": { "key": { "type": "string" } },
@@ -599,10 +592,7 @@
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "nationalId": { "type": "string", "nullable": true },
           "name": { "type": "string" },
-          "nameDative": { "type": "string", "nullable": true },
-          "slug": { "type": "string", "nullable": true },
           "type": {
             "type": "string",
             "enum": [
@@ -613,19 +603,25 @@
               "school"
             ]
           },
+          "subType": {
+            "type": "string",
+            "enum": [
+              "specialEducationBehaviorDepartment",
+              "specialEducationBehaviorSchool",
+              "specialEducationDisabilityDepartment",
+              "specialEducationDisabilitySchool",
+              "internationalSchool",
+              "generalSchool"
+            ],
+            "nullable": true
+          },
+          "sector": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "nullable": true
+          },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
-          "address": {
-            "nullable": true,
-            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
-          },
-          "managing": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/OrganizationModel" }
-          },
           "unitId": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "phone": { "type": "string", "nullable": true },
-          "website": { "type": "string", "nullable": true },
           "settings": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/ApplicationSettings" }]
@@ -633,19 +629,38 @@
         },
         "required": [
           "id",
-          "nationalId",
           "name",
-          "nameDative",
-          "slug",
           "type",
+          "subType",
+          "sector",
           "gradeLevels",
-          "address",
-          "managing",
           "unitId",
-          "email",
-          "phone",
-          "website",
           "settings"
+        ]
+      },
+      "AddressModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "address": { "type": "string" },
+          "municipality": { "type": "string", "nullable": true },
+          "postCode": { "type": "string" },
+          "country": { "type": "string", "nullable": true },
+          "houseNumber": { "type": "number", "nullable": true },
+          "streetNumber": { "type": "number", "nullable": true },
+          "apartmentNumber": { "type": "number", "nullable": true },
+          "municipalityId": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "address",
+          "municipality",
+          "postCode",
+          "country",
+          "houseNumber",
+          "streetNumber",
+          "apartmentNumber",
+          "municipalityId"
         ]
       },
       "HealthProfileModel": {
@@ -728,6 +743,126 @@
           "languages"
         ]
       },
+      "AffiliationOrganizationModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nationalId": { "type": "string", "nullable": true },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "childCare",
+              "municipality",
+              "national",
+              "privateOwner",
+              "school"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "enum": [
+              "specialEducationBehaviorDepartment",
+              "specialEducationBehaviorSchool",
+              "specialEducationDisabilityDepartment",
+              "specialEducationDisabilitySchool",
+              "internationalSchool",
+              "generalSchool"
+            ],
+            "nullable": true
+          },
+          "sector": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "nullable": true
+          }
+        },
+        "required": ["id", "nationalId", "name", "type", "subType", "sector"]
+      },
+      "AffiliationModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "aide",
+              "counselor",
+              "guardian",
+              "member",
+              "principal",
+              "student",
+              "teacher"
+            ]
+          },
+          "classificationId": { "type": "string" },
+          "beginDate": { "format": "date-time", "type": "string" },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "organization": {
+            "nullable": true,
+            "allOf": [
+              { "$ref": "#/components/schemas/AffiliationOrganizationModel" }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "classificationId",
+          "beginDate",
+          "endDate",
+          "organization"
+        ]
+      },
+      "AgentModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "preferredName": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true },
+          "pronouns": {
+            "nullable": true,
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["emergencyContact", "guardian", "sibling"]
+          },
+          "relationTypeId": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "object" },
+          "domicile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
+          },
+          "requiresInterpreter": { "type": "boolean", "default": false },
+          "preferredLanguage": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "name",
+          "nationalId",
+          "preferredName",
+          "nationality",
+          "pronouns",
+          "type",
+          "relationTypeId",
+          "phone",
+          "email",
+          "domicile",
+          "requiresInterpreter",
+          "preferredLanguage"
+        ]
+      },
       "UserModel": {
         "type": "object",
         "properties": {
@@ -767,12 +902,12 @@
           "affiliations": {
             "nullable": true,
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "$ref": "#/components/schemas/AffiliationModel" }
           },
           "agents": {
             "nullable": true,
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "$ref": "#/components/schemas/AgentModel" }
           },
           "phone": { "type": "string", "nullable": true },
           "mobile": { "type": "string", "nullable": true }

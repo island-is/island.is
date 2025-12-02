@@ -94,20 +94,15 @@ const InputAdvocate: FC<Props> = ({
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const options = useMemo(() => {
-    const filteredLawyers =
-      advocateType === 'litigator'
-        ? lawyers?.filter((l) => l.isLitigator)
-        : lawyers
-
-    if (!filteredLawyers || filteredLawyers.length === 0) {
+    if (!lawyers || lawyers.length === 0) {
       return []
     }
 
-    return filteredLawyers?.map((l) => ({
+    return lawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
       value: l.email,
     }))
-  }, [lawyers, advocateType])
+  }, [lawyers])
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
@@ -231,7 +226,7 @@ const InputAdvocate: FC<Props> = ({
         component={Input}
         replacement={{ _: /\d/ }}
         mask={PHONE_NUMBER}
-        value={formatPhoneNumber(lawyerPhoneNumber)}
+        value={formatPhoneNumber(lawyerPhoneNumber) ?? ''}
         disabled={Boolean(disabled)}
         onChange={handlePhoneNumberChange}
         onBlur={handlePhoneNumberBlur}

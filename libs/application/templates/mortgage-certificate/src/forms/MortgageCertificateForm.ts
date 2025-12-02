@@ -15,7 +15,7 @@ import {
 } from '../lib/messages'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItemsWithExtraLabel } from '../util'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const MortgageCertificateForm = (
   allowShip = false,
@@ -23,7 +23,7 @@ export const MortgageCertificateForm = (
 ): Form => {
   return buildForm({
     id: 'MortgageCertificateFormDraft',
-    logo: Logo,
+    logo: DistrictCommissionersLogo,
     mode: FormModes.DRAFT,
     renderLastScreenBackButton: true,
     renderLastScreenButton: true,

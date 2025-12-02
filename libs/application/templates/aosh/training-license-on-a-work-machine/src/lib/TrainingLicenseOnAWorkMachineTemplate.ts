@@ -34,7 +34,6 @@ import {
   UserProfileApiWithValidation,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -61,7 +60,6 @@ const template: ApplicationTemplate<
       ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE
     ].translation,
   dataSchema: TrainingLicenseOnAWorkMachineAnswersSchema,
-  featureFlag: Features.TrainingLicenseOnAWorkMachineEnabled,
   allowedDelegations: [
     {
       type: AuthDelegationType.Custom,

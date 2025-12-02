@@ -51,6 +51,7 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        modified
         caseId
         defendantId
         created
@@ -62,10 +63,10 @@ query Case($input: CaseQueryInput!) {
         serviceDate
         serviceInformationForDefendant
         externalPoliceDocumentId
-        legalPaperRequestDate
         comment
         deliveredToDefenderNationalId
         servedBy
+        isDefaultJudgement
       }
     }
     defenderName
@@ -249,6 +250,7 @@ query Case($input: CaseQueryInput!) {
       recordedSpeed
       speedLimit
     }
+    withCourtSessions
     courtSessions {
       id
       created
@@ -284,9 +286,33 @@ query Case($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
+        mergedDocumentOrder
         name
         caseFileId
         generatedPdfUri
+        submittedBy
+      }
+      mergedFiledDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        mergedCourtSessionId
+        mergedDocumentOrder
+        name
+        caseFileId
+        generatedPdfUri
+        submittedBy
+      }
+      courtSessionStrings {
+        id
+        courtSessionId
+        mergedCaseId
+        stringType
+        value
       }
     }
     unfiledCourtDocuments {
@@ -375,6 +401,8 @@ query Case($input: CaseQueryInput!) {
       type
       state
       indictmentRulingDecision
+      hasCivilClaims
+      withCourtSessions
       courtSessions {
         id
         startDate
@@ -388,9 +416,33 @@ query Case($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          mergedDocumentOrder
           name
           caseFileId
           generatedPdfUri
+          submittedBy
+        }
+        mergedFiledDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          mergedCourtSessionId
+          mergedDocumentOrder
+          name
+          caseFileId
+          generatedPdfUri
+          submittedBy
+        }
+        courtSessionStrings {
+          id
+          courtSessionId
+          mergedCaseId
+          stringType
+          value
         }
       }
       court {
@@ -453,6 +505,7 @@ query Case($input: CaseQueryInput!) {
           serviceRequirement
           serviceDate
           serviceInformationForDefendant
+          externalPoliceDocumentId
         }
       }
       caseFiles {
@@ -501,6 +554,7 @@ query Case($input: CaseQueryInput!) {
     }
     mergeCaseNumber
     civilDemands
+    penalties
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

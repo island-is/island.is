@@ -8,6 +8,7 @@ import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type BeforeSubmitCallback = (
   event?: string,
@@ -60,6 +61,7 @@ export type FormTextWithLocale =
   | ((
       application: Application,
       locale: Locale,
+      formatMessage?: FormatMessage,
     ) => StaticText | null | undefined)
 
 export type FormComponent =

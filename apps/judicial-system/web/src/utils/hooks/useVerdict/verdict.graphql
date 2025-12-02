@@ -9,9 +9,9 @@ query Verdict($input: VerdictQueryInput!) {
     serviceDate
     serviceInformationForDefendant
     externalPoliceDocumentId
-    legalPaperRequestDate
     comment
     deliveredToDefenderNationalId
     servedBy
+    isDefaultJudgement
   }
 }

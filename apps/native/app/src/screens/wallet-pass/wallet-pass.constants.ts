@@ -16,6 +16,7 @@ export const INCLUDED_LICENSE_TYPES = [
 ]
 
 export const SHOW_INFO_ALERT_TYPES = [
+  GenericLicenseType.DriversLicense,
   GenericLicenseType.PCard,
   GenericLicenseType.Ehic,
   GenericLicenseType.Passport,

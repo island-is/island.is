@@ -15,6 +15,23 @@ export const overviewAttachments = [
     marginBottom: 'gutter',
   }),
   buildKeyValueField({
+    label: m.additionalCommentsTitle,
+    value: ({ answers }) =>
+      getValueViaPath<string>(answers, 'additionalComments') || '',
+    condition: (answers) => {
+      const comments = getValueViaPath<string>(answers, 'additionalComments')
+      return comments !== undefined && comments.trim().length > 0
+    },
+  }),
+  buildDescriptionField({
+    id: 'additionalComments_space',
+    space: 'gutter',
+    condition: (answers) => {
+      const comments = getValueViaPath<string>(answers, 'additionalComments')
+      return comments !== undefined && comments.trim().length > 0
+    },
+  }),
+  buildKeyValueField({
     label: '',
     value: ({ answers }) => {
       const files = getValueViaPath<Array<Files>>(

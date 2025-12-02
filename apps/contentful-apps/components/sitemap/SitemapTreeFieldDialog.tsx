@@ -22,6 +22,8 @@ import * as styles from './SitemapTreeFieldDialog.css'
 interface CategoryState {
   label: string
   labelEN?: string
+  shortLabel?: string
+  shortLabelEN?: string
   slug: string
   slugEN?: string
   description: string
@@ -69,6 +71,30 @@ const CategoryForm = ({
             }}
           />
         </div>
+      </div>
+      <div>
+        <FormControl.Label>Short title (Icelandic)</FormControl.Label>
+        <TextInput
+          value={state.shortLabel}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabel: ev.target.value,
+            }))
+          }}
+        />
+      </div>
+      <div>
+        <FormControl.Label>Short title (English)</FormControl.Label>
+        <TextInput
+          value={state.shortLabelEN}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              shortLabelEN: ev.target.value,
+            }))
+          }}
+        />
       </div>
       <div>
         <FormControl.Label>Slug (Icelandic)</FormControl.Label>
@@ -138,15 +164,10 @@ const CategoryForm = ({
           if (!stateToSubmit.slugEN) {
             stateToSubmit.slugEN = slugify(stateToSubmit.labelEN ?? '')
           }
-
           if (!stateToSubmit.status) {
             stateToSubmit.status = 'draft'
-          } else if (
-            stateToSubmit.status === 'published' &&
-            initialState.status === 'published'
-          ) {
-            stateToSubmit.status = 'changed'
           }
+
           onSubmit(stateToSubmit)
         }}
       >
@@ -162,6 +183,8 @@ interface UrlState {
   url: string
   urlEN?: string
   urlType?: SitemapUrlType
+  description?: string
+  descriptionEN?: string
 }
 
 const UrlForm = ({
@@ -260,6 +283,35 @@ const UrlForm = ({
           </div>
         </div>
       )}
+
+      <div>
+        <FormControl.Label>Description (Icelandic)</FormControl.Label>
+        <Textarea
+          value={state.description}
+          onChange={(ev) => {
+            setState((prevState) => ({
+              ...prevState,
+              description: ev.target.value,
+            }))
+          }}
+          resize="none"
+        />
+      </div>
+      <div>
+        <FormControl.Label>Description (English)</FormControl.Label>
+        <div>
+          <Textarea
+            value={state.descriptionEN}
+            onChange={(ev) => {
+              setState((prevState) => ({
+                ...prevState,
+                descriptionEN: ev.target.value,
+              }))
+            }}
+            resize="none"
+          />
+        </div>
+      </div>
 
       <Button
         variant="primary"

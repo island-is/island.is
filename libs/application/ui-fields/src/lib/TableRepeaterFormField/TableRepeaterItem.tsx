@@ -1,4 +1,11 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  coreDefaultFieldMessages,
+  DEFAULT_ALLOWED_FILE_TYPES,
+  DEFAULT_FILE_SIZE_LIMIT,
+  DEFAULT_TOTAL_FILE_SIZE_SUM,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   AlertMessageField,
   Application,
@@ -6,10 +13,12 @@ import {
   DescriptionField,
   FieldComponents,
   FieldTypes,
+  FileUploadField,
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
   VehiclePermnoWithInfoField,
+  StaticText,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -32,6 +41,7 @@ import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageForm
 import * as styles from './TableRepeaterItem.css'
 import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
 import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
+import { FileUploadFormField } from '../FileUploadFormField/FileUploadFormField'
 import { RecordObject } from '@island.is/shared/types'
 
 interface ItemFieldProps {
@@ -113,6 +123,8 @@ export const Item = ({
     Component = VehiclePermnoWithInfoFormField
   } else if (component === 'description') {
     Component = DescriptionFormField
+  } else if (component === 'fileUpload') {
+    Component = FileUploadFormField
   } else {
     Component = componentMapper[component]
   }
@@ -290,6 +302,13 @@ export const Item = ({
     suffixVal = formatText(item.suffix, application, formatMessage)
   }
 
+  let labelVal: StaticText | undefined
+  if (typeof label === 'function') {
+    labelVal = label(activeIndex)
+  } else {
+    labelVal = label
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -314,7 +333,7 @@ export const Item = ({
   if (component === 'selectAsync') {
     selectAsyncProps = {
       id: id,
-      title: label,
+      title: labelVal,
       placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
@@ -389,6 +408,7 @@ export const Item = ({
       errorTitle: item.errorTitle,
       fallbackErrorMessage: item.fallbackErrorMessage,
       validationFailedErrorMessage: item.validationFailedErrorMessage,
+      isTrailer: item.isTrailer ?? false,
     }
   }
 
@@ -402,6 +422,32 @@ export const Item = ({
       title: item.title,
       titleVariant: item.titleVariant,
       showRequiredStar: requiredVal,
+    }
+  }
+
+  let fileUploadProps: FileUploadField | undefined
+  if (component === 'fileUpload') {
+    fileUploadProps = {
+      id: id,
+      type: FieldTypes.FILEUPLOAD,
+      component: FieldComponents.FILEUPLOAD,
+      children: undefined,
+      uploadHeader:
+        item.uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
+      introduction: item.introduction,
+      uploadDescription:
+        item.uploadDescription ||
+        coreDefaultFieldMessages.defaultFileUploadDescription,
+      uploadButtonLabel:
+        item.uploadButtonLabel ||
+        coreDefaultFieldMessages.defaultFileUploadButtonLabel,
+      uploadMultiple: item.uploadMultiple,
+      uploadAccept: item.uploadAccept ?? DEFAULT_ALLOWED_FILE_TYPES,
+      maxSize: item.maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
+      maxSizeErrorText: item.maxSizeErrorText,
+      totalMaxSize: item.totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
+      maxFileCount: item.maxFileCount,
+      forImageUpload: item.forImageUpload,
     }
   }
 
@@ -423,9 +469,9 @@ export const Item = ({
           : undefined
       }
     >
-      {component === 'radio' && label && (
+      {component === 'radio' && labelVal && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
-          {formatText(label, application, formatMessage)}
+          {formatText(labelVal, application, formatMessage)}
         </Text>
       )}
       {component === 'selectAsync' && selectAsyncProps && (
@@ -471,17 +517,28 @@ export const Item = ({
           showFieldName={true}
         />
       )}
+      {component === 'fileUpload' && fileUploadProps && (
+        <FileUploadFormField
+          application={application}
+          error={getFieldError(itemId)}
+          field={{
+            ...fileUploadProps,
+          }}
+          showFieldName={true}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
         !(component === 'hiddenInput' && hiddenInputProps) &&
         !(component === 'alertMessage' && alertMessageProps) &&
         !(
           component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps
         ) &&
-        !(component === 'description' && descriptionProps) && (
+        !(component === 'description' && descriptionProps) &&
+        !(component === 'fileUpload' && fileUploadProps) && (
           <Component
             id={id}
             name={id}
-            label={formatText(label, application, formatMessage)}
+            label={formatText(labelVal, application, formatMessage)}
             options={translatedOptions}
             placeholder={formatText(placeholder, application, formatMessage)}
             split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}

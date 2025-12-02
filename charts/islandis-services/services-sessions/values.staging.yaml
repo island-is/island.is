@@ -65,8 +65,8 @@ ingress:
           - '/'
 namespace: 'services-sessions'
 podDisruptionBudget:
-  maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

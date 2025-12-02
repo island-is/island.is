@@ -3,6 +3,7 @@ export const is = {
   // General buttons
   'button.change': 'Breyta',
   'button.open': 'Skoða',
+  'button.moreInfoHere': 'Nánari upplýsingar hér',
 
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
@@ -296,6 +297,12 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
+  'profile.moreInfo': 'Meira á mínum síðum',
+  'profile.accessControl': 'Aðgangsstýring',
+  'profile.supportPayments': 'Framfærsla',
+  'profile.education': 'Menntun',
+  'profile.lawAndOrder': 'Lög og reglur',
+  'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -304,6 +311,7 @@ export const is = {
     'Ökutæki sem eru skráð á þig munu birtast hér.',
   'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
   'vehicles.mileageRequired': 'Kílómetragjald',
+  'vehicles.registerMileage': 'Skrá kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -353,11 +361,29 @@ export const is = {
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
+  'vehicle.links.vehicleHistory': 'Ökutækjaferill',
+  'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
+  'vehicle.links.returnCertificate': 'Skilavottorð',
+  'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Panta númeraplötu',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Panta skráningarskírteini',
+  'vehicle.links.dropdown.changeCoOwner': 'Breyta meðeiganda',
+  'vehicle.links.dropdown.changeOperator': 'Breyta umráðamanni',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Ferilskýrsla',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
   'assetsOverview.emptyListDescription':
     'Fasteignir sem skráðar eru á þig munu birtast hér.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Veðbókarvottorð',
 
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
@@ -385,6 +411,9 @@ export const is = {
   'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
   'finance.heading.subtitle':
     'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+  'finance.links.payments': 'Greiðslur',
+  'finance.links.loans': 'Lán',
+  'finance.links.transactions': 'Hreyfingar',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',
@@ -463,6 +492,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.description':
+    'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
   'licenseDetail.ehic.alert.description':
     'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
@@ -644,6 +676,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Loftbrú lokuð',
+  'airDiscount.disabledDescription':
+    'Afsláttarkóðar Loftbrúar eru ekki í gildi í augnablikinu.',
 
   // offline
   'offline.title': 'Ekkert netsamband',
