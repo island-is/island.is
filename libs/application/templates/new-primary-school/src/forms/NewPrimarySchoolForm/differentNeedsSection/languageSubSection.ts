@@ -81,8 +81,11 @@ export const languageSubSection = buildSubSection({
           fields: {
             code: {
               component: 'select',
-              label:
-                newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
+              label: (index) => ({
+                ...newPrimarySchoolMessages.differentNeeds
+                  .languageSelectionTitle,
+                values: { index: index + 1 },
+              }),
               placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
               width: 'full',
               options: (application) => {

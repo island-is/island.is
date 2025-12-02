@@ -394,7 +394,6 @@ export class HealthDirectorateHealthService {
   public async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
     status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>

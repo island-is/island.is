@@ -5,15 +5,19 @@ import {
   buildFileUploadField,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
+  buildRadioField,
   buildSelectField,
   buildSubSection,
   buildTextField,
+  coreMessages,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
 import {
   employment as employmentMessages,
   application as applicationMessages,
+  contentfulIdMapReasonsForJobSearch,
 } from '../../../lib/messages'
 import { GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO } from '@island.is/clients/vmst-unemployment'
 import { getReasonBasedOnChoice, getReasonsBasedOnChoice } from '../../../utils'
@@ -138,6 +142,111 @@ export const reasonForJobSearchSubSection = buildSubSection({
             return (
               !!reasonBasedOnChoice &&
               !!reasonBasedOnChoice.requiresAdditonalDetails
+            )
+          },
+        }),
+
+        buildRadioField({
+          id: 'reasonForJobSearch.reasonQuestion',
+          width: 'half',
+          title: (application, _, formatMessage) => {
+            let title = ''
+            if (typeof formatMessage === 'function') {
+              const reasonBasedOnChoice = getReasonBasedOnChoice(
+                application.answers,
+                application.externalData,
+              )
+              if (reasonBasedOnChoice?.contentfulQuestionId) {
+                const contentfulId =
+                  contentfulIdMapReasonsForJobSearch[
+                    reasonBasedOnChoice?.contentfulQuestionId
+                  ]
+                title = formatMessage(contentfulId)
+              }
+            }
+            return title
+          },
+          options: [
+            { label: coreMessages.radioYes, value: YES },
+            { label: coreMessages.radioNo, value: NO },
+          ],
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.contentfulQuestionId
+            )
+          },
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.reasonQuestionRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              application.answers,
+              application.externalData,
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.contentfulQuestionId
+            )
+          },
+        }),
+        buildAlertMessageField({
+          id: 'reasonForJobSearch.extraExplanation',
+          alertType: 'info',
+          message: (application, locale, formatMessage) => {
+            let title = ''
+            if (typeof formatMessage === 'function') {
+              const reasonBasedOnChoice = getReasonBasedOnChoice(
+                application.answers,
+                application.externalData,
+              )
+              const radioAnswer = getValueViaPath<string>(
+                application.answers,
+                'reasonForJobSearch.reasonQuestion',
+              )
+              if (
+                radioAnswer === YES &&
+                reasonBasedOnChoice?.contentfulIdOnYes
+              ) {
+                const contentfulId =
+                  contentfulIdMapReasonsForJobSearch[
+                    reasonBasedOnChoice?.contentfulIdOnYes
+                  ]
+                title = formatMessage(contentfulId)
+              }
+
+              if (radioAnswer === NO && reasonBasedOnChoice?.contentfulIdOnNo) {
+                const contentfulId =
+                  contentfulIdMapReasonsForJobSearch[
+                    reasonBasedOnChoice?.contentfulIdOnNo
+                  ]
+                title = formatMessage(contentfulId)
+              }
+            }
+            return title
+          },
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+
+            const radioAnswer = getValueViaPath<string>(
+              answers,
+              'reasonForJobSearch.reasonQuestion',
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.contentfulQuestionId &&
+              !!radioAnswer
             )
           },
         }),

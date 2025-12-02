@@ -11,6 +11,8 @@ import {
   CaseFileCategory,
   DefendantEventType,
   EventType,
+  isProsecutionUser,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -103,14 +105,17 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case) => {
+const transformCase = (theCase: Case, user?: User) => {
   return {
     ...theCase.toJSON(),
     defendants: transformDefendants(theCase.defendants),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
-    penalties: CaseString.penalties(theCase.caseStrings),
+    penalties:
+      user && isProsecutionUser(user)
+        ? CaseString.penalties(theCase.caseStrings)
+        : null,
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
@@ -149,7 +154,10 @@ const transformCase = (theCase: Case) => {
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    return next.handle().pipe(map(transformCase))
+    const request = context.switchToHttp().getRequest()
+    const user = request.user.currentUser as User
+
+    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
 }
 

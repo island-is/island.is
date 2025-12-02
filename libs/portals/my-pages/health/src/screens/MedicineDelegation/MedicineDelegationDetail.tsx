@@ -31,7 +31,6 @@ const MedicineDelegationDetail = () => {
     variables: {
       locale: lang,
       input: {
-        active: false,
         status: [
           'active',
           'expired',

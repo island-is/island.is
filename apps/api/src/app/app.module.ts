@@ -87,6 +87,7 @@ import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { PoliceCasesClientConfig } from '@island.is/clients/police-cases'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AuthIdsApiClientConfig } from '@island.is/clients/auth/ids-api'
@@ -123,7 +124,7 @@ import {
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
-import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
@@ -188,7 +189,10 @@ import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
-import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientConfig,
+  SocialInsuranceAdministrationClientConfigV2,
+} from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 import { FormSystemClientConfig } from '@island.is/clients/form-system'
 import { FormSystemModule } from '@island.is/api/domains/form-system'
@@ -393,6 +397,7 @@ const environment = getConfig
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         NationalRegistryV3ClientConfig,
+        PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
@@ -428,6 +433,7 @@ const environment = getConfig
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         SocialInsuranceAdministrationClientConfig,
+        SocialInsuranceAdministrationClientConfigV2,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         FinancialStatementsInaoClientConfig,
@@ -460,7 +466,7 @@ const environment = getConfig
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
-        IcelandicGovernmentInstitutionVacanciesClientConfig,
+        FinancialManagementAuthorityClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,

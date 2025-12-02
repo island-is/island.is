@@ -1,5 +1,5 @@
 import { HTMLText } from '@island.is/regulations'
-import { Editor } from '@island.is/regulations-tools/Editor'
+import { Editor } from '@dmr.is/regulations-tools/Editor'
 import { useRef } from 'react'
 import { classes, editorWrapper } from '../htmlEditor/HTMLEditor.css'
 import { Box } from '@island.is/island-ui/core'
