@@ -387,296 +387,260 @@ const Conclusion: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.decisionTitle)}
-            required
-          />
-          <BlueBox className={styles.grid({ gap: 2 })}>
-            <RadioButton
-              id="conclusion-postponing"
-              name="conclusion-decision"
-              checked={selectedAction === IndictmentDecision.POSTPONING}
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.POSTPONING)
-              }}
-              large
-              backgroundColor="white"
-              label={formatMessage(strings.postponing)}
-            />
-            <RadioButton
-              id="conclusion-scheduling"
-              name="conclusion-decision"
-              checked={selectedAction === IndictmentDecision.SCHEDULING}
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.SCHEDULING)
-              }}
-              large
-              backgroundColor="white"
-              label={formatMessage(strings.scheduling)}
-            />
-            <RadioButton
-              id="conclusion-postponing-until-verdict"
-              name="conclusion-decision"
-              checked={
-                selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
-              }
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-              }}
-              large
-              backgroundColor="white"
-              label={formatMessage(strings.postponingUntilVerdict)}
-            />
-            <RadioButton
-              id="conclusion-completing"
-              name="conclusion-decision"
-              checked={selectedAction === IndictmentDecision.COMPLETING}
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.COMPLETING)
-              }}
-              large
-              backgroundColor="white"
-              label={formatMessage(strings.completing)}
-            />
-            <RadioButton
-              id="conclusion-redistributing"
-              name="conclusion-redistribute"
-              checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.REDISTRIBUTING)
-              }}
-              large
-              backgroundColor="white"
-              label={formatMessage(strings.redistributing)}
-            />
-            <RadioButton
-              id="conclusion-splitting"
-              name="conclusion-splitting"
-              checked={selectedAction === IndictmentDecision.SPLITTING}
-              onChange={() => {
-                setSelectedAction(IndictmentDecision.SPLITTING)
-              }}
-              large
-              backgroundColor="white"
-              label="Kljúfa mál"
-            />
-          </BlueBox>
-        </Box>
-        {selectedAction === IndictmentDecision.POSTPONING && (
-          <Box marginBottom={5}>
-            <SectionHeading title={formatMessage(strings.postponingTitle)} />
-            <Input
-              name="reasonForPostponement"
-              rows={10}
-              autoExpand={{ on: true, maxHeight: 600 }}
-              label={formatMessage(strings.reasonForPostponementTitle)}
-              placeholder={formatMessage(
-                strings.reasonForPostponementPlaceholder,
-              )}
-              value={postponementReason}
-              onChange={(event) => setPostponementReason(event.target.value)}
-              textarea
+        <Box className={styles.grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(strings.decisionTitle)}
               required
             />
-          </Box>
-        )}
-        {selectedAction === IndictmentDecision.SCHEDULING && (
-          <Box marginBottom={5}>
-            <SectionHeading title={formatMessage(strings.schedulingTitle)} />
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Select
-                  name="court-session-type"
-                  label={formatMessage(strings.courtSessionLabel)}
-                  placeholder={formatMessage(strings.courtSessionPlaceholder)}
-                  options={courtSessionOptions}
-                  value={
-                    selectedCourtSessionType &&
-                    courtSessionOptions.find(
-                      (option) => option.value === selectedCourtSessionType,
-                    )
-                  }
-                  onChange={(selectedOption) => {
-                    const type = selectedOption?.value
-                    setSelectedCourtSessionType(type)
-                  }}
-                  required
-                />
-              </Box>
-              <CourtArrangements
-                handleCourtDateChange={handleCourtDateChange}
-                handleCourtRoomChange={handleCourtRoomChange}
-                courtDate={workingCase.courtDate}
-                blueBox={false}
+            <BlueBox className={styles.grid({ gap: 2 })}>
+              <RadioButton
+                id="conclusion-postponing"
+                name="conclusion-decision"
+                checked={selectedAction === IndictmentDecision.POSTPONING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.POSTPONING)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.postponing)}
+              />
+              <RadioButton
+                id="conclusion-scheduling"
+                name="conclusion-decision"
+                checked={selectedAction === IndictmentDecision.SCHEDULING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.SCHEDULING)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.scheduling)}
+              />
+              <RadioButton
+                id="conclusion-postponing-until-verdict"
+                name="conclusion-decision"
+                checked={
+                  selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
+                }
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.postponingUntilVerdict)}
+              />
+              <RadioButton
+                id="conclusion-completing"
+                name="conclusion-decision"
+                checked={selectedAction === IndictmentDecision.COMPLETING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.COMPLETING)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.completing)}
+              />
+              <RadioButton
+                id="conclusion-redistributing"
+                name="conclusion-redistribute"
+                checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.REDISTRIBUTING)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.redistributing)}
+              />
+              <RadioButton
+                id="conclusion-splitting"
+                name="conclusion-splitting"
+                checked={selectedAction === IndictmentDecision.SPLITTING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.SPLITTING)
+                }}
+                large
+                backgroundColor="white"
+                label="Kljúfa mál"
               />
             </BlueBox>
           </Box>
-        )}
-        {selectedAction === IndictmentDecision.COMPLETING && (
-          <>
-            <Box marginBottom={5}>
-              <SectionHeading
-                title={formatMessage(strings.completingTitle)}
+          {selectedAction === IndictmentDecision.POSTPONING && (
+            <Box component="section">
+              <SectionHeading title={formatMessage(strings.postponingTitle)} />
+              <Input
+                name="reasonForPostponement"
+                rows={10}
+                autoExpand={{ on: true, maxHeight: 600 }}
+                label={formatMessage(strings.reasonForPostponementTitle)}
+                placeholder={formatMessage(
+                  strings.reasonForPostponementPlaceholder,
+                )}
+                value={postponementReason}
+                onChange={(event) => setPostponementReason(event.target.value)}
+                textarea
                 required
               />
-              <BlueBox className={styles.grid({ gap: 2 })}>
-                <RadioButton
-                  id="decision-ruling"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.RULING
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.RULING)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.ruling)}
-                />
-                <RadioButton
-                  id="decision-fine"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.FINE
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.FINE)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.fine)}
-                />
-                <RadioButton
-                  id="decision-dismissal"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.DISMISSAL
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.DISMISSAL)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.dismissal)}
-                />
-                <RadioButton
-                  id="decision-merge"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.MERGE
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.merge)}
-                />
-                <RadioButton
-                  id="decision-cancellation"
-                  name="decision"
-                  checked={
-                    selectedDecision ===
-                    CaseIndictmentRulingDecision.CANCELLATION
-                  }
-                  onChange={() => {
-                    setSelectedDecision(
-                      CaseIndictmentRulingDecision.CANCELLATION,
-                    )
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.cancellation)}
+            </Box>
+          )}
+          {selectedAction === IndictmentDecision.SCHEDULING && (
+            <Box component="section">
+              <SectionHeading title={formatMessage(strings.schedulingTitle)} />
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <Select
+                    name="court-session-type"
+                    label={formatMessage(strings.courtSessionLabel)}
+                    placeholder={formatMessage(strings.courtSessionPlaceholder)}
+                    options={courtSessionOptions}
+                    value={
+                      selectedCourtSessionType &&
+                      courtSessionOptions.find(
+                        (option) => option.value === selectedCourtSessionType,
+                      )
+                    }
+                    onChange={(selectedOption) => {
+                      const type = selectedOption?.value
+                      setSelectedCourtSessionType(type)
+                    }}
+                    required
+                  />
+                </Box>
+                <CourtArrangements
+                  handleCourtDateChange={handleCourtDateChange}
+                  handleCourtRoomChange={handleCourtRoomChange}
+                  courtDate={workingCase.courtDate}
+                  blueBox={false}
                 />
               </BlueBox>
             </Box>
-            {selectedDecision === CaseIndictmentRulingDecision.MERGE && (
-              <Box marginBottom={5}>
+          )}
+          {selectedAction === IndictmentDecision.COMPLETING && (
+            <>
+              <Box component="section">
                 <SectionHeading
-                  title={formatMessage(strings.connectedCaseNumbersTitle)}
+                  title={formatMessage(strings.completingTitle)}
                   required
                 />
                 <BlueBox className={styles.grid({ gap: 2 })}>
-                  <SelectConnectedCase
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    mergeCaseNumber={mergeCaseNumber}
+                  <RadioButton
+                    id="decision-ruling"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.RULING
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.RULING)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.ruling)}
                   />
-                  <Input
-                    name="mergeCaseNumber"
-                    label={formatMessage(strings.mergeCaseNumberLabel)}
-                    autoComplete="off"
-                    value={mergeCaseNumber}
-                    placeholder={formatMessage(
-                      strings.mergeCaseNumberPlaceholder,
-                    )}
-                    onChange={(evt) => {
-                      setMergeCaseNumberErrorMessage(undefined)
-                      setMergeCaseNumber(evt.target.value)
+                  <RadioButton
+                    id="decision-fine"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.FINE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.FINE)
                     }}
-                    onBlur={(evt) => {
-                      handleMergeCaseNumberBlur(evt.target.value)
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.fine)}
+                  />
+                  <RadioButton
+                    id="decision-dismissal"
+                    name="decision"
+                    checked={
+                      selectedDecision ===
+                      CaseIndictmentRulingDecision.DISMISSAL
+                    }
+                    onChange={() => {
+                      setSelectedDecision(
+                        CaseIndictmentRulingDecision.DISMISSAL,
+                      )
                     }}
-                    hasError={Boolean(mergeCaseNumberErrorMessage)}
-                    errorMessage={mergeCaseNumberErrorMessage}
-                    disabled={Boolean(workingCase.mergeCase)}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.dismissal)}
+                  />
+                  <RadioButton
+                    id="decision-merge"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.MERGE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.merge)}
+                  />
+                  <RadioButton
+                    id="decision-cancellation"
+                    name="decision"
+                    checked={
+                      selectedDecision ===
+                      CaseIndictmentRulingDecision.CANCELLATION
+                    }
+                    onChange={() => {
+                      setSelectedDecision(
+                        CaseIndictmentRulingDecision.CANCELLATION,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.cancellation)}
                   />
                 </BlueBox>
               </Box>
-            )}
-          </>
-        )}
-        {selectedAction && !workingCase.withCourtSessions && (
-          <Box
-            component="section"
-            marginBottom={selectedDecision === 'RULING' ? 5 : 10}
-          >
-            <SectionHeading
-              title={formatMessage(strings.courtRecordTitle)}
-              required={selectedAction === IndictmentDecision.COMPLETING}
-            />
-            <InputFileUpload
-              name="court-records"
-              files={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.COURT_RECORD,
+              {selectedDecision === CaseIndictmentRulingDecision.MERGE && (
+                <Box component="section">
+                  <SectionHeading
+                    title={formatMessage(strings.connectedCaseNumbersTitle)}
+                    required
+                  />
+                  <BlueBox className={styles.grid({ gap: 2 })}>
+                    <SelectConnectedCase
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      mergeCaseNumber={mergeCaseNumber}
+                    />
+                    <Input
+                      name="mergeCaseNumber"
+                      label={formatMessage(strings.mergeCaseNumberLabel)}
+                      autoComplete="off"
+                      value={mergeCaseNumber}
+                      placeholder={formatMessage(
+                        strings.mergeCaseNumberPlaceholder,
+                      )}
+                      onChange={(evt) => {
+                        setMergeCaseNumberErrorMessage(undefined)
+                        setMergeCaseNumber(evt.target.value)
+                      }}
+                      onBlur={(evt) => {
+                        handleMergeCaseNumberBlur(evt.target.value)
+                      }}
+                      hasError={Boolean(mergeCaseNumberErrorMessage)}
+                      errorMessage={mergeCaseNumberErrorMessage}
+                      disabled={Boolean(workingCase.mergeCase)}
+                    />
+                  </BlueBox>
+                </Box>
               )}
-              accept="application/pdf"
-              title={formatMessage(strings.inputFieldLabel)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(strings.uploadButtonText)}
-              onChange={(files) => {
-                handleUpload(
-                  addUploadFiles(files, {
-                    category: CaseFileCategory.COURT_RECORD,
-                  }),
-                  updateUploadFile,
-                )
-              }}
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-              onOpenFile={(file) => onOpenFile(file)}
-            />
-          </Box>
-        )}
-        {selectedAction === IndictmentDecision.COMPLETING &&
-          (selectedDecision === CaseIndictmentRulingDecision.RULING ||
-            selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-            <Box component="section" marginBottom={5}>
+            </>
+          )}
+          {selectedAction && !workingCase.withCourtSessions && (
+            <Box component="section">
               <SectionHeading
-                title={formatMessage(
-                  selectedDecision === CaseIndictmentRulingDecision.RULING
-                    ? strings.verdictUploadTitle
-                    : strings.rulingUploadTitle,
-                )}
-                required
+                title={formatMessage(strings.courtRecordTitle)}
+                required={selectedAction === IndictmentDecision.COMPLETING}
               />
               <InputFileUpload
-                name="ruling"
+                name="court-records"
                 files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.RULING,
+                  (file) => file.category === CaseFileCategory.COURT_RECORD,
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -687,7 +651,7 @@ const Conclusion: FC = () => {
                 onChange={(files) => {
                   handleUpload(
                     addUploadFiles(files, {
-                      category: CaseFileCategory.RULING,
+                      category: CaseFileCategory.COURT_RECORD,
                     }),
                     updateUploadFile,
                   )
@@ -698,35 +662,70 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-        {selectedAction === IndictmentDecision.COMPLETING &&
-          selectedDecision === CaseIndictmentRulingDecision.RULING &&
-          workingCase.defendants &&
-          workingCase.defendants?.length > 0 && (
-            <Box
-              component="section"
-              marginBottom={workingCase.withCourtSessions ? 5 : 10}
-            >
-              <SelectableList
-                selectAllText="Útivistardómur"
-                items={defendantsWithDefaultJudgments}
-                onChange={(selectableItems: SelectableItem[]) => {
-                  setDefendantsWithDefaultJudgments(selectableItems)
-                }}
-                isLoading={false}
+          {selectedAction === IndictmentDecision.COMPLETING &&
+            (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+              selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
+              <Box component="section">
+                <SectionHeading
+                  title={formatMessage(
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                      ? strings.verdictUploadTitle
+                      : strings.rulingUploadTitle,
+                  )}
+                  required
+                />
+                <InputFileUpload
+                  name="ruling"
+                  files={uploadFiles.filter(
+                    (file) => file.category === CaseFileCategory.RULING,
+                  )}
+                  accept="application/pdf"
+                  title={formatMessage(strings.inputFieldLabel)}
+                  description={formatMessage(core.uploadBoxDescription, {
+                    fileEndings: '.pdf',
+                  })}
+                  buttonLabel={formatMessage(strings.uploadButtonText)}
+                  onChange={(files) => {
+                    handleUpload(
+                      addUploadFiles(files, {
+                        category: CaseFileCategory.RULING,
+                      }),
+                      updateUploadFile,
+                    )
+                  }}
+                  onRemove={(file) => handleRemove(file, removeUploadFile)}
+                  onRetry={(file) => handleRetry(file, updateUploadFile)}
+                  onOpenFile={(file) => onOpenFile(file)}
+                />
+              </Box>
+            )}
+          {selectedAction === IndictmentDecision.COMPLETING &&
+            selectedDecision === CaseIndictmentRulingDecision.RULING &&
+            workingCase.defendants &&
+            workingCase.defendants?.length > 0 && (
+              <Box component="section">
+                <SelectableList
+                  selectAllText="Útivistardómur"
+                  items={defendantsWithDefaultJudgments}
+                  onChange={(selectableItems: SelectableItem[]) => {
+                    setDefendantsWithDefaultJudgments(selectableItems)
+                  }}
+                  isLoading={false}
+                />
+              </Box>
+            )}
+          {selectedAction && workingCase.withCourtSessions && (
+            <Box component="section">
+              <PdfButton
+                caseId={workingCase.id}
+                title="Þingbók - PDF"
+                pdfType="courtRecord"
+                elementId="Þingbók"
+                disabled={!hasGeneratedCourtRecord}
               />
             </Box>
           )}
-        {selectedAction && workingCase.withCourtSessions && (
-          <Box component="section" marginBottom={10}>
-            <PdfButton
-              caseId={workingCase.id}
-              title="Þingbók - PDF"
-              pdfType="courtRecord"
-              elementId="Þingbók"
-              disabled={!hasGeneratedCourtRecord}
-            />
-          </Box>
-        )}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
