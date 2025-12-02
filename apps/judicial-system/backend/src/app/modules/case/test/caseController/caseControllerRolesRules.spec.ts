@@ -199,7 +199,7 @@ describe('CaseController - Extend rules', () => {
   verifyRolesRules(CaseController, 'extend', [prosecutorRule])
 })
 
-describe('CaseController - Extend rules', () => {
+describe('CaseController - Split rules', () => {
   verifyRolesRules(CaseController, 'extend', [districtCourtJudgeRule])
 })
 
