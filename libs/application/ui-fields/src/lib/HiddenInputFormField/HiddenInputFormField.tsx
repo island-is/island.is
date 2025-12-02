@@ -54,17 +54,21 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   // Initialize field with undefined when:
   // - getDefaultValue is undefined, and
   //   - the current value is an empty string, OR
-  //   - the field has dontDefaultToEmptyString enabled.
+  //   - the field has dontDefaultToEmptyString enabled and is undefined/null.
   //
   // This prevents non-string types (e.g. boolean or number) from being defaulted
   // to an empty string by react-hook-form, which would otherwise cause validation
   // issues (e.g. with Zod).
   useEffect(() => {
+    if (getDefaultValue !== undefined) return
+
     const oldValue = getValues(id)
-    if (
-      getDefaultValue === undefined &&
-      (oldValue === '' || dontDefaultToEmptyString)
-    ) {
+
+    const isEmptyString = oldValue === ''
+    const isNullOrUndefinedWithFlag =
+      (oldValue === null || oldValue === undefined) && dontDefaultToEmptyString
+
+    if (isEmptyString || isNullOrUndefinedWithFlag) {
       setValue(id, undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
