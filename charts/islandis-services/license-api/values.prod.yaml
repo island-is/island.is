@@ -35,7 +35,7 @@ env:
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
   XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
-  XROAD_HUNTING_LICENSE_PATH: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api'
+  XROAD_NVS_PERMITS_PATH: 'IS/GOV/7009241570/NVS-Protected/api'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
 grantNamespaces:
