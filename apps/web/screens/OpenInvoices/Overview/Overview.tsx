@@ -20,6 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
+import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroup,
   IcelandicGovernmentInstitutionsInvoices,
@@ -269,6 +270,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     setPage(null)
   }
 
+  console.log(totalPages)
+
   return (
     <OpenInvoicesWrapper
       title={formatMessage(m.overview.title)}
@@ -367,12 +370,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Stack>
           }
         >
-          {hitsMessage}
+          {hitsMessage && <MarkdownText>{hitsMessage}</MarkdownText>}
           <Box marginLeft={2} background="white">
             <OverviewContent invoiceGroups={invoiceGroups} />
           </Box>
 
-          <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+          <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) <= 1}>
             <Pagination
               variant="purple"
               page={page}
