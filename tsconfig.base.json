@@ -787,9 +787,6 @@
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
-      "@island.is/clients/hunting-license": [
-        "libs/clients/hunting-license/src/index.ts"
-      ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
       ],
@@ -834,6 +831,9 @@
       ],
       "@island.is/clients/national-registry-v3-applications": [
         "libs/clients/national-registry/v3-applications/src/index.ts"
+      ],
+      "@island.is/clients/nvs-permits": [
+        "libs/clients/nvs-permits/src/index.ts"
       ],
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
