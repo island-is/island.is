@@ -24,12 +24,6 @@ import {
   EventLog,
 } from '../../repository'
 
-interface RequestWithUser extends Request {
-  user?: {
-    currentUser?: User
-  }
-}
-
 export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => {
     const { verdict } = defendant
@@ -160,8 +154,8 @@ const transformCase = (theCase: Case, user?: User) => {
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    const request = context.switchToHttp().getRequest<RequestWithUser>()
-    const user = request.user?.currentUser
+    const request = context.switchToHttp().getRequest()
+    const user = request.user?.currentUser as User | undefined
 
     return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
