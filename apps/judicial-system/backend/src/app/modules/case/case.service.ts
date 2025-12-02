@@ -2679,7 +2679,10 @@ export class CaseService {
       .then((extendedCase) => this.findById(extendedCase.id))
   }
 
-  async split(theCase: Case, defendant: Defendant, user: TUser): Promise<Case> {
+  async splitDefendantFromCase(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<Case> {
     const copiedSplitIndictmentCaseFields: (keyof Case)[] = [
       'origin',
       'type',
@@ -2716,6 +2719,8 @@ export class CaseService {
         pick(theCase, copiedSplitIndictmentCaseFields),
         transaction,
       )
+      // defendant subpoenas eventLogs verdict
+
       await transaction.commit()
 
       return splitCase

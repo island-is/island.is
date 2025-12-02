@@ -916,13 +916,15 @@ export class CaseController {
   async splitDefendantFromCase(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() theDefendant: Defendant,
   ): Promise<Case> {
     this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
 
-    const newCase = await this.caseService.split(theCase, theDefendant, user)
+    const newCase = await this.caseService.splitDefendantFromCase(
+      theCase,
+      theDefendant,
+    )
 
     this.eventService.postEvent('SPLIT', newCase)
 
