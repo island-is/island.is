@@ -12,9 +12,11 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { INDICTMENTS_TO_REVIEW } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../../factories'
 import { InternalCaseService } from '../../../case'
 import { EventService } from '../../../event'
 import { Notification, type User } from '../../../repository'
@@ -91,13 +93,13 @@ export class InstitutionNotificationService extends BaseNotificationService {
     )
   }
 
-  // for each reviewer filter all cases that have deadline in 7 days
   private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
     prosecutorsOfficeId: string,
   ) {
     const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
+    const targetDate = addDays(nowFactory(), 7)
 
-    const targetDate = addDays(Date.now(), 7)
+    const emailPromises: Promise<unknown>[] = []
     for (const prosecutorUser of users) {
       const cases =
         await this.internalCaseService.getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
@@ -115,19 +117,25 @@ export class InstitutionNotificationService extends BaseNotificationService {
 
       const subject = 'Áminning um yfirlestur'
       const html = `Áminning um yfirlestur á mál${
-        areMultipleCases ? 'um' : 'i'
+        areMultipleCases ? 'um:' : 'i'
       } ${curtCaseNumbers}. Áfrýjunarfrestur er til ${formatDate(
         targetDate,
-      )}. Sjá nánar í <a href="${this.config.clientUrl}
-      }">Réttarvörslugátt.</a>`
+      )}. Sjá nánar í <a href="${
+        this.config.clientUrl
+      }${INDICTMENTS_TO_REVIEW}">Réttarvörslugátt.</a>`
 
-      this.sendEmail({
+      const recipient = this.sendEmail({
         subject,
         html,
         recipientName: prosecutorUser.name,
         recipientEmail: prosecutorUser.email,
       })
+      this.logger.info(
+        `Public prosecutor verdict review reminder sent to ${prosecutorUser.id} for ${cases.length} cases`,
+      )
+      emailPromises.push(recipient)
     }
+    return Promise.all(emailPromises)
   }
 
   async sendNotification(

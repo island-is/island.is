@@ -1,5 +1,8 @@
 import addDays from 'date-fns/addDays'
+import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
+import startOfDay from 'date-fns/startOfDay'
+import subDays from 'date-fns/subDays'
 import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
@@ -1568,9 +1571,10 @@ export class InternalCaseService {
     indictmentReviewerId: string,
     targetDate: Date,
   ) {
-    const targetRulingDate = new Date(
-      nowFactory().getDate() - targetDate.getDate(),
-    )
+    const targetRulingDate = subDays(targetDate, VERDICT_APPEAL_WINDOW_DAYS)
+    const start = startOfDay(targetRulingDate)
+    const end = endOfDay(targetRulingDate)
+
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
@@ -1586,7 +1590,7 @@ export class InternalCaseService {
       where: {
         indictmentReviewerId: indictmentReviewerId,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        rulingDate: { [Op.eq]: targetRulingDate },
+        rulingDate: { [Op.gte]: start, [Op.lte]: end },
       },
     })
     return cases

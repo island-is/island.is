@@ -1901,7 +1901,7 @@ export class CaseNotificationService extends BaseNotificationService {
       deadline,
     )}. Sjá nánar á <a href="${
       this.config.clientUrl
-    }${INDICTMENTS_OVERVIEW_ROUTE}/${
+    }${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${
       theCase.id
     }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 

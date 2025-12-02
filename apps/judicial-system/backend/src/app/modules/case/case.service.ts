@@ -1625,17 +1625,6 @@ export class CaseService {
         )
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         await this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
-      } else if (
-        theCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.FINE &&
-        updatedCase.indictmentReviewerId &&
-        isIndictment
-      ) {
-        // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
-        await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
-          updatedCase,
-          user,
-        )
       }
     }
 
@@ -1792,6 +1781,19 @@ export class CaseService {
     // This only applies to indictments and only when an arraignment has been completed
     if (updatedCase.indictmentDecision && !theCase.indictmentDecision) {
       await this.addMessagesForIndictmentArraignmentCompletionToQueue(
+        updatedCase,
+        user,
+      )
+    }
+
+    // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE &&
+      updatedCase.indictmentReviewerId &&
+      updatedCase.indictmentReviewerId !== theCase.indictmentReviewerId &&
+      isIndictment
+    ) {
+      await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
         updatedCase,
         user,
       )
