@@ -913,7 +913,7 @@ export class CaseController {
     description:
       'Creates a new case by splitting off a defendant from an existing case',
   })
-  async split(
+  async splitDefendantFromCase(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentHttpUser() user: User,

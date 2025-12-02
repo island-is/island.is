@@ -260,10 +260,10 @@ describe('CaseController - Extend guards', () => {
   )
 })
 
-describe('CaseController - Split guards', () => {
+describe('CaseController - Split defendant from case guards', () => {
   verifyGuards(
     CaseController,
-    'extend',
+    'splitDefendantFromCase',
     [
       RolesGuard,
       CaseExistsGuard,
