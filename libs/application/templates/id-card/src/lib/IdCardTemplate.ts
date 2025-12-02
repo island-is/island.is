@@ -1,6 +1,5 @@
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
@@ -18,7 +17,6 @@ import {
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
-  PendingAction,
   StaticText,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
@@ -35,7 +33,7 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItems, hasReviewer, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewer, reviewStatePendingAction } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
@@ -57,25 +55,6 @@ export const determineMessageFromApplicationAnswers = (
   return nameObject
 }
 
-const reviewStatePendingAction = (
-  application: Application,
-  role: ApplicationRole,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE && !hasReviewerApproved(application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
-
 const IdCardTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -86,6 +65,13 @@ const IdCardTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   dataSchema: IdCardSchema,
   translationNamespaces: ApplicationConfigurations.IdCard.translation,
+  adminDataConfig: {
+    answers: [
+      // fields that we need to keep after pruning for pending action to work properly
+      { key: 'secondGuardianInformation.$.nationalId', isListed: false },
+      { key: 'secondGuardianInformation.$.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -221,7 +207,7 @@ const IdCardTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: applicationMessage.historyWaitingForParentB,
+                logMessage: applicationMessage.historyLogApprovedByParentB,
                 onEvent: DefaultEvents.SUBMIT,
                 includeSubjectAndActor: true,
               },
