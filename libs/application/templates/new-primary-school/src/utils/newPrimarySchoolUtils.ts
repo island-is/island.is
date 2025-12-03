@@ -520,34 +520,39 @@ export const getApplicationType = (
 ) => {
   const { childNationalId } = getApplicationAnswers(answers)
   const { childInformation } = getApplicationExternalData(externalData)
-
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
-
-  if (!isValid(nationalId)) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
-  if (!yearOfBirth) {
+  if (!isValid(nationalId) || !yearOfBirth) {
+    return undefined
+  }
+
+  // temporary check - need to be fixed before february 2026 after testing phase
+  // is over and rule about enrollment age has been finalized.
+  // if the child is 1 to 6 years old, it's an enrollment application
+  // so the year of birth can be between currentYear - 6 and currentYear - 1
+
+  // if the child is a first grader and not currently enrolled in a primary
+  // school, set the application type to enrollment in primary school
+  if (
+    yearOfBirth >= firstGradeYear &&
+    yearOfBirth <= currentYear - 1 &&
+    !childInformation?.primaryOrgId
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  // if the child is not a first grader and not currently enrolled in a primary
+  // school (no data in Frigg), set the application type to new primary school
+  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  if (!childInformation?.primaryOrgId) {
-    // temporary check - need to be fixed before february 2026 after testing phase is over and rule about enrollment age has been finalized
-    // if the child is 1 to 6 years old, it's an enrollment application
-    // so the year of birth can be between currentYear - 6 and currentYear - 1
-    return yearOfBirth >= firstGradeYear && yearOfBirth <= currentYear - 1
-      ? //return yearOfBirth === firstGradeYear
-        ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      : ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
-  return ApplicationType.NEW_PRIMARY_SCHOOL
+  // else the application type should be determined by the applicant
+  return undefined
 }
 
 export const getGuardianByNationalId = (
