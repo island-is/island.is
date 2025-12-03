@@ -381,6 +381,11 @@ export const m = defineMessages({
     id: 'service.portal:my-vehicles-mileage',
     defaultMessage: 'Kílómetrastaða',
   },
+  vehicleMileageDescription: {
+    id: 'service.portal:my-vehicles-mileage-description',
+    defaultMessage:
+      'Hér getur þú skráð kílómetrastöðu ökutækja þinna. Einnig má finna ökutækin þín undir Eignir og tæki.',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -2136,7 +2141,7 @@ export const searchTagsMessages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
   },
   healthInsuranceEhicCardLong: {
-    id: 'sp.search.tags:health-insurance-ehic-card',
+    id: 'sp.search.tags:health-insurance-ehic-card-eu',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   healthPaymentParticipation: {

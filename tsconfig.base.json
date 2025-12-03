@@ -1200,6 +1200,9 @@
       "@island.is/portals/my-pages/licenses/messages": [
         "libs/portals/my-pages/licenses/src/lib/messages.ts"
       ],
+       "@island.is/portals/my-pages/mileage-registration": [
+        "libs/portals/my-pages/mileage-registration/src/index.ts"
+      ],
       "@island.is/portals/my-pages/modules": [
         "libs/portals/my-pages/modules/src/index.ts"
       ],
@@ -1289,6 +1292,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+     
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
