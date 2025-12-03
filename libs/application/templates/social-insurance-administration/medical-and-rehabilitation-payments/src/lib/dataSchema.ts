@@ -307,11 +307,10 @@ export const dataSchema = z.object({
   confirmationOfIllHealth: z.object({
     confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   }),
-  selfAssessmentQuestionsOne: z
-    .object({
-      hadAssistance: z.enum([YES, NO]).optional(),
-      educationalLevel: z.string().min(1),
-    }),    
+  selfAssessmentQuestionsOne: z.object({
+    hadAssistance: z.enum([YES, NO]).optional(),
+    educationalLevel: z.string().min(1),
+  }),
   selfAssessmentQuestionsTwo: z
     .object({
       currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
