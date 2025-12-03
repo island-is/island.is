@@ -17,13 +17,7 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   field,
 }) => {
   const { register, setValue, getValues, watch } = useFormContext()
-  const {
-    watchValue,
-    defaultValue: getDefaultValue,
-    id,
-    valueModifier,
-    dontDefaultToEmptyString,
-  } = field
+  const { watchValue, defaultValue: getDefaultValue, id, valueModifier } = field
   const defaultValue =
     typeof getDefaultValue === 'function'
       ? getDefaultValue(application, field)
@@ -64,9 +58,22 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
     const oldValue = getValues(id)
 
     const isEmptyString = oldValue === ''
+    // const isNullOrUndefinedWithFlag =
+    //   (oldValue === null || oldValue === undefined) && dontDefaultToEmptyString
     const isNullOrUndefinedWithFlag =
-      (oldValue === null || oldValue === undefined) && dontDefaultToEmptyString
+      oldValue === null && field.dontDefaultToEmptyString
 
+    console.log('id', id)
+    console.log(
+      'oldValue',
+      oldValue === null
+        ? 'null'
+        : oldValue === undefined
+        ? 'undefined'
+        : oldValue === ''
+        ? '<empty string>'
+        : 'unknown',
+    )
     if (isEmptyString || isNullOrUndefinedWithFlag) {
       setValue(id, undefined)
     }
