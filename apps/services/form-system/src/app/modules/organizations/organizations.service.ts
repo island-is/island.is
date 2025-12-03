@@ -131,12 +131,12 @@ export class OrganizationsService {
 
     organizationAdminDto.organizations = await this.organizationModel
       .findAll({
-        attributes: ['name', 'nationalId'],
+        attributes: ['nationalId'],
       })
       .then((organizations) => {
         return organizations.map((organization) => {
           return {
-            label: organization.name.is,
+            label: '',
             value: organization.nationalId,
             isSelected: organization.nationalId === nationalId,
           } as Option
@@ -155,7 +155,7 @@ export class OrganizationsService {
       throw new NotFoundException(`Organization with id ${id} not found`)
     }
 
-    const keys = ['id', 'name', 'nationalId']
+    const keys = ['id', 'nationalId']
     const organizationDto: OrganizationDto = defaults(
       pick(organization, keys),
       zipObject(keys, Array(keys.length).fill(null)),
@@ -169,7 +169,7 @@ export class OrganizationsService {
       'created',
       'modified',
       'isTranslated',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'hasPayment',
@@ -194,7 +194,7 @@ export class OrganizationsService {
     )
     await newOrganzation.save()
 
-    const keys = ['id', 'name', 'nationalId']
+    const keys = ['id', 'nationalId']
     const organizationDto: OrganizationDto = defaults(
       pick(newOrganzation, keys),
       zipObject(keys, Array(keys.length).fill(null)),

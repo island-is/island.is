@@ -9,6 +9,7 @@ import { messages } from '../../../lib/messages'
 import { PrescriptionItem } from '../../../utils/types'
 import { useGetPrescriptionDocumentsLazyQuery } from '../Prescriptions.generated'
 import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionModal'
+import { mapBlockedStatus } from '../../../utils/mappers'
 
 const STRING_MAX_LENGTH = 22
 
@@ -110,7 +111,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                 }
               : {
                   type: 'info',
-                  label: item.renewalBlockedReason?.toString() ?? '',
+                  label: mapBlockedStatus(
+                    item.renewalBlockedReason?.toString() ?? '',
+                    formatMessage,
+                  ),
                   text: formatMessage(messages.notValidForRenewal),
                 },
 
@@ -142,6 +146,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                             value: item?.name ?? '',
                             href: item?.url ?? '',
                             type: 'link',
+                          },
+                          {
+                            title: formatMessage(messages.medicineStrength),
+                            value: item?.strength ?? '',
                           },
                           ...(item.documents?.map((doc, index) => ({
                             title: formatMessage(messages.fylgiskjalNr, {
@@ -196,6 +204,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                       {item.dispensations.length > 0 && (
                         <DispensingContainer
                           backgroundColor="blue"
+                          showMedicineName
                           label={formatMessage(messages.dispenseHistory)}
                           data={item.dispensations.map((dispensation, di) => ({
                             date: formatDate(dispensation?.date),
@@ -211,6 +220,14 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                                 type="outline"
                               />
                             ),
+                            medicine:
+                              dispensation.items
+                                ?.map((item) => item.name)
+                                .join(', ') ?? '',
+                            strength:
+                              dispensation.items
+                                ?.map((item) => item.strength)
+                                .join(', ') ?? '',
                             number: (di + 1).toString() ?? '',
                             pharmacy: dispensation?.agentName ?? '',
                             quantity: dispensation?.count.toString() ?? '',

@@ -103,7 +103,7 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',
@@ -131,7 +131,7 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',
@@ -285,8 +285,8 @@ export const staticPartyTableData = (
   application: Application,
   role: ApplicantsRole,
 ) => {
-  const { answers } = application
-  const aplicantRole = getValueViaPath<string>(
+  const { answers, externalData } = application
+  const applicantRole = getValueViaPath<string>(
     answers,
     'assignApplicantParty.applicantsRole',
   )
@@ -296,7 +296,22 @@ export const staticPartyTableData = (
   const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
   const address = getValueViaPath<string>(answers, 'applicant.address')
 
-  if (aplicantRole !== role) {
+  if (
+    getValueViaPath<string>(externalData, 'identity.data.type') === 'company' &&
+    role === ApplicantsRole.LANDLORD
+  ) {
+    return [
+      {
+        name: fullName ?? '',
+        phone: formatPhoneNumber(phone ?? ''),
+        nationalId: formatNationalId(nationalId ?? ''),
+        email: email ?? '',
+        address: address ?? '',
+      },
+    ]
+  }
+
+  if (applicantRole !== role) {
     return []
   }
 

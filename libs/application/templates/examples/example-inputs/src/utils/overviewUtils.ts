@@ -1,4 +1,5 @@
 import { ApolloClient } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   AttachmentItem,
@@ -7,9 +8,8 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { friggSchoolsByMunicipalityQuery } from '../graphql/sampleQuery'
+import { friggOrganizationsByTypeQuery } from '../graphql/sampleQuery'
 import { m } from '../lib/messages'
-import { FriggSchoolsByMunicipality } from './types'
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -89,11 +89,11 @@ export const getOverviewLoadItems = async (
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipality>({
-    query: friggSchoolsByMunicipalityQuery,
+  const { data } = await apolloClient.query<Query>({
+    query: friggOrganizationsByTypeQuery,
   })
 
-  const municipality = data?.friggSchoolsByMunicipality?.[0].name
+  const organization = data?.friggOrganizationsByType?.[0]?.name ?? ''
 
   return [
     {
@@ -110,7 +110,7 @@ export const getOverviewLoadItems = async (
     {
       width: 'half',
       keyText: 'Half width',
-      valueText: municipality,
+      valueText: organization,
     },
   ]
 }
@@ -184,11 +184,11 @@ export const getLoadTableData = async (
   _externalData: ExternalData,
   apolloClient: ApolloClient<object>,
 ): Promise<TableData> => {
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipality>({
-    query: friggSchoolsByMunicipalityQuery,
+  const { data } = await apolloClient.query<Query>({
+    query: friggOrganizationsByTypeQuery,
   })
 
-  const municipality = data?.friggSchoolsByMunicipality?.[0].name
+  const organization = data?.friggOrganizationsByType?.[0]?.name ?? ''
 
   return {
     header: [
@@ -198,12 +198,7 @@ export const getLoadTableData = async (
       'Table heading 4',
     ],
     rows: [
-      [
-        municipality ?? '',
-        'Row 1, Column 2',
-        'Row 1, Column 3',
-        'Row 1, Column 4',
-      ],
+      [organization, 'Row 1, Column 2', 'Row 1, Column 3', 'Row 1, Column 4'],
       [
         'Row 2, Column 1',
         'Row 2, Column 2',

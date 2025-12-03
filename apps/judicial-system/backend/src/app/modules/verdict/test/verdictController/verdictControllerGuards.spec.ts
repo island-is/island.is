@@ -5,6 +5,7 @@ import { verifyGuards } from '../../../../test'
 import {
   CaseCompletedGuard,
   CaseExistsGuard,
+  CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,
 } from '../../../case'
@@ -16,13 +17,7 @@ describe('VerdictController - Top-level guards', () => {
   verifyGuards(
     VerdictController,
     undefined,
-    [
-      JwtAuthUserGuard,
-      RolesGuard,
-      CaseExistsGuard,
-      CaseTypeGuard,
-      CaseWriteGuard,
-    ],
+    [JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseTypeGuard],
     [
       {
         guard: CaseTypeGuard,
@@ -35,11 +30,12 @@ describe('VerdictController - Top-level guards', () => {
 })
 
 describe('VerdictController - Create verdicts', () => {
-  verifyGuards(VerdictController, 'createVerdicts', [])
+  verifyGuards(VerdictController, 'createVerdicts', [CaseWriteGuard])
 })
 
 describe('VerdictController - Update', () => {
   verifyGuards(VerdictController, 'update', [
+    CaseWriteGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
     CaseCompletedGuard,
@@ -48,6 +44,7 @@ describe('VerdictController - Update', () => {
 
 describe('VerdictController - getServiceCertificatePdf', () => {
   verifyGuards(VerdictController, 'getServiceCertificatePdf', [
+    CaseReadGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
     CaseCompletedGuard,
@@ -56,6 +53,7 @@ describe('VerdictController - getServiceCertificatePdf', () => {
 
 describe('VerdictController - getVerdict', () => {
   verifyGuards(VerdictController, 'getVerdict', [
+    CaseReadGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
     CaseCompletedGuard,
@@ -63,5 +61,8 @@ describe('VerdictController - getVerdict', () => {
 })
 
 describe('VerdictController - deliverCaseVerdict', () => {
-  verifyGuards(VerdictController, 'deliverCaseVerdict', [CaseCompletedGuard])
+  verifyGuards(VerdictController, 'deliverCaseVerdict', [
+    CaseWriteGuard,
+    CaseCompletedGuard,
+  ])
 })
