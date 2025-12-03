@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 
 import { Input } from '@island.is/island-ui/core'
@@ -15,10 +15,16 @@ interface Props {
 const InputPenalties: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
+  const hasRunDebounce = useRef<boolean>(false)
   const [value, setValue] = useState<string>(workingCase.penalties ?? '')
 
   useDebounce(
     async () => {
+      if (!hasRunDebounce.current) {
+        hasRunDebounce.current = true
+        return
+      }
+
       setWorkingCase((currentWorkingCase) => ({
         ...currentWorkingCase,
         penalties: value ?? null,
