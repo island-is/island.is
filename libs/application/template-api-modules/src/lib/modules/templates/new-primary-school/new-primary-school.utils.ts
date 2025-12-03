@@ -12,6 +12,7 @@ import { Application } from '@island.is/application/types'
 import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
+  RegistrationApplicationInputApplicationTypeEnum,
 } from '@island.is/clients/mms/frigg'
 
 export const getSocialProfile = (application: Application) => {
@@ -100,6 +101,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   )
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    id: application.id,
+    applicationType: mapApplicationType(applicationType),
     approvalRequester: application.applicant,
     registration: {
       applicant: {
@@ -189,4 +192,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   }
 
   return newPrimarySchoolDTO
+}
+
+export const mapApplicationType = (
+  applicationType: ApplicationType | undefined,
+) => {
+  if (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL)
+    return RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+  return RegistrationApplicationInputApplicationTypeEnum.Enrollment
 }

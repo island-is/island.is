@@ -424,6 +424,24 @@
           "caseWorkers": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaseWorkerInput" }
+          },
+          "previousSocialServices": {
+            "description": "List of ids of the social services the applicant has received in the past",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ongoingSocialServices": {
+            "description": "List of ids of the social services the applicant is currently receiving",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "previousChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
+          },
+          "openChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
           }
         }
       },
@@ -443,6 +461,15 @@
           "nationalId": { "type": "string" }
         },
         "required": ["name", "nationalId"]
+      },
+      "ConsentInput": {
+        "type": "object",
+        "properties": {
+          "fieldInspection": { "type": "boolean" },
+          "additionalDataProvisioning": { "type": "boolean" },
+          "outsideSpecialist": { "type": "boolean" },
+          "childViewOnApplication": { "type": "boolean" }
+        }
       },
       "RegistrationInput": {
         "type": "object",
@@ -473,6 +500,12 @@
             "type": "string",
             "description": "The school selected for a student in the application process"
           },
+          "alternativeOrganizationIds": {
+            "description": "The alternative schools for a student in the application process",
+            "example": ["ec0ef194-0b74-4a91-adf1-a77f6a262097"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "requestingMeeting": { "type": "boolean" },
           "expectedStartDate": { "format": "date-time", "type": "string" },
           "expectedEndDate": { "format": "date-time", "type": "string" },
@@ -481,14 +514,25 @@
             "type": "string",
             "description": "Reason ID for application",
             "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
-          }
+          },
+          "terms": { "type": "boolean" },
+          "consents": { "$ref": "#/components/schemas/ConsentInput" }
         },
         "required": ["applicant", "selectedOrganizationId", "expectedStartDate"]
       },
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of the application being submitted"
+          },
           "registration": { "$ref": "#/components/schemas/RegistrationInput" },
+          "applicationType": {
+            "type": "string",
+            "enum": ["enrollment", "transfer", "continuation"],
+            "description": "Type of application"
+          },
           "additionalRequesters": {
             "description": "national IDs of additional requesters",
             "example": ["1234567890", "2345678901"],
@@ -498,9 +542,24 @@
           "approvalRequester": {
             "type": "string",
             "description": "national ID of the approval requester"
+          },
+          "files": {
+            "description": "Files",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "fileUploadType": {
+            "type": "string",
+            "enum": ["attachments", "physical", "attachmentsAndPhysical"],
+            "description": "File upload type"
           }
         },
-        "required": ["registration", "approvalRequester"]
+        "required": [
+          "id",
+          "registration",
+          "applicationType",
+          "approvalRequester"
+        ]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
@@ -562,6 +621,31 @@
         },
         "required": ["type", "options"]
       },
+      "AddressModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "address": { "type": "string" },
+          "municipality": { "type": "string", "nullable": true },
+          "postCode": { "type": "string" },
+          "country": { "type": "string", "nullable": true },
+          "houseNumber": { "type": "number", "nullable": true },
+          "streetNumber": { "type": "number", "nullable": true },
+          "apartmentNumber": { "type": "number", "nullable": true },
+          "municipalityId": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "address",
+          "municipality",
+          "postCode",
+          "country",
+          "houseNumber",
+          "streetNumber",
+          "apartmentNumber",
+          "municipalityId"
+        ]
+      },
       "ApplicationFeatureModel": {
         "type": "object",
         "properties": { "key": { "type": "string" } },
@@ -570,7 +654,10 @@
       "ApplicationFeatureConfig": {
         "type": "object",
         "properties": {
-          "applicationType": { "type": "string", "enum": ["registration"] },
+          "applicationType": {
+            "type": "string",
+            "enum": ["enrollment", "transfer", "continuation"]
+          },
           "applicationFeatures": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ApplicationFeatureModel" }
@@ -621,6 +708,7 @@
             "nullable": true
           },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
+          "address": { "$ref": "#/components/schemas/AddressModel" },
           "unitId": { "type": "string", "nullable": true },
           "settings": {
             "nullable": true,
@@ -636,31 +724,6 @@
           "gradeLevels",
           "unitId",
           "settings"
-        ]
-      },
-      "AddressModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "address": { "type": "string" },
-          "municipality": { "type": "string", "nullable": true },
-          "postCode": { "type": "string" },
-          "country": { "type": "string", "nullable": true },
-          "houseNumber": { "type": "number", "nullable": true },
-          "streetNumber": { "type": "number", "nullable": true },
-          "apartmentNumber": { "type": "number", "nullable": true },
-          "municipalityId": { "type": "string", "nullable": true }
-        },
-        "required": [
-          "id",
-          "address",
-          "municipality",
-          "postCode",
-          "country",
-          "houseNumber",
-          "streetNumber",
-          "apartmentNumber",
-          "municipalityId"
         ]
       },
       "HealthProfileModel": {
