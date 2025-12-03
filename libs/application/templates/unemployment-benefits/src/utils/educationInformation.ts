@@ -64,7 +64,12 @@ export const lastSemesterEducationFinsihed = (answers: FormValue) => {
 
 export const showFinishedEducationField = (answers: FormValue) => {
   if (sameEducationAsLastSemester(answers)) {
-    return wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)
+    //if last semester education is the same as current, then we need to show this field as this can't be the same education as lastSemester
+    //if lastSemster is not checked, even though the sameEducationAsLastSemester has been submitted, meaning the user went back to education page and changed the answer, then we need to show the field
+    return (
+      (wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)) ||
+      !wasStudyingLastSemester(answers)
+    )
   } else {
     return wasStudyingInTheLastYear(answers)
   }
@@ -74,7 +79,10 @@ export const showFinishedEducationDateField = (answers: FormValue) => {
   if (showFinishedEducationField(answers)) {
     return showFinishedEducationField(answers)
   } else {
-    return !lastSemesterEducationFinsihed(answers)
+    return (
+      !lastSemesterEducationFinsihed(answers) &&
+      wasStudyingLastTwelveMonths(answers)
+    )
   }
 }
 
@@ -150,5 +158,12 @@ export const getCourseOfStudy = (
       value: subject.id ?? '',
       label: subject.name ?? '',
     })) ?? []
+  )
+}
+
+export const lastSemesterGeneralCondition = (answers: FormValue) => {
+  return (
+    (wasStudyingLastSemester(answers) && !sameEducationAsCurrent(answers)) ||
+    (!isCurrentlyStudying(answers) && sameEducationAsCurrent(answers))
   )
 }

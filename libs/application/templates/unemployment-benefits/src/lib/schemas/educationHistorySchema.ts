@@ -5,10 +5,11 @@ import { FileSchema } from './fileSchema'
 export const requiredStudies = z
   .object({
     sameAsAboveEducation: z.preprocess((val) => {
-      if (!val) {
+      const cleaned = Array.isArray(val) ? val.filter(Boolean) : []
+      if (!cleaned) {
         return []
       }
-      return val
+      return cleaned
     }, z.array(z.enum([YES])).optional()),
     levelOfStudy: z
       .preprocess((val) => {
@@ -21,6 +22,7 @@ export const requiredStudies = z
     courseOfStudy: z.string().optional(),
     degree: z.string().optional(),
     units: z.string().min(1),
+    unfinishedStudy: z.array(z.enum([YES])).optional(),
     endDate: z.string().nullish(),
     degreeFile: z.array(FileSchema).nullish(),
   })
@@ -37,6 +39,6 @@ export const previousEducationSchema = z.object({
 export const educationHistorySchema = z.object({
   currentStudies: requiredStudies,
   lastSemester: requiredStudies,
-  finishedEducation: requiredStudies.refine((x) => x?.endDate),
+  finishedEducation: requiredStudies,
   educationHistory: z.array(previousEducationSchema),
 })
