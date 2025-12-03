@@ -950,6 +950,7 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: (value: unknown, application?: Application) => unknown
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface HiddenInputField extends BaseField {
