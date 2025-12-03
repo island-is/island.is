@@ -134,7 +134,7 @@ export class ApplicationsService {
     ).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
-    return response
+    return response as Screen
   }
 
   async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {

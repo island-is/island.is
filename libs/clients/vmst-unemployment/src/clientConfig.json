@@ -6720,6 +6720,12 @@
             "description": "Viðmiðunardags ef sein heimkoma í U2",
             "format": "",
             "nullable": true
+          },
+          "acknowledgementsId": {
+            "type": "string",
+            "description": "Auðkenni fyrir skilmála staðfestingar umsækjanda",
+            "format": "guid",
+            "nullable": true
           }
         }
       },
@@ -7930,6 +7936,15 @@
                 "type": "string",
                 "format": "guid",
                 "nullable": true
+              },
+              "contentfulId": {
+                "type": "string",
+                "nullable": true
+              },
+              "attachmentTypeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
               }
             }
           }
@@ -8376,11 +8391,6 @@
           "monthlyJobSearchAcknowledgement": {
             "type": "string",
             "description": "Staðfesting á atvinnuleit í hverjum mánuði",
-            "nullable": true
-          },
-          "introductoryMeetingAcknowledgement": {
-            "type": "string",
-            "description": "Kynningarfundur – skyldumæting",
             "nullable": true
           }
         }
