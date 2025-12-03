@@ -1,7 +1,6 @@
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import {
-  coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -180,15 +179,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendDraft,
           }),
-          actionCard: {
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
-                includeSubjectAndActor: true,
-              },
-            ],
-          },
           roles: [
             {
               id: Roles.APPLICANT,

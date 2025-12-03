@@ -42,7 +42,12 @@ export const application = defineMessages({
   },
   historyLogApprovedByParentB: {
     id: 'id.application:historyLogApprovedByParentB',
-    defaultMessage: 'Sammþykkt af forráðamanni',
+    defaultMessage: 'Samþykkt af forsjáraðila 2',
+    description: 'History log approved by parentB',
+  },
+  pendingActionWaitingForReviewFromParentB: {
+    id: 'id.application:pendingActionWaitingForReviewFromParentB',
+    defaultMessage: 'Beðið eftir samþykki frá forsjáraðila 2',
     description: 'History log approved by parentB',
   },
 })

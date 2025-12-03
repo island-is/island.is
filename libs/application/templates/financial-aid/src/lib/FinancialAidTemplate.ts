@@ -32,7 +32,10 @@ import {
   SendSpouseEmailApi,
 } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
-import { coreHistoryMessages } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -187,6 +190,21 @@ const FinancialAidTemplate: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
+            pendingAction: (_, role) => {
+              return role === Roles.SPOUSE
+                ? {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.youNeedToReviewDescription,
+                    displayStatus: 'warning',
+                  }
+                : {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.waitingForReviewFromSpouseDescription,
+                    displayStatus: 'info',
+                  }
+            },
           },
           roles: [
             {

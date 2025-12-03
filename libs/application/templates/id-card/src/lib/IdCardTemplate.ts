@@ -1,7 +1,7 @@
 import {
   coreHistoryMessages,
+  corePendingActionMessages,
   EphemeralStateLifeCycle,
-  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -34,12 +34,7 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import {
-  getChargeItems,
-  getReviewers,
-  hasReviewer,
-  hasReviewerApproved,
-} from '../utils'
+import { getChargeItems, hasReviewer } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
@@ -218,12 +213,20 @@ const IdCardTemplate: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
-            pendingAction: (application, role, nationalId) => {
-              return getReviewStatePendingAction(
-                role === Roles.ASSIGNEE &&
-                  hasReviewerApproved(application.answers, nationalId),
-                getReviewers(application.answers),
-              )
+            pendingAction: (_, role) => {
+              return role === Roles.ASSIGNEE
+                ? {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.youNeedToReviewDescription,
+                    displayStatus: 'warning',
+                  }
+                : {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      applicationMessage.pendingActionWaitingForReviewFromParentB,
+                    displayStatus: 'info',
+                  }
             },
           },
         },
