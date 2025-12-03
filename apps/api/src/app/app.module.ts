@@ -150,7 +150,6 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
-import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
@@ -232,6 +231,7 @@ import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-schoo
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
 import { HmsConfig } from '@island.is/clients/hms'
+import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
@@ -388,6 +388,7 @@ const environment = getConfig
         FormSystemClientConfig,
         WorkMachinesClientConfig,
         SeminarsClientConfig,
+        NvsPermitsClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
@@ -414,7 +415,6 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         LshClientConfig,
-        HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsConfig,
         HmsApplicationSystemConfig,

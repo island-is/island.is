@@ -1,14 +1,14 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { createPkPassDataInput } from './huntingLicenseClientMapper'
+import { FetchError } from '@island.is/clients/middlewares'
+import { NvsPermitsClientService } from '@island.is/clients/nvs-permits'
 import {
   Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   LicenseClient,
   LicensePkPassAvailability,
@@ -17,11 +17,10 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import {
-  HuntingLicenseClientService,
-  HuntingLicenseDto,
-} from '@island.is/clients/hunting-license'
+import { createPkPassDataInput } from './huntingLicenseClientMapper'
 import { HuntingLicenseVerifyExtraData } from './huntingLicenseExtraData.types'
+import { mapHuntingLicenseDto } from './mapper'
+import { HuntingLicenseDto } from './types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'hunting-license-service'
@@ -32,7 +31,7 @@ export class HuntingLicenseClient
 {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private huntingService: HuntingLicenseClientService,
+    private huntingService: NvsPermitsClientService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
@@ -53,8 +52,8 @@ export class HuntingLicenseClient
     user: User,
   ): Promise<Result<HuntingLicenseDto | null>> {
     try {
-      const licenseInfo = await this.huntingService.getPermits(user)
-      return { ok: true, data: licenseInfo }
+      const licenseInfo = await this.huntingService.getHuntingPermits(user)
+      return { ok: true, data: mapHuntingLicenseDto(licenseInfo ?? undefined) }
     } catch (e) {
       //404 - no license for user, still ok!
       let error
