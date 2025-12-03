@@ -39,22 +39,6 @@ import type { Locale } from '@island.is/shared/types'
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @ApiOperation({ summary: 'Get an application by id' })
-  @ApiOkResponse({
-    description: 'Get an application by id',
-    type: ApplicationResponseDto,
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Get(
-    'form/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})',
-  )
-  async getApplication(
-    @Param('id') id: string,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.getApplication(id, user)
-  }
-
   @ApiOperation({
     summary: 'Get all applications belonging to a user to display on my pages',
   })
@@ -71,6 +55,43 @@ export class ApplicationsController {
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
     return await this.applicationsService.findAllByNationalId(locale, user)
+  }
+
+  @ApiOperation({ summary: 'Get all applications belonging to organization' })
+  @ApiOkResponse({
+    type: ApplicationResponseDto,
+    description: 'Get all applications belonging to organization',
+  })
+  @ApiParam({ name: 'organizationNationalId', type: String })
+  @Get('organization/:organizationNationalId')
+  async findAllByOrganization(
+    @Param('organizationNationalId') organizationNationalId: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('isTest') isTest: boolean,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.findAllByOrganization(
+      organizationNationalId,
+      page,
+      limit,
+      isTest,
+    )
+  }
+
+  @ApiOperation({ summary: 'Get an application by id' })
+  @ApiOkResponse({
+    description: 'Get an application by id',
+    type: ApplicationResponseDto,
+  })
+  @ApiParam({ name: 'id', type: String })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug/:id')
+  async getApplication(
+    @Param('id') id: string,
+    @Param('slug') slug: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.getApplication(id, slug, user)
   }
 
   @ApiOperation({ summary: 'Create new application' })
@@ -149,27 +170,6 @@ export class ApplicationsController {
     @Body() applicationDto: ApplicationDto,
   ): Promise<ScreenValidationResponse> {
     return await this.applicationsService.submitScreen(screenId, applicationDto)
-  }
-
-  @ApiOperation({ summary: 'Get all applications belonging to organization' })
-  @ApiOkResponse({
-    type: ApplicationResponseDto,
-    description: 'Get all applications belonging to organization',
-  })
-  @ApiParam({ name: 'organizationNationalId', type: String })
-  @Get('organization/:organizationNationalId')
-  async findAllByOrganization(
-    @Param('organizationNationalId') organizationNationalId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('isTest') isTest: boolean,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllByOrganization(
-      organizationNationalId,
-      page,
-      limit,
-      isTest,
-    )
   }
 
   @ApiOperation({ summary: 'Save screen data' })

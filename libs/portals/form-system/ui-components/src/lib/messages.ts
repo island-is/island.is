@@ -618,7 +618,7 @@ export const m = defineMessages({
   },
   unpublish: {
     id: 'form.system:unpublish',
-    defaultMessage: 'Afturkalla útgáfu',
+    defaultMessage: 'Taka úr útgáfu',
     description: 'Unpublish',
   },
   tryOut: {
@@ -1018,8 +1018,14 @@ export const m = defineMessages({
   },
   deleteFormWarning: {
     id: 'form.system:delete-form-warning',
-    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
-    description: 'Are you sure you want to delete the form: {formName}?',
+    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}',
+    description: 'Are you sure you want to delete the form: {formName}',
+  },
+  unpublishFormWarning: {
+    id: 'form.system:unpublish-form-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
+    description: 'Are you sure you want to unpublish the form: {formName}',
   },
   previewField: {
     id: 'form.system:preview-field',
@@ -1060,5 +1066,30 @@ export const m = defineMessages({
     id: 'form.system:create-application',
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
+  },
+  inProgress: {
+    id: 'form.system:in-progress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  publishedInProgress: {
+    id: 'form.system:published-in-progress',
+    defaultMessage: 'Útgefið í vinnslu',
+    description: 'Published in progress',
+  },
+  published: {
+    id: 'form.system:published',
+    defaultMessage: 'Útgefið',
+    description: 'Published',
+  },
+  slugNotFound: {
+    id: 'form.system:slug-not-found',
+    defaultMessage: 'Tegund umsóknar fannst ekki',
+    description: 'Application type not found',
+  },
+  checkUrlPlease: {
+    id: 'form.system:check-url-please',
+    defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
+    description: 'Please check the URL.',
   },
 })

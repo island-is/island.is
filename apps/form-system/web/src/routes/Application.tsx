@@ -13,7 +13,7 @@ type UseParams = {
 export const Application = () => {
   const { slug, id } = useParams() as UseParams
   const { data, error, loading } = useQuery(GET_APPLICATION, {
-    variables: { input: { id } },
+    variables: { input: { id, slug } },
     skip: !id,
     fetchPolicy: 'cache-first',
   })

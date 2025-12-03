@@ -70,7 +70,7 @@ export const updateFormFn = async (
         },
       },
     })
-    return response.data.formSystemUpdateForm as UpdateFormResponse
+    return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
     throw err
