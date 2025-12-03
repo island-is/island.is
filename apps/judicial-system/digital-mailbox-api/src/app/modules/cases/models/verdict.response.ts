@@ -8,8 +8,7 @@ import {
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
@@ -58,16 +57,15 @@ export class VerdictResponse {
       ? verdict?.serviceDate
       : internalCase.rulingDate
 
-    const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate({
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
           baseDate: new Date(baseDate),
           isFine,
         })
-      : null
-
-    const isAppealDeadlineExpired = appealDeadline
-      ? hasDatePassed(appealDeadline)
-      : false
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
 
     // Default judgements can't be appealed
     const canBeAppealed = !!verdict && !verdict.isDefaultJudgement
