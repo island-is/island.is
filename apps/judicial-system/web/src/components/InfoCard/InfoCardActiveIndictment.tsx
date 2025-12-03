@@ -6,10 +6,11 @@ import useInfoCardItems from './useInfoCardItems'
 
 interface Props {
   displayVerdictViewDate?: boolean
+  onProsecutorClick?: () => void
 }
 
 const InfoCardActiveIndictment: React.FC<Props> = (props) => {
-  const { displayVerdictViewDate } = props
+  const { displayVerdictViewDate, onProsecutorClick } = props
   const { workingCase } = useContext(FormContext)
   const {
     defendants,
@@ -46,7 +47,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           id: 'case-info-section',
           items: [
             ...(showItem(indictmentCreated) ? [indictmentCreated] : []),
-            prosecutor(workingCase.type),
+            prosecutor(workingCase.type, onProsecutorClick),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),

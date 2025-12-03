@@ -15,7 +15,7 @@ import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.gen
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
-  onChange: (prosecutorId: string) => void
+  onChange?: (prosecutorId: string) => void
 }
 
 const ProsecutorSelection: FC<Props> = ({ onChange }) => {
@@ -73,7 +73,7 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
 
   const handleUpdate = useCallback(
     (prosecutorId: string) => {
-      if (!workingCase.id) {
+      if (!workingCase.id || !onChange) {
         const prosecutor = data?.users?.find((p) => p.id === prosecutorId)
 
         setWorkingCase((prevWorkingCase) => ({
