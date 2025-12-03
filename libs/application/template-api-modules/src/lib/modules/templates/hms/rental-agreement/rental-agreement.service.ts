@@ -34,12 +34,11 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    const { id, answers } = application
+
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
       draftRequest: {
-        ...draftAnswers(
-          applicationAnswers(application.answers),
-          application.id,
-        ),
+        ...draftAnswers(applicationAnswers(answers), id),
       },
     })
   }

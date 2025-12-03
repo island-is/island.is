@@ -5,13 +5,15 @@ import {
   buildSection,
   buildStaticTableField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { applicationAnswers } from '../../shared'
+import { ApplicantsInfo, applicationAnswers } from '../../shared'
 import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { NextStepInReviewOptions } from '../../utils/enums'
 import { getNextStepInReviewOptions } from '../../utils/options'
 import * as m from '../../lib/messages'
+import { applicantIsCompany } from '../../utils/conditions'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',
@@ -45,6 +47,33 @@ export const ReviewInfoSection = buildSection({
               formatPhoneNumber(person.phone || '') ?? '',
               person.email ?? '',
             ])
+          },
+        }),
+        buildStaticTableField({
+          title: m.overview.signatoryHeader,
+          marginTop: 3,
+          header: [
+            m.misc.fullName,
+            m.misc.nationalId,
+            m.misc.phoneNumber,
+            m.misc.email,
+          ],
+          condition: applicantIsCompany,
+          rows: (application) => {
+            const signatory = getValueViaPath<ApplicantsInfo>(
+              application.answers,
+              'parties.signatory',
+            )
+            return [
+              [
+                signatory?.nationalIdWithName.name ?? '',
+                formatNationalId(
+                  signatory?.nationalIdWithName.nationalId || '',
+                ) ?? '',
+                formatPhoneNumber(signatory?.phone || '') ?? '',
+                signatory?.email ?? '',
+              ],
+            ]
           },
         }),
         buildDescriptionField({

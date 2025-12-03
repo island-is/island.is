@@ -28,6 +28,17 @@ export const partiesDetails = defineMessages({
       'Hér eru upplýsingar um þig eins og þær eru skráðar í Þjóðskrá og á Ísland.is. Ef þú vilt nota annað netfang eða símanúmer við gerð leigusamnings, þá getur þú breytt því hér að neðan.',
     description: 'Parties details description',
   },
+  companySignatoryTitle: {
+    id: 'ra.application:partiesDetails.companySignatoryTitle',
+    defaultMessage: 'Undirritunar aðili fyrirtækis',
+    description: 'Company signatory title',
+  },
+  companySignatoryDescription: {
+    id: 'ra.application:partiesDetails.companySignatoryDescription',
+    defaultMessage:
+      'Prókúruhafi sem skrifar rafrænt undir samninginn fyrir hönd fyrirtækisins',
+    description: 'Company signatory description',
+  },
 
   // DataSchema errors
   partiesEmptyTableError: {
@@ -41,6 +52,11 @@ export const partiesDetails = defineMessages({
     defaultMessage:
       'Þessi kennitala er nú þegar skráð sem aðili að leigusamningnum. Ekki er hægt að skrá sama aðila tvisvar.',
     description: 'Duplicate national ID error in table',
+  },
+  companySignatoryError: {
+    id: 'ra.application:partiesDetails.companySignatoryError',
+    defaultMessage: 'Undirritunar aðili fyrirtækis verður að vera skráður',
+    description: 'Company signatory error',
   },
   tenantTableTitle: {
     id: 'ra.application:tenantDetails.tenantTableTitle',
