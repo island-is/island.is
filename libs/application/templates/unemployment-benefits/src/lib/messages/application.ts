@@ -102,4 +102,9 @@ export const application = defineMessages({
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar. Spjallaðu við Ask',
     description: 'Info alert title on confirmation page',
   },
+  fileUploadGeneralHeader: {
+    id: 'vmst.ub.application:fileUploadGeneralHeader',
+    defaultMessage: 'Viðhengi',
+    description: 'General title for file upload',
+  },
 })
