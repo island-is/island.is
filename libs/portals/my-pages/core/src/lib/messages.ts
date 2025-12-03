@@ -2141,7 +2141,7 @@ export const searchTagsMessages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
   },
   healthInsuranceEhicCardLong: {
-    id: 'sp.search.tags:health-insurance-ehic-card',
+    id: 'sp.search.tags:health-insurance-ehic-card-eu',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   healthPaymentParticipation: {
