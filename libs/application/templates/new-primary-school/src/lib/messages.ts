@@ -1219,14 +1219,17 @@ export const assigneeMessages: MessageDir = {
     },
     approvalDescription: {
       id: 'nps.application:assignee.payer.approval.description',
-      defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi gjalds fyrir skólavist barns í sjálfstætt starfandi skóla.',
-      description: 'You have been registered as the payer of schools fees for a child’s enrolment in an independent school.',
+      defaultMessage:
+        'Þú hefur verið skráð/ur sem greiðandi gjalds fyrir skólavist barns í sjálfstætt starfandi skóla.',
+      description:
+        'You have been registered as the payer of schools fees for a child’s enrolment in an independent school.',
     },
     rejectedDescription: {
       id: 'nps.application:assignee.payer.rejected.description',
       defaultMessage:
         'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
-      description: 'The requested payer has rejected your request for the payment of school fees',
+      description:
+        'The requested payer has rejected your request for the payment of school fees',
     },
     name: {
       id: 'nps.application:assignee.payer.name',

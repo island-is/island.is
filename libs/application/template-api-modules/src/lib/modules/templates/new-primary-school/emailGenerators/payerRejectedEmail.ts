@@ -1,4 +1,8 @@
-import { getApplicationAnswers, getApplicationExternalData, getSchoolName } from '@island.is/application/templates/new-primary-school'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getSchoolName,
+} from '@island.is/application/templates/new-primary-school'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 import { format as formatKennitala } from 'kennitala'
@@ -29,7 +33,7 @@ export const generatePayerRejectedApplicationEmail: EmailTemplateGenerator = (
   if (!userProfileEmail) throw new Error('Could not find applicant email')
   if (!childInfo) throw new Error('Could not find child information')
   if (!selectedSchoolName)
-    throw new Error('Could not find selected school name')    
+    throw new Error('Could not find selected school name')
 
   const subject = 'Skráður greiðandi hafnaði greiðsluþátttöku'
 
@@ -79,7 +83,7 @@ export const generatePayerRejectedApplicationEmail: EmailTemplateGenerator = (
           context: {
             copy: selectedSchoolName,
           },
-        },        
+        },
         {
           component: 'Copy',
           context: {

@@ -17,9 +17,8 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
     options: { email, clientLocationOrigin },
   } = props
 
-  const { payerName, payerEmail, childInfo, selectedSchoolId } = getApplicationAnswers(
-    application.answers,
-  )
+  const { payerName, payerEmail, childInfo, selectedSchoolId } =
+    getApplicationAnswers(application.answers)
 
   const { applicantName } = getApplicationExternalData(application.externalData)
 
@@ -31,7 +30,7 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
   if (!payerEmail) throw new Error('Could not find payer email')
   if (!childInfo) throw new Error('Could not find child information')
   if (!selectedSchoolName)
-    throw new Error('Could not find selected school name')    
+    throw new Error('Could not find selected school name')
 
   const subject = 'Yfirferð á umsókn í sjálfstætt starfandi grunnskóla'
 
