@@ -50,7 +50,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
     case VerdictServiceStatus.LEGAL_PAPER:
       return [
-        `Dómur birtur í Lögbirtingarblaðinu - ${
+        `Dómur birtur í Lögbirtingablaðinu - ${
           verdict.serviceDate ? `${formatDate(verdict.serviceDate)}` : ''
         }`,
       ]
@@ -104,7 +104,7 @@ const VerdictStatusAlertMessage = ({
     if (verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER) {
       return (
         <AlertMessage
-          type="info"
+          type="success"
           title={`Dómur birtur í Lögbirtingablaðinu - ${defendantName}`}
           message={messages[0]}
         />
@@ -114,7 +114,7 @@ const VerdictStatusAlertMessage = ({
     return (
       <AlertMessage
         type="success"
-        title={`Birting tókst - ${defendantName}`}
+        title={`Dómur birtur - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (

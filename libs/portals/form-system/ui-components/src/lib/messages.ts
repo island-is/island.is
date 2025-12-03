@@ -618,7 +618,7 @@ export const m = defineMessages({
   },
   unpublish: {
     id: 'form.system:unpublish',
-    defaultMessage: 'Afturkalla útgáfu',
+    defaultMessage: 'Taka úr útgáfu',
     description: 'Unpublish',
   },
   tryOut: {
@@ -1018,7 +1018,78 @@ export const m = defineMessages({
   },
   deleteFormWarning: {
     id: 'form.system:delete-form-warning',
-    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}?',
-    description: 'Are you sure you want to delete the form: {formName}?',
+    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}',
+    description: 'Are you sure you want to delete the form: {formName}',
+  },
+  unpublishFormWarning: {
+    id: 'form.system:unpublish-form-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
+    description: 'Are you sure you want to unpublish the form: {formName}',
+  },
+  previewField: {
+    id: 'form.system:preview-field',
+    defaultMessage: 'Sýnishorn',
+    description: 'Preview',
+  },
+  largeCheckbox: {
+    id: 'form.system.large-checkbox',
+    defaultMessage: 'Stórt hakbox',
+    description: 'Large checkbox',
+  },
+  hasSublabel: {
+    id: 'form.system.has-sublabel',
+    defaultMessage: 'Hefur undirtexta',
+    description: 'Has sublabel',
+  },
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
+  },
+  switchLoginToCreateApplication: {
+    id: 'form.system:switch-login-to-create-application',
+    defaultMessage: 'Skipta þarf um notanda.',
+    description: 'You must change your login.',
+  },
+  applicationDoesNotPermitLogin: {
+    id: 'form.system:application-does-not-permit-login',
+    defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
+    description: 'This application does not support this type of login.',
+  },
+  errorFetchingApplication: {
+    id: 'form.system:error-fetching-application',
+    defaultMessage: 'Villa kom upp við að sækja umsóknina.',
+    description: 'An error occurred while fetching the application.',
+  },
+  createApplication: {
+    id: 'form.system:create-application',
+    defaultMessage: 'Stofna nýja umsókn',
+    description: 'Create new application',
+  },
+  inProgress: {
+    id: 'form.system:in-progress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  publishedInProgress: {
+    id: 'form.system:published-in-progress',
+    defaultMessage: 'Útgefið í vinnslu',
+    description: 'Published in progress',
+  },
+  published: {
+    id: 'form.system:published',
+    defaultMessage: 'Útgefið',
+    description: 'Published',
+  },
+  slugNotFound: {
+    id: 'form.system:slug-not-found',
+    defaultMessage: 'Tegund umsóknar fannst ekki',
+    description: 'Application type not found',
+  },
+  checkUrlPlease: {
+    id: 'form.system:check-url-please',
+    defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
+    description: 'Please check the URL.',
   },
 })
