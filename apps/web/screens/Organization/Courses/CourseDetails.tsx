@@ -76,9 +76,8 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage?.title ?? '',
-          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
-            .href,
+          title: organizationPage?.title,
+          href: linkResolver('organizationpage', [organizationPage?.slug]).href,
         },
         {
           title: n(
@@ -86,7 +85,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             activeLocale === 'is' ? 'Námskeið' : 'Courses',
           ),
           href: linkResolver('organizationcourseoverview', [
-            organizationPage?.slug ?? '',
+            organizationPage.slug,
           ]).href,
         },
       ]}

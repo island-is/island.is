@@ -152,6 +152,14 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
             id: category.key,
             slug: category.key,
             title: category.label,
+            genericTagGroup: {
+              id: 'course-categories',
+              slug: 'course-categories',
+              title:
+                activeLocale === 'is'
+                  ? 'Námskeiðsflokkar'
+                  : 'Course Categories',
+            },
           }))}
           searchInputPlaceholder={n(
             'courseListSearchInputPlaceholder',
@@ -176,6 +184,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
           searchQueryId={searchQueryId}
           tagQueryId={tagQueryId}
           showSearchInput={false}
+          showSearchFilters={true}
         >
           <GridContainer>
             <GridRow rowGap={3}>
