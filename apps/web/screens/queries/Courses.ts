@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { slices } from './fragments'
 
 export const GET_ORGANIZATION_COURSES_QUERY = gql`
