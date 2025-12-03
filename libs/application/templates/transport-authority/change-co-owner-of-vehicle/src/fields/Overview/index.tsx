@@ -192,6 +192,10 @@ export const Overview: FC<
                 </Box>
               </Box>
             )}
+            {/**
+             * Note: If every reviewer has approved and application in not yet in COMPLETED state
+             * we allow reviewer to "re-approve" to push the application to the next state.
+             */}
             {hasEveryReviewerApproved(application.answers) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
