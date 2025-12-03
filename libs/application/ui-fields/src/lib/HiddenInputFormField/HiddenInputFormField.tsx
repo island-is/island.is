@@ -56,24 +56,11 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
     if (getDefaultValue !== undefined) return
 
     const oldValue = getValues(id)
-
     const isEmptyString = oldValue === ''
-    // const isNullOrUndefinedWithFlag =
-    //   (oldValue === null || oldValue === undefined) && dontDefaultToEmptyString
     const isNullOrUndefinedWithFlag =
-      oldValue === null && field.dontDefaultToEmptyString
+      (oldValue === null || oldValue === undefined) &&
+      field.dontDefaultToEmptyString
 
-    console.log('id', id)
-    console.log(
-      'oldValue',
-      oldValue === null
-        ? 'null'
-        : oldValue === undefined
-        ? 'undefined'
-        : oldValue === ''
-        ? '<empty string>'
-        : 'unknown',
-    )
     if (isEmptyString || isNullOrUndefinedWithFlag) {
       setValue(id, undefined)
     }
