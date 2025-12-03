@@ -7,7 +7,7 @@ import {
 import * as m from '../../../lib/messages'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { SectionRouteEnum } from '../../../types/routes'
-import { generatePast24Months } from '../../../utils/generateYearsAndMonths'
+import { generateYearsAndMonths } from '../../../utils/generateYearsAndMonths'
 import { getApplicationAnswers } from '../../../utils'
 
 export const disabilityPeriodSubsection = buildSubSection({
@@ -29,7 +29,7 @@ export const disabilityPeriodSubsection = buildSubSection({
           width: 'half',
           placeholder: m.shared.chooseYear,
           options: () => {
-            const years = generatePast24Months()
+            const years = generateYearsAndMonths()
             const yearValues = Object.keys(years)
             return yearValues.map((year) => ({
               value: year.toString(),
@@ -44,7 +44,7 @@ export const disabilityPeriodSubsection = buildSubSection({
           placeholder: m.shared.chooseMonth,
 
           options: ({ answers }) => {
-            const pastYearsWithMonths = generatePast24Months()
+            const pastYearsWithMonths = generateYearsAndMonths()
             const { disabilityRenumerationDateYear } =
               getApplicationAnswers(answers)
 

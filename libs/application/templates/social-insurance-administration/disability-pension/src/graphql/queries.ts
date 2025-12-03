@@ -1,18 +1,13 @@
 import gql from 'graphql-tag'
 
 export const siaDisabilityPensionCertificateQuery = gql`
-  query SiaDisabilityPensionCertificate {
-    socialInsuranceDisabilityPensionCertificate {
+  query SiaDisabilityPensionCertificate($locale: String!) {
+    socialInsuranceDisabilityPensionCertificate(locale: $locale) {
       referenceId
       doctor {
         name
-        doctorNumber
-        phoneNumber
-        email
         residence
       }
-      lastInspectionDate
-      certificateDate
       dateOfWorkIncapacity
       diagnoses {
         mainDiagnoses {
@@ -25,38 +20,26 @@ export const siaDisabilityPensionCertificateQuery = gql`
         }
       }
       healthHistorySummary
-      healthImpact {
-        description
-        impactLevel
-      }
       participationLimitationCause
-      abilityChangePotential
-      medicationAndSupports
-      assessmentToolsUsed
-      physicalAbilityRatings {
-        type
-        score
-      }
-      cognitiveAndMentalAbilityRatings {
-        type
-        score
-      }
-      functionalAssessment {
-        type
-        score
-      }
-      impairments {
-        type
-        functions {
-          title
-          keyNumber
-          description
-        }
-      }
-      environmentalFactors {
-        category
-        keyNumber
+      stabilityOfHealth {
         description
+        furtherDetails
+      }
+      abilityChangePotential
+      medicationAndSupportsUsed {
+        medicationUsed
+        supportsUsed
+        interventionsUsed
+      }
+      capacityForWork
+      previousRehabilitation
+      physicalImpairments {
+        title
+        value
+      }
+      mentalImpairments {
+        title
+        value
       }
     }
   }

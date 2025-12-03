@@ -2,7 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
+  IntroWrapper,
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -22,7 +22,6 @@ const CourtCaseDetail = () => {
   const { formatMessage, lang } = useLocale()
 
   const { id } = useParams() as UseParams
-
   const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {
@@ -33,22 +32,21 @@ const CourtCaseDetail = () => {
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
+
   const hasVerdict = courtCase?.data?.hasVerdict
   const hasVerdictBeenServed = courtCase?.data?.hasVerdictBeenServed
 
   return (
-    <>
-      <IntroHeader
-        loading={loading}
-        title={
-          courtCase?.data?.caseNumberTitle ??
-          formatMessage(messages.courtCaseNumberNotRegistered)
-        }
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
-
+    <IntroWrapper
+      loading={loading}
+      title={
+        courtCase?.data?.caseNumberTitle ??
+        formatMessage(messages.courtCaseNumberNotRegistered)
+      }
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail &&
           !loading &&
@@ -106,7 +104,7 @@ const CourtCaseDetail = () => {
             imgSrc="./assets/images/sofa.svg"
           />
         )}
-    </>
+    </IntroWrapper>
   )
 }
 export default CourtCaseDetail

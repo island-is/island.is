@@ -11,16 +11,19 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
-import { overview as overviewMessages } from '../lib/messages'
+import {
+  overview as overviewMessages,
+  education as educationMessages,
+} from '../lib/messages'
 import {
   FamilyInformationInAnswers,
   EmploymentStatus,
   FileSchemaInAnswers,
   LanguagesInAnswers,
   EducationType,
-  CurrentEducationInAnswers,
   PreviousEducationInAnswers,
   EmploymentHistoryInAnswers,
+  RepeatableRequiredEducationInAnswers,
 } from '../shared'
 import * as kennitala from 'kennitala'
 import {
@@ -40,7 +43,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { StaticText } from '@island.is/shared/types'
 
-import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsSelectItem,
+  GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO,
+  GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO,
+  GaldurDomainModelsSettingsPostcodesPostcodeDTO,
+} from '@island.is/clients/vmst-unemployment'
 import {
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
@@ -49,7 +57,7 @@ import { getEmploymentFromRsk } from './getEmploymenInfo'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { formatMessage } = useLocale()
   const children = getValueViaPath<FamilyInformationInAnswers>(
@@ -95,12 +103,20 @@ export const useApplicantOverviewItems = (
   ]
 
   if (differentResidence?.includes(YES)) {
+    const nameAndPostcode = getValueViaPath<
+      GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
+    >(externalData, 'unemploymentApplication.data.supportData.postCodes')
+    const otherPostCodeId =
+      getValueViaPath<string>(answers, 'applicant.otherPostcode') ?? ''
+    const otherPostCodeName = nameAndPostcode?.find(
+      (x) => x.id === otherPostCodeId,
+    )?.nameAndCode
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.applicantOverview.differentResidence,
       valueText: [
         getValueViaPath<string>(answers, 'applicant.otherAddress') ?? '',
-        getValueViaPath<string>(answers, 'applicant.otherPostcode') ?? '',
+        otherPostCodeName,
       ],
     })
   }
@@ -187,34 +203,33 @@ export const useEducationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { formatMessage } = useLocale()
   const lastTvelveMonths = getValueViaPath<YesOrNo>(
     answers,
     'education.lastTwelveMonths',
     NO,
   )
   const lastTvelveMonthsString: StaticText =
-    getValueViaPath<YesOrNo>(answers, 'education.lastTwelveMonths', NO) === 'no'
+    getValueViaPath<YesOrNo>(answers, 'education.lastTwelveMonths', NO) === NO
       ? overviewMessages.labels.education.notLastTvelveMonths
       : ''
 
   const educationAnswer =
-    getValueViaPath<EducationType>(answers, 'education.typeOfEducation') ?? ''
+    getValueViaPath<Array<EducationType>>(
+      answers,
+      'education.typeOfEducation',
+    ) ?? []
 
-  const educationString = educationAnswer
-    ? getLastTvelveMonthsEducationString(educationAnswer)
-    : undefined
+  const educationStrings: Array<StaticText> = []
+  educationAnswer?.forEach((answer) => {
+    const edAnswer = getLastTvelveMonthsEducationString(answer)
+    educationStrings.push(edAnswer)
+  })
 
   const valueItems =
     lastTvelveMonthsString !== '' ? [lastTvelveMonthsString] : []
   if (lastTvelveMonths === YES) {
-    educationString && valueItems.push(educationString)
+    valueItems.push(...educationStrings)
   }
-
-  const currentEducation = getValueViaPath<CurrentEducationInAnswers>(
-    answers,
-    'educationHistory.currentStudies',
-  )
 
   const overviewItems: Array<KeyValueItem> = [
     {
@@ -223,38 +238,6 @@ export const useEducationOverviewItems = (
       valueText: valueItems,
     },
   ]
-
-  if (currentEducation) {
-    const educationValueItems = [
-      currentEducation.levelOfStudy,
-      currentEducation.degree,
-      currentEducation.courseOfStudy,
-    ]
-    const showEndDateLabel =
-      wasStudyingInTheLastYear(answers) || wasStudyingLastSemester(answers)
-    if (currentEducation.endDate) {
-      educationValueItems.push(
-        `${
-          showEndDateLabel
-            ? formatMessage(overviewMessages.labels.education.endDate)
-            : formatMessage(overviewMessages.labels.education.predictedEndDate)
-        }: ${currentEducation.endDate}`,
-      )
-    }
-
-    overviewItems.push({
-      width: 'full',
-      keyText: overviewMessages.labels.education.currentEducation,
-      valueText: [
-        currentEducation.levelOfStudy,
-        currentEducation.degree,
-        currentEducation.courseOfStudy,
-        `${formatMessage(overviewMessages.labels.education.endDate)}: ${
-          currentEducation.endDate
-        }`,
-      ],
-    })
-  }
 
   return overviewItems
 }
@@ -337,13 +320,134 @@ export const useEmploymentSearchOverviewItems = (
 
 export const useEducationHistoryOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { formatMessage, locale } = useLocale()
-  const currentEducation = getValueViaPath<CurrentEducationInAnswers>(
-    answers,
-    'educationHistory.currentStudies',
-  )
+  const overviewItems: Array<KeyValueItem> = []
+  const currentEducation =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
+      answers,
+      'educationHistory.currentStudies',
+    )
+
+  const lastSemesterEducation =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
+      answers,
+      'educationHistory.lastSemester',
+    )
+
+  const graduationLastTwelveMonthsEducation =
+    getValueViaPath<RepeatableRequiredEducationInAnswers>(
+      answers,
+      'educationHistory.finishedEducation',
+    )
+  if (currentEducation) {
+    const educationStrings = getEducationStrings(
+      currentEducation,
+      externalData,
+      locale,
+    )
+    const educationValueItems = [
+      educationStrings.levelOfStudy,
+      educationStrings.degree,
+      educationStrings.courseOfStudy,
+      `${formatMessage(
+        educationMessages.labels.schoolProgramUnitsLabelPerSemester,
+      )}: ${currentEducation.units}`,
+    ]
+    overviewItems.push({
+      width: 'full',
+      keyText: overviewMessages.labels.educationHistory.currentEducation,
+      valueText: educationValueItems,
+    })
+  }
+
+  if (lastSemesterEducation) {
+    let thisEducationItem = lastSemesterEducation
+    if (
+      lastSemesterEducation.sameAsAboveEducation?.includes(YES) &&
+      currentEducation
+    ) {
+      thisEducationItem = currentEducation
+    }
+    const educationStrings = getEducationStrings(
+      thisEducationItem,
+      externalData,
+      locale,
+    )
+    const educationValueItems = [
+      educationStrings.levelOfStudy,
+      educationStrings.degree,
+      educationStrings.courseOfStudy,
+      `${formatMessage(
+        educationMessages.labels.schoolProgramUnitsLabelPerSemester,
+      )}: ${lastSemesterEducation.units}`, //units are per semester and are not shared even though the user checks the "same education" checkbox
+    ]
+    const showEndDateLabel =
+      wasStudyingInTheLastYear(answers) || wasStudyingLastSemester(answers)
+    if (thisEducationItem.endDate) {
+      educationValueItems.push(
+        `${
+          showEndDateLabel
+            ? formatMessage(overviewMessages.labels.educationHistory.endDate)
+            : formatMessage(
+                overviewMessages.labels.educationHistory.predictedEndDate,
+              )
+        }: ${thisEducationItem.endDate}`,
+      )
+    }
+
+    overviewItems.push({
+      width: 'full',
+      keyText: overviewMessages.labels.educationHistory.lastSemesterEducation,
+      valueText: educationValueItems,
+    })
+  }
+
+  if (graduationLastTwelveMonthsEducation) {
+    let thisEducationItem = graduationLastTwelveMonthsEducation
+    if (
+      graduationLastTwelveMonthsEducation.sameAsAboveEducation?.includes(YES) &&
+      lastSemesterEducation
+    ) {
+      thisEducationItem = lastSemesterEducation
+    }
+    const educationStrings = getEducationStrings(
+      thisEducationItem,
+      externalData,
+      locale,
+    )
+
+    const educationValueItems = [
+      educationStrings.levelOfStudy,
+      educationStrings.degree,
+      educationStrings.courseOfStudy,
+      `${formatMessage(educationMessages.labels.schoolProgramUnitsLabel)}: ${
+        graduationLastTwelveMonthsEducation.units
+      }`,
+    ]
+    const showEndDateLabel =
+      wasStudyingInTheLastYear(answers) || wasStudyingLastSemester(answers)
+    if (graduationLastTwelveMonthsEducation.endDate) {
+      educationValueItems.push(
+        `${
+          showEndDateLabel
+            ? formatMessage(overviewMessages.labels.educationHistory.endDate)
+            : formatMessage(
+                overviewMessages.labels.educationHistory.predictedEndDate,
+              )
+        }: ${graduationLastTwelveMonthsEducation.endDate}`,
+      )
+    }
+
+    overviewItems.push({
+      width: 'full',
+      keyText:
+        overviewMessages.labels.educationHistory
+          .graduatedLastTvelweMonthsEducation,
+      valueText: educationValueItems,
+    })
+  }
 
   const educationHistory =
     getValueViaPath<Array<PreviousEducationInAnswers>>(
@@ -353,12 +457,12 @@ export const useEducationHistoryOverviewItems = (
     ) ?? []
   const mappedHistory: Array<KeyValueItem> = educationHistory.map(
     (item, index) => {
-      const educationStrings = getEducationStrings(item, _externalData, locale)
+      const educationStrings = getEducationStrings(item, externalData, locale)
       return {
         width: 'half',
         keyText: `${formatMessage(
           overviewMessages.labels.educationHistory.educationHistory,
-        )} ${index + 2}`,
+        )} ${index + 1}`,
         valueText: [
           educationStrings.levelOfStudy,
           educationStrings.degree,
@@ -368,20 +472,6 @@ export const useEducationHistoryOverviewItems = (
     },
   )
 
-  const overviewItems: Array<KeyValueItem> = []
-  if (currentEducation) {
-    overviewItems.push({
-      width: 'half',
-      keyText: `${formatMessage(
-        overviewMessages.labels.educationHistory.educationHistory,
-      )} ${1}`,
-      valueText: [
-        currentEducation?.levelOfStudy,
-        currentEducation?.degree,
-        currentEducation?.courseOfStudy,
-      ],
-    })
-  }
   if (mappedHistory.length > 0) {
     overviewItems.push(...mappedHistory)
   }
@@ -390,8 +480,23 @@ export const useEducationHistoryOverviewItems = (
 
 export const useLicenseOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const drivingLicenseTypes =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.drivingLicenses',
+    ) || []
+
+  const heavyMachineryLicenses =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.heavyMachineryLicenses',
+    ) || []
   const hasDriversLicense = getValueViaPath<Array<YesOrNoEnum>>(
     answers,
     'licenses.hasDrivingLicense',
@@ -403,23 +508,32 @@ export const useLicenseOverviewItems = (
 
   const overviewItems: Array<KeyValueItem> = []
   if (hasDriversLicense && hasDriversLicense[0] === YES) {
+    const ids = getValueViaPath<Array<string>>(
+      answers,
+      'licenses.drivingLicenseTypes',
+    )
+    const name = ids
+      ?.map((id) => drivingLicenseTypes.find((x) => x.id === id)?.name)
+      .filter(Boolean)
+
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.drivingLicense,
-      valueText: getValueViaPath<string>(
-        answers,
-        'licenses.drivingLicenseTypes',
-      ),
+      valueText: name,
     })
   }
   if (hasHeavyMachineryLicense && hasHeavyMachineryLicense[0] === YES) {
+    const ids = getValueViaPath<Array<string>>(
+      answers,
+      'licenses.heavyMachineryLicensesTypes',
+    )
+    const name = ids
+      ?.map((id) => heavyMachineryLicenses.find((x) => x.id === id)?.name)
+      .filter(Boolean)
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
-      valueText: getValueViaPath<string[]>(
-        answers,
-        'licenses.heavyMachineryLicensesTypes',
-      ),
+      valueText: name,
     })
   }
   return overviewItems
