@@ -26,7 +26,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefendantSelector,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -40,10 +39,12 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CourtSessionType,
+  Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -58,6 +59,7 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CourtCaseNumberInput from '../../components/CourtCaseNumber/CourtCaseNumberInput'
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
 
@@ -137,7 +139,9 @@ const Conclusion: FC = () => {
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
-  const [modalVisible, setModalVisible] = useState<'SPLIT'>()
+  const [modalVisible, setModalVisible] = useState<
+    'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
+  >()
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -806,7 +810,7 @@ const Conclusion: FC = () => {
           text={`Ákærði ${selectedDefendant?.name} verður klofinn frá málinu og nýtt mál stofnað.`}
           primaryButton={{
             text: 'Já, kljúfa mál',
-            onClick: () => console.log('Split case'),
+            onClick: () => setModalVisible('CREATE_COURT_CASE_NUMBER'),
           }}
           secondaryButton={{
             text: 'Hætta við',
@@ -814,6 +818,21 @@ const Conclusion: FC = () => {
           }}
           onClose={() => setModalVisible(undefined)}
         />
+      )}
+      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && (
+        <Modal
+          title={`Nýtt mál - ${selectedDefendant?.name}`}
+          text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
+          primaryButton={{
+            text: 'Staðfesta',
+            onClick: () => console.log('Split case'),
+          }}
+        >
+          <CourtCaseNumberInput
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
+        </Modal>
       )}
     </PageLayout>
   )

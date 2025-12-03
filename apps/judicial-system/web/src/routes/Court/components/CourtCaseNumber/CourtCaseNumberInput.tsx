@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
@@ -70,87 +70,81 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
   }
 
   return (
-    <BlueBox>
-      <div className={styles.createCourtCaseContainer}>
-        <Box display="flex">
-          <div className={styles.createCourtCaseButton}>
-            <Button
-              size="small"
-              onClick={() => handleCreateCourtCase(workingCase)}
-              loading={isCreatingCourtCase}
-              disabled={Boolean(
-                (workingCase.state !== CaseState.SUBMITTED &&
-                  workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-                  workingCase.state !== CaseState.RECEIVED) ||
-                  workingCase.courtCaseNumber,
-              )}
-              fluid
-            >
-              {formatMessage(courtCaseNumber.createCaseButtonText)}
-            </Button>
-          </div>
-          <div className={styles.createCourtCaseInput}>
-            <Input
-              data-testid="courtCaseNumber"
-              name="courtCaseNumber"
-              label={formatMessage(courtCaseNumber.label)}
-              placeholder={formatMessage(courtCaseNumber.placeholder, {
-                isIndictment: isIndictmentCase(workingCase.type),
-                year: new Date().getFullYear(),
-              })}
-              autoComplete="off"
-              size="sm"
-              backgroundColor="white"
-              value={workingCase.courtCaseNumber ?? ''}
-              icon={
-                workingCase.courtCaseNumber && createCourtCaseSuccess
-                  ? { name: 'checkmark' }
-                  : undefined
-              }
-              errorMessage={courtCaseNumberErrorMessage}
-              hasError={
-                !isCreatingCourtCase && courtCaseNumberErrorMessage !== ''
-              }
-              onChange={(event) => {
-                setCreateCourtCaseSuccess(false)
-                removeTabsValidateAndSet(
-                  'courtCaseNumber',
-                  event.target.value,
-                  [
-                    'empty',
-                    isIndictmentCase(workingCase.type)
-                      ? 'S-case-number'
-                      : 'R-case-number',
-                  ],
-                  setWorkingCase,
-                  courtCaseNumberErrorMessage,
-                  setCourtCaseNumberErrorMessage,
-                )
-              }}
-              onBlur={(event) => {
-                validateAndSendToServer(
-                  'courtCaseNumber',
-                  event.target.value,
-                  [
-                    'empty',
-                    isIndictmentCase(workingCase.type)
-                      ? 'S-case-number'
-                      : 'R-case-number',
-                  ],
-                  workingCase,
-                  updateCourtCaseNumber,
-                  setCourtCaseNumberErrorMessage,
-                )
-              }}
-              disabled={
-                workingCase.state !== CaseState.SUBMITTED &&
-                workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-                workingCase.state !== CaseState.RECEIVED
-              }
-              required
-            />
-          </div>
-        </Box>
+    <BlueBox className={styles.createCourtCaseContainer}>
+      <div className={styles.createCourtCaseButton}>
+        <Button
+          size="small"
+          onClick={() => handleCreateCourtCase(workingCase)}
+          loading={isCreatingCourtCase}
+          disabled={Boolean(
+            (workingCase.state !== CaseState.SUBMITTED &&
+              workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
+              workingCase.state !== CaseState.RECEIVED) ||
+              workingCase.courtCaseNumber,
+          )}
+          fluid
+        >
+          {formatMessage(courtCaseNumber.createCaseButtonText)}
+        </Button>
+      </div>
+      <div className={styles.createCourtCaseInput}>
+        <Input
+          data-testid="courtCaseNumber"
+          name="courtCaseNumber"
+          label={formatMessage(courtCaseNumber.label)}
+          placeholder={formatMessage(courtCaseNumber.placeholder, {
+            isIndictment: isIndictmentCase(workingCase.type),
+            year: new Date().getFullYear(),
+          })}
+          autoComplete="off"
+          size="sm"
+          backgroundColor="white"
+          value={workingCase.courtCaseNumber ?? ''}
+          icon={
+            workingCase.courtCaseNumber && createCourtCaseSuccess
+              ? { name: 'checkmark' }
+              : undefined
+          }
+          errorMessage={courtCaseNumberErrorMessage}
+          hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
+          onChange={(event) => {
+            setCreateCourtCaseSuccess(false)
+            removeTabsValidateAndSet(
+              'courtCaseNumber',
+              event.target.value,
+              [
+                'empty',
+                isIndictmentCase(workingCase.type)
+                  ? 'S-case-number'
+                  : 'R-case-number',
+              ],
+              setWorkingCase,
+              courtCaseNumberErrorMessage,
+              setCourtCaseNumberErrorMessage,
+            )
+          }}
+          onBlur={(event) => {
+            validateAndSendToServer(
+              'courtCaseNumber',
+              event.target.value,
+              [
+                'empty',
+                isIndictmentCase(workingCase.type)
+                  ? 'S-case-number'
+                  : 'R-case-number',
+              ],
+              workingCase,
+              updateCourtCaseNumber,
+              setCourtCaseNumberErrorMessage,
+            )
+          }}
+          disabled={
+            workingCase.state !== CaseState.SUBMITTED &&
+            workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
+            workingCase.state !== CaseState.RECEIVED
+          }
+          required
+        />
       </div>
     </BlueBox>
   )
