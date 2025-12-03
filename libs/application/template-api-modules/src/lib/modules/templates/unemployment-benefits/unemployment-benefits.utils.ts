@@ -665,7 +665,6 @@ export const getPreviousOccupationInformation = (
         )?.name,
     unemploymentReasonQuestionResponse:
       unemploymentReasons?.reasonQuestion === YES,
-    additionalDetails: unemploymentReasons?.additionalReasonText,
     agreementConfirmation:
       unemploymentReasons?.agreementConfirmation?.includes(YES),
     bankruptcyConfirmation:

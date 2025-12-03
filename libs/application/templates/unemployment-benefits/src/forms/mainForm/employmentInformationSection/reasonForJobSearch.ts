@@ -8,7 +8,6 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
-  buildTextField,
   coreMessages,
   getValueViaPath,
   NO,
@@ -159,7 +158,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
               if (reasonBasedOnChoice?.contentfulQuestionId) {
                 const contentfulId =
                   contentfulIdMapReasonsForJobSearch[
-                    reasonBasedOnChoice?.contentfulQuestionId
+                    `${reasonBasedOnChoice?.contentfulQuestionId}#markdown`
                   ]
                 title = formatMessage(contentfulId)
               }
@@ -198,10 +197,9 @@ export const reasonForJobSearchSubSection = buildSubSection({
             )
           },
         }),
-        buildAlertMessageField({
+        buildDescriptionField({
           id: 'reasonForJobSearch.extraExplanation',
-          alertType: 'info',
-          message: (application, locale, formatMessage) => {
+          description: (application, locale, formatMessage) => {
             let title = ''
             if (typeof formatMessage === 'function') {
               const reasonBasedOnChoice = getReasonBasedOnChoice(
@@ -218,7 +216,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
               ) {
                 const contentfulId =
                   contentfulIdMapReasonsForJobSearch[
-                    reasonBasedOnChoice?.contentfulIdOnYes
+                    `${reasonBasedOnChoice?.contentfulIdOnYes}#markdown`
                   ]
                 title = formatMessage(contentfulId)
               }
@@ -226,7 +224,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
               if (radioAnswer === NO && reasonBasedOnChoice?.contentfulIdOnNo) {
                 const contentfulId =
                   contentfulIdMapReasonsForJobSearch[
-                    reasonBasedOnChoice?.contentfulIdOnNo
+                    `${reasonBasedOnChoice?.contentfulIdOnNo}#markdown`
                   ]
                 title = formatMessage(contentfulId)
               }
@@ -247,51 +245,6 @@ export const reasonForJobSearchSubSection = buildSubSection({
               !!reasonBasedOnChoice &&
               !!reasonBasedOnChoice.contentfulQuestionId &&
               !!radioAnswer
-            )
-          },
-        }),
-        buildHiddenInputWithWatchedValue({
-          id: 'reasonForJobSearch.additionalReasonTextRequired',
-          watchValue: 'reasonForJobSearch.additionalReason',
-          valueModifier: (value, application: Application | undefined) => {
-            if (!application) {
-              return ''
-            }
-            const unemploymentReasonCategories =
-              getValueViaPath<
-                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
-              >(
-                application.externalData,
-                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
-                [],
-              ) || []
-            let required: boolean | undefined = false
-            unemploymentReasonCategories.forEach((cat) => {
-              cat.unemploymentReasons?.forEach((reason) => {
-                if (reason.id === value) {
-                  required = reason.requiresAdditonalDetails
-                }
-              })
-            })
-
-            return required
-          },
-        }),
-        buildTextField({
-          id: 'reasonForJobSearch.additionalReasonText',
-          title:
-            employmentMessages.reasonForJobSearch.labels
-              .additionalReasonForJobSearchLabel,
-          variant: 'textarea',
-          rows: 6,
-          condition: (answers, externalData) => {
-            const reasonBasedOnChoice = getReasonBasedOnChoice(
-              answers,
-              externalData,
-            )
-            return (
-              !!reasonBasedOnChoice &&
-              !!reasonBasedOnChoice.requiresAdditonalDetails
             )
           },
         }),
@@ -323,6 +276,20 @@ export const reasonForJobSearchSubSection = buildSubSection({
             return required
           },
         }),
+        buildDescriptionField({
+          id: 'reasonForJobSearch.healthReasonDescription',
+          title:
+            employmentMessages.reasonForJobSearch.labels
+              .healthReasonDescription,
+          titleVariant: 'h5',
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return !!reasonBasedOnChoice && !!reasonBasedOnChoice.healthReason
+          },
+        }),
         buildFileUploadField({
           id: 'reasonForJobSearch.healthReason',
           uploadHeader:
@@ -338,6 +305,91 @@ export const reasonForJobSearchSubSection = buildSubSection({
             return !!reasonBasedOnChoice && !!reasonBasedOnChoice.healthReason
           },
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.attachmentTypeId',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let attachmentTypeId: string | undefined = undefined
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
+                if (reason.id === value && reason.attachmentTypeId) {
+                  attachmentTypeId = reason.attachmentTypeId
+                } else if (
+                  reason.id === value &&
+                  reason.attachmentTypeIdOnYes
+                ) {
+                  attachmentTypeId = reason.attachmentTypeIdOnYes
+                }
+              })
+            })
+
+            return attachmentTypeId
+          },
+        }),
+        buildDescriptionField({
+          id: 'reasonForJobSearch.extraDescription',
+          description(application, locale, formatMessage) {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              application.answers,
+              application.externalData,
+            )
+            if (
+              reasonBasedOnChoice?.contentfulId &&
+              formatMessage &&
+              typeof formatMessage === 'function'
+            ) {
+              const contentfulId =
+                contentfulIdMapReasonsForJobSearch[
+                  `${reasonBasedOnChoice?.contentfulId}#markdown`
+                ]
+              return formatMessage(contentfulId)
+            }
+
+            return ''
+          },
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return !!reasonBasedOnChoice && !!reasonBasedOnChoice.contentfulId
+          },
+        }),
+        buildFileUploadField({
+          id: 'reasonForJobSearch.extraFileUpload',
+          uploadHeader: applicationMessages.fileUploadGeneralHeader,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: UPLOAD_ACCEPT,
+          uploadDescription: applicationMessages.fileUploadAcceptFiles,
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            const radioAnswer = getValueViaPath<string>(
+              answers,
+              'reasonForJobSearch.reasonQuestion',
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              (!!reasonBasedOnChoice.attachmentTypeId ||
+                (radioAnswer === YES &&
+                  !!reasonBasedOnChoice.attachmentTypeIdOnYes))
+            )
+          },
+        }),
+
         buildAlertMessageField({
           id: 'reasonForJobSearch.alertMessage',
           message: employmentMessages.reasonForJobSearch.labels.informationBox,
