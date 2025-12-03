@@ -45,6 +45,7 @@ import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 type Vacancy =
   IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
+const DEBUG = false
 const ITEMS_PER_PAGE = 12
 const SHOW_CURRENT_BREADCRUMB = false
 export const VACANCY_INTRO_MAX_LENGTH = 280
@@ -308,6 +309,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           }`,
           variant: getDeadlineVariant(vacancy.applicationDeadlineTo),
         },
+        DEBUG &&
+          vacancy.creationDate && {
+            label: `Búið til: ${vacancy.creationDate}`,
+            variant: 'blue' as const,
+          },
+        DEBUG &&
+          vacancy.updatedDate && {
+            label: `Uppfært: ${vacancy.updatedDate}`,
+            variant: 'blue' as const,
+          },
       ].filter(isDefined)
 
       return {
