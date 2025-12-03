@@ -25,7 +25,7 @@ export interface ApplicantChildCustodyInformationV3 {
   familyName?: string | null
   fullName: string
   genderCode: string
-  genderDescription: string
+  genderDescription?: string | undefined
   livesWithApplicant: boolean
   livesWithBothParents: boolean
   otherParent?: NationalRegistryOtherIndividual | null
