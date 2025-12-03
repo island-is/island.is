@@ -907,7 +907,7 @@ export class CaseController {
   )
   @RolesRules(districtCourtJudgeRule)
   @UseInterceptors(CaseInterceptor)
-  @Post('case/:caseId/split/:defendantId')
+  @Post('case/:caseId/defendant/:defendantId/split')
   @ApiCreatedResponse({
     type: Case,
     description:
