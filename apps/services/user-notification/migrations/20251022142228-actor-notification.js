@@ -50,7 +50,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, _Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('actor_notification')
   },
 }

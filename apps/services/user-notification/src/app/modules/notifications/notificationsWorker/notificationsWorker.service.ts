@@ -89,7 +89,7 @@ export class NotificationsWorkerService {
   ) {}
 
   async handlePushNotifications(args: HandleNotification) {
-    const { profile, messageId, notificationId, message, template } = args
+    const { profile, messageId, notificationId, message } = args
     // don't send message unless user wants this type of notification and national id is a person.
     if (isCompany(profile.nationalId)) {
       this.logger.info(
@@ -313,10 +313,17 @@ export class NotificationsWorkerService {
     })
 
     // Get actor profile (which includes their preferred locale)
+    if (!args.onBehalfOf) {
+      this.logger.error('onBehalfOf is required for actor notifications', {
+        messageId: args.messageId,
+      })
+      return
+    }
+
     const actorProfile =
       await this.userProfileApi.userProfileControllerGetActorProfile({
         xParamToNationalId: args.recipient,
-        xParamFromNationalId: args.onBehalfOf!.nationalId,
+        xParamFromNationalId: args.onBehalfOf.nationalId,
       })
 
     if (!actorProfile) {
@@ -389,12 +396,19 @@ export class NotificationsWorkerService {
       return null
     }
 
+    if (!message.onBehalfOf) {
+      this.logger.error('onBehalfOf is required for actor notifications', {
+        messageId,
+      })
+      return null
+    }
+
     try {
       const created = await this.actorNotificationModel.create({
         messageId,
         rootMessageId: message.rootMessageId,
         userNotificationId: userNotification.id,
-        onBehalfOfNationalId: message.onBehalfOf!.nationalId,
+        onBehalfOfNationalId: message.onBehalfOf.nationalId,
         recipient: message.recipient,
         scope,
       })

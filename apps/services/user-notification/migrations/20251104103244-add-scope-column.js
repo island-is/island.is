@@ -22,7 +22,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, _Sequelize) {
+  async down(queryInterface) {
     await queryInterface.removeColumn('user_notification', 'scope')
   },
 }
