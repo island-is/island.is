@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   ActionCard,
+  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -28,6 +29,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './Questionnaires.css'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -49,12 +51,15 @@ const Questionnaires: React.FC = () => {
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
   const [filteredData, setFilteredData] = useState<QuestionnairesBaseItem[]>([])
+  const [showExpired, setShowExpired] = useState(false)
 
   const { data, loading, error } = useGetQuestionnairesQuery({
     variables: {
       locale: lang,
     },
   })
+
+  const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0
 
   const toggleStatus = (status: QuestionnaireQuestionnairesStatusEnum) => {
     setFilterValues((prev) => ({
@@ -112,10 +117,19 @@ const Questionnaires: React.FC = () => {
           (item.organization &&
             filterValues.organization.includes(item.organization))
 
-        return matchesSearch && matchesStatus && matchesOrganization
+        // Expired filter
+        const matchesExpired =
+          showExpired || item.status !== QuestionnairesStatusEnum.expired
+
+        return (
+          matchesSearch &&
+          matchesStatus &&
+          matchesOrganization &&
+          matchesExpired
+        )
       }) || [],
     )
-  }, [filterValues, data])
+  }, [filterValues, data, showExpired])
 
   return (
     <IntroWrapper
@@ -159,11 +173,6 @@ const Questionnaires: React.FC = () => {
 
             <Stack space={2}>
               {[
-                {
-                  name: 'expired',
-                  label: formatMessage(messages.expiredQuestionnaire),
-                  status: QuestionnairesStatusEnum.expired,
-                },
                 {
                   name: 'unanswered',
                   label: formatMessage(messages.unAnsweredQuestionnaire),
@@ -237,8 +246,41 @@ const Questionnaires: React.FC = () => {
         </Box>
       )}
       <Box marginTop={5}>
+        {loading && <CardLoader />}
+        {!loading && !error && dataLength > 0 && (
+          <Box
+            justifyContent="spaceBetween"
+            alignItems="center"
+            display="flex"
+            marginBottom={2}
+            className={styles.toggleBox}
+          >
+            <Text variant="medium">
+              {filteredData?.length === 1
+                ? formatMessage(messages.singleQuestionnaire)
+                : formatMessage(messages.numberOfQuestionnaires, {
+                    number: filteredData?.length,
+                  })}
+            </Text>
+            <ToggleSwitchButton
+              className={styles.toggleButton}
+              label={formatMessage(messages.showExpiredQuestionnaires)}
+              onChange={() => setShowExpired(!showExpired)}
+              checked={showExpired}
+            />
+          </Box>
+        )}
+        {dataLength > 0 && filteredData?.length === 0 && !showExpired && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(messages.noData)}
+            message={formatMessage(messages.noActiveQuestionnairesRegistered)}
+            imgSrc="./assets/images/empty_flower.svg"
+            imgAlt=""
+          />
+        )}
         <Stack space={3}>
-          {loading && <CardLoader />}
           {filteredData?.map((questionnaire) => {
             const status = questionnaire.status
             const isAnswered = status === QuestionnairesStatusEnum.answered

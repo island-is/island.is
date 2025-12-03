@@ -313,6 +313,10 @@ const mapQuestion = (q: QuestionType): Question => {
       q.maxValue !== null && q.maxValue !== undefined
         ? (q.maxValue as number).toString()
         : undefined,
+    maxLength:
+      q.maxLength !== null && q.maxLength !== undefined
+        ? q.maxLength.toString()
+        : undefined,
     formula: (q.formula as string)?.trim() || undefined,
   }
 
@@ -332,6 +336,7 @@ const mapQuestion = (q: QuestionType): Question => {
     answerOptions: answerOption,
     visibilityConditions,
     dependsOn: allDeps.length > 0 ? allDeps : undefined,
+    required: q.required === true,
   }
 }
 

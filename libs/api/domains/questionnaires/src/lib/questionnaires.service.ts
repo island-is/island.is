@@ -374,7 +374,7 @@ export class QuestionnairesService {
                 ? 'Ónefndur spurningalisti'
                 : 'Untitled questionnaire',
               description: q.message ?? undefined,
-              sentDate: q.lastSubmitted?.toDateString() || '',
+              sentDate: q.createdDate?.toDateString() || '',
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,
               status:
@@ -426,7 +426,21 @@ export class QuestionnairesService {
     return {
       questionnaires: allLists
         .flatMap((list) => list.questionnaires)
-        .filter((q) => q !== undefined),
+        .filter((q) => q !== undefined)
+        .sort((a, b) => {
+          // First, sort by status (expired goes to bottom)
+          const aIsExpired = a.status === QuestionnairesStatusEnum.expired
+          const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+
+          if (aIsExpired && !bIsExpired) return 1
+          if (!aIsExpired && bIsExpired) return -1
+
+          // Then sort by date (newest first)
+          const dateA = new Date(a.sentDate).getTime()
+          const dateB = new Date(b.sentDate).getTime()
+
+          return dateB - dateA
+        }),
     }
   }
 

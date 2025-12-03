@@ -1841,11 +1841,22 @@ export const messages = defineMessages({
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
     id: 'sp.health:questionnaire-not-found-detail',
   },
+  singleQuestionnaire: {
+    defaultMessage: '1 spurningalisti',
+    id: 'sp.health:single-questionnaire',
+  },
+  numberOfQuestionnaires: {
+    defaultMessage: '{number} spurningalistar',
+    id: 'sp.health:number-of-questionnaires',
+  },
   seeAnswers: {
     defaultMessage: 'Skoða svör',
     id: 'sp.health:see-answers',
   },
-
+  showExpiredQuestionnaires: {
+    defaultMessage: 'Sýna útrunna',
+    id: 'sp.health:show-expired-questionnaires',
+  },
   treatment: {
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',
@@ -2091,6 +2102,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
     id: 'sp.health:no-active-permits-registered',
+  },
+  noActiveQuestionnairesRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neinar virkar spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+    id: 'sp.health:no-active-questionnaires-registered',
   },
   active: {
     defaultMessage: 'Virk',
