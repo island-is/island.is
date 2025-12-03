@@ -23,10 +23,10 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { getTypeFromPath, isLicenseTypePath } from '../../../utils/mapPaths'
-import { m } from '../../../lib/messages'
+import { getTypeFromPath, isLicenseTypePath } from '../../utils/mapPaths'
+import { m } from '../../lib/messages'
 import { useGenericLicenseLazyQuery } from './LicenseDetail.generated'
-import { LicenseDataFields } from '../../../components/LicenseDataFields/LicenseDataFields'
+import { LicenseDataFields } from '../../components/LicenseDataFields/LicenseDataFields'
 
 type UseParams = {
   type: string | undefined
