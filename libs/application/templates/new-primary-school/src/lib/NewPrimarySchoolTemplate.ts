@@ -179,15 +179,15 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: [
-            {
-              target: States.OTHER_GUARDIAN_APPROVAL,
-              cond: (context) =>
-                needsOtherGuardianApproval(context?.application),
-            },
-            {
-              target: States.PAYER_APPROVAL,
-              cond: (context) => needsPayerApproval(context?.application),
-            },
+            // {
+            //   target: States.OTHER_GUARDIAN_APPROVAL,
+            //   cond: (context) =>
+            //     needsOtherGuardianApproval(context?.application),
+            // },
+            // {
+            //   target: States.PAYER_APPROVAL,
+            //   cond: (context) => needsPayerApproval(context?.application),
+            // },
             {
               target: States.SUBMITTED,
             },

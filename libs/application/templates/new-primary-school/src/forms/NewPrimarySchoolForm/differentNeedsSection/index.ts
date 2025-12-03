@@ -6,6 +6,7 @@ import { languageSubSection } from './languageSubSection'
 import { payerSubSection } from './payerSubSection'
 import { supportSubSection } from './supportSubSection'
 import { termsSubSection } from './termsSubSection'
+import { attachmentSubSection } from './attachmentSubSection'
 
 export const differentNeedsSection = buildSection({
   id: 'differentNeedsSection',
@@ -17,5 +18,6 @@ export const differentNeedsSection = buildSection({
     childCircumstancesSubSection,
     payerSubSection,
     termsSubSection,
+    attachmentSubSection,
   ],
 })
