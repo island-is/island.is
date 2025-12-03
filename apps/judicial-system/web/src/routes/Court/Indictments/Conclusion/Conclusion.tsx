@@ -36,6 +36,7 @@ import {
   PdfButton,
   SectionHeading,
   SelectableList,
+  SplitDefendantFromCaseConfirmationModal,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -107,7 +108,12 @@ const Conclusion: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { isUpdatingCase, setAndSendCaseToServer } = useCase()
+  const {
+    isUpdatingCase,
+    setAndSendCaseToServer,
+    splitDefendantFromCase,
+    isSplittingDefendantFromCase,
+  } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts } = useVerdict()
@@ -804,13 +810,18 @@ const Conclusion: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'SPLIT' && (
+      {modalVisible === 'SPLIT' && selectedDefendant && (
         <Modal
           title="Viltu kljúfa mál?"
-          text={`Ákærði ${selectedDefendant?.name} verður klofinn frá málinu og nýtt mál stofnað.`}
+          text={`Ákærði ${selectedDefendant.name} verður klofinn frá málinu og nýtt mál stofnað.`}
           primaryButton={{
             text: 'Já, kljúfa mál',
-            onClick: () => setModalVisible('CREATE_COURT_CASE_NUMBER'),
+            onClick: async () => {
+              await splitDefendantFromCase(workingCase.id, selectedDefendant.id)
+
+              setModalVisible('CREATE_COURT_CASE_NUMBER')
+            },
+            isLoading: isSplittingDefendantFromCase,
           }}
           secondaryButton={{
             text: 'Hætta við',

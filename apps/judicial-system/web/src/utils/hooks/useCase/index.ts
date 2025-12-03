@@ -22,6 +22,7 @@ import {
   useLimitedAccessUpdateCaseMutation,
 } from './limitedAccessUpdateCase.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
+import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
 import {
   TransitionCaseMutation,
   useTransitionCaseMutation,
@@ -65,6 +66,11 @@ const useCase = () => {
 
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useExtendCaseMutation()
+
+  const [
+    splitDefendantFromCaseMutation,
+    { loading: isSplittingDefendantFromCase },
+  ] = useSplitDefendantFromCaseMutation()
 
   const createCase = useMemo(
     () =>
@@ -287,6 +293,21 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
+  const splitDefendantFromCase = useMemo(
+    () => async (caseId: string, defendantId: string) => {
+      try {
+        const { data } = await splitDefendantFromCaseMutation({
+          variables: { input: { id: caseId, defendantId } },
+        })
+
+        return data?.splitDefendantFromCase
+      } catch (error) {
+        toast.error('Ekki tókst að kljúfa varnaraðila frá máli')
+      }
+    },
+    [splitDefendantFromCaseMutation],
+  )
+
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
     workingCase: Case,
@@ -340,6 +361,8 @@ const useCase = () => {
     sendNotificationError,
     extendCase,
     isExtendingCase,
+    splitDefendantFromCase,
+    isSplittingDefendantFromCase,
     setAndSendCaseToServer,
   }
 }
