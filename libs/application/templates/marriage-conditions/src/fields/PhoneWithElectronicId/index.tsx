@@ -37,17 +37,17 @@ export const PhoneWithElectronicId: FC<
     if (cleanPhone.length === 7 && nationalId?.length === 10) {
       setLoading(true)
 
-      if (fakeDataIsEnabled(answers)) {
-        // For fake data
-        // Allow electronic ID for phone numbers ending in 9
-        if (cleanPhone.slice(-1) === '9') {
-          setValue(`${topId}.electronicID`, 'true')
-        } else {
-          setValue(`${topId}.electronicID`, '')
-        }
-        setLoading(false)
-        return
-      }
+      // if (fakeDataIsEnabled(answers)) {
+      //   // For fake data
+      //   // Allow electronic ID for phone numbers ending in 9
+      //   if (cleanPhone.slice(-1) === '9') {
+      //     setValue(`${topId}.electronicID`, 'true')
+      //   } else {
+      //     setValue(`${topId}.electronicID`, '')
+      //   }
+      //   setLoading(false)
+      //   return
+      // }
 
       getElectronicIdStatus({
         variables: {
@@ -65,7 +65,7 @@ export const PhoneWithElectronicId: FC<
         setLoading(false)
       })
     }
-  }, [phoneNumber, nationalId, answers, getElectronicIdStatus, setValue, topId])
+  }, [phoneNumber, nationalId, getElectronicIdStatus, setValue, topId])
 
   return (
     <Box marginTop={2}>

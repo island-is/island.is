@@ -778,16 +778,27 @@ export class SyslumennService {
 
   async hasElectronicID(
     nationalId: string,
-    phoneNumber: string,
+    phoneNumber: string, // Kept for backward compatibility but not used
   ): Promise<boolean> {
     const { id, api } = await this.createApi()
-    const res = await api.kannaRafraenSkilrikiGet({
+    // Use comprehensive endpoint that checks ALL electronic ID types:
+    // - simi: eSIM/phone-based
+    // - app: App-based (Auðkenni app)
+    // - kort: Card-based (physical smart cards)
+    const res = await api.kannaRafraenSkilrikiGet2({
       audkenni: id,
       kennitala: nationalId,
-      simi: phoneNumber,
     })
 
-    return res?.stada === 'ok'
+    console.log('RESPONSE')
+    console.log(JSON.stringify(res, null, 2))
+    // Accept if ANY valid electronic ID method exists
+    return (
+      res?.gildSkilriki?.simi ||
+      res?.gildSkilriki?.app ||
+      res?.gildSkilriki?.kort ||
+      false
+    )
   }
 
   async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {
