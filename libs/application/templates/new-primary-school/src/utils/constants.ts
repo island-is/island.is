@@ -56,6 +56,13 @@ export enum OptionsType {
   RELATION = 'relation',
   ALLERGY = 'allergy',
   LANGUAGE_ENVIRONMENT = 'languageEnvironment',
+  REASON_SPECIAL_EDUCATION = 'registrationReasonSpecialEducation',
+  DIAGNOSIS_SPECIALIST = 'diagnosisSpecialist',
+  PROFESSIONAL = 'professional',
+  CHILD_AND_ADOLESCENT_MENTAL_HEALTH_SERVICE = 'childAndAdolescentMentalHealthService',
+  SERVICE_CENTER = 'serviceCenter',
+  ASSESSOR = 'assessor',
+  CHILD_AND_ADOLESCENT_MENTAL_HEALTH_DEPARTMENT = 'childAndAdolescentMentalHealthDepartment',
 }
 
 export enum AffiliationRole {

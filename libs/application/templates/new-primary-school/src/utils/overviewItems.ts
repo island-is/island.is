@@ -768,8 +768,8 @@ export const specialEducationSupportItems = async (
   answers: FormValue,
   externalData: ExternalData,
   _userNationalId: string,
-  _apolloClient: ApolloClient<object>,
-  _locale: Locale,
+  apolloClient: ApolloClient<object>,
+  locale: Locale,
 ): Promise<KeyValueItem[]> => {
   const {
     specialEducationHasWelfareContact,
@@ -796,6 +796,42 @@ export const specialEducationSupportItems = async (
     hasBeenReportedToChildProtectiveServices,
     isCaseOpenWithChildProtectiveServices,
   } = getApplicationAnswers(answers)
+
+  const assessorOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.ASSESSOR,
+    locale,
+  )
+
+  const diagnosisSpecialistOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.DIAGNOSIS_SPECIALIST,
+    locale,
+  )
+
+  const professionalOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.PROFESSIONAL,
+    locale,
+  )
+
+  const serviceCenterOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.SERVICE_CENTER,
+    locale,
+  )
+
+  const childAndAdolescentMentalHealthDepartmentOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_DEPARTMENT,
+    locale,
+  )
+
+  const childAndAdolescentMentalHealthServiceOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_SERVICE,
+    locale,
+  )
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -894,7 +930,6 @@ export const specialEducationSupportItems = async (
         ]
       : []
 
-  // TODO: Update when data is ready
   const supportNeedsAssessmentByItems: Array<KeyValueItem> =
     shouldShowSupportNeedsAssessmentBy(answers)
       ? [
@@ -902,7 +937,10 @@ export const specialEducationSupportItems = async (
             width: 'full',
             keyText:
               newPrimarySchoolMessages.differentNeeds.supportNeedsAssessmentBy,
-            valueText: supportNeedsAssessmentBy,
+            valueText: getSelectedOptionLabel(
+              assessorOptions,
+              supportNeedsAssessmentBy,
+            ),
           },
         ]
       : []
@@ -932,7 +970,6 @@ export const specialEducationSupportItems = async (
         ]
       : []
 
-  // TODO: Update when data is ready
   const diagnosticiansItems: Array<KeyValueItem> = shouldShowDiagnosticians(
     answers,
   )
@@ -940,7 +977,11 @@ export const specialEducationSupportItems = async (
         {
           width: 'full',
           keyText: newPrimarySchoolMessages.differentNeeds.atWhichDiagnostician,
-          valueText: diagnosticians?.join(', '),
+          valueText: diagnosticians
+            .map((diagnostician) =>
+              getSelectedOptionLabel(diagnosisSpecialistOptions, diagnostician),
+            )
+            .join(', '),
         },
       ]
     : []
@@ -956,13 +997,16 @@ export const specialEducationSupportItems = async (
     },
   ]
 
-  // TODO: Update when data is ready
   const specialistsItems: Array<KeyValueItem> = shouldShowSpecialists(answers)
     ? [
         {
           width: 'full',
           keyText: newPrimarySchoolMessages.differentNeeds.atWhichSpecialist,
-          valueText: specialists?.join(', '),
+          valueText: specialists
+            .map((specialist) =>
+              getSelectedOptionLabel(professionalOptions, specialist),
+            )
+            .join(', '),
         },
       ]
     : []
@@ -980,14 +1024,17 @@ export const specialEducationSupportItems = async (
     },
   ]
 
-  // TODO: Update when data is ready
   const servicesFromMunicipalityItems: Array<KeyValueItem> =
     shouldShowServicesFromMunicipality(answers)
       ? [
           {
             width: 'full',
             keyText: newPrimarySchoolMessages.differentNeeds.whichService,
-            valueText: servicesFromMunicipality?.join(', '),
+            valueText: servicesFromMunicipality
+              .map((service) =>
+                getSelectedOptionLabel(serviceCenterOptions, service),
+              )
+              .join(', '),
           },
         ]
       : []
@@ -1026,7 +1073,6 @@ export const specialEducationSupportItems = async (
         ]
       : []
 
-  // TODO: Update when data is ready
   const childAndAdolescentPsychiatryDepartmentItems: Array<KeyValueItem> =
     shouldShowChildAndAdolescentPsychiatryDepartment(answers, externalData)
       ? [
@@ -1035,12 +1081,14 @@ export const specialEducationSupportItems = async (
             keyText:
               newPrimarySchoolMessages.differentNeeds
                 .whichChildAndAdolescentPsychiatryDepartment,
-            valueText: childAndAdolescentPsychiatryDepartment,
+            valueText: getSelectedOptionLabel(
+              childAndAdolescentMentalHealthDepartmentOptions,
+              childAndAdolescentPsychiatryDepartment,
+            ),
           },
         ]
       : []
 
-  // TODO: Update when data is ready
   const childAndAdolescentPsychiatryServicesReceivedItems: Array<KeyValueItem> =
     shouldShowChildAndAdolescentPsychiatryServicesReceived(
       answers,
@@ -1052,7 +1100,14 @@ export const specialEducationSupportItems = async (
             keyText:
               newPrimarySchoolMessages.differentNeeds
                 .childAndAdolescentPsychiatryServicesReceived,
-            valueText: childAndAdolescentPsychiatryServicesReceived?.join(', '),
+            valueText: childAndAdolescentPsychiatryServicesReceived
+              .map((service) =>
+                getSelectedOptionLabel(
+                  childAndAdolescentMentalHealthServiceOptions,
+                  service,
+                ),
+              )
+              .join(', '),
           },
         ]
       : []

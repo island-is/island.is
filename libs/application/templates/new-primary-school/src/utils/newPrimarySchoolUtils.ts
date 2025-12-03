@@ -233,30 +233,31 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'specialEducationSupport.isDiagnosisInProgress',
   )
 
-  const diagnosticians = getValueViaPath<string[]>(
-    answers,
-    'specialEducationSupport.diagnosticians',
-  )
+  const diagnosticians =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.diagnosticians',
+    ) ?? []
 
   const hasOtherSpecialists = getValueViaPath<YesOrNo>(
     answers,
     'specialEducationSupport.hasOtherSpecialists',
   )
 
-  const specialists = getValueViaPath<string[]>(
-    answers,
-    'specialEducationSupport.specialists',
-  )
+  const specialists =
+    getValueViaPath<string[]>(answers, 'specialEducationSupport.specialists') ??
+    []
 
   const hasReceivedServicesFromMunicipality = getValueViaPath<YesOrNo>(
     answers,
     'specialEducationSupport.hasReceivedServicesFromMunicipality',
   )
 
-  const servicesFromMunicipality = getValueViaPath<string[]>(
-    answers,
-    'specialEducationSupport.servicesFromMunicipality',
-  )
+  const servicesFromMunicipality =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.servicesFromMunicipality',
+    ) ?? []
 
   const hasReceivedChildAndAdolescentPsychiatryServices =
     getValueViaPath<YesOrNo>(
@@ -274,12 +275,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
   )
 
-  const childAndAdolescentPsychiatryServicesReceived = getValueViaPath<
-    string[]
-  >(
-    answers,
-    'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
-  )
+  const childAndAdolescentPsychiatryServicesReceived =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
+    ) ?? []
 
   const hasBeenReportedToChildProtectiveServices = getValueViaPath<YesOrNo>(
     answers,
@@ -846,4 +846,14 @@ export const otherGuardianApprovalStatePendingAction = (
       displayStatus: 'info',
     }
   }
+}
+
+export const getWelfareContactDescription = (answers: FormValue) => {
+  const { applicationType } = getApplicationAnswers(answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.differentNeeds
+        .hasWelfareNurserySchoolContactDescription
+    : newPrimarySchoolMessages.differentNeeds
+        .hasWelfarePrimarySchoolContactDescription
 }

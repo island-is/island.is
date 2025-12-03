@@ -12,9 +12,9 @@ import {
 import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
+  hasSpecialEducationSubType,
   isWelfareContactSelected,
   showCaseManagerFields,
-  hasSpecialEducationSubType,
 } from '../../../utils/conditionUtils'
 import {
   ApplicationType,
@@ -27,6 +27,7 @@ import {
   getDefaultSupportCaseworker,
   getDefaultYESNOValue,
   getSelectedSchoolSubType,
+  getWelfareContactDescription,
   hasDefaultSupportCaseworker,
 } from '../../../utils/newPrimarySchoolUtils'
 
@@ -119,18 +120,8 @@ export const supportSubSection = buildSubSection({
         buildRadioField({
           id: 'support.hasWelfareContact',
           title: newPrimarySchoolMessages.differentNeeds.hasWelfareContact,
-          description: (application) => {
-            const { applicationType } = getApplicationAnswers(
-              application.answers,
-            )
-
-            return applicationType ===
-              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .hasWelfareNurserySchoolContactDescription
-              : newPrimarySchoolMessages.differentNeeds
-                  .hasWelfarePrimarySchoolContactDescription
-          },
+          description: (application) =>
+            getWelfareContactDescription(application.answers),
           width: 'half',
           required: true,
           space: 4,
@@ -312,6 +303,7 @@ export const supportSubSection = buildSubSection({
         buildHiddenInput({
           id: 'support.triggerHiddenInput',
           doesNotRequireAnswer: true,
+          defaultValue: '',
         }),
       ],
     }),

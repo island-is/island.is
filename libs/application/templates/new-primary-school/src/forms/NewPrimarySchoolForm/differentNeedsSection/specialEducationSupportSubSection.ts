@@ -1,14 +1,15 @@
 import {
-  buildAsyncSelectField,
+  buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
-  coreErrorMessages,
   NO,
   YES,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   hasBehaviorSchoolOrDepartmentSubType,
@@ -22,8 +23,15 @@ import {
   shouldShowSpecialists,
   shouldShowSupportNeedsAssessmentBy,
 } from '../../../utils/conditionUtils'
-import { ApplicationType } from '../../../utils/constants'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import { CaseWorkerInputTypeEnum, OptionsType } from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getDefaultSupportCaseworker,
+  getDefaultYESNOValue,
+  getWelfareContactDescription,
+  hasDefaultSupportCaseworker,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const specialEducationSupportSubSection = buildSubSection({
   id: 'specialEducationSupportSubSection',
@@ -44,19 +52,8 @@ export const specialEducationSupportSubSection = buildSubSection({
           title:
             newPrimarySchoolMessages.differentNeeds
               .specialEducationHasWelfareContact,
-          // TODO: Á að setja mismunandi texta hér eftir hvort er innritun í 1 bekk eða skólaskipti?
-          description: (application) => {
-            const { applicationType } = getApplicationAnswers(
-              application.answers,
-            )
-
-            return applicationType ===
-              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .hasWelfareNurserySchoolContactDescription
-              : newPrimarySchoolMessages.differentNeeds
-                  .hasWelfarePrimarySchoolContactDescription
-          },
+          description: (application) =>
+            getWelfareContactDescription(application.answers),
           width: 'half',
           required: true,
           options: [
@@ -71,7 +68,11 @@ export const specialEducationSupportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            hasDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            ),
         }),
         buildTextField({
           id: 'specialEducationSupport.welfareContact.name',
@@ -79,7 +80,11 @@ export const specialEducationSupportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => hasSpecialEducationWelfareContact(answers),
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            )?.name,
         }),
         buildTextField({
           id: 'specialEducationSupport.welfareContact.email',
@@ -87,7 +92,11 @@ export const specialEducationSupportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => hasSpecialEducationWelfareContact(answers),
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            )?.email,
         }),
 
         // Case manager
@@ -113,7 +122,11 @@ export const specialEducationSupportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            hasDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            ),
         }),
         buildTextField({
           id: 'specialEducationSupport.caseManager.name',
@@ -121,7 +134,11 @@ export const specialEducationSupportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => hasSpecialEducationCaseManager(answers),
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )?.name,
         }),
         buildTextField({
           id: 'specialEducationSupport.caseManager.email',
@@ -129,7 +146,11 @@ export const specialEducationSupportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => hasSpecialEducationCaseManager(answers),
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )?.email,
         }),
 
         // Has integrated services
@@ -156,7 +177,13 @@ export const specialEducationSupportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          // TODO: Add a defaultValue?
+          defaultValue: (application: Application) => {
+            const { socialProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(socialProfile?.hasIntegratedServices)
+          },
         }),
 
         // Assessment of support needs
@@ -218,29 +245,20 @@ export const specialEducationSupportSubSection = buildSubSection({
           space: 4,
           condition: (answers) => shouldShowSupportNeedsAssessmentBy(answers),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.supportNeedsAssessmentBy',
-          title: newPrimarySchoolMessages.differentNeeds.evaluationProvider,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectWhatIsppropriatePlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isSearchable: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Ráðgjafar- og greiningarstöð',
-              },
-              {
-                value: 'value2',
-                label: 'Sérfræðingar Reykjavíkurborgar',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.supportNeedsAssessmentBy',
+            title: newPrimarySchoolMessages.differentNeeds.evaluationProvider,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers) => shouldShowSupportNeedsAssessmentBy(answers),
           },
-          condition: (answers) => shouldShowSupportNeedsAssessmentBy(answers),
-        }),
+          {
+            optionsType: OptionsType.ASSESSOR,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectWhatIsppropriatePlaceholder,
+          },
+        ),
 
         // Confirmed diagnosis
         buildRadioField({
@@ -293,51 +311,21 @@ export const specialEducationSupportSubSection = buildSubSection({
           space: 4,
           condition: (answers) => shouldShowDiagnosticians(answers),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.diagnosticians',
-          title: newPrimarySchoolMessages.differentNeeds.diagnostician,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectAllThatAppliesPlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isClearable: true,
-          isSearchable: true,
-          isMulti: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Barnaspítalinn',
-              },
-              {
-                value: 'value2',
-                label: 'BUGL',
-              },
-              {
-                value: 'value3',
-                label: 'BUGSA',
-              },
-              {
-                value: 'value4',
-                label: 'Ráðgjafar- og greiningarstöð',
-              },
-              {
-                value: 'value5',
-                label: 'Geðheilsumiðstöð barna',
-              },
-              {
-                value: 'value6',
-                label: 'SÓL',
-              },
-              {
-                value: 'value7',
-                label: 'Annað',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.diagnosticians',
+            title: newPrimarySchoolMessages.differentNeeds.diagnostician,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers) => shouldShowDiagnosticians(answers),
           },
-          condition: (answers) => shouldShowDiagnosticians(answers),
-        }),
+          {
+            optionsType: OptionsType.DIAGNOSIS_SPECIALIST,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectAllThatAppliesPlaceholder,
+            isMulti: true,
+          },
+        ),
 
         // Other specialists
         buildRadioField({
@@ -369,107 +357,21 @@ export const specialEducationSupportSubSection = buildSubSection({
           space: 4,
           condition: (answers) => shouldShowSpecialists(answers),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.specialists',
-          title: newPrimarySchoolMessages.differentNeeds.specialists,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectAllThatAppliesPlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isClearable: true,
-          isSearchable: true,
-          isMulti: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Atferlisráðgjafi',
-              },
-              {
-                value: 'value2',
-                label: 'Barnageðlæknir',
-              },
-              {
-                value: 'value3',
-                label: 'Barnalæknir',
-              },
-              {
-                value: 'value4',
-                label: 'Félagsráðgjafi',
-              },
-              {
-                value: 'value5',
-                label: 'Frístundaráðgjafi',
-              },
-              {
-                value: 'value6',
-                label: 'Fötlunarráðgjafi',
-              },
-              {
-                value: 'value7',
-                label: 'Hegðunarráðgjafi',
-              },
-              {
-                value: 'value8',
-                label: 'Heimilislæknir',
-              },
-              {
-                value: 'value9',
-                label: 'Iðjuþjálfi',
-              },
-              {
-                value: 'value10',
-                label: 'Námsráðgjafi',
-              },
-              {
-                value: 'value11',
-                label: 'Sálfræðingur',
-              },
-              {
-                value: 'value12',
-                label: 'Sérkennari',
-              },
-              {
-                value: 'value13',
-                label: 'Sérkennsluráðgjafi',
-              },
-              {
-                value: 'value14',
-                label: 'Sjónráðgjafi',
-              },
-              {
-                value: 'value15',
-                label: 'Sjúkraþjálfi',
-              },
-              {
-                value: 'value16',
-                label: 'Skólahjúkrunarfræðingur',
-              },
-              {
-                value: 'value17',
-                label: 'Talmeinafræðingur',
-              },
-              {
-                value: 'value18',
-                label: 'Umferlisþjálfari',
-              },
-              {
-                value: 'value19',
-                label: 'Uppeldisráðgjafi',
-              },
-              {
-                value: 'value20',
-                label: 'Þroskaþjálfi',
-              },
-              {
-                value: 'value21',
-                label: 'Annað',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.specialists',
+            title: newPrimarySchoolMessages.differentNeeds.specialists,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers) => shouldShowSpecialists(answers),
           },
-          condition: (answers) => shouldShowSpecialists(answers),
-        }),
+          {
+            optionsType: OptionsType.PROFESSIONAL,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectAllThatAppliesPlaceholder,
+            isMulti: true,
+          },
+        ),
 
         // Has received services from municipality
         buildRadioField({
@@ -503,68 +405,21 @@ export const specialEducationSupportSubSection = buildSubSection({
           space: 4,
           condition: (answers) => shouldShowServicesFromMunicipality(answers),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.servicesFromMunicipality',
-          title: newPrimarySchoolMessages.differentNeeds.service,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectAllThatAppliesPlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isClearable: true,
-          isSearchable: true,
-          isMulti: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Akstursþjónusta',
-              },
-              {
-                value: 'value2',
-                label: 'Foreldrafræðsla eða uppeldisráðgjöf s.s. PMT eða SOS',
-              },
-              {
-                value: 'value3',
-                label:
-                  'Heimili fyrir börn með fötlun, þroska- og/eða geðraskanir',
-              },
-              {
-                value: 'value4',
-                label: 'Hópastarf',
-              },
-              {
-                value: 'value5',
-                label: 'Námskeið',
-              },
-              {
-                value: 'value6',
-                label: 'Persónulegur ráðgjafi eða liðveisla',
-              },
-              {
-                value: 'value7',
-                label: 'Sérhæft frístundaúrræði',
-              },
-              {
-                value: 'value8',
-                label: 'Skammtímadvöl',
-              },
-              {
-                value: 'value9',
-                label: 'Stuðningsfjölskylda',
-              },
-              {
-                value: 'value10',
-                label: 'Stuðningur heim',
-              },
-              {
-                value: 'value11',
-                label: 'Annað',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.servicesFromMunicipality',
+            title: newPrimarySchoolMessages.differentNeeds.service,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers) => shouldShowServicesFromMunicipality(answers),
           },
-          condition: (answers) => shouldShowServicesFromMunicipality(answers),
-        }),
+          {
+            optionsType: OptionsType.SERVICE_CENTER,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectAllThatAppliesPlaceholder,
+            isMulti: true,
+          },
+        ),
 
         // Has received Child and Adolescent Psychiatry services
         buildRadioField({
@@ -634,35 +489,27 @@ export const specialEducationSupportSubSection = buildSubSection({
               externalData,
             ),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
-          title:
-            newPrimarySchoolMessages.differentNeeds
-              .childAndAdolescentPsychiatryDepartment,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectWhatIsppropriatePlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isSearchable: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Landsspítali',
-              },
-              {
-                value: 'value2',
-                label: 'Heilbrigðisstofnun Norðurlands',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
+            title:
+              newPrimarySchoolMessages.differentNeeds
+                .childAndAdolescentPsychiatryDepartment,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers, externalData) =>
+              shouldShowChildAndAdolescentPsychiatryDepartment(
+                answers,
+                externalData,
+              ),
           },
-          condition: (answers, externalData) =>
-            shouldShowChildAndAdolescentPsychiatryDepartment(
-              answers,
-              externalData,
-            ),
-        }),
+          {
+            optionsType:
+              OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_DEPARTMENT,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectWhatIsppropriatePlaceholder,
+          },
+        ),
         buildDescriptionField({
           id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived.description',
           title:
@@ -676,59 +523,25 @@ export const specialEducationSupportSubSection = buildSubSection({
               externalData,
             ),
         }),
-        buildAsyncSelectField({
-          id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
-          title: newPrimarySchoolMessages.differentNeeds.service,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .selectAllThatAppliesPlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          isClearable: true,
-          isSearchable: true,
-          isMulti: true,
-          loadOptions: async () => {
-            // TODO: Update when data is ready
-            return [
-              {
-                value: 'value1',
-                label: 'Greining',
-              },
-              {
-                value: 'value2',
-                label: 'Innlögn',
-              },
-              {
-                value: 'value3',
-                label: 'Viðtöl',
-              },
-              {
-                value: 'value4',
-                label: 'Meðferð',
-              },
-              {
-                value: 'value5',
-                label: 'Námskeið',
-              },
-              {
-                value: 'value6',
-                label: 'Eftirlit',
-              },
-              {
-                value: 'value7',
-                label: 'Vettvangsþjónustu',
-              },
-              {
-                value: 'value8',
-                label: 'Annað',
-              },
-            ]
+        buildCustomField(
+          {
+            id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
+            title: newPrimarySchoolMessages.differentNeeds.service,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers, externalData) =>
+              shouldShowChildAndAdolescentPsychiatryServicesReceived(
+                answers,
+                externalData,
+              ),
           },
-          condition: (answers, externalData) =>
-            shouldShowChildAndAdolescentPsychiatryServicesReceived(
-              answers,
-              externalData,
-            ),
-        }),
+          {
+            optionsType: OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_SERVICE,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .selectAllThatAppliesPlaceholder,
+            isMulti: true,
+          },
+        ),
 
         // Has been reported to child protective services
         buildRadioField({
@@ -783,6 +596,10 @@ export const specialEducationSupportSubSection = buildSubSection({
               hasBeenReportedToChildProtectiveServices === YES
             )
           },
+        }),
+        buildHiddenInput({
+          id: 'specialEducationSupport.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

@@ -30,9 +30,12 @@ import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
+  hasSpecialEducationSubType,
+  isWelfareContactSelected,
   needsOtherGuardianApproval,
   needsPayerApproval,
   shouldShowExpectedEndDate,
+  showCaseManagerFields,
 } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
@@ -584,23 +587,32 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearSupport: assign((context) => {
         const { application } = context
-        const {
-          hasDiagnoses,
-          hasHadSupport,
-          hasIntegratedServices,
-          hasCaseManager,
-        } = getApplicationAnswers(application.answers)
+        const { hasDiagnoses, hasHadSupport } = getApplicationAnswers(
+          application.answers,
+        )
 
-        if (hasDiagnoses !== YES && hasHadSupport !== YES) {
+        if (
+          hasSpecialEducationSubType(
+            application.answers,
+            application.externalData,
+          )
+        ) {
+          unset(application.answers, 'support')
+        }
+        if (!(hasDiagnoses === YES || hasHadSupport === YES)) {
+          unset(application.answers, 'support.hasWelfareContact')
+          unset(application.answers, 'support.welfareContact')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
           unset(application.answers, 'support.hasIntegratedServices')
+        }
+        if (!isWelfareContactSelected(application.answers)) {
+          unset(application.answers, 'support.welfareContact')
           unset(application.answers, 'support.hasCaseManager')
           unset(application.answers, 'support.caseManager')
+          unset(application.answers, 'support.hasIntegratedServices')
         }
-        if (hasIntegratedServices !== YES) {
-          unset(application.answers, 'support.hasCaseManager')
-          unset(application.answers, 'support.caseManager')
-        }
-        if (hasCaseManager !== YES) {
+        if (!showCaseManagerFields(application.answers)) {
           unset(application.answers, 'support.caseManager')
         }
         return context
