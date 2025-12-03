@@ -1442,24 +1442,40 @@ export class CmsElasticsearchService {
       aggs: {
         onlyCourses: {
           filter: {
-            term: {
-              type: 'webCourse',
+            bool: {
+              must: [
+                {
+                  term: {
+                    type: 'webCourse',
+                  },
+                },
+                ...(input.organizationSlug
+                  ? [
+                      {
+                        nested: {
+                          path: 'tags',
+                          query: {
+                            bool: {
+                              must: [
+                                {
+                                  term: {
+                                    'tags.type': 'organization',
+                                  },
+                                },
+                                {
+                                  term: {
+                                    'tags.key': input.organizationSlug,
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    ]
+                  : []),
+              ],
             },
-            // TODO: Test if commented code works
-            // must: input.organizationSlug
-            //   ? [
-            //       {
-            //         term: {
-            //           'tags.type': 'organization',
-            //         },
-            //       },
-            //       {
-            //         term: {
-            //           'tags.key': input.organizationSlug,
-            //         },
-            //       },
-            //     ]
-            //   : [],
           },
           aggs: {
             uniqueTags: {
