@@ -224,7 +224,7 @@ const IdCardTemplate: ApplicationTemplate<
                 : {
                     title: corePendingActionMessages.waitingForReviewTitle,
                     content:
-                      applicationMessage.pendingActionWaitingForReviewFromParentB,
+                      corePendingActionMessages.waitingForReviewFromParentBDescription,
                     displayStatus: 'info',
                   }
             },
