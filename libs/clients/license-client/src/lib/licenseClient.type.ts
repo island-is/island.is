@@ -3,7 +3,6 @@ import { VinnuvelaDto } from '@island.is/clients/adr-and-machine-license'
 
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
 import { DriverLicenseDto } from '@island.is/clients/driving-license'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Staediskortamal } from '@island.is/clients/p-card'
 import {
@@ -18,7 +17,10 @@ import {
   FirearmLicenseDto,
   FirearmLicenseVerifyExtraData,
 } from './clients/firearm-license-client'
-import { HuntingLicenseVerifyExtraData } from './clients/hunting-license-client'
+import {
+  HuntingLicenseDto,
+  HuntingLicenseVerifyExtraData,
+} from './clients/hunting-license-client'
 
 export type LicenseLabelsObject = {
   [x: string]: string
