@@ -12,55 +12,30 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
-import { m } from '../../../lib/messages'
-import { getPathFromType } from '../../../utils/mapPaths'
+import { m } from '../../lib/messages'
+import { getPathFromType } from '../../utils/mapPaths'
 import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
 
-const BASE_INCLUDED_TYPES = [
-  GenericLicenseType.AdrLicense,
-  GenericLicenseType.DisabilityLicense,
-  GenericLicenseType.DriversLicense,
-  GenericLicenseType.Ehic,
-  GenericLicenseType.FirearmLicense,
-  GenericLicenseType.HuntingLicense,
-  GenericLicenseType.MachineLicense,
-  GenericLicenseType.PCard,
-  GenericLicenseType.Passport,
-]
-
-export const LicensesOverviewV2 = () => {
+export const LicensesOverview = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-
-  const [includedTypes, setIncludedTypes] = useState<Array<GenericLicenseType>>(
-    [],
-  )
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isIdentityDocumentEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setIncludedTypes([
-          ...BASE_INCLUDED_TYPES,
-          GenericLicenseType.IdentityDocument,
-        ])
-      } else setIncludedTypes(BASE_INCLUDED_TYPES)
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
       locale: lang,
       input: {
-        includedTypes,
+        includedTypes: [
+          GenericLicenseType.AdrLicense,
+          GenericLicenseType.DisabilityLicense,
+          GenericLicenseType.DriversLicense,
+          GenericLicenseType.Ehic,
+          GenericLicenseType.FirearmLicense,
+          GenericLicenseType.HuntingLicense,
+          GenericLicenseType.MachineLicense,
+          GenericLicenseType.PCard,
+          GenericLicenseType.Passport,
+          GenericLicenseType.IdentityDocument,
+        ],
       },
     },
   })
@@ -171,4 +146,4 @@ export const LicensesOverviewV2 = () => {
   )
 }
 
-export default LicensesOverviewV2
+export default LicensesOverview
