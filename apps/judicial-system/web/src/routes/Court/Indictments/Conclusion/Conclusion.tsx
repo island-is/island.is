@@ -30,6 +30,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -39,7 +40,6 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -134,6 +134,10 @@ const Conclusion: FC = () => {
     useState<string>()
   const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
     useState<SelectableItem[]>([])
+  const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
+    null,
+  )
+  const [modalVisible, setModalVisible] = useState<'SPLIT'>()
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -160,6 +164,9 @@ const Conclusion: FC = () => {
       }
 
       switch (selectedAction) {
+        case IndictmentDecision.SPLITTING:
+          setModalVisible('SPLIT')
+          break
         case IndictmentDecision.POSTPONING:
           update.postponedIndefinitelyExplanation = postponementReason
           break
@@ -187,6 +194,11 @@ const Conclusion: FC = () => {
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
+      }
+
+      // TODO: Refactor this
+      if (selectedAction === IndictmentDecision.SPLITTING) {
+        return
       }
 
       const updateSuccess = await setAndSendCaseToServer(
@@ -328,6 +340,8 @@ const Conclusion: FC = () => {
         return Boolean(postponementReason)
       case IndictmentDecision.SCHEDULING:
         return Boolean(selectedCourtSessionType && courtDate?.date)
+      case IndictmentDecision.SPLITTING:
+        return Boolean(selectedDefendant)
       case IndictmentDecision.COMPLETING:
         switch (selectedDecision) {
           case CaseIndictmentRulingDecision.RULING:
@@ -634,7 +648,32 @@ const Conclusion: FC = () => {
           )}
           {selectedAction === IndictmentDecision.SPLITTING && (
             <Box component="section">
-              <DefendantSelector defendants={workingCase.defendants} />
+              <SectionHeading title="Hvern á að kljúfa frá málinu?" />
+              <Select
+                name="defendant"
+                options={workingCase.defendants?.map((defendant) => ({
+                  label: defendant.name ?? 'Nafn ekki skráð',
+                  value: defendant.id,
+                }))}
+                label="Ákærði"
+                placeholder="Veldu ákærða"
+                value={
+                  selectedDefendant
+                    ? {
+                        label: selectedDefendant.name ?? 'Nafn ekki skráð',
+                        value: selectedDefendant.id,
+                      }
+                    : null
+                }
+                onChange={(option) => {
+                  const defendant = workingCase.defendants?.find(
+                    (defendant) => defendant.id === option?.value,
+                  )
+                  setSelectedDefendant(defendant ?? null)
+                }}
+                noOptionsMessage="Enginn ákærði er skráður í málinu"
+                isClearable
+              />
             </Box>
           )}
           {selectedAction && !workingCase.withCourtSessions && (
@@ -761,6 +800,21 @@ const Conclusion: FC = () => {
           }
         />
       </FormContentContainer>
+      {modalVisible === 'SPLIT' && (
+        <Modal
+          title="Viltu kljúfa mál?"
+          text={`Ákærði ${selectedDefendant?.name} verður klofinn frá málinu og nýtt mál stofnað.`}
+          primaryButton={{
+            text: 'Já, kljúfa mál',
+            onClick: () => console.log('Split case'),
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setModalVisible(undefined),
+          }}
+          onClose={() => setModalVisible(undefined)}
+        />
+      )}
     </PageLayout>
   )
 }
