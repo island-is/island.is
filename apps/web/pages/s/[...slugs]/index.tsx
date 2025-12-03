@@ -58,6 +58,7 @@ import SubPage, {
 import { GET_ORGANIZATION_PAGE_QUERY } from '@island.is/web/screens/queries'
 import type { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 enum PageType {
@@ -247,6 +248,10 @@ Component.getProps = async (context) => {
 
   const isStandaloneTheme = organizationPage.theme === 'standalone'
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   if (slugs.length === 1) {
     if (isStandaloneTheme) {
       return {
@@ -291,7 +296,10 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (slugs[1] === 'courses') {
+      if (
+        slugs[1] === 'courses' &&
+        Boolean(organizationNamespace['organizationCourseListEnabled'])
+      ) {
         return {
           page: {
             type: PageType.COURSE_LIST,
@@ -324,7 +332,10 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (slugs[1] === 'namskeid') {
+      if (
+        slugs[1] === 'namskeid' &&
+        Boolean(organizationNamespace['organizationCourseListEnabled'])
+      ) {
         return {
           page: {
             type: PageType.COURSE_LIST,
@@ -407,7 +418,10 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (slugs[1] === 'courses') {
+      if (
+        slugs[1] === 'courses' &&
+        Boolean(organizationNamespace['organizationCourseDetailsEnabled'])
+      ) {
         return {
           page: {
             type: PageType.COURSE_DETAILS,
@@ -432,7 +446,10 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (slugs[1] === 'namskeid') {
+      if (
+        slugs[1] === 'namskeid' &&
+        Boolean(organizationNamespace['organizationCourseDetailsEnabled'])
+      ) {
         return {
           page: {
             type: PageType.COURSE_DETAILS,

@@ -191,6 +191,10 @@ CourseDetails.getProps = async ({
     throw new CustomNextError(404, 'Course not found')
   }
 
+  if (getCourseById.organizationId !== getOrganizationPage?.organization?.id) {
+    throw new CustomNextError(404, 'Course belongs to another organization')
+  }
+
   return {
     organizationPage: getOrganizationPage,
     course: getCourseById,

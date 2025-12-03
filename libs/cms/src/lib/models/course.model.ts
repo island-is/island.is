@@ -47,6 +47,9 @@ export class Course {
 
   @CacheField(() => [CourseInstance])
   instances!: CourseInstance[]
+
+  @Field(() => String)
+  organizationId!: string
 }
 
 export const mapCourse = ({ fields, sys }: ICourse): Course => {
@@ -58,6 +61,7 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
       : [],
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
+    organizationId: fields.organization?.sys?.id ?? '',
   }
 }
 
