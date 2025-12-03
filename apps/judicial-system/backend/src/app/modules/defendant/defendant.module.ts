@@ -17,7 +17,7 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    RepositoryModule,
+    forwardRef(() => RepositoryModule),
     SequelizeModule.forFeature([CivilClaimant]),
   ],
   controllers: [
