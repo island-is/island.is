@@ -136,6 +136,10 @@ CourseDetails.getProps = async ({
   const querySlugs = (query.slugs ?? []) as string[]
   const [organizationPageSlug, _, courseId] = querySlugs
 
+  if (!courseId) {
+    throw new CustomNextError(404, 'Course ID is required')
+  }
+
   const [
     {
       data: { getOrganizationPage },

@@ -219,8 +219,6 @@ CourseList.getProps = async ({
   query,
   organizationPage,
 }) => {
-  // TODO: If there are no courses, default to trying to render an organization subpage?
-
   const querySlugs = (query.slugs ?? []) as string[]
   const [organizationPageSlug] = querySlugs
 
