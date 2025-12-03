@@ -120,7 +120,7 @@ export const addConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(24)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const institutionWidth = calculatePt(160)
+  const institutionWidth = calculatePt(297)
   const confirmedByWidth = institutionWidth + calculatePt(48)
   const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleWidth = institutionWidth + confirmedByWidth
@@ -152,9 +152,14 @@ export const addConfirmation = (
   doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
   doc.text(
     formatDate(confirmation.date) ?? '',
-    shaddowWidth - calculatePt(24),
+    0,
     pageMargin + calculatePt(9),
+    {
+      align: 'right',
+      width: 575,
+    },
   )
+  doc.moveDown(0)
 
   // Draw the institution
   doc
@@ -358,7 +363,7 @@ export const addIndictmentCourtRecordConfirmation = (
   const coatOfArmsWidth = calculatePt(105)
   const coatOfArmsHeight = calculatePt(90)
   const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleWidth = calculatePt(370)
+  const titleWidth = calculatePt(642)
   const titleHeight = calculatePt(32)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
 
