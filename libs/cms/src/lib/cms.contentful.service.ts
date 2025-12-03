@@ -103,7 +103,7 @@ import {
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
-import { Course, mapCourse } from './models/course.model'
+import { mapCourse } from './models/course.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
