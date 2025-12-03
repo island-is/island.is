@@ -13,6 +13,9 @@ import OrganizationSubPageGenericListItem, {
 import OrganizationCategory, {
   type OrganizationCategoryProps,
 } from '@island.is/web/screens/Organization/Category/Category'
+import CourseList, {
+  type CourseListProps,
+} from '@island.is/web/screens/Organization/Courses/CourseList'
 import Home, {
   type HomeProps,
 } from '@island.is/web/screens/Organization/Home/Home'
@@ -69,6 +72,7 @@ enum PageType {
   EVENT_DETAILS = 'event-details',
   GENERIC_LIST_ITEM = 'generic-list-item',
   CATEGORY = 'category',
+  COURSE_LIST = 'course-list',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,6 +101,7 @@ const pageMap: Record<PageType, FC<any>> = {
     <OrganizationSubPageGenericListItem {...props} />
   ),
   [PageType.CATEGORY]: (props) => <OrganizationCategory {...props} />,
+  [PageType.COURSE_LIST]: (props) => <CourseList {...props} />,
 }
 
 interface Props {
@@ -184,6 +189,13 @@ interface Props {
           componentProps: OrganizationCategoryProps
         }
       }
+    | {
+        type: PageType.COURSE_LIST
+        props: {
+          layoutProps: LayoutProps
+          componentProps: CourseListProps
+        }
+      }
 }
 
 export const Component: ScreenType<Props> = ({ page }: Props) => {
@@ -267,6 +279,14 @@ Component.getProps = async (context) => {
           },
         }
       }
+      if (slugs[1] === 'courses') {
+        return {
+          page: {
+            type: PageType.COURSE_LIST,
+            props: await CourseList.getProps(modifiedContext),
+          },
+        }
+      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -289,6 +309,14 @@ Component.getProps = async (context) => {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
             props: await PublishedMaterial.getProps(modifiedContext),
+          },
+        }
+      }
+      if (slugs[1] === 'namskeid') {
+        return {
+          page: {
+            type: PageType.COURSE_LIST,
+            props: await CourseList.getProps(modifiedContext),
           },
         }
       }

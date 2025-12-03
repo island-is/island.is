@@ -102,6 +102,8 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { Course, mapCourse } from './models/course.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1558,5 +1560,25 @@ export class CmsContentfulService {
       )
 
     return items
+  }
+
+  async getCourseById(input: GetCourseByIdInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'course') {
+      return null
+    }
+
+    return mapCourse(response as types.ICourse)
   }
 }
