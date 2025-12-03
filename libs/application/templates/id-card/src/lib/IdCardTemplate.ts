@@ -66,13 +66,6 @@ const IdCardTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   dataSchema: IdCardSchema,
   translationNamespaces: ApplicationConfigurations.IdCard.translation,
-  adminDataConfig: {
-    answers: [
-      // fields that we need to keep after pruning for pending action to work properly
-      { key: 'secondGuardianInformation.$.nationalId', isListed: false },
-      { key: 'secondGuardianInformation.$.approved', isListed: false },
-    ],
-  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
