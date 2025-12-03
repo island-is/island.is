@@ -188,6 +188,19 @@ export const landlordRepresentativeOverview = (
   return [...applicantRepresentative, ...items]
 }
 
+export const signatoryOverview = (answers: FormValue): Array<KeyValueItem> => {
+  const signatory = getValueViaPath<ApplicantsInfo>(
+    answers,
+    'parties.signatory',
+  )
+
+  if (!signatory) {
+    return []
+  }
+
+  return formatPartyItems([signatory])
+}
+
 export const tenantOverview = (
   answers: FormValue,
   externalData: ExternalData,
