@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
@@ -12,6 +18,7 @@ import {
   UpdateFormError,
   UpdateFormResponse,
   UrlMethods,
+  UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
 import { jwtDecode } from 'jwt-decode'
@@ -104,7 +111,11 @@ export class FormsService {
     }
 
     const forms = await this.formModel.findAll({
-      where: { organizationId: organization.id },
+      where: {
+        organizationId: organization.id,
+        status: { [Op.ne]: FormStatus.ARCHIVED },
+      },
+      order: [['modified', 'DESC']],
     })
 
     const keys = [
@@ -231,79 +242,6 @@ export class FormsService {
     return formResponse
   }
 
-  async changePublished(id: string): Promise<FormResponseDto> {
-    const form = await this.formModel.findOne({
-      where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
-    })
-
-    if (form) {
-      throw new Error('Form is already being changed')
-    }
-
-    const newForm = await this.copyForm(id, true)
-
-    const formResponse = await this.buildFormResponse(newForm)
-
-    if (!formResponse) {
-      throw new Error('Error generating form response.')
-    }
-
-    return formResponse
-  }
-
-  async publish(id: string): Promise<void> {
-    const form = await this.formModel.findByPk(id)
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
-    }
-
-    if (form.status === FormStatus.PUBLISHED) {
-      return
-    }
-
-    const existingPublishedForm = await this.formModel.findOne({
-      where: {
-        slug: form.slug,
-        status: FormStatus.PUBLISHED,
-        id: { [Op.ne]: form.derivedFrom },
-      },
-    })
-
-    if (existingPublishedForm) {
-      throw new Error(
-        `A published form with the slug '${form.slug}' already exists`,
-      )
-    }
-
-    form.status = FormStatus.PUBLISHED
-    form.beenPublished = true
-
-    if (
-      form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
-      form.derivedFrom
-    ) {
-      const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
-
-      if (!derivedFromForm) {
-        throw new NotFoundException(`Form with id '${id}' not found`)
-      }
-
-      derivedFromForm.status = FormStatus.ARCHIVED
-
-      // TODO: When form is archived we should maybe delete applications that are in progress
-
-      await this.sequelize.transaction(async (transaction) => {
-        await form.save({ transaction })
-        await derivedFromForm.save({ transaction })
-      })
-    } else {
-      await form.save()
-    }
-
-    // return this.findAll(user, user.nationalId)
-  }
-
   async update(
     id: string,
     updateFormDto: UpdateFormDto,
@@ -340,14 +278,14 @@ export class FormsService {
       await form.save()
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
+        const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = error.errors.map(
-          (err) =>
-            ({
-              field: err.path,
-              message: err.message,
-            } as UpdateFormError),
-        )
+        response.errors = [
+          {
+            field: 'slug',
+            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+          } as UpdateFormError,
+        ]
       } else {
         throw error
       }
@@ -356,29 +294,177 @@ export class FormsService {
     return response
   }
 
-  async delete(id: string): Promise<void> {
+  async copy(id: string): Promise<FormResponseDto> {
+    const form = await this.findById(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  async updateStatus(
+    id: string,
+    updateFormStatusDto: UpdateFormStatusDto,
+  ): Promise<FormResponseDto> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found.`)
+      throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
-    const hasApplications =
+    const { newStatus } = updateFormStatusDto
+    const currentStatus = form.status
+
+    switch (currentStatus) {
+      case FormStatus.IN_DEVELOPMENT:
+        if (newStatus === FormStatus.PUBLISHED) {
+          return await this.publishFormInDevelopment(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          return await this.deleteForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED:
+        if (newStatus === FormStatus.ARCHIVED) {
+          return await this.archiveForm(id, form)
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
+          return await this.changePublishedForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED_BEING_CHANGED:
+        if (newStatus === FormStatus.PUBLISHED) {
+          return await this.publishFormBeingChanged(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          return await this.deleteForm(id, form)
+        }
+        break
+    }
+    throw new BadRequestException(
+      `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
+    )
+  }
+
+  private async publishFormInDevelopment(
+    id: string,
+    form: Form,
+  ): Promise<FormResponseDto> {
+    await this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
+
+        form.status = FormStatus.PUBLISHED
+        form.beenPublished = true
+        await form.save({ transaction })
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
+
+    return new FormResponseDto()
+  }
+
+  private async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
+    const slug = form.slug
+    form.status = FormStatus.ARCHIVED
+    form.slug = `${form.slug}-archived-${Date.now()}`
+    await form.save()
+
+    const copyForm = await this.copyForm(id, false, slug)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async publishFormBeingChanged(
+    id: string,
+    formToBePublished: Form,
+  ): Promise<FormResponseDto> {
+    const derivedFromId = formToBePublished.derivedFrom
+    if (!derivedFromId) {
+      throw new BadRequestException(
+        `derivedFromId not found on form with id '${id}'`,
+      )
+    }
+
+    const formToBeArchived = await this.formModel.findByPk(derivedFromId)
+    if (!formToBeArchived) {
+      throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
+    }
+
+    const slugToBeArchived = formToBeArchived.slug
+    formToBeArchived.status = FormStatus.ARCHIVED
+    formToBeArchived.slug = `${formToBeArchived.slug}-archived-${Date.now()}`
+    await formToBeArchived.save()
+
+    formToBePublished.slug =
+      formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
+        ? slugToBeArchived
+        : formToBePublished.slug
+    formToBePublished.status = FormStatus.PUBLISHED
+    await formToBePublished.save()
+
+    const formResponse = await this.buildFormResponse(formToBeArchived)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async changePublishedForm(
+    id: string,
+    form: Form,
+  ): Promise<FormResponseDto> {
+    const copyForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async deleteForm(id: string, form: Form): Promise<FormResponseDto> {
+    const hasLiveApplications =
+      form.beenPublished &&
       (await this.applicationModel.count({
         where: { formId: id, isTest: false },
       })) > 0
 
-    if (form.beenPublished && hasApplications) {
-      throw new Error(
-        `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+    if (hasLiveApplications) {
+      throw new ConflictException(
+        `Form '${id}' cannot be deleted because it has been published and has applications tied to it.`,
       )
     }
 
     try {
       await form.destroy()
     } catch (error) {
-      console.error(`Error deleting form with id '${id}':`, error)
+      throw new InternalServerErrorException(
+        `Unexpected error deleting form '${id}'.`,
+      )
     }
+
+    return new FormResponseDto()
   }
 
   private async findById(id: string): Promise<Form> {
@@ -693,7 +779,7 @@ export class FormsService {
       'isRequired',
       'fieldSettings',
     ]
-    form.sections.map((section) => {
+    form.sections?.map((section) => {
       formDto.sections?.push(
         defaults(
           pick(section, sectionKeys),
@@ -785,16 +871,19 @@ export class FormsService {
     } as Screen)
   }
 
-  private async copyForm(id: string, isDerived: boolean): Promise<Form> {
+  private async copyForm(
+    id: string,
+    isDerived: boolean,
+    slug: string,
+  ): Promise<Form> {
     const existingForm = await this.findById(id)
-
     if (!existingForm) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
     if (existingForm.status === FormStatus.PUBLISHED_BEING_CHANGED) {
       throw new Error(
-        `Cannot change form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
+        `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
 
@@ -803,9 +892,10 @@ export class FormsService {
     newForm.status = isDerived
       ? FormStatus.PUBLISHED_BEING_CHANGED
       : FormStatus.IN_DEVELOPMENT
+    newForm.slug = slug
     newForm.created = new Date()
     newForm.modified = new Date()
-    newForm.derivedFrom = isDerived ? existingForm.id : ''
+    newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
@@ -894,17 +984,26 @@ export class FormsService {
       }
     }
 
-    await this.sequelize.transaction(async (transaction) => {
-      await this.formModel.create(newForm, { transaction })
-      await this.sectionModel.bulkCreate(sections, { transaction })
-      await this.screenModel.bulkCreate(screens, { transaction })
-      await this.fieldModel.bulkCreate(fields, { transaction })
-      await this.listItemModel.bulkCreate(listItems, { transaction })
-      await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
-        transaction,
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        await this.formModel.create(newForm, { transaction })
+        await this.sectionModel.bulkCreate(sections, { transaction })
+        await this.screenModel.bulkCreate(screens, { transaction })
+        await this.fieldModel.bulkCreate(fields, { transaction })
+        await this.listItemModel.bulkCreate(listItems, { transaction })
+        await this.formCertificationTypeModel.bulkCreate(
+          formCertificationTypes,
+          {
+            transaction,
+          },
+        )
+        await this.formUrlModel.bulkCreate(formUrls, { transaction })
       })
-      await this.formUrlModel.bulkCreate(formUrls, { transaction })
-    })
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Unexpected error copying form '${id}'.`,
+      )
+    }
 
     return newForm
   }

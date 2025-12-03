@@ -357,7 +357,7 @@ export const schoolItems = (
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.shared.date,
+            keyText: newPrimarySchoolMessages.overview.expectedStartDate,
             valueText: format(parseISO(expectedStartDate ?? ''), 'dd.MM.yyyy', {
               locale: is,
             }),
