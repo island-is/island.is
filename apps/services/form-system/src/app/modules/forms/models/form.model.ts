@@ -106,7 +106,7 @@ export class Form extends Model<Form> {
     type: DataType.UUID,
     allowNull: true,
   })
-  derivedFrom!: string
+  derivedFrom!: string | null
 
   @Column({
     type: DataType.ENUM,
