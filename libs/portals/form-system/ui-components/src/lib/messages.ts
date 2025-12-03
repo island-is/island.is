@@ -1061,4 +1061,14 @@ export const m = defineMessages({
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
   },
+  maxTextLength: {
+    id: 'form.system:max-text-length',
+    defaultMessage: 'Hámarksfjöldi stafa',
+    description: 'Maximum text length',
+  },
+  hasDescription: {
+    id: 'form.system:has-description',
+    defaultMessage: 'Hefur lýsingu',
+    description: 'Has description',
+  },
 })
