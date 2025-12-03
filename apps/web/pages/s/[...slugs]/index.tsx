@@ -13,6 +13,9 @@ import OrganizationSubPageGenericListItem, {
 import OrganizationCategory, {
   type OrganizationCategoryProps,
 } from '@island.is/web/screens/Organization/Category/Category'
+import CourseDetails, {
+  type CourseDetailsProps,
+} from '@island.is/web/screens/Organization/Courses/CourseDetails'
 import CourseList, {
   type CourseListProps,
 } from '@island.is/web/screens/Organization/Courses/CourseList'
@@ -73,6 +76,7 @@ enum PageType {
   GENERIC_LIST_ITEM = 'generic-list-item',
   CATEGORY = 'category',
   COURSE_LIST = 'course-list',
+  COURSE_DETAILS = 'course-details',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,6 +106,7 @@ const pageMap: Record<PageType, FC<any>> = {
   ),
   [PageType.CATEGORY]: (props) => <OrganizationCategory {...props} />,
   [PageType.COURSE_LIST]: (props) => <CourseList {...props} />,
+  [PageType.COURSE_DETAILS]: (props) => <CourseDetails {...props} />,
 }
 
 interface Props {
@@ -194,6 +199,13 @@ interface Props {
         props: {
           layoutProps: LayoutProps
           componentProps: CourseListProps
+        }
+      }
+    | {
+        type: PageType.COURSE_DETAILS
+        props: {
+          layoutProps: LayoutProps
+          componentProps: CourseDetailsProps
         }
       }
 }
@@ -395,6 +407,14 @@ Component.getProps = async (context) => {
           },
         }
       }
+      if (slugs[1] === 'courses') {
+        return {
+          page: {
+            type: PageType.COURSE_DETAILS,
+            props: await CourseDetails.getProps(modifiedContext),
+          },
+        }
+      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -409,6 +429,14 @@ Component.getProps = async (context) => {
           page: {
             type: PageType.EVENT_DETAILS,
             props: await OrganizationEventArticle.getProps(modifiedContext),
+          },
+        }
+      }
+      if (slugs[1] === 'namskeid') {
+        return {
+          page: {
+            type: PageType.COURSE_DETAILS,
+            props: await CourseDetails.getProps(modifiedContext),
           },
         }
       }

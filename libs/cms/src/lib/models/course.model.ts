@@ -72,3 +72,18 @@ export class CourseList {
   @CacheField(() => GetCoursesInput)
   input!: GetCoursesInput
 }
+
+@ObjectType()
+class CourseCategory {
+  @Field(() => String)
+  key!: string
+
+  @Field(() => String)
+  label!: string
+}
+
+@ObjectType()
+export class CourseCategoriesResponse {
+  @CacheField(() => [CourseCategory])
+  items!: CourseCategory[]
+}

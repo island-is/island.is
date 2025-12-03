@@ -1,16 +1,26 @@
 import { useState } from 'react'
+import flatten from 'lodash/flatten'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
 
 import {
   GridColumn,
   GridContainer,
   GridRow,
   NavigationItem,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { GenericList, OrganizationWrapper } from '@island.is/web/components'
+import {
+  ClickableItem,
+  GenericList,
+  getThemeConfig,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import type {
   OrganizationPage,
   Query,
+  QueryGetCourseCategoriesArgs,
   QueryGetCoursesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -22,7 +32,10 @@ import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
-import { GET_ORGANIZATION_COURSES_QUERY } from '../../queries/Courses'
+import {
+  GET_COURSE_CATEGORIES_QUERY,
+  GET_ORGANIZATION_COURSES_QUERY,
+} from '../../queries/Courses'
 
 type CourseListScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
@@ -31,11 +44,15 @@ type CourseListScreenContext = ScreenContext & {
 export interface CourseListProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  initialItemsResponse: Query['getCourses']
+  courseCategories: Query['getCourseCategories']['items']
 }
 
 const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
   organizationPage,
   namespace,
+  initialItemsResponse,
+  courseCategories,
 }) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -62,20 +79,20 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
 
   const searchQueryId = 'q'
   const pageQueryId = 'page'
-  const categoryQueryId = 'category'
+  const tagQueryId = 'tag'
 
-  const [itemsResponse, setItemsResponse] =
-    useState<GenericListItemResponse | null>(null)
+  const [itemsResponse, setItemsResponse] = useState<
+    Query['getCourses'] | null
+  >(initialItemsResponse)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
   const [fetchListItems, { loading, called }] = useLazyQuery<
     Query,
-    GetGenericListItemsQueryVariables
-  >(GET_GENERIC_LIST_ITEMS_QUERY, {
+    QueryGetCoursesArgs
+  >(GET_ORGANIZATION_COURSES_QUERY, {
     onCompleted(data) {
       const searchParams = new URLSearchParams(window.location.search)
 
-      const queryString = searchParams.get(searchQueryId) || ''
       const pageQuery = searchParams.get(pageQueryId) || '1'
       const tagQuery = searchParams.get(tagQueryId) || '{}'
 
@@ -83,13 +100,15 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
 
       if (
         // Make sure the response matches the request input
-        queryString === data?.getGenericListItems?.input?.queryString &&
-        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
+        pageQuery === data?.getCourses?.input?.page?.toString() &&
         tags.every((tag) =>
-          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
-        )
+          (data?.getCourses?.input?.categoryKeys ?? []).includes(tag),
+        ) &&
+        data?.getCourses?.input?.lang === activeLocale &&
+        data?.getCourses?.input?.organizationSlug ===
+          organizationPage.organization?.slug
       ) {
-        setItemsResponse(data.getGenericListItems)
+        setItemsResponse(data.getCourses)
         setErrorOccurred(false)
       }
     },
@@ -124,46 +143,63 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
         items: navList,
       }}
     >
-      <GenericList
-        filterTags={[]}
-        searchInputPlaceholder={n(
-          'courseListSearchInputPlaceholder',
-          activeLocale === 'is' ? 'Leit' : 'Search',
-        )}
-        displayError={errorOccurred}
-        fetchListItems={({ page, searchValue, tags, tagGroups }) => {
-          //   fetchListItems({
-          //     variables: {
-          //       input: {
-          //         genericListId: id,
-          //         size: ITEMS_PER_PAGE,
-          //         lang: activeLocale,
-          //         page: page,
-          //         queryString: searchValue,
-          //         tags,
-          //         tagGroups,
-          //         orderBy,
-          //       },
-          //     },
-          //   })
-        }}
-        totalItems={totalItems}
-        loading={loading || !called}
-        pageQueryId={pageQueryId}
-        searchQueryId={searchQueryId}
-        tagQueryId={categoryQueryId}
-        showSearchInput={false}
-      >
-        <GridContainer>
-          <GridRow rowGap={3}>
-            {items.map(() => (
-              <GridColumn key={item.id} span="1/1">
-                <div>...</div>
-              </GridColumn>
-            ))}
-          </GridRow>
-        </GridContainer>
-      </GenericList>
+      <Stack space={3}>
+        <Text variant="h1" as="h1">
+          {n('courseListPageTitle', 'Námskeið')}
+        </Text>
+        <GenericList
+          filterTags={courseCategories.map((category) => ({
+            id: category.key,
+            slug: category.key,
+            title: category.label,
+          }))}
+          searchInputPlaceholder={n(
+            'courseListSearchInputPlaceholder',
+            activeLocale === 'is' ? 'Leit' : 'Search',
+          )}
+          displayError={errorOccurred}
+          fetchListItems={({ page, tags }) => {
+            fetchListItems({
+              variables: {
+                input: {
+                  categoryKeys: tags,
+                  lang: activeLocale,
+                  organizationSlug: organizationPage.organization?.slug,
+                  page,
+                },
+              },
+            })
+          }}
+          totalItems={totalItems}
+          loading={loading || !called}
+          pageQueryId={pageQueryId}
+          searchQueryId={searchQueryId}
+          tagQueryId={tagQueryId}
+          showSearchInput={false}
+        >
+          <GridContainer>
+            <GridRow rowGap={3}>
+              {items.map((item) => (
+                <GridColumn key={item.id} span="1/1">
+                  <ClickableItem
+                    item={{
+                      title: item.title,
+                      slug: item.id,
+                      cardIntro: [],
+                      id: item.id,
+                      filterTags: item.categories.map((category) => ({
+                        id: category.id,
+                        slug: category.slug,
+                        title: category.title,
+                      })),
+                    }}
+                  />
+                </GridColumn>
+              ))}
+            </GridRow>
+          </GridContainer>
+        </GenericList>
+      </Stack>
     </OrganizationWrapper>
   )
 }
@@ -220,19 +256,39 @@ CourseList.getProps = async ({
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  const coursesResponse = await apolloClient.query<Query, QueryGetCoursesArgs>({
-    query: GET_ORGANIZATION_COURSES_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        organizationSlug: getOrganizationPage.organization?.slug,
+  const organizationSlug = getOrganizationPage.organization?.slug
+
+  const [coursesResponse, courseCategoriesResponse] = await Promise.all([
+    apolloClient.query<Query, QueryGetCoursesArgs>({
+      query: GET_ORGANIZATION_COURSES_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          organizationSlug,
+        },
       },
-    },
-  })
+    }),
+    apolloClient.query<Query, QueryGetCourseCategoriesArgs>({
+      query: GET_COURSE_CATEGORIES_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          organizationSlug,
+        },
+      },
+    }),
+  ])
 
   return {
     organizationPage: getOrganizationPage,
     namespace,
+    initialItemsResponse: coursesResponse.data?.getCourses,
+    courseCategories:
+      courseCategoriesResponse.data?.getCourseCategories?.items ?? [],
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

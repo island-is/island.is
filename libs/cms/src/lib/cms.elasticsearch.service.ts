@@ -62,7 +62,10 @@ import { GrantList } from './models/grantList.model'
 import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
-import { GetCoursesInput } from './dto/getCourses.input'
+import {
+  GetCourseCategoriesInput,
+  GetCoursesInput,
+} from './dto/getCourses.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -1430,6 +1433,106 @@ export class CmsElasticsearchService {
         .filter(Boolean),
       total: response.body.hits.total.value,
       input,
+    }
+  }
+
+  async getCourseCategories(index: string, input: GetCourseCategoriesInput) {
+    const response = await this.elasticService.findByQuery(index, {
+      size: 0,
+      aggs: {
+        onlyCourses: {
+          filter: {
+            term: {
+              type: 'webCourse',
+            },
+            // TODO: Test if commented code works
+            // must: input.organizationSlug
+            //   ? [
+            //       {
+            //         term: {
+            //           'tags.type': 'organization',
+            //         },
+            //       },
+            //       {
+            //         term: {
+            //           'tags.key': input.organizationSlug,
+            //         },
+            //       },
+            //     ]
+            //   : [],
+          },
+          aggs: {
+            uniqueTags: {
+              nested: {
+                path: 'tags',
+              },
+              aggs: {
+                uniqueGenericTags: {
+                  filter: {
+                    term: {
+                      'tags.type': 'genericTag',
+                    },
+                  },
+                  aggs: {
+                    tagKeys: {
+                      terms: {
+                        field: 'tags.key',
+                        size: 1000,
+                      },
+                      aggs: {
+                        tagValues: {
+                          terms: {
+                            field: 'tags.value.keyword',
+                            size: 1,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const body = response.body as {
+      aggregations: {
+        onlyCourses: {
+          uniqueTags: {
+            uniqueGenericTags: {
+              tagKeys: {
+                buckets: Array<{
+                  key: string
+                  tagValues: { buckets: Array<{ key: string }> }
+                }>
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const tags =
+      body.aggregations.onlyCourses.uniqueTags.uniqueGenericTags.tagKeys.buckets
+        .filter(
+          (tagResult) =>
+            Boolean(tagResult?.key) &&
+            Boolean(tagResult.tagValues?.buckets?.[0]?.key),
+        )
+        .map((tagResult) => ({
+          key: tagResult.key,
+          value: tagResult.tagValues.buckets[0].key,
+        }))
+
+    tags.sort(sortAlpha('value'))
+
+    return {
+      items: tags.map((tag) => ({
+        key: tag.key,
+        label: tag.value,
+      })),
     }
   }
 

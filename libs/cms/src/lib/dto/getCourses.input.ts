@@ -18,7 +18,10 @@ export class GetCoursesInput {
 }
 
 @InputType()
-export class GetBloodDonationRestrictionGenericTagsInput {
+export class GetCourseCategoriesInput {
   @Field(() => String)
   lang: ElasticsearchIndexLocale = 'is'
+
+  @Field(() => String, { nullable: true })
+  organizationSlug?: string
 }
