@@ -345,7 +345,7 @@ export const dataSchema = z.object({
       { path: ['lastActivityOfProfessionDescription'] },
     ),
   selfAssessmentQuestionsThree: z
-    .object({       
+    .object({
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -389,22 +389,21 @@ export const dataSchema = z.object({
           : true,
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
     ),
-    selfAssessment: z 
-      .object({      
-        questionnaire: z
-          .array(
-            z.object({
-              answer: z
-                .string()
-                .min(1)
-                .refine((v) => !!v && v.trim().length > 0, {
-                  params: errorMessages.selfAssessmentQuestionnaireRequired,
-                }),
-              questionId: z.string(),
+  selfAssessment: z.object({
+    questionnaire: z
+      .array(
+        z.object({
+          answer: z
+            .string()
+            .min(1)
+            .refine((v) => !!v && v.trim().length > 0, {
+              params: errorMessages.selfAssessmentQuestionnaireRequired,
             }),
-          )
-          .optional(),
-      })
+          questionId: z.string(),
+        }),
+      )
+      .optional(),
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

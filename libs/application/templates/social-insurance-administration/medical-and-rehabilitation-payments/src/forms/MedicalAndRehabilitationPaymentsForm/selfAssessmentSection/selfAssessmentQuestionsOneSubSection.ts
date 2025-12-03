@@ -47,7 +47,7 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
               .levelOfEducationTitle,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .levelOfEducationPlaceholder, 
+              .levelOfEducationPlaceholder,
           options: (application: Application) => {
             const { educationLevels } = getApplicationExternalData(
               application.externalData,
