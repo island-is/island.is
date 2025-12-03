@@ -44,7 +44,7 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } =
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace, linkType } =
     useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
@@ -127,7 +127,12 @@ export const LanguageToggler = ({
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
-    if ((type as string) === 'genericListItem' || resolveLinkTypeLocally) {
+    if (linkType) {
+      type = linkType
+    } else if (
+      (type as string) === 'genericListItem' ||
+      resolveLinkTypeLocally
+    ) {
       const localType = typeResolver(pathWithoutQueryParams)?.type
       if (localType) {
         type = localType

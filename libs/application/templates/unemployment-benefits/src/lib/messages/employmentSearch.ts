@@ -112,6 +112,12 @@ export const employmentSearch = {
     pageTitle: {
       id: 'vmst.ub.application:employmentSearch.educationHistory.pageTitle',
       defaultMessage: 'Námsferill',
+      description: 'Education history page title',
+    },
+    pageDescription: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.pageDescription',
+      defaultMessage:
+        'Vinsamlegast skráðu inn eftirfarandi upplýsingar um nám í tímaröð',
       description: 'Education history page description',
     },
   }),

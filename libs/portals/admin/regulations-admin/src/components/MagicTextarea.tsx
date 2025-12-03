@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { Input } from '@island.is/island-ui/core'
 
-import { PlainText } from '@island.is/regulations-tools/types'
+import { PlainText } from '@dmr.is/regulations-tools/types'
 import debounce from 'lodash/debounce'
 
 const setAutoHeight = (textarea: HTMLTextAreaElement | null) => {

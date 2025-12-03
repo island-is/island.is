@@ -744,7 +744,13 @@ export const coreErrorMessages = defineMessages({
   },
   noBankAccountError: {
     id: 'application.system:core.fetch.data.noBankAccountError',
-    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    defaultMessage: 'Bankareikningur ekki skráður',
+    description: 'No bank account error',
+  },
+  noBankAccountErrorDescription: {
+    id: 'application.system:core.fetch.data.noBankAccountErrorDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráðan bankareikning hjá Ísland.is. Vinsamlegast skráðu það [hér]({link})',
     description: 'No bank account error',
   },
   invalidBankAccountError: {
@@ -1108,37 +1114,10 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
-  applicationApprovedByReviewer: {
-    id: 'application.system:core.history.applicationApprovedByReviewer',
-    defaultMessage: 'Samþykkt. [{subject}]',
-    description: 'History log approved by reviewer',
-  },
-  applicationApprovedByReviewerWithActor: {
-    id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
-    defaultMessage: 'Samþykkt. [{actor} fyrir hönd {subject}]',
-    description: 'History log approved by actor on behalf of reviewer',
-  },
-  applicationApprovedByReviewerFallback: {
-    id: 'application.system:core.history.applicationApprovedByReviewerFallback',
-    defaultMessage: 'Samþykkt af samþykktaraðila',
-    description:
-      'History log approved by reviewer, fallback string when nationalId info missing',
-  },
-  applicationRejectedByReviewer: {
-    id: 'application.system:core.history.applicationRejectedByReviewer',
-    defaultMessage: 'Hafnað af {subject}',
-    description: 'History log Rejected by reviewer',
-  },
-  applicationRejectedByReviewerWithActor: {
-    id: 'application.system:core.history.applicationRejectedByReviewerWithActor',
-    defaultMessage: 'Hafnað af {actor} fyrir hönd {subject}',
-    description: 'History log Rejected by actor on behalf of reviewer',
-  },
-  applicationRejectedByReviewerFallback: {
-    id: 'application.system:core.history.applicationRejectedByReviewerFallback',
-    defaultMessage: 'Hafnað af samþykktaraðila',
-    description:
-      'History log Rejected by reviewer, fallback string when nationalId info missing',
+  applicationApprovedBy: {
+    id: 'application.system:core.history.applicationApprovedBy',
+    defaultMessage: 'Samþykkt.',
+    description: 'History log approved',
   },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
@@ -1189,6 +1168,16 @@ export const coreHistoryMessages = defineMessages({
     id: 'application.system:core.history.applicationReceived',
     defaultMessage: 'Umsókn móttekin',
     description: 'History application received',
+  },
+  byReviewer: {
+    id: 'application.system:core.history.byReviewer',
+    defaultMessage: ' [{subject}]',
+    description: 'History log by reviewer',
+  },
+  byReviewerWithActor: {
+    id: 'application.system:core.history.byReviewerWithActor',
+    defaultMessage: '  [{actor} fyrir hönd {subject}]',
+    description: 'History log by actor on behalf of reviewer',
   },
 })
 
