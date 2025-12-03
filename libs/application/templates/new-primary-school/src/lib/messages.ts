@@ -518,6 +518,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We want to properly welcome your child to the school. To prepare for their arrival, please select a date for the first school day.',
     },
+    expectedStartDateTitle: {
+      id: 'nps.application:primary.school.expected.start.date.title',
+      defaultMessage: 'Áætlaður upphafsdagur',
+      description: 'Expected start date',
+    },
+    expectedStartDatePlaceholder: {
+      id: 'nps.application:primary.school.expected.start.date.placeholder',
+      defaultMessage: 'Veldu áætlaðan upphafsdag',
+      description: 'Select expected start date',
+    },
     expectedEndDateDescription: {
       id: 'nps.application:primary.school.expected.end.date.description',
       defaultMessage: 'Vinsamlegast skráið áætlaðan lokadag',
@@ -525,8 +535,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     expectedEndDateTitle: {
       id: 'nps.application:primary.school.expected.end.date.title',
-      defaultMessage: 'Lokadagur',
-      description: 'End date',
+      defaultMessage: 'Áætlaður lokadagur',
+      description: 'Expected end date',
+    },
+    expectedEndDatePlaceholder: {
+      id: 'nps.application:primary.school.expected.end.date.placeholder',
+      defaultMessage: 'Veldu áætlaðan lokadag',
+      description: 'Select expected end date',
     },
     temporaryStay: {
       id: 'nps.application:primary.school.temporary.stay',
@@ -937,6 +952,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.current.nursery',
       defaultMessage: 'Núverandi leikskóli',
       description: 'Current nursery',
+    },
+    expectedStartDate: {
+      id: 'nps.application:overview.expected.start.date',
+      defaultMessage: 'Áætlaður upphafsdagur',
+      description: 'Expected start date',
     },
     expectedEndDate: {
       id: 'nps.application:overview.expected.end.date',

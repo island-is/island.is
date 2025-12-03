@@ -121,9 +121,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: TemplateApiActions.consumerIndex,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.consumerIndex,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
