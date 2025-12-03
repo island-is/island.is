@@ -400,7 +400,8 @@ const Overview: FC = () => {
           />
         ) : modal === 'editProsecutor' ? (
           <Modal
-            title={'Breyta ákæranda'}
+            title="Breyta um ákæranda"
+            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
             onClose={() => setModal('noModal')}
             primaryButton={{
               text: 'Staðfesta',
@@ -413,12 +414,16 @@ const Overview: FC = () => {
               },
             }}
             secondaryButton={{
-              text: 'Hætta við',
+              text: 'Loka glugga',
               onClick: () => setModal('noModal'),
             }}
           >
             <Box marginBottom={2}>
-              <ProsecutorSelection />
+              <ProsecutorSelection
+                placeholder="Veldu ákæranda til að taka við málinu"
+                isRequired={false}
+                shouldInitializeSelector={true}
+              />
             </Box>
           </Modal>
         ) : null}

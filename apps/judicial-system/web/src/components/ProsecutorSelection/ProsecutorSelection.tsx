@@ -16,9 +16,17 @@ import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
   onChange?: (prosecutorId: string) => void
+  placeholder?: string
+  isRequired?: boolean
+  shouldInitializeSelector?: boolean
 }
 
-const ProsecutorSelection: FC<Props> = ({ onChange }) => {
+const ProsecutorSelection: FC<Props> = ({
+  onChange,
+  placeholder,
+  isRequired,
+  shouldInitializeSelector,
+}) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
@@ -26,7 +34,10 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const [caseLoaded, setCaseLoaded] = useState(false)
 
   const selectedProsecutor = useMemo(() => {
-    if (!workingCase.prosecutor && currentUser?.role !== UserRole.PROSECUTOR) {
+    if (
+      (!workingCase.prosecutor && currentUser?.role !== UserRole.PROSECUTOR) ||
+      shouldInitializeSelector
+    ) {
       return undefined
     }
 
@@ -39,7 +50,13 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       : currentUser?.id
 
     return { label, value }
-  }, [currentUser, workingCase.prosecutor])
+  }, [
+    currentUser?.id,
+    currentUser?.name,
+    currentUser?.role,
+    shouldInitializeSelector,
+    workingCase.prosecutor,
+  ])
 
   const { data, loading } = useProsecutorSelectionUsersQuery({
     fetchPolicy: 'no-cache',
@@ -110,14 +127,17 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       label={formatMessage(strings.label, {
         isIndictmentCase: isIndictmentCase(workingCase.type),
       })}
-      placeholder={formatMessage(strings.placeholder, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      placeholder={
+        placeholder ??
+        formatMessage(strings.placeholder, {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        })
+      }
       value={selectedProsecutor}
       options={eligibleProsecutors}
       onChange={handleChange}
       isDisabled={loading}
-      required
+      required={isRequired === undefined ? true : isRequired}
     />
   )
 }
