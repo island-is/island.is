@@ -163,24 +163,21 @@ export class NotificationsService {
     }
   }
 
-  /**
+ /**
    * Validates that all required arguments are provided for the template.
    * Throws BadRequestException if any required arguments are missing.
    */
   validate(template: HnippTemplate, args: ArgumentDto[]): void {
     const providedKeys = args.map((arg) => arg.key)
 
-    // Filter out 'subject' from template args since it's optional and not used in template replacement
-    const requiredArgs = template.args.filter((arg) => arg !== 'subject')
-
-    const missingArgs = requiredArgs.filter(
+    const missingArgs = template.args.filter(
       (requiredKey) => !providedKeys.includes(requiredKey),
     )
     if (missingArgs.length > 0) {
       throw new BadRequestException(
         `Missing required arguments for template '${
           template.templateId
-        }': ${missingArgs.join(', ')}. Required args are: ${requiredArgs.join(
+        }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
           ', ',
         )}`,
       )
