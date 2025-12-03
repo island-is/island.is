@@ -30,7 +30,7 @@ type CourseDetailsScreenContext = ScreenContext & {
   organizationPage: Query['getOrganizationPage']
 }
 
-interface CourseDetailsProps {
+export interface CourseDetailsProps {
   course: Course
   organizationPage: OrganizationPage
   namespace: Record<string, string>
