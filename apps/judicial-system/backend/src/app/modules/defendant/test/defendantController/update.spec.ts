@@ -12,7 +12,11 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, Defendant } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+} from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
 
 interface Then {
@@ -39,15 +43,19 @@ describe('DefendantController - Update', () => {
 
   let mockMessageService: MessageService
   let transaction: Transaction
-  let mockDefendantModel: typeof Defendant
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, sequelize, defendantModel, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      messageService,
+      sequelize,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
     mockMessageService = messageService
-    mockDefendantModel = defendantModel
+    mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -55,7 +63,7 @@ describe('DefendantController - Update', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    const mockUpdate = mockDefendantModel.update as jest.Mock
+    const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
@@ -87,17 +95,19 @@ describe('DefendantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       then = await givenWhenThen(defendantUpdate, CaseType.CUSTODY)
     })
 
     it('should update the defendant without queuing', () => {
-      expect(mockDefendantModel.update).toHaveBeenCalledWith(defendantUpdate, {
-        where: { id: defendantId, caseId },
-        returning: true,
-      })
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        defendantUpdate,
+        { transaction: undefined },
+      )
       expect(then.result).toBe(updatedDefendant)
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
@@ -108,8 +118,8 @@ describe('DefendantController - Update', () => {
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, uuid())
     })
@@ -124,8 +134,8 @@ describe('DefendantController - Update', () => {
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       await givenWhenThen(defendantUpdate, CaseType.CUSTODY, uuid())
     })
@@ -147,8 +157,8 @@ describe('DefendantController - Update', () => {
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       await givenWhenThen(defendantUpdate, CaseType.TELECOMMUNICATIONS, uuid())
     })
@@ -185,8 +195,8 @@ describe('DefendantController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockUpdate = mockDefendantModel.update as jest.Mock
-        mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+        const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+        mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
         await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, uuid())
       })
@@ -230,8 +240,8 @@ describe('DefendantController - Update', () => {
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
     })
@@ -256,8 +266,8 @@ describe('DefendantController - Update', () => {
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
       await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
     })
