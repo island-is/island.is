@@ -534,6 +534,69 @@ export class ApplicationsService {
     return applicationDtos
   }
 
+  // private isLoginAllowed(
+  //   loginTypes: string[],
+  //   allowedLoginTypes: string[],
+  // ): boolean {
+  //   return (
+  //     loginTypes.length > 0 &&
+  //     loginTypes.every((type) => allowedLoginTypes.includes(type))
+  //   )
+  // }
+
+  // private doesUserMatchApplication(
+  //   application: Application,
+  //   user: User,
+  //   loginTypes: string[],
+  // ): boolean {
+  //   const hasDelegation =
+  //     Array.isArray(user.delegationType) && user.delegationType.length > 0
+  //   const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+  //   const delegatorNationalId = hasDelegation ? user.nationalId : null
+
+  //   const applications = await this.applicationModel.findAll({
+  //     where: {
+  //       nationalId,
+  //       formId,
+  //       status: { [Op.in]: [ApplicationStatus.DRAFT] },
+  //       isTest,
+  //       pruned: false,
+  //     },
+  //     include: [{ model: Value, as: 'values' }],
+  //   })
+  //   const loginTypes = await this.getLoginTypes(user)
+  //   const applicationsByUser = await this.getApplicationsByUser(
+  //     applications,
+  //     user,
+  //     loginTypes,
+  //   )
+
+  //   const delegator = delegatorNationalId
+  //     ? application.values?.find(
+  //         (value) =>
+  //           value.fieldType === FieldTypesEnum.APPLICANT &&
+  //           value.json?.nationalId === delegatorNationalId &&
+  //           loginTypes.includes(value.json?.applicantType ?? ''),
+  //       )
+  //     : null
+
+  //   for (const application of applicationsByUser) {
+  //     const applicationResponseDto = await this.getApplication(
+  //       application.id,
+  //       null,
+  //     )
+  //     if (!applicationResponseDto.application) {
+  //       throw new NotFoundException(
+  //         `Application DTO with id '${application.id}' not found.`,
+  //       )
+  //     }
+  //     const applicationDto = applicationResponseDto.application
+  //     applicationDtos.push(applicationDto)
+  //   }
+
+  //   return applicationDtos
+  // }
+
   private isLoginAllowed(
     loginTypes: string[],
     allowedLoginTypes: string[],

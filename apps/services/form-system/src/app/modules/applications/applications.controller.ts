@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   VERSION_NEUTRAL,
+  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -171,6 +172,36 @@ export class ApplicationsController {
       isTest,
     )
   }
+
+  // @ApiOperation({
+  //   summary: 'Get all applications belonging to a user to display on my pages',
+  // })
+  // @ApiOkResponse({
+  //   type: [MyPagesApplicationResponseDto],
+  //   description:
+  //     'Get all applications belonging to a user to display on my pages',
+  // })
+  // @ApiParam({ name: 'nationalId', type: String })
+  // @ApiParam({ name: 'locale', type: String })
+  // @Get('user/:nationalId/:locale')
+  // async findAllByUser(
+  //   @Param('nationalId') nationalId: string,
+  //   @Param('locale') locale: string,
+  //   @CurrentUser()
+  //   user: User,
+  // ): Promise<MyPagesApplicationResponseDto[]> {
+  //   const actorNationalId = user.actor ? user.actor.nationalId : user.nationalId
+  //   if (nationalId !== actorNationalId) {
+  //     throw new ForbiddenException(
+  //       'You are not allowed to access applications for this user',
+  //     )
+  //   }
+  //   return await this.applicationsService.findAllByNationalId(
+  //     nationalId,
+  //     locale,
+  //     user,
+  //   )
+  // }
 
   @ApiOperation({ summary: 'Save screen data' })
   @ApiCreatedResponse({

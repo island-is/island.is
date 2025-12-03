@@ -179,13 +179,11 @@ export const BaseSettings = () => {
               setFocus(e.target.value)
             }}
             onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                const response: UpdateFormResponse = await formUpdate()
-                if (response && response.errors) {
-                  setErrorMsg(response.errors[0].message as string)
-                } else {
-                  setErrorMsg('')
-                }
+              const response: UpdateFormResponse = await formUpdate()
+              if (response && response.errors) {
+                setErrorMsg(response.errors[0].message as string)
+              } else {
+                setErrorMsg('')
               }
             }}
             onChange={(e) =>
