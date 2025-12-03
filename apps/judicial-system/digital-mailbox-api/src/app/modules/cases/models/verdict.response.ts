@@ -67,6 +67,9 @@ export class VerdictResponse {
     const isAppealDeadlineExpired =
       appealDeadlineResult?.isDeadlineExpired ?? false
 
+    // Default judgements can't be appealed
+    const canBeAppealed = !!verdict && !verdict.isDefaultJudgement
+
     const rulingInstructionsItems = getRulingInstructionItems(
       verdict?.serviceInformationForDefendant ?? [],
       lang,
@@ -88,12 +91,17 @@ export class VerdictResponse {
             ],
             [t.court, internalCase.court?.name || t.notAvailable],
             [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
-            [
-              t.appealDeadline,
-              appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
-            ],
-            // Default judgements can't be appealed
-            ...(!verdict?.isDefaultJudgement && isAppealDeadlineExpired
+            ...(canBeAppealed
+              ? [
+                  [
+                    t.appealDeadline,
+                    appealDeadline
+                      ? formatDate(appealDeadline)
+                      : t.notAvailable,
+                  ],
+                ]
+              : []),
+            ...(canBeAppealed && isAppealDeadlineExpired
               ? [
                   [
                     t.appealDecision,
@@ -120,8 +128,7 @@ export class VerdictResponse {
             },
           ],
         },
-        // Default judgements can't be appealed
-        ...(!verdict?.isDefaultJudgement && !isAppealDeadlineExpired
+        ...(canBeAppealed && !isAppealDeadlineExpired
           ? [
               {
                 label: t.appealDecision,
