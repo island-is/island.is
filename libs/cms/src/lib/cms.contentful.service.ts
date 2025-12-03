@@ -1579,6 +1579,21 @@ export class CmsContentfulService {
       return null
     }
 
-    return mapCourse(response as types.ICourse)
+    const mappedCourse = mapCourse(response as types.ICourse)
+
+    // Filter out instances that are in the past
+    const today = new Date()
+    mappedCourse.instances = mappedCourse.instances.filter(
+      (instance) =>
+        Boolean(instance.startDate) && new Date(instance.startDate) > today,
+    )
+
+    // Sort instances in ascending start date order
+    mappedCourse.instances.sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
+
+    return mappedCourse
   }
 }

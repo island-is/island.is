@@ -17,6 +17,7 @@ import type {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -45,6 +46,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -95,6 +97,31 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           {course.title}
         </Text>
         <Box>{webRichText(course.description)}</Box>
+        <Stack space={3}>
+          <Text variant="h2" as="h2">
+            {n(
+              'courseInstancesLabel',
+              activeLocale === 'is' ? 'Dagsetningar' : 'Dates',
+            )}
+          </Text>
+          <Stack space={3}>
+            {course.instances.map((instance) => (
+              <Box
+                key={instance.id}
+                padding={2}
+                border="standard"
+                borderRadius="large"
+              >
+                <Stack space={2}>
+                  <Text variant="h3" as="h3">
+                    {format(new Date(instance.startDate), 'do MMMM yyyy')}
+                  </Text>
+                  <Text>{instance.description}</Text>
+                </Stack>
+              </Box>
+            ))}
+          </Stack>
+        </Stack>
       </Stack>
     </OrganizationWrapper>
   )
