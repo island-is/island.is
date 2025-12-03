@@ -4,7 +4,7 @@ import { isCompany } from 'kennitala'
 import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
-import { notificationScopes } from '@island.is/auth/scopes'
+import { DocumentsScope, notificationScopes } from '@island.is/auth/scopes'
 import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
