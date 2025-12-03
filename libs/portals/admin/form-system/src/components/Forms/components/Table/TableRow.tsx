@@ -254,6 +254,7 @@ export const TableRow = ({
     updateFormStatus,
     copyForm,
     setFormsState,
+    name,
   ])
 
   const goToForm = () => {
