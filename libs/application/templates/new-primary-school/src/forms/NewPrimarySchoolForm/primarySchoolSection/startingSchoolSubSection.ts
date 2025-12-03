@@ -33,8 +33,9 @@ export const startingSchoolSubSection = buildSubSection({
       children: [
         buildDateField({
           id: 'startingSchool.expectedStartDate',
-          title: newPrimarySchoolMessages.shared.date,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+          title: newPrimarySchoolMessages.primarySchool.expectedStartDateTitle,
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedStartDatePlaceholder,
           defaultValue: null,
           minDate: () => new Date(),
         }),
@@ -85,7 +86,8 @@ export const startingSchoolSubSection = buildSubSection({
         buildDateField({
           id: 'startingSchool.expectedEndDate',
           title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedEndDatePlaceholder,
           condition: (answers, externalData) => {
             const {
               expectedStartDateHiddenInput,
