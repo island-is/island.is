@@ -10,11 +10,7 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import {
-  Case,
-  Defendant,
-  DefendantRepositoryService,
-} from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
 
 interface Then {
@@ -41,19 +37,19 @@ describe('LimitedAccessDefendantController - Update', () => {
 
   let mockMessageService: MessageService
   let transaction: Transaction
-  let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       messageService,
       sequelize,
-      defendantRepositoryService,
+      defendantModel,
       limitedAccessDefendantController,
     } = await createTestingDefendantModule()
 
     mockMessageService = messageService
-    mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantModel = defendantModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -61,7 +57,7 @@ describe('LimitedAccessDefendantController - Update', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+    const mockUpdate = mockDefendantModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
@@ -92,19 +88,18 @@ describe('LimitedAccessDefendantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
       then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT)
     })
 
     it('should update the defendant without queuing', () => {
-      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        defendantId,
-        defendantUpdate,
-        { transaction },
-      )
+      expect(mockDefendantModel.update).toHaveBeenCalledWith(defendantUpdate, {
+        where: { id: defendantId, caseId },
+        returning: true,
+        transaction,
+      })
       expect(then.result).toBe(updatedDefendant)
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })

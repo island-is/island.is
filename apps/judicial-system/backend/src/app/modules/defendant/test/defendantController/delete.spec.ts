@@ -5,7 +5,7 @@ import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, DefendantRepositoryService } from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 import { DeleteDefendantResponse } from '../../models/delete.response'
 
 interface Then {
@@ -21,18 +21,18 @@ describe('DefendantController - Delete', () => {
   const defendantId = uuid()
 
   let mockMessageService: MessageService
-  let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
+    const { messageService, defendantModel, defendantController } =
       await createTestingDefendantModule()
 
     mockMessageService = messageService
-    mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantModel = defendantModel
 
-    const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
-    mockDelete.mockRejectedValue(new Error('Some error'))
+    const mockDestroy = mockDefendantModel.destroy as jest.Mock
+    mockDestroy.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
@@ -56,17 +56,16 @@ describe('DefendantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
-      mockDelete.mockResolvedValue(undefined)
+      const mockDestroy = mockDefendantModel.destroy as jest.Mock
+      mockDestroy.mockResolvedValue(1)
 
       then = await givenWhenThen()
     })
 
     it('should delete the defendant without queuing', () => {
-      expect(mockDefendantRepositoryService.delete).toHaveBeenCalledWith(
-        caseId,
-        defendantId,
-      )
+      expect(mockDefendantModel.destroy).toHaveBeenCalledWith({
+        where: { id: defendantId, caseId },
+      })
       expect(then.result).toEqual({ deleted: true })
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
@@ -74,8 +73,8 @@ describe('DefendantController - Delete', () => {
 
   describe('defendant removed after case is delivered to court', () => {
     beforeEach(async () => {
-      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
-      mockDelete.mockResolvedValue(undefined)
+      const mockDestroy = mockDefendantModel.destroy as jest.Mock
+      mockDestroy.mockResolvedValue(1)
 
       await givenWhenThen(uuid())
     })

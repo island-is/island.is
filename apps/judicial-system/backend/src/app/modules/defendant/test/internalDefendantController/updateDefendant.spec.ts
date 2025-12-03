@@ -2,11 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import {
-  Case,
-  Defendant,
-  DefendantRepositoryService,
-} from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 import { InternalUpdateDefendantDto } from '../../dto/internalUpdateDefendant.dto'
 
 interface Then {
@@ -26,7 +22,7 @@ describe('InternalDefendantController - Update defendant', () => {
     nationalId: defendantNationalId,
     ...update,
   }
-  let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -34,12 +30,12 @@ describe('InternalDefendantController - Update defendant', () => {
       id: defendantId,
       nationalId: defendantNationalId,
     } as Defendant
-    const { defendantRepositoryService, internalDefendantController } =
+    const { defendantModel, internalDefendantController } =
       await createTestingDefendantModule()
 
-    mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantModel = defendantModel
 
-    const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+    const mockUpdate = mockDefendantModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
@@ -64,17 +60,15 @@ describe('InternalDefendantController - Update defendant', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValue(updatedDefendant)
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValue([1, [updatedDefendant]])
 
       then = await givenWhenThen()
     })
     it('should update the defendant', async () => {
-      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        defendantId,
+      expect(mockDefendantModel.update).toHaveBeenCalledWith(
         { ...update },
-        { transaction: undefined },
+        { where: { id: defendantId, caseId }, returning: true },
       )
       expect(then.result).toEqual(updatedDefendant)
     })

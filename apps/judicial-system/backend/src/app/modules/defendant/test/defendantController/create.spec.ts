@@ -5,11 +5,7 @@ import { Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import {
-  Case,
-  Defendant,
-  DefendantRepositoryService,
-} from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 
 interface Then {
   result: Defendant
@@ -32,17 +28,17 @@ describe('DefendantController - Create', () => {
   const createdDefendant = { id: defendantId, caseId }
 
   let mockMessageService: MessageService
-  let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
+    const { messageService, defendantModel, defendantController } =
       await createTestingDefendantModule()
 
     mockMessageService = messageService
-    mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantModel = defendantModel
 
-    const mockCreate = mockDefendantRepositoryService.create as jest.Mock
+    const mockCreate = mockDefendantModel.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
 
     givenWhenThen = async (courtCaseNumber?: string) => {
@@ -70,7 +66,7 @@ describe('DefendantController - Create', () => {
     })
 
     it('should create a defendant', () => {
-      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith({
+      expect(mockDefendantModel.create).toHaveBeenCalledWith({
         ...defendantToCreate,
         caseId,
       })
@@ -106,7 +102,7 @@ describe('DefendantController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockDefendantRepositoryService.create as jest.Mock
+      const mockCreate = mockDefendantModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen()
