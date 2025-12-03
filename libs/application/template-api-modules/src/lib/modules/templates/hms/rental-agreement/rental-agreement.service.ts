@@ -13,6 +13,7 @@ import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
   FinancialIndexationEntry,
+  errorMapper,
 } from './utils/utils'
 
 @Injectable()
@@ -65,7 +66,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
 
-        throw new Error(`${errorMessage}: ${error.message || 'Unknown error'}`)
+        const mappedError = errorMapper(error)
+
+        throw mappedError
       })
   }
 }

@@ -24,6 +24,7 @@ import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -102,6 +103,7 @@ type TableRepeaterOptions =
       application: Application,
       activeField?: Record<string, string>,
       locale?: Locale,
+      formatMessage?: FormatMessage,
     ) => RepeaterOption[] | [])
 
 type MaybeWithApplicationAndActiveField<T> =
@@ -283,6 +285,7 @@ export type RepeaterItem = {
       errorTitle?: FormText
       fallbackErrorMessage?: FormText
       validationFailedErrorMessage?: FormText
+      isTrailer?: boolean
     }
   | {
       component: 'description'
@@ -767,6 +770,7 @@ export interface NationalIdWithNameField extends InputField {
   phoneLabel?: StaticText
   emailLabel?: StaticText
   titleVariant?: TitleVariants
+  readonly?: boolean
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -854,7 +858,7 @@ export type FieldsRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   hideRemoveButton?: boolean
-  hideAddButton?: boolean
+  hideAddButton?: MaybeWithApplication<boolean>
   displayTitleAsAccordion?: boolean
   itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>
@@ -1099,6 +1103,7 @@ export interface VehiclePermnoWithInfoField extends InputField {
   errorTitle?: FormText
   fallbackErrorMessage?: FormText
   validationFailedErrorMessage?: FormText
+  isTrailer: boolean
 }
 
 export type Field =

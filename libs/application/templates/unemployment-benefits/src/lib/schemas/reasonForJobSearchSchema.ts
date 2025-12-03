@@ -14,6 +14,8 @@ export const reasonForJobSearchSchema = z
     bankruptsyReasonRequired: z.boolean().optional(),
     bankruptsyReason: z.array(z.string()).optional(),
     agreementConfirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+    reasonQuestion: z.string().optional(),
+    reasonQuestionRequired: z.boolean().optional(),
   })
   .refine(
     ({ additionalReasonText, additionalReasonTextRequired }) => {
@@ -23,6 +25,15 @@ export const reasonForJobSearchSchema = z
       return true
     },
     { path: ['additionalReasonText'] },
+  )
+  .refine(
+    ({ reasonQuestion, reasonQuestionRequired }) => {
+      if (reasonQuestionRequired === true) {
+        return !!reasonQuestion
+      }
+      return true
+    },
+    { path: ['reasonQuestion'] },
   )
   .refine(
     ({ healthReason, healthReasonRequired }) => {

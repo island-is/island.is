@@ -120,7 +120,6 @@ export const fieldsRepeaterSubsection = buildSubSection({
               label: (index) => `Regular input with index in label: ${index}`,
               width: 'full',
               type: 'text',
-              format: '######-####',
             },
           },
         }),

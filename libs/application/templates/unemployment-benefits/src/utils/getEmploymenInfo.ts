@@ -1,9 +1,13 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormatMessage,
+  FormValue,
+} from '@island.is/application/types'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../shared'
 import { GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer } from '@island.is/clients/vmst-unemployment'
 import { employment as employmentMessages } from '../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 export const isUnemployed = (answers: FormValue) => {
   const status = getValueViaPath<string>(answers, 'currentSituation.status')
@@ -44,7 +48,10 @@ export const doesOwnResume = (answers: FormValue) => {
   return doesOwnResume === YES
 }
 
-export const getEmploymentFromRsk = (externalData: ExternalData) => {
+export const getEmploymentFromRsk = (
+  externalData: ExternalData,
+  formatMessage?: FormatMessage,
+) => {
   const employmentList =
     getValueViaPath<
       Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
@@ -53,9 +60,6 @@ export const getEmploymentFromRsk = (externalData: ExternalData) => {
       'unemploymentApplication.data.rskEmploymentInformation',
       [],
     ) ?? []
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { formatMessage } = useLocale()
 
   const extendedList = [
     ...employmentList.map((x) => {
@@ -66,9 +70,11 @@ export const getEmploymentFromRsk = (externalData: ExternalData) => {
     }),
     {
       employerSSN: '-',
-      employer: formatMessage(
-        employmentMessages.currentSituation.labels.unregisteredEmployer,
-      ),
+      employer: formatMessage
+        ? formatMessage(
+            employmentMessages.currentSituation.labels.unregisteredEmployer,
+          )
+        : '',
     },
   ]
 
@@ -215,9 +221,16 @@ export const getDefaultFromCurrentStatus = (
 }
 
 export const getChosenEmployerNationalId = (
-  repeaterJobs: CurrentEmploymentInAnswers[],
   index: number,
+  application: Application,
 ) => {
+  const repeaterJobs =
+    getValueViaPath<CurrentEmploymentInAnswers[]>(
+      application.answers,
+      'currentSituation.currentSituationRepeater',
+      [],
+    ) ?? []
+
   return repeaterJobs[index]?.nationalIdWithName &&
     repeaterJobs[index]?.nationalIdWithName !== '-'
     ? repeaterJobs[index]?.nationalIdWithName
@@ -225,13 +238,28 @@ export const getChosenEmployerNationalId = (
 }
 
 export const getChosenEmployerName = (
-  repeaterJobs: CurrentEmploymentInAnswers[],
   index: number,
-  externalData: ExternalData,
-  nationalIdChosen: string,
+  application: Application,
 ) => {
+  const repeaterJobs =
+    getValueViaPath<CurrentEmploymentInAnswers[]>(
+      application.answers,
+      'currentSituation.currentSituationRepeater',
+      [],
+    ) ?? []
+
+  if (
+    isUnemployed(application.answers) ||
+    repeaterJobs.length === 0 ||
+    !repeaterJobs[index]
+  ) {
+    return ''
+  }
+
+  const nationalIdChosen = getChosenEmployerNationalId(index, application)
+
   return repeaterJobs[index]?.nationalIdWithName &&
     repeaterJobs[index]?.nationalIdWithName !== '-'
-    ? getEmployerNameFromSSN(externalData, nationalIdChosen || '')
+    ? getEmployerNameFromSSN(application.externalData, nationalIdChosen || '')
     : repeaterJobs[index]?.employer?.name
 }

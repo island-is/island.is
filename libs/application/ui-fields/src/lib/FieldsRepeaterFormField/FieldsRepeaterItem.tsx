@@ -198,7 +198,7 @@ export const Item = ({
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues, lang)
+    translatedOptions = options(application, activeValues, lang, formatMessage)
   } else {
     translatedOptions =
       options?.map((option) => ({
@@ -405,6 +405,7 @@ export const Item = ({
       errorTitle: item.errorTitle,
       fallbackErrorMessage: item.fallbackErrorMessage,
       validationFailedErrorMessage: item.validationFailedErrorMessage,
+      isTrailer: item.isTrailer ?? false,
     }
   }
 

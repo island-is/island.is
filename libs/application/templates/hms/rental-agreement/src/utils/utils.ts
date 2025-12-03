@@ -103,7 +103,7 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',
@@ -131,7 +131,7 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',

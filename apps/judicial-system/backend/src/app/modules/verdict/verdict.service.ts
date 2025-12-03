@@ -268,6 +268,7 @@ export class VerdictService {
   private mapToPoliceSupplementCodes(
     theCase: Case,
     defendant: Defendant,
+    verdict: Verdict,
   ): { code: string; value: string }[] {
     const receiverSsn =
       defendant.nationalId &&
@@ -305,6 +306,14 @@ export class VerdictService {
             {
               code: 'RULING',
               value: ruling,
+            },
+          ]
+        : []),
+      ...(verdict && verdict.isDefaultJudgement
+        ? [
+            {
+              code: 'REQUIRES_APPEAL_DECISION',
+              value: verdict.isDefaultJudgement ? 'false' : 'true',
             },
           ]
         : []),
@@ -402,7 +411,11 @@ export class VerdictService {
           : []),
       ],
       fileTypeCode: PoliceFileTypeCode.VERDICT,
-      caseSupplements: this.mapToPoliceSupplementCodes(theCase, defendant),
+      caseSupplements: this.mapToPoliceSupplementCodes(
+        theCase,
+        defendant,
+        verdict,
+      ),
     })
     if (!createdDocument) {
       return { delivered: false }
