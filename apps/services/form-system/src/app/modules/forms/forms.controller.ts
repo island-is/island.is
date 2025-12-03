@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +11,6 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -81,21 +79,6 @@ export class FormsController {
     return await this.formsService.findOne(id)
   }
 
-  @ApiOperation({ summary: 'Update form' })
-  @ApiOkResponse({
-    type: UpdateFormResponse,
-    description: 'Update form',
-  })
-  @ApiBody({ type: UpdateFormDto })
-  @ApiParam({ name: 'id', type: String })
-  @Put(':id')
-  async updateForm(
-    @Param('id') id: string,
-    @Body() updateFormDto: UpdateFormDto,
-  ): Promise<UpdateFormResponse> {
-    return await this.formsService.update(id, updateFormDto)
-  }
-
   @ApiOperation({ summary: 'Update form status' })
   @ApiOkResponse({
     type: FormResponseDto,
@@ -120,5 +103,20 @@ export class FormsController {
   @Put('copy/:id')
   async copy(@Param('id') id: string): Promise<FormResponseDto> {
     return await this.formsService.copy(id)
+  }
+
+  @ApiOperation({ summary: 'Update form' })
+  @ApiOkResponse({
+    type: UpdateFormResponse,
+    description: 'Update form',
+  })
+  @ApiBody({ type: UpdateFormDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put(':id')
+  async updateForm(
+    @Param('id') id: string,
+    @Body() updateFormDto: UpdateFormDto,
+  ): Promise<UpdateFormResponse> {
+    return await this.formsService.update(id, updateFormDto)
   }
 }

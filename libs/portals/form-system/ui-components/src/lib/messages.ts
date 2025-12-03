@@ -1023,7 +1023,8 @@ export const m = defineMessages({
   },
   unpublishFormWarning: {
     id: 'form.system:unpublish-form-warning',
-    defaultMessage: 'Ertu viss að þú viljir taka úr útgáfu formið: {formName}',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
     description: 'Are you sure you want to unpublish the form: {formName}',
   },
   previewField: {

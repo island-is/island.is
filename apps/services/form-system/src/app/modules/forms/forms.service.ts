@@ -346,12 +346,10 @@ export class FormsService {
           return await this.deleteForm(id, form)
         }
         break
-      default:
-        throw new Error(
-          `Cannot change status from '${currentStatus}' to '${newStatus}'`,
-        )
     }
-    return new FormResponseDto()
+    throw new BadRequestException(
+      `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
+    )
   }
 
   private async publishFormInDevelopment(

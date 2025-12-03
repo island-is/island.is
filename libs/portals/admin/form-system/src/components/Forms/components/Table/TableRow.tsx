@@ -77,13 +77,12 @@ export const TableRow = ({
               },
             },
           })
-          console.log('Data from copy form:', data)
           setFormsState((prevForms) => {
             const returnedForm = data.copyFormSystemForm.form
             return [returnedForm, ...prevForms]
           })
         } catch (error) {
-          console.error('Error copying form:', error)
+          // TODO: Add user-facing error notification
         }
       },
     }
@@ -247,7 +246,15 @@ export const TableRow = ({
     }
 
     return [test, copy, publish, del]
-  }, [id, slug, status, formatMessage, updateFormStatus, setFormsState])
+  }, [
+    id,
+    slug,
+    status,
+    formatMessage,
+    updateFormStatus,
+    copyForm,
+    setFormsState,
+  ])
 
   const goToForm = () => {
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
