@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useNavigation } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
 
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { useFeatureFlagClient } from '../../contexts/feature-flag-provider'
 import {
   HealthDirectorateMedicineHistoryItem,
   HealthDirectoratePrescription,
@@ -20,7 +21,6 @@ import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
 import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicin-history-card'
 import { PrescriptionCard } from './components/prescription-card'
-import { Text } from 'react-native-reanimated/lib/typescript/Animated'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -39,9 +39,7 @@ const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
-        text: intl.formatMessage({
-          id: 'health.prescriptionsAndCertificates.screenTitle',
-        }),
+        text: '',
       },
     },
     bottomTabs: {
@@ -58,10 +56,46 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
 
-  const disableDrugCertificates = useFeatureFlag(
-    'isDrugCertificateEnabled',
-    false,
-  )
+  const featureFlagClient = useFeatureFlagClient()
+  const [isPrescriptionsEnabled, setIsPrescriptionsEnabled] = useState<
+    boolean | null
+  >(null)
+
+  const { mergeOptions } = useNavigation(componentId)
+
+  useEffect(() => {
+    let isMounted = true
+
+    featureFlagClient
+      .getValue('isPrescriptionsEnabled', false)
+      .then((value) => {
+        if (isMounted) {
+          setIsPrescriptionsEnabled(Boolean(value))
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [featureFlagClient])
+
+  useEffect(() => {
+    if (isPrescriptionsEnabled === null) {
+      return
+    }
+
+    mergeOptions({
+      topBar: {
+        title: {
+          text: intl.formatMessage({
+            id: isPrescriptionsEnabled
+              ? 'health.prescriptionsAndCertificates.screenTitle'
+              : 'health.drugCertificates.title',
+          }),
+        },
+      },
+    })
+  }, [intl, isPrescriptionsEnabled, mergeOptions])
 
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
@@ -90,7 +124,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       {
         id: 'prescriptions',
         titleId: 'health.prescriptions.title',
-        enabled: true,
+        enabled: isPrescriptionsEnabled,
         queryResult: prescriptionsRes,
         getData: () =>
           prescriptionsRes.data?.healthDirectoratePrescriptions?.prescriptions,
@@ -110,7 +144,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       {
         id: 'drugCertificates',
         titleId: 'health.drugCertificates.title',
-        enabled: disableDrugCertificates,
+        enabled: true,
         queryResult: certificatesRes,
         getData: () => certificatesRes.data?.rightsPortalDrugCertificates,
         renderContent: (data: RightsPortalDrugCertificate[]) => (
@@ -129,7 +163,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       {
         id: 'medicineHistory',
         titleId: 'health.medicineHistory.title',
-        enabled: true,
+        enabled: isPrescriptionsEnabled,
         queryResult: medicineHistoryRes,
         getData: () =>
           medicineHistoryRes.data?.healthDirectorateMedicineHistory
@@ -151,7 +185,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
 
     return allTabs.filter((tab) => tab.enabled)
   }, [
-    disableDrugCertificates,
+    isPrescriptionsEnabled,
     prescriptionsRes,
     certificatesRes,
     medicineHistoryRes,
@@ -196,7 +230,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     }
   }, [prescriptionsRes, certificatesRes, medicineHistoryRes])
 
-  return (
+  if (isPrescriptionsEnabled === null) {
+    return null
+  }
+
+  return isPrescriptionsEnabled ? (
     <View style={{ flex: 1 }}>
       <ScrollView
         refreshControl={
@@ -229,6 +267,22 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               <Problem type="no_data" />
             </Wrapper>
           )}
+        </Host>
+      </ScrollView>
+    </View>
+  ) : (
+    <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
+        <Host>
+          <Wrapper>
+            {tabs
+              .find((tab) => tab.id === 'drugCertificates')
+              ?.renderContent(
+                tabs
+                  .find((tab) => tab.id === 'drugCertificates')
+                  ?.getData() as any,
+              )}
+          </Wrapper>
         </Host>
       </ScrollView>
     </View>

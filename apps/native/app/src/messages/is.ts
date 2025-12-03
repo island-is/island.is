@@ -4,7 +4,7 @@ export const is = {
   'button.change': 'Breyta',
   'button.open': 'Skoða',
   'button.moreInfoHere': 'Nánari upplýsingar hér',
-
+  'button.seeMore': 'Sjá nánar',
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
@@ -818,6 +818,15 @@ export const is = {
   'health.prescriptions.issueInformation': 'Útgáfa',
   'health.prescriptions.dispensations': 'Afgreiðslusaga',
   'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
-
+  'health.prescriptions.lastDispensationDate': 'Síðast afgreitt: {date}',
+  'health.prescriptions.dispensationCount': '{count} afgreiðslur',
+  'health.prescriptions.fetchMoreDispensations': 'Ná í fleiri afgreiðslur',
+  'health.prescriptions.completedDispensation': '{number}. afgreiðsla',
+  'health.prescriptions.history.table.date': 'Dags.',
+  'health.prescriptions.history.table.dispensery': 'Afhendingarstaður',
+  'health.prescriptions.history.table.drug': 'Lyf',
+  'health.prescriptions.history.table.quantity': 'Magn',
+  'health.prescriptions.history.table.moreInfo': 'Nánar um afgreiðslu',
+  'health.prescriptions.dispensationDetail.title': 'Upplýsingar um afgreiðslu',
   'health.medicineHistory.title': 'Lyfjasaga',
 }

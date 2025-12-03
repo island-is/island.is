@@ -184,6 +184,21 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/prescriptions/dispensation', (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDispensationDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {

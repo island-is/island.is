@@ -49,6 +49,7 @@ export const ComponentRegistry = {
   RegisterEmailScreen: `${prefix}.screens.RegisterEmailScreen`,
   SettingsScreen: `${prefix}.screens.SettingsScreen`,
   UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
+  MedicineDispensationDetailScreen: `${prefix}.screens.MedicineDispensationDetailScreen`,
   VaccinationsScreen: `${prefix}.screens.VaccinationsScreen`,
   PrescriptionsScreen: `${prefix}.screens.PrescriptionsScreen`,
   VehicleDetailScreen: `${prefix}.screens.VehicleDetailScreen`,

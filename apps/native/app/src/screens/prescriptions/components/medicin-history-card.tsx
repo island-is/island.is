@@ -9,9 +9,10 @@ import {
   HealthDirectorateMedicineHistoryItem,
   useGetMedicineDispensationForAtcLazyQuery,
 } from '../../../graphql/types/schema'
-import { ExpandableCard, Typography } from '../../../ui'
+import { navigateTo } from '../../../lib/deep-linking'
+import { Button, ExpandableCard, Typography } from '../../../ui'
+import arrowRightIcon from '../../../ui/assets/icons/arrow.png'
 import checkmarkIcon from '../../../ui/assets/icons/check.png'
-import { capitalize } from '../../../utils/capitalize'
 
 const TableRow = styled.View`
   flex-direction: row;
@@ -27,8 +28,12 @@ const RowItem = styled.View`
   flex: 1;
 `
 
-const TableHeader = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+const DispensationHeader = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  margin-vertical: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const DispensationRowItem = styled.View`
@@ -41,6 +46,16 @@ const DispensationRowItem = styled.View`
 const DispensationCheckmark = styled.View`
   max-width: 15%;
   padding-right: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const MoreInfoLink = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  align-self: center;
+  margin-vertical: ${({ theme }) => theme.spacing[2]}px;
 `
 
 type MedicineHistoryCardProps = {
@@ -79,92 +94,157 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
 
   return (
     <ExpandableCard
-      title={`Síðast afgreitt: ${
+      title={
         medicine.lastDispensationDate
-          ? intl.formatDate(medicine.lastDispensationDate)
-          : ''
-      }`}
+          ? intl.formatMessage(
+              {
+                id: 'health.prescriptions.lastDispensationDate',
+              },
+              {
+                date: medicine.lastDispensationDate
+                  ? intl.formatDate(medicine.lastDispensationDate)
+                  : '',
+              },
+            )
+          : undefined
+      }
       message={medicine.name}
       icon={chevronDown}
       onPress={() => setOpen(!open)}
       open={open}
       topRightValue={
         <Typography variant="body3">
-          Afgreiðslur: {medicine.dispensationCount?.toString() ?? ''}
+          {intl.formatMessage(
+            {
+              id: 'health.prescriptions.dispensationCount',
+            },
+            { count: medicine.dispensationCount?.toString() ?? '' },
+          )}
         </Typography>
       }
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
-        <View>
-          <Typography variant="eyebrow">Lyf er notað við:</Typography>
-          <Typography variant="body3">
-            {capitalize(medicine.indication ?? '')}
-          </Typography>
-        </View>
         <View style={{ marginTop: theme.spacing[2] }}>
           {dispensations.data.length > 0 ? (
             <>
-              <Typography variant="eyebrow">Afgreiðslur:</Typography>
-              {dispensations.data.map(
-                (
-                  item: HealthDirectorateMedicineHistoryDispensation,
-                  visibleIndex,
-                ) => (
+              {dispensations.data.map((dispensation, index) => (
+                <View key={`${dispensation.id}-${index}`}>
+                  <DispensationHeader>
+                    <Typography variant="eyebrow">
+                      {intl.formatMessage(
+                        {
+                          id: 'health.prescriptions.completedDispensation',
+                        },
+                        { number: index + 1 },
+                      )}
+                    </Typography>
+                    <DispensationCheckmark>
+                      <Image
+                        source={checkmarkIcon}
+                        style={{ width: 16, height: 16 }}
+                      />
+                    </DispensationCheckmark>
+                  </DispensationHeader>
                   <TableRow
-                    key={visibleIndex}
                     style={{
-                      backgroundColor:
-                        visibleIndex % 2 === 0
-                          ? theme.color.blue100
-                          : theme.color.white,
-                      paddingTop: theme.spacing[1],
-                      paddingBottom: theme.spacing[1],
+                      backgroundColor: theme.color.blue100,
                     }}
                   >
-                    <DispensationRowItem>
-                      <DispensationCheckmark>
-                        <Image source={checkmarkIcon} />
-                      </DispensationCheckmark>
-                      <View>
-                        <Typography variant="eyebrow">
-                          {intl.formatMessage(
-                            {
-                              id: 'health.prescriptions.dispensationNumber',
-                            },
-                            { number: visibleIndex + 1 },
-                          )}
-                        </Typography>
-                        <Typography variant="body">{item.name}</Typography>
-                        <Typography variant="body3">
-                          {`${intl.formatDate(item.date ?? '')}${
-                            item.agentName ? ' - ' + item.agentName : ''
-                          }${item.quantity ? ' - ' + item.quantity : ''}`}
-                        </Typography>
-                      </View>
-                    </DispensationRowItem>
+                    <RowItem>
+                      <Typography variant="eyebrow">
+                        {intl.formatMessage({
+                          id: 'health.prescriptions.history.table.date',
+                        })}
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography variant="body3">
+                        {dispensation.date
+                          ? intl.formatDate(dispensation.date)
+                          : ''}
+                      </Typography>
+                    </RowItem>
                   </TableRow>
-                ),
-              )}
+                  <TableRow>
+                    <RowItem>
+                      <Typography variant="eyebrow">
+                        {intl.formatMessage({
+                          id: 'health.prescriptions.history.table.dispensery',
+                        })}
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography variant="body3">
+                        {dispensation.agentName}
+                      </Typography>
+                    </RowItem>
+                  </TableRow>
+                  <TableRow style={{ backgroundColor: theme.color.blue100 }}>
+                    <RowItem>
+                      <Typography variant="eyebrow">
+                        {intl.formatMessage({
+                          id: 'health.prescriptions.history.table.drug',
+                        })}
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography variant="body3">
+                        {dispensation.name}
+                      </Typography>
+                    </RowItem>
+                  </TableRow>
+                  <TableRow>
+                    <RowItem>
+                      <Typography variant="eyebrow">
+                        {intl.formatMessage({
+                          id: 'health.prescriptions.history.table.quantity',
+                        })}
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography variant="body3">
+                        {dispensation.quantity}
+                      </Typography>
+                    </RowItem>
+                  </TableRow>
+                  <Pressable
+                    onPress={() => {
+                      navigateTo('/prescriptions/dispensation', {
+                        dispensation,
+                        number: index + 1,
+                      })
+                    }}
+                  >
+                    <MoreInfoLink>
+                      <Typography variant="eyebrow" color={theme.color.blue400}>
+                        {intl.formatMessage({
+                          id: 'health.prescriptions.history.table.moreInfo',
+                        })}
+                      </Typography>
+                      <Image
+                        source={arrowRightIcon}
+                        style={{
+                          width: 12,
+                          height: 12,
+                        }}
+                      />
+                    </MoreInfoLink>
+                  </Pressable>
+                </View>
+              ))}
             </>
           ) : (
             <Typography variant="body3">Engar afgreiðslur fundust</Typography>
           )}
         </View>
       </View>
-      <Pressable
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: theme.spacing[2],
-          margin: theme.spacing[2],
-          backgroundColor: theme.color.blue100,
-          borderRadius: theme.border.radius.standard,
-          borderWidth: 1,
-          borderColor: theme.color.blue200,
-          opacity: atcLoading || dispensations.fullyLoaded ? 0.5 : 1,
-        }}
+      <Button
+        isUtilityButton
+        isOutlined
         disabled={atcLoading || dispensations.fullyLoaded}
+        title={intl.formatMessage({
+          id: 'health.prescriptions.fetchMoreDispensations',
+        })}
         onPress={() => {
           if (medicine.atcCode) {
             getDispensationForAtc({
@@ -174,9 +254,7 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
             })
           }
         }}
-      >
-        <Typography variant="body3">Ná í fleiri afgreiðslur</Typography>
-      </Pressable>
+      />
     </ExpandableCard>
   )
 }
