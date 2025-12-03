@@ -7,19 +7,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   FormsApi,
   FormsControllerCreateRequest,
-  FormsControllerDeleteRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
-  FormsControllerPublishRequest,
   FormsControllerUpdateFormRequest,
+  FormsControllerUpdateStatusRequest,
 } from '@island.is/clients/form-system'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusInput,
+} from '@island.is/form-system/shared'
 import {
   CreateFormInput,
-  DeleteFormInput,
   GetFormInput,
   GetFormsInput,
-  PublishFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -53,16 +53,21 @@ export class FormsService {
     return response as FormResponse
   }
 
-  async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth).formsControllerDelete(
-      input as FormsControllerDeleteRequest,
+  async copyForm(auth: User, input: GetFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerCopy(
+      input as FormsControllerFindOneRequest,
     )
+    return response as FormResponse
   }
 
-  async publishForm(auth: User, input: PublishFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth).formsControllerPublish(
-      input as FormsControllerPublishRequest,
-    )
+  async updateFormStatus(
+    auth: User,
+    input: UpdateFormStatusInput,
+  ): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerUpdateStatus(input as FormsControllerUpdateStatusRequest)
+    return response as FormResponse
   }
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
@@ -76,7 +81,6 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth).formsControllerFindAll(
       input as FormsControllerFindAllRequest,
     )
-
     return response as FormResponse
   }
 
