@@ -19,7 +19,10 @@ const InputPenalties: FC<Props> = (props) => {
 
   useDebounce(
     async () => {
-      setWorkingCase({ ...workingCase, penalties: value ?? null })
+      setWorkingCase((currentWorkingCase) => ({
+        ...currentWorkingCase,
+        penalties: value ?? null,
+      }))
       await updateCase(workingCase.id, {
         penalties: value ?? null,
       })
