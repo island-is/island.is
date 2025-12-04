@@ -69,15 +69,17 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
         offset: true,
         breadcrumbs: breadcrumbItems,
         shortcuts: {
-          variant: 'tags',
+          variant: 'cards',
           items: [
             {
               title: formatMessage(m.home.invoiceOverview),
               href: linkResolver('openinvoicesoverview', [], locale).href,
+              imgSrc: formatMessage(m.home.featuredImage),
             },
             {
               title: formatMessage(m.home.invoices),
               href: 'island.is',
+              imgSrc: formatMessage(m.home.featuredImage),
             },
           ],
         },

@@ -12,7 +12,17 @@ export const searchBox = style({
   color: theme.color.black,
 })
 
+export const shortcut = style({
+  height: '80px',
+  width: '318px'
+})
+
 export const image = style({
   width: '100%',
   maxWidth: '432px',
+})
+
+export const headerImage = style({
+  width: '80px',
+  aspectRatio: '1/1'
 })

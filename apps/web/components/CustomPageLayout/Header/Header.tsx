@@ -2,6 +2,9 @@ import { ReactNode } from 'react'
 
 import {
   Box,
+  Button,
+  CategoryCard,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -9,12 +12,12 @@ import {
   Input,
   Tag,
   TagVariant,
-  Text,
+  Text
 } from '@island.is/island-ui/core'
 
-import { CardWithFeaturedItems } from '../../real'
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'
+import { theme } from '@island.is/island-ui/theme'
 
 type ShortcutItem = {
   title: string
@@ -89,15 +92,25 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
     const cardsOrTags =
       variant === 'cards'
         ? items.map(({ href, title, imgSrc, imgAlt }) => (
-            <CardWithFeaturedItems
-              key={`${href}-${title}`}
-              featuredItems={[]}
-              href={href}
-              heading={title}
-              imgSrc={imgSrc}
-              imgAlt={imgAlt}
-            />
-          ))
+
+          <FocusableBox zIndex={10}  href={href} borderRadius="standard" paddingX={1} paddingY={2}  background="backgroundBrandSecondaryMinimal" display="flex" alignItems="center"className={styles.shortcut}>
+            <Box
+                display="flex"
+                position="relative"
+                height="full"
+                justifyContent="center"
+                alignItems={'center'}
+                marginRight={1}
+              >
+                <img
+                  src={imgSrc}
+                  alt={imgAlt ?? ""}
+                  className={styles.headerImage}
+                />
+              </Box>
+            <Text color='foregroundBrandSecondaryContrast' variant="h5">{title}</Text>
+          </FocusableBox>
+        ))
         : items.map(({ href, title, variant }) => (
             <Tag key={`${href}-${title}`} href={href} variant={variant}>
               {title}
@@ -111,7 +124,7 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
             {title}
           </Text>
         )}
-        <Inline space={1}>{cardsOrTags}</Inline>
+        <Inline space={variant === 'cards' ? 3 : 1}>{cardsOrTags}</Inline>
       </Box>
     )
   }
