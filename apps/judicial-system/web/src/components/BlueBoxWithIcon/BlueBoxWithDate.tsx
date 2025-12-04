@@ -114,10 +114,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           isFine: false,
         }).toISOString())
 
-    return getAppealExpirationInfo(
-      deadline,
-      defendant.isVerdictAppealDeadlineExpired,
-    )
+    return getAppealExpirationInfo({
+      verdictAppealDeadline: deadline,
+      isVerdictAppealDeadlineExpired: defendant.isVerdictAppealDeadlineExpired,
+    })
   }, [
     dates.serviceDate,
     defendant.isVerdictAppealDeadlineExpired,
@@ -161,6 +161,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       texts.push(
         formatMessage(appealExpirationInfo.message, {
           appealExpirationDate: appealExpirationInfo.date,
+          deadlineType: verdict?.isDefaultJudgement
+            ? 'Endurupptökufrestur'
+            : 'Áfrýjunarfrestur',
         }),
       )
 
