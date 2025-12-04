@@ -538,6 +538,7 @@ export const en: TranslatedMessages = {
   'finance.links.payments': 'Payments',
   'finance.links.loans': 'Loans',
   'finance.links.transactions': 'Transactions',
+  'finance.links.status': 'Status',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
