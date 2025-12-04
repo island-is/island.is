@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, InputError } from '@island.is/island-ui/core'
+import { Box, AlertMessage } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { willValidation } from '../../lib/constants'
 import React from 'react'
@@ -43,7 +43,10 @@ export const WillValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <Box>
       {!!errors?.[willValidation] && (
         <Box marginTop={4}>
-          <InputError errorMessage={formatMessage(m.willValidationError)} />
+          <AlertMessage
+            type="error"
+            title={formatMessage(m.errorRoleConfirmation)}
+          />
         </Box>
       )}
     </Box>

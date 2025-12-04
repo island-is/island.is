@@ -204,6 +204,11 @@ export const m = defineMessages({
       'Þú verður að velja einn af tveimur valmöguleikum til að halda áfram',
     description: 'Error message when will knowledge question is not answered',
   },
+  filesValidationError: {
+    id: 'aod.application:filesValidationError',
+    defaultMessage: 'Þú verður að velja viðtakanda fyrir öll þrjú skjölin',
+    description: 'Error message when file recipients are not selected',
+  },
 
   /* Firearms step */
   firearmsTitle: {
@@ -461,6 +466,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Erfingi',
     description: 'Files dropdown label',
   },
+  filesRecipientPlaceholder: {
+    id: 'aod.application:filesRecipientPlaceholder',
+    defaultMessage: 'Veldu viðtakanda',
+    description: 'Files recipient placeholder',
+  },
   certificateOfDeathAnnouncementTitle: {
     id: 'aod.application:certificateOfDeathAnnouncementTitle',
     defaultMessage: 'Vottorð um tilkynningu andláts',
@@ -568,6 +578,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     id: 'aod.application:error.errorNoDateOfBirthProvided',
     defaultMessage: 'Fæðingardagur þarf að vera fylltur út',
     description: 'Date of birth is required',
+  },
+  errorSelectRecipient: {
+    id: 'aod.application:error.errorSelectRecipient',
+    defaultMessage: 'Þú verður að velja viðtakanda',
+    description: 'Recipient must be selected',
   },
 
   /* Announcement */

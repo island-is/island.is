@@ -8,3 +8,4 @@ export { LinkExistingApplication } from './ExistingApplication/LinkExistingAppli
 export { FirearmApplicant } from './FirearmApplicant'
 export { FirearmsWrapper } from './FirearmsWrapper'
 export { WillValidation } from './WillValidation'
+export { FilesValidation } from './FilesValidation'
