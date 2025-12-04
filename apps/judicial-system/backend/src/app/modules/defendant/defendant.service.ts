@@ -534,4 +534,17 @@ export class DefendantService {
         return { delivered: false }
       })
   }
+
+  transferDefendantToCase(
+    newCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<Defendant> {
+    return this.defendantRepositoryService.update(
+      defendant.caseId,
+      defendant.id,
+      { caseId: newCase.id },
+      { transaction },
+    )
+  }
 }
