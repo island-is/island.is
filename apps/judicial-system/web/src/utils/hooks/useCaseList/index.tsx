@@ -28,6 +28,7 @@ import {
 import {
   Case,
   CaseAppealState,
+  CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { findFirstInvalidStep } from '../../formHelper'
@@ -86,7 +87,11 @@ const useCaseList = () => {
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+            if (caseToOpen.state === CaseState.CORRECTING) {
+              routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+            } else {
+              routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+            }
           } else {
             // Route to Indictment Overview section since it always a valid step and
             // would be skipped if we route to the last valid step

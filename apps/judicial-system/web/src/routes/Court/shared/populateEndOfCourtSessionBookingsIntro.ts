@@ -1,9 +1,9 @@
 import { formatAppeal } from '@island.is/judicial-system/formatters'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
-  isInvestigationCase,
+  Case,
   SessionArrangements,
-} from '@island.is/judicial-system/types'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const populateEndOfCourtSessionBookingsIntro = (
   workingCase: Case,

@@ -14,8 +14,11 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseListEntry } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../Tags/TagCaseState/TagCaseState'
 
@@ -54,7 +57,8 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
       </Box>
       {isIndictmentCase(workingCase.type) &&
         workingCase.indictmentRulingDecision &&
-        isCompletedCase(workingCase.state) && (
+        isCompletedCase(workingCase.state) &&
+        workingCase.state !== CaseState.CORRECTING && (
           <TagCaseState theCase={workingCase as CaseListEntry} />
         )}
     </Box>

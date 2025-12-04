@@ -5,8 +5,8 @@ query Case($input: CaseQueryInput!) {
     modified
     type
     indictmentSubtypes
-    state
     description
+    state
     policeCaseNumbers
     defendants {
       id

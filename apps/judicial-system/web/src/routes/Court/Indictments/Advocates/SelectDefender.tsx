@@ -18,6 +18,7 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseState,
   Defendant,
   DefenderChoice,
   UpdateDefendantInput,
@@ -156,6 +157,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               <IconButton
                 icon="pencil"
                 colorScheme="blue"
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onClick={() => setDisplayModal(true)}
               />
             )}
@@ -182,7 +184,10 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             }}
             filled
             large
-            disabled={defendant.isDefenderChoiceConfirmed === true}
+            disabled={
+              defendant.isDefenderChoiceConfirmed === true ||
+              workingCase.state === CaseState.CORRECTING
+            }
           />
         </Box>
         <InputAdvocate
@@ -230,7 +235,8 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           }
           disabled={
             defendant.defenderChoice === DefenderChoice.WAIVE ||
-            defendant.isDefenderChoiceConfirmed
+            defendant.isDefenderChoiceConfirmed ||
+            workingCase.state === CaseState.CORRECTING
           }
         />
         <Box marginTop={2}>
@@ -240,7 +246,8 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             checked={Boolean(defendant.caseFilesSharedWithDefender)}
             disabled={
               defendant.isDefenderChoiceConfirmed ||
-              (!defendant.defenderName && !defendant.defenderEmail)
+              (!defendant.defenderName && !defendant.defenderEmail) ||
+              workingCase.state === CaseState.CORRECTING
             }
             onChange={() => {
               toggleCaseFilesSharedWithDefender(
@@ -276,6 +283,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               colorScheme={
                 defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
               }
+              disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() => {
                 setDisplayModal(true)
               }}

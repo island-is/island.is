@@ -28,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseState,
   CourtSessionType,
   Defendant,
   UpdateDefendantInput,
@@ -344,7 +345,10 @@ const Subpoena: FC = () => {
                   <Button
                     variant="text"
                     icon="reload"
-                    disabled={newSubpoenas.includes(defendant.id)}
+                    disabled={
+                      newSubpoenas.includes(defendant.id) ||
+                      workingCase.state === CaseState.CORRECTING
+                    }
                     onClick={() => {
                       setNewSubpoenas((previous) => [...previous, defendant.id])
                       // Clear any alternative service for the defendant
@@ -368,6 +372,7 @@ const Subpoena: FC = () => {
                     colorScheme="destructive"
                     icon="trash"
                     iconType="outline"
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onClick={() => {
                       setNewSubpoenas((previous) =>
                         previous.filter((v) => v !== defendant.id),
@@ -399,8 +404,14 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={updates?.theCase.arraignmentDate}
-            dateTimeDisabled={!isSchedulingArraignmentDate}
-            courtRoomDisabled={!isSchedulingArraignmentDate}
+            dateTimeDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
+            courtRoomDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
             courtRoomRequired
           />
         </Box>
