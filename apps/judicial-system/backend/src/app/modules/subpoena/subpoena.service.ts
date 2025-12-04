@@ -94,6 +94,7 @@ export class SubpoenaService {
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtDocumentService: CourtDocumentService,
     private readonly courtService: CourtService,
