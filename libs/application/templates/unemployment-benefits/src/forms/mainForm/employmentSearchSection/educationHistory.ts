@@ -23,6 +23,7 @@ import {
   getDegreeOptions,
   getLevelsOfStudyOptions,
   isCurrentlyStudying,
+  lastSemesterGeneralCondition,
   sameEducationAsCurrent,
   showFinishedEducationDateField,
   showFinishedEducationField,
@@ -30,6 +31,7 @@ import {
   wasStudyingLastSemester,
 } from '../../../utils/educationInformation'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared'
+import { Application } from '@island.is/application/types'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -146,9 +148,7 @@ export const educationHistorySubSection = buildSubSection({
           required: true,
           options: (application, _, locale) =>
             getLevelsOfStudyOptions(application, locale),
-          condition: (answers) =>
-            wasStudyingLastSemester(answers) &&
-            !sameEducationAsCurrent(answers),
+          condition: lastSemesterGeneralCondition,
         }),
         buildSelectField({
           id: 'educationHistory.lastSemester.degree',
@@ -163,9 +163,7 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return getDegreeOptions(application, locale, levelOfStudy)
           },
-          condition: (answers) =>
-            wasStudyingLastSemester(answers) &&
-            !sameEducationAsCurrent(answers),
+          condition: lastSemesterGeneralCondition,
         }),
         buildSelectField({
           id: 'educationHistory.lastSemester.courseOfStudy',
@@ -186,9 +184,7 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return getCourseOfStudy(application, levelOfStudy, degreeAnswer)
           },
-          condition: (answers) =>
-            wasStudyingLastSemester(answers) &&
-            !sameEducationAsCurrent(answers),
+          condition: lastSemesterGeneralCondition,
         }),
         buildTextField({
           id: 'educationHistory.lastSemester.units',
@@ -207,9 +203,7 @@ export const educationHistorySubSection = buildSubSection({
             })
             return years
           },
-          condition: (answers) =>
-            wasStudyingLastSemester(answers) &&
-            !sameEducationAsCurrent(answers),
+          condition: lastSemesterGeneralCondition,
         }),
         buildCheckboxField({
           id: 'educationHistory.lastSemester.unfinishedStudy',
@@ -223,9 +217,7 @@ export const educationHistorySubSection = buildSubSection({
             },
           ],
           clearOnChange: [`educationHistory.lastSemester.endDate`],
-          condition: (answers) =>
-            wasStudyingLastSemester(answers) &&
-            !sameEducationAsCurrent(answers),
+          condition: lastSemesterGeneralCondition,
         }),
         buildAlertMessageField({
           id: 'educationHistory.lastSemester.schoolAlert',
@@ -324,7 +316,8 @@ export const educationHistorySubSection = buildSubSection({
         buildSelectField({
           id: 'educationHistory.finishedEducation.endDate',
           title: educationMessages.labels.previousSchoolEndDate,
-          required: true,
+          required: (application: Application) =>
+            showFinishedEducationDateField(application.answers),
           options: () => {
             const currentYear = new Date().getFullYear()
             const years = Array.from({ length: 51 }, (_, i) => {
