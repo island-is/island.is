@@ -51,6 +51,13 @@ export const newSchoolSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.municipality,
           placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
+          setOnChange: [
+            // clear answer
+            {
+              key: 'newSchool.alternativeSpecialEducationDepartment',
+              value: [],
+            },
+          ],
           defaultValue: (application: Application) => {
             const { applicantMunicipalityCode } = getApplicationExternalData(
               application.externalData,
