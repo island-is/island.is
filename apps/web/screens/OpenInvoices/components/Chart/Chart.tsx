@@ -107,7 +107,7 @@ interface Props {
   }
 }
 
-export const Chart = ({ title, link, outlined, chart}: Props) => {
+export const Chart = ({ title, link, outlined, chart }: Props) => {
   const isMultipleBars = (chart.bars?.length ?? 0) > 1
 
   return (

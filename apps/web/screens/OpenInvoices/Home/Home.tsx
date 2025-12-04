@@ -235,7 +235,10 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.cardOneDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <ArrowLink href={formatMessage(m.home.cardOneLinkUrl)} color="blue400">
+                  <ArrowLink
+                    href={formatMessage(m.home.cardOneLinkUrl)}
+                    color="blue400"
+                  >
                     {formatMessage(m.home.cardOneLinkText)}
                   </ArrowLink>
                 </Box>
@@ -254,7 +257,10 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.cardTwoDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <ArrowLink href={formatMessage(m.home.cardTwoLinkUrl)} color="blue400">
+                  <ArrowLink
+                    href={formatMessage(m.home.cardTwoLinkUrl)}
+                    color="blue400"
+                  >
                     {formatMessage(m.home.cardTwoLinkText)}
                   </ArrowLink>
                 </Box>
@@ -296,7 +302,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 src={formatMessage(m.home.featuredImage)}
                 alt={formatMessage(m.home.featuredImageAlt)}
                 text={formatMessage(m.home.categoryCardTwoDescription)}
-                objectFit='contain'
+                objectFit="contain"
               />
             </GridColumn>
           </GridRow>

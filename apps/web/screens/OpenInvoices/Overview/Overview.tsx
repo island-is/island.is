@@ -368,7 +368,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Stack>
           }
         >
-          <MarkdownText>{hitsMessage ?? ""}</MarkdownText>
+          <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
           <Box marginLeft={2} background="white">
             <OverviewContent invoiceGroups={invoiceGroups} />
           </Box>
