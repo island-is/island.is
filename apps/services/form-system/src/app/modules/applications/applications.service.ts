@@ -561,7 +561,7 @@ export class ApplicationsService {
     const result: string[] = []
 
     const partySection = form.sections.find(
-      (section) => section.sectionType === 'PARTIES',
+      (section) => section.sectionType === SectionTypes.PARTIES,
     )
 
     if (!partySection) {
@@ -570,8 +570,8 @@ export class ApplicationsService {
       )
     }
 
-    for (const screen of partySection.screens) {
-      for (const field of screen.fields) {
+    for (const screen of partySection.screens ?? []) {
+      for (const field of screen.fields ?? []) {
         const applicantType = field?.fieldSettings?.applicantType
         if (applicantType) {
           result.push(applicantType)
