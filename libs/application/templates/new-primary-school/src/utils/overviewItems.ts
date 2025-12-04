@@ -28,6 +28,10 @@ import {
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
+} from './conditionUtils'
+import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
@@ -47,7 +51,6 @@ import {
   getSelectedSchoolSector,
   getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
-import { shouldShowExpectedEndDate } from './conditionUtils'
 
 const getFriggOptions = async (
   apolloClient: ApolloClient<object>,
@@ -332,6 +335,7 @@ export const schoolItems = (
     applyForPreferredSchool,
     temporaryStay,
     expectedEndDate,
+    alternativeSpecialEducationDepartment,
   } = getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
@@ -376,7 +380,26 @@ export const schoolItems = (
         ]
       : []
 
-  return [...baseItems, ...expectedStartDateItems, ...expectedEndDateItems]
+  const alternativeSpecialEducationDepartmentItems: Array<KeyValueItem> =
+    shouldShowAlternativeSpecialEducationDepartment(answers, externalData)
+      ? alternativeSpecialEducationDepartment.map(({ department }, index) => ({
+          width: 'half',
+          keyText: {
+            ...newPrimarySchoolMessages.primarySchool
+              .alternativeSpecialEducationDepartment,
+            values: { index: index + 2 },
+          },
+          valueText: getSchoolName(externalData, department ?? ''),
+          hideIfEmpty: true,
+        }))
+      : []
+
+  return [
+    ...baseItems,
+    ...expectedStartDateItems,
+    ...expectedEndDateItems,
+    ...alternativeSpecialEducationDepartmentItems,
+  ]
 }
 
 export const reasonForApplicationItems = async (

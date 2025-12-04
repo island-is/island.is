@@ -25,8 +25,12 @@ import {
   OrganizationSubType,
   PayerOption,
   States,
+  OrganizationType,
 } from './constants'
-import { getApplicationType } from './newPrimarySchoolUtils'
+import {
+  getApplicationType,
+  getSpecialEducationDepartmentsInMunicipality,
+} from './newPrimarySchoolUtils'
 
 const buildApplication = (data: {
   answers?: FormValue
@@ -722,5 +726,336 @@ describe('hasSpecialEducationSubType', () => {
     expect(
       hasSpecialEducationSubType(application.answers, application.externalData),
     ).toBe(false)
+  })
+})
+
+describe('getSpecialEducationDepartmentsInMunicipality', () => {
+  let application: Application
+
+  beforeEach(() => {
+    application = buildApplication({
+      externalData: {
+        schools: {
+          data: [
+            {
+              name: 'Brúarskóli - Brúarhús við Húsaskóla',
+              type: OrganizationType.School,
+              sector: OrganizationSector.PUBLIC,
+              unitId: 'G-1236-D',
+              address: {
+                address: 'Dalhúsum 41',
+                postCode: '112',
+                municipality: 'Reykjavíkurborg',
+                municipalityId: '0000',
+              },
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+              gradeLevels: ['03', '04', '05', '06', '07'],
+            },
+            {
+              name: 'Brúarskóli - Stuðlar',
+              type: OrganizationType.School,
+              sector: OrganizationSector.PUBLIC,
+              unitId: 'G-1236-C',
+              address: {
+                address: 'Vesturhlíð 3',
+                postCode: '105',
+                municipality: 'Reykjavíkurborg',
+                municipalityId: '0000',
+              },
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+              gradeLevels: ['08', '09', '10'],
+            },
+            {
+              name: 'Brúarskóli - Vesturhlíð',
+              type: OrganizationType.School,
+              sector: OrganizationSector.PUBLIC,
+              unitId: 'G-1236-A',
+              address: {
+                address: 'Vesturhlíð 3',
+                postCode: '105',
+                municipality: 'Reykjavíkurborg',
+                municipalityId: '0000',
+              },
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+              gradeLevels: ['04', '05', '06', '07', '08', '09', '10'],
+            },
+            {
+              name: 'Brúarskóli - Brúarsel við Ingunnarskóla',
+              type: OrganizationType.School,
+              sector: OrganizationSector.PUBLIC,
+              unitId: 'G-1236-E',
+              address: {
+                address: 'Maríubaugi 1',
+                postCode: '113',
+                municipality: 'Reykjavíkurborg',
+                municipalityId: '0000',
+              },
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+              gradeLevels: ['03', '04', '05', '06', '07'],
+            },
+            {
+              name: 'Álfhólsskóli - Hjalli',
+              type: OrganizationType.School,
+              sector: OrganizationSector.PUBLIC,
+              unitId: 'G-2384-B',
+              address: {
+                address: 'Álfhólsvegi 120',
+                postCode: '200',
+                municipality: 'Kópavogsbær',
+                municipalityId: '1000',
+              },
+              subType:
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+              gradeLevels: ['05', '06', '07', '08', '09', '10'],
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+  })
+  it('Should return all special education departments in the selected municipality', () => {
+    application.answers.newSchool = {
+      municipality: '0000',
+      school: uuid(),
+    }
+
+    const res = getSpecialEducationDepartmentsInMunicipality(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(res).toEqual([
+      {
+        name: 'Brúarskóli - Brúarhús við Húsaskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-D',
+        address: {
+          address: 'Dalhúsum 41',
+          postCode: '112',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+      {
+        name: 'Brúarskóli - Stuðlar',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-C',
+        address: {
+          address: 'Vesturhlíð 3',
+          postCode: '105',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['08', '09', '10'],
+      },
+      {
+        name: 'Brúarskóli - Vesturhlíð',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-A',
+        address: {
+          address: 'Vesturhlíð 3',
+          postCode: '105',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['04', '05', '06', '07', '08', '09', '10'],
+      },
+      {
+        name: 'Brúarskóli - Brúarsel við Ingunnarskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-E',
+        address: {
+          address: 'Maríubaugi 1',
+          postCode: '113',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+    ])
+  })
+  it('Should return an empty array if no special education department in the selected municipality', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: uuid(),
+    }
+
+    const res = getSpecialEducationDepartmentsInMunicipality(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(res).toEqual([])
+  })
+
+  it('Should return all special education departments in the selected municipality if no childGradeLevel', () => {
+    application.answers.newSchool = {
+      municipality: '0000',
+      school: uuid(),
+    }
+
+    const res = getSpecialEducationDepartmentsInMunicipality(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(res).toEqual([
+      {
+        name: 'Brúarskóli - Brúarhús við Húsaskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-D',
+        address: {
+          address: 'Dalhúsum 41',
+          postCode: '112',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+      {
+        name: 'Brúarskóli - Stuðlar',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-C',
+        address: {
+          address: 'Vesturhlíð 3',
+          postCode: '105',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['08', '09', '10'],
+      },
+      {
+        name: 'Brúarskóli - Vesturhlíð',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-A',
+        address: {
+          address: 'Vesturhlíð 3',
+          postCode: '105',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['04', '05', '06', '07', '08', '09', '10'],
+      },
+      {
+        name: 'Brúarskóli - Brúarsel við Ingunnarskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-E',
+        address: {
+          address: 'Maríubaugi 1',
+          postCode: '113',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+    ])
+  })
+
+  it('Should return all special education departments in the selected municipality that offer the childs current and next grade', () => {
+    application.answers.newSchool = {
+      municipality: '0000',
+      school: uuid(),
+    }
+    application.externalData.childInformation = {
+      data: {
+        gradeLevel: '03',
+      },
+      date: new Date(),
+      status: 'success',
+    }
+
+    const res = getSpecialEducationDepartmentsInMunicipality(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(res).toEqual([
+      {
+        name: 'Brúarskóli - Brúarhús við Húsaskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-D',
+        address: {
+          address: 'Dalhúsum 41',
+          postCode: '112',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+      {
+        name: 'Brúarskóli - Vesturhlíð',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-A',
+        address: {
+          address: 'Vesturhlíð 3',
+          postCode: '105',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['04', '05', '06', '07', '08', '09', '10'],
+      },
+      {
+        name: 'Brúarskóli - Brúarsel við Ingunnarskóla',
+        type: OrganizationType.School,
+        sector: OrganizationSector.PUBLIC,
+        unitId: 'G-1236-E',
+        address: {
+          address: 'Maríubaugi 1',
+          postCode: '113',
+          municipality: 'Reykjavíkurborg',
+          municipalityId: '0000',
+        },
+        subType: OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+        gradeLevels: ['03', '04', '05', '06', '07'],
+      },
+    ])
+  })
+
+  it('Should return an empty array if no special education department offers the childs current and next grade', () => {
+    application.answers.newSchool = {
+      municipality: '0000',
+      school: uuid(),
+    }
+    application.externalData.childInformation = {
+      data: {
+        gradeLevel: '01',
+      },
+      date: new Date(),
+      status: 'success',
+    }
+
+    const res = getSpecialEducationDepartmentsInMunicipality(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(res).toEqual([])
   })
 })

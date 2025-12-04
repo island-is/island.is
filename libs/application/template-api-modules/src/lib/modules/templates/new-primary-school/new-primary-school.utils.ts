@@ -8,6 +8,7 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
@@ -96,6 +97,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     temporaryStay,
     expectedEndDate,
     selectedSchoolId,
+    alternativeSpecialEducationDepartment,
     currentSchoolId,
     applyForPreferredSchool,
     payerName,
@@ -110,6 +112,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.answers,
     application.externalData,
   )
+
+  const alternativeSpecialEducationDepartmentIds =
+    alternativeSpecialEducationDepartment
+      .filter((item) => item.department)
+      .map((item) => item.department)
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
@@ -154,6 +161,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         (applyForPreferredSchool === YES
           ? preferredSchool?.id
           : selectedSchoolId) || '',
+      ...(shouldShowAlternativeSpecialEducationDepartment(
+        application.answers,
+        application.externalData,
+      ) &&
+        alternativeSpecialEducationDepartmentIds.length > 0 && {
+          alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
+        }),
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {

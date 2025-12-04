@@ -32,6 +32,7 @@ import {
   hasOtherPayer,
   needsOtherGuardianApproval,
   needsPayerApproval,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
 } from '../utils/conditionUtils'
 import {
@@ -138,6 +139,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         exit: [
+          'clearAlternativeSpecialEducationDepartment',
           'clearApplicationIfReasonForApplication',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
@@ -533,6 +535,22 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           getApplicationType(application.answers, application.externalData),
         )
 
+        return context
+      }),
+      clearAlternativeSpecialEducationDepartment: assign((context) => {
+        const { application } = context
+
+        if (
+          !shouldShowAlternativeSpecialEducationDepartment(
+            application.answers,
+            application.externalData,
+          )
+        ) {
+          unset(
+            application.answers,
+            'newSchool.alternativeSpecialEducationDepartment',
+          )
+        }
         return context
       }),
       // Clear answers depending on what is selected as reason for application
