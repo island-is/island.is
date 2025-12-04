@@ -119,6 +119,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       .map((item) => item.department)
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    id: application.id,
     applicationType: mapApplicationType(applicationType),
     approvalRequester: application.applicant,
     ...(needsOtherGuardianApproval(application) &&
