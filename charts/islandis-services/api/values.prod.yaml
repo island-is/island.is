@@ -184,6 +184,7 @@ env:
   XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
   XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
   XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
+  XROAD_VERDICTS_GOPRO_PATH: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is'
   XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
