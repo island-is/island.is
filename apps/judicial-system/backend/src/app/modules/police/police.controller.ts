@@ -33,6 +33,7 @@ import { Case } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { SpeedingViolationInfo } from './models/speedingViolationInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
@@ -85,6 +86,24 @@ export class PoliceController {
     this.logger.debug(`Getting info for police case ${caseId}`)
 
     return this.policeService.getPoliceCaseInfo(theCase.id, user)
+  }
+
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
+  @Get('speedingViolationInfo')
+  @ApiOkResponse({
+    type: [SpeedingViolationInfo],
+    isArray: true,
+    description: 'Gets speeding info for a police case',
+  })
+  getSpeedingViolationInfo(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<SpeedingViolationInfo[]> {
+    this.logger.debug(`Getting speeding for police case ${caseId}`)
+
+    return this.policeService.getSpeedingViolationInfo(theCase.id, user)
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

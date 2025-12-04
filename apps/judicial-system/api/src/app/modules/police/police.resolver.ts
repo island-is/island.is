@@ -17,9 +17,11 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
+import { SpeedingViolationInfoQueryInput } from './dto/speedingViolationInfo.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { SpeedingViolationInfo } from './models/speedingViolationInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -57,12 +59,32 @@ export class PoliceResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseInfo[]> {
-    this.logger.debug(`Getting all police case info for case ${input.caseId}`)
+    this.logger.debug(`Getting police case info for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_INFO,
       backendService.getPoliceCaseInfo(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => [SpeedingViolationInfo], { nullable: true })
+  speedingViolationInfo(
+    @Args('input', { type: () => SpeedingViolationInfoQueryInput })
+    input: SpeedingViolationInfoQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SpeedingViolationInfo[]> {
+    this.logger.debug(
+      `Getting speeding violation info for case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_SPEEDING_VIOLATION_INFO,
+      backendService.getSpeedingViolationInfo(input.caseId),
       input.caseId,
     )
   }

@@ -2,6 +2,8 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
+import isSameDay from 'date-fns/isSameDay'
+import isSameMinute from 'date-fns/isSameMinute'
 import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
@@ -35,6 +37,7 @@ import {
   Maybe,
   Offense,
   PoliceCaseInfo,
+  SpeedingViolationInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -51,6 +54,7 @@ import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/ut
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
+import { useSpeedingViolationInfoQuery } from './lib/speedingViolationInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'
@@ -149,6 +153,21 @@ const Indictment = () => {
       if (!data.policeCaseInfo) {
         return undefined
       } else return data as PoliceCaseInfo[]
+    },
+  })
+
+  const { data: speedingViolationInfoData } = useSpeedingViolationInfoQuery({
+    variables: {
+      input: {
+        caseId: workingCase.id,
+      },
+    },
+    skip: workingCase.origin !== CaseOrigin.LOKE,
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      if (!data.speedingViolationInfo) {
+        return undefined
+      } else return data as SpeedingViolationInfo[]
     },
   })
 
@@ -285,14 +304,45 @@ const Indictment = () => {
         updatedIndictmentCount.policeCaseNumber &&
         policeCaseData?.policeCaseInfo
       ) {
-        const vehicleNumber = policeCaseData.policeCaseInfo?.find(
+        const policeCase = policeCaseData.policeCaseInfo?.find(
           (policeCase) =>
             policeCase?.policeCaseNumber ===
             updatedIndictmentCount.policeCaseNumber,
-        )?.licencePlate
+        )
 
-        if (vehicleNumber)
-          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+        const indictmentCount = workingCase.indictmentCounts?.find(
+          (count) => count.id === indictmentCountId,
+        )
+
+        if (!indictmentCount || !policeCase) {
+          return
+        }
+
+        const speedingInfo =
+          speedingViolationInfoData?.speedingViolationInfo?.find(
+            (info) =>
+              info.date &&
+              policeCase?.date &&
+              info.licencePlate === policeCase.licencePlate &&
+              isSameDay(new Date(policeCase.date), new Date(info.date)) &&
+              isSameMinute(new Date(policeCase.date), new Date(info.date)),
+          )
+
+        if (
+          !indictmentCount.vehicleRegistrationNumber &&
+          policeCase.licencePlate
+        ) {
+          updatedIndictmentCount.vehicleRegistrationNumber =
+            policeCase.licencePlate
+        }
+
+        if (!indictmentCount.recordedSpeed && speedingInfo?.recordedSpeed) {
+          updatedIndictmentCount.recordedSpeed = speedingInfo.recordedSpeed
+        }
+
+        if (!indictmentCount.speedLimit && speedingInfo?.speedLimit) {
+          updatedIndictmentCount.speedLimit = speedingInfo.speedLimit
+        }
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
@@ -339,6 +389,7 @@ const Indictment = () => {
       policeCaseData?.policeCaseInfo,
       setSuspensionRequest,
       setWorkingCase,
+      speedingViolationInfoData?.speedingViolationInfo,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
