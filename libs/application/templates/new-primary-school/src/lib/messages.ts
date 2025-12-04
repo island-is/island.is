@@ -540,6 +540,38 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'You have chosen to apply for special resources for your child. Special resources are for children with assessed special needs who are considered to be unable to attend general education in primary school, whether with support in the classroom or special education.',
     },
+    alternativeSpecialEducationDepartmentTitle: {
+      id: 'nps.application:primary.school.new.school.alternative.special.education.department.title',
+      defaultMessage: 'Annað val',
+      description: 'Second choice',
+    },
+    alternativeSpecialEducationDepartmentDescription: {
+      id: 'nps.application:primary.school.new.school.alternative.special.education.department.description',
+      defaultMessage:
+        'Athugið að ekki er víst að hægt sé að verða við ósk foreldra um val á sérdeild. Fer það fer eftir fjölda lausra plássa, fjölda umsókna og aðstæðum í deildinni hverju sinni. Biðjum við þig því að merkja við aðra sérdeild sem kemur til greina fyrir barnið þitt.',
+      description:
+        'Please note, it may not be possible to comply with the parents’ wishes regarding their choice of special education department. This depends on the number of available places, the number of applications and the situation at the department at any given time. We therefore ask that you select an alternative special education department that is appropriate for your child.',
+    },
+    alternativeSpecialEducationDepartment: {
+      id: 'nps.application:primary.school.new.school.alternative.special.education.department',
+      defaultMessage: 'Sérdeild {index}',
+      description: 'Special education department {index}',
+    },
+    alternativeSpecialEducationDepartmentPlaceholder: {
+      id: 'nps.application:primary.school.new.school.alternative.special.education.department.placeholder',
+      defaultMessage: 'Veldu sérdeild',
+      description: 'Choose special education department',
+    },
+    addAlternativeSpecialEducationDepartmentButton: {
+      id: 'nps.application:primary.school.new.school.add.alternative.special.education.department.button',
+      defaultMessage: 'Bæta við sérdeild',
+      description: 'Add special education department',
+    },
+    removeAlternativeSpecialEducationDepartmentButton: {
+      id: 'nps.application:primary.school.new.school.remove.alternative.special.education.department.button',
+      defaultMessage: 'Fjarlægja sérdeild',
+      description: 'Remove special education department',
+    },
 
     // Starting school
     startingSchoolSubSectionTitle: {
