@@ -18,8 +18,8 @@ export const caseFilesRecord = defineMessages({
     description: 'Notaður fyrir málsnúmer lögreglu í PDF skjalaskrá',
   },
   accused: {
-    id: 'judicial.system.backend:case_files_record.accused_heading',
-    defaultMessage: 'Sakborningur:',
+    id: 'judicial.system.backend:case_files_record.accused_heading_v2',
+    defaultMessage: 'Sakborning{suffix}:',
     description: 'Notaður fyrir titil á skborningi í PDF skjalaskrá',
   },
   accusedOf: {
