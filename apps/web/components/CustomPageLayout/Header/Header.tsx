@@ -12,7 +12,7 @@ import {
   Input,
   Tag,
   TagVariant,
-  Text
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -92,9 +92,18 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
     const cardsOrTags =
       variant === 'cards'
         ? items.map(({ href, title, imgSrc, imgAlt }) => (
-
-          <FocusableBox zIndex={10}  href={href} borderRadius="standard" paddingX={1} paddingY={2}  background="backgroundBrandSecondaryMinimal" display="flex" alignItems="center"className={styles.shortcut}>
-            <Box
+            <FocusableBox
+              zIndex={10}
+              href={href}
+              borderRadius="standard"
+              paddingX={1}
+              paddingY={2}
+              background="backgroundBrandSecondaryMinimal"
+              display="flex"
+              alignItems="center"
+              className={styles.shortcut}
+            >
+              <Box
                 display="flex"
                 position="relative"
                 height="full"
@@ -104,13 +113,15 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
               >
                 <img
                   src={imgSrc}
-                  alt={imgAlt ?? ""}
+                  alt={imgAlt ?? ''}
                   className={styles.headerImage}
                 />
               </Box>
-            <Text color='foregroundBrandSecondaryContrast' variant="h5">{title}</Text>
-          </FocusableBox>
-        ))
+              <Text color="foregroundBrandSecondaryContrast" variant="h5">
+                {title}
+              </Text>
+            </FocusableBox>
+          ))
         : items.map(({ href, title, variant }) => (
             <Tag key={`${href}-${title}`} href={href} variant={variant}>
               {title}

@@ -14,7 +14,7 @@ export const searchBox = style({
 
 export const shortcut = style({
   height: '80px',
-  width: '318px'
+  width: '318px',
 })
 
 export const image = style({
@@ -24,5 +24,5 @@ export const image = style({
 
 export const headerImage = style({
   width: '80px',
-  aspectRatio: '1/1'
+  aspectRatio: '1/1',
 })
