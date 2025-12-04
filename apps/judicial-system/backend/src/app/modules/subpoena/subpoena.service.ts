@@ -541,4 +541,16 @@ export class SubpoenaService {
 
     return this.update(theCase, defendant, subpoena, subpoenaInfo)
   }
+
+  transferDefendantSubpoenasToCase(
+    newCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<number> {
+    return this.subpoenaRepositoryService.updateMany(
+      { caseId: newCase.id, defendantId: defendant.id },
+      { caseId: newCase.id },
+      { transaction },
+    )
+  }
 }

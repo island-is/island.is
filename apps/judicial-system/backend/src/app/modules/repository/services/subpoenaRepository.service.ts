@@ -48,6 +48,7 @@ interface UpdateSubpoenaOptions {
 }
 
 interface UpdateSubpoena {
+  caseId?: string
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceStatus?: ServiceStatus
@@ -260,6 +261,42 @@ export class SubpoenaRepositoryService {
       return updatedSubpoena
     } catch (error) {
       this.logger.error(`Error updating subpoena ${subpoenaId} with data:`, {
+        data: Object.keys(data),
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  async updateMany(
+    where: FindOptions['where'],
+    data: UpdateSubpoena,
+    options?: UpdateSubpoenaOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug('Updating multiple subpoenas with data:', {
+        where: Object.keys(where ?? {}),
+        data: Object.keys(data),
+      })
+
+      const updateOptions: UpdateOptions = { where: where ?? {} }
+
+      if (options?.transaction) {
+        updateOptions.transaction = options.transaction
+      }
+
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(
+        data,
+        updateOptions,
+      )
+
+      this.logger.debug(`Updated ${numberOfAffectedRows} subpoena(s)`)
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error('Error updating multiple subpoenas with data:', {
+        where: Object.keys(where ?? {}),
         data: Object.keys(data),
         error,
       })
