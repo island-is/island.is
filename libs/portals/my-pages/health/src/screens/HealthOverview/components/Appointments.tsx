@@ -5,12 +5,15 @@ import { InfoCardGrid, LinkButton } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
+import { generateGoogleMapsLink } from '../../../utils/googleMaps'
+import { mapWeekday } from '../../../utils/mappers'
 import { DataState } from '../../../utils/types'
 
 interface Props {
   data?: DataState<HealthDirectorateAppointments | null>
   showLinkButton?: boolean
 }
+
 const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
   const appointments = data?.data?.data
@@ -39,9 +42,12 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         appointment: {
           date: appointment.date ?? '',
           time: appointment.time ?? '',
+          weekday: appointment.weekday
+            ? mapWeekday(appointment.weekday, formatMessage)
+            : undefined,
           location: {
             label: appointment.location?.name ?? '',
-            href: `https://ja.is/?q=${appointment.location?.name ?? ''}`, // TODO: CHECK FOR OTHER SOLUTIONS
+            href: generateGoogleMapsLink(appointment.location?.address ?? ''),
           },
         },
       })) ?? []

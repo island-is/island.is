@@ -29,3 +29,24 @@ export const mapBlockedStatus = (
       return formatMessage(messages.prescriptionBlockedOther)
   }
 }
+
+export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
+  switch (weekday) {
+    case 'mánudagur':
+      return formatMessage(messages.weekdayMondayAcc)
+    case 'þriðjudagur':
+      return formatMessage(messages.weekdayTuesdayAcc)
+    case 'miðvikudagur':
+      return formatMessage(messages.weekdayWednesdayAcc)
+    case 'fimmtudagur':
+      return formatMessage(messages.weekdayThursdayAcc)
+    case 'föstudagur':
+      return formatMessage(messages.weekdayFridayAcc)
+    case 'laugardagur':
+      return formatMessage(messages.weekdaySaturdayAcc)
+    case 'sunnudagur':
+      return formatMessage(messages.weekdaySundayAcc)
+    default:
+      return weekday
+  }
+}

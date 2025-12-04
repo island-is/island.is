@@ -203,7 +203,7 @@ export const mapDispensationItem = (
 
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
-): AppointmentStatus | undefined => {
+): AppointmentStatus | null => {
   switch (status) {
     case AppointmentStatusEnum.BOOKED:
       return AppointmentStatus.BOOKED
@@ -226,6 +226,6 @@ export const mapAppointmentStatus = (
     case AppointmentStatusEnum.DELETED:
       return AppointmentStatus.DELETED
     default:
-      return undefined
+      return null
   }
 }

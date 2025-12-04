@@ -6,22 +6,21 @@ import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { CONTENT_GAP_LG } from '../../utils/constants'
 import {
+  useGetAppointmentsOverviewQuery,
+  useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetDonorStatusOverviewQuery,
   useGetHealthCenterOverviewQuery,
   useGetInsuranceOverviewQuery,
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
-  useGetBloodTypeOverviewQuery,
-  useGetAppointmentsOverviewQuery,
 } from './HealthOverview.generated'
 
-import BasicInformation from './components/BasicInformation'
-import PaymentsAndRights from './components/PaymentsAndRights'
-import Appointments from './components/Appointments'
-import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
+import Appointments from './components/Appointments'
+import BasicInformation from './components/BasicInformation'
+import PaymentsAndRights from './components/PaymentsAndRights'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -109,17 +108,16 @@ export const HealthOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      from: undefined, // TODO: Change back to TODAY when data is present,
-      status: [
-        HealthDirectorateAppointmentStatus.BOOKED,
-        HealthDirectorateAppointmentStatus.PENDING,
-      ],
+      status: [], //TODO: FIX WHEN SERVICE IS READY
     },
     skip: !showAppointments,
   })
 
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
+
+  const firstTwoAppointments =
+    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
   return (
     <>
@@ -140,10 +138,11 @@ export const HealthOverview = () => {
       {showAppointments && (
         <Appointments
           data={{
-            data: appointmentsData?.healthDirectorateAppointments,
+            data: { data: firstTwoAppointments },
             loading: appointmentsLoading,
             error: !!appointmentsError,
           }}
+          showLinkButton
         />
       )}
       {/* Payments, medicine and insurance overview */}

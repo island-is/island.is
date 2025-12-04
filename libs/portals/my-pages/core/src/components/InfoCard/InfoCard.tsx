@@ -60,6 +60,7 @@ export interface InfoCardProps {
   to?: string
   size?: 'small' | 'large'
   appointment?: {
+    weekday?: string
     date: string
     time: string
     location: {

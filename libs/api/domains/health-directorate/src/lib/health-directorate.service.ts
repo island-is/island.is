@@ -606,16 +606,20 @@ export class HealthDirectorateService {
         input.from,
         input.status
           ?.map((status) => mapAppointmentStatus(status))
-          .filter(
-            (status): status is AppointmentStatus => status !== undefined,
-          ) || undefined,
+          .filter((status): status is AppointmentStatus => status !== null),
       )
       if (!data) {
         return null
       }
 
+      // Sort data by startTime before mapping
+      const sortedData = [...data].sort((a, b) => {
+        if (!a.startTime || !b.startTime) return 0
+        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      })
+
       const appointments: Array<Appointment> =
-        data.map((item) => {
+        sortedData.map((item) => {
           const data: Appointment = {
             id: item.id,
             date: item.startTime

@@ -17,6 +17,7 @@ interface AppointmentCardProps {
   data?: {
     date: string
     time: string
+    weekday?: string
     location: {
       label: string
       href?: string
@@ -65,6 +66,7 @@ export const TimeCard = ({
             flexDirection={isMobile ? 'column' : 'row'}
           >
             <Text variant="medium" marginBottom={'smallGutter'}>
+              {data.weekday ? data.weekday + ', ' : ''}
               {data.date}
             </Text>
             <Box

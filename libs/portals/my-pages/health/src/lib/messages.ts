@@ -1747,7 +1747,7 @@ export const messages = defineMessages({
     id: 'sp.health:my-appointments',
   },
   appointmentsIntro: {
-    defaultMessage: 'Hér sérðu yfirlit yfir tímabókanir þínar.',
+    defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
     id: 'sp.health:appointments-intro',
   },
   appointmentsDetailIntro: {
@@ -2187,5 +2187,33 @@ export const messages = defineMessages({
   prescriptionBlockedOther: {
     defaultMessage: 'Óþekkt ástæða',
     id: 'sp.health:prescription-blocked-other',
+  },
+  weekdayMondayAcc: {
+    defaultMessage: 'Mánudaginn',
+    id: 'sp.health:weekday-monday-acc',
+  },
+  weekdayTuesdayAcc: {
+    defaultMessage: 'Þriðjudaginn',
+    id: 'sp.health:weekday-tuesday-acc',
+  },
+  weekdayWednesdayAcc: {
+    defaultMessage: 'Miðvikudaginn',
+    id: 'sp.health:weekday-wednesday-acc',
+  },
+  weekdayThursdayAcc: {
+    defaultMessage: 'Fimmtudaginn',
+    id: 'sp.health:weekday-thursday-acc',
+  },
+  weekdayFridayAcc: {
+    defaultMessage: 'Föstudaginn',
+    id: 'sp.health:weekday-friday-acc',
+  },
+  weekdaySaturdayAcc: {
+    defaultMessage: 'Laugardaginn',
+    id: 'sp.health:weekday-saturday-acc',
+  },
+  weekdaySundayAcc: {
+    defaultMessage: 'Sunnudaginn',
+    id: 'sp.health:weekday-sunday-acc',
   },
 })

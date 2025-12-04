@@ -430,10 +430,16 @@ export class HealthDirectorateHealthService {
     statuses?: AppointmentStatus[],
   ): Promise<AppointmentDto[] | null> {
     const defaultFrom = new Date()
-    defaultFrom.setFullYear(defaultFrom.getFullYear() - 3)
-    // TODO: add back props when API has fixed milliseconds issue
+
     const appointments = await withAuthContext(auth, () =>
-      data(meAppointmentControllerGetPatientAppointmentsV1()),
+      data(
+        meAppointmentControllerGetPatientAppointmentsV1({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            statuses: statuses,
+          },
+        }),
+      ),
     )
 
     return appointments ?? null
