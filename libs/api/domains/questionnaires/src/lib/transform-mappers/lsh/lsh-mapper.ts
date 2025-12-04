@@ -46,11 +46,12 @@ const parseVisibility = (
 
     // Pattern 1: not(isSelected('value', @@@questionId)) or not(isSelected(number, @@@questionId))
     // Handle negation - question should be HIDDEN when value is selected
-    const notIsSelectedPattern =
-      /not\s*\(\s*isSelected\s*\(\s*['"]?([^'",)]+?)['"]?\s*,\s*@@@([a-zA-Z0-9_-]+)\s*\)\s*\)/g
+    // Handle single-quoted strings (can contain parentheses)
+    const notIsSelectedQuotedPattern =
+      /not\s*\(\s*isSelected\s*\(\s*'([^']+)'\s*,\s*@@@([a-zA-Z0-9_-]+)\s*\)\s*\)/g
     let match
 
-    while ((match = notIsSelectedPattern.exec(remainingExpr)) !== null) {
+    while ((match = notIsSelectedQuotedPattern.exec(remainingExpr)) !== null) {
       const expectedValue = match[1].trim()
       conditions.push({
         questionId: match[2],
@@ -58,16 +59,84 @@ const parseVisibility = (
         expectedValues: [expectedValue],
         showWhenMatched: false, // This means: hide when the value matches
       })
-      // Remove this match from remaining expression to avoid double processing
+      remainingExpr = remainingExpr.replace(match[0], '')
+    }
+
+    // Handle double-quoted strings
+    const notIsSelectedDoubleQuotedPattern =
+      /not\s*\(\s*isSelected\s*\(\s*"([^"]+)"\s*,\s*@@@([a-zA-Z0-9_-]+)\s*\)\s*\)/g
+
+    while (
+      (match = notIsSelectedDoubleQuotedPattern.exec(remainingExpr)) !== null
+    ) {
+      const expectedValue = match[1].trim()
+      conditions.push({
+        questionId: match[2],
+        operator: VisibilityOperator.equals,
+        expectedValues: [expectedValue],
+        showWhenMatched: false,
+      })
+      remainingExpr = remainingExpr.replace(match[0], '')
+    }
+
+    // Fallback for unquoted values (typically numbers)
+    const notIsSelectedUnquotedPattern =
+      /not\s*\(\s*isSelected\s*\(\s*([^'",\s)]+)\s*,\s*@@@([a-zA-Z0-9_-]+)\s*\)\s*\)/g
+
+    while (
+      (match = notIsSelectedUnquotedPattern.exec(remainingExpr)) !== null
+    ) {
+      const expectedValue = match[1].trim()
+      conditions.push({
+        questionId: match[2],
+        operator: VisibilityOperator.equals,
+        expectedValues: [expectedValue],
+        showWhenMatched: false,
+      })
       remainingExpr = remainingExpr.replace(match[0], '')
     }
 
     // Pattern 2: isSelected('value', @@@questionId) or isSelected(number, @@@questionId)
     // This handles both string and numeric values
-    const isSelectedPattern =
-      /isSelected\s*\(\s*['"]?([^'",)]+?)['"]?\s*,\s*['"]?@@@([a-zA-Z0-9_-]+)['"]?\s*\)/g
+    // First try quoted string pattern (handles values with parentheses inside)
+    const isSelectedQuotedPattern =
+      /isSelected\s*\(\s*'([^']+)'\s*,\s*['"]?@@@([a-zA-Z0-9_-]+)['"]?\s*\)/g
 
-    while ((match = isSelectedPattern.exec(remainingExpr)) !== null) {
+    while ((match = isSelectedQuotedPattern.exec(remainingExpr)) !== null) {
+      const expectedValue = match[1].trim()
+      conditions.push({
+        questionId: match[2],
+        operator: VisibilityOperator.equals,
+        expectedValues: [expectedValue],
+        showWhenMatched: true,
+      })
+      // Remove this match from remaining expression
+      remainingExpr = remainingExpr.replace(match[0], '')
+    }
+
+    // Also handle double-quoted strings
+    const isSelectedDoubleQuotedPattern =
+      /isSelected\s*\(\s*"([^"]+)"\s*,\s*['"]?@@@([a-zA-Z0-9_-]+)['"]?\s*\)/g
+
+    while (
+      (match = isSelectedDoubleQuotedPattern.exec(remainingExpr)) !== null
+    ) {
+      const expectedValue = match[1].trim()
+      conditions.push({
+        questionId: match[2],
+        operator: VisibilityOperator.equals,
+        expectedValues: [expectedValue],
+        showWhenMatched: true,
+      })
+      // Remove this match from remaining expression
+      remainingExpr = remainingExpr.replace(match[0], '')
+    }
+
+    // Fallback for unquoted numeric values: isSelected(123, @@@questionId)
+    const isSelectedUnquotedPattern =
+      /isSelected\s*\(\s*([^'",\s)]+)\s*,\s*['"]?@@@([a-zA-Z0-9_-]+)['"]?\s*\)/g
+
+    while ((match = isSelectedUnquotedPattern.exec(remainingExpr)) !== null) {
       const expectedValue = match[1].trim()
       conditions.push({
         questionId: match[2],
