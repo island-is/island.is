@@ -4,16 +4,21 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  hasBehaviorSchoolOrDepartmentSubType,
+  hasSpecialEducationCaseManager,
   hasSpecialEducationSubType,
+  hasSpecialEducationWelfareContact,
   LanguageEnvironmentOptions,
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
   shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
+  CaseWorkerInput,
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
   RegistrationApplicationInputApplicationTypeEnum,
@@ -32,41 +37,139 @@ export const getSocialProfile = (application: Application) => {
     caseManagerName,
     caseManagerEmail,
     hasIntegratedServices,
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
   } = getApplicationAnswers(application.answers)
 
   if (
-    (hasHadSupport === YES || hasDiagnoses === YES) &&
-    hasWelfareContact === YES
+    hasSpecialEducationSubType(application.answers, application.externalData)
   ) {
+    const caseWorkers: CaseWorkerInput[] = []
+    const previousSocialServices: string[] = []
+    const ongoingSocialServices: string[] = []
+
+    const hasBehaviorSubType = hasBehaviorSchoolOrDepartmentSubType(
+      application.answers,
+      application.externalData,
+    )
+
+    if (hasSpecialEducationWelfareContact(application.answers)) {
+      caseWorkers.push({
+        name: specialEducationWelfareContactName || '',
+        email: specialEducationWelfareContactEmail || '',
+        type: CaseWorkerInputTypeEnum.SupportManager,
+      })
+    }
+
+    if (hasSpecialEducationCaseManager(application.answers)) {
+      caseWorkers.push({
+        name: specialEducationCaseManagerName || '',
+        email: specialEducationCaseManagerEmail || '',
+        type: CaseWorkerInputTypeEnum.CaseManager,
+      })
+    }
+
+    if (hasAssessmentOfSupportNeeds === YES) {
+      previousSocialServices.push(supportNeedsAssessmentBy || '')
+    } else if (isAssessmentOfSupportNeedsInProgress === YES) {
+      ongoingSocialServices.push(supportNeedsAssessmentBy || '')
+    }
+
+    if (hasConfirmedDiagnosis === YES) {
+      previousSocialServices.push(...diagnosticians)
+    } else if (isDiagnosisInProgress === YES) {
+      ongoingSocialServices.push(...diagnosticians)
+    }
+
+    if (hasOtherSpecialists === YES) {
+      previousSocialServices.push(...specialists)
+    }
+
+    if (hasReceivedServicesFromMunicipality === YES) {
+      previousSocialServices.push(...servicesFromMunicipality)
+    }
+
+    if (hasBehaviorSubType) {
+      if (hasReceivedChildAndAdolescentPsychiatryServices === YES) {
+        previousSocialServices.push(
+          childAndAdolescentPsychiatryDepartment || '',
+        )
+        previousSocialServices.push(
+          ...childAndAdolescentPsychiatryServicesReceived,
+        )
+      } else if (isOnWaitlistForServices === YES) {
+        ongoingSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+      }
+    }
+
+    return {
+      caseWorkers: caseWorkers,
+      hasIntegratedServices: specialEducationHasIntegratedServices === YES,
+      previousSocialServices: previousSocialServices,
+      ongoingSocialServices: ongoingSocialServices,
+      ...(hasBehaviorSubType && {
+        previousChildProtectionCase:
+          hasBeenReportedToChildProtectiveServices === YES,
+        ...(hasBeenReportedToChildProtectiveServices === YES && {
+          openChildProtectionCase:
+            isCaseOpenWithChildProtectiveServices === YES,
+        }),
+      }),
+    }
+  } else {
+    if (
+      (hasHadSupport === YES || hasDiagnoses === YES) &&
+      hasWelfareContact === YES
+    ) {
+      return {
+        hasHadSupport: hasHadSupport === YES,
+        hasDiagnoses: hasDiagnoses === YES,
+        hasIntegratedServices: hasIntegratedServices === YES,
+        caseWorkers: [
+          {
+            name: welfareContactName || '',
+            email: welfareContactEmail || '',
+            type: CaseWorkerInputTypeEnum.SupportManager,
+          },
+          ...(hasCaseManager === YES
+            ? [
+                {
+                  name: caseManagerName || '',
+                  email: caseManagerEmail || '',
+                  type: CaseWorkerInputTypeEnum.CaseManager,
+                },
+              ]
+            : []),
+        ],
+      }
+    }
+
+    // If hasWelfareContact is NO or not defined, return empty caseWorkers array
     return {
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
-      hasIntegratedServices: hasIntegratedServices === YES,
-      caseWorkers: [
-        {
-          name: welfareContactName ?? '',
-          email: welfareContactEmail ?? '',
-          type: CaseWorkerInputTypeEnum.SupportManager,
-        },
-        ...(hasCaseManager === YES
-          ? [
-              {
-                name: caseManagerName ?? '',
-                email: caseManagerEmail ?? '',
-                type: CaseWorkerInputTypeEnum.CaseManager,
-              },
-            ]
-          : []),
-      ],
+      hasIntegratedServices: false,
+      caseWorkers: [],
     }
-  }
-
-  // If hasWelfareContact is NO or not defined, return empty caseWorkers array
-  return {
-    hasHadSupport: hasHadSupport === YES,
-    hasDiagnoses: hasDiagnoses === YES,
-    hasIntegratedServices: false,
-    caseWorkers: [],
   }
 }
 
@@ -99,6 +202,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     temporaryStay,
     expectedEndDate,
     selectedSchoolId,
+    alternativeSpecialEducationDepartment,
     currentSchoolId,
     applyForPreferredSchool,
     payerName,
@@ -113,6 +217,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.answers,
     application.externalData,
   )
+
+  const alternativeSpecialEducationDepartmentIds =
+    alternativeSpecialEducationDepartment
+      .filter((item) => item.department)
+      .map((item) => item.department)
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
@@ -157,6 +266,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         (applyForPreferredSchool === YES
           ? preferredSchool?.id
           : selectedSchoolId) || '',
+      ...(shouldShowAlternativeSpecialEducationDepartment(
+        application.answers,
+        application.externalData,
+      ) &&
+        alternativeSpecialEducationDepartmentIds.length > 0 && {
+          alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
+        }),
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {

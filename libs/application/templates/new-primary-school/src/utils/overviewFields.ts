@@ -27,6 +27,7 @@ import {
   relativesTable,
   schoolItems,
   siblingsTable,
+  specialEducationSupportItems,
   supportItems,
 } from './overviewItems'
 
@@ -165,6 +166,15 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+      condition: (answers, externalData) =>
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.specialEducationSupport',
+      backId: editable ? 'specialEducationSupport' : undefined,
+      loadItems: specialEducationSupportItems,
+      condition: (answers, externalData) =>
+        hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.payer',

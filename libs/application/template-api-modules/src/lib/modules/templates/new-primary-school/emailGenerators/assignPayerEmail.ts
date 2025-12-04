@@ -1,6 +1,7 @@
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getSchoolName,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
@@ -16,15 +17,22 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
     options: { email, clientLocationOrigin },
   } = props
 
-  const { payerName, payerEmail, childInfo } = getApplicationAnswers(
-    application.answers,
-  )
+  const { payerName, payerEmail, childInfo, selectedSchoolId } =
+    getApplicationAnswers(application.answers)
+
   const { applicantName } = getApplicationExternalData(application.externalData)
+
+  const selectedSchoolName = getSchoolName(
+    application.externalData,
+    selectedSchoolId ?? '',
+  )
 
   if (!payerEmail) throw new Error('Could not find payer email')
   if (!childInfo) throw new Error('Could not find child information')
+  if (!selectedSchoolName)
+    throw new Error('Could not find selected school name')
 
-  const subject = 'Yfirferð á umsókn í grunnskóla'
+  const subject = 'Yfirferð á umsókn í sjálfstætt starfandi grunnskóla'
 
   return {
     from: {
@@ -58,7 +66,7 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
           context: {
             copy: `${applicantName} Kt: ${formatKennitala(
               application.applicant,
-            )} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfarandi barni og er að óska eftir samþykki frá þér.`,
+            )} hefur skráð þig sem greiðanda fyrir skólavist í umsókn hjá eftirfarandi barni og óskar eftir samþykki frá þér.`,
           },
         },
         {
@@ -67,6 +75,12 @@ export const generateAssignPayerEmail: EmailTemplateGenerator = (
             copy: `${childInfo.name} Kt: ${formatKennitala(
               childInfo.nationalId,
             )}`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: selectedSchoolName,
           },
         },
         {
