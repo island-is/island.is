@@ -21,6 +21,9 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   IsRegiment = 'isRegiment',
   NoMedCard = 'noMedCard',
   NoHealthClinic = 'noHealthClinic',
+  DismissedRequest = 'dismissedRequest',
+  AlreadyRequested = 'alreadyRequested',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalBlockedReasonEnum, {

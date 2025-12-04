@@ -31,11 +31,11 @@ export interface EstateMember {
   advocate?: Advocate
 }
 
-export type AssetsRepeaterProps = {
+export type GunsRepeaterProps = {
   field: {
     id: string
     props: {
-      assetName: 'guns' | 'vehicles'
+      assetName: 'guns'
       texts: {
         assetTitle: object
         assetNumber: object

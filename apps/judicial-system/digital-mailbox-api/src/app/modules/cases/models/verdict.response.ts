@@ -8,8 +8,7 @@ import {
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
@@ -45,36 +44,41 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
+    const verdict = defendant?.verdict
+
     const isServiceRequired =
-      defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+
     const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
     const baseDate = isServiceRequired
-      ? defendant?.verdict?.serviceDate
+      ? verdict?.serviceDate
       : internalCase.rulingDate
 
-    const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate({
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
           baseDate: new Date(baseDate),
           isFine,
         })
-      : null
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
 
-    const isAppealDeadlineExpired = appealDeadline
-      ? hasDatePassed(appealDeadline)
-      : false
+    // Default judgements can't be appealed
+    const canBeAppealed = !!verdict && !verdict.isDefaultJudgement
 
     const rulingInstructionsItems = getRulingInstructionItems(
-      defendant?.verdict?.serviceInformationForDefendant ?? [],
+      verdict?.serviceInformationForDefendant ?? [],
       lang,
     )
 
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      appealDecision: defendant?.verdict?.appealDecision,
+      appealDecision: verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -87,17 +91,21 @@ export class VerdictResponse {
             ],
             [t.court, internalCase.court?.name || t.notAvailable],
             [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
-            [
-              t.appealDeadline,
-              appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
-            ],
-            ...(isAppealDeadlineExpired
+            ...(canBeAppealed
+              ? [
+                  [
+                    t.appealDeadline,
+                    appealDeadline
+                      ? formatDate(appealDeadline)
+                      : t.notAvailable,
+                  ],
+                ]
+              : []),
+            ...(canBeAppealed && isAppealDeadlineExpired
               ? [
                   [
                     t.appealDecision,
-                    getVerdictAppealDecision(
-                      defendant?.verdict?.appealDecision,
-                    ),
+                    getVerdictAppealDecision(verdict?.appealDecision),
                   ],
                 ]
               : []),
@@ -120,7 +128,7 @@ export class VerdictResponse {
             },
           ],
         },
-        ...(!isAppealDeadlineExpired
+        ...(canBeAppealed && !isAppealDeadlineExpired
           ? [
               {
                 label: t.appealDecision,

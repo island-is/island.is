@@ -49,6 +49,7 @@ import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
   mapAppointmentStatus,
+  mapCountryPermitStatus,
   mapDelegationStatus,
   mapDispensationItem,
   mapPermit,
@@ -278,6 +279,7 @@ export class HealthDirectorateService {
           name: item.productName,
           type: item.productType,
           form: item.productForm,
+          strength: item.productStrength,
           url: item.productUrl,
           quantity: item.productQuantity?.toString(),
           prescriberName: item.prescriberName,
@@ -298,18 +300,18 @@ export class HealthDirectorateService {
             ? mapPrescriptionRenewalStatus(item.renewalStatus)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
-          dispensations: item.dispensations.map((item) => {
+          dispensations: item.dispensations.map((dispensation) => {
             return {
-              id: item.id,
-              agentName: item.dispensingAgentName,
-              date: item.dispensationDate,
-              count: item.dispensedItems.length,
-              items: item.dispensedItems.map((item) => {
+              id: dispensation.id,
+              agentName: dispensation.dispensingAgentName,
+              date: dispensation.dispensationDate,
+              count: item.dispensations.length,
+              items: dispensation.dispensedItems.map((dispensedItem) => {
                 return {
-                  id: item.productId,
-                  name: item.productName,
-                  strength: item.productStrength,
-                  amount: item.dispensedAmountDisplay,
+                  id: dispensedItem.productId,
+                  name: dispensedItem.productName,
+                  strength: dispensedItem.productStrength,
+                  amount: dispensedItem.dispensedAmountDisplay,
                 }
               }),
             }
@@ -421,7 +423,6 @@ export class HealthDirectorateService {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      input.active,
       input.status.map((status) =>
         status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
       ),
@@ -508,9 +509,7 @@ export class HealthDirectorateService {
     const permits = await this.healthApi.getPermits(
       auth,
       locale,
-      input.status.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status.map((status) => mapCountryPermitStatus(status)),
     )
 
     if (!permits) {

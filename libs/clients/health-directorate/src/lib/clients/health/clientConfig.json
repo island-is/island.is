@@ -578,15 +578,6 @@
                 "type": "string"
               }
             }
-          },
-          {
-            "name": "active",
-            "required": true,
-            "in": "query",
-            "description": "Whether to only include active commissions",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -1689,10 +1680,10 @@
             "name": "fromStartTime",
             "required": false,
             "in": "query",
-            "description": "Filter appointments to only include those starting at or after this time. Use current timestamp to get only future appointments.",
+            "description": "Filter appointments to only include those starting at or after this time. ",
             "schema": {
               "format": "date-time",
-              "example": "2024-01-15T10:30:00Z",
+              "example": "2024-01-15T10:30:00.000Z",
               "type": "string"
             }
           }
@@ -1831,37 +1822,6 @@
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
-            "name": "validFrom",
-            "required": false,
-            "in": "query",
-            "description": "The valid from date to filter the consents",
-            "schema": {
-              "format": "date",
-              "type": "string"
-            }
-          },
-          {
-            "name": "validTo",
-            "required": false,
-            "in": "query",
-            "description": "The valid to date to filter the consents",
-            "schema": {
-              "format": "date",
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
             "name": "locale",
             "required": false,
             "in": "query",
@@ -1871,12 +1831,37 @@
             }
           },
           {
-            "name": "statuses",
+            "name": "validFrom",
+            "required": false,
+            "in": "query",
+            "description": "The valid from date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "validTo",
+            "required": false,
+            "in": "query",
+            "description": "The valid to date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-12-31T23:59:59.999Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "required": false,
             "in": "query",
             "description": "The statuses to filter the consents",
             "schema": {
-              "$ref": "#/components/schemas/EuPatientConsentStatus"
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
+              }
             }
           }
         ],

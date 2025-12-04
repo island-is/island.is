@@ -6,11 +6,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import {
-  ApplicantTypesEnum,
-  FieldTypesEnum,
-  SectionTypes,
-} from '@island.is/form-system/shared'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
@@ -80,29 +76,25 @@ export class FormApplicantTypesService {
     let screenDto = new ScreenDto()
 
     await this.sequelize.transaction(async (transaction) => {
-      let allowedDelegationTypes: string[] = []
-
-      if (Array.isArray(form.allowedDelegationTypes)) {
-        allowedDelegationTypes = [...form.allowedDelegationTypes]
-      } else if (
-        form.allowedDelegationTypes &&
-        typeof form.allowedDelegationTypes === 'object'
-      ) {
-        allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-      } else {
-        allowedDelegationTypes = []
-      }
-
-      const delegationType = await this.getDelegationType(
-        createFormApplicantTypeDto.applicantTypeId,
+      const lockedForm = await this.formModel.findByPk(
+        createFormApplicantTypeDto.formId,
+        {
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        },
       )
-      if (
-        delegationType !== 'Other' &&
-        !allowedDelegationTypes.includes(delegationType)
-      ) {
-        allowedDelegationTypes.push(delegationType)
-        form.allowedDelegationTypes = allowedDelegationTypes
-        await form.save({ transaction })
+      if (!lockedForm) throw new NotFoundException('Form not found')
+
+      const loginType = createFormApplicantTypeDto.applicantTypeId
+      const current: string[] = Array.isArray(lockedForm.allowedLoginTypes)
+        ? lockedForm.allowedLoginTypes
+        : Object.values(lockedForm.allowedLoginTypes ?? {})
+
+      if (!current.includes(loginType)) {
+        const next = [...current, loginType]
+        lockedForm.set('allowedLoginTypes', next)
+        lockedForm.changed('allowedLoginTypes', true)
+        await lockedForm.save({ transaction })
       }
 
       const newScreen = await this.screenModel.create(
@@ -180,49 +172,36 @@ export class FormApplicantTypesService {
       )
     }
 
-    // Update allowedDelegationTypes
-    let allowedDelegationTypes: string[] = []
-    if (Array.isArray(form.allowedDelegationTypes)) {
-      allowedDelegationTypes = [...form.allowedDelegationTypes]
-    } else if (
-      form.allowedDelegationTypes &&
-      typeof form.allowedDelegationTypes === 'object'
-    ) {
-      allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-    } else {
-      allowedDelegationTypes = []
-    }
-    const delegationType = await this.getDelegationType(
-      deleteFormApplicantTypeDto.applicantTypeId,
-    )
-    const updatedDelegationTypes = allowedDelegationTypes.filter(
-      (type) => type !== delegationType,
-    )
-    form.allowedDelegationTypes = updatedDelegationTypes
-    await form.save()
+    let screenDto: ScreenDto = new ScreenDto()
 
-    const screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
+    await this.sequelize.transaction(async (transaction) => {
+      const lockedForm = await this.formModel.findByPk(
+        deleteFormApplicantTypeDto.formId,
+        {
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        },
+      )
+      if (!lockedForm) throw new NotFoundException('Form not found')
 
-    await this.screenModel.destroy({ where: { id: targetScreen.id } })
+      const loginType = deleteFormApplicantTypeDto.applicantTypeId
+      const current: string[] = Array.isArray(lockedForm.allowedLoginTypes)
+        ? lockedForm.allowedLoginTypes
+        : Object.values(lockedForm.allowedLoginTypes ?? {})
+      const next = current.filter((t) => t !== loginType)
+      lockedForm.set('allowedLoginTypes', next)
+      lockedForm.changed('allowedLoginTypes', true)
+      await lockedForm.save({ transaction })
+
+      screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
+
+      await this.screenModel.destroy({
+        where: { id: targetScreen.id },
+        transaction,
+      })
+    })
 
     return screenDto
-  }
-
-  private async getDelegationType(applicantType: string): Promise<string> {
-    switch (applicantType) {
-      case ApplicantTypesEnum.INDIVIDUAL:
-        return 'Individual'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
-        return 'GeneralMandate'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY:
-        return 'Custom'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION:
-        return 'ProcurationHolder'
-      case ApplicantTypesEnum.LEGAL_GUARDIAN:
-        return 'LegalGuardian'
-      default:
-        return 'Other'
-    }
   }
 
   private mapToScreenDto(screen: Screen, field: Field): ScreenDto {

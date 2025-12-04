@@ -4,13 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { DecimalInputController } from '../DecimalInputController'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
@@ -132,7 +126,7 @@ export const StocksRepeater: FC<
         const fieldError = error && error[index] ? error[index] : null
 
         return (
-          <Box position="relative" key={field.id} marginTop={2}>
+          <Box position="relative" key={field.id} marginTop={4}>
             <Controller
               name={initialField}
               control={control}
@@ -145,44 +139,36 @@ export const StocksRepeater: FC<
               defaultValue={field.enabled ?? true}
               render={() => <input type="hidden" />}
             />
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={0}
-            >
-              <Text variant="h4" />
-              <Box display="flex" alignItems="center" columnGap={2}>
-                {field.initial && (
-                  <Button
-                    variant="text"
-                    icon={field.enabled ? 'remove' : 'add'}
-                    size="small"
-                    iconType="outline"
-                    onClick={() => {
-                      const updatedStock = {
-                        ...field,
-                        enabled: !field.enabled,
-                      }
-                      update(index, updatedStock)
-                      clearErrors(`${id}[${index}].value`)
-                    }}
-                  >
-                    {field.enabled
-                      ? formatMessage(m.inheritanceDisableMember)
-                      : formatMessage(m.inheritanceEnableMember)}
-                  </Button>
-                )}
-                {!field.initial && (
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    circle
-                    icon="remove"
-                    onClick={handleRemoveStock.bind(null, index)}
-                  />
-                )}
-              </Box>
+            <Box display="flex" justifyContent="flexEnd">
+              {field.initial && (
+                <Button
+                  variant="text"
+                  icon={field.enabled ? 'remove' : 'add'}
+                  size="small"
+                  iconType="outline"
+                  onClick={() => {
+                    const updatedStock = {
+                      ...field,
+                      enabled: !field.enabled,
+                    }
+                    update(index, updatedStock)
+                    clearErrors(`${id}[${index}].value`)
+                  }}
+                >
+                  {field.enabled
+                    ? formatMessage(m.disable)
+                    : formatMessage(m.activate)}
+                </Button>
+              )}
+              {!field.initial && (
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={handleRemoveStock.bind(null, index)}
+                />
+              )}
             </Box>
             <GridRow>
               <GridColumn

@@ -41,6 +41,7 @@ import {
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
   PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
@@ -274,7 +275,6 @@ export class HealthDirectorateHealthService {
   public async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
     status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
@@ -282,7 +282,6 @@ export class HealthDirectorateHealthService {
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
             status: status,
-            active: active,
           },
         }),
       ),
@@ -313,7 +312,7 @@ export class HealthDirectorateHealthService {
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: string[],
+    status: EuPatientConsentStatus[],
     dateFrom?: Date | undefined,
     dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {
@@ -392,13 +391,7 @@ export class HealthDirectorateHealthService {
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
     if (!input.validTo || !input.validFrom) {
-      return null
-    }
-    const validFrom = new Date(input.validFrom)
-    const validTo = new Date(input.validTo)
-
-    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
-      this.logger.debug('Invalid date values provided to createPermit')
+      this.logger.debug('Missing validTo or validFrom in createPermit input')
       return null
     }
 
@@ -408,8 +401,8 @@ export class HealthDirectorateHealthService {
           body: {
             codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
             countryCodes: input.countryCodes,
-            validFrom: validFrom,
-            validTo: validTo,
+            validFrom: input.validFrom,
+            validTo: input.validTo,
           },
         }),
       ),
