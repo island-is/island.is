@@ -1,4 +1,4 @@
-import { getIndictmentAppealDeadlineDate, hasDatePassed } from './dates'
+import { getIndictmentAppealDeadline } from './dates'
 
 export type VerdictInfo = {
   canAppealVerdict: boolean //indicating whether the defendant can appeal the verdict
@@ -43,13 +43,13 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
         : newest,
     new Date(0),
   )
-  const deadline = getIndictmentAppealDeadlineDate({
+  const { isDeadlineExpired } = getIndictmentAppealDeadline({
     baseDate: newestViewDate,
     isFine,
   })
 
   return {
     isVerdictViewedByAllRequiredDefendants: true,
-    hasVerdictAppealDeadlineExpiredForAll: hasDatePassed(deadline),
+    hasVerdictAppealDeadlineExpiredForAll: isDeadlineExpired,
   }
 }

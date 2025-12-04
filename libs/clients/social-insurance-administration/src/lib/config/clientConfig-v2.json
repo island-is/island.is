@@ -1,0 +1,296 @@
+{
+  "openapi": "3.0.4",
+  "info": { "title": "TR Portal API", "version": "v2" },
+  "paths": {
+    "/api/protected/v2/Application/{applicationType}": {
+      "post": {
+        "tags": ["Application"],
+        "summary": "Processes applications of various types, depending on the input.applicationType parameter and adds them to a queue\nfor further processing of consumers",
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "description": "The application type, e.g. \"oldagepension\"",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "lightweightValidation",
+            "in": "query",
+            "description": "Whether to skip non-essential validation steps. Used for debugging/testing purposes.",
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "requestBody": {
+          "description": "Input for application, varies by type",
+          "content": {
+            "application/json; x-api-version=2": {
+              "schema": { "type": "object" }
+            },
+            "text/json; x-api-version=2": { "schema": { "type": "object" } },
+            "application/*+json; x-api-version=2": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/api/protected/v2/Application/{applicationType}/contract": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Returns the contract associated with application type. This is used for developers to retrieve the\ncorrect contract to send in via X-Road.",
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=2": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=2": { "schema": { "type": "string" } },
+              "application/json; x-api-version=2": {
+                "schema": { "type": "string" }
+              },
+              "text/json; x-api-version=2": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TrWeb.Applications.ExternalPortals.Error": {
+        "required": ["message"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the error"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.ErrorDetails"
+            },
+            "description": "Detailed information of errors",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Applications.ExternalPortals.ErrorDetails": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the error",
+            "nullable": true
+          },
+          "help": {
+            "type": "string",
+            "description": "URL to a page explaining the error and possible solutions",
+            "nullable": true
+          },
+          "trackingId": {
+            "type": "string",
+            "description": "Identifier for mapping failures to service internal codes",
+            "nullable": true
+          },
+          "param": {
+            "type": "string",
+            "description": "Name of the parameter which was incorrect",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Detailed error message"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Using the Authorization header with the Bearer scheme.",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [{ "Bearer": ["Bearer"] }]
+}

@@ -54,6 +54,10 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.RejectedRequest
     case PrescriptionRenewalBlockedReason.PENDING_REQUEST:
       return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
+    case PrescriptionRenewalBlockedReason.DISMISSED_REQUEST:
+      return PrescribedItemRenewalBlockedReasonEnum.DismissedRequest
+    case PrescriptionRenewalBlockedReason.ALREADY_REQUESTED:
+      return PrescribedItemRenewalBlockedReasonEnum.AlreadyRequested
     case PrescriptionRenewalBlockedReason.NOT_FULLY_DISPENSED:
       return PrescribedItemRenewalBlockedReasonEnum.NotFullyDispensed
     case PrescriptionRenewalBlockedReason.IS_REGIMENT:
@@ -63,7 +67,7 @@ export const mapPrescriptionRenewalBlockedReason = (
     case PrescriptionRenewalBlockedReason.NO_HEALTH_CLINIC:
       return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
     default:
-      return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
+      return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }
 }
 
@@ -111,6 +115,23 @@ export const mapPermitStatus = (
       return PermitStatusEnum.awaitingApproval
     default:
       return PermitStatusEnum.unknown
+  }
+}
+
+export const mapCountryPermitStatus = (
+  status: string,
+): EuPatientConsentStatus => {
+  switch (status) {
+    case PermitStatusEnum.active:
+      return EuPatientConsentStatus.ACTIVE
+    case PermitStatusEnum.expired:
+      return EuPatientConsentStatus.EXPIRED
+    case PermitStatusEnum.inactive:
+      return EuPatientConsentStatus.INACTIVE
+    case PermitStatusEnum.awaitingApproval:
+      return EuPatientConsentStatus.PENDING
+    default:
+      return EuPatientConsentStatus.INACTIVE
   }
 }
 

@@ -1,10 +1,10 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import {
-  FormSystemSection,
-  FormSystemScreen,
   FormSystemField,
   FormSystemLanguageType,
   FormSystemLanguageTypeInput,
+  FormSystemScreen,
+  FormSystemSection,
 } from '@island.is/api/schema'
 
 export enum NavbarSelectStatus {
@@ -36,3 +36,8 @@ export type ButtonTypes =
   | 'SET_MESSAGE_WITH_LINK_SETTINGS'
 
 export type FormsLocationState = 'forms' | 'applications' | 'admin'
+
+export interface OpenComponents {
+  sections: string[]
+  screens: string[]
+}

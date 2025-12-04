@@ -1,8 +1,21 @@
 import {
   CodeOwners,
+  json,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
+
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
 
 const serviceName = 'services-form-system-api'
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
@@ -19,6 +32,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',
@@ -26,9 +42,10 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       },
       FORM_SYSTEM_BUCKET: {
         dev: 'island-is-dev-storage-form-system',
-        staging: '', // Still need to get buckets created
-        prod: '',
+        staging: 'island-is-staging-storage-form-system',
+        prod: 'island-is-prod-storage-form-system',
       },
+      REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
