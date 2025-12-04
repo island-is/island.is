@@ -7,6 +7,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
+import { DefendantExistsGuard } from '../../../defendant'
 import { CaseController } from '../../case.controller'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
@@ -254,6 +255,26 @@ describe('CaseController - Extend guards', () => {
         prop: {
           allowedCaseTypes: [...restrictionCases, ...investigationCases],
         },
+      },
+    ],
+  )
+})
+
+describe('CaseController - Split defendant from case guards', () => {
+  verifyGuards(
+    CaseController,
+    'splitDefendantFromCase',
+    [
+      RolesGuard,
+      CaseExistsGuard,
+      CaseTypeGuard,
+      CaseWriteGuard,
+      DefendantExistsGuard,
+    ],
+    [
+      {
+        guard: CaseTypeGuard,
+        prop: { allowedCaseTypes: indictmentCases },
       },
     ],
   )

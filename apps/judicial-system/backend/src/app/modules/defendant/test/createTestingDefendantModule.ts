@@ -14,7 +14,11 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
+import {
+  CivilClaimant,
+  DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
+} from '../../repository'
 import { UserService } from '../../user'
 import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
@@ -27,6 +31,8 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
+jest.mock('../../repository/services/defendantRepository.service')
+jest.mock('../../repository/services/defendantEventLogRepository.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -43,6 +49,8 @@ export const createTestingDefendantModule = async () => {
       UserService,
       CourtService,
       CaseService,
+      DefendantRepositoryService,
+      DefendantEventLogRepositoryService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -53,29 +61,7 @@ export const createTestingDefendantModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
-        provide: getModelToken(Defendant),
-        useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
-        },
-      },
-      {
         provide: getModelToken(CivilClaimant),
-        useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
-        },
-      },
-      {
-        provide: getModelToken(DefendantEventLog),
         useValue: {
           findOne: jest.fn(),
           findAll: jest.fn(),
@@ -98,9 +84,13 @@ export const createTestingDefendantModule = async () => {
 
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
-  const defendantModel = await defendantModule.resolve<typeof Defendant>(
-    getModelToken(Defendant),
-  )
+  const defendantRepositoryService =
+    defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
+
+  const defendantEventLogRepositoryService =
+    defendantModule.get<DefendantEventLogRepositoryService>(
+      DefendantEventLogRepositoryService,
+    )
 
   const defendantService =
     defendantModule.get<DefendantService>(DefendantService)
@@ -136,7 +126,8 @@ export const createTestingDefendantModule = async () => {
     userService,
     courtService,
     sequelize,
-    defendantModel,
+    defendantRepositoryService,
+    defendantEventLogRepositoryService,
     defendantService,
     defendantController,
     internalDefendantController,

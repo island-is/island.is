@@ -1,3 +1,4 @@
+import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -52,6 +53,7 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isRequestCase,
+  isRestrictionCase,
   notificationTypes,
   ServiceStatus,
   StringType,
@@ -601,15 +603,15 @@ export class CaseService {
   }
 
   private async createCase(
-    caseToCreate: CreateCaseDto,
+    caseToCreate: Partial<Case>,
     transaction: Transaction,
-  ): Promise<string> {
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.create(
       {
-        ...caseToCreate,
         ...(isRequestCase(caseToCreate.type)
           ? { state: CaseState.NEW }
           : { state: CaseState.DRAFT, withCourtSessions: true }),
+        ...caseToCreate,
       },
       { transaction },
     )
@@ -622,7 +624,7 @@ export class CaseService {
       )
     }
 
-    return theCase.id
+    return theCase
   }
 
   private async handlePoliceCaseNumbersUpdate(
@@ -1860,7 +1862,7 @@ export class CaseService {
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const caseId = await this.createCase(
+        const theCase = await this.createCase(
           {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
@@ -1874,15 +1876,19 @@ export class CaseService {
               ? user.institution?.defaultCourtId
               : undefined,
             prosecutorsOfficeId: user.institution?.id,
-          } as CreateCaseDto,
+          },
           transaction,
         )
 
-        await this.defendantService.createForNewCase(caseId, {}, transaction)
+        await this.defendantService.createForNewCase(
+          theCase.id,
+          {},
+          transaction,
+        )
 
-        return caseId
+        return theCase
       })
-      .then((caseId) => this.findById(caseId))
+      .then((theCase) => this.findById(theCase.id))
   }
 
   private async handleDateLogUpdates(
@@ -2504,7 +2510,7 @@ export class CaseService {
           actor: user.name,
           institution: user.institution?.name,
         },
-        error as Error,
+        error,
       )
 
       if (error instanceof DokobitError) {
@@ -2590,7 +2596,7 @@ export class CaseService {
           actor: user.name,
           institution: user.institution?.name,
         },
-        error as Error,
+        error,
       )
 
       if (error instanceof DokobitError) {
@@ -2606,38 +2612,46 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
+    const copiedExtendRestrictionCaseFields: (keyof Case)[] = [
+      'origin',
+      'type',
+      'description',
+      'policeCaseNumbers',
+      'defenderName',
+      'defenderNationalId',
+      'defenderEmail',
+      'defenderPhoneNumber',
+      'leadInvestigator',
+      'courtId',
+      'translator',
+      'lawsBroken',
+      'legalBasis',
+      'legalProvisions',
+      'requestedCustodyRestrictions',
+      'caseFacts',
+      'legalArguments',
+      'requestProsecutorOnlySession',
+      'prosecutorOnlySessionRequest',
+    ]
+
+    const copiedExtendInvestigationCaseFields: (keyof Case)[] = [
+      ...copiedExtendRestrictionCaseFields,
+      'demands',
+    ]
+
     return this.sequelize
       .transaction(async (transaction) => {
-        const caseId = await this.createCase(
+        const extendedCase = await this.createCase(
           {
-            origin: theCase.origin,
-            type: theCase.type,
-            description: theCase.description,
-            policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            leadInvestigator: theCase.leadInvestigator,
-            courtId: theCase.courtId,
-            translator: theCase.translator,
-            lawsBroken: theCase.lawsBroken,
-            legalBasis: theCase.legalBasis,
-            legalProvisions: theCase.legalProvisions,
-            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-            caseFacts: theCase.caseFacts,
-            legalArguments: theCase.legalArguments,
-            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            ...(isRestrictionCase(theCase.type)
+              ? pick(theCase, copiedExtendRestrictionCaseFields)
+              : pick(theCase, copiedExtendInvestigationCaseFields)),
             parentCaseId: theCase.id,
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
             prosecutorsOfficeId: user.institution?.id,
-            demands: isInvestigationCase(theCase.type)
-              ? theCase.demands
-              : undefined,
-          } as CreateCaseDto,
+          },
           transaction,
         )
 
@@ -2645,7 +2659,7 @@ export class CaseService {
           await Promise.all(
             theCase.defendants?.map((defendant) =>
               this.defendantService.createForNewCase(
-                caseId,
+                extendedCase.id,
                 {
                   noNationalId: defendant.noNationalId,
                   nationalId: defendant.nationalId,
@@ -2660,9 +2674,68 @@ export class CaseService {
           )
         }
 
-        return caseId
+        return extendedCase
       })
-      .then((caseId) => this.findById(caseId))
+      .then((extendedCase) => this.findById(extendedCase.id))
+  }
+
+  async splitDefendantFromCase(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<Case> {
+    const copiedSplitIndictmentCaseFields: (keyof Case)[] = [
+      'origin',
+      'type',
+      'indictmentSubtypes',
+      'description',
+      'state',
+      'policeCaseNumbers',
+      'courtId',
+      'demands',
+      'comments',
+      'creatingProsecutorId',
+      'prosecutorId',
+      'courtEndTime',
+      'rulingDate',
+      'registrarId',
+      'judgeId',
+      'rulingModifiedHistory',
+      'openedByDefender',
+      'crimeScenes',
+      'indictmentIntroduction',
+      'withCourtSessions',
+      'requestDriversLicenseSuspension',
+      'prosecutorsOfficeId',
+      'indictmentDeniedExplanation',
+      'indictmentReturnedExplanation',
+      'indictmentHash',
+      'hasCivilClaims',
+    ]
+
+    const transaction = await this.sequelize.transaction()
+
+    try {
+      const splitCase = await this.createCase(
+        pick(theCase, copiedSplitIndictmentCaseFields),
+        transaction,
+      )
+      // defendant subpoenas eventLogs verdict
+
+      await transaction.commit()
+
+      return splitCase
+    } catch (error) {
+      await transaction.rollback()
+
+      this.logger.error(
+        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
+        { error },
+      )
+
+      throw new InternalServerErrorException(
+        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
+      )
+    }
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
