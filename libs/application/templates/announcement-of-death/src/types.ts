@@ -37,7 +37,7 @@ export type Answers = {
     encountered?: boolean
   }
   assetsAbroad: boolean
-  authorizationForFuneralExpenses?: boolean
+  authorizationForFuneralExpenses: string
   bankStockOrShares: boolean
   caseNumber: string
   certificateOfDeathAnnouncement: string
@@ -47,7 +47,7 @@ export type Answers = {
     encountered?: boolean
     applicantAdded?: boolean
   }
-  financesDataCollectionPermission?: boolean
+  financesDataCollectionPermission: string
   knowledgeOfOtherWills: 'yes' | 'no'
   hadFirearms: 'yes' | 'no'
   firearmApplicant: FirearmApplicant

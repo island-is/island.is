@@ -95,6 +95,7 @@ export const EstateMemberRepeater: FC<
       // This persists even if they remove themselves from the list
       setValue('estateMembers.applicantAdded', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields.length, applicantAddedFlag])
 
   const handleAddMember = () =>

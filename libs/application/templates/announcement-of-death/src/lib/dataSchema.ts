@@ -144,6 +144,21 @@ export const dataSchema = z.object({
     vehicles: asset,
     encountered: z.boolean().optional(),
   }),
+  certificateOfDeathAnnouncement: z
+    .string()
+    .refine((val) => val && val.length > 0, {
+      params: m.errorSelectRecipient,
+    }),
+  authorizationForFuneralExpenses: z
+    .string()
+    .refine((val) => val && val.length > 0, {
+      params: m.errorSelectRecipient,
+    }),
+  financesDataCollectionPermission: z
+    .string()
+    .refine((val) => val && val.length > 0, {
+      params: m.errorSelectRecipient,
+    }),
 })
 
 export type AnnouncementOfDeath = z.TypeOf<typeof dataSchema>

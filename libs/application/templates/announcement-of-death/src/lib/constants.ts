@@ -39,3 +39,4 @@ export const DayLifeCycle: StateLifeCycle = {
 }
 
 export const willValidation = 'willValidation'
+export const filesValidation = 'filesValidation'
