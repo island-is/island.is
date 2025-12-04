@@ -1,6 +1,11 @@
-import { getApplicationExternalData } from '@island.is/application/templates/new-primary-school'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getSchoolName,
+} from '@island.is/application/templates/new-primary-school'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
+import { format as formatKennitala } from 'kennitala'
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../new-primary-school.utils'
 
@@ -12,11 +17,23 @@ export const generatePayerRejectedApplicationEmail: EmailTemplateGenerator = (
     options: { email, clientLocationOrigin },
   } = props
 
+  const { childInfo, selectedSchoolId } = getApplicationAnswers(
+    application.answers,
+  )
+
   const { applicantName, userProfileEmail } = getApplicationExternalData(
     application.externalData,
   )
 
+  const selectedSchoolName = getSchoolName(
+    application.externalData,
+    selectedSchoolId ?? '',
+  )
+
   if (!userProfileEmail) throw new Error('Could not find applicant email')
+  if (!childInfo) throw new Error('Could not find child information')
+  if (!selectedSchoolName)
+    throw new Error('Could not find selected school name')
 
   const subject = 'Skráður greiðandi hafnaði greiðsluþátttöku'
 
@@ -50,7 +67,27 @@ export const generatePayerRejectedApplicationEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
-            copy: 'Skráður greiðandi hefur hafnað greiðsluþáttöku í umsókn í grunnskóla. Þú þarft því að breyta umsókn þinni.',
+            copy: 'Skráður greiðandi hefur hafnað greiðsluþátttöku í umsókn þinni um sjálfstætt starfandi skóla fyrir eftirfarandi barn:',
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `${childInfo.name} Kt: ${formatKennitala(
+              childInfo.nationalId,
+            )}`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: selectedSchoolName,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Þú þarft því að opna umsóknina og skrá nýjan greiðanda áður en umsókn er send til úrvinnslu.`,
           },
         },
         {

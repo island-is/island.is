@@ -1053,9 +1053,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     payerDescription: {
       id: 'nps.application:different.needs.payer.description',
       defaultMessage:
-        'Hér er átt við greiðslu gjalda eins og innritunargjald, staðfestingargjald, efnisgjald, foreldrafélagsgjald og skólagjald þar sem það á við.',
+        'Forsjáraðilar sem sækja um sjálfstætt starfandi skóla fyrir barn sitt, þurfa að gera ráð fyrir því að greiða gjöld sem eru sérstök fyrir þann skóla. Þetta geta verið skráningargjöld, foreldragjöld, efnisgjöld eða önnur gjöld sem eru óháð greiðslu sveitarfélaganna til skólanna sjálfra. Vinsamlegast skráðu hver verður greiðandi viðbótargjalda fyrir barnið þitt.',
       description:
-        'This refers to the payment of fees such as enrolment fees, confirmation fees, materials fees, parent association fees and school fees where applicable',
+        'Guardians applying for an independent school for their child, must expect to pay fees specific to that school. This refers to the payment of fees such as enrolment fees, parent association fees, materials fees or other fees that are independent of the payments the school receives from the municipality. Please register who will be the payer of the additional school fees for your child.',
     },
     payerOptionApplicant: {
       id: 'nps.application:different.needs.payer.option.applicant',
@@ -1075,9 +1075,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     payerInformationDescription: {
       id: 'nps.application:different.needs.payer.information.description',
       defaultMessage:
-        'Greiðandi verður beðinn um að staðfesta greiðsluþátttöku með rafrænum skilríkjum áður en umsókn er send inn.',
+        'Greiðandi verður beðinn um að samþykkja greiðsluþátttöku áður en umsókn er send inn.',
       description:
-        'The payer will be asked to confirm the payment participation with electronic ID before submitting the application.',
+        'The payer will be asked to confirm the payment participation before the application is submitted.',
     },
   }),
 
@@ -1265,23 +1265,23 @@ export const assigneeMessages: MessageDir = {
 
   payer: defineMessages({
     title: {
-      // TODO: MMS needs to update the text
       id: 'nps.application:assignee.payer.title',
-      defaultMessage: 'Greiðandi skólagjalda',
-      description: 'english description',
+      defaultMessage: 'Greiðandi gjalds fyrir skólavist',
+      description: 'Payer of school fees',
     },
     approvalDescription: {
-      // TODO: MMS needs to update the text
       id: 'nps.application:assignee.payer.approval.description',
-      defaultMessage: 'Þú hefur verið skráð/ur sem greiðandi skólagjalda barns',
-      description: 'english description',
+      defaultMessage:
+        'Þú hefur verið skráð/ur sem greiðandi gjalds fyrir skólavist barns í sjálfstætt starfandi skóla.',
+      description:
+        'You have been registered as the payer of schools fees for a child’s enrolment in an independent school.',
     },
     rejectedDescription: {
-      // TODO: MMS needs to update the text
       id: 'nps.application:assignee.payer.rejected.description',
       defaultMessage:
         'Umbeðinn greiðandi hefur hafnað beiðni þinni um greiðslu skólagjalda.',
-      description: 'english description',
+      description:
+        'The requested payer has rejected your request for the payment of school fees',
     },
     name: {
       id: 'nps.application:assignee.payer.name',
@@ -1289,11 +1289,10 @@ export const assigneeMessages: MessageDir = {
       description: 'Payer name',
     },
     alertMessage: {
-      // TODO: MMS needs to update the text
       id: 'nps.application:assignee.payer.alert.message',
       defaultMessage:
         'Vinsamlegast farðu inn í umsóknina og veldu annan greiðanda',
-      description: 'english description',
+      description: 'Please revisit the application and choose another payer',
     },
   }),
 }
