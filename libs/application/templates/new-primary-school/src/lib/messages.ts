@@ -413,6 +413,32 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Select reason',
     },
 
+    // Counselling regarding application
+    counsellingRegardingApplicationSubSectionTitle: {
+      id: 'nps.application:primary.school.counselling.regarding.application.sub.section.title',
+      defaultMessage: 'Ráðgjöf vegna umsóknar',
+      description: 'Counselling regarding application',
+    },
+    counsellingRegardingApplicationDescription: {
+      id: 'nps.application:primary.school.counselling.regarding.application.description',
+      defaultMessage:
+        'Stuðningsteymi eða eftir atvikum þjónustuteymi barns hefur það hlutverk að útfæra og skipuleggja þjónustu við barn og hafa samráð við forsjáraðila og barn um samfellu hennar og gæði. Vinsamlegast tilgreindu hvaðan þú sóttir ráðgjöf um þetta úrræði.',
+      description:
+        'The support team or, depending on the circumstances, the child’s service team has the task of implementing and organising services for the child and consulting with the guardians and the child regarding its continuity and quality. Please indicate where you received counselling on this resource.',
+    },
+    counsellingRegardingApplicationPlaceholder: {
+      id: 'nps.application:primary.school.counselling.regarding.application.placeholder',
+      defaultMessage: 'Veldu ráðgjöf',
+      description: 'Choose counselling type',
+    },
+    counsellingRegardingApplicationHasVisitedSchool: {
+      id: 'nps.application:primary.school.counselling.regarding.application.has.visited.school',
+      defaultMessage:
+        'Hefurðu heimsótt og kynnt þér starfsemi þess skóla sem þú sækir um?',
+      description:
+        'Have you visited and familiarised yourself with the operation of the school you are applying for?',
+    },
+
     // Siblings
     siblingsSubSectionTitle: {
       id: 'nps.application:primary.school.siblings.sub.section.title',

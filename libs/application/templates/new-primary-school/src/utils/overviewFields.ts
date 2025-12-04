@@ -1,6 +1,10 @@
-import { buildOverviewField, NO, YES } from '@island.is/application/core'
+import { buildOverviewField, YES } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { shouldShowPage } from './conditionUtils'
+import {
+  hasSpecialEducationSubType,
+  shouldShowPage,
+  shouldShowReasonForApplicationPage,
+} from './conditionUtils'
 import {
   ApplicationFeatureKey,
   ApplicationType,
@@ -12,6 +16,7 @@ import {
 } from './newPrimarySchoolUtils'
 import {
   childItems,
+  counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
   guardiansItems,
@@ -120,16 +125,17 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.reasonForApplication',
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
-      condition: (answers) => {
-        const { applicationType, applyForPreferredSchool } =
-          getApplicationAnswers(answers)
-
-        return (
-          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-          (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-            applyForPreferredSchool === NO)
-        )
-      },
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.counsellingRegardingApplication',
+      backId: editable ? 'counsellingRegardingApplication' : undefined,
+      loadItems: counsellingRegardingApplicationItems,
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',

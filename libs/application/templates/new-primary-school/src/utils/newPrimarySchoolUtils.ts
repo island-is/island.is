@@ -37,6 +37,9 @@ import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  OptionsType,
+  OrganizationSector,
+  OrganizationSubType,
   PayerOption,
   ReasonForApplicationOptions,
   Roles,
@@ -64,6 +67,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
+
+  const counsellingRegardingApplication = getValueViaPath<string>(
+    answers,
+    'counsellingRegardingApplication.counselling',
+  )
+
+  const hasVisitedSchool = getValueViaPath<YesOrNo>(
+    answers,
+    'counsellingRegardingApplication.hasVisitedSchool',
+  )
 
   const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
 
@@ -240,6 +253,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationId,
+    counsellingRegardingApplication,
+    hasVisitedSchool,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -713,4 +728,18 @@ export const otherGuardianApprovalStatePendingAction = (
       displayStatus: 'info',
     }
   }
+}
+
+export const getReasonOptionsType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSector = getSelectedSchoolSector(answers, externalData)
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  return selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL
+    ? OptionsType.REASON_INTERNATIONAL_SCHOOL
+    : selectedSchoolSector === OrganizationSector.PRIVATE
+    ? OptionsType.REASON_PRIVATE_SCHOOL
+    : OptionsType.REASON
 }

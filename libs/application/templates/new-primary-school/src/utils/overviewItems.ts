@@ -27,12 +27,11 @@ import {
   friggOrganizationsByTypeQuery,
 } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
+import { shouldShowExpectedEndDate } from './conditionUtils'
 import {
   ApplicationType,
   LanguageEnvironmentOptions,
   OptionsType,
-  OrganizationSector,
-  OrganizationSubType,
   PayerOption,
 } from './constants'
 import {
@@ -42,12 +41,10 @@ import {
   getCurrentSchoolName,
   getGenderMessage,
   getPreferredSchoolName,
+  getReasonOptionsType,
   getSchoolName,
   getSelectedOptionLabel,
-  getSelectedSchoolSector,
-  getSelectedSchoolSubType,
 } from './newPrimarySchoolUtils'
-import { shouldShowExpectedEndDate } from './conditionUtils'
 
 const getFriggOptions = async (
   apolloClient: ApolloClient<object>,
@@ -314,7 +311,7 @@ export const currentNurseryItems = async (
 
   return [
     {
-      width: 'half',
+      width: 'full',
       keyText: newPrimarySchoolMessages.overview.currentNursery,
       valueText: currentNurseryName,
     },
@@ -388,22 +385,13 @@ export const reasonForApplicationItems = async (
 ): Promise<KeyValueItem[]> => {
   const { reasonForApplicationId } = getApplicationAnswers(answers)
 
-  const friggOptionsType =
-    getSelectedSchoolSector(answers, externalData) ===
-    OrganizationSector.PRIVATE
-      ? OptionsType.REASON_PRIVATE_SCHOOL
-      : getSelectedSchoolSubType(answers, externalData) ===
-        OrganizationSubType.INTERNATIONAL_SCHOOL
-      ? OptionsType.REASON_INTERNATIONAL_SCHOOL
-      : OptionsType.REASON
-
   const reasonFriggOptions = await getFriggOptions(
     apolloClient,
-    friggOptionsType,
+    getReasonOptionsType(answers, externalData),
     locale,
   )
 
-  const baseItems: Array<KeyValueItem> = [
+  return [
     {
       width: 'full',
       keyText:
@@ -414,8 +402,47 @@ export const reasonForApplicationItems = async (
         '',
     },
   ]
+}
 
-  return [...baseItems]
+export const counsellingRegardingApplicationItems = async (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  apolloClient: ApolloClient<object>,
+  locale: Locale,
+): Promise<KeyValueItem[]> => {
+  const { counsellingRegardingApplication, hasVisitedSchool } =
+    getApplicationAnswers(answers)
+
+  const reasonFriggOptions = await getFriggOptions(
+    apolloClient,
+    OptionsType.REASON_SPECIAL_EDUCATION,
+    locale,
+  )
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.primarySchool
+          .counsellingRegardingApplicationSubSectionTitle,
+      valueText:
+        getSelectedOptionLabel(
+          reasonFriggOptions,
+          counsellingRegardingApplication,
+        ) || '',
+    },
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.primarySchool
+          .counsellingRegardingApplicationHasVisitedSchool,
+      valueText:
+        hasVisitedSchool === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
 }
 
 export const siblingsTable = (answers: FormValue): TableData => {

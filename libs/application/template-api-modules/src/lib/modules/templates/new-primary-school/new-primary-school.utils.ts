@@ -4,11 +4,13 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  hasSpecialEducationSubType,
   LanguageEnvironmentOptions,
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
   shouldShowExpectedEndDate,
+  shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -78,6 +80,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     relatives,
     reasonForApplication,
     reasonForApplicationId,
+    counsellingRegardingApplication,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -173,7 +176,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reasonId: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
+      ...(shouldShowReasonForApplicationPage(application.answers) && {
+        reasonId: hasSpecialEducationSubType(
+          application.answers,
+          application.externalData,
+        )
+          ? counsellingRegardingApplication
+          : reasonForApplicationId,
+      }),
       health: {
         ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
           foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,

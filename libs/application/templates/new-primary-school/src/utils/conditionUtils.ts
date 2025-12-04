@@ -1,4 +1,4 @@
-import { YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 import {
   ApplicationFeatureKey,
+  ApplicationType,
   LanguageEnvironmentOptions,
   OrganizationSubType,
   PayerOption,
@@ -165,5 +166,16 @@ export const hasSpecialEducationSubType = (
       OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
     selectedSchoolSubType ===
       OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
+  )
+}
+
+export const shouldShowReasonForApplicationPage = (answers: FormValue) => {
+  const { applyForPreferredSchool, applicationType } =
+    getApplicationAnswers(answers)
+
+  return (
+    applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+    (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      applyForPreferredSchool === NO)
   )
 }
