@@ -198,6 +198,12 @@ export const m = defineMessages({
     defaultMessage: 'Nei',
     description: 'Testament step knowledge of other testament answer no',
   },
+  willValidationError: {
+    id: 'aod.application:willValidationError',
+    defaultMessage:
+      'Þú verður að velja einn af tveimur valmöguleikum til að halda áfram',
+    description: 'Error message when will knowledge question is not answered',
+  },
 
   /* Firearms step */
   firearmsTitle: {
