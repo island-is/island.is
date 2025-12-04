@@ -444,6 +444,7 @@ api:
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
+    XROAD_VERDICTS_GOPRO_PATH: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '10003'
     XROAD_WORK_ACCIDENT_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token'
