@@ -14,10 +14,10 @@ import {
   TagVariant,
   Text
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'
-import { theme } from '@island.is/island-ui/theme'
 
 type ShortcutItem = {
   title: string
