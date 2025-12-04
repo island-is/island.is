@@ -53,7 +53,7 @@ export const sameEducationAsLastSemester = (answers: FormValue) => {
   return hasCheckedSame.includes(YES)
 }
 
-export const lastSemesterEducationFinsihed = (answers: FormValue) => {
+export const lastSemesterEducationFinished = (answers: FormValue) => {
   const lastSemesterEndDate = getValueViaPath<string>(
     answers,
     'educationHistory.lastSemester.endDate',
@@ -64,18 +64,24 @@ export const lastSemesterEducationFinsihed = (answers: FormValue) => {
 
 export const showFinishedEducationField = (answers: FormValue) => {
   if (sameEducationAsLastSemester(answers)) {
-    return wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)
+    //if last semester education is the same as current, then we need to show this field as this can't be the same education as lastSemester
+    //if lastSemster is not checked, even though the sameEducationAsLastSemester has been submitted, meaning the user went back to education page and changed the answer, then we need to show the field
+    return (
+      (wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)) ||
+      !wasStudyingLastSemester(answers)
+    )
   } else {
     return wasStudyingInTheLastYear(answers)
   }
 }
 
 export const showFinishedEducationDateField = (answers: FormValue) => {
-  if (showFinishedEducationField(answers)) {
-    return showFinishedEducationField(answers)
-  } else {
-    return !lastSemesterEducationFinsihed(answers)
-  }
+  return (
+    showFinishedEducationField(answers) ||
+    (!lastSemesterEducationFinished(answers) &&
+      wasStudyingLastTwelveMonths(answers) &&
+      wasStudyingInTheLastYear(answers))
+  )
 }
 
 export const appliedForNextSemester = (answers: FormValue) => {
@@ -150,5 +156,12 @@ export const getCourseOfStudy = (
       value: subject.id ?? '',
       label: subject.name ?? '',
     })) ?? []
+  )
+}
+
+export const lastSemesterGeneralCondition = (answers: FormValue) => {
+  return (
+    (wasStudyingLastSemester(answers) && !sameEducationAsCurrent(answers)) ||
+    (!isCurrentlyStudying(answers) && sameEducationAsCurrent(answers))
   )
 }

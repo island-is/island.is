@@ -324,6 +324,12 @@ export const useEducationHistoryOverviewItems = (
 ): Array<KeyValueItem> => {
   const { formatMessage, locale } = useLocale()
   const overviewItems: Array<KeyValueItem> = []
+  const typeOfEducationAnswers =
+    getValueViaPath<Array<EducationType>>(
+      answers,
+      'education.typeOfEducation',
+    ) ?? []
+
   const currentEducation =
     getValueViaPath<RepeatableRequiredEducationInAnswers>(
       answers,
@@ -341,7 +347,10 @@ export const useEducationHistoryOverviewItems = (
       answers,
       'educationHistory.finishedEducation',
     )
-  if (currentEducation) {
+  if (
+    currentEducation &&
+    typeOfEducationAnswers.includes(EducationType.CURRENT)
+  ) {
     const educationStrings = getEducationStrings(
       currentEducation,
       externalData,
@@ -362,7 +371,10 @@ export const useEducationHistoryOverviewItems = (
     })
   }
 
-  if (lastSemesterEducation) {
+  if (
+    lastSemesterEducation &&
+    typeOfEducationAnswers.includes(EducationType.LAST_SEMESTER)
+  ) {
     let thisEducationItem = lastSemesterEducation
     if (
       lastSemesterEducation.sameAsAboveEducation?.includes(YES) &&
@@ -404,7 +416,10 @@ export const useEducationHistoryOverviewItems = (
     })
   }
 
-  if (graduationLastTwelveMonthsEducation) {
+  if (
+    graduationLastTwelveMonthsEducation &&
+    typeOfEducationAnswers.includes(EducationType.LAST_YEAR)
+  ) {
     let thisEducationItem = graduationLastTwelveMonthsEducation
     if (
       graduationLastTwelveMonthsEducation.sameAsAboveEducation?.includes(YES) &&

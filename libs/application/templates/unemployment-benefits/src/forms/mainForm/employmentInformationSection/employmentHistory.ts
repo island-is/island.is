@@ -356,7 +356,8 @@ export const employmentHistorySubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.lastJobRepeater,
-              options: (application) => getRskOptions(application),
+              options: (application, _, locale, formatMessage) =>
+                getRskOptions(application, formatMessage),
             },
             employer: {
               component: 'nationalIdWithName',
