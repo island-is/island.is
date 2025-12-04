@@ -53,7 +53,7 @@ export const sameEducationAsLastSemester = (answers: FormValue) => {
   return hasCheckedSame.includes(YES)
 }
 
-export const lastSemesterEducationFinsihed = (answers: FormValue) => {
+export const lastSemesterEducationFinished = (answers: FormValue) => {
   const lastSemesterEndDate = getValueViaPath<string>(
     answers,
     'educationHistory.lastSemester.endDate',
@@ -76,14 +76,12 @@ export const showFinishedEducationField = (answers: FormValue) => {
 }
 
 export const showFinishedEducationDateField = (answers: FormValue) => {
-  if (showFinishedEducationField(answers)) {
-    return showFinishedEducationField(answers)
-  } else {
-    return (
-      !lastSemesterEducationFinsihed(answers) &&
-      wasStudyingLastTwelveMonths(answers)
-    )
-  }
+  return (
+    showFinishedEducationField(answers) ||
+    (!lastSemesterEducationFinished(answers) &&
+      wasStudyingLastTwelveMonths(answers) &&
+      wasStudyingInTheLastYear(answers))
+  )
 }
 
 export const appliedForNextSemester = (answers: FormValue) => {

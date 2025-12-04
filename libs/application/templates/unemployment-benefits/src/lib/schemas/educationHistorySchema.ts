@@ -6,9 +6,6 @@ export const requiredStudies = z
   .object({
     sameAsAboveEducation: z.preprocess((val) => {
       const cleaned = Array.isArray(val) ? val.filter(Boolean) : []
-      if (!cleaned) {
-        return []
-      }
       return cleaned
     }, z.array(z.enum([YES])).optional()),
     levelOfStudy: z

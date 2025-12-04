@@ -28,7 +28,7 @@ export const getSortedJobCodes = (
     (locale === 'is' ? job.name : job.english ?? job.name) ?? ''
 
   const sorted = [...jobList].sort((a, b) =>
-    getName(a).localeCompare(getName(b)),
+    getName(a).localeCompare(getName(b), locale, { sensitivity: 'base' }),
   )
 
   return sorted
