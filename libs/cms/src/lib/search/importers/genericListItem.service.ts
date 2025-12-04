@@ -16,7 +16,7 @@ export class GenericListItemSyncService
     const entriesToDelete: string[] = []
 
     for (const entry of entries) {
-      if (entry.sys.contentType.sys.id !== 'genericListItem') continue
+      if (entry?.sys?.contentType?.sys?.id !== 'genericListItem') continue
       if (!entry.fields.title) {
         entriesToDelete.push(entry.sys.id)
       } else {
