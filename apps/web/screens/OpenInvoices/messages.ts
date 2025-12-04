@@ -100,30 +100,30 @@ export const m = {
       id: 'web.openinvoices:home.cardTwoLinkUrl',
       defaultMessage: 'https://www.island.is',
     },
-    categoryCardOneTitle: {
-      id: 'web.openinvoices:home.categoryCardOneTitle',
+    categoryCardTwoTitle: {
+      id: 'web.openinvoices:home.categoryCardTwoTitle',
       defaultMessage: 'Yfirlit reikninga',
     },
-    categoryCardOneDescription: {
-      id: 'web.openinvoices:home.categoryCardOneTitle',
+    categoryCardTwoDescription: {
+      id: 'web.openinvoices:home.categoryCardTwoDescription',
       defaultMessage:
         'Heildarlisti greiddra reikninga á völdu tímabili. Hægt er að velja leitarskilyrði og afmarka þannig hvaða reikningar eru birtir.',
     },
-    categoryCardOneLink: {
+    categoryCardTwoLink: {
       id: 'web.openinvoices:home.categoryCardOneLink',
       defaultMessage: 'https://www.island.is',
     },
-    categoryCardTwoTitle: {
-      id: 'web.openinvoices:home.categoryCardTwoTitle',
+    categoryCardOneTitle: {
+      id: 'web.openinvoices:home.categoryCardOneTitle',
       defaultMessage: 'Samtölur reikninga',
     },
-    categoryCardTwoDescription: {
-      id: 'web.openinvoices:home.categoryCardTwoTitle',
+    categoryCardOneDescription: {
+      id: 'web.openinvoices:home.categoryCardOneDescription',
       defaultMessage:
         'Lykiltölfræði á borð við stærstu kaupendur og seljendur á völdu tímabili. Hægt er að kafa frá samtölum niður í einstaka reikninga.',
     },
-    categoryCardTwoLink: {
-      id: 'web.openinvoices:home.categoryCardTwoLink',
+    categoryCardOneLink: {
+      id: 'web.openinvoices:home.categoryCardOneLink',
       defaultMessage: 'https://www.island.is',
     },
   }),
