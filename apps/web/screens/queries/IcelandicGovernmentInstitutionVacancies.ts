@@ -15,8 +15,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
         applicationDeadlineTo
         institutionName
         logoUrl
-        creationDate
-        updatedDate
         locations {
           title
           postalCode
