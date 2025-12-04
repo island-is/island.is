@@ -198,6 +198,8 @@ export class SubpoenaRepositoryService {
   }
 
   async update(
+    caseId: string,
+    defendantId: string,
     subpoenaId: string,
     data: UpdateSubpoena,
     options?: UpdateSubpoenaOptions,
@@ -210,7 +212,7 @@ export class SubpoenaRepositoryService {
       })
 
       const updateOptions: UpdateOptions = {
-        where: { id: subpoenaId },
+        where: { id: subpoenaId, caseId, defendantId },
       }
 
       if (options?.transaction) {

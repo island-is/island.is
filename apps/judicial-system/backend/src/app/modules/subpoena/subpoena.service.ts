@@ -123,11 +123,18 @@ export class SubpoenaService {
   }
 
   async setHash(
-    id: string,
+    caseId: string,
+    defendantId: string,
+    subpoenaId: string,
     hash: string,
     hashAlgorithm: HashAlgorithm,
   ): Promise<void> {
-    await this.subpoenaRepositoryService.update(id, { hash, hashAlgorithm })
+    await this.subpoenaRepositoryService.update(
+      caseId,
+      defendantId,
+      subpoenaId,
+      { hash, hashAlgorithm },
+    )
   }
 
   private async addMessagesForSubpoenaUpdateToQueue(
@@ -184,10 +191,16 @@ export class SubpoenaService {
     } = update
 
     await this.sequelize.transaction(async (transaction) => {
-      await this.subpoenaRepositoryService.update(subpoena.id, update, {
-        transaction,
-        throwOnZeroRows: false,
-      })
+      await this.subpoenaRepositoryService.update(
+        theCase.id,
+        defendant.id,
+        subpoena.id,
+        update,
+        {
+          transaction,
+          throwOnZeroRows: false,
+        },
+      )
 
       if (
         defenderChoice ||
@@ -345,6 +358,8 @@ export class SubpoenaService {
       }
 
       await this.subpoenaRepositoryService.update(
+        theCase.id,
+        defendant.id,
         subpoena.id,
         { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
         { throwOnZeroRows: false },
