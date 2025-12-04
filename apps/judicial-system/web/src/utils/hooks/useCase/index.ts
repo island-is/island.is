@@ -113,22 +113,14 @@ const useCase = () => {
 
   const createCourtCase = useMemo(
     () =>
-      async (
-        workingCase: Case,
-        setWorkingCase: Dispatch<SetStateAction<Case>>,
-      ): Promise<string> => {
+      async (caseId: string): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
             const { data, errors } = await createCourtCaseMutation({
-              variables: { input: { caseId: workingCase.id } },
+              variables: { input: { caseId } },
             })
 
             if (data?.createCourtCase?.courtCaseNumber && !errors) {
-              setWorkingCase((prevWorkingCase) => ({
-                ...prevWorkingCase,
-                courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
-              }))
-
               return data.createCourtCase.courtCaseNumber
             }
           }

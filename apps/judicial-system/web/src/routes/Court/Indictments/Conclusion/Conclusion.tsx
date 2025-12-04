@@ -36,14 +36,16 @@ import {
   PdfButton,
   SectionHeading,
   SelectableList,
-  SplitDefendantFromCaseConfirmationModal,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
+  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
+  CaseType,
   CourtSessionType,
   Defendant,
   IndictmentDecision,
@@ -109,6 +111,7 @@ const Conclusion: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
+    createCourtCase,
     isUpdatingCase,
     setAndSendCaseToServer,
     splitDefendantFromCase,
@@ -145,6 +148,7 @@ const Conclusion: FC = () => {
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
+  const [splitCase, setSplitCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<
     'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
   >()
@@ -817,8 +821,12 @@ const Conclusion: FC = () => {
           primaryButton={{
             text: 'Já, kljúfa mál',
             onClick: async () => {
-              await splitDefendantFromCase(workingCase.id, selectedDefendant.id)
+              const newCase = (await splitDefendantFromCase(
+                workingCase.id,
+                selectedDefendant.id,
+              )) as Case
 
+              setSplitCase(newCase)
               setModalVisible('CREATE_COURT_CASE_NUMBER')
             },
             isLoading: isSplittingDefendantFromCase,
@@ -830,7 +838,7 @@ const Conclusion: FC = () => {
           onClose={() => setModalVisible(undefined)}
         />
       )}
-      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && (
+      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && splitCase && (
         <Modal
           title={`Nýtt mál - ${selectedDefendant?.name}`}
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
@@ -840,8 +848,12 @@ const Conclusion: FC = () => {
           }}
         >
           <CourtCaseNumberInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
+            workingCase={{
+              ...splitCase,
+              state: CaseState.RECEIVED,
+              type: CaseType.INDICTMENT,
+            }}
+            onCreateCourtCase={() => createCourtCase(splitCase.id)}
           />
         </Modal>
       )}

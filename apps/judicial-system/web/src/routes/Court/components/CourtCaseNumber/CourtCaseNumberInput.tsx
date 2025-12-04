@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -8,10 +9,6 @@ import {
   Case,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   UpdateCase,
   useCase,
@@ -23,21 +20,27 @@ import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  setWorkingCase?: Dispatch<SetStateAction<Case>>
+  onCreateCourtCase?: () => void
 }
 
 const CourtCaseNumberInput: FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
-
+  const { workingCase, setWorkingCase, onCreateCourtCase } = props
   const { formatMessage } = useIntl()
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
+  const [value, setValue] = useState<string>(workingCase.courtCaseNumber ?? '')
   const [courtCaseNumberErrorMessage, setCourtCaseNumberErrorMessage] =
-    useState('')
+    useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
 
-  const handleCreateCourtCase = async (workingCase: Case) => {
-    const courtCaseNumber = await createCourtCase(workingCase, setWorkingCase)
+  const handleCreateCourtCase = async (caseId: string) => {
+    const courtCaseNumber = await createCourtCase(caseId)
+
+    setWorkingCase?.((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      courtCaseNumber,
+    }))
 
     if (courtCaseNumber !== '') {
       setCourtCaseNumberErrorMessage('')
@@ -69,12 +72,46 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
     await updateCase(id, update)
   }
 
+  const validateInput = (inputValue: string) => {
+    const validation = validate([
+      [
+        inputValue,
+        [
+          'empty',
+          isIndictmentCase(workingCase.type)
+            ? 'S-case-number'
+            : 'R-case-number',
+        ],
+      ],
+    ])
+
+    setCourtCaseNumberErrorMessage(
+      validation.isValid ? '' : validation.errorMessage,
+    )
+  }
+
+  useDebounce(
+    () => {
+      if (createCourtCaseSuccess) {
+        setCreateCourtCaseSuccess(false)
+      }
+
+      updateCourtCaseNumber(workingCase.id, { courtCaseNumber: value })
+    },
+    500,
+    [value],
+  )
+
   return (
     <BlueBox className={styles.createCourtCaseContainer}>
       <div className={styles.createCourtCaseButton}>
         <Button
           size="small"
-          onClick={() => handleCreateCourtCase(workingCase)}
+          onClick={() =>
+            onCreateCourtCase
+              ? onCreateCourtCase()
+              : handleCreateCourtCase(workingCase.id)
+          }
           loading={isCreatingCourtCase}
           disabled={Boolean(
             (workingCase.state !== CaseState.SUBMITTED &&
@@ -99,7 +136,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           autoComplete="off"
           size="sm"
           backgroundColor="white"
-          value={workingCase.courtCaseNumber ?? ''}
+          value={value}
           icon={
             workingCase.courtCaseNumber && createCourtCaseSuccess
               ? { name: 'checkmark' }
@@ -108,36 +145,10 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           errorMessage={courtCaseNumberErrorMessage}
           hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
           onChange={(event) => {
-            setCreateCourtCaseSuccess(false)
-            removeTabsValidateAndSet(
-              'courtCaseNumber',
-              event.target.value,
-              [
-                'empty',
-                isIndictmentCase(workingCase.type)
-                  ? 'S-case-number'
-                  : 'R-case-number',
-              ],
-              setWorkingCase,
-              courtCaseNumberErrorMessage,
-              setCourtCaseNumberErrorMessage,
-            )
+            setCourtCaseNumberErrorMessage('')
+            setValue(event.target.value)
           }}
-          onBlur={(event) => {
-            validateAndSendToServer(
-              'courtCaseNumber',
-              event.target.value,
-              [
-                'empty',
-                isIndictmentCase(workingCase.type)
-                  ? 'S-case-number'
-                  : 'R-case-number',
-              ],
-              workingCase,
-              updateCourtCaseNumber,
-              setCourtCaseNumberErrorMessage,
-            )
-          }}
+          onBlur={(evt) => validateInput(evt.target.value)}
           disabled={
             workingCase.state !== CaseState.SUBMITTED &&
             workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&

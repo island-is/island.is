@@ -4,11 +4,13 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const createCourtCaseContainer = style({
   display: 'flex',
-  gap: theme.spacing[2],
+  flexDirection: 'column-reverse',
+  gap: theme.spacing[1],
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)  `]: {
-      flexDirection: 'column-reverse',
+    [`screen and (min-width: ${theme.breakpoints.md}px)  `]: {
+      flexDirection: 'row',
+      gap: theme.spacing[2],
     },
   },
 })
