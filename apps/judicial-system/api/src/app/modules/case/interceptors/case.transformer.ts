@@ -207,8 +207,8 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
     return {
       ...defendant,
       // represents both verdicts and fines
-      verdictAppealDeadline: verdictAppealDeadline.deadlineDate?.toISOString(),
-      isVerdictAppealDeadlineExpired: verdictAppealDeadline.isDeadlineExpired,
+      verdictAppealDeadline: verdictAppealDeadline?.deadlineDate?.toISOString(),
+      isVerdictAppealDeadlineExpired: verdictAppealDeadline?.isDeadlineExpired,
     }
   })
 }
