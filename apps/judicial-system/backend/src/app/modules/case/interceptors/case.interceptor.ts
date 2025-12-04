@@ -9,9 +9,12 @@ import {
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
   isProsecutionUser,
+  ServiceRequirement,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -24,9 +27,33 @@ import {
   EventLog,
 } from '../../repository'
 
-export const transformDefendants = (defendants?: Defendant[]) => {
+export const transformDefendants = ({
+  defendants,
+  indictmentRulingDecision,
+  rulingDate,
+}: {
+  defendants?: Defendant[]
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+}) => {
   return defendants?.map((defendant) => {
     const { verdict } = defendant
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
+
     return {
       ...defendant.toJSON(),
       ...(verdict
@@ -41,6 +68,8 @@ export const transformDefendants = (defendants?: Defendant[]) => {
             },
           }
         : {}),
+      verdictAppealDeadline: appealDeadline,
+      isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
@@ -108,7 +137,11 @@ const transformCaseRepresentatives = (theCase: Case) => {
 const transformCase = (theCase: Case, user?: User) => {
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants(theCase.defendants),
+    defendants: transformDefendants({
+      defendants: theCase.defendants,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+    }),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),

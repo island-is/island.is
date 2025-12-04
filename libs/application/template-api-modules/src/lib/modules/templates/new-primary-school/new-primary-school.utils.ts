@@ -112,6 +112,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   )
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    id: application.id,
+    applicationType: mapApplicationType(applicationType),
     approvalRequester: application.applicant,
     ...(needsOtherGuardianApproval(application) &&
       otherGuardian && {
@@ -208,7 +210,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         },
       }),
     },
-    applicationType: mapApplicationType(applicationType),
   }
 
   return newPrimarySchoolDTO

@@ -425,10 +425,23 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaseWorkerInput" }
           },
-          "socialServices": {
-            "description": "List of ids of the social services the applicant has used",
+          "previousSocialServices": {
+            "description": "List of ids of the social services the applicant has received in the past",
             "type": "array",
             "items": { "type": "string" }
+          },
+          "ongoingSocialServices": {
+            "description": "List of ids of the social services the applicant is currently receiving",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "previousChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
+          },
+          "openChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
           }
         }
       },
@@ -510,6 +523,10 @@
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of the application being submitted"
+          },
           "registration": { "$ref": "#/components/schemas/RegistrationInput" },
           "applicationType": {
             "type": "string",
@@ -526,9 +543,23 @@
             "type": "string",
             "description": "national ID of the approval requester"
           },
-          "files": { "type": "string", "description": "Files" }
+          "files": {
+            "description": "Files",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "fileUploadType": {
+            "type": "string",
+            "enum": ["attachments", "physical", "attachmentsAndPhysical"],
+            "description": "File upload type"
+          }
         },
-        "required": ["registration", "applicationType", "approvalRequester"]
+        "required": [
+          "id",
+          "registration",
+          "applicationType",
+          "approvalRequester"
+        ]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
