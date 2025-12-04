@@ -1,6 +1,8 @@
 import addDays from 'date-fns/addDays'
 import endOfDay from 'date-fns/endOfDay'
 
+import { ServiceRequirement } from './verdict'
+
 export const VERDICT_APPEAL_WINDOW_DAYS = 28
 const FINE_APPEAL_WINDOW_DAYS = 3
 
@@ -34,4 +36,22 @@ export const hasTimestamp = (date: Date): boolean => {
     date.getTime() !==
     new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
   )
+}
+
+export const getDefendantServiceDate = ({
+  verdict,
+  fallbackDate,
+}: {
+  verdict:
+    | {
+        serviceDate?: Date | string
+        serviceRequirement?: ServiceRequirement
+      }
+    | undefined
+  fallbackDate?: Date | string
+}) => {
+  const isServiceRequired =
+    verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+  const baseDate = isServiceRequired ? verdict.serviceDate : fallbackDate
+  return baseDate ? new Date(baseDate) : undefined
 }
