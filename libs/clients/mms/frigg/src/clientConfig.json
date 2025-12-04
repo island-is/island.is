@@ -523,6 +523,10 @@
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of the application being submitted"
+          },
           "registration": { "$ref": "#/components/schemas/RegistrationInput" },
           "applicationType": {
             "type": "string",
@@ -550,7 +554,12 @@
             "description": "File upload type"
           }
         },
-        "required": ["registration", "applicationType", "approvalRequester"]
+        "required": [
+          "id",
+          "registration",
+          "applicationType",
+          "approvalRequester"
+        ]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
