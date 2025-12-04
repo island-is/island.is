@@ -5,11 +5,7 @@ import {
   DELETE_APPLICATION,
   GET_ALL_APPLICATIONS,
 } from '@island.is/form-system/graphql'
-import {
-  ApplicationList,
-  ApplicationLoading,
-  m,
-} from '@island.is/form-system/ui'
+import { ApplicationList, m } from '@island.is/form-system/ui'
 import {
   Box,
   Button,
@@ -21,7 +17,7 @@ import { useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
 
 interface Params {
   slug?: string
@@ -32,7 +28,6 @@ export const Applications = () => {
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const [loginAllowed, setLoginAllowed] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
@@ -93,7 +88,6 @@ export const Applications = () => {
 
   useEffect(() => {
     let cancelled = false
-
     const run = async () => {
       const responseDto = await fetchApplications()
       if (cancelled) return
@@ -101,11 +95,9 @@ export const Applications = () => {
       const apps = responseDto?.applications || []
       if (apps.length > 0) {
         setApplications(apps)
-        setLoading(false)
       } else if (loginAllowed !== false) {
         await createApplication()
         if (cancelled) return
-        setLoading(false)
       }
     }
 
@@ -145,8 +137,6 @@ export const Applications = () => {
       />
     )
   }
-
-  if (loading) return <ApplicationLoading />
 
   if (!loginAllowed) {
     return (
