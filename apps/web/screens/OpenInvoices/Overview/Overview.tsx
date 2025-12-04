@@ -270,8 +270,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     setPage(null)
   }
 
-  console.log(totalPages)
-
   return (
     <OpenInvoicesWrapper
       title={formatMessage(m.overview.title)}
@@ -370,7 +368,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Stack>
           }
         >
-          {hitsMessage && <MarkdownText>{hitsMessage}</MarkdownText>}
+          <MarkdownText>{hitsMessage ?? ""}</MarkdownText>
           <Box marginLeft={2} background="white">
             <OverviewContent invoiceGroups={invoiceGroups} />
           </Box>

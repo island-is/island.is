@@ -37,7 +37,9 @@ import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import { MOCK_CHART_1, MOCK_CHART_2, MOCK_CHART_3 } from './mockData'
+import { MOCK_CHART_1 } from '../mocks/mockChart1'
+import { MOCK_CHART_2 } from '../mocks/mockChart2'
+import { MULTIPLE_YEAR_CHART_MOCK } from '../mocks/multipleYearChartMock'
 
 const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
   locale,
@@ -228,7 +230,7 @@ const OpenInvoicesTotalsPage: CustomScreen<OpenInvoicesTotalsProps> = ({
                       { datakey: '2024', fill: theme.color.blue400 },
                       { datakey: '2025', fill: theme.color.purple400 },
                     ],
-                    dataset: MOCK_CHART_3,
+                    dataset: MULTIPLE_YEAR_CHART_MOCK,
                     xAxisOptions: { datakey: 'month' },
                     legend: {},
                     tooltip: {},

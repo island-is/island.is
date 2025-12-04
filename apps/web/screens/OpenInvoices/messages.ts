@@ -14,7 +14,7 @@ export const m = {
     featuredImage: {
       id: 'web.openinvoices:home.featuredImage',
       defaultMessage:
-        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        'https://images.ctfassets.net/8k0h54kbe6bj/3SAzg9pelYc1wtrlgAZlag/dee0db5d44b5bfd6a9b9a436ccb6372a/LE_-_Jobs_-_M1.png',
     },
     featuredImageAlt: {
       id: 'web.openinvoices:home.featuredImageAlt',
@@ -140,7 +140,7 @@ export const m = {
     featuredImage: {
       id: 'web.openinvoices:overview.featuredImage',
       defaultMessage:
-        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        'https://images.ctfassets.net/8k0h54kbe6bj/3SAzg9pelYc1wtrlgAZlag/dee0db5d44b5bfd6a9b9a436ccb6372a/LE_-_Jobs_-_M1.png',
     },
     featuredImageAlt: {
       id: 'web.openinvoices:overview.featuredImageAlt',
@@ -181,7 +181,7 @@ export const m = {
     featuredImage: {
       id: 'web.openinvoices:totals.featuredImage',
       defaultMessage:
-        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        'https://images.ctfassets.net/8k0h54kbe6bj/3SAzg9pelYc1wtrlgAZlag/dee0db5d44b5bfd6a9b9a436ccb6372a/LE_-_Jobs_-_M1.png',
     },
     featuredImageAlt: {
       id: 'web.openinvoices:totals.featuredImageAlt',

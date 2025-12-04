@@ -107,7 +107,7 @@ interface Props {
   }
 }
 
-export const Chart = ({ title, link, outlined, chart }: Props) => {
+export const Chart = ({ title, link, outlined, chart}: Props) => {
   const isMultipleBars = (chart.bars?.length ?? 0) > 1
 
   return (
@@ -115,7 +115,7 @@ export const Chart = ({ title, link, outlined, chart }: Props) => {
       width="full"
       height="full"
       padding={4}
-      background="white"
+      background={'transparent'}
       border={outlined ? 'standard' : 'disabled'}
       borderRadius="large"
     >

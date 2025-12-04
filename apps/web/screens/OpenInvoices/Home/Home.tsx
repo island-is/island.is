@@ -12,8 +12,8 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
-import { ChartsCard } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   Organization,
@@ -27,10 +27,11 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
+import { Chart } from '../components/Chart/Chart'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
-import { CHART_MOCK_DATA } from './mockData'
+import { MULTIPLE_YEAR_CHART_MOCK } from '../mocks/multipleYearChartMock'
 import * as styles from './Home.css'
 
 const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
@@ -192,26 +193,17 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 <Text marginTop={2} variant="intro">
                   {formatMessage(m.home.chartDescription)}
                 </Text>
-                <ChartsCard
+                <Chart
+                  outlined={false}
                   chart={{
-                    type: 'Bar',
-                    data: JSON.stringify(CHART_MOCK_DATA),
-                    datakeys: JSON.stringify({
-                      yAxis: {
-                        label: 'm.kr.',
-                      },
-                      xAxis: 'month',
-                      bars: [
-                        {
-                          datakey: '2024',
-                          color: '#0061FF',
-                        },
-                        {
-                          datakey: '2025',
-                          color: '#D799C7',
-                        },
-                      ],
-                    }),
+                    bars: [
+                      { datakey: '2024', fill: theme.color.blue400 },
+                      { datakey: '2025', fill: theme.color.purple400 },
+                    ],
+                    dataset: MULTIPLE_YEAR_CHART_MOCK,
+                    xAxisOptions: { datakey: 'month' },
+                    legend: {},
+                    tooltip: {},
                   }}
                 />
               </Box>
@@ -243,8 +235,8 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.cardOneDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <ArrowLink href="/temp" color="blue400">
-                    Sjá alla kaupendur
+                  <ArrowLink href={formatMessage(m.home.cardOneLinkUrl)} color="blue400">
+                    {formatMessage(m.home.cardOneLinkText)}
                   </ArrowLink>
                 </Box>
               </Stack>
@@ -262,13 +254,9 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                   {formatMessage(m.home.cardTwoDescription)}
                 </Text>
                 <Box display="flex" alignItems="center">
-                  <LinkV2
-                    href={formatMessage(m.home.cardTwoLinkUrl)}
-                    color="blue400"
-                  >
+                  <ArrowLink href={formatMessage(m.home.cardTwoLinkUrl)} color="blue400">
                     {formatMessage(m.home.cardTwoLinkText)}
-                  </LinkV2>
-                  <Icon icon="arrowForward" color="blue400" />
+                  </ArrowLink>
                 </Box>
               </Stack>
             </GridColumn>
@@ -308,6 +296,7 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
                 src={formatMessage(m.home.featuredImage)}
                 alt={formatMessage(m.home.featuredImageAlt)}
                 text={formatMessage(m.home.categoryCardTwoDescription)}
+                objectFit='contain'
               />
             </GridColumn>
           </GridRow>
