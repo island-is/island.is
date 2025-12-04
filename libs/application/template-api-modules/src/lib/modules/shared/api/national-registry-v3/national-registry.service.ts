@@ -53,16 +53,13 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('nationalRegistry')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getIndividual(
         auth.nationalId,
         auth,
         params,
       )
     }
+
     const individual = await this.getIndividual(auth.nationalId, auth)
     //Check if individual is found in national registry
     if (!individual) {
@@ -322,21 +319,13 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getIndividual')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getIndividual(
         nationalId,
         auth,
         params,
       )
     }
-    console.log('--------------------------------')
-    console.log('getIndividual')
-    console.log('nationalId')
-    console.log(nationalId)
-    console.log('--------------------------------')
+
     const person = await this.nationalRegistryV3Api.getIndividual(
       nationalId,
       auth,
@@ -346,10 +335,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     let cohabitationInfo: CohabitationDto | null = null
-
-    console.log('--------------------------------')
-    console.log('marital title getCohabitationInfo')
-    console.log('--------------------------------')
     if (!params?.skipMaritalTitle) {
       // get marital title
       cohabitationInfo = await this.nationalRegistryV3Api.getCohabitationInfo(
@@ -400,10 +385,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getOtherIndividual')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getIndividual(nationalId, auth)
     }
     const otherIndividual = await this.nationalRegistryV3Api.getOtherIndividual(
@@ -426,10 +407,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getParents')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getParents({
         auth,
       } as TemplateApiModuleActionProps)
@@ -498,10 +475,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('childrenCustodyInformation')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.childrenCustodyInformation({
         auth,
         params,
@@ -511,21 +484,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     const parentUser = auth
     const childrenNationalIds =
       await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
-
-    console.log('--------------------------------')
-    console.log(
-      'childrenCustodyInformation auth nationalId: ',
-      parentUser.nationalId,
-    )
-    console.log('--------------------------------')
-    console.log('childrenCustodyInformation params')
-    console.dir(params, { depth: null })
-    console.log('--------------------------------')
-
-    console.log('--------------------------------')
-    console.log('childrenCustodyInformation childrenNationalIds')
-    console.dir(childrenNationalIds, { depth: null })
-    console.log('--------------------------------')
 
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
@@ -544,26 +502,15 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     }
 
     const parentAFamily = await this.nationalRegistryV3Api.getFamily(parentUser)
-    console.log('--------------------------------')
-    console.log('parentAFamily')
-    // console.dir(parentAFamily, { depth: null })
-    console.log('--------------------------------')
+
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
 
     const children: Array<ApplicantChildCustodyInformationV3 | null> =
       await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          console.log('--------------------------------')
-          console.log('childNationalId')
-          console.log(childNationalId)
-          console.log('--------------------------------')
           const child = await this.getIndividual(childNationalId, auth, {
             skipMaritalTitle: true,
           })
-          console.log('--------------------------------')
-          console.log('child getIndividual')
-          console.dir(child, { depth: null })
-          console.log('--------------------------------')
 
           let domicileInIceland = true
           const domicileCode = child?.address?.municipalityCode
@@ -575,35 +522,19 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
             return null
           }
 
-          console.log('--------------------------------')
-          console.log('getOtherCustodyParents')
-          console.log('--------------------------------')
           const parents =
             await this.nationalRegistryV3Api.getOtherCustodyParents(
               parentUser,
               childNationalId,
             )
 
-          console.log('--------------------------------')
-          console.log('getOtherCustodyParents')
-          console.dir(parents, { depth: null })
-          console.log('--------------------------------')
-
           const parentBNationalId = parents.find(
             (id) => id !== parentUser.nationalId,
           )
-          console.log('--------------------------------')
-          console.log('parentBNationalId')
-          console.log(parentBNationalId)
-          console.log('--------------------------------')
+
           const parentB = parentBNationalId
             ? await this.getOtherIndividual(parentBNationalId, auth)
             : undefined
-
-          console.log('--------------------------------')
-          console.log('parentB getOtherIndividual')
-          console.dir(parentB, { depth: null })
-          console.log('--------------------------------')
 
           const livesWithApplicant = parentAFamilyMembers.some(
             (person) => person.nationalId === child?.nationalId,
@@ -664,27 +595,16 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getSpouse')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getSpouse({
         auth,
       } as TemplateApiModuleActionProps)
     }
-    console.log('--------------------------------')
-    console.log('getSpouse')
-    console.log('--------------------------------')
+
     const cohabitationInfo =
       await this.nationalRegistryV3Api.getCohabitationInfo(
         auth.nationalId,
         auth,
       )
-
-    console.log('--------------------------------')
-    console.log('cohabitationInfo')
-    console.dir(cohabitationInfo, { depth: null })
-    console.log('--------------------------------')
 
     const spouseIndividual = cohabitationInfo
       ? await this.getOtherIndividual(cohabitationInfo.spouseNationalId, auth)
@@ -713,17 +633,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getMaritalTitle')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getMaritalTitle({
         auth,
       } as TemplateApiModuleActionProps)
     }
-    console.log('--------------------------------')
-    console.log('getMaritalTitle')
-    console.log('--------------------------------')
+
     const cohabitationInfo =
       await this.nationalRegistryV3Api.getCohabitationInfo(
         auth.nationalId,
@@ -748,10 +662,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getBirthplace')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getBirthplace({
         auth,
         params,
@@ -793,10 +703,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getCurrentResidence')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getCurrentResidence({
         auth,
       } as TemplateApiModuleActionProps)
@@ -831,10 +737,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getResidenceHistory')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getResidenceHistory({
         auth,
       } as TemplateApiModuleActionProps)
@@ -871,6 +773,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
         auth,
       } as TemplateApiModuleActionProps)
     }
+
     const cohabitants: string[] | null =
       await this.nationalRegistryV3Api.getCohabitants(auth.nationalId, auth)
 
@@ -896,12 +799,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       props.auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getCohabitantsDetailed')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getCohabitantsDetailed(props)
     }
+
     const auth = props.auth
     const cohabitants = await this.getCohabitants(props)
 
@@ -934,10 +834,6 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      console.log('--------------------------------')
-      console.log('getCustodians')
-      console.log('shouldUseNationalRegistryV3 is false')
-      console.log('--------------------------------')
       return this.nationalRegistryService.getCustodians({
         auth,
       } as TemplateApiModuleActionProps)
