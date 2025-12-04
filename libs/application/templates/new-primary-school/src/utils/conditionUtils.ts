@@ -1,4 +1,4 @@
-import { YES } from '@island.is/application/core'
+import { YES, NO } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -190,5 +190,96 @@ export const shouldShowAlternativeSpecialEducationDepartment = (
     selectedSchoolSubType !== '' &&
     specialEducationSubtypes.includes(selectedSchoolSubType) &&
     specialEducationDepartmentsInMunicipality.length > 1
+  )
+}
+
+export const hasSpecialEducationWelfareContact = (answers: FormValue) => {
+  const { specialEducationHasWelfareContact } = getApplicationAnswers(answers)
+
+  return specialEducationHasWelfareContact === YES
+}
+
+export const hasSpecialEducationCaseManager = (answers: FormValue) => {
+  const { specialEducationHasCaseManager } = getApplicationAnswers(answers)
+
+  return specialEducationHasCaseManager === YES
+}
+
+export const hasBehaviorSchoolOrDepartmentSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  if (!selectedSchoolSubType) return false
+
+  return (
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
+    selectedSchoolSubType ===
+      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
+  )
+}
+
+export const shouldShowSupportNeedsAssessmentBy = (answers: FormValue) => {
+  const { hasAssessmentOfSupportNeeds, isAssessmentOfSupportNeedsInProgress } =
+    getApplicationAnswers(answers)
+
+  return (
+    hasAssessmentOfSupportNeeds === YES ||
+    (hasAssessmentOfSupportNeeds === NO &&
+      isAssessmentOfSupportNeedsInProgress === YES)
+  )
+}
+
+export const shouldShowDiagnosticians = (answers: FormValue) => {
+  const { hasConfirmedDiagnosis, isDiagnosisInProgress } =
+    getApplicationAnswers(answers)
+
+  return (
+    hasConfirmedDiagnosis === YES ||
+    (hasConfirmedDiagnosis === NO && isDiagnosisInProgress === YES)
+  )
+}
+
+export const shouldShowSpecialists = (answers: FormValue) => {
+  const { hasOtherSpecialists } = getApplicationAnswers(answers)
+
+  return hasOtherSpecialists === YES
+}
+
+export const shouldShowServicesFromMunicipality = (answers: FormValue) => {
+  const { hasReceivedServicesFromMunicipality } = getApplicationAnswers(answers)
+
+  return hasReceivedServicesFromMunicipality === YES
+}
+
+export const shouldShowChildAndAdolescentPsychiatryDepartment = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const {
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+  } = getApplicationAnswers(answers)
+
+  return (
+    hasBehaviorSchoolOrDepartmentSubType(answers, externalData) &&
+    (hasReceivedChildAndAdolescentPsychiatryServices === YES ||
+      (hasReceivedChildAndAdolescentPsychiatryServices === NO &&
+        isOnWaitlistForServices === YES))
+  )
+}
+
+export const shouldShowChildAndAdolescentPsychiatryServicesReceived = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { hasReceivedChildAndAdolescentPsychiatryServices } =
+    getApplicationAnswers(answers)
+
+  return (
+    hasBehaviorSchoolOrDepartmentSubType(answers, externalData) &&
+    hasReceivedChildAndAdolescentPsychiatryServices === YES
   )
 }
