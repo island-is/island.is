@@ -65,7 +65,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -114,7 +114,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.15,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,

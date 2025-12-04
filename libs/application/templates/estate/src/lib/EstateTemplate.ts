@@ -61,7 +61,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -118,7 +118,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.25,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
