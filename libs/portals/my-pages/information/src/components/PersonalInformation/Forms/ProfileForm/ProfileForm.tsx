@@ -28,6 +28,7 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
+import { useFeatureFlagClient, Features } from '@island.is/react/feature-flags'
 import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTypeFeatureFlag'
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 import { emailsMsg, msg, mNotifications } from '../../../../lib/messages'
@@ -93,6 +94,10 @@ export const ProfileForm = ({
   const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
     useDelegationTypeFeatureFlag()
 
+  const featureFlagClient = useFeatureFlagClient()
+  const [allowCompanyUserProfileEmails, setAllowCompanyUserProfileEmails] =
+    useState(false)
+
   // Filter out emails that are not set
   const emails = useMemo(() => {
     return (
@@ -105,6 +110,24 @@ export const ProfileForm = ({
 
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompanyUser = isCompany(userInfo)
+
+  useEffect(() => {
+    const checkFeatureFlag = async () => {
+      if (isCompanyUser && userInfo?.profile?.nationalId) {
+        const isEnabled = await featureFlagClient.getValue(
+          Features.shouldSendEmailNotificationsToCompanyUserProfiles,
+          false,
+          {
+            id: userInfo.profile.nationalId,
+            attributes: {},
+          },
+        )
+        setAllowCompanyUserProfileEmails(isEnabled as boolean)
+      }
+    }
+
+    checkFeatureFlag()
+  }, [isCompanyUser, featureFlagClient, userInfo])
 
   const {
     wantsPaper,
@@ -290,8 +313,8 @@ export const ProfileForm = ({
                 )}
               </InputSection>
             ) : (
-              !isDelegationTypeEnabled &&
-              hasUserProfileWriteScope && (
+              ((!isDelegationTypeEnabled && hasUserProfileWriteScope) ||
+                (isCompanyUser && allowCompanyUserProfileEmails)) && (
                 <Box marginTop={2}>
                   <InputEmail
                     buttonText={formatMessage(msg.saveEmail)}

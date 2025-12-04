@@ -435,6 +435,7 @@ export class NotificationsWorkerService {
 
     let locale: Locale = 'is' // Default locale
     let userProfile: UserProfileDto | undefined
+    let allowCompanyUserProfileEmails = false
 
     if (!isCompanyRecipient) {
       userProfile =
@@ -450,6 +451,23 @@ export class NotificationsWorkerService {
       }
 
       locale = (userProfile.locale as Locale) || 'is'
+    } else {
+      allowCompanyUserProfileEmails = await this.featureFlagService.getValue(
+        Features.shouldSendEmailNotificationsToCompanyUserProfiles,
+        false,
+        { nationalId: message.recipient } as User,
+      )
+
+      if (allowCompanyUserProfileEmails) {
+        userProfile =
+          await this.userProfileApi.userProfileControllerFindUserProfile({
+            xParamNationalId: message.recipient,
+          })
+
+        if (userProfile) {
+          locale = (userProfile.locale as Locale) || 'is'
+        }
+      }
     }
 
     const template = await this.notificationsService.getTemplate(
@@ -460,8 +478,11 @@ export class NotificationsWorkerService {
     const scope = template.scope || DocumentsScope.main
     const notification = await this.createUserNotificationDbRecord(args, scope)
 
-    // Only send email and push notifications for individuals, not companies
-    if (!isCompanyRecipient && userProfile) {
+    const shouldSendNotifications =
+      (!isCompanyRecipient && userProfile) ||
+      (isCompanyRecipient && userProfile && allowCompanyUserProfileEmails)
+
+    if (shouldSendNotifications && userProfile) {
       const handleNotificationArgs: HandleNotification = {
         profile: userProfile,
         messageId: args.messageId,
