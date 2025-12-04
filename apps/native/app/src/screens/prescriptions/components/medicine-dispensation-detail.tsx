@@ -78,33 +78,6 @@ export const MedicineDispensationDetailScreen: NavigationFunctionComponent<
             <Input
               label={intl.formatMessage({ id: 'health.prescriptions.drug' })}
               value={dispensation.name ?? ''}
-              rightElement={
-                <Pressable
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: theme.spacing[1],
-                    borderBottomWidth: 1,
-                    borderBottomColor: theme.color.blue400,
-                  }}
-                  onPress={() => {
-                    console.log('dispensation.name', dispensation.name)
-                    navigateTo('/prescriptions/drug', {
-                      drug: dispensation.name,
-                    })
-                  }}
-                >
-                  <Typography variant="eyebrow" color={theme.color.blue400}>
-                    {intl.formatMessage({
-                      id: 'button.seeMore',
-                    })}
-                  </Typography>
-                  {/* <Image
-                    source={externalLinkIcon}
-                    style={{ width: 12, height: 12 }}
-                  /> */}
-                </Pressable>
-              }
             />
           </InputRow>
 

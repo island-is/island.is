@@ -65,6 +65,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   linkTextId,
 }) => {
   const theme = useTheme()
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -307,7 +308,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           <Button
             title={intl.formatMessage({
               id: isPrescriptionsEnabled
-                ? 'health.overview.prescriptions'
+                ? 'health.prescriptionsAndCertificates.screenTitle'
                 : 'health.drugCertificates.title',
             })}
             isOutlined
