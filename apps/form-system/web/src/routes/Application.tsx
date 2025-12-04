@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
 import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
 import { ApplicationLoading } from '@island.is/form-system/ui'
 import { useParams } from 'react-router-dom'
