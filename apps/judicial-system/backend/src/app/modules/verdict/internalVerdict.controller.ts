@@ -29,9 +29,9 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
+  getDefendantServiceDate,
   getIndictmentAppealDeadline,
   indictmentCases,
-  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -72,10 +72,11 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – No ruling date has been set for case ${caseId}`,
     )
   }
-  const isServiceRequired =
-    verdict.serviceRequirement === ServiceRequirement.REQUIRED
-  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+
+  const baseDate = getDefendantServiceDate({
+    verdict,
+    fallbackDate: rulingDate,
+  })
 
   // this can only be thrown if service date is not set
   if (!baseDate) {
@@ -85,7 +86,7 @@ const validateVerdictAppealUpdate = ({
   }
   const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
     baseDate: new Date(baseDate),
-    isFine,
+    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
   })
   if (isDeadlineExpired) {
     throw new BadRequestException(
