@@ -50,18 +50,6 @@ export class FormApplicantTypesService {
             model: Section,
             as: 'sections',
             where: { sectionType: SectionTypes.PARTIES },
-            include: [
-              {
-                model: Screen,
-                as: 'screens',
-                include: [
-                  {
-                    model: Field,
-                    as: 'fields',
-                  },
-                ],
-              },
-            ],
           },
         ],
       },
@@ -76,27 +64,6 @@ export class FormApplicantTypesService {
     let screenDto = new ScreenDto()
 
     await this.sequelize.transaction(async (transaction) => {
-      const lockedForm = await this.formModel.findByPk(
-        createFormApplicantTypeDto.formId,
-        {
-          transaction,
-          lock: transaction.LOCK.UPDATE,
-        },
-      )
-      if (!lockedForm) throw new NotFoundException('Form not found')
-
-      const loginType = createFormApplicantTypeDto.applicantTypeId
-      const current: string[] = Array.isArray(lockedForm.allowedLoginTypes)
-        ? lockedForm.allowedLoginTypes
-        : Object.values(lockedForm.allowedLoginTypes ?? {})
-
-      if (!current.includes(loginType)) {
-        const next = [...current, loginType]
-        lockedForm.set('allowedLoginTypes', next)
-        lockedForm.changed('allowedLoginTypes', true)
-        await lockedForm.save({ transaction })
-      }
-
       const newScreen = await this.screenModel.create(
         {
           sectionId: form.sections[0].id, // PARTIES is the only section
@@ -124,18 +91,11 @@ export class FormApplicantTypesService {
   async delete(
     deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
   ): Promise<ScreenDto> {
-    const form = await this.formModel.findByPk(
-      deleteFormApplicantTypeDto.formId,
-    )
-
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${deleteFormApplicantTypeDto.formId}' not found`,
-      )
-    }
-
     const partiesSection = await Section.findOne({
-      where: { formId: form.id, sectionType: SectionTypes.PARTIES },
+      where: {
+        formId: deleteFormApplicantTypeDto.formId,
+        sectionType: SectionTypes.PARTIES,
+      },
       include: [
         {
           model: Screen,
@@ -174,31 +134,10 @@ export class FormApplicantTypesService {
 
     let screenDto: ScreenDto = new ScreenDto()
 
-    await this.sequelize.transaction(async (transaction) => {
-      const lockedForm = await this.formModel.findByPk(
-        deleteFormApplicantTypeDto.formId,
-        {
-          transaction,
-          lock: transaction.LOCK.UPDATE,
-        },
-      )
-      if (!lockedForm) throw new NotFoundException('Form not found')
+    screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
 
-      const loginType = deleteFormApplicantTypeDto.applicantTypeId
-      const current: string[] = Array.isArray(lockedForm.allowedLoginTypes)
-        ? lockedForm.allowedLoginTypes
-        : Object.values(lockedForm.allowedLoginTypes ?? {})
-      const next = current.filter((t) => t !== loginType)
-      lockedForm.set('allowedLoginTypes', next)
-      lockedForm.changed('allowedLoginTypes', true)
-      await lockedForm.save({ transaction })
-
-      screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
-
-      await this.screenModel.destroy({
-        where: { id: targetScreen.id },
-        transaction,
-      })
+    await this.screenModel.destroy({
+      where: { id: targetScreen.id },
     })
 
     return screenDto
