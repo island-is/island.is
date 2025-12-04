@@ -45,6 +45,7 @@ export type Answers = {
   estateMembers: {
     members: EstateMember[]
     encountered?: boolean
+    applicantAdded?: boolean
   }
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
