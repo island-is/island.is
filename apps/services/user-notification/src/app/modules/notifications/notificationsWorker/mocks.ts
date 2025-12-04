@@ -211,7 +211,9 @@ export class MockFeatureFlagService {
       )
     }
 
-    if (feature === Features.shouldSendEmailNotificationsToCompanyUserProfiles) {
+    if (
+      feature === Features.shouldSendEmailNotificationsToCompanyUserProfiles
+    ) {
       return true
     }
 
