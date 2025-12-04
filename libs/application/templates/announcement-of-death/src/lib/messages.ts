@@ -88,7 +88,7 @@ export const m = defineMessages({
     description: 'Title of the data needed to fetch existing applications',
   },
   existingApplicationExists: {
-    id: 'aod.application:error.existingApplicationExists',
+    id: 'aod.application:error.existingApplicationExists#markdown',
     defaultMessage: 'Þú átt nú þegar umsókn í vinnslu',
     description:
       'Message letting the applicant know they already have an application in progress',
@@ -123,13 +123,13 @@ export const m = defineMessages({
     description: 'Role confirmation section title',
   },
   roleConfirmationNotice: {
-    id: 'aod.application:roleConfirmationNotice',
+    id: 'aod.application:roleConfirmationNotice#markdown',
     defaultMessage:
       'Ferlið vistast sjálfkrafa á meðan það er fyllt út og hægt er að opna það aftur inn á Mínar síður á Ísland.is. Sjáir þú þér ekki fært um að sinna þessu ferli skaltu senda umsóknina áfram á réttan aðila.',
     description: 'Role confirmation notice',
   },
   roleConfirmationDescription: {
-    id: 'aod.application:roleConfirmationDescription',
+    id: 'aod.application:roleConfirmationDescription#markdown',
     defaultMessage:
       'Þú hefur fengið umsjón yfir andlátstilkynningu fyrir viðkomandi aðila. Sem nánasti aðstandandi færðu það hlutverk að sækja um dánarvottorð, tilkynna um eignir í dánarbúi og fá heimild til úttektar fyrir útfararkostnað. Andlát ber að tilkynna til sýslumanns í því umdæmi sem hinn látni hafði lögheimili og getur útför farið fram þegar sýslumaður hefur staðfest móttöku dánarvottorðs.',
     description: 'Role confirmation description',
@@ -145,7 +145,7 @@ export const m = defineMessages({
     description: 'Role confirmation delegate role',
   },
   delegateRoleDisclaimer: {
-    id: 'aod.application:delegateRoleDisclaimer',
+    id: 'aod.application:delegateRoleDisclaimer#markdown',
     defaultMessage:
       'Þegar andlátstilkynning hefur verið send á annan aðila verður hún eingöngu virk hjá þeim aðila.',
     description: 'Delegate role disclaimer',
@@ -168,7 +168,7 @@ export const m = defineMessages({
     description: 'Testament step title',
   },
   testamentDescription: {
-    id: 'aod.application:testamentDescription',
+    id: 'aod.application:testamentDescription#markdown',
     defaultMessage:
       'Upplýsingar um erfðaskrá eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
     description: 'Testament step description',
@@ -359,7 +359,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Properties title',
   },
   propertiesDescription: {
-    id: 'aod.application:propertiesDescription',
+    id: 'aod.application:propertiesDescription#markdown',
     defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
     description: 'Properties description',
   },
@@ -451,7 +451,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Files title',
   },
   filesDescription: {
-    id: 'aod.application:filesDescription',
+    id: 'aod.application:filesDescription#markdown',
     defaultMessage:
       'Skjölin verða send og gerð aðgengileg í pósthólfi inni á Mínar síður Ísland.is.',
     description: 'Files description',
@@ -477,7 +477,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Certificate of death announcement title',
   },
   certificateOfDeathAnnouncementDescription: {
-    id: 'aod.application:certificateOfDeathAnnouncementDescription',
+    id: 'aod.application:certificateOfDeathAnnouncementDescription#markdown',
     defaultMessage:
       'Heimilar að útför hins látna megi fara fram. Prestur eða sá aðili sem sér um útför þarf að fá þetta vottorð áður en útför fer fram.',
     description: 'Certificate of death announcement description',
@@ -493,7 +493,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Finances data collection permission title',
   },
   financesDataCollectionPermissionDescription: {
-    id: 'aod.application:financesDataCollectionPermissionDescription',
+    id: 'aod.application:financesDataCollectionPermissionDescription#markdown',
     defaultMessage:
       'Heimild veitt til erfingja svo þau geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins.',
     description: 'Finances data collection permission description',
@@ -509,7 +509,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Authorization for funeral expenses title',
   },
   authorizationForFuneralExpensesDescription: {
-    id: 'aod.application:authorizationForFuneralExpensesDescription',
+    id: 'aod.application:authorizationForFuneralExpensesDescription#markdown',
     defaultMessage:
       'Heimild veitt til erfingja svo þau geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins.',
     description: 'Authorization for funeral expenses description',
@@ -592,7 +592,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Announcement section title',
   },
   announcementDescription: {
-    id: 'aod.application:announcementDescription',
+    id: 'aod.application:announcementDescription#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: 'Announcement description',
@@ -677,7 +677,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Delegated title',
   },
   delegatedDescription: {
-    id: 'aod.application:delegatedDescription',
+    id: 'aod.application:delegatedDescription#markdown',
     defaultMessage:
       'Tilkynningarferlið hefur verið sent áfram. Viðkomandi fær send skilaboð á næstu mínútum til þess að taka við ferlinu.',
     description: 'Delegated title',
@@ -725,7 +725,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'announcement complete text',
   },
   announcementCompleteDescription: {
-    id: 'aod.application:announcementCompleteDescription',
+    id: 'aod.application:announcementCompleteDescription#markdown',
     defaultMessage:
       'Takk fyrir að gefa þér tíma til þess að sinna þessu ferli. Þegar tilkynningin hefur verið afgreidd færðu senda staðfestingu og heimildir í þitt pósthólf á Mínar síður á Ísland.is.',
     description: '',
@@ -760,7 +760,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Overview title',
   },
   overviewSectionDescription: {
-    id: 'aod.application:overviewSectionDescription',
+    id: 'aod.application:overviewSectionDescription#markdown',
     defaultMessage:
       'Endilega lestu yfir til að vera viss um að réttar upplýsingar hafi verið gefnar.',
     description: 'Overview description',
