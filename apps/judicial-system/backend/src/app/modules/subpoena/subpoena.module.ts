@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { Defendant, Subpoena } from '../repository'
+import { Defendant } from '../repository'
 import {
   CaseModule,
   CourtModule,
@@ -17,6 +17,7 @@ import {
   EventModule,
   FileModule,
   PoliceModule,
+  RepositoryModule,
 } from '..'
 import { InternalSubpoenaController } from './internalSubpoena.controller'
 import { LimitedAccessSubpoenaController } from './limitedAccessSubpoena.controller'
@@ -25,6 +26,7 @@ import { SubpoenaService } from './subpoena.service'
 
 @Module({
   imports: [
+    RepositoryModule,
     AuditTrailModule,
     CourtModule,
     forwardRef(() => CaseModule),
@@ -34,7 +36,7 @@ import { SubpoenaService } from './subpoena.service'
     forwardRef(() => DefendantModule),
     forwardRef(() => CourtSessionModule),
     forwardRef(() => FileModule),
-    SequelizeModule.forFeature([Subpoena, Defendant]),
+    SequelizeModule.forFeature([Defendant]),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [auditTrailModuleConfig],
