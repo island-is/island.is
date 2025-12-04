@@ -158,10 +158,16 @@ export class ApplicationService {
     let applicationTypeIds: string[] = []
 
     if (institutionNationalId) {
-      getTypeIdsForInstitution(institutionNationalId).forEach((applicationTypeId) => {applicationTypeIds.push(applicationTypeId)})
+      getTypeIdsForInstitution(institutionNationalId).forEach(
+        (applicationTypeId) => {
+          applicationTypeIds.push(applicationTypeId)
+        },
+      )
 
       if (typeId) {
-        applicationTypeIds = applicationTypeIds.filter(applicationTypeId => applicationTypeId === typeId)
+        applicationTypeIds = applicationTypeIds.filter(
+          (applicationTypeId) => applicationTypeId === typeId,
+        )
       }
       if (applicationTypeIds.length < 1) {
         return {
@@ -177,7 +183,9 @@ export class ApplicationService {
       where: {
         [Op.and]: [
           statuses ? { status: { [Op.in]: statuses } } : {},
-          applicationTypeIds?.length ? { typeId: { [Op.in]: applicationTypeIds } } : {},
+          applicationTypeIds?.length
+            ? { typeId: { [Op.in]: applicationTypeIds } }
+            : {},
           fromDate ? { created: { [Op.gte]: fromDate } } : {},
           toDate ? { created: { [Op.lte]: toDate } } : {},
           applicantNationalId

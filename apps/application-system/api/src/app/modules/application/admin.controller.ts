@@ -164,8 +164,7 @@ export class AdminController {
     @Query('to') to?: string,
     @Query('typeId') typeId?: string,
     @Query('searchStr') searchStr?: string,
-    ) {
-
+  ) {
     return this.applicationService.findAllByAdminFilters(
       page ?? 1,
       count ?? 12,
@@ -176,7 +175,6 @@ export class AdminController {
       to,
       typeId,
       searchStr,
-
     )
   }
 

@@ -39,9 +39,7 @@ query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   }
 }
 
-query getApplicationsInstitutionAdmin(
-  $input: ApplicationsAdminFilters!
-) {
+query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
   applicationApplicationsInstitutionAdmin(input: $input) {
     rows {
       id
@@ -114,9 +112,7 @@ query getOrganizations($input: GetOrganizationsInput) {
   }
 }
 
-query getApplicationStatistics(
-  $input: ApplicationsAdminStatisticsInput!
-) {
+query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
   applicationApplicationsAdminStatistics(input: $input) {
     typeid
     count
