@@ -776,22 +776,29 @@ export class SyslumennService {
     )
   }
 
-  async hasElectronicID(
-    nationalId: string,
-    phoneNumber: string, // Kept for backward compatibility but not used
-  ): Promise<boolean> {
+  /**
+   * Check if a person has valid electronic ID credentials.
+   *
+   * Uses the comprehensive Syslumenn endpoint (kannaRafraenSkilrikiGet2) which checks
+   * ALL electronic ID authentication methods, not just phone-based (eSIM).
+   *
+   * This ensures users with:
+   * - Auðkenni app (without SIM card registration) ✓
+   * - eSIM/phone-based authentication ✓
+   * - Physical smart card authentication ✓
+   *
+   * ...are all correctly identified as having valid electronic credentials.
+   *
+   * @param nationalId - Icelandic national ID (kennitala)
+   * @returns true if ANY valid electronic ID method exists
+   */
+  async hasElectronicID(nationalId: string): Promise<boolean> {
     const { id, api } = await this.createApi()
-    // Use comprehensive endpoint that checks ALL electronic ID types:
-    // - simi: eSIM/phone-based
-    // - app: App-based (Auðkenni app)
-    // - kort: Card-based (physical smart cards)
     const res = await api.kannaRafraenSkilrikiGet2({
       audkenni: id,
       kennitala: nationalId,
     })
 
-    console.log('RESPONSE')
-    console.log(JSON.stringify(res, null, 2))
     // Accept if ANY valid electronic ID method exists
     return (
       res?.gildSkilriki?.simi ||
