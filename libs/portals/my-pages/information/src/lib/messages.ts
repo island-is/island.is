@@ -223,6 +223,10 @@ export const msg = defineMessages({
     id: 'sp.settings:overlay-intro-text',
     defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,
   },
+  companysSettingsIntro: {
+    id: 'sp.settings:company-settings-intro-text',
+    defaultMessage: `Hér getur þú breytt upplýsingum um fyrirtækið`,
+  },
   dropModalAllTitle: {
     id: 'sp.settings:dropmodal-all-title',
     defaultMessage: 'Engar upplýsingar skráðar',
