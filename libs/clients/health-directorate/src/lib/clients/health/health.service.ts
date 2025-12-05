@@ -395,7 +395,7 @@ export class HealthDirectorateHealthService {
       return null
     }
 
-    this.logger.debug('Creating permit with input:', input)
+    this.logger.info('Creating permit with input:', input)
 
     return await withAuthContext(auth, () =>
       data(
