@@ -6,6 +6,7 @@ import {
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import HtmlParser from 'react-html-parser'
+import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
 import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
@@ -14,8 +15,6 @@ import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { Scale } from './QuestionsTypes/Scale'
 import { Table } from './QuestionsTypes/Table'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface QuestionRendererProps {
   question: QuestionnaireQuestion
@@ -32,8 +31,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   disabled = false,
   error,
 }) => {
-  const { width } = useWindowSize()
-  const _isMobile = width < theme.breakpoints.md
+  const isMobile = useIsMobile()
 
   const handleValueChange = (
     value: string | string[] | number,
@@ -259,7 +257,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.datetime: {
         const dateValue = answer?.answers?.[0]?.value
         return (
-          <Box width="half">
+          <Box width={isMobile ? 'full' : 'half'}>
             <Text variant="h5" marginBottom={2}>
               {question.label}
             </Text>

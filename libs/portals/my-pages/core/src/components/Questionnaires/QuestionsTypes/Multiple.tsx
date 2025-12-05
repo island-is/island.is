@@ -2,6 +2,7 @@ import React from 'react'
 import { Checkbox, Box, Stack, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
+import useIsMobile from '../../../hooks/useIsMobile/useIsMobile'
 
 export interface MultipleOption {
   label: string
@@ -35,6 +36,8 @@ export const Multiple: React.FC<MultipleProps> = ({
   maxSelections,
 }) => {
   const { formatMessage } = useLocale()
+  const isMobile = useIsMobile()
+
   const handleChange = (optionValue: string, checked: boolean) => {
     if (checked) {
       if (maxSelections && value.length >= maxSelections) {
@@ -88,7 +91,7 @@ export const Multiple: React.FC<MultipleProps> = ({
       {direction === 'horizontal' ? (
         <Inline space={2}>{checkboxes}</Inline>
       ) : (
-        <Box width="half">
+        <Box width={isMobile ? 'full' : 'half'}>
           <Stack space={2}>{checkboxes}</Stack>
         </Box>
       )}

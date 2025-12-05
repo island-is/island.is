@@ -1,5 +1,6 @@
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import React from 'react'
+import { useIsMobile } from '../../..'
 
 export interface TextInputProps {
   id: string
@@ -40,6 +41,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   inputLabel = false,
   step: _step,
 }) => {
+  const isMobile = useIsMobile()
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -75,7 +77,15 @@ export const TextInput: React.FC<TextInputProps> = ({
           {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
         </Text>
       )}
-      <Box width={type === 'number' || type === 'decimal' ? 'half' : 'full'}>
+      <Box
+        width={
+          isMobile
+            ? 'full'
+            : type === 'number' || type === 'decimal'
+            ? 'half'
+            : 'full'
+        }
+      >
         <Input
           label={inputLabel ? label : undefined}
           size="xs"
