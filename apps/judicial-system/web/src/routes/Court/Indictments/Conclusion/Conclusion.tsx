@@ -177,10 +177,12 @@ const Conclusion: FC = () => {
         force: true,
       }
 
+      if (selectedAction === IndictmentDecision.SPLITTING) {
+        setModalVisible('SPLIT')
+        return
+      }
+
       switch (selectedAction) {
-        case IndictmentDecision.SPLITTING:
-          setModalVisible('SPLIT')
-          break
         case IndictmentDecision.POSTPONING:
           update.postponedIndefinitelyExplanation = postponementReason
           break
@@ -208,11 +210,6 @@ const Conclusion: FC = () => {
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
-      }
-
-      // TODO: Refactor this
-      if (selectedAction === IndictmentDecision.SPLITTING) {
-        return
       }
 
       const updateSuccess = await setAndSendCaseToServer(
