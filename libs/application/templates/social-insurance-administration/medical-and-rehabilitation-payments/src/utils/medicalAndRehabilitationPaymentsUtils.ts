@@ -156,12 +156,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hadAssistance = getValueViaPath<YesOrNo>(
     answers,
-    'selfAssessment.hadAssistance',
+    'selfAssessmentQuestionsOne.hadAssistance',
   )
 
   const educationalLevel = getValueViaPath<string>(
     answers,
-    'selfAssessment.educationalLevel',
+    'selfAssessmentQuestionsOne.educationalLevel',
   )
 
   const comment = getValueViaPath<string>(answers, 'comment')
@@ -174,65 +174,65 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const mainProblem = getValueViaPath<string>(
     answers,
-    'selfAssessment.mainProblem',
+    'selfAssessmentQuestionsThree.mainProblem',
   )
 
   const hasPreviouslyReceivedRehabilitationOrTreatment =
     getValueViaPath<YesOrNo>(
       answers,
-      'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
+      'selfAssessmentQuestionsThree.hasPreviouslyReceivedRehabilitationOrTreatment',
     )
 
   const previousRehabilitationOrTreatment = getValueViaPath<string>(
     answers,
-    'selfAssessment.previousRehabilitationOrTreatment',
+    'selfAssessmentQuestionsThree.previousRehabilitationOrTreatment',
   )
 
   const previousRehabilitationSuccessful = getValueViaPath<YesOrNo>(
     answers,
-    'selfAssessment.previousRehabilitationSuccessful',
+    'selfAssessmentQuestionsThree.previousRehabilitationSuccessful',
   )
 
   const previousRehabilitationSuccessfulFurtherExplanations =
     getValueViaPath<string>(
       answers,
-      'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
+      'selfAssessmentQuestionsThree.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
   const currentEmploymentStatuses =
     getValueViaPath<string[]>(
       answers,
-      'selfAssessment.currentEmploymentStatuses',
+      'selfAssessmentQuestionsTwo.currentEmploymentStatuses',
     ) ?? []
 
   const currentEmploymentStatusExplanation = getValueViaPath<string>(
     answers,
-    'selfAssessment.currentEmploymentStatusExplanation',
+    'selfAssessmentQuestionsTwo.currentEmploymentStatusExplanation',
   )
 
   const lastProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfession',
+    'selfAssessmentQuestionsTwo.lastProfession',
   )
 
   const lastProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfessionDescription',
+    'selfAssessmentQuestionsTwo.lastProfessionDescription',
   )
 
   const lastActivityOfProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastActivityOfProfession',
+    'selfAssessmentQuestionsTwo.lastActivityOfProfession',
   )
 
   const lastActivityOfProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastActivityOfProfessionDescription',
+    'selfAssessmentQuestionsTwo.lastActivityOfProfessionDescription',
   )
 
   const lastProfessionYear = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfessionYear',
+    'selfAssessmentQuestionsTwo.lastProfessionYear',
   )
 
   return {
