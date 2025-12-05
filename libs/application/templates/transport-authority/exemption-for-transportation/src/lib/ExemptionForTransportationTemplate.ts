@@ -30,6 +30,7 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { ExemptionType } from '../shared'
+import { getConvoyShortNamesFromAnswers } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const exemptionType = getValueViaPath<ExemptionType>(
@@ -37,9 +38,15 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     'exemptionPeriod.type',
   )
   if (exemptionType === ExemptionType.SHORT_TERM)
-    return applicationMessage.nameShortTerm
+    return {
+      name: applicationMessage.nameShortTerm,
+      value: getConvoyShortNamesFromAnswers(application.answers),
+    }
   else if (exemptionType === ExemptionType.LONG_TERM)
-    return applicationMessage.nameLongTerm
+    return {
+      name: applicationMessage.nameLongTerm,
+      value: getConvoyShortNamesFromAnswers(application.answers),
+    }
   return applicationMessage.name
 }
 

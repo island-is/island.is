@@ -44,6 +44,11 @@ export const getConvoyShortName = (convoyItem: Convoy): string => {
   )
 }
 
+export const getConvoyShortNamesFromAnswers = (answers: FormValue): string => {
+  const convoyItems = getConvoyItems(answers)
+  return convoyItems.map((x) => getConvoyShortName(x)).join(', ')
+}
+
 export const hasDuplicateConvoyItems = (answers: FormValue): boolean => {
   const convoyItems = getConvoyItems(answers)
 
