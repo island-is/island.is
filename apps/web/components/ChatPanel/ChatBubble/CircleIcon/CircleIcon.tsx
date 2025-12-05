@@ -12,7 +12,9 @@ export const CircleIcon = ({ loading = false }: CircleIconProps) => {
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       className={styles.container}
+      tabIndex={0}
     >
       <circle
         cx="60"

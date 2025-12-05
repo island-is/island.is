@@ -87,8 +87,13 @@ const CircleVariant = ({
       )}
       role="button"
       data-testid="chatbot"
-      tabIndex={0}
       onClick={handleClick}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          handleClick()
+          event.preventDefault()
+        }
+      }}
     >
       <CircleIcon loading={loading} />
     </div>
