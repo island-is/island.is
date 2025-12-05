@@ -71,7 +71,7 @@ export const generateOtherGuardianRejectedApplicationEmail: EmailTemplateGenerat
           {
             component: 'Copy',
             context: {
-              copy: `${childInfo.name}, Kt. ${formatKennitala(
+              copy: `${childInfo.name} Kt. ${formatKennitala(
                 childInfo.nationalId,
               )}`,
             },
