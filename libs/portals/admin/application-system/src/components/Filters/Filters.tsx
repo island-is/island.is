@@ -22,6 +22,7 @@ import { format as formatNationalId } from 'kennitala'
 import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
 
 interface Props {
+  onTypeIdChange: (period: ApplicationFilters['typeId']) => void
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
@@ -34,9 +35,12 @@ interface Props {
 }
 
 export const Filters = ({
+  onTypeIdChange,
   onSearchChange,
+  onFilterChange,
   onFilterClear,
   onDateChange,
+  multiChoiceFilters,
   filters,
   organizations,
   numberOfDocuments,
@@ -122,12 +126,19 @@ export const Filters = ({
             >
               <Box width="half">
                 <Select
+                  id={MultiChoiceFilter.INSTITUTION}
                   label={formatMessage(m.institution)}
                   placeholder={formatMessage(m.institutionDropdownPlaceholder)}
                   name="admin-applications-search"
                   backgroundColor="blue"
-                  isMulti={true}
                   size="sm"
+                  onChange={() =>
+                    onFilterChange({
+                      categoryId: MultiChoiceFilter.INSTITUTION,
+                      selected:
+                        multiChoiceFilters[MultiChoiceFilter.INSTITUTION] ?? [],
+                    })
+                  }
                   options={availableOrganizations.map((x) => ({
                     value: x.slug,
                     label: x.title,
@@ -136,15 +147,24 @@ export const Filters = ({
               </Box>
               <Box width="half" marginLeft={3}>
                 <Select
+                  id={MultiChoiceFilter.TYPE_ID}
                   label={formatMessage(m.applicationType)}
                   placeholder={formatMessage(
                     m.applicationTypeDropdownPlaceholder,
                   )}
-                  name="admin-applications-search"
+                  value={
+                    institutionTypeIds.find((opt) => opt.value === typeId) ||
+                    null
+                  }
                   backgroundColor="blue"
-                  isMulti={true}
+                  onChange={(v) => {
+                    setTypeId(v?.value)
+                    onTypeIdChange(v?.value)
+                  }}
                   size="sm"
                   options={institutionTypeIds}
+                  isLoading={typesLoading}
+                  isClearable={true}
                 />
               </Box>
             </Box>

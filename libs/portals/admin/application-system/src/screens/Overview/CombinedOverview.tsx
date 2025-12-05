@@ -121,7 +121,6 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
   const applicationApplicationsAdmin = isSuperAdmin
     ? superData?.applicationApplicationsAdmin
     : institutionData?.applicationApplicationsInstitutionAdmin?.rows
-  console.log('applicationApplicationsAdmin', applicationApplicationsAdmin)
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
   const organizations = (orgData?.getOrganizations?.items ??
@@ -230,6 +229,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
       </Text>
       {isSuperAdmin ? (
         <Filters
+          onTypeIdChange={handleTypeIdChange}
           onSearchChange={handleSearchChange}
           onFilterChange={handleMultiChoiceFilterChange}
           onDateChange={handleDateChange}

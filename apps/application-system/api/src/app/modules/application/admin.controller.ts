@@ -27,7 +27,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
-  ApplicationListAdminResponseDto,
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
 } from './dto/applicationAdmin.response.dto'
