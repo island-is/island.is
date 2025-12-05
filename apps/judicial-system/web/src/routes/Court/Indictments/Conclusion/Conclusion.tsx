@@ -29,6 +29,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -40,8 +41,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
+  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
+  CaseType,
   CourtSessionType,
   Defendant,
   IndictmentDecision,
@@ -58,6 +62,7 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CourtCaseNumberInput from '../../components/CourtCaseNumber/CourtCaseNumberInput'
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
 
@@ -105,7 +110,13 @@ const Conclusion: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { isUpdatingCase, setAndSendCaseToServer } = useCase()
+  const {
+    createCourtCase,
+    isUpdatingCase,
+    setAndSendCaseToServer,
+    splitDefendantFromCase,
+    isSplittingDefendantFromCase,
+  } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts } = useVerdict()
@@ -137,6 +148,10 @@ const Conclusion: FC = () => {
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
+  const [splitCase, setSplitCase] = useState<Case>()
+  const [modalVisible, setModalVisible] = useState<
+    'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
+  >()
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -163,6 +178,9 @@ const Conclusion: FC = () => {
       }
 
       switch (selectedAction) {
+        case IndictmentDecision.SPLITTING:
+          setModalVisible('SPLIT')
+          break
         case IndictmentDecision.POSTPONING:
           update.postponedIndefinitelyExplanation = postponementReason
           break
@@ -190,6 +208,11 @@ const Conclusion: FC = () => {
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
+      }
+
+      // TODO: Refactor this
+      if (selectedAction === IndictmentDecision.SPLITTING) {
+        return
       }
 
       const updateSuccess = await setAndSendCaseToServer(
@@ -457,17 +480,19 @@ const Conclusion: FC = () => {
                 backgroundColor="white"
                 label={formatMessage(strings.redistributing)}
               />
-              <RadioButton
-                id="conclusion-splitting"
-                name="conclusion-splitting"
-                checked={selectedAction === IndictmentDecision.SPLITTING}
-                onChange={() => {
-                  setSelectedAction(IndictmentDecision.SPLITTING)
-                }}
-                large
-                backgroundColor="white"
-                label="Kljúfa mál"
-              />
+              {workingCase.defendants && workingCase.defendants.length > 1 && (
+                <RadioButton
+                  id="conclusion-splitting"
+                  name="conclusion-splitting"
+                  checked={selectedAction === IndictmentDecision.SPLITTING}
+                  onChange={() => {
+                    setSelectedAction(IndictmentDecision.SPLITTING)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label="Kljúfa mál"
+                />
+              )}
             </BlueBox>
           </Box>
           {selectedAction === IndictmentDecision.POSTPONING && (
@@ -791,6 +816,49 @@ const Conclusion: FC = () => {
           }
         />
       </FormContentContainer>
+      {modalVisible === 'SPLIT' && selectedDefendant && (
+        <Modal
+          title="Viltu kljúfa mál?"
+          text={`Ákærði ${selectedDefendant.name} verður klofinn frá málinu og nýtt mál stofnað.`}
+          primaryButton={{
+            text: 'Já, kljúfa mál',
+            onClick: async () => {
+              const newCase = (await splitDefendantFromCase(
+                workingCase.id,
+                selectedDefendant.id,
+              )) as Case
+
+              setSplitCase(newCase)
+              setModalVisible('CREATE_COURT_CASE_NUMBER')
+            },
+            isLoading: isSplittingDefendantFromCase,
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setModalVisible(undefined),
+          }}
+          onClose={() => setModalVisible(undefined)}
+        />
+      )}
+      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && splitCase && (
+        <Modal
+          title={`Nýtt mál - ${selectedDefendant?.name}`}
+          text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
+          primaryButton={{
+            text: 'Staðfesta',
+            onClick: () => console.log('Split case'),
+          }}
+        >
+          <CourtCaseNumberInput
+            workingCase={{
+              ...splitCase,
+              state: CaseState.RECEIVED,
+              type: CaseType.INDICTMENT,
+            }}
+            onCreateCourtCase={() => createCourtCase(splitCase.id)}
+          />
+        </Modal>
+      )}
     </PageLayout>
   )
 }

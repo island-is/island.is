@@ -46,6 +46,7 @@ import {
   EmploymentStatus,
   EmploymentStatusIds,
   EducationHistoryInAnswers,
+  ReasonsForJobSearchInAnswers,
 } from '@island.is/application/templates/unemployment-benefits'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -267,6 +268,19 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const resume = getValueViaPath<ResumeInAnswers>(answers, 'resume')
     resume?.resumeFile?.forEach((file) => {
       attachmentPromises.push(safeGetFileInfo(file, FileTypeIds.CV))
+    })
+
+    // ástæður atvinnuleysis - extra gögn
+    const reasonsForJobSearchExtraFiles =
+      getValueViaPath<ReasonsForJobSearchInAnswers>(
+        answers,
+        'reasonForJobSearch',
+      )
+    reasonsForJobSearchExtraFiles?.extraFileUpload?.forEach((file) => {
+      const fileTypeId = reasonsForJobSearchExtraFiles.attachmentTypeId
+      if (fileTypeId) {
+        attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+      }
     })
 
     await Promise.all(attachmentPromises)
