@@ -23,13 +23,13 @@ import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
+import { SearchInput } from '../SearchInput/SearchInput'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
-import { SearchInput } from '../SearchInput/SearchInput'
 
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {

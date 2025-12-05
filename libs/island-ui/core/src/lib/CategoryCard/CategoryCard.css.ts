@@ -19,11 +19,6 @@ export const icon = style({
   minWidth: 24,
   width: 32,
   height: 32,
-  // ...themeUtils.responsiveStyle({
-  //   md: {
-  //     minWidth: 40,
-  //   },
-  // }),
 })
 
 globalStyle(`${icon} svg`, {
