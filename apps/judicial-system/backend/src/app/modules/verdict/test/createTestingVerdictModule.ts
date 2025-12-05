@@ -77,8 +77,9 @@ export const createTestingVerdictModule = async () => {
     ],
   }).compile()
 
-  const verdictRepositoryService =
-    verdictModule.get<VerdictRepositoryService>(VerdictRepositoryService)
+  const verdictRepositoryService = verdictModule.get<VerdictRepositoryService>(
+    VerdictRepositoryService,
+  )
 
   const verdictService = verdictModule.get<VerdictService>(VerdictService)
 
