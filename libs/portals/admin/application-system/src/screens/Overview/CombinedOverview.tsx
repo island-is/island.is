@@ -7,6 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
+  useGetApplicationsInstitutionAdminQuery,
   useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
@@ -23,10 +24,12 @@ import { institutionMapper } from '@island.is/application/types'
 import { getFilteredApplications } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationSystemPaths } from '../../lib/paths'
+import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
   period: {},
+  searchStr: '',
 }
 
 const defaultMultiChoiceFilters: Record<
@@ -39,9 +42,13 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
+interface CombinedOverviewProps {
+  isSuperAdmin: boolean
+}
+
 const pageSize = 12
 
-const Overview = () => {
+const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
   const institutionApplications = invertBy(institutionMapper, (application) => {
     return application.slug
   })
@@ -62,40 +69,58 @@ const Overview = () => {
 
   const useAdvancedSearch = !!filters.typeId
 
-  const { data, loading: queryLoading } = useGetApplicationsSuperAdminQuery({
-    ssr: false,
-    variables: {
-      input: {
-        page: page,
-        count: pageSize,
-        applicantNationalId:
-          !useAdvancedSearch && filters.nationalId
-            ? filters.nationalId.replace('-', '')
-            : '',
-        from: filters.period.from?.toISOString(),
-        to: filters.period.to?.toISOString(),
-        typeId: filters.typeId,
-        searchStr:
-          useAdvancedSearch && filters.searchStr
-            ? filters.searchStr.replace('-', '')
-            : undefined,
-        status: multiChoiceFilters?.status,
-      },
+  const commonVariables = {
+    input: {
+      page,
+      count: pageSize,
+      applicantNationalId:
+        !useAdvancedSearch && filters.nationalId
+          ? filters.nationalId.replace('-', '')
+          : '',
+      from: filters.period.from?.toISOString(),
+      to: filters.period.to?.toISOString(),
+      typeId: filters.typeId,
+      searchStr:
+        useAdvancedSearch && filters.searchStr
+          ? filters.searchStr.replace('-', '')
+          : undefined,
+      status: multiChoiceFilters?.status,
     },
+  }
+
+  const {
+    data: institutionData,
+    loading: loadingInstitution,
+    refetch: refetchInstitution,
+  } = useGetApplicationsInstitutionAdminQuery({
+    ssr: false,
+    variables: commonVariables,
+    skip: isSuperAdmin, //do NOT run if user IS superAdmin
+  })
+
+  const {
+    data: superData,
+    loading: loadingSuper,
+    refetch: refetchSuper,
+  } = useGetApplicationsSuperAdminQuery({
+    ssr: false,
+    variables: commonVariables,
+    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
     onCompleted: (q) => {
-      // Initialize available applications from the initial response
-      // So that we can use them to filter by
       const names = q.applicationApplicationsAdmin
         ?.filter((x) => !!x.name)
-        .map((x) => x.name ?? '')
+        ?.map((x) => x.name ?? '')
+
       if (names) {
         setAvailableApplications(uniq(names))
       }
     },
   })
 
-  const isLoading = queryLoading || orgsLoading
-  const { applicationApplicationsAdmin = [] } = data ?? {}
+  const isLoading = loadingSuper || loadingInstitution || orgsLoading
+  const applicationApplicationsAdmin = isSuperAdmin
+    ? superData?.applicationApplicationsAdmin
+    : institutionData?.applicationApplicationsInstitutionAdmin?.rows
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
   const organizations = (orgData?.getOrganizations?.items ??
@@ -115,6 +140,20 @@ const Overview = () => {
         nationalId,
       }))
     }
+  }
+
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeId: typeId,
+    }))
+  }
+
+  const handleSearchStrChange = (searchStr: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      searchStr,
+    }))
   }
 
   const handleMultiChoiceFilterChange: FilterMultiChoiceProps['onChange'] = ({
@@ -144,7 +183,7 @@ const Overview = () => {
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
       // Clear all filters (except nationalId)
-      setFilters((prev) => ({ ...prev, period: {} }))
+      setFilters((prev) => ({ ...prev, period: {}, searchStr: '' }))
       setMultiChoiceFilters(defaultMultiChoiceFilters)
       setInstitutionFilters(undefined)
       return
@@ -161,7 +200,12 @@ const Overview = () => {
   }
 
   // Reset the page on filter change
-  useEffect(() => setPage(1), [filters, multiChoiceFilters])
+  useEffect(() => {
+    setPage(1)
+    const refetch = isSuperAdmin ? refetchSuper : refetchInstitution
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, multiChoiceFilters])
 
   const filteredApplicationList = getFilteredApplications(
     applicationAdminList ?? [],
@@ -183,17 +227,34 @@ const Overview = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
-      <Filters
-        onSearchChange={handleSearchChange}
-        onFilterChange={handleMultiChoiceFilterChange}
-        onDateChange={handleDateChange}
-        onFilterClear={clearFilters}
-        multiChoiceFilters={multiChoiceFilters}
-        filters={filters}
-        applications={availableApplications ?? []}
-        organizations={availableOrganizations ?? []}
-        numberOfDocuments={applicationAdminList?.length}
-      />
+      {isSuperAdmin ? (
+        <Filters
+          onTypeIdChange={handleTypeIdChange}
+          onSearchChange={handleSearchChange}
+          onFilterChange={handleMultiChoiceFilterChange}
+          onDateChange={handleDateChange}
+          onFilterClear={clearFilters}
+          multiChoiceFilters={multiChoiceFilters}
+          filters={filters}
+          applications={availableApplications ?? []}
+          organizations={availableOrganizations ?? []}
+          numberOfDocuments={applicationAdminList?.length}
+        />
+      ) : (
+        <InstitutionFilters
+          onTypeIdChange={handleTypeIdChange}
+          onSearchStrChange={handleSearchStrChange}
+          onSearchChange={handleSearchChange}
+          onFilterChange={handleMultiChoiceFilterChange}
+          onDateChange={handleDateChange}
+          onFilterClear={clearFilters}
+          multiChoiceFilters={multiChoiceFilters}
+          filters={filters}
+          numberOfDocuments={applicationAdminList?.length}
+          useAdvancedSearch={useAdvancedSearch}
+        />
+      )}
+
       {isLoading && applicantNationalId.length === 10 ? (
         <SkeletonLoader
           height={60}
@@ -201,12 +262,6 @@ const Overview = () => {
           space={2}
           borderRadius="large"
         />
-      ) : applicantNationalId === '' ? (
-        <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
-          <Text variant="h4">
-            {formatMessage(m.pleaseEnterValueToBeingSearch)}
-          </Text>
-        </Box>
       ) : (
         <ApplicationsTable
           applications={filteredApplicationList ?? []}
@@ -221,4 +276,4 @@ const Overview = () => {
   )
 }
 
-export default Overview
+export default CombinedOverview

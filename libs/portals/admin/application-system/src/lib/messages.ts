@@ -51,6 +51,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:application',
     defaultMessage: 'Umsókn',
   },
+  applicationType: {
+    id: 'admin-portal.application-system:applicationType',
+    defaultMessage: 'Tegund umsóknar',
+  },
+  applicationTypeDropdownPlaceholder: {
+    id: 'admin-portal.application-system:applicationTypeDropdownPlaceholder',
+    defaultMessage: 'Veldu tegund',
+  },
   applicant: {
     id: 'admin-portal.application-system:applicant',
     defaultMessage: 'Umsækjandi',
@@ -86,6 +94,10 @@ export const m = defineMessages({
   institution: {
     id: 'admin-portal.application-system:institution',
     defaultMessage: 'Stofnun',
+  },
+  institutionDropdownPlaceholder: {
+    id: 'admin-portal.application-system:institutionDropdownPlaceholder',
+    defaultMessage: 'Veldu stofnun',
   },
   status: {
     id: 'admin-portal.application-system:status',
@@ -195,10 +207,6 @@ export const m = defineMessages({
   clearSelected: {
     id: 'admin-portal.application-system:clearSelected',
     defaultMessage: 'Hreinsa val',
-  },
-  applicationType: {
-    id: 'admin-portal.application-system:applicationType',
-    defaultMessage: 'Tegund umsóknar',
   },
   searchPlaceholder: {
     id: 'admin-portal.application-system:searchPlaceholder',
