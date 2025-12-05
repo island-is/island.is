@@ -94,8 +94,7 @@ describe('InternalVerdictController - Update verdict appeal', () => {
     beforeEach(async () => {
       jest.spyOn(Date, 'now').mockImplementation(() => now.getTime())
 
-      const mockUpdate =
-        mockVerdictRepositoryService.update as jest.Mock
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedVerdict)
 
       then = await givenWhenThen()
