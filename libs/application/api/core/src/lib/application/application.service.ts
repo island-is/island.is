@@ -155,29 +155,23 @@ export class ApplicationService {
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    let applicationTypeIds: string[] = []
+    const { typeIds: applicationTypeIds, returnEmpty } =
+      await this.resolveApplicationTypeIds(institutionNationalId, typeId)
 
-    if (institutionNationalId) {
-      getTypeIdsForInstitution(institutionNationalId).forEach((applicationTypeId) => {applicationTypeIds.push(applicationTypeId)})
-
-      if (typeId) {
-        applicationTypeIds = applicationTypeIds.filter(applicationTypeId => applicationTypeId === typeId)
+    if (returnEmpty) {
+      return {
+        rows: [],
+        count: 0,
       }
-      if (applicationTypeIds.length < 1) {
-        return {
-          rows: [],
-          count: 0,
-        }
-      }
-    } else if (typeId) {
-      applicationTypeIds.push(typeId)
     }
 
     return this.applicationModel.findAndCountAll({
       where: {
         [Op.and]: [
           statuses ? { status: { [Op.in]: statuses } } : {},
-          applicationTypeIds?.length ? { typeId: { [Op.in]: applicationTypeIds } } : {},
+          applicationTypeIds?.length
+            ? { typeId: { [Op.in]: applicationTypeIds } }
+            : {},
           fromDate ? { created: { [Op.gte]: fromDate } } : {},
           toDate ? { created: { [Op.lte]: toDate } } : {},
           applicantNationalId
@@ -206,6 +200,42 @@ export class ApplicationService {
       offset: (page - 1) * count,
       order: [['modified', 'DESC']],
     })
+  }
+
+  private async resolveApplicationTypeIds(
+    institutionNationalId?: string,
+    typeId?: string,
+  ): Promise<{ typeIds?: string[]; returnEmpty: boolean }> {
+    // Case 1: neither institution nor typeId -> no type filter at all
+    if (!institutionNationalId && !typeId) {
+      return { returnEmpty: false }
+    }
+
+    // Case 2: only typeId -> filter by that typeId only
+    if (!institutionNationalId && typeId) {
+      return { typeIds: [typeId], returnEmpty: false }
+    }
+
+    // From here on, institutionNationalId is defined
+    const institutionTypeIds = getTypeIdsForInstitution(institutionNationalId!)
+
+    // If the institution has no types at all, no applications can match
+    if (!institutionTypeIds.length) {
+      return { returnEmpty: true }
+    }
+
+    // Case 3: institution only -> all types belonging to that institution
+    if (!typeId) {
+      return { typeIds: institutionTypeIds, returnEmpty: false }
+    }
+
+    // Case 4: both institution and typeId -> typeId must belong to the institution
+    if (!institutionTypeIds.includes(typeId)) {
+      return { returnEmpty: true }
+    }
+
+    // Valid institution+typeId combination
+    return { typeIds: [typeId], returnEmpty: false }
   }
 
   async getAllApplicationTypesInstitutionAdmin(
