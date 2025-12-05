@@ -37,6 +37,46 @@ export const getSocialProfile = (application: Application) => {
     caseManagerName,
     caseManagerEmail,
     hasIntegratedServices,
+  } = getApplicationAnswers(application.answers)
+
+  if (
+    (hasHadSupport === YES || hasDiagnoses === YES) &&
+    hasWelfareContact === YES
+  ) {
+    return {
+      hasHadSupport: hasHadSupport === YES,
+      hasDiagnoses: hasDiagnoses === YES,
+      hasIntegratedServices: hasIntegratedServices === YES,
+      caseWorkers: [
+        {
+          name: welfareContactName || '',
+          email: welfareContactEmail || '',
+          type: CaseWorkerInputTypeEnum.SupportManager,
+        },
+        ...(hasCaseManager === YES
+          ? [
+              {
+                name: caseManagerName || '',
+                email: caseManagerEmail || '',
+                type: CaseWorkerInputTypeEnum.CaseManager,
+              },
+            ]
+          : []),
+      ],
+    }
+  }
+
+  // If hasWelfareContact is NO or not defined, return empty caseWorkers array
+  return {
+    hasHadSupport: hasHadSupport === YES,
+    hasDiagnoses: hasDiagnoses === YES,
+    hasIntegratedServices: false,
+    caseWorkers: [],
+  }
+}
+
+export const getSpecialEducationSocialProfile = (application: Application) => {
+  const {
     specialEducationWelfareContactName,
     specialEducationWelfareContactEmail,
     specialEducationCaseManagerName,
@@ -60,116 +100,74 @@ export const getSocialProfile = (application: Application) => {
     isCaseOpenWithChildProtectiveServices,
   } = getApplicationAnswers(application.answers)
 
-  if (
-    hasSpecialEducationSubType(application.answers, application.externalData)
-  ) {
-    const caseWorkers: CaseWorkerInput[] = []
-    const previousSocialServices: string[] = []
-    const ongoingSocialServices: string[] = []
+  const caseWorkers: CaseWorkerInput[] = []
+  const previousSocialServices: string[] = []
+  const ongoingSocialServices: string[] = []
 
-    const hasBehaviorSubType = hasBehaviorSchoolOrDepartmentSubType(
-      application.answers,
-      application.externalData,
-    )
+  const hasBehaviorSubType = hasBehaviorSchoolOrDepartmentSubType(
+    application.answers,
+    application.externalData,
+  )
 
-    if (hasSpecialEducationWelfareContact(application.answers)) {
-      caseWorkers.push({
-        name: specialEducationWelfareContactName || '',
-        email: specialEducationWelfareContactEmail || '',
-        type: CaseWorkerInputTypeEnum.SupportManager,
-      })
+  if (hasSpecialEducationWelfareContact(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationWelfareContactName || '',
+      email: specialEducationWelfareContactEmail || '',
+      type: CaseWorkerInputTypeEnum.SupportManager,
+    })
+  }
+
+  if (hasSpecialEducationCaseManager(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationCaseManagerName || '',
+      email: specialEducationCaseManagerEmail || '',
+      type: CaseWorkerInputTypeEnum.CaseManager,
+    })
+  }
+
+  if (hasAssessmentOfSupportNeeds === YES) {
+    previousSocialServices.push(supportNeedsAssessmentBy || '')
+  } else if (isAssessmentOfSupportNeedsInProgress === YES) {
+    ongoingSocialServices.push(supportNeedsAssessmentBy || '')
+  }
+
+  if (hasConfirmedDiagnosis === YES) {
+    previousSocialServices.push(...diagnosticians)
+  } else if (isDiagnosisInProgress === YES) {
+    ongoingSocialServices.push(...diagnosticians)
+  }
+
+  if (hasOtherSpecialists === YES) {
+    previousSocialServices.push(...specialists)
+  }
+
+  if (hasReceivedServicesFromMunicipality === YES) {
+    previousSocialServices.push(...servicesFromMunicipality)
+  }
+
+  if (hasBehaviorSubType) {
+    if (hasReceivedChildAndAdolescentPsychiatryServices === YES) {
+      previousSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+      previousSocialServices.push(
+        ...childAndAdolescentPsychiatryServicesReceived,
+      )
+    } else if (isOnWaitlistForServices === YES) {
+      ongoingSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
     }
+  }
 
-    if (hasSpecialEducationCaseManager(application.answers)) {
-      caseWorkers.push({
-        name: specialEducationCaseManagerName || '',
-        email: specialEducationCaseManagerEmail || '',
-        type: CaseWorkerInputTypeEnum.CaseManager,
-      })
-    }
-
-    if (hasAssessmentOfSupportNeeds === YES) {
-      previousSocialServices.push(supportNeedsAssessmentBy || '')
-    } else if (isAssessmentOfSupportNeedsInProgress === YES) {
-      ongoingSocialServices.push(supportNeedsAssessmentBy || '')
-    }
-
-    if (hasConfirmedDiagnosis === YES) {
-      previousSocialServices.push(...diagnosticians)
-    } else if (isDiagnosisInProgress === YES) {
-      ongoingSocialServices.push(...diagnosticians)
-    }
-
-    if (hasOtherSpecialists === YES) {
-      previousSocialServices.push(...specialists)
-    }
-
-    if (hasReceivedServicesFromMunicipality === YES) {
-      previousSocialServices.push(...servicesFromMunicipality)
-    }
-
-    if (hasBehaviorSubType) {
-      if (hasReceivedChildAndAdolescentPsychiatryServices === YES) {
-        previousSocialServices.push(
-          childAndAdolescentPsychiatryDepartment || '',
-        )
-        previousSocialServices.push(
-          ...childAndAdolescentPsychiatryServicesReceived,
-        )
-      } else if (isOnWaitlistForServices === YES) {
-        ongoingSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
-      }
-    }
-
-    return {
-      caseWorkers: caseWorkers,
-      hasIntegratedServices: specialEducationHasIntegratedServices === YES,
-      previousSocialServices: previousSocialServices,
-      ongoingSocialServices: ongoingSocialServices,
-      ...(hasBehaviorSubType && {
-        previousChildProtectionCase:
-          hasBeenReportedToChildProtectiveServices === YES,
-        ...(hasBeenReportedToChildProtectiveServices === YES && {
-          openChildProtectionCase:
-            isCaseOpenWithChildProtectiveServices === YES,
-        }),
+  return {
+    caseWorkers: caseWorkers,
+    hasIntegratedServices: specialEducationHasIntegratedServices === YES,
+    previousSocialServices: previousSocialServices,
+    ongoingSocialServices: ongoingSocialServices,
+    ...(hasBehaviorSubType && {
+      previousChildProtectionCase:
+        hasBeenReportedToChildProtectiveServices === YES,
+      ...(hasBeenReportedToChildProtectiveServices === YES && {
+        openChildProtectionCase: isCaseOpenWithChildProtectiveServices === YES,
       }),
-    }
-  } else {
-    if (
-      (hasHadSupport === YES || hasDiagnoses === YES) &&
-      hasWelfareContact === YES
-    ) {
-      return {
-        hasHadSupport: hasHadSupport === YES,
-        hasDiagnoses: hasDiagnoses === YES,
-        hasIntegratedServices: hasIntegratedServices === YES,
-        caseWorkers: [
-          {
-            name: welfareContactName || '',
-            email: welfareContactEmail || '',
-            type: CaseWorkerInputTypeEnum.SupportManager,
-          },
-          ...(hasCaseManager === YES
-            ? [
-                {
-                  name: caseManagerName || '',
-                  email: caseManagerEmail || '',
-                  type: CaseWorkerInputTypeEnum.CaseManager,
-                },
-              ]
-            : []),
-        ],
-      }
-    }
-
-    // If hasWelfareContact is NO or not defined, return empty caseWorkers array
-    return {
-      hasHadSupport: hasHadSupport === YES,
-      hasDiagnoses: hasDiagnoses === YES,
-      hasIntegratedServices: false,
-      caseWorkers: [],
-    }
+    }),
   }
 }
 
@@ -222,6 +220,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     alternativeSpecialEducationDepartment
       .filter((item) => item.department)
       .map((item) => item.department)
+
+  const isSpecialEducation = hasSpecialEducationSubType(
+    application.answers,
+    application.externalData,
+  )
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
@@ -293,10 +296,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
       ...(shouldShowReasonForApplicationPage(application.answers) && {
-        reasonId: hasSpecialEducationSubType(
-          application.answers,
-          application.externalData,
-        )
+        reasonId: isSpecialEducation
           ? counsellingRegardingApplication
           : reasonForApplicationId,
       }),
@@ -315,7 +315,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: getSocialProfile(application),
+      social: isSpecialEducation
+        ? getSpecialEducationSocialProfile(application)
+        : getSocialProfile(application),
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
