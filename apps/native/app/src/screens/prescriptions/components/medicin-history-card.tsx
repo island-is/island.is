@@ -36,13 +36,6 @@ const DispensationHeader = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const DispensationRowItem = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
-`
-
 const DispensationCheckmark = styled.View`
   max-width: 15%;
   padding-right: ${({ theme }) => theme.spacing[2]}px;
@@ -76,12 +69,10 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
         (medicine.dispensations?.length ?? 0) || false,
   })
 
-  const [
-    getDispensationForAtc,
-    { data: atcData, loading: atcLoading, error: atcError },
-  ] = useGetMedicineDispensationForAtcLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
+  const [getDispensationForAtc, { data: atcData, loading: atcLoading }] =
+    useGetMedicineDispensationForAtcLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
 
   useEffect(() => {
     if (atcData) {

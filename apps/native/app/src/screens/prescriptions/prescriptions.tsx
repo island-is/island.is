@@ -22,6 +22,10 @@ import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicin-history-card'
 import { PrescriptionCard } from './components/prescription-card'
 
+type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
+  HealthDirectoratePrescription[] &
+  RightsPortalDrugCertificate[]
+
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
@@ -31,12 +35,8 @@ const Wrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
-const Top = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((_, intl) => ({
+  createNavigationOptionHooks((_) => ({
     topBar: {
       title: {
         text: '',
@@ -193,7 +193,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   ])
 
   const activeTab = tabs[selectedTab]
-  const activeTabData = activeTab?.getData()
+  const activeTabData = activeTab?.getData() as ActiveTabData
 
   const handleTabChange = (tabIndex: number) => {
     setSelectedTab(tabIndex)
@@ -256,7 +256,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
           </Wrapper>
           {activeTab &&
             (activeTabData?.length || activeTab.queryResult.loading) &&
-            activeTab.renderContent(activeTabData as any)}
+            activeTab.renderContent(activeTabData)}
           {showError && (
             <Wrapper>
               <Problem error={activeTab?.queryResult.error} />
@@ -280,7 +280,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               ?.renderContent(
                 tabs
                   .find((tab) => tab.id === 'drugCertificates')
-                  ?.getData() as any,
+                  ?.getData() as ActiveTabData,
               )}
           </Wrapper>
         </Host>
