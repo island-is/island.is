@@ -2,8 +2,6 @@ import { ReactNode } from 'react'
 
 import {
   Box,
-  Button,
-  CategoryCard,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -14,7 +12,6 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'

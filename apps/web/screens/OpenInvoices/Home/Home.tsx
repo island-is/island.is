@@ -8,7 +8,6 @@ import {
   GridContainer,
   GridRow,
   Icon,
-  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
