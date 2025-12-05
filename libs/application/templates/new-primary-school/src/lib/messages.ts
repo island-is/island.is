@@ -7,18 +7,18 @@ export const newPrimarySchoolMessages: MessageDir = {
   shared: defineMessages({
     applicationName: {
       id: 'nps.application:application.name',
-      defaultMessage: 'Umsókn í nýjan grunnskóla',
-      description: 'Application for a new primary school',
+      defaultMessage: 'Umsókn í grunnskóla',
+      description: 'Application for primary school',
     },
     enrollmentApplicationName: {
       id: 'nps.application:enrollment.application.name',
-      defaultMessage: 'Innritun í grunnskóla',
-      description: 'Enrollment in primary school',
+      defaultMessage: 'Innritun í 1. bekk',
+      description: 'Enrollment in 1st grade',
     },
     newPrimarySchoolApplicationName: {
       id: 'nps.application:new.primary.school.application.name',
-      defaultMessage: 'Umsókn í nýjan skóla',
-      description: 'Application for a new school',
+      defaultMessage: 'Umsókn um skólaskipti',
+      description: 'Application for school transfer',
     },
     institution: {
       id: 'nps.application:institution.name',
@@ -278,24 +278,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
-    differentPlaceOfResidence: {
-      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence',
-      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
-      description:
-        "Is the child's temporary residence different from the registered legal domicile?",
-    },
-    differentPlaceOfResidenceDescription: {
-      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence.description',
-      defaultMessage:
-        'Aðsetur og lögheimili er ekki sama skráningin. Aðsetur er tímabundin skráning á búsetu sem notuð er þegar dvalið er utan lögheimilis í afmarkaðan tíma svo sem vegna náms eða veikinda.',
-      description:
-        'Temporary residence and legal domicile are not the same registration. Temporary residence is a temporary registration of residence used when staying outside the legal domicile for a limited time, such as for education or illness.',
-    },
-    childInfoPlaceOfResidence: {
-      id: 'nps.application:childrenNGuardians.child.info.place.of.residence',
-      defaultMessage: 'Aðsetur barns',
-      description: "Child's temporary residence",
-    },
 
     // Guardians
     guardiansSubSectionTitle: {
@@ -402,12 +384,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:primary.school.reason.for.application.placeholder',
       defaultMessage: 'Veldu ástæðu',
       description: 'Select reason',
-    },
-    registerNewDomicileAlertMessage: {
-      id: 'nps.application:primary.school.register.new.domicile.alert.message',
-      defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
-      description:
-        'We remind you to register your new domicile in Registers Iceland.',
     },
 
     // Siblings
@@ -542,6 +518,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We want to properly welcome your child to the school. To prepare for their arrival, please select a date for the first school day.',
     },
+    expectedStartDateTitle: {
+      id: 'nps.application:primary.school.expected.start.date.title',
+      defaultMessage: 'Áætlaður upphafsdagur',
+      description: 'Expected start date',
+    },
+    expectedStartDatePlaceholder: {
+      id: 'nps.application:primary.school.expected.start.date.placeholder',
+      defaultMessage: 'Veldu áætlaðan upphafsdag',
+      description: 'Select expected start date',
+    },
     expectedEndDateDescription: {
       id: 'nps.application:primary.school.expected.end.date.description',
       defaultMessage: 'Vinsamlegast skráið áætlaðan lokadag',
@@ -549,8 +535,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     expectedEndDateTitle: {
       id: 'nps.application:primary.school.expected.end.date.title',
-      defaultMessage: 'Lokadagur',
-      description: 'End date',
+      defaultMessage: 'Áætlaður lokadagur',
+      description: 'Expected end date',
+    },
+    expectedEndDatePlaceholder: {
+      id: 'nps.application:primary.school.expected.end.date.placeholder',
+      defaultMessage: 'Veldu áætlaðan lokadag',
+      description: 'Select expected end date',
     },
     temporaryStay: {
       id: 'nps.application:primary.school.temporary.stay',
@@ -961,6 +952,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.current.nursery',
       defaultMessage: 'Núverandi leikskóli',
       description: 'Current nursery',
+    },
+    expectedStartDate: {
+      id: 'nps.application:overview.expected.start.date',
+      defaultMessage: 'Áætlaður upphafsdagur',
+      description: 'Expected start date',
     },
     expectedEndDate: {
       id: 'nps.application:overview.expected.end.date',

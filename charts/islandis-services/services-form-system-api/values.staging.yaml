@@ -24,9 +24,15 @@ env:
   DB_NAME: 'services_form_system_api'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'services_form_system_api'
+  FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
+  FORM_SYSTEM_BUCKET: 'island-is-staging-storage-form-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+  S3_REGION: 'eu-west-1'
+  S3_TIME_TO_LIVE_GET: '5'
+  S3_TIME_TO_LIVE_POST: '15'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'islandis'
@@ -76,7 +82,7 @@ initContainer:
     DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
 namespace: 'services-form-system-api'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

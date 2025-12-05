@@ -7,17 +7,13 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
-  Feature,
-  isRulingOrDismissalCase,
-} from '@island.is/judicial-system/types'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
   Conclusion,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -70,7 +66,6 @@ export const Overview = () => {
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -174,7 +169,7 @@ export const Overview = () => {
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.VERDICT_DELIVERY) && verdict && (
+                {verdict && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">

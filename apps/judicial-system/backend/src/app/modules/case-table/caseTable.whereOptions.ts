@@ -174,4 +174,5 @@ export const caseTableWhereOptions: Record<
     prosecutionIndictmentsInProgressWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
     prosecutionIndictmentsCompletedWhereOptions,
+  [CaseTableType.STATISTICS]: () => ({}),
 }

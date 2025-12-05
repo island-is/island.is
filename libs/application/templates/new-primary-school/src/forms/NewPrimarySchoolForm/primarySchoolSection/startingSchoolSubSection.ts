@@ -8,9 +8,12 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
+import { ApplicationType, OrganizationSubType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getSelectedSchoolSubType,
+} from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
 
 export const startingSchoolSubSection = buildSubSection({
@@ -30,8 +33,9 @@ export const startingSchoolSubSection = buildSubSection({
       children: [
         buildDateField({
           id: 'startingSchool.expectedStartDate',
-          title: newPrimarySchoolMessages.shared.date,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+          title: newPrimarySchoolMessages.primarySchool.expectedStartDateTitle,
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedStartDatePlaceholder,
           defaultValue: null,
           minDate: () => new Date(),
         }),
@@ -52,10 +56,11 @@ export const startingSchoolSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
-            const { selectedSchoolType } = getApplicationAnswers(answers)
-
-            return selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+          condition: (answers, externalData) => {
+            return (
+              getSelectedSchoolSubType(answers, externalData) ===
+              OrganizationSubType.INTERNATIONAL_SCHOOL
+            )
           },
         }),
         buildDescriptionField({
@@ -64,15 +69,15 @@ export const startingSchoolSubSection = buildSubSection({
             newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              getSelectedSchoolSubType(answers, externalData) ===
+                OrganizationSubType.INTERNATIONAL_SCHOOL &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -81,16 +86,17 @@ export const startingSchoolSubSection = buildSubSection({
         buildDateField({
           id: 'startingSchool.expectedEndDate',
           title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-          condition: (answers) => {
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedEndDatePlaceholder,
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              getSelectedSchoolSubType(answers, externalData) ===
+                OrganizationSubType.INTERNATIONAL_SCHOOL &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )

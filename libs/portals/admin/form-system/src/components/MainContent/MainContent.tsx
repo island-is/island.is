@@ -34,7 +34,7 @@ export const MainContent = () => {
   const { formatMessage } = useIntl()
 
   return (
-    <Box padding={2}>
+    <Box>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&

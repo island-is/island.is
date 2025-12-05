@@ -33,6 +33,10 @@ export const createBullModule = () => {
       name: 'upload',
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
         prefix: `{${config.bullModuleName}}`,
+        defaultJobOptions: {
+          removeOnComplete: { age: 5 * 60 },
+          removeOnFail: { age: 14 * 24 * 60 * 60 }, // 2 weeks
+        },
         createClient: () =>
           // Type assertion needed due to Bull's Redis client interface requirements
           createRedisCluster({

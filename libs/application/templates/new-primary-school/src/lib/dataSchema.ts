@@ -1,12 +1,8 @@
+import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ApplicationType,
-  LanguageEnvironmentOptions,
-  ReasonForApplicationOptions,
-} from '../utils/constants'
-import { NO, YES } from '@island.is/application/core'
+import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -20,6 +16,13 @@ const phoneNumberSchema = z
     params: errorMessages.phoneNumber,
   })
 
+const nationalIdWithNameSchema = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((nationalId) => kennitala.isValid(nationalId), {
+    params: errorMessages.nationalId,
+  }),
+})
+
 export const dataSchema = z.object({
   applicationType: z.enum([
     ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -32,13 +35,6 @@ export const dataSchema = z.object({
       usePronounAndPreferredName: z.array(z.string()),
       preferredName: z.string().optional(),
       pronouns: z.array(z.string()).optional().nullable(),
-      differentPlaceOfResidence: z.enum([YES, NO]),
-      placeOfResidence: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
     })
     .refine(
       ({ usePronounAndPreferredName, preferredName, pronouns }) =>
@@ -53,20 +49,6 @@ export const dataSchema = z.object({
           ? (!!pronouns && pronouns.length > 0) || !!preferredName
           : true,
       { path: ['pronouns'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.streetAddress.length > 0
-          : true,
-      { path: ['placeOfResidence', 'streetAddress'] },
-    )
-    .refine(
-      ({ differentPlaceOfResidence, placeOfResidence }) =>
-        differentPlaceOfResidence === YES
-          ? placeOfResidence && placeOfResidence.postalCode.length > 0
-          : true,
-      { path: ['placeOfResidence', 'postalCode'] },
     ),
   guardians: z.array(
     z
@@ -88,11 +70,8 @@ export const dataSchema = z.object({
   relatives: z
     .array(
       z.object({
-        fullName: z.string().min(1),
+        nationalIdWithName: nationalIdWithNameSchema,
         phoneNumber: phoneNumberSchema,
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
         relation: z.string(),
       }),
     )
@@ -103,36 +82,9 @@ export const dataSchema = z.object({
     municipality: z.string(),
     nursery: z.string(),
   }),
-  reasonForApplication: z
-    .object({
-      reason: z.string(),
-      transferOfLegalDomicile: z
-        .object({
-          streetAddress: z.string(),
-          postalCode: z.string(),
-        })
-        .optional(),
-    })
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.streetAddress.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'streetAddress'],
-      },
-    )
-    .refine(
-      ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
-          ? transferOfLegalDomicile &&
-            transferOfLegalDomicile.postalCode.length > 0
-          : true,
-      {
-        path: ['transferOfLegalDomicile', 'postalCode'],
-      },
-    ),
+  reasonForApplication: z.object({
+    reason: z.string(),
+  }),
   currentSchool: z
     .object({
       municipality: z.string().optional().nullable(),
@@ -156,10 +108,7 @@ export const dataSchema = z.object({
   siblings: z
     .array(
       z.object({
-        fullName: z.string().min(1),
-        nationalId: z.string().refine((n) => kennitala.isValid(n), {
-          params: errorMessages.nationalId,
-        }),
+        nationalIdWithName: nationalIdWithNameSchema,
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -201,6 +150,10 @@ export const dataSchema = z.object({
       preferredLanguage: z.string().optional().nullable(),
     })
     .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      // LanguageEnvironment is stored as <id>::<option> in the DB
+      const selectedLanguageEnvironment =
+        languageEnvironment.split('::')[1] ?? ''
+
       const checkAndAddIssue = (index: number) => {
         // If required 2 languages but the second language field is still hidden
         // else check if applicant has selected a languages
@@ -220,12 +173,13 @@ export const dataSchema = z.object({
       }
 
       if (
-        languageEnvironment ===
+        selectedLanguageEnvironment ===
         LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
       ) {
         checkAndAddIssue(0)
       } else if (
-        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        selectedLanguageEnvironment ===
+        LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
       ) {
         checkAndAddIssue(0)
         checkAndAddIssue(1)
@@ -233,12 +187,16 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
+        // LanguageEnvironment is stored as <id>::<option> in the DB
+        const selectedLanguageEnvironment =
+          languageEnvironment.split('::')[1] ?? ''
+
         if (
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 1) ||
-          (languageEnvironment ===
+          (selectedLanguageEnvironment ===
             LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
             !!selectedLanguages &&
             selectedLanguages?.length >= 2)
@@ -299,14 +257,14 @@ export const dataSchema = z.object({
       hasWelfareContact: z.string().optional(),
       welfareContact: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
         .object({
-          name: z.string(),
+          name: z.string().optional(),
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
@@ -324,7 +282,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact && welfareContact.name.length > 0
+          ? welfareContact && !!welfareContact.name?.trim()
           : true,
       { path: ['welfareContact', 'name'] },
     )
@@ -332,9 +290,7 @@ export const dataSchema = z.object({
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact &&
-            welfareContact.email &&
-            welfareContact.email.length > 0
+          ? welfareContact && !!welfareContact.email?.trim()
           : true,
       { path: ['welfareContact', 'email'] },
     )
@@ -357,7 +313,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.name.length > 0
+          ? caseManager && !!caseManager.name?.trim()
           : true,
       { path: ['caseManager', 'name'] },
     )
@@ -372,7 +328,7 @@ export const dataSchema = z.object({
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.email && caseManager.email.length > 0
+          ? caseManager && !!caseManager.email?.trim()
           : true,
       {
         path: ['caseManager', 'email'],

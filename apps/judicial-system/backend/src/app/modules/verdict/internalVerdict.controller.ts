@@ -20,13 +20,16 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
+  formatDate,
+  getVerdictServiceStatusText,
+} from '@island.is/judicial-system/formatters'
+import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   indictmentCases,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
@@ -39,8 +42,12 @@ import {
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
+import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import { VerdictService } from '../verdict/verdict.service'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -76,13 +83,13 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate(
-    new Date(baseDate),
+  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
+    baseDate: new Date(baseDate),
     isFine,
-  )
-  if (hasDatePassed(appealDeadline)) {
+  })
+  if (isDeadlineExpired) {
     throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
     )
   }
 }
@@ -94,6 +101,7 @@ export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -160,17 +168,31 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
     @CurrentVerdict() verdict: Verdict,
+    @CurrentCase() theCase: Case,
     @Body() update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(
-      `Updating verdict by external police document id ${policeDocumentId}`,
+    this.logger.info(
+      `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
-    return await this.verdictService.updatePoliceDelivery(verdict, update)
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+    )
+    if (
+      updatedVerdict.serviceStatus &&
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
+        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+      })
+    }
+    return updatedVerdict
   }
 
   @UseGuards(
@@ -224,5 +246,25 @@ export class InternalVerdictController {
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }
+  }
+
+  @ApiOkResponse({
+    description:
+      'Delivers a service certificate to the police for all defendants where appeal deadline is expired',
+  })
+  @Post('verdict/deliverVerdictServiceCertificates')
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    VerdictServiceCertificateDelivery[]
+  > {
+    this.logger.debug(
+      `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
+    )
+
+    const delivered =
+      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
+
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
+
+    return delivered
   }
 }

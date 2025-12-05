@@ -13,6 +13,7 @@ import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
   FinancialIndexationEntry,
+  errorMapper,
 } from './utils/utils'
 
 @Injectable()
@@ -33,12 +34,11 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    const { id, answers } = application
+
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
       draftRequest: {
-        ...draftAnswers(
-          applicationAnswers(application.answers),
-          application.id,
-        ),
+        ...draftAnswers(applicationAnswers(answers), id),
       },
     })
   }
@@ -65,7 +65,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
 
-        throw new Error(`${errorMessage}: ${error.message || 'Unknown error'}`)
+        const mappedError = errorMapper(error)
+
+        throw mappedError
       })
   }
 }

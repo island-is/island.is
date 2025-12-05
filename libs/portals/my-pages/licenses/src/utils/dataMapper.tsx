@@ -458,7 +458,7 @@ enum LicenseTypePath {
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
-  EnvironmentAgency = 'EnvironmentAgency',
+  NatureConservationAgencyofIceland = 'NatureConservationAgencyofIceland',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration',
   DistrictCommissioners = 'DistrictCommissioners',
@@ -466,7 +466,7 @@ enum LicenseProviderId {
 }
 enum LicenseProviderPath {
   vinnueftirlitid = 'vinnueftirlitid',
-  umhverfisstofnun = 'umhverfisstofnun',
+  natturuverndarstofnun = 'natturuverndarstofnun',
   rikislogreglustjori = 'rikislogreglustjori',
   tryggingastofnun = 'tryggingastofnun',
   syslumenn = 'syslumenn',
@@ -564,7 +564,7 @@ export const getTitleAndLogo = (type: string) => {
     case LicenseType.HuntingLicense:
       return {
         title: m.huntingLicense,
-        logo: './assets/images/umhverfisstofnun.svg',
+        logo: './assets/images/natturuverndarstofnun.svg',
       }
     case LicenseType.FirearmLicense:
       return {
@@ -640,8 +640,8 @@ export const getPathFromProviderId = (id: string) => {
   switch (id) {
     case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
       return LicenseProviderPath.vinnueftirlitid
-    case LicenseProviderId.EnvironmentAgency:
-      return LicenseProviderPath.umhverfisstofnun
+    case LicenseProviderId.NatureConservationAgencyofIceland:
+      return LicenseProviderPath.natturuverndarstofnun
     case LicenseProviderId.NationalPoliceCommissioner:
       return LicenseProviderPath.rikislogreglustjori
     case LicenseProviderId.SocialInsuranceAdministration:

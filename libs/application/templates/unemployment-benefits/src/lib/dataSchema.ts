@@ -16,7 +16,6 @@ import {
   licenseSchema,
   currentSituationSchema,
 } from './schemas'
-import { WorkingAbility } from '../shared'
 import { reasonForJobSearchSchema } from './schemas/reasonForJobSearchSchema'
 
 const FileSchema = z.object({
@@ -27,7 +26,12 @@ const FileSchema = z.object({
 
 export const languageSkillsSchema = z.object({
   language: z.string().nullish(),
-  skill: z.string(),
+  skill: z
+    .string()
+    .optional()
+    .refine((v) => v !== undefined && v !== '', {
+      params: serviceErrors.requiredError,
+    }),
 })
 
 const euresSchema = z.object({
@@ -48,9 +52,7 @@ export const introductoryMeetingSchema = z.object({
 })
 
 export const workingAbilitySchema = z.object({
-  status: z
-    .nativeEnum(WorkingAbility)
-    .refine((v) => Object.values(WorkingAbility).includes(v)),
+  status: z.string(),
   medicalReport: z.array(FileSchema).optional(),
 })
 
@@ -99,11 +101,6 @@ export const UnemploymentBenefitsSchema = z.object({
     .refine((v) => v.includes(YES), {
       params: serviceErrors.iUnderstandError,
     }),
-  introductoryMeetingAgreement: z
-    .array(z.string())
-    .refine((v) => v.includes(YES), {
-      params: serviceErrors.iUnderstandError,
-    }),
   unemploymentBenefitsPayoutAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
@@ -114,6 +111,17 @@ export const UnemploymentBenefitsSchema = z.object({
     .refine((v) => v.includes(YES), {
       params: serviceErrors.iUnderstandError,
     }),
+  acknowledgements: z.object({
+    dataCollectionAcknowledgement: z.string(),
+    notifyChangesAcknowledgement: z.string(),
+    rightsAndObligationsAcknowledgement: z.string(),
+    workAlongsidePaymentsAcknowledgement: z.string(),
+    lossOfBenefitEntitlementAcknowledgement: z.string(),
+    foreignTravelAndWorkAbroadAcknowledgement: z.string(),
+    unemploymentBenefitsPaymentAcknowledgement: z.string(),
+    meetingsAndMeasuresAcknowledgement: z.string(),
+    monthlyJobSearchAcknowledgement: z.string(),
+  }),
 })
 
 export type UnemploymentBenefits = z.TypeOf<typeof UnemploymentBenefitsSchema>

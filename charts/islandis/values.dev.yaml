@@ -53,7 +53,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -95,7 +95,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
-    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
+    REDIS_URL_NODE_01: 'clustercfg.ads-valkey-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -168,7 +168,7 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -255,7 +255,7 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -303,6 +303,7 @@ api:
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENVIRONMENT: 'dev'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -330,7 +331,7 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
@@ -392,7 +393,6 @@ api:
     XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1'
-    XROAD_HUNTING_LICENSE_PATH: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
@@ -406,6 +406,7 @@ api:
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
+    XROAD_NVS_PERMITS_PATH: 'IS-DEV/GOV/10085/NVS-Protected/api'
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application'
     XROAD_OFFICIAL_JOURNAL_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal'
     XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1'
@@ -413,6 +414,7 @@ api:
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
+    XROAD_POLICE_CASES_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/MittLogreglanApi-v1'
     XROAD_PRACTICAL_EXAMS_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
@@ -429,6 +431,7 @@ api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_TR_PATH: 'IS-DEV/GOV/10008/TR-Protected/external-v1'
+    XROAD_TR_PATH_V2: 'IS-DEV/GOV/10008/TR-Protected/external-v2'
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_MILEAGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
@@ -441,6 +444,7 @@ api:
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
+    XROAD_VERDICTS_GOPRO_PATH: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '10003'
     XROAD_WORK_ACCIDENT_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token'
@@ -459,9 +463,9 @@ api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 10
       path: '/liveness'
-      timeoutSeconds: 3
+      timeoutSeconds: 5
     readiness:
       initialDelaySeconds: 3
       path: '/health'
@@ -469,7 +473,7 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 90
+        cpuAverageUtilization: 75
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -490,7 +494,7 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -502,10 +506,10 @@ api:
   resources:
     limits:
       cpu: '1200m'
-      memory: '3200Mi'
+      memory: '2500Mi'
     requests:
-      cpu: '400m'
-      memory: '896Mi'
+      cpu: '800m'
+      memory: '1500Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -539,6 +543,11 @@ api:
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
     DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER'
+    FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH'
+    FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID'
+    FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET'
+    FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
     FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
@@ -565,6 +574,7 @@ api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
     LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
+    LANDSPITALI_PAYMENT_ORGANISATION_ID: '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID'
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -583,6 +593,7 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
@@ -743,6 +754,7 @@ application-system-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_TR_PATH: 'IS-DEV/GOV/10008/TR-Protected/external-v1'
+    XROAD_TR_PATH_V2: 'IS-DEV/GOV/10008/TR-Protected/external-v2'
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_MILEAGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
@@ -824,7 +836,7 @@ application-system-api:
       DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -966,7 +978,7 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1054,7 +1066,7 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1116,7 +1128,7 @@ cms-importer-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1184,7 +1196,7 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1250,7 +1262,7 @@ contentful-apps:
             - '/'
   namespace: 'contentful-apps'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1314,7 +1326,7 @@ contentful-entry-tagger-service:
             - '/'
   namespace: 'contentful-entry-tagger'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1411,7 +1423,7 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1536,7 +1548,7 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1609,7 +1621,7 @@ form-system-web:
             - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1684,7 +1696,7 @@ github-actions-cache:
             - '/'
   namespace: 'github-actions-cache'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1792,7 +1804,7 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1858,7 +1870,7 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1896,7 +1908,7 @@ license-api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
-    XROAD_HUNTING_LICENSE_PATH: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api'
+    XROAD_NVS_PERMITS_PATH: 'IS-DEV/GOV/10085/NVS-Protected/api'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
@@ -1932,7 +1944,7 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2060,7 +2072,7 @@ payments:
             - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2134,7 +2146,7 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2234,7 +2246,7 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2371,7 +2383,7 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2449,7 +2461,7 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2565,7 +2577,7 @@ service-portal-api:
       DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2662,7 +2674,7 @@ services-bff-portals-admin:
             - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2749,7 +2761,7 @@ services-bff-portals-my-pages:
             - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2836,7 +2848,7 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2871,9 +2883,15 @@ services-form-system-api:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
+    FORM_SYSTEM_BUCKET: 'island-is-dev-storage-form-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    S3_REGION: 'eu-west-1'
+    S3_TIME_TO_LIVE_GET: '5'
+    S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2923,7 +2941,7 @@ services-form-system-api:
       DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
   namespace: 'services-form-system-api'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2999,7 +3017,7 @@ services-payment-flow-update-handler:
             - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3046,7 +3064,7 @@ services-payments:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/payments-v1'
+    XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is-protected/payments-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
@@ -3118,7 +3136,7 @@ services-payments:
       DB_PASS: '/k8s/services-payments/DB_PASSWORD'
   namespace: 'services-payments'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3209,7 +3227,7 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3278,7 +3296,7 @@ services-sessions-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -3369,7 +3387,7 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3497,7 +3515,7 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3583,7 +3601,7 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3655,7 +3673,7 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3753,7 +3771,7 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3876,7 +3894,7 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3977,7 +3995,7 @@ user-notification-birthday-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4077,7 +4095,7 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4198,7 +4216,7 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4252,9 +4270,9 @@ web:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 10
       path: '/liveness'
-      timeoutSeconds: 3
+      timeoutSeconds: 5
     readiness:
       initialDelaySeconds: 20
       path: '/readiness'
@@ -4262,7 +4280,7 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 90
+        cpuAverageUtilization: 75
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -4282,7 +4300,7 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4293,11 +4311,11 @@ web:
     min: 1
   resources:
     limits:
-      cpu: '1000m'
+      cpu: '1200m'
       memory: '768Mi'
     requests:
-      cpu: '300m'
-      memory: '384Mi'
+      cpu: '800m'
+      memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
@@ -4350,7 +4368,7 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534

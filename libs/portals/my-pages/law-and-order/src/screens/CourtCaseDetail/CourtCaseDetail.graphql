@@ -1,3 +1,5 @@
+#import "./CourtCaseGroupsFragment.graphql"
+
 query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
   lawAndOrderCourtCaseDetail(input: $input, locale: $locale) {
     texts {
@@ -5,21 +7,14 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
       footnote
     }
     data {
+      cacheId
       id
-      hasBeenServed
+      hasSubpoenaBeenServed
+      hasVerdictBeenServed
+      hasVerdict
       caseNumberTitle
       groups {
-        label
-        items {
-          label
-          value
-          link
-          action {
-            type
-            title
-            data
-          }
-        }
+        ...CourtCaseGroupsFragment
       }
     }
   }

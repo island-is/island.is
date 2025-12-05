@@ -7,14 +7,14 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { TheIcelandicRecyclingFundLogo } from '@island.is/application/assets/institution-logos'
 import { carRecyclingMessages } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const CarRecyclingForm: Form = buildForm({
   id: 'carsOverview',
   title: carRecyclingMessages.shared.formTitle,
-  logo: Logo,
+  logo: TheIcelandicRecyclingFundLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

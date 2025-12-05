@@ -80,7 +80,7 @@ export const m = defineMessages({
     description: '',
   },
   dataCollectionSubtitle: {
-    id: 'es.application:dataCollectionSubtitle',
+    id: 'es.application:dataCollectionSubtitle#markdown',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: '',
   },
@@ -261,6 +261,21 @@ export const m = defineMessages({
     defaultMessage: 'Samtals',
     description: '',
   },
+  activate: {
+    id: 'es.application:activate',
+    defaultMessage: 'Virkja',
+    description: '',
+  },
+  disable: {
+    id: 'es.application:disable',
+    defaultMessage: 'Afvirkja',
+    description: '',
+  },
+  delete: {
+    id: 'es.application:delete',
+    defaultMessage: 'Fjarlægja',
+    description: '',
+  },
 
   // Applicant
   announcer: {
@@ -284,7 +299,7 @@ export const m = defineMessages({
     description: '',
   },
   applicantsInfoSubtitle: {
-    id: 'es.application:applicantsInfoSubtitle',
+    id: 'es.application:applicantsInfoSubtitle#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
@@ -332,25 +347,25 @@ export const m = defineMessages({
     description: '',
   },
   estateMembersDescriptionEstateWithoutAssets: {
-    id: 'es.application:estateMembersDescriptionEstateWithoutAssets',
+    id: 'es.application:estateMembersDescriptionEstateWithoutAssets#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   estateMembersDescriptionOfficialDivision: {
-    id: 'es.application:estateMembersDescriptionOfficialDivision',
+    id: 'es.application:estateMembersDescriptionOfficialDivision#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   estateMembersDescriptionUndividedEstate: {
-    id: 'es.application:estateMembersDescriptionUndividedEstate',
+    id: 'es.application:estateMembersDescriptionUndividedEstate#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   estateMembersDescriptionDivisionOfEstateByHeirs: {
-    id: 'es.application:estateMembersDescriptionDivisionOfEstateByHeirs',
+    id: 'es.application:estateMembersDescriptionDivisionOfEstateByHeirs#markdown',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
@@ -371,25 +386,25 @@ export const m = defineMessages({
     description: '',
   },
   willsAndAgreementsDescriptionEstateWithoutAssets: {
-    id: 'es.application:willsAndAgreementsDescriptionEstateWithoutAssets',
+    id: 'es.application:willsAndAgreementsDescriptionEstateWithoutAssets#markdown',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
   },
   willsAndAgreementsDescriptionOfficialDivision: {
-    id: 'es.application:willsAndAgreementsDescriptionOfficialDivision',
+    id: 'es.application:willsAndAgreementsDescriptionOfficialDivision#markdown',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
   },
   willsAndAgreementsDescriptionDescriptionUndividedEstate: {
-    id: 'es.application:willsAndAgreementsDescriptionDescriptionUndividedEstate',
+    id: 'es.application:willsAndAgreementsDescriptionDescriptionUndividedEstate#markdown',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
   },
   willsAndAgreementsDescriptionDivisionOfEstateByHeirs: {
-    id: 'es.application:willsAndAgreementsDescriptionDivisionOfEstateByHeirs',
+    id: 'es.application:willsAndAgreementsDescriptionDivisionOfEstateByHeirs#markdown',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
@@ -520,7 +535,7 @@ export const m = defineMessages({
     description: '',
   },
   realEstateDescription: {
-    id: 'es.application:realEstateDescription',
+    id: 'es.application:realEstateDescription#markdown',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
     description: '',
   },
@@ -530,7 +545,7 @@ export const m = defineMessages({
     description: '',
   },
   inventoryDescription: {
-    id: 'es.application:inventoryDescription',
+    id: 'es.application:inventoryDescription#markdown',
     defaultMessage: 'Til dæmis bækur og málverk',
     description: '',
   },
@@ -555,7 +570,7 @@ export const m = defineMessages({
     description: '',
   },
   vehiclesDescription: {
-    id: 'es.application:vehiclesDescription',
+    id: 'es.application:vehiclesDescription#markdown',
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
@@ -565,7 +580,7 @@ export const m = defineMessages({
     description: '',
   },
   gunsDescription: {
-    id: 'es.application:gunsDescription',
+    id: 'es.application:gunsDescription#markdown',
     defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
     description: '',
   },
@@ -577,7 +592,7 @@ export const m = defineMessages({
     description: '',
   },
   estateBankInfoDescription: {
-    id: 'es.application:estateBankInfoDescription',
+    id: 'es.application:estateBankInfoDescription#markdown',
     defaultMessage:
       'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum',
     description: '',
@@ -602,6 +617,11 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við bankareikning',
     description: '',
   },
+  bankAccountForeign: {
+    id: 'es.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
 
   // Claims
   claimsTitle: {
@@ -610,7 +630,7 @@ export const m = defineMessages({
     description: '',
   },
   claimsDescription: {
-    id: 'es.application:claimsDescription',
+    id: 'es.application:claimsDescription#markdown',
     defaultMessage: 'Útgefandi og fjárhæð með vöxtum',
     description: '',
   },
@@ -637,7 +657,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescription: {
-    id: 'es.application:stocksDescription',
+    id: 'es.application:stocksDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
@@ -711,7 +731,7 @@ export const m = defineMessages({
     description: '',
   },
   otherAssetsDescription: {
-    id: 'es.application:otherAssetsDescription',
+    id: 'es.application:otherAssetsDescription#markdown',
     defaultMessage: 'Til dæmis hugverkaréttindi, búseturéttur o.fl.',
     description: '',
   },
@@ -757,27 +777,27 @@ export const m = defineMessages({
     description: '',
   },
   debtsDescription: {
-    id: 'es.application:debtsDescription',
+    id: 'es.application:debtsDescription#markdown',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },
   debtsDescriptionOfficialDivision: {
-    id: 'es.application:debtsDescriptionOfficialDivision',
+    id: 'es.application:debtsDescriptionOfficialDivision#markdown',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },
   debtsDescriptionEstateWithoutAssets: {
-    id: 'es.application:debtsDescriptionEstateWithoutAssets',
+    id: 'es.application:debtsDescriptionEstateWithoutAssets#markdown',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },
   debtsDescriptionDivisionOfEstateByHeirs: {
-    id: 'es.application:debtsDescriptionDivisionOfEstateByHeirs',
+    id: 'es.application:debtsDescriptionDivisionOfEstateByHeirs#markdown',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },
   debtsDescriptionUndividedEstate: {
-    id: 'es.application:debtsDescriptionUndividedEstate',
+    id: 'es.application:debtsDescriptionUndividedEstate#markdown',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },
@@ -818,7 +838,7 @@ export const m = defineMessages({
     description: '',
   },
   representativeDescription: {
-    id: 'es.application:representativeDescription',
+    id: 'es.application:representativeDescription#markdown',
     defaultMessage: 'Vanalega er valinn umboðsmaður...',
     description: '',
   },
@@ -865,6 +885,23 @@ export const m = defineMessages({
       'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
     description: '',
   },
+  additionalCommentsTitle: {
+    id: 'es.application:additionalCommentsTitle',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalCommentsDescription: {
+    id: 'es.application:additionalCommentsDescription',
+    defaultMessage:
+      'Hér er hægt að skrá viðbótarupplýsingar um dánarbúið, umsóknina eða önnur atriði sem gætu verið gagnleg fyrir sýslumanninn við afgreiðslu málsins.',
+    description: '',
+  },
+  additionalCommentsPlaceholder: {
+    id: 'es.application:additionalCommentsPlaceholder',
+    defaultMessage:
+      'T.d. upplýsingar um sérstök skilyrði, samkomulag erfingja eða aðrar skýringar',
+    description: '',
+  },
 
   // No assets
   doAssetsExist: {
@@ -895,7 +932,7 @@ export const m = defineMessages({
     description: '',
   },
   overviewSubtitleWithoutAssets: {
-    id: 'es.application:overviewSubtitleWithoutAssets',
+    id: 'es.application:overviewSubtitleWithoutAssets#markdown',
     defaultMessage: 'Þú hefur lýst yfir eignaleysi dánarbús.',
     description: '',
   },
@@ -1162,6 +1199,12 @@ export const m = defineMessages({
     id: 'es.application:missingSpouseUndividedEstateValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem skrá þarf maka í listann af erfingjum',
+    description: '',
+  },
+  multipleSpousesValidation: {
+    id: 'es.application:multipleSpousesValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðeins einn maki getur verið skráður í listann af erfingjum',
     description: '',
   },
 

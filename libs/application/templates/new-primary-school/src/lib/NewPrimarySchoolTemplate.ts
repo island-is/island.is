@@ -1,7 +1,6 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  NO,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
@@ -26,20 +25,21 @@ import { CodeOwners } from '@island.is/shared/constants'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
+  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
-  SchoolType,
   States,
 } from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
+  getSelectedSchoolSubType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
@@ -100,7 +100,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ChildrenApi,
+                SchoolsApi,
+              ],
             },
           ],
         },
@@ -112,7 +117,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
-          'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
@@ -278,31 +282,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
-        if (
-          reasonForApplication !==
-          ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ) {
-          unset(
-            application.answers,
-            'reasonForApplication.transferOfLegalDomicile',
-          )
-        }
-
         // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
           ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
-        }
-        return context
-      }),
-      clearPlaceOfResidence: assign((context) => {
-        const { application } = context
-        const { childInfo } = getApplicationAnswers(application.answers)
-        if (childInfo?.differentPlaceOfResidence === NO) {
-          unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
@@ -362,16 +347,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearExpectedEndDate: assign((context) => {
         const { application } = context
-        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+        const { temporaryStay } = getApplicationAnswers(application.answers)
+
+        const selectedSchoolSubType = getSelectedSchoolSubType(
           application.answers,
+          application.externalData,
         )
 
-        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+        if (
+          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+        ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')

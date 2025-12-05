@@ -65,6 +65,8 @@ export const jobWishesSubSection = buildSubSection({
           variant: 'number',
           suffix: '%',
           required: true,
+          allowNegative: false,
+          max: 100,
         }),
         buildAlertMessageField({
           id: 'jobWishes.wantedJobAlert',
@@ -138,7 +140,6 @@ export const jobWishesSubSection = buildSubSection({
           id: 'jobWishes.location',
           title: employmentSearchMessages.jobWishes.location,
           isMulti: true,
-          required: true,
           options: (application, _, locale) => {
             const locations =
               getValueViaPath<

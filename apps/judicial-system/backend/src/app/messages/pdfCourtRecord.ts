@@ -94,9 +94,9 @@ export const courtRecord = {
     description: 'Notaður sem fyrirsögn á úrskurðarorð.',
   }),
   missingConclusion: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.missing_conclusion',
-    defaultMessage: 'Úrskurðarorð hafa ekki verið skráð.',
-    description: 'Notaður sem texti þegar úrskurðarorð hafa ekki verið skráð.',
+    id: 'judicial.system.backend:pdf.court_record.missing_conclusion_v2',
+    defaultMessage: 'Úrskurðarorð hefur ekki verið skráð.',
+    description: 'Notaður sem texti þegar úrskurðarorð hefur ekki verið skráð.',
   }),
   missingJudge: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.missing_judge',

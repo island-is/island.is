@@ -132,6 +132,7 @@ export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  signingParties: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -293,17 +294,32 @@ export interface DraftAnswers {
   landlords: DraftPartyContact[]
   landlordRepresentatives: DraftPartyContact[]
   tenants: DraftPartyContact[]
+  signingParties: ApplicantsInfo[]
   units: DraftPropertyUnit[]
   startDate: string
   endDate: string
   amount: string
+  isIndexConnected: YesOrNoEnum[]
+  indexDate: string
+  indexRate: string
   paymentMethodOther?: string
   paymentDateOptions: string
   paymentDayOther?: string
   paymentMethodOptions: string
   paymentMethodBankAccountNumber: BankAccount
+  securityDepositRequired: YesOrNoEnum
+  securityType: string
+  bankGuaranteeInfo: string
+  thirdPartyGuaranteeInfo: string
+  insuranceCompanyInfo: string
+  mutualFundInfo: string
+  otherInfo: string
+  securityDepositAmount: string
+  securityAmountOther: string
+  securityAmountCalculated: string
   categoryType: string
   categoryClass: string
+  categoryClassGroup: string
   description: string
   rules: string
   conditionDescription: string

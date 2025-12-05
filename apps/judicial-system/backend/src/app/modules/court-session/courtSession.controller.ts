@@ -22,14 +22,21 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { Case, CourtSession } from '../repository'
+import {
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
+import { Case, CourtSession, CourtSessionString } from '../repository'
+import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
@@ -37,7 +44,13 @@ import { CourtSessionService } from './courtSession.service'
 
 @Controller('api/case/:caseId/courtSession')
 @ApiTags('court-sessions')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseWriteGuard,
+)
 export class CourtSessionController {
   constructor(
     private readonly courtSessionService: CourtSessionService,
@@ -45,7 +58,6 @@ export class CourtSessionController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -56,13 +68,18 @@ export class CourtSessionController {
     type: CourtSession,
     description: 'Creates a new court session',
   })
-  create(@Param('caseId') caseId: string): Promise<CourtSession> {
+  create(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<CourtSession> {
     this.logger.debug(`Creating a new court session for case ${caseId}`)
 
-    return this.courtSessionService.create(caseId)
+    return this.sequelize.transaction(async (transaction) =>
+      this.courtSessionService.create(theCase, transaction),
+    )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -89,7 +106,34 @@ export class CourtSessionController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch(':courtSessionId/courtSessionString')
+  @ApiOkResponse({
+    type: CourtSessionString,
+    description: 'Creates or updates a court session string',
+  })
+  createOrUpdateCourtSessionString(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @Body() courtSessionString: CourtSessionStringDto,
+  ): Promise<CourtSessionString> {
+    this.logger.debug(
+      `Updating court session string of ${courtSessionId} of case ${caseId}`,
+    )
+    return this.courtSessionService.createOrUpdateCourtSessionString({
+      caseId,
+      courtSessionId,
+      mergedCaseId: courtSessionString.mergedCaseId,
+      update: courtSessionString,
+    })
+  }
+
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

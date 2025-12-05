@@ -65,11 +65,15 @@ const populateError = (
       return undefined
     }
 
+    // log to help with debug
     console.info(relevantErrors)
+
     return relevantErrors
   }
 
+  // log to help with debug
   console.info(errorObject)
+
   return errorObject
 }
 

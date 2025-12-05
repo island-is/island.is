@@ -37,10 +37,10 @@ export const ConvoyLongTermMultiField = buildMultiField({
           convoy.labels.trailerTableHeader,
         ],
         format: {
-          index: (_, index) => {
+          index: (_value, displayIndex) => {
             return {
               ...convoy.labels.convoyNumber,
-              values: { number: index + 1 },
+              values: { number: displayIndex + 1 },
             }
           },
         },
@@ -69,6 +69,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: false,
         },
         trailer: {
           component: 'vehiclePermnoWithInfo',
@@ -82,6 +83,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
           fallbackErrorMessage: convoy.error.fallbackErrorMessage,
           validationFailedErrorMessage:
             convoy.error.validationFailedErrorMessage,
+          isTrailer: true,
         },
         dollyType: {
           component: 'hiddenInput',

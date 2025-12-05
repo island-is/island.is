@@ -113,6 +113,7 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
+    clearOnChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -123,6 +124,7 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
+    clearOnChange,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -317,10 +319,12 @@ export const buildTextField = (
     rightAlign,
     tooltip,
     onChange,
+    allowNegative,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
+    allowNegative,
     placeholder,
     backgroundColor,
     variant,
@@ -723,13 +727,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -842,6 +859,7 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
   }
 }
 
@@ -869,6 +887,7 @@ export const buildNationalIdWithNameField = (
     emailLabel,
     titleVariant,
     description,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -895,6 +914,7 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
+    readOnly,
   }
 }
 
@@ -1282,6 +1302,7 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   } = data
 
   return {
@@ -1296,5 +1317,6 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   }
 }

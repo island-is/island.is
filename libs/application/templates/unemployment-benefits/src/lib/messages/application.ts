@@ -29,6 +29,11 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is submitted',
   },
+  firstSectionStepperTitle: {
+    id: 'vmst.ub.application:firstSectionStepperTitle',
+    defaultMessage: 'Fyrri hluti',
+    description: 'Title of first section stepper',
+  },
   firstSectionTitle: {
     id: 'vmst.ub.application:firstSectionTitle',
     defaultMessage: 'Fyrri hluti: Þinn réttur til atvinnuleysisbóta',
@@ -40,6 +45,11 @@ export const application = defineMessages({
       'Eftirfarandi kafli snýr að því að safna upplýsingum um núverandi eða fyrrverandi stöðu þína á atvinnumarkaði svo hægt sé að reikna út hvort eða hve miklar atvinnuleysisbætur þú hefur rétt á.',
     description: 'Description of first section page',
   },
+  secondSectionStepperTitle: {
+    id: 'vmst.ub.application:secondSectionStepperTitle',
+    defaultMessage: 'Seinni hluti',
+    description: 'Title of second section stepper',
+  },
   secondSectionTitle: {
     id: 'vmst.ub.application:secondSectionTitle',
     defaultMessage: 'Seinni hluti: Atvinnuleitin',
@@ -48,7 +58,7 @@ export const application = defineMessages({
   secondSectionDescription: {
     id: 'vmst.ub.application:secondSectionDescription',
     defaultMessage:
-      'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan ert beðið um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
+      'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan eru beiðnir um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
     description: 'Description of second section page',
   },
   agreeCheckbox: {
@@ -59,7 +69,7 @@ export const application = defineMessages({
   fileUploadAcceptFiles: {
     id: 'vmst.ub.application:fileUploadAcceptFiles',
     defaultMessage:
-      'Tekið er við skjölum með endingu: pdf, .doc, .docx, .png, .jpg, .jpeg',
+      'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
     description: 'description for file uploads',
   },
   successSubmissionTitle: {
@@ -91,5 +101,10 @@ export const application = defineMessages({
     defaultMessage:
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar. Spjallaðu við Ask',
     description: 'Info alert title on confirmation page',
+  },
+  fileUploadGeneralHeader: {
+    id: 'vmst.ub.application:fileUploadGeneralHeader',
+    defaultMessage: 'Viðhengi',
+    description: 'General title for file upload',
   },
 })
