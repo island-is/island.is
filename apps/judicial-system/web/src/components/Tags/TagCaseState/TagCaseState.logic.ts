@@ -99,13 +99,26 @@ export const mapCaseStateToTagVariant = (
       return { color: 'rose', text: formatMessage(strings.rejected) }
     case CaseState.DISMISSED:
       return { color: 'dark', text: formatMessage(strings.dismissed) }
-    case CaseState.COMPLETED:
+    case CaseState.COMPLETED: {
+      // TODO: this will be fixed when we have considered ruling decision per defendant
+      const defendants = theCase.defendants
+      if (
+        defendants &&
+        defendants.length === 1 &&
+        defendants[0]?.verdict?.isDefaultJudgement
+      ) {
+        return {
+          color: 'purple',
+          text: 'Útivistardómur',
+        }
+      }
       return {
         color: 'darkerBlue',
         text: formatMessage(strings.completed, {
           indictmentRulingDecision: theCase.indictmentRulingDecision,
         }),
       }
+    }
     case CaseState.WAITING_FOR_CANCELLATION:
       return {
         color: 'rose',
