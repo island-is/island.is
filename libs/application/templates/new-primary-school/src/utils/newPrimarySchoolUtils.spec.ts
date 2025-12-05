@@ -1,3 +1,4 @@
+import { NO, YES } from '@island.is/application/core'
 import {
   Application,
   ApplicationStatus,
@@ -14,6 +15,7 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   shouldShowPage,
+  shouldShowReasonForApplicationPage,
   showPreferredLanguageFields,
 } from './conditionUtils'
 import {
@@ -21,14 +23,16 @@ import {
   ApplicationType,
   FIRST_GRADE_AGE,
   LanguageEnvironmentOptions,
+  OptionsType,
   OrganizationSector,
   OrganizationSubType,
+  OrganizationType,
   PayerOption,
   States,
-  OrganizationType,
 } from './constants'
 import {
   getApplicationType,
+  getReasonOptionsType,
   getSpecialEducationDepartmentsInMunicipality,
 } from './newPrimarySchoolUtils'
 
@@ -729,6 +733,38 @@ describe('hasSpecialEducationSubType', () => {
   })
 })
 
+describe('shouldShowReasonForApplicationPage', () => {
+  it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
+    const answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
+    }
+    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+  })
+
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: YES },
+    }
+    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: NO },
+    }
+    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+  })
+
+  it('should return false if application type is CONTINUING_ENROLLMENT', () => {
+    const answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+  })
+})
+
 describe('getSpecialEducationDepartmentsInMunicipality', () => {
   let application: Application
 
@@ -819,6 +855,7 @@ describe('getSpecialEducationDepartmentsInMunicipality', () => {
       },
     })
   })
+
   it('Should return all special education departments in the selected municipality', () => {
     application.answers.newSchool = {
       municipality: '0000',
@@ -1057,5 +1094,91 @@ describe('getSpecialEducationDepartmentsInMunicipality', () => {
     )
 
     expect(res).toEqual([])
+  })
+})
+
+describe('getReasonOptionsType', () => {
+  let application: Application
+
+  const publicInternationalSchoolSchoolId = uuid()
+  const privateInternationalSchoolSchoolId = uuid()
+  const publicGeneralSchoolSchoolId = uuid()
+  const privateGeneralSchoolSchoolId = uuid()
+
+  beforeEach(() => {
+    application = buildApplication({
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: publicInternationalSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.INTERNATIONAL_SCHOOL,
+            },
+            {
+              id: privateInternationalSchoolSchoolId,
+              sector: OrganizationSector.PRIVATE,
+              subType: OrganizationSubType.INTERNATIONAL_SCHOOL,
+            },
+            {
+              id: publicGeneralSchoolSchoolId,
+              sector: OrganizationSector.PUBLIC,
+              subType: OrganizationSubType.GENERAL_SCHOOL,
+            },
+            {
+              id: privateGeneralSchoolSchoolId,
+              sector: OrganizationSector.PRIVATE,
+              subType: OrganizationSubType.GENERAL_SCHOOL,
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+  })
+
+  it('should return REASON_INTERNATIONAL_SCHOOL if the selected school has subType INTERNATIONAL_SCHOOL and sector PUBLIC', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: publicInternationalSchoolSchoolId,
+    }
+
+    expect(
+      getReasonOptionsType(application.answers, application.externalData),
+    ).toBe(OptionsType.REASON_INTERNATIONAL_SCHOOL)
+  })
+
+  it('should return REASON_INTERNATIONAL_SCHOOL if the selected school has subType INTERNATIONAL_SCHOOL and sector PRIVATE', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: privateInternationalSchoolSchoolId,
+    }
+
+    expect(
+      getReasonOptionsType(application.answers, application.externalData),
+    ).toBe(OptionsType.REASON_INTERNATIONAL_SCHOOL)
+  })
+
+  it('should return REASON if the selected school has subType GENERAL_SCHOOL and sector PUBLIC', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: publicGeneralSchoolSchoolId,
+    }
+
+    expect(
+      getReasonOptionsType(application.answers, application.externalData),
+    ).toBe(OptionsType.REASON)
+  })
+
+  it('should return REASON_PRIVATE_SCHOOL if the selected school has subType GENERAL_SCHOOL and sector PRIVATE', () => {
+    application.answers.newSchool = {
+      municipality: '3000',
+      school: privateGeneralSchoolSchoolId,
+    }
+
+    expect(
+      getReasonOptionsType(application.answers, application.externalData),
+    ).toBe(OptionsType.REASON_PRIVATE_SCHOOL)
   })
 })

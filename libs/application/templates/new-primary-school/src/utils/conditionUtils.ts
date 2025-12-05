@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 import {
   ApplicationFeatureKey,
+  ApplicationType,
   LanguageEnvironmentOptions,
   OrganizationSubType,
   PayerOption,
@@ -284,5 +285,16 @@ export const shouldShowChildAndAdolescentPsychiatryServicesReceived = (
   return (
     hasBehaviorSchoolOrDepartmentSubType(answers, externalData) &&
     hasReceivedChildAndAdolescentPsychiatryServices === YES
+  )
+}
+
+export const shouldShowReasonForApplicationPage = (answers: FormValue) => {
+  const { applyForPreferredSchool, applicationType } =
+    getApplicationAnswers(answers)
+
+  return (
+    applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+    (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      applyForPreferredSchool === NO)
   )
 }

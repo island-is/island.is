@@ -93,6 +93,10 @@ export const dataSchema = z.object({
   reasonForApplication: z.object({
     reason: z.string(),
   }),
+  counsellingRegardingApplication: z.object({
+    counselling: z.string(),
+    hasVisitedSchool: z.enum([YES, NO]),
+  }),
   currentSchool: z
     .object({
       municipality: z.string().optional().nullable(),
