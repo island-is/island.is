@@ -120,8 +120,7 @@ export const supportSubSection = buildSubSection({
         buildRadioField({
           id: 'support.hasWelfareContact',
           title: newPrimarySchoolMessages.differentNeeds.hasWelfareContact,
-          description: (application) =>
-            getWelfareContactDescription(application.answers),
+          description: getWelfareContactDescription,
           width: 'half',
           required: true,
           space: 4,
@@ -154,7 +153,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
           width: 'half',
           required: true,
-          condition: (answers) => isWelfareContactSelected(answers),
+          condition: isWelfareContactSelected,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -166,7 +165,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
           width: 'half',
           required: true,
-          condition: (answers) => isWelfareContactSelected(answers),
+          condition: isWelfareContactSelected,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -193,7 +192,7 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => isWelfareContactSelected(answers),
+          condition: isWelfareContactSelected,
           defaultValue: (application: Application) =>
             hasDefaultSupportCaseworker(
               application.externalData,
@@ -205,7 +204,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
           width: 'half',
           required: true,
-          condition: (answers) => showCaseManagerFields(answers),
+          condition: showCaseManagerFields,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -217,7 +216,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
           width: 'half',
           required: true,
-          condition: (answers) => showCaseManagerFields(answers),
+          condition: showCaseManagerFields,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -245,7 +244,7 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => isWelfareContactSelected(answers),
+          condition: isWelfareContactSelected,
           defaultValue: (application: Application) => {
             const { socialProfile } = getApplicationExternalData(
               application.externalData,

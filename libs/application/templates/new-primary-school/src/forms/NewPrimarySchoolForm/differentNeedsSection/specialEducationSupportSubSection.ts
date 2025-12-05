@@ -52,8 +52,7 @@ export const specialEducationSupportSubSection = buildSubSection({
           title:
             newPrimarySchoolMessages.differentNeeds
               .specialEducationHasWelfareContact,
-          description: (application) =>
-            getWelfareContactDescription(application.answers),
+          description: getWelfareContactDescription,
           width: 'half',
           required: true,
           options: [
@@ -79,7 +78,7 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
           width: 'half',
           required: true,
-          condition: (answers) => hasSpecialEducationWelfareContact(answers),
+          condition: hasSpecialEducationWelfareContact,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -91,7 +90,7 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
           width: 'half',
           required: true,
-          condition: (answers) => hasSpecialEducationWelfareContact(answers),
+          condition: hasSpecialEducationWelfareContact,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -133,7 +132,7 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
           width: 'half',
           required: true,
-          condition: (answers) => hasSpecialEducationCaseManager(answers),
+          condition: hasSpecialEducationCaseManager,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -145,7 +144,7 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
           width: 'half',
           required: true,
-          condition: (answers) => hasSpecialEducationCaseManager(answers),
+          condition: hasSpecialEducationCaseManager,
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -243,14 +242,14 @@ export const specialEducationSupportSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.supportNeedsAssessmentBy,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => shouldShowSupportNeedsAssessmentBy(answers),
+          condition: shouldShowSupportNeedsAssessmentBy,
         }),
         buildCustomField(
           {
             id: 'specialEducationSupport.supportNeedsAssessmentBy',
             title: newPrimarySchoolMessages.differentNeeds.evaluationProvider,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers) => shouldShowSupportNeedsAssessmentBy(answers),
+            condition: shouldShowSupportNeedsAssessmentBy,
           },
           {
             optionsType: OptionsType.ASSESSOR,
@@ -309,14 +308,14 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.atWhichDiagnostician,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => shouldShowDiagnosticians(answers),
+          condition: shouldShowDiagnosticians,
         }),
         buildCustomField(
           {
             id: 'specialEducationSupport.diagnosticians',
             title: newPrimarySchoolMessages.differentNeeds.diagnostician,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers) => shouldShowDiagnosticians(answers),
+            condition: shouldShowDiagnosticians,
           },
           {
             optionsType: OptionsType.DIAGNOSIS_SPECIALIST,
@@ -355,14 +354,14 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.atWhichSpecialist,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => shouldShowSpecialists(answers),
+          condition: shouldShowSpecialists,
         }),
         buildCustomField(
           {
             id: 'specialEducationSupport.specialists',
             title: newPrimarySchoolMessages.differentNeeds.specialists,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers) => shouldShowSpecialists(answers),
+            condition: shouldShowSpecialists,
           },
           {
             optionsType: OptionsType.PROFESSIONAL,
@@ -403,14 +402,14 @@ export const specialEducationSupportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.whichService,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => shouldShowServicesFromMunicipality(answers),
+          condition: shouldShowServicesFromMunicipality,
         }),
         buildCustomField(
           {
             id: 'specialEducationSupport.servicesFromMunicipality',
             title: newPrimarySchoolMessages.differentNeeds.service,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers) => shouldShowServicesFromMunicipality(answers),
+            condition: shouldShowServicesFromMunicipality,
           },
           {
             optionsType: OptionsType.SERVICE_CENTER,
@@ -444,8 +443,7 @@ export const specialEducationSupportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) =>
-            hasBehaviorSchoolOrDepartmentSubType(answers, externalData),
+          condition: hasBehaviorSchoolOrDepartmentSubType,
         }),
         buildRadioField({
           id: 'specialEducationSupport.isOnWaitlistForServices',
@@ -483,11 +481,7 @@ export const specialEducationSupportSubSection = buildSubSection({
               .whichChildAndAdolescentPsychiatryDepartment,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers, externalData) =>
-            shouldShowChildAndAdolescentPsychiatryDepartment(
-              answers,
-              externalData,
-            ),
+          condition: shouldShowChildAndAdolescentPsychiatryDepartment,
         }),
         buildCustomField(
           {
@@ -496,11 +490,7 @@ export const specialEducationSupportSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .childAndAdolescentPsychiatryDepartment,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers, externalData) =>
-              shouldShowChildAndAdolescentPsychiatryDepartment(
-                answers,
-                externalData,
-              ),
+            condition: shouldShowChildAndAdolescentPsychiatryDepartment,
           },
           {
             optionsType:
@@ -517,22 +507,14 @@ export const specialEducationSupportSubSection = buildSubSection({
               .childAndAdolescentPsychiatryServicesReceived,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers, externalData) =>
-            shouldShowChildAndAdolescentPsychiatryServicesReceived(
-              answers,
-              externalData,
-            ),
+          condition: shouldShowChildAndAdolescentPsychiatryServicesReceived,
         }),
         buildCustomField(
           {
             id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
             title: newPrimarySchoolMessages.differentNeeds.service,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers, externalData) =>
-              shouldShowChildAndAdolescentPsychiatryServicesReceived(
-                answers,
-                externalData,
-              ),
+            condition: shouldShowChildAndAdolescentPsychiatryServicesReceived,
           },
           {
             optionsType: OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_SERVICE,
@@ -564,8 +546,7 @@ export const specialEducationSupportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) =>
-            hasBehaviorSchoolOrDepartmentSubType(answers, externalData),
+          condition: hasBehaviorSchoolOrDepartmentSubType,
         }),
         buildRadioField({
           id: 'specialEducationSupport.isCaseOpenWithChildProtectiveServices',
