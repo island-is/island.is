@@ -72,8 +72,8 @@ export class VerdictService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
-    private readonly eventLogService: EventLogService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     private readonly messageService: MessageService,
@@ -535,5 +535,19 @@ export class VerdictService {
       return { queued: true }
     }
     return { queued: false }
+  }
+
+  transferDefendantVerdictToCase(
+    newCase: Case,
+    verdict: Verdict,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    return this.verdictRepositoryService.update(
+      verdict.caseId,
+      verdict.defendantId,
+      verdict.id,
+      { caseId: newCase.id },
+      { transaction },
+    )
   }
 }
