@@ -1,12 +1,12 @@
 import {
   buildMultiField,
+  buildPhoneField,
   buildSelectField,
   buildTextField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import { EstateMember } from '../../types'
 import { Application } from '@island.is/api/schema'
 
@@ -33,20 +33,17 @@ export const subSectionInfo = buildSubSection({
               'nationalRegistry.data.fullName',
             ) ?? '',
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicantPhone',
           title: m.applicantsPhoneNumber,
-          format: '###-####',
           placeholder: '',
           width: 'half',
-          defaultValue: (application: Application) => {
-            const phone =
-              getValueViaPath<string>(
-                application.externalData,
-                'userProfile.data.mobilePhoneNumber',
-              ) ?? ''
-            return removeCountryCode(phone)
-          },
+          enableCountrySelector: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) ?? '',
         }),
         buildTextField({
           id: 'applicantEmail',
