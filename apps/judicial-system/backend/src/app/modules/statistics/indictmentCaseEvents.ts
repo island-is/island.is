@@ -5,6 +5,7 @@ import { pipe } from 'fp-ts/lib/function'
 
 import {
   capitalize,
+  formatCaseType,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -52,8 +53,8 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   if (caseType === CaseType.INDICTMENT) {
     return 'Ákæra'
   }
-  const subtypes = courtSubtypes[caseType]
-  return Array.isArray(subtypes) ? subtypes[0] : subtypes
+  const subtypes = formatCaseType(caseType)
+  return capitalize(Array.isArray(subtypes) ? subtypes[0] : subtypes)
 }
 
 const rulingFields = (c: Case) => {
