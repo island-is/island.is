@@ -31,6 +31,7 @@ const IncomePlanDetail = () => {
       serviceProviderTooltip={formatMessage(
         coreMessages.socialInsuranceTooltip,
       )}
+      childrenWidthFull
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />

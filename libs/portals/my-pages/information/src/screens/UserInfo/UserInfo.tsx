@@ -11,6 +11,7 @@ import {
   THJODSKRA_SLUG,
   InfoLine,
   InfoLineStack,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
@@ -35,13 +36,12 @@ const SubjectInfo = () => {
   const isUserAdult = info(userInfo.profile.nationalId).age >= 18
 
   return (
-    <>
-      <IntroHeader
-        title={nationalRegistryPerson?.name?.fullName || ''}
-        intro={spmm.userInfoDesc}
-        serviceProviderSlug={THJODSKRA_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+    <IntroWrapper
+      title={nationalRegistryPerson?.name?.fullName || ''}
+      intro={spmm.userInfoDesc}
+      serviceProviderSlug={THJODSKRA_SLUG}
+      serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.nationalRegistryPerson && (
         <Problem
@@ -214,9 +214,7 @@ const SubjectInfo = () => {
           )}
         </>
       )}
-
-      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
-    </>
+    </IntroWrapper>
   )
 }
 
