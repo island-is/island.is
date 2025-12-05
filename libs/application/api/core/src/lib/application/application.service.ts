@@ -262,7 +262,6 @@ export class ApplicationService {
   }
 
   async getAllApplicationTypesSuperAdmin(): Promise<{ id: string }[]> {
-
     const results = await this.applicationModel.findAll({
       attributes: ['typeId'],
       group: ['typeId'],
