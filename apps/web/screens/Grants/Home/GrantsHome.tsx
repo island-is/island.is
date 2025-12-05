@@ -46,8 +46,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   locale,
   customPageData,
 }) => {
-  useLocalLinkTypeResolver()
   useContentfulId(customPageData?.id)
+  useLocalLinkTypeResolver('grantsplaza')
+
   const intl = useIntl()
   const { linkResolver } = useLinkResolver()
 
