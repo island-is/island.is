@@ -51,7 +51,7 @@ export const m = {
     },
     supplierCountTitle: {
       id: 'web.openinvoices:home.supplierCountTitle',
-      defaultMessage: 'Fjöldi súrðna',
+      defaultMessage: 'Fjöldi seljenda',
     },
     medianInvoiceAmountTitle: {
       id: 'web.openinvoices:home.medianInvoiceAmountTitle',
