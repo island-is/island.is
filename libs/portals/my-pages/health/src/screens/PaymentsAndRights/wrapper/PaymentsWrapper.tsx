@@ -49,6 +49,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       intro={formatMessage(messages.paymentsIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
       buttonGroup={[
         <Button
           variant="utility"
