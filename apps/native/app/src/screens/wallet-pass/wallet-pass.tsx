@@ -211,6 +211,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     },
   })
 
+  // useFragment will get the license by license type and license id from license list cache
   const licenseFromCache = useFragment_experimental<GenericUserLicense>({
     fragment: GenericUserLicenseFragmentFragmentDoc,
     fragmentName: 'GenericUserLicenseFragment',

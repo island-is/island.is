@@ -170,6 +170,11 @@ const cache = new InMemoryCache({
         },
       },
     },
+    // Custom cache key for GenericUserLicense.
+    // The backend does not expose a single stable id, so we synthesise one from
+    // license.type and payload.metadata.licenseId. This must stay in sync with
+    // the fields selected in GenericUserLicenseFragment so list and detail
+    // queries for the same license share the same cache entry.
     GenericUserLicense: {
       keyFields: (object) => {
         const licenseType = (object as GenericUserLicense).license?.type
@@ -177,13 +182,17 @@ const cache = new InMemoryCache({
           ?.licenseId
 
         if (licenseType && licenseId) {
+          // Composite key ensures no collisions between different license types
+          // that might share the same licenseId.
           return `${licenseType}:${licenseId}`
         }
 
         if (licenseId) {
+          // Fallback when type is missing but licenseId is still unique enough.
           return licenseId
         }
 
+        // Last resort – let Apollo fall back to its default normalisation.
         return defaultDataIdFromObject(object) ?? undefined
       },
     },
