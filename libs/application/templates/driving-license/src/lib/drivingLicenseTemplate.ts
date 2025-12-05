@@ -13,7 +13,7 @@ import {
   JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
-  NationalRegistryUserApi,
+  // NationalRegistryUserApi,
   UserProfileApi,
   QualityPhotoApi,
   TeachersApi,
@@ -115,7 +115,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                // NationalRegistryUserApi,
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
