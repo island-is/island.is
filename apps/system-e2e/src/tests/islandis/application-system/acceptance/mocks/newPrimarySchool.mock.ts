@@ -181,16 +181,6 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '68c8fdce-4ab6-4cfe-a12a-d5c9541c5d4f',
-            key: 'hin',
-            value: [
-              {
-                content: 'Hín/Híns',
-                language: 'is',
-              },
-            ],
-          },
-          {
             id: '86a1b4a3-8968-4447-a901-ad7e83a0da2a',
             key: 'thad',
             value: [
