@@ -90,14 +90,15 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
       return (
         <Box marginTop={4}>
           <GridRow>
-            {items.map(shortcut => (
+            {items.map((shortcut) => (
               <GridColumn span={'1/2'}>
                 <ShortcutCard {...shortcut} />
-            </GridColumn>
+              </GridColumn>
             ))}
           </GridRow>
         </Box>
-    )}
+      )
+    }
 
     return (
       <Box marginTop={4}>
@@ -106,7 +107,8 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
             {title}
           </Text>
         )}
-        <Inline space={1}>{items.map(({ href, title, variant }) => (
+        <Inline space={1}>
+          {items.map(({ href, title, variant }) => (
             <Tag key={`${href}-${title}`} href={href} variant={variant}>
               {title}
             </Tag>

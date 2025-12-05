@@ -74,12 +74,14 @@ const OpenInvoicesHomePage: CustomScreen<OpenInvoicesHomeProps> = ({
             {
               title: formatMessage(m.home.invoiceOverview),
               href: linkResolver('openinvoicesoverview', [], locale).href,
-              imgSrc:"https://images.ctfassets.net/8k0h54kbe6bj/xBT1Dp1hqBl5r03Q0L5f2/548548812e08e97f1973c78e891370cf/LE_-_Moving_-_S3.svg",
+              imgSrc:
+                'https://images.ctfassets.net/8k0h54kbe6bj/xBT1Dp1hqBl5r03Q0L5f2/548548812e08e97f1973c78e891370cf/LE_-_Moving_-_S3.svg',
             },
             {
               title: formatMessage(m.home.invoices),
               href: 'island.is',
-              imgSrc: "https://images.ctfassets.net/8k0h54kbe6bj/xBT1Dp1hqBl5r03Q0L5f2/548548812e08e97f1973c78e891370cf/LE_-_Moving_-_S3.svg",
+              imgSrc:
+                'https://images.ctfassets.net/8k0h54kbe6bj/xBT1Dp1hqBl5r03Q0L5f2/548548812e08e97f1973c78e891370cf/LE_-_Moving_-_S3.svg',
             },
           ],
         },
