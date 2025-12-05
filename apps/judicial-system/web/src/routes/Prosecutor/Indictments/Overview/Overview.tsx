@@ -29,6 +29,7 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
   useIndictmentsLawsBroken,
@@ -56,12 +57,14 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
+
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase, updateCase, isTransitioningCase } = useCase()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -224,7 +227,12 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment displayVerdictViewDate />
+          <InfoCardActiveIndictment
+            displayVerdictViewDate
+            onProsecutorClick={() => {
+              setModal('editProsecutor')
+            }}
+          />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
@@ -390,6 +398,34 @@ const Overview: FC = () => {
               onClick: () => setModal('noModal'),
             }}
           />
+        ) : modal === 'editProsecutor' ? (
+          <Modal
+            title="Breyta um ákæranda"
+            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
+            onClose={() => setModal('noModal')}
+            primaryButton={{
+              text: 'Staðfesta',
+              onClick: async () => {
+                const prosecutorId = workingCase?.prosecutor?.id
+                await updateCase(workingCase.id, {
+                  prosecutorId,
+                })
+                setModal('noModal')
+              },
+            }}
+            secondaryButton={{
+              text: 'Loka glugga',
+              onClick: () => setModal('noModal'),
+            }}
+          >
+            <Box marginBottom={2}>
+              <ProsecutorSelection
+                placeholder="Veldu ákæranda til að taka við málinu"
+                isRequired={false}
+                shouldInitializeSelector={true}
+              />
+            </Box>
+          </Modal>
         ) : null}
       </AnimatePresence>
     </PageLayout>

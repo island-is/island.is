@@ -28,7 +28,7 @@ export const buttonDisabled = style({
 
 export const transparent = style({
   ':hover': {
-    backgroundColor: theme.color.blue100,
+    backgroundColor: theme.color.blue200,
     filter: 'brightness(1)',
   },
 })
