@@ -87,3 +87,19 @@ export const getReviewerRole = (
   if (sellerCoOwners?.map((x) => x.nationalId)?.includes(nationalId))
     return 'sellerCoOwners'
 }
+
+export const hasReviewerApproved = (
+  answers: FormValue,
+  reviewerNationalId: string,
+): boolean => {
+  const reviewers = getReviewers(answers)
+
+  const reviewer = reviewers.find((x) => x.nationalId === reviewerNationalId)
+
+  return !!reviewer?.hasApproved
+}
+
+export const hasEveryReviewerApproved = (answers: FormValue): boolean => {
+  const reviewers = getReviewers(answers)
+  return reviewers.every((x) => x.hasApproved)
+}

@@ -14,6 +14,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -31,7 +32,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItems, reviewStatePendingAction } from '../utils'
+import { getChargeItems, getReviewers, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -238,8 +239,12 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: (application, _role, nationalId) =>
-              reviewStatePendingAction(application, nationalId),
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                hasReviewerApproved(application.answers, nationalId),
+                getReviewers(application.answers),
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,

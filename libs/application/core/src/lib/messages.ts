@@ -1223,6 +1223,16 @@ export const corePendingActionMessages = defineMessages({
     defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
     description: 'Pending action waiting for review description',
   },
+  waitingForReviewFromSpouseDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromSpouseDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá maka umsækjanda.',
+    description: 'Pending action waiting for review from spouse description',
+  },
+  waitingForReviewFromParentBDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromParentBDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá forsjáraðila 2.',
+    description: 'Pending action waiting for review from parent B description',
+  },
   youNeedToReviewDescription: {
     id: 'application.system:core.pendingAction.youNeedToReviewDescription',
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',

@@ -180,10 +180,12 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: history.general.onCounterPartyApprove,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: history.general.onCounterPartyReject,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: (_, role) =>

@@ -21,12 +21,10 @@ export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
-export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
-export { getReviewers, getReviewerRole } from './getReviewers'
-export * from './pendingAction'
+export * from './getReviewers'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

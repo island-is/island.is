@@ -192,6 +192,7 @@ const PassportTemplate: ApplicationTemplate<
               {
                 logMessage: m.confirmedByParentB,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: {
