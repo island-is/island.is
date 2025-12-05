@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
+import { useToggle } from 'react-use'
 
 import {
   Box,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { Webreader } from '../../Webreader'
+import { ShortcutCard } from './ShortcutCard'
 import * as styles from './Header.css'
 
 type ShortcutItem = {
@@ -55,6 +56,8 @@ export type CustomPageLayoutHeaderProps = {
 }
 
 export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
+  const [isHovered, toggleIsHovered] = useToggle(false)
+
   const renderSearchSection = () => {
     if (!props.searchUrl) {
       return
@@ -86,44 +89,18 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
 
     const { title, variant, items } = props.shortcuts
 
-    const cardsOrTags =
-      variant === 'cards'
-        ? items.map(({ href, title, imgSrc, imgAlt }) => (
-            <FocusableBox
-              zIndex={10}
-              href={href}
-              borderRadius="standard"
-              paddingX={1}
-              paddingY={2}
-              background="backgroundBrandSecondaryMinimal"
-              display="flex"
-              alignItems="center"
-              className={styles.shortcut}
-            >
-              <Box
-                display="flex"
-                position="relative"
-                height="full"
-                justifyContent="center"
-                alignItems={'center'}
-                marginRight={1}
-              >
-                <img
-                  src={imgSrc}
-                  alt={imgAlt ?? ''}
-                  className={styles.headerImage}
-                />
-              </Box>
-              <Text color="foregroundBrandSecondaryContrast" variant="h5">
-                {title}
-              </Text>
-            </FocusableBox>
-          ))
-        : items.map(({ href, title, variant }) => (
-            <Tag key={`${href}-${title}`} href={href} variant={variant}>
-              {title}
-            </Tag>
-          ))
+    if (variant === 'cards') {
+      return (
+        <Box marginTop={4}>
+          <GridRow>
+            {items.map(shortcut => (
+              <GridColumn span={'1/2'}>
+                <ShortcutCard {...shortcut} />
+            </GridColumn>
+            ))}
+          </GridRow>
+        </Box>
+    )}
 
     return (
       <Box marginTop={4}>
@@ -132,7 +109,12 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
             {title}
           </Text>
         )}
-        <Inline space={variant === 'cards' ? 3 : 1}>{cardsOrTags}</Inline>
+        <Inline space={1}>{items.map(({ href, title, variant }) => (
+            <Tag key={`${href}-${title}`} href={href} variant={variant}>
+              {title}
+            </Tag>
+          ))}
+        </Inline>
       </Box>
     )
   }

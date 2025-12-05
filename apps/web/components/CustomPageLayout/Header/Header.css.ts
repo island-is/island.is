@@ -14,7 +14,7 @@ export const searchBox = style({
 
 export const shortcut = style({
   height: '80px',
-  width: '318px',
+  maxWidth: '318px',
 })
 
 export const image = style({
