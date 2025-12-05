@@ -16,6 +16,7 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerGetPatientAppointmentsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -34,6 +35,8 @@ import {
   meWaitingListControllerGetWaitingListEntriesV1,
 } from './gen/fetch'
 import {
+  AppointmentDto,
+  AppointmentStatus,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -392,6 +395,8 @@ export class HealthDirectorateHealthService {
       return null
     }
 
+    this.logger.info('Creating permit with input:', input)
+
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
@@ -416,5 +421,27 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    from?: Date,
+    statuses?: AppointmentStatus[],
+  ): Promise<AppointmentDto[] | null> {
+    const defaultFrom = new Date()
+
+    const appointments = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentsV1({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            statuses: statuses,
+          },
+        }),
+      ),
+    )
+
+    return appointments ?? null
   }
 }

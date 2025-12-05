@@ -6,15 +6,19 @@ import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { CONTENT_GAP_LG } from '../../utils/constants'
 import {
+  useGetAppointmentsOverviewQuery,
+  useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetDonorStatusOverviewQuery,
   useGetHealthCenterOverviewQuery,
   useGetInsuranceOverviewQuery,
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
-  useGetBloodTypeOverviewQuery,
 } from './HealthOverview.generated'
 
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
+import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
 
@@ -26,9 +30,24 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const [showAppointments, setShowAppointments] = useState(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalHealthAppointmentsPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowAppointments(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
   const {
     data: healthCenterData,
     loading: healthCenterLoading,
@@ -83,8 +102,22 @@ export const HealthOverview = () => {
     error: bloodTypeError,
   } = useGetBloodTypeOverviewQuery()
 
+  const {
+    data: appointmentsData,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+  } = useGetAppointmentsOverviewQuery({
+    variables: {
+      status: [], //TODO: FIX WHEN SERVICE IS READY
+    },
+    skip: !showAppointments,
+  })
+
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
+
+  const firstTwoAppointments =
+    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
   return (
     <>
@@ -102,6 +135,16 @@ export const HealthOverview = () => {
         </GridColumn>
       </GridRow>
       {/* Appointments */}
+      {showAppointments && (
+        <Appointments
+          data={{
+            data: { data: firstTwoAppointments },
+            loading: appointmentsLoading,
+            error: !!appointmentsError,
+          }}
+          showLinkButton
+        />
+      )}
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
