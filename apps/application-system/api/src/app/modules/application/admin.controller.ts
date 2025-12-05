@@ -89,7 +89,7 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   //todo sleppa bypass?
   @BypassDelegation()
-  @Get('admin/applications/:page/:count')
+  @Get('admin/applications/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
     resources: (apps) => apps.rows.map((app) => app.id),
@@ -180,7 +180,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/applications/institution/:page/:count')
+  @Get('admin/applications/overview/institution/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
     resources: (apps) => apps.rows.map((app) => app.id),
@@ -265,7 +265,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/applications/institution/:nationalId/application-types')
+  @Get('admin/applications/application-types/:nationalId/')
   @UseInterceptors(ApplicationTypeAdminSerializer)
   @Documentation({
     description: 'Get application types for a specific institution',
