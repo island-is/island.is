@@ -388,12 +388,12 @@ export const specialEducationSupportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'has-has-received-services-from-municipality',
+              dataTestId: 'has-received-services-from-municipality',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-has-has-received-services-from-municipality',
+              dataTestId: 'no-has-received-services-from-municipality',
               value: NO,
             },
           ],
