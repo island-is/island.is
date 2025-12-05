@@ -173,8 +173,7 @@ const VehiclesOverview = () => {
                   placeholder={formatMessage(vehicleMessage.searchForPlate)}
                 />
               }
-            >
-            </Filter>
+            ></Filter>
           </Box>
         )}
 
