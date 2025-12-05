@@ -23,6 +23,7 @@ export const isAllowedBulkMileageUploadLoader: WrappedLoaderFn =
           page: 1,
           pageSize: 10,
           filterOnlyVehiclesUserCanRegisterMileage: true,
+          filterOnlyMileageRequiredVehicles: false,
           includeNextMainInspectionDate: false,
         },
       },

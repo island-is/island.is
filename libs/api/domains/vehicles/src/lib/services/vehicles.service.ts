@@ -93,6 +93,7 @@ export class VehiclesService {
       auth,
     ).currentvehicleswithmileageandinspGet({
       ...input,
+      onlyMileageRequiredVehicles: input.onlyMileage,
       permno: input.permno
         ? input.permno.length < 5
           ? `${input.permno}*`
@@ -111,6 +112,7 @@ export class VehiclesService {
       includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
+      onlyMileageRequiredVehicles: input.filterOnlyMileageRequiredVehicles,
       query: input.query,
     })
 

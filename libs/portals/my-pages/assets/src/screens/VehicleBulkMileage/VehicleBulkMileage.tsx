@@ -51,6 +51,7 @@ const VehicleBulkMileage = () => {
             pageSize: 10,
             query: search ?? undefined,
             filterOnlyVehiclesUserCanRegisterMileage: true,
+            filterOnlyMileageRequiredVehicles: true,
             includeNextMainInspectionDate: false,
           },
         },
