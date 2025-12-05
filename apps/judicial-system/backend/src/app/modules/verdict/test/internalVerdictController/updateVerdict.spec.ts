@@ -4,11 +4,7 @@ import { VerdictServiceStatus } from '@island.is/judicial-system/types'
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
-import {
-  Case,
-  Verdict,
-  VerdictRepositoryService,
-} from '../../../repository'
+import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
 
 interface Then {
@@ -77,8 +73,7 @@ describe('InternalVerdictController - Update verdict', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate =
-        mockVerdictRepositoryService.update as jest.Mock
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedVerdict)
 
       then = await givenWhenThen()
