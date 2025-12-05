@@ -32,10 +32,10 @@ import {
   CaseState,
   CaseType,
   CourtSessionRulingType,
+  courtSubtypes,
   DefendantEventType,
   EventType,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -61,7 +61,6 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
@@ -647,12 +646,11 @@ export class InternalCaseService {
         theCase.defendants ?? [],
         filterMap((defendant) => {
           if (defendant.verdict?.serviceDate) {
-            const appealDeadline = getIndictmentAppealDeadlineDate({
+            const { isDeadlineExpired } = getIndictmentAppealDeadline({
               baseDate: defendant.verdict?.serviceDate,
               isFine: false,
             })
-            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
-            if (isAppealDeadlineExpired) {
+            if (isDeadlineExpired) {
               return option.some({ theCase, defendant })
             }
           }

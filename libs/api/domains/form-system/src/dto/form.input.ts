@@ -25,18 +25,6 @@ export class DependencyInput {
   isSelected?: boolean
 }
 
-@InputType('FormSystemDeleteFormInput')
-export class DeleteFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
-@InputType('FormSystemPublishFormInput')
-export class PublishFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })

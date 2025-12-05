@@ -108,6 +108,9 @@ export {
   deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
+  IndictmentCaseSubtypes,
+  type Subtype,
+  courtSubtypes,
   CaseAppealState,
   RequestCaseState,
   CaseTransition,
@@ -150,7 +153,7 @@ export {
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
 export {
-  getIndictmentAppealDeadlineDate,
+  getIndictmentAppealDeadline,
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,

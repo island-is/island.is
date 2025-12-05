@@ -15,8 +15,8 @@ import {
   DefaultApi,
 } from '../../gen/fetch/supreme-court'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import type { ConfigType } from '@nestjs/config'
 import { VerdictsClientConfig } from './verdicts-client.config'
+import type { ConfigType } from '@nestjs/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { CaseFilterOptionType } from './types'
 
@@ -146,6 +146,7 @@ export class VerdictsClientService {
                 'dateTo',
                 this.logger,
               ),
+              caseContact: input.caseContact,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -377,6 +378,15 @@ export class VerdictsClientService {
     }
   }
 
+  private getDefaultDateFrom() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return {
+      date: today,
+      dateString: today.toISOString(),
+    }
+  }
+
   async getCourtAgendas(input: {
     page?: number
     court?: string
@@ -396,16 +406,22 @@ export class VerdictsClientService {
             agendaSearchRequest: {
               page: pageNumber,
               limit: itemsPerPage,
-              dateFrom: safelyConvertStringToDate(
-                input.dateFrom,
-                'dateFrom',
-                this.logger,
-              ),
+              dateFrom: input.dateFrom
+                ? safelyConvertStringToDate(
+                    input.dateFrom,
+                    'dateFrom',
+                    this.logger,
+                  )
+                : !input.dateTo
+                ? this.getDefaultDateFrom().date
+                : undefined,
               dateTo: safelyConvertStringToDate(
                 input.dateTo,
                 'dateTo',
                 this.logger,
               ),
+              lawyer: input.lawyer ? input.lawyer : undefined,
+              orderBy: 'verdictDate ASC',
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -415,9 +431,15 @@ export class VerdictsClientService {
             pageNumber: pageNumber,
             courts: input.court ? input.court.split(',') : [],
             itemsPerPage,
-            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateFrom: input.dateFrom
+              ? input.dateFrom
+              : !input.dateTo
+              ? this.getDefaultDateFrom().dateString
+              : undefined,
             dateTo: input.dateTo ? input.dateTo : undefined,
             lawyer: input.lawyer ? input.lawyer : undefined,
+            orderBy: 'StartDateTime',
+            orderDirection: 'ASC',
           }),
     ])
 
@@ -470,33 +492,84 @@ export class VerdictsClientService {
       })
     }
 
+    items.sort((a, b) => {
+      if (!a.dateFrom && !b.dateFrom) return 0
+      if (!b.dateFrom) return 1
+      if (!a.dateFrom) return -1
+
+      const dateFromDiff =
+        new Date(a.dateFrom).getTime() - new Date(b.dateFrom).getTime()
+      if (dateFromDiff !== 0) return dateFromDiff
+
+      if (!a.dateTo && !b.dateTo) return 0
+      if (!b.dateTo) return 1
+      if (!a.dateTo) return -1
+      return new Date(a.dateTo).getTime() - new Date(b.dateTo).getTime()
+    })
+
     return {
       items,
       total,
     }
   }
 
-  private isLawyerValid(lawyer: {
-    isRemovedFromLawyersList?: boolean
-    name?: string
-    idNumber?: string
-  }): lawyer is {
-    isRemovedFromLawyersList?: boolean
-    name: string
-  } {
-    return !lawyer?.isRemovedFromLawyersList && Boolean(lawyer.name)
+  private async getSupremeCourtLawyers(lawyerNameSet: Set<string>) {
+    const pageSize = 1000
+    let page = 1
+
+    let response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+      limit: pageSize,
+      page,
+    })
+    for (const lawyer of response.items ?? [])
+      if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+
+    while (
+      typeof response.total === 'number' &&
+      response.total > pageSize * page
+    ) {
+      page += 1
+      response = await this.supremeCourtApi.apiV2VerdictGetLawyersGet({
+        limit: pageSize,
+        page,
+      })
+      for (const lawyer of response.items ?? [])
+        if (lawyer?.name) lawyerNameSet.add(lawyer.name)
+    }
+
+    return lawyerNameSet
   }
 
   async getLawyers() {
     const { goproLawyersApi } = await this.getAuthenticatedGoproApis()
-    const response = await goproLawyersApi.getLawyersV2()
-    const lawyerNames = (response.items ?? [])
-      .filter(this.isLawyerValid)
-      .map((lawyer) => lawyer.name)
-    const lawyers = Array.from(new Set(lawyerNames)).map((name) => ({
+
+    const lawyerNameSet = new Set<string>()
+
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
+      goproLawyersApi.getLawyersV2(),
+      this.getSupremeCourtLawyers(lawyerNameSet),
+    ])
+
+    if (goproResponse.status === 'fulfilled')
+      for (const lawyer of goproResponse.value.items ?? [])
+        if (Boolean(lawyer?.name) && !lawyer.isRemovedFromLawyersList)
+          lawyerNameSet.add(lawyer.name as string)
+
+    if (goproResponse.status === 'rejected')
+      this.logger.error('Failed to fetch gopro lawyers', {
+        error: goproResponse.reason,
+      })
+
+    if (supremeCourtResponse.status === 'rejected')
+      this.logger.error('Failed to fetch supreme court lawyers', {
+        error: supremeCourtResponse.reason,
+      })
+
+    const lawyers = Array.from(lawyerNameSet).map((name) => ({
       id: name,
       name,
     }))
+
     lawyers.sort(sortAlpha('name'))
     return lawyers
   }
