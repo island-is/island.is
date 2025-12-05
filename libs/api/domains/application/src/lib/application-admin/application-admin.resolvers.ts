@@ -28,7 +28,7 @@ import { ApplicationService } from '../application.service'
 export class ApplicationAdminResolver {
   constructor(private applicationService: ApplicationService) {}
 
-  @Query(() => [ApplicationAdmin], { nullable: true })
+  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdmin(
     @CurrentUser() user: User,
@@ -36,7 +36,7 @@ export class ApplicationAdminResolver {
     locale: Locale = 'is',
     @Args('input')
     input: ApplicationsSuperAdminFilters,
-  ): Promise<ApplicationAdmin[] | null> {
+  ): Promise<ApplicationAdminPaginatedResponse | null> {
     return this.applicationService.findAllSuperAdmin(user, locale, input)
   }
 
@@ -55,6 +55,21 @@ export class ApplicationAdminResolver {
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   async applicationTypesInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: ApplicationTypesInstitutionAdminInput,
+  ): Promise<ApplicationTypeAdminInstitution[] | null> {
+    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
+  }
+
+  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationTypesSuperAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',

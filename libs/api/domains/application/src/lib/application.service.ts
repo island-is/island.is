@@ -132,6 +132,18 @@ export class ApplicationService {
     })
   }
 
+  async findAllApplicationTypesSuperAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationTypesInstitutionAdminInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesSuperAdmin({
+      locale,
+    })
+  }
+
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,

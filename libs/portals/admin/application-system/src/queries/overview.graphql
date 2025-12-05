@@ -1,41 +1,44 @@
 query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   applicationApplicationsAdmin(input: $input) {
-    id
-    typeId
-    applicant
-    state
-    created
-    modified
-    assignees
-    applicantActors
-    name
-    pruned
-    pruneAt
-    institution
-    progress
-    status
-    applicantName
-    paymentStatus
-    actionCard {
-      title
-      description
-      tag {
-        label
-        variant
-      }
-      pendingAction {
-        displayStatus
-        content
+    rows {
+      id
+      typeId
+      applicant
+      state
+      created
+      modified
+      assignees
+      applicantActors
+      name
+      pruned
+      pruneAt
+      institution
+      progress
+      status
+      applicantName
+      paymentStatus
+      actionCard {
         title
+        description
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          displayStatus
+          content
+          title
+        }
+        history {
+          log
+          date
+        }
+        deleteButton
+        draftTotalSteps
+        draftFinishedSteps
       }
-      history {
-        log
-        date
-      }
-      deleteButton
-      draftTotalSteps
-      draftFinishedSteps
     }
+    count
   }
 }
 
