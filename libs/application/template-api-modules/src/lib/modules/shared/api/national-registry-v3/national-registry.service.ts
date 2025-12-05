@@ -53,11 +53,10 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      return this.nationalRegistryService.getIndividual(
-        auth.nationalId,
+      return this.nationalRegistryService.nationalRegistry({
         auth,
         params,
-      )
+      } as TemplateApiModuleActionProps<NationalRegistryParameters>)
     }
 
     const individual = await this.getIndividual(auth.nationalId, auth)
