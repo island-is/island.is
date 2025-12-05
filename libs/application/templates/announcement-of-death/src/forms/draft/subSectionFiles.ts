@@ -54,6 +54,11 @@ export const subSectionFiles = buildSubSection({
             placeholder: m.financesDataCollectionPermissionPlaceholder,
           },
         ),
+        buildCustomField({
+          id: 'filesValidation',
+          component: 'FilesValidation',
+          title: '',
+        }),
       ],
     }),
   ],
