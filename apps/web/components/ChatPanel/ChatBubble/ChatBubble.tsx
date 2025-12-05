@@ -70,6 +70,7 @@ interface CircleVariantProps {
   pushUp: boolean
   handleClick: () => void
   loading: boolean
+  text: string
 }
 
 const CircleVariant = ({
@@ -77,6 +78,7 @@ const CircleVariant = ({
   pushUp,
   handleClick,
   loading,
+  text,
 }: CircleVariantProps) => {
   return (
     <div
@@ -94,6 +96,7 @@ const CircleVariant = ({
           event.preventDefault()
         }
       }}
+      aria-label={text}
     >
       <CircleIcon loading={loading} />
     </div>
@@ -163,6 +166,7 @@ export const ChatBubble = ({
           pushUp={pushUp}
           handleClick={handleClick}
           loading={loading}
+          text={text}
         />
       )}
     </>
