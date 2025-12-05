@@ -16,11 +16,10 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 }
 export { getSelectedMachine } from './getSelectedMachine'
 export { getReviewSteps } from './getReviewSteps'
-export * from './hasReviewerApproved'
+export * from './getReviewers'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
 export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'
-export * from './pendingAction'
 
 export const getChargeItems = (
   application: Application<FormValue>,
