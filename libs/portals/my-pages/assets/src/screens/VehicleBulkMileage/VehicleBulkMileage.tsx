@@ -141,6 +141,7 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+          childrenWidthFull
           buttonGroup={
             isAllowedBulkMileageUpload
               ? [
