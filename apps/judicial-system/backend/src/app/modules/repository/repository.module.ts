@@ -10,6 +10,7 @@ import { CourtSession } from './models/courtSession.model'
 import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { Subpoena } from './models/subpoena.model'
+import { Verdict } from './models/verdict.model'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
@@ -17,6 +18,7 @@ import { CourtSessionRepositoryService } from './services/courtSessionRepository
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
 
 @Module({
@@ -29,6 +31,7 @@ import { repositoryModuleConfig } from './repository.config'
       Defendant,
       DefendantEventLog,
       Subpoena,
+      Verdict,
     ]),
     ConfigModule.forFeature(repositoryModuleConfig),
   ],
@@ -40,6 +43,7 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     SubpoenaRepositoryService,
+    VerdictRepositoryService,
   ],
   exports: [
     CaseArchiveRepositoryService,
@@ -49,6 +53,7 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     SubpoenaRepositoryService,
+    VerdictRepositoryService,
   ],
 })
 export class RepositoryModule {}

@@ -29,5 +29,6 @@ export { CourtDocumentRepositoryService } from './services/courtDocumentReposito
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export { UpdateCase } from './types/caseRepository.types'

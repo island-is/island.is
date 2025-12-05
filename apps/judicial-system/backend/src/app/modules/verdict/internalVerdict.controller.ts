@@ -44,10 +44,6 @@ import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import {
-  VerdictService,
-  VerdictServiceCertificateDelivery,
-} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -55,6 +51,10 @@ import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdict
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from './verdict.service'
 
 const validateVerdictAppealUpdate = ({
   caseId,

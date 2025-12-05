@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
   AuditTrailModule,
@@ -8,7 +7,6 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { Verdict } from '../repository'
 import {
   CaseModule,
   DefendantModule,
@@ -17,6 +15,7 @@ import {
   FileModule,
   LawyerRegistryModule,
   PoliceModule,
+  RepositoryModule,
 } from '..'
 import { InternalVerdictController } from './internalVerdict.controller'
 import { VerdictController } from './verdict.controller'
@@ -33,7 +32,7 @@ import { VerdictService } from './verdict.service'
     forwardRef(() => DefendantModule),
     forwardRef(() => EventLogModule),
     forwardRef(() => LawyerRegistryModule),
-    SequelizeModule.forFeature([Verdict]),
+    forwardRef(() => RepositoryModule),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [auditTrailModuleConfig],
