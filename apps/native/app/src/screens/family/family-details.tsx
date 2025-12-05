@@ -18,7 +18,7 @@ import { Input, InputRow, NavigationBarSheet, Typography } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 type ChildCustodyDetails = NonNullable<
   NonNullable<

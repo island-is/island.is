@@ -1,6 +1,6 @@
 import { useIntl } from 'react-intl'
 import { ImageSourcePropType, View } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 import { Typography } from '../../ui'
 import { ExternalLink } from '../external-links/external-links'
 
