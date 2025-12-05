@@ -3,5 +3,5 @@ export { NationalRegistryV3ApplicationsClientConfig } from './lib/nationalRegist
 export { NationalRegistryV3ApplicationsClientService } from './lib/nationalRegistryV3Applications.service'
 export { CitizenshipDto } from './lib/types/citizenship.dto'
 export { CohabitationDto } from './lib/types/cohabitation.dto'
-export { IndividualDto, IndividualLiteDto } from './lib/types/individual.dto'
+export { IndividualDto } from './lib/types/individual.dto'
 export * from '../gen/fetch'

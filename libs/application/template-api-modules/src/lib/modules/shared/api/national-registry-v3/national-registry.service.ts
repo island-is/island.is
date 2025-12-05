@@ -23,7 +23,6 @@ import {
   CitizenshipDto,
   CohabitationDto,
   IndividualDto,
-  IndividualLiteDto,
 } from '@island.is/clients/national-registry-v3-applications'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -277,7 +276,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }
 
   private formatNationalRegistryOtherIndividual(
-    person: IndividualLiteDto,
+    person: Pick<IndividualDto, 'nationalId' | 'name' | 'legalDomicile'>,
   ): NationalRegistryOtherIndividual {
     return {
       nationalId: person.nationalId,
