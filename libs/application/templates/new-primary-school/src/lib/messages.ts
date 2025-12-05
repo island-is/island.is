@@ -1112,7 +1112,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu allt það sem á við',
       description: 'Select all that applies',
     },
-    selectWhatIsppropriatePlaceholder: {
+    selectWhatIsAppropriatePlaceholder: {
       id: 'nps.application:different.needs.select.what.is.appropriate.placeholder',
       defaultMessage: 'Veldu það sem á við',
       description: 'Select what is appropriate',

@@ -256,7 +256,7 @@ export const specialEducationSupportSubSection = buildSubSection({
             optionsType: OptionsType.ASSESSOR,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
-                .selectWhatIsppropriatePlaceholder,
+                .selectWhatIsAppropriatePlaceholder,
           },
         ),
 
@@ -507,7 +507,7 @@ export const specialEducationSupportSubSection = buildSubSection({
               OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_DEPARTMENT,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
-                .selectWhatIsppropriatePlaceholder,
+                .selectWhatIsAppropriatePlaceholder,
           },
         ),
         buildDescriptionField({
