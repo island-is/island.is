@@ -41,7 +41,10 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             }),
         )
 
-        return { ...theCase, caseFiles }
+        return {
+          ...theCase,
+          caseFiles,
+        }
       }),
     )
   }

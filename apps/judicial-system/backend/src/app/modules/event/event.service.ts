@@ -39,6 +39,18 @@ const errorEmojis = [
   ':x:',
 ]
 
+export type CaseEvent =
+  | CaseTransition
+  | 'ARCHIVE'
+  | 'CREATE'
+  | 'CREATE_XRD'
+  | 'EXTEND'
+  | 'RESUBMIT'
+  | 'SCHEDULE_COURT_DATE'
+  | 'SPLIT'
+  | 'SUBPOENA_SERVICE_STATUS'
+  | 'VERDICT_SERVICE_STATUS'
+
 const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
@@ -47,12 +59,13 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  CREATE: ':new: Mál stofnað',
+  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
-  CREATE: ':new: Mál stofnað',
-  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
+  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
   [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
@@ -62,25 +75,14 @@ const caseEvent: Record<CaseEvent, string> = {
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  SPLIT: ':scissors: Mál klofið',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
-  [CaseTransition.WITHDRAW_APPEAL]:
-    ':leftwards_arrow_with_hook: Kæra afturkölluð',
-  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
+  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
   VERDICT_SERVICE_STATUS:
     ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
+  [CaseTransition.WITHDRAW_APPEAL]:
+    ':leftwards_arrow_with_hook: Kæra afturkölluð',
 }
-
-export type CaseEvent =
-  | CaseTransition
-  | 'ARCHIVE'
-  | 'CREATE'
-  | 'CREATE_XRD'
-  | 'EXTEND'
-  | 'RESUBMIT'
-  | 'SCHEDULE_COURT_DATE'
-  | 'SUBPOENA_SERVICE_STATUS'
-  | 'VERDICT_SERVICE_STATUS'
 
 const caseEventsToLog = [
   'CREATE',
