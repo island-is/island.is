@@ -2,7 +2,11 @@ import { NO, YES } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, LanguageEnvironmentOptions } from '../utils/constants'
+import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
+  PayerOption,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -23,13 +27,17 @@ const nationalIdWithNameSchema = z.object({
   }),
 })
 
+const nameEmailSchema = z
+  .object({
+    name: z.string().optional(),
+    email: z.string().email().optional().or(z.literal('')),
+  })
+  .optional()
+
 export const dataSchema = z.object({
-  applicationType: z.enum([
-    ApplicationType.NEW_PRIMARY_SCHOOL,
-    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  applicationType: z.nativeEnum(ApplicationType),
   childInfo: z
     .object({
       usePronounAndPreferredName: z.array(z.string()),
@@ -84,6 +92,10 @@ export const dataSchema = z.object({
   }),
   reasonForApplication: z.object({
     reason: z.string(),
+  }),
+  counsellingRegardingApplication: z.object({
+    counselling: z.string(),
+    hasVisitedSchool: z.enum([YES, NO]),
   }),
   currentSchool: z
     .object({
@@ -255,19 +267,9 @@ export const dataSchema = z.object({
       hasDiagnoses: z.enum([YES, NO]),
       hasHadSupport: z.enum([YES, NO]),
       hasWelfareContact: z.string().optional(),
-      welfareContact: z
-        .object({
-          name: z.string().optional(),
-          email: z.string().email().optional().or(z.literal('')),
-        })
-        .optional(),
+      welfareContact: nameEmailSchema,
       hasCaseManager: z.string().optional(),
-      caseManager: z
-        .object({
-          name: z.string().optional(),
-          email: z.string().email().optional().or(z.literal('')),
-        })
-        .optional(),
+      caseManager: nameEmailSchema,
       hasIntegratedServices: z.string().optional(),
       requestingMeeting: z.array(z.enum([YES, NO])).optional(),
     })
@@ -346,6 +348,179 @@ export const dataSchema = z.object({
           ? !!hasIntegratedServices
           : true,
       { path: ['hasIntegratedServices'] },
+    ),
+  specialEducationSupport: z
+    .object({
+      hasWelfareContact: z.enum([YES, NO]),
+      welfareContact: nameEmailSchema,
+      hasCaseManager: z.enum([YES, NO]),
+      caseManager: nameEmailSchema,
+      hasIntegratedServices: z.enum([YES, NO]),
+      hasAssessmentOfSupportNeeds: z.enum([YES, NO]),
+      isAssessmentOfSupportNeedsInProgress: z.string().optional(),
+      supportNeedsAssessmentBy: z.string().optional(),
+      hasConfirmedDiagnosis: z.enum([YES, NO]),
+      isDiagnosisInProgress: z.string().optional(),
+      diagnosticians: z.array(z.string()).optional(),
+      hasOtherSpecialists: z.enum([YES, NO]),
+      specialists: z.array(z.string()).optional(),
+      hasReceivedServicesFromMunicipality: z.enum([YES, NO]),
+      servicesFromMunicipality: z.array(z.string()).optional(),
+      hasReceivedChildAndAdolescentPsychiatryServices: z
+        .string()
+        .min(1)
+        .optional(),
+      isOnWaitlistForServices: z.string().optional(),
+      childAndAdolescentPsychiatryDepartment: z.string().optional(),
+      childAndAdolescentPsychiatryServicesReceived: z
+        .array(z.string())
+        .optional(),
+      hasBeenReportedToChildProtectiveServices: z.string().min(1).optional(),
+      isCaseOpenWithChildProtectiveServices: z.string().optional(),
+    })
+    .refine(
+      ({ hasWelfareContact, welfareContact }) =>
+        hasWelfareContact === YES
+          ? welfareContact && !!welfareContact.name?.trim()
+          : true,
+      { path: ['welfareContact', 'name'] },
+    )
+    .refine(
+      ({ hasWelfareContact, welfareContact }) =>
+        hasWelfareContact === YES
+          ? welfareContact && !!welfareContact.email?.trim()
+          : true,
+      { path: ['welfareContact', 'email'] },
+    )
+    .refine(
+      ({ hasCaseManager, caseManager }) =>
+        hasCaseManager === YES
+          ? caseManager && !!caseManager.name?.trim()
+          : true,
+      { path: ['caseManager', 'name'] },
+    )
+    .refine(
+      ({ hasCaseManager, caseManager }) =>
+        hasCaseManager === YES
+          ? caseManager && !!caseManager.email?.trim()
+          : true,
+      { path: ['caseManager', 'email'] },
+    )
+    .refine(
+      ({ hasAssessmentOfSupportNeeds, isAssessmentOfSupportNeedsInProgress }) =>
+        hasAssessmentOfSupportNeeds === NO
+          ? !!isAssessmentOfSupportNeedsInProgress
+          : true,
+      { path: ['isAssessmentOfSupportNeedsInProgress'] },
+    )
+    .refine(
+      ({
+        hasAssessmentOfSupportNeeds,
+        isAssessmentOfSupportNeedsInProgress,
+        supportNeedsAssessmentBy,
+      }) =>
+        hasAssessmentOfSupportNeeds === YES ||
+        (hasAssessmentOfSupportNeeds === NO &&
+          isAssessmentOfSupportNeedsInProgress === YES)
+          ? !!supportNeedsAssessmentBy
+          : true,
+      { path: ['supportNeedsAssessmentBy'] },
+    )
+    .refine(
+      ({ hasConfirmedDiagnosis, isDiagnosisInProgress }) =>
+        hasConfirmedDiagnosis === NO ? !!isDiagnosisInProgress : true,
+      { path: ['isDiagnosisInProgress'] },
+    )
+    .refine(
+      ({ hasConfirmedDiagnosis, isDiagnosisInProgress, diagnosticians }) =>
+        hasConfirmedDiagnosis === YES ||
+        (hasConfirmedDiagnosis === NO && isDiagnosisInProgress === YES)
+          ? !!diagnosticians
+          : true,
+      { path: ['diagnosticians'] },
+    )
+    .refine(
+      ({ hasOtherSpecialists, specialists }) =>
+        hasOtherSpecialists === YES ? !!specialists : true,
+      { path: ['specialists'] },
+    )
+    .refine(
+      ({ hasReceivedServicesFromMunicipality, servicesFromMunicipality }) =>
+        hasReceivedServicesFromMunicipality === YES
+          ? !!servicesFromMunicipality
+          : true,
+      { path: ['servicesFromMunicipality'] },
+    )
+    .refine(
+      ({
+        hasReceivedChildAndAdolescentPsychiatryServices,
+        isOnWaitlistForServices,
+      }) =>
+        hasReceivedChildAndAdolescentPsychiatryServices === NO
+          ? !!isOnWaitlistForServices
+          : true,
+      { path: ['isOnWaitlistForServices'] },
+    )
+    .refine(
+      ({
+        hasReceivedChildAndAdolescentPsychiatryServices,
+        isOnWaitlistForServices,
+        childAndAdolescentPsychiatryDepartment,
+      }) =>
+        hasReceivedChildAndAdolescentPsychiatryServices === YES ||
+        (hasReceivedChildAndAdolescentPsychiatryServices === NO &&
+          isOnWaitlistForServices === YES)
+          ? !!childAndAdolescentPsychiatryDepartment
+          : true,
+      { path: ['childAndAdolescentPsychiatryDepartment'] },
+    )
+    .refine(
+      ({
+        hasReceivedChildAndAdolescentPsychiatryServices,
+        childAndAdolescentPsychiatryServicesReceived,
+      }) =>
+        hasReceivedChildAndAdolescentPsychiatryServices === YES
+          ? !!childAndAdolescentPsychiatryServicesReceived
+          : true,
+      { path: ['childAndAdolescentPsychiatryServicesReceived'] },
+    )
+    .refine(
+      ({
+        hasBeenReportedToChildProtectiveServices,
+        isCaseOpenWithChildProtectiveServices,
+      }) =>
+        hasBeenReportedToChildProtectiveServices === YES
+          ? !!isCaseOpenWithChildProtectiveServices
+          : true,
+      { path: ['isCaseOpenWithChildProtectiveServices'] },
+    ),
+  payer: z
+    .object({
+      option: z.nativeEnum(PayerOption),
+      other: z
+        .object({
+          name: z.string(),
+          nationalId: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.name?.trim() : true,
+      { path: ['other', 'name'] },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER
+          ? other && kennitala.isValid(other.nationalId)
+          : true,
+      { path: ['other', 'nationalId'], params: errorMessages.nationalId },
+    )
+    .refine(
+      ({ option, other }) =>
+        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
+      { path: ['other', 'email'] },
     ),
 })
 
