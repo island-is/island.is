@@ -81,6 +81,9 @@ export enum Features {
   isHolarUniversityEnabled = 'isHolarUniversityEnabled',
   isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
 
+  //License service license scanner disabled
+  isLicenseScannerDisabled = 'isLicenseScannerDisabled',
+
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
   licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',

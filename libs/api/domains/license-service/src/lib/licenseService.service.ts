@@ -50,7 +50,7 @@ import {
 import { UserAgent } from '@island.is/nest/core'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -532,15 +532,24 @@ export class LicenseService {
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
 
-      if (
-        'licenseType' in tokenData &&
-        tokenData.licenseType !== GenericLicenseType.DriversLicense
-      ) {
-        return {
-          barcodeType: VerifyLicenseBarcodeType.V2,
-          licenseType: tokenData.licenseType,
-          valid: false,
-          error: VerifyLicenseBarcodeError.ERROR,
+      const isLicenseScannerDisabled =
+        await this.featureService.getValue<boolean>(
+          Features.isLicenseScannerDisabled,
+          false,
+        )
+
+      // If license scanner is disabled, we still allow drivers license to be verified, for now
+      if (isLicenseScannerDisabled) {
+        if (
+          'licenseType' in tokenData &&
+          tokenData.licenseType !== GenericLicenseType.DriversLicense
+        ) {
+          return {
+            barcodeType: VerifyLicenseBarcodeType.V2,
+            licenseType: tokenData.licenseType,
+            valid: false,
+            error: VerifyLicenseBarcodeError.ERROR,
+          }
         }
       }
 
