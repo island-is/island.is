@@ -108,11 +108,18 @@ export const createCaseFilesRecord = async (
       titleFontSize,
       { alignment: Alignment.Center, bold: true },
     )
-    .addText(formatMessage(caseFilesRecord.accused), textFontSize, {
-      bold: true,
-      marginTop: 7,
-      newLine: false,
-    })
+    .addText(
+      formatMessage(caseFilesRecord.accused, {
+        suffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'ur',
+      }),
+      textFontSize,
+      {
+        bold: true,
+        marginTop: 7,
+        newLine: false,
+      },
+    )
 
   for (const defendant of theCase.defendants ?? []) {
     pdfDocument.addParagraph(
