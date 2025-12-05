@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import { useToggle } from 'react-use'
 
 import {
   Box,
@@ -56,8 +55,6 @@ export type CustomPageLayoutHeaderProps = {
 }
 
 export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
-  const [isHovered, toggleIsHovered] = useToggle(false)
-
   const renderSearchSection = () => {
     if (!props.searchUrl) {
       return
