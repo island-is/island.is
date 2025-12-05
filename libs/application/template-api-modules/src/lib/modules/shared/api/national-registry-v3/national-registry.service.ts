@@ -15,6 +15,7 @@ import {
   NationalRegistryCustodian,
   NationalRegistrySpouseV3,
   NationalRegistryParent,
+  ApplicantChildCustodyInformation,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -466,7 +467,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
-    ApplicantChildCustodyInformationV3[]
+    ApplicantChildCustodyInformationV3[] | ApplicantChildCustodyInformation[]
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
