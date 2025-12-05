@@ -123,6 +123,11 @@ export const circleRoot = style({
   borderRadius: '100%',
   color: 'white',
   right: 0,
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${theme.color.mint400}`,
+    },
+  },
 })
 
 export const circleRootPushUp = style({

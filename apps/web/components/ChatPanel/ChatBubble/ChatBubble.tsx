@@ -97,6 +97,7 @@ const CircleVariant = ({
         }
       }}
       aria-label={text}
+      tabIndex={0}
     >
       <CircleIcon loading={loading} />
     </div>

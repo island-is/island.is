@@ -1,7 +1,15 @@
 import { keyframes, style } from '@vanilla-extract/css'
 
+import { theme } from '@island.is/island-ui/theme'
+
 export const container = style({
   position: 'relative',
+  selectors: {
+    '&:focus-visible': {
+      outline: 'none',
+      border: `2px solid ${theme.color.mint400}`,
+    },
+  },
 })
 
 const slideInAnimation = keyframes({

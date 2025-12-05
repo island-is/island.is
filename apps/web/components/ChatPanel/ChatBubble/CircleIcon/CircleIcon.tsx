@@ -14,7 +14,6 @@ export const CircleIcon = ({ loading = false }: CircleIconProps) => {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       className={styles.container}
-      tabIndex={0}
     >
       <circle
         cx="60"
