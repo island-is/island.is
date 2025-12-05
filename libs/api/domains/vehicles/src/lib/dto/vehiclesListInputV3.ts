@@ -19,8 +19,5 @@ export class VehiclesListInputV3 {
   filterOnlyVehiclesUserCanRegisterMileage?: boolean
 
   @Field({ nullable: true })
-  filterOnlyMileageRequiredVehicles?: boolean
-
-  @Field({ nullable: true })
   query?: string
 }

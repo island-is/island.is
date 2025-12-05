@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
-  Checkbox,
   DropdownMenu,
   Filter,
   Input,
   Pagination,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -33,11 +31,9 @@ import { isDefined } from '@island.is/shared/utils'
 
 const defaultFilterValues = {
   searchQuery: '',
-  onlyMileageRequiredVehicles: undefined,
 }
 type FilterValues = {
   searchQuery: string
-  onlyMileageRequiredVehicles?: boolean
 }
 
 const VehiclesOverview = () => {
@@ -66,7 +62,6 @@ const VehiclesOverview = () => {
 
   useDebounce(
     () => {
-      const onlyMileage = Boolean(filterValue.onlyMileageRequiredVehicles)
       const permno = filterValue.searchQuery
       GetUsersVehiclesLazyQuery({
         onCompleted: () => setSearchLoading(false),
@@ -75,13 +70,12 @@ const VehiclesOverview = () => {
             pageSize: 10,
             page: page,
             ...(permno && { permno }),
-            ...(onlyMileage && { onlyMileage }),
           },
         },
       })
     },
     500,
-    [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery, page],
+    [filterValue.searchQuery, page],
   )
 
   const vehicles = usersVehicleQuery.data?.vehiclesListV2
@@ -180,27 +174,6 @@ const VehiclesOverview = () => {
                 />
               }
             >
-              <Box padding={4}>
-                <Text variant="eyebrow" as="p" paddingBottom={2}>
-                  {formatMessage(m.filterBy)}
-                </Text>
-                <Checkbox
-                  name="onlyMileageRequiredVehicles"
-                  label={formatMessage(
-                    vehicleMessage.vehiclesRequireMileageRegistration,
-                  )}
-                  value="onlyMileageRequiredVehicles"
-                  checked={Boolean(filterValue.onlyMileageRequiredVehicles)}
-                  onChange={(e) => {
-                    setPage(1)
-                    setSearchLoading(true)
-                    setFilterValue({
-                      ...filterValue,
-                      onlyMileageRequiredVehicles: e.target.checked,
-                    })
-                  }}
-                />
-              </Box>
             </Filter>
           </Box>
         )}

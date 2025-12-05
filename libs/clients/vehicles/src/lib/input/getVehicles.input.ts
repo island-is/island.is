@@ -6,6 +6,8 @@ export interface GetVehiclesInput {
   showOwned?: boolean
   showCoowned?: boolean
   showOperated?: boolean
+
+  //DEPRECATED
   onlyMileageRequiredVehicles?: boolean
   onlyMileageRegisterableVehicles?: boolean
 }
