@@ -101,7 +101,10 @@ export const shouldShowPage = (
 
   if (!selectedSchoolSettings) return false
 
-  return selectedSchoolSettings.applicationConfigs[0].applicationFeatures.some(
+  const applicationConfig = selectedSchoolSettings.applicationConfigs?.[0]
+  if (!applicationConfig?.applicationFeatures) return false
+
+  return applicationConfig.applicationFeatures.some(
     (feature) => feature.key === key,
   )
 }
