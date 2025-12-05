@@ -1092,12 +1092,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.APPROVE,
                 logMessage:
                   statesMessages.employerApprovalApproveHistoryLogMessage,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
+                includeSubjectAndActor: true,
               },
             ],
           },
