@@ -110,3 +110,35 @@ export const loadingDots = style({
   left: 0,
   right: 0,
 })
+
+export const circleRoot = style({
+  display: 'flex',
+  width: 120,
+  justifyContent: 'center',
+  cursor: 'pointer',
+  position: 'fixed',
+  zIndex: 9999,
+  outline: 0,
+  border: 'none',
+  borderRadius: '100%',
+  color: 'white',
+  right: 0,
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${theme.color.mint400}`,
+    },
+  },
+})
+
+export const circleRootPushUp = style({
+  bottom: 72,
+  ...themeUtils.responsiveStyle({
+    md: {
+      bottom: 0,
+    },
+  }),
+})
+
+export const circleRootNoPushUp = style({
+  bottom: 0,
+})
