@@ -179,13 +179,11 @@ export const BaseSettings = () => {
               setFocus(e.target.value)
             }}
             onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                const response: UpdateFormResponse = await formUpdate()
-                if (response && response.errors) {
-                  setErrorMsg(response.errors[0].message as string)
-                } else {
-                  setErrorMsg('')
-                }
+              const response: UpdateFormResponse = await formUpdate()
+              if (response && response.errors) {
+                setErrorMsg(response.errors[0].message as string)
+              } else {
+                setErrorMsg('')
               }
             }}
             onChange={(e) =>
@@ -205,9 +203,9 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.max120Days)}
             name="applicationsDaysToRemove"
             value={
-              form.applicationDaysToRemove === 0
+              form.daysUntilApplicationPrune === 0
                 ? ''
-                : form.applicationDaysToRemove ?? ''
+                : form.daysUntilApplicationPrune ?? ''
             }
             backgroundColor="blue"
             type="number"
@@ -215,7 +213,7 @@ export const BaseSettings = () => {
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({
-                type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE',
+                type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
                 payload: { value: parseInt(e.target.value) },
               })
             }

@@ -22,12 +22,16 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.\"Microsoft.AspNetCore.Mvc.ProblemDetails\".additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.\"TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset\".properties.gildi += {\"type\": \"string\"}' src/clientConfig.json) > src/clientConfig.json",
-          "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationGuid}/documents\".post.requestBody += {\"required\": \"true\"}' src/clientConfig.json) > src/clientConfig.json",
-          "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/clientConfig.json) > src/clientConfig.json",
-          "prettier --write src/clientConfig.json"
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v2 > src/lib/config/clientConfig-v2.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/lib/config/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.\"Microsoft.AspNetCore.Mvc.ProblemDetails\".additionalProperties = false' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.\"TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset\".properties.gildi += {\"type\": \"string\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationGuid}/documents\".post.requestBody += {\"required\": \"true\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/protected/v2/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/lib/config/clientConfig-v2.json) > src/lib/config/clientConfig-v2.json",
+
+          "prettier --write src/lib/config/clientConfig.json",
+          "prettier --write src/lib/config/clientConfig-v2.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/social-insurance-administration"
@@ -36,7 +40,10 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.json"
+        "commands": [
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch/v1 -i libs/clients/social-insurance-administration/src/lib/config/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch/v2 -i libs/clients/social-insurance-administration/src/lib/config/clientConfig-v2.json"
+        ]
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

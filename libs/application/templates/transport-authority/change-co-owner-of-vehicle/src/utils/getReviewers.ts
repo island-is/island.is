@@ -9,11 +9,8 @@ export const getReviewers = (
     []
 
   // Old co-owner
-  const oldCoOwners = getValueViaPath(
-    answers,
-    'ownerCoOwners',
-    [],
-  ) as OwnerCoOwnersInformation[]
+  const oldCoOwners =
+    getValueViaPath<OwnerCoOwnersInformation[]>(answers, 'ownerCoOwners') || []
   oldCoOwners.forEach((item) => {
     if (item?.nationalId)
       result.push({
@@ -25,7 +22,7 @@ export const getReviewers = (
 
   // New co-owner
   const newCoOwners = (
-    getValueViaPath(answers, 'coOwners', []) as CoOwnersInformation[]
+    getValueViaPath<CoOwnersInformation[]>(answers, 'coOwners') || []
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   newCoOwners.forEach((item) => {
     if (item?.nationalId)
@@ -37,4 +34,25 @@ export const getReviewers = (
   })
 
   return result
+}
+
+export const getReviewerRole = (
+  answers: FormValue,
+  nationalId: string,
+): 'ownerCoOwners' | 'coOwners' | undefined => {
+  // Old co-owner
+  const ownerCoOwners = getValueViaPath<OwnerCoOwnersInformation[]>(
+    answers,
+    'ownerCoOwners',
+  )
+  if (ownerCoOwners?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'ownerCoOwners'
+
+  // New co-owner
+  const coOwners = getValueViaPath<CoOwnersInformation[]>(
+    answers,
+    'coOwners',
+  )?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+  if (coOwners?.map((x) => x.nationalId)?.includes(nationalId))
+    return 'coOwners'
 }

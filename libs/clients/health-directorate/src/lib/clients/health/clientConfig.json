@@ -578,15 +578,6 @@
                 "type": "string"
               }
             }
-          },
-          {
-            "name": "active",
-            "required": true,
-            "in": "query",
-            "description": "Whether to only include active commissions",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -1444,10 +1435,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "type": "string"
                 }
               }
             }
@@ -1509,7 +1497,7 @@
         "tags": ["Questionnaire"]
       }
     },
-    "/v1/me/questionnaires/{id}/{submissionId}": {
+    "/v1/me/questionnaires/{id}/submissions/{submissionId}": {
       "get": {
         "description": "Get a questionnaire submission",
         "operationId": "QuestionnaireController_getQuestionnaireSubmission_v1",
@@ -1539,10 +1527,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
                 }
               }
             }
@@ -1695,10 +1680,10 @@
             "name": "fromStartTime",
             "required": false,
             "in": "query",
-            "description": "Filter appointments to only include those starting at or after this time. Use current timestamp to get only future appointments.",
+            "description": "Filter appointments to only include those starting at or after this time. ",
             "schema": {
               "format": "date-time",
-              "example": "2024-01-15T10:30:00Z",
+              "example": "2024-01-15T10:30:00.000Z",
               "type": "string"
             }
           }
@@ -1837,37 +1822,6 @@
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
-            "name": "validFrom",
-            "required": false,
-            "in": "query",
-            "description": "The valid from date to filter the consents",
-            "schema": {
-              "format": "date",
-              "type": "string"
-            }
-          },
-          {
-            "name": "validTo",
-            "required": false,
-            "in": "query",
-            "description": "The valid to date to filter the consents",
-            "schema": {
-              "format": "date",
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
             "name": "locale",
             "required": false,
             "in": "query",
@@ -1877,12 +1831,37 @@
             }
           },
           {
-            "name": "statuses",
+            "name": "validFrom",
+            "required": false,
+            "in": "query",
+            "description": "The valid from date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "validTo",
+            "required": false,
+            "in": "query",
+            "description": "The valid to date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-12-31T23:59:59.999Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "required": false,
             "in": "query",
             "description": "The statuses to filter the consents",
             "schema": {
-              "$ref": "#/components/schemas/EuPatientConsentStatus"
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
+              }
             }
           }
         ],
@@ -2350,6 +2329,7 @@
           "pendingRequest",
           "rejectedRequest",
           "dismissedRequest",
+          "alreadyRequested",
           "notFullyDispensed",
           "isRegiment",
           "noMedCard",
@@ -2841,10 +2821,12 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "createdDate": {
             "format": "date-time",
@@ -2852,7 +2834,8 @@
           },
           "expiryDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "numRepliesAllowed": {
             "type": "number",
@@ -2865,9 +2848,17 @@
           "lastSubmitted": {
             "format": "date-time",
             "type": "string"
+          },
+          "hasDraft": {
+            "type": "boolean"
           }
         },
-        "required": ["questionnaireId", "numRepliesAllowed", "numSubmissions"]
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "hasDraft"
+        ]
       },
       "QuestionType": {
         "type": "string",
@@ -3447,8 +3438,8 @@
           },
           "answer": {
             "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
           }
         },
         "required": ["questionId", "answer"]
@@ -3557,8 +3548,8 @@
                       },
                       "answer": {
                         "type": "string",
-                        "format": "date",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3624,11 +3615,13 @@
           },
           "lastUpdatedDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "submittedDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "required": ["id", "questionnaireId", "isDraft", "createdDate"]
@@ -3686,10 +3679,12 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "createdDate": {
             "format": "date-time",
@@ -3697,7 +3692,8 @@
           },
           "expiryDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "numRepliesAllowed": {
             "type": "number",
@@ -3711,8 +3707,12 @@
             "format": "date-time",
             "type": "string"
           },
+          "hasDraft": {
+            "type": "boolean"
+          },
           "hint": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "daysBetweenReplies": {
             "type": "number",
@@ -3727,9 +3727,6 @@
             "items": {
               "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
             }
-          },
-          "hasDraft": {
-            "type": "boolean"
           },
           "groups": {
             "type": "array",
@@ -3790,10 +3787,10 @@
           "questionnaireId",
           "numRepliesAllowed",
           "numSubmissions",
+          "hasDraft",
           "daysBetweenReplies",
           "canSubmit",
           "submissions",
-          "hasDraft",
           "groups",
           "triggers"
         ]
@@ -3837,8 +3834,8 @@
                     },
                     "answer": {
                       "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -3947,8 +3944,8 @@
                                 },
                                 "answer": {
                                   "type": "string",
-                                  "format": "date",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -4005,14 +4002,42 @@
         },
         "required": ["replies", "isDraft"]
       },
+      "InvalidSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "type": "string"
+              },
+              "rowNum": {
+                "type": "number"
+              },
+              "rowQuestionId": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              }
+            },
+            "required": ["questionId", "errorCode", "errorMessage"]
+          }
+        }
+      },
       "QuestionnaireSubmissionDetailDto": {
         "type": "object",
         "properties": {
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "canSubmit": {
             "type": "boolean",
@@ -4058,32 +4083,6 @@
           }
         },
         "required": ["canSubmit", "groups", "submission"]
-      },
-      "InvalidSubmissionDto": {
-        "type": "object",
-        "properties": {
-          "errorMessage": {
-            "type": "object",
-            "properties": {
-              "questionId": {
-                "type": "string"
-              },
-              "rowNum": {
-                "type": "number"
-              },
-              "rowQuestionId": {
-                "type": "string"
-              },
-              "errorCode": {
-                "type": "string"
-              },
-              "errorMessage": {
-                "type": "string"
-              }
-            },
-            "required": ["questionId", "errorCode", "errorMessage"]
-          }
-        }
       },
       "AllergyClinicalStatus": {
         "type": "string",

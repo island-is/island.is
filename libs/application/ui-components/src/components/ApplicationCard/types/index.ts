@@ -1,10 +1,20 @@
-import { Application } from '@island.is/application/types'
+import { ApplicationCard as ApplicationCardType } from '@island.is/application/types'
 import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from 'react-intl'
 
 export type ApplicationCardFields = Pick<
-  Application,
-  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  ApplicationCardType,
+  | 'actionCard'
+  | 'id'
+  | 'typeId'
+  | 'status'
+  | 'modified'
+  | 'name'
+  | 'progress'
+  | 'org'
+  | 'orgContentfulId'
+  | 'slug'
+  | 'applicationPath'
 >
 
 export interface DefaultCardData {
