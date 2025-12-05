@@ -261,6 +261,17 @@ export class ApplicationService {
     return results.map((row) => ({ id: row.typeId }))
   }
 
+  async getAllApplicationTypesSuperAdmin(): Promise<{ id: string }[]> {
+
+    const results = await this.applicationModel.findAll({
+      attributes: ['typeId'],
+      group: ['typeId'],
+      raw: true,
+    })
+
+    return results.map((row) => ({ id: row.typeId }))
+  }
+
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,

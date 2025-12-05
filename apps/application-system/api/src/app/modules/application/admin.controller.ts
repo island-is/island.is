@@ -290,4 +290,19 @@ export class AdminController {
       nationalId,
     )
   }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications/application-types')
+  @UseInterceptors(ApplicationTypeAdminSerializer)
+  @Documentation({
+    description: 'Get all application types',
+    response: {
+      status: 200,
+      type: [ApplicationTypeAdminInstitution],
+    },
+  })
+  async getApplicationTypesSuperAdmin() {
+    return this.applicationService.getAllApplicationTypesSuperAdmin()
+  }
 }
