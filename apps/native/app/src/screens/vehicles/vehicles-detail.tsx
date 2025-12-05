@@ -87,12 +87,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
           }),
           link: myPagesLinks.changeOperator,
         },
-        {
-          title: intl.formatMessage({
-            id: 'vehicle.links.dropdown.vehicleHistoryReport',
-          }),
-          link: myPagesLinks.vehicleHistoryReport,
-        },
       ]
 
       const contentId = `vehicle-dropdown-${id}`

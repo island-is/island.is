@@ -145,7 +145,7 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: StaticText
+  label?: MaybeWithIndex<StaticText>
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
@@ -950,6 +950,7 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: (value: unknown, application?: Application) => unknown
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface HiddenInputField extends BaseField {

@@ -24,7 +24,6 @@ import {
   HealthInsurance,
   PoliceCases,
   HousingBenefitCalculator,
-  Hunting,
   IcelandicGovernmentInstitutionVacancies,
   Inna,
   IntellectualProperties,
@@ -54,6 +53,7 @@ import {
   TransportAuthority,
   UniversityCareers,
   Vehicles,
+  NVSPermits,
   VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
@@ -63,6 +63,7 @@ import {
   PracticalExams,
   FireCompensation,
   VMSTUnemployment,
+  GoProVerdicts,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -484,7 +485,6 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
-      Hunting,
       PoliceCases,
       Firearm,
       Disability,
@@ -497,6 +497,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
@@ -545,6 +546,7 @@ export const serviceSetup = (services: {
       LSH,
       PracticalExams,
       VMSTUnemployment,
+      GoProVerdicts,
     )
     .ingress({
       primary: {

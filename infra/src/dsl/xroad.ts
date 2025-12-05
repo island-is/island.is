@@ -411,12 +411,12 @@ export const PoliceCases = new XroadConf({
   },
 })
 
-export const Hunting = new XroadConf({
+export const NVSPermits = new XroadConf({
   env: {
-    XROAD_HUNTING_LICENSE_PATH: {
-      dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
-      staging: 'IS-TEST/GOV/10009/Umhverfisstofnun-Protected/api',
-      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
+    XROAD_NVS_PERMITS_PATH: {
+      dev: 'IS-DEV/GOV/10085/NVS-Protected/api',
+      staging: 'IS-TEST/GOV/10085/NVS-Protected/api',
+      prod: 'IS/GOV/7009241570/NVS-Protected/api',
     },
   },
 })
@@ -982,6 +982,11 @@ export const SocialInsuranceAdministration = new XroadConf({
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/external-v1',
     },
+    XROAD_TR_PATH_V2: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v2',
+      staging: 'IS-TEST/GOV/5012130120/TR-Protected/external-v2',
+      prod: 'IS/GOV/5012130120/TR-Protected/external-v2',
+    },
   },
 })
 
@@ -1102,5 +1107,15 @@ export const VMSTUnemployment = new XroadConf({
       '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME',
     XROAD_VMST_UNEMPLOYMENT_PASSWORD:
       '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD',
+  },
+})
+
+export const GoProVerdicts = new XroadConf({
+  env: {
+    XROAD_VERDICTS_GOPRO_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is',
+      staging: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is',
+      prod: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is',
+    },
   },
 })
