@@ -208,9 +208,10 @@ export class SubpoenaRepositoryService {
     const throwOnZeroRows = options?.throwOnZeroRows ?? true
 
     try {
-      this.logger.debug(`Updating subpoena ${subpoenaId} with data:`, {
-        data: Object.keys(data),
-      })
+      this.logger.debug(
+        `Updating subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId} with data:`,
+        { data: Object.keys(data) },
+      )
 
       const updateOptions: UpdateOptions = {
         where: { id: subpoenaId, caseId, defendantId },
@@ -220,50 +221,42 @@ export class SubpoenaRepositoryService {
         updateOptions.transaction = options.transaction
       }
 
-      const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        data,
-        updateOptions,
-      )
+      const [numberOfAffectedRows, updatedSubpoenas] =
+        await this.subpoenaModel.update(data, {
+          ...updateOptions,
+          returning: true,
+        })
 
       if (numberOfAffectedRows < 1) {
         if (throwOnZeroRows) {
           throw new InternalServerErrorException(
-            `Could not update subpoena ${subpoenaId}`,
+            `Could not update subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
           )
         }
 
         this.logger.error(
-          `No rows affected when updating subpoena ${subpoenaId}`,
+          `No rows affected when updating subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
         )
       }
 
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena ${subpoenaId} with data:`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId} with data:`,
           { data: Object.keys(data) },
         )
       }
 
-      this.logger.debug(`Updated subpoena ${subpoenaId}`)
+      this.logger.debug(
+        `Updated subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+      )
 
-      const updatedSubpoena = await this.findOne({
-        where: { id: subpoenaId },
-        transaction: options?.transaction,
-      })
-
-      if (!updatedSubpoena) {
-        throw new InternalServerErrorException(
-          `Subpoena ${subpoenaId} not found after update`,
-        )
-      }
-
-      return updatedSubpoena
+      return updatedSubpoenas[0]
     } catch (error) {
-      this.logger.error(`Error updating subpoena ${subpoenaId} with data:`, {
-        data: Object.keys(data),
-        error,
-      })
+      this.logger.error(
+        `Error updating subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
 
       throw error
     }
