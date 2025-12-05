@@ -49,6 +49,12 @@ export const BaseInput = () => {
     ) {
       return true
     }
+    if (
+      currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
     return false
   }
 
