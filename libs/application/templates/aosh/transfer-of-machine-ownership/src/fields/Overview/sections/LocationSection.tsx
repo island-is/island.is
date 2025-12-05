@@ -26,7 +26,7 @@ export const LocationSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        !hasReviewerApproved(reviewerNationalId, answers) &&
+        !hasReviewerApproved(answers, reviewerNationalId) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addLocationButton)
           : undefined
