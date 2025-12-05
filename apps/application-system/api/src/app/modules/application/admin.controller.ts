@@ -91,14 +91,14 @@ export class AdminController {
   @BypassDelegation()
   @Get('admin/applications/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationListAdminResponseDto[]>({
-    resources: (apps) => apps.map((app) => app.id),
+  @Audit<ApplicationAdminPaginatedResponse>({
+    resources: (apps) => apps.rows.map((app) => app.id),
   })
   @Documentation({
     description: 'Get applications for super admin overview',
     response: {
       status: 200,
-      type: [ApplicationListAdminResponseDto],
+      type: ApplicationAdminPaginatedResponse,
     },
     request: {
       params: {
@@ -164,8 +164,7 @@ export class AdminController {
     @Query('to') to?: string,
     @Query('typeId') typeId?: string,
     @Query('searchStr') searchStr?: string,
-    ) {
-
+  ) {
     return this.applicationService.findAllByAdminFilters(
       page ?? 1,
       count ?? 12,
@@ -176,7 +175,6 @@ export class AdminController {
       to,
       typeId,
       searchStr,
-
     )
   }
 

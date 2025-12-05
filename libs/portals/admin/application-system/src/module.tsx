@@ -4,13 +4,9 @@ import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
+import CombinedOverview from './screens/Overview/CombinedOverview'
 
 const Root = lazy(() => import('./screens/Root/Root'))
-
-const Overview = lazy(() => import('./screens/Overview/Overview'))
-const InstitutionOverview = lazy(() =>
-  import('./screens/Overview/InstitutionOverview'),
-)
 
 const Statistics = lazy(() => import('./screens/Statistics/Statistics'))
 
@@ -19,10 +15,10 @@ const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemInstitution,
 ]
 const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
-  if (userInfo.scopes.includes(AdminPortalScope.applicationSystemInstitution)) {
-    return <InstitutionOverview />
-  }
-  return <Overview />
+  const isSuperAdmin = userInfo.scopes.includes(
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  return <CombinedOverview isSuperAdmin={isSuperAdmin} />
 }
 
 export const applicationSystemAdminModule: PortalModule = {
