@@ -202,6 +202,8 @@ describe('CaseController - Extend rules', () => {
 describe('CaseController - Split defendant from case rules', () => {
   verifyRolesRules(CaseController, 'splitDefendantFromCase', [
     districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   ])
 })
 

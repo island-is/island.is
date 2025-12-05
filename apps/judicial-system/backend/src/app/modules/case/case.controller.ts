@@ -905,7 +905,11 @@ export class CaseController {
     CaseWriteGuard,
     DefendantExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/defendant/:defendantId/split')
   @ApiCreatedResponse({

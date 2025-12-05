@@ -2719,7 +2719,12 @@ export class CaseService {
         pick(theCase, copiedSplitIndictmentCaseFields),
         transaction,
       )
-      // defendant subpoenas eventLogs verdict
+
+      await this.defendantService.transferDefendantToCase(
+        splitCase,
+        defendant,
+        transaction,
+      )
 
       await transaction.commit()
 
