@@ -101,11 +101,9 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     case CaseState.COMPLETED: {
       // TODO: this will be fixed when we have considered ruling decision per defendant
-      const defendants = theCase.defendants
       if (
-        defendants &&
-        defendants.length === 1 &&
-        defendants[0]?.verdict?.isDefaultJudgement
+        theCase.defendants &&
+        theCase.defendants?.every((d) => d.verdict?.isDefaultJudgement)
       ) {
         return {
           color: 'purple',
