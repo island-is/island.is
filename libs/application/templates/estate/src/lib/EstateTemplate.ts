@@ -1,6 +1,4 @@
 import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   coreHistoryMessages,
   getValueViaPath,
   pruneAfterDays,
@@ -185,7 +183,7 @@ const EstateTemplate: ApplicationTemplate<
           name: 'Approved',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,

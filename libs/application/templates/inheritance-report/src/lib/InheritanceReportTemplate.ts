@@ -156,7 +156,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'approved',
           progress: 1,
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(60),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,
