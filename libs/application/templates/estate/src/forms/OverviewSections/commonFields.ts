@@ -9,6 +9,7 @@ import { Application } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
+import { applicantOverviewFields } from './applicantInfo'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { JA, NEI, YES } from '../../lib/constants'
@@ -22,6 +23,7 @@ export const commonOverviewFields = [
     space: 'gutter',
   }),
   buildDividerField({}),
+  ...applicantOverviewFields,
   buildDescriptionField({
     id: 'overviewEstateMembersHeader',
     title: m.estateMembersTitle,
