@@ -549,7 +549,7 @@ export class SubpoenaService {
     transaction: Transaction,
   ): Promise<number> {
     return this.subpoenaRepositoryService.updateMany(
-      { caseId: newCase.id, defendantId: defendant.id },
+      { caseId: defendant.caseId, defendantId: defendant.id },
       { caseId: newCase.id },
       { transaction },
     )
