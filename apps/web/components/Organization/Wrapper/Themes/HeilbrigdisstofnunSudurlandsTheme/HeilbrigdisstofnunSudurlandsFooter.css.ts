@@ -1,7 +1,8 @@
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
-  background: 'linear-gradient(90deg, #1C1664 0%, #2A2E67 50.92%, #37436A 86.57%)',
+  background:
+    'linear-gradient(90deg, #1C1664 0%, #2A2E67 50.92%, #37436A 86.57%)',
   maxWidth: '1342px',
   margin: '0 auto',
 })

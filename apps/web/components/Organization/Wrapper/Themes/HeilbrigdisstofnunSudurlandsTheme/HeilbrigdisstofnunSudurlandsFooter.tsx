@@ -125,7 +125,7 @@ const HeilbrigdisstofnunSudurlandsFooter = ({
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
-              <Text marginBottom={[3,3,5]} variant="h2" color="white">
+              <Text marginBottom={[3, 3, 5]} variant="h2" color="white">
                 {title}
               </Text>
             </GridRow>
