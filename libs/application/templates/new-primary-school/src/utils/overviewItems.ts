@@ -984,9 +984,10 @@ export const specialEducationSupportItems = async (
             width: 'full',
             keyText:
               newPrimarySchoolMessages.differentNeeds.isDiagnosisInProgress,
-            valueText: isDiagnosisInProgress
-              ? newPrimarySchoolMessages.shared.yes
-              : newPrimarySchoolMessages.shared.no,
+            valueText:
+              isDiagnosisInProgress === YES
+                ? newPrimarySchoolMessages.shared.yes
+                : newPrimarySchoolMessages.shared.no,
           },
         ]
       : []
