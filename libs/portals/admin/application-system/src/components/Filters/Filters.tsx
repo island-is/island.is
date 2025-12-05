@@ -2,23 +2,24 @@ import { InstitutionTypes } from '@island.is/application/types'
 import {
   Box,
   Text,
-  FilterMultiChoice,
   Filter,
   FilterInput,
   Hidden,
   DatePicker,
   FilterMultiChoiceProps,
+  Select,
 } from '@island.is/island-ui/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { debounceTime } from '@island.is/shared/constants'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { statusMapper } from '../../shared/utils'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
+import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
 
 interface Props {
   onSearchChange: (query: string) => void
@@ -34,23 +35,32 @@ interface Props {
 
 export const Filters = ({
   onSearchChange,
-  onFilterChange,
   onFilterClear,
   onDateChange,
-  multiChoiceFilters,
   filters,
-  applications,
   organizations,
   numberOfDocuments,
 }: Props) => {
+  const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
   const { formatMessage } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
+  const userInfo = useUserInfo()
+
   const asInstitutions = Object.values(InstitutionTypes)
   const availableOrganizations = organizations
     .filter((x) => asInstitutions.findIndex((y) => y === x.slug) !== -1)
     .sort((a, b) => a.title.localeCompare(b.title))
+
+  const { data: typeData, loading: typesLoading } =
+    useGetInstitutionApplicationTypesQuery({
+      variables: {
+        input: {
+          nationalId: userInfo.profile.nationalId,
+        },
+      },
+    })
 
   useDebounce(
     () => {
@@ -66,6 +76,21 @@ export const Filters = ({
     }
     setIsMobile(false)
   }, [width])
+
+  useEffect(() => {
+    if (!filters.typeId) setTypeId(undefined)
+  }, [filters.typeId, filters.nationalId, filters.searchStr])
+
+  const institutionTypeIds = useMemo(() => {
+    return (
+      typeData?.applicationTypesInstitutionAdmin
+        ?.map((type) => ({
+          value: type.id,
+          label: type.name ?? '',
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
+    )
+  }, [typeData])
 
   return (
     <Box
@@ -88,84 +113,81 @@ export const Filters = ({
         labelTitle={formatMessage(m.filter)}
         onFilterClear={() => onFilterClear()}
         filterInput={
-          <Box display="flex" flexDirection={['column', 'column', 'row']}>
-            <FilterInput
-              placeholder={formatMessage(m.searchPlaceholder)}
-              name="admin-applications-nationalId"
-              value={
-                nationalId.length > 6
-                  ? formatNationalId(nationalId)
-                  : nationalId
-              }
-              onChange={setNationalId}
-              backgroundColor="blue"
-            />
-            <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
+          <Box display="flex" flexDirection={['column', 'column', 'column']}>
+            <Box
+              display="flex"
+              flexDirection={['column', 'column', 'row']}
+              width="full"
+              marginBottom={3}
+            >
+              <Box width="half">
+                <Select
+                  label={formatMessage(m.institution)}
+                  placeholder={formatMessage(m.institutionDropdownPlaceholder)}
+                  name="admin-applications-search"
+                  backgroundColor="blue"
+                  isMulti={true}
+                  size="sm"
+                  options={availableOrganizations.map((x) => ({
+                    value: x.slug,
+                    label: x.title,
+                  }))}
+                />
+              </Box>
+              <Box width="half" marginLeft={3}>
+                <Select
+                  label={formatMessage(m.applicationType)}
+                  placeholder={formatMessage(
+                    m.applicationTypeDropdownPlaceholder,
+                  )}
+                  name="admin-applications-search"
+                  backgroundColor="blue"
+                  isMulti={true}
+                  size="sm"
+                  options={institutionTypeIds}
+                />
+              </Box>
+            </Box>
+            <Box display="flex" flexDirection={['column', 'column', 'row']}>
+              <FilterInput
+                placeholder={formatMessage(m.searchPlaceholder)}
+                name="admin-applications-nationalId"
+                value={
+                  nationalId.length > 6
+                    ? formatNationalId(nationalId)
+                    : nationalId
+                }
+                onChange={setNationalId}
+                backgroundColor="blue"
+              />
+              <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
+                <DatePicker
+                  id="periodFrom"
+                  label=""
+                  backgroundColor="blue"
+                  maxDate={filters.period.to}
+                  selected={filters.period.from}
+                  placeholderText={formatMessage(m.filterFrom)}
+                  handleChange={(from) => onDateChange({ from })}
+                  size="xs"
+                  locale="is"
+                />
+              </Box>
               <DatePicker
-                id="periodFrom"
+                id="periodTo"
                 label=""
                 backgroundColor="blue"
-                maxDate={filters.period.to}
-                selected={filters.period.from}
-                placeholderText={formatMessage(m.filterFrom)}
-                handleChange={(from) => onDateChange({ from })}
+                minDate={filters.period.from}
+                selected={filters.period.to}
+                placeholderText={formatMessage(m.filterTo)}
+                handleChange={(to) => onDateChange({ to })}
                 size="xs"
                 locale="is"
               />
             </Box>
-            <DatePicker
-              id="periodTo"
-              label=""
-              backgroundColor="blue"
-              minDate={filters.period.from}
-              selected={filters.period.to}
-              placeholderText={formatMessage(m.filterTo)}
-              handleChange={(to) => onDateChange({ to })}
-              size="xs"
-              locale="is"
-            />
           </Box>
         }
-      >
-        <FilterMultiChoice
-          labelClear={formatMessage(m.clearSelected)}
-          singleExpand={true}
-          onChange={onFilterChange}
-          onClear={onFilterClear}
-          categories={[
-            {
-              id: MultiChoiceFilter.INSTITUTION,
-              label: formatMessage(m.institution),
-              selected: multiChoiceFilters[MultiChoiceFilter.INSTITUTION] ?? [],
-              inline: false,
-              singleOption: false,
-              filters: availableOrganizations.map((x) => ({
-                value: x.slug,
-                label: x.title,
-              })),
-            },
-            {
-              id: MultiChoiceFilter.APPLICATION,
-              label: formatMessage(m.application),
-              selected: multiChoiceFilters[MultiChoiceFilter.APPLICATION] ?? [],
-              inline: false,
-              singleOption: false,
-              filters: applications.map((x) => ({ value: x, label: x })),
-            },
-            {
-              id: MultiChoiceFilter.STATUS,
-              label: formatMessage(m.status),
-              selected: multiChoiceFilters[MultiChoiceFilter.STATUS] ?? [],
-              inline: false,
-              singleOption: false,
-              filters: Object.entries(statusMapper).map(([value, tag]) => ({
-                value,
-                label: formatMessage(tag.label),
-              })),
-            },
-          ]}
-        />
-      </Filter>
+      ></Filter>
 
       {numberOfDocuments !== undefined && (
         <Hidden below="md">
