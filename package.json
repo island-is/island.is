@@ -72,7 +72,7 @@
     "@actions/core": "1.11.1",
     "@actions/github": "6.0.0",
     "@apollo/client": "3.7.15",
-    "@apollo/gateway": "2.1.1",
+    "@apollo/gateway": "2.10.1",
     "@apollo/subgraph": "2.1.1",
     "@apollo/utils.keyvadapter": "4.0.1",
     "@ariakit/react": "0.4.17",
