@@ -161,7 +161,7 @@
     "aws-sdk": "2.814.0",
     "aws-sdk-client-mock": "4.0.2",
     "aws4": "1.11.0",
-    "axios": "1.7.2",
+    "axios": "1.12.0",
     "bottleneck": "2.19.5",
     "bull": "4.10.4",
     "cache-manager": "5.2.3",
