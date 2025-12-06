@@ -292,7 +292,7 @@ const useCase = () => {
           variables: { input: { id: caseId, defendantId } },
         })
 
-        return data?.splitDefendantFromCase
+        return data?.splitDefendantFromCase?.id
       } catch (error) {
         toast.error('Ekki tókst að kljúfa varnaraðila frá máli')
       }

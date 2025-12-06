@@ -148,7 +148,7 @@ const Conclusion: FC = () => {
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
-  const [splitCase, setSplitCase] = useState<Case>()
+  const [splitCaseId, setSplitCaseId] = useState<string>()
   const [modalVisible, setModalVisible] = useState<
     'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
   >()
@@ -820,12 +820,12 @@ const Conclusion: FC = () => {
           primaryButton={{
             text: 'Já, kljúfa mál',
             onClick: async () => {
-              const newCase = (await splitDefendantFromCase(
+              const newCaseId = await splitDefendantFromCase(
                 workingCase.id,
                 selectedDefendant.id,
-              )) as Case
+              )
 
-              setSplitCase(newCase)
+              setSplitCaseId(newCaseId)
               setModalVisible('CREATE_COURT_CASE_NUMBER')
             },
             isLoading: isSplittingDefendantFromCase,
@@ -837,7 +837,7 @@ const Conclusion: FC = () => {
           onClose={() => setModalVisible(undefined)}
         />
       )}
-      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && splitCase && (
+      {modalVisible === 'CREATE_COURT_CASE_NUMBER' && splitCaseId && (
         <Modal
           title={`Nýtt mál - ${selectedDefendant?.name}`}
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
@@ -848,11 +848,11 @@ const Conclusion: FC = () => {
         >
           <CourtCaseNumberInput
             workingCase={{
-              ...splitCase,
+              id: splitCaseId,
               state: CaseState.RECEIVED,
               type: CaseType.INDICTMENT,
             }}
-            onCreateCourtCase={() => createCourtCase(splitCase.id)}
+            onCreateCourtCase={() => createCourtCase(splitCaseId)}
           />
         </Modal>
       )}
