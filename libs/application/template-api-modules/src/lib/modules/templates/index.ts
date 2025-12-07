@@ -1,4 +1,3 @@
-
 import { CoursesModule } from './hh/courses/courses.module'
 import { CoursesService } from './hh/courses/courses.service'
 import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
@@ -271,7 +270,7 @@ export const modules = [
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
   CoursesModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -363,4 +362,4 @@ export const services = [
   ExemptionForTransportationService,
   RegistrationOfNewPropertyNumbersService,
   CoursesService,
-            ]
+]
