@@ -1,3 +1,6 @@
+
+import { CoursesModule } from './hh/courses/courses.module'
+import { CoursesService } from './hh/courses/courses.service'
 import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
 import { RegistrationOfNewPropertyNumbersService } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service'
 import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
@@ -267,7 +270,8 @@ export const modules = [
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
-]
+  CoursesModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -358,4 +362,5 @@ export const services = [
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
   RegistrationOfNewPropertyNumbersService,
-]
+  CoursesService,
+            ]

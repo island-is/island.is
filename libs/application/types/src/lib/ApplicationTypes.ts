@@ -97,6 +97,7 @@ export enum ApplicationTypes {
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
+  HH_COURSES = 'HHCourses',
 }
 
 export const ApplicationConfigurations = {
@@ -495,5 +496,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
     slug: 'skraning-fasteignanumera',
     translation: ['ronp.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HH_COURSES]: {
+    slug: 'hh-namskeid',
+    translation: ['hh.courses.application', 'uiForms.application'], // TODO: Create a hh.courses.application translation namespace
   },
 }
