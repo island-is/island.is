@@ -1,26 +1,24 @@
-import { defineMessage } from 'react-intl'
-import { checkDelegation } from '@island.is/shared/utils'
-import { info } from 'kennitala'
-import { Problem } from '@island.is/react-spa/shared'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  FootNote,
   formatNationalId,
-  IntroHeader,
-  m,
-  THJODSKRA_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
+  m,
+  THJODSKRA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { Problem } from '@island.is/react-spa/shared'
+import { checkDelegation } from '@island.is/shared/utils'
+import { info } from 'kennitala'
+import { defineMessage } from 'react-intl'
 
+import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
 import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
-import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
 import { useNationalRegistryPersonQuery } from './UserInfo.generated'
 
 const SubjectInfo = () => {
