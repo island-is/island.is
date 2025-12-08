@@ -6,10 +6,9 @@ import {
   BadRequestException,
   forwardRef,
   Inject,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,10 +27,14 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
-import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
-import { Case, Defendant, Verdict } from '../repository'
+import {
+  Case,
+  Defendant,
+  Verdict,
+  VerdictRepositoryService,
+} from '../repository'
 import { CreateVerdictDto } from './dto/createVerdict.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -62,14 +65,14 @@ export type VerdictServiceCertificateDelivery = {
 export class VerdictService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
+    private readonly verdictRepositoryService: VerdictRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
-    private readonly eventLogService: EventLogService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     private readonly messageService: MessageService,
@@ -80,7 +83,7 @@ export class VerdictService {
     verdictId: string,
     transaction?: Transaction,
   ): Promise<Verdict> {
-    const verdict = await this.verdictModel.findOne({
+    const verdict = await this.verdictRepositoryService.findOne({
       where: { id: verdictId },
       transaction,
     })
@@ -95,7 +98,7 @@ export class VerdictService {
   async findByExternalPoliceDocumentId(
     externalPoliceDocumentId: string,
   ): Promise<Verdict> {
-    const verdict = await this.verdictModel.findOne({
+    const verdict = await this.verdictRepositoryService.findOne({
       where: { externalPoliceDocumentId },
     })
 
@@ -113,12 +116,15 @@ export class VerdictService {
     verdict: CreateVerdictDto,
     transaction: Transaction,
   ): Promise<Verdict> {
-    const currentVerdict = await this.verdictModel.findOne({
+    const currentVerdict = await this.verdictRepositoryService.findOne({
       where: { defendantId: verdict.defendantId },
     })
 
     if (!currentVerdict) {
-      return this.verdictModel.create({ caseId, ...verdict }, { transaction })
+      return this.verdictRepositoryService.create(
+        { caseId, ...verdict },
+        { transaction },
+      )
     }
 
     return currentVerdict
@@ -152,21 +158,10 @@ export class VerdictService {
     defendantId: string,
     transaction: Transaction,
   ): Promise<boolean> {
-    const numberOfAffectedRows = await this.verdictModel.destroy({
-      where: { defendantId, caseId },
+    await this.verdictRepositoryService.delete(caseId, defendantId, {
       transaction,
     })
 
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting verdict for defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete verdict of ${defendantId} of case ${caseId}`,
-      )
-    }
     return true
   }
 
@@ -213,25 +208,13 @@ export class VerdictService {
     update: UpdateVerdict,
     transaction?: Transaction,
   ): Promise<Verdict> {
-    const [numberOfAffectedRows, updatedVerdict] =
-      await this.verdictModel.update(update, {
-        where: { id: verdict.id },
-        returning: true,
-        transaction,
-      })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows ${numberOfAffectedRows} affected when updating verdict`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update verdict ${verdict.id}`,
-      )
-    }
-
-    return updatedVerdict[0]
+    return this.verdictRepositoryService.update(
+      verdict.caseId,
+      verdict.defendantId,
+      verdict.id,
+      update,
+      { transaction },
+    )
   }
 
   async update(
@@ -551,5 +534,19 @@ export class VerdictService {
       return { queued: true }
     }
     return { queued: false }
+  }
+
+  transferDefendantVerdictToCase(
+    newCase: Case,
+    verdict: Verdict,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    return this.verdictRepositoryService.update(
+      verdict.caseId,
+      verdict.defendantId,
+      verdict.id,
+      { caseId: newCase.id },
+      { transaction },
+    )
   }
 }

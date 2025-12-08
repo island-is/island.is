@@ -32,6 +32,7 @@ import {
   DefendantRepositoryService,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
+import { VerdictService } from '../verdict'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
@@ -44,6 +45,7 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly subpoenaService: SubpoenaService,
+    private readonly verdictService: VerdictService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -554,6 +556,14 @@ export class DefendantService {
       defendant,
       transaction,
     )
+
+    if (defendant.verdict) {
+      await this.verdictService.transferDefendantVerdictToCase(
+        newCase,
+        defendant.verdict,
+        transaction,
+      )
+    }
 
     return updatedDefendant
   }
