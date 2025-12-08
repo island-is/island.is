@@ -10,8 +10,7 @@ import { navigateTo } from '../../lib/deep-linking'
 import { Typography } from '../../ui'
 
 const Host = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  padding: ${({ theme }) => theme.spacing[3]}px;
+  padding: ${({ theme }) => theme.spacing.p2}px;
   border-radius: 16px;
   background-color: ${({ theme }) => theme.color.blue100};
   flex-direction: row;
@@ -50,7 +49,7 @@ const CloseButton = styled(TouchableOpacity)`
 `
 
 const CtaRow = styled(TouchableOpacity)`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
   flex-direction: row;
   align-items: center;
 `
