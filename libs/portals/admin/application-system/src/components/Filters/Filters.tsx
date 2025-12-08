@@ -1,4 +1,3 @@
-import { InstitutionTypes } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -9,7 +8,6 @@ import {
   FilterMultiChoiceProps,
   Select,
 } from '@island.is/island-ui/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { debounceTime } from '@island.is/shared/constants'
@@ -19,10 +17,7 @@ import { m } from '../../lib/messages'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import {
-  useGetInstitutionApplicationTypesQuery,
-  useGetSuperApplicationTypesQuery,
-} from '../../queries/overview.generated'
+import { useGetSuperApplicationTypesQuery } from '../../queries/overview.generated'
 
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
@@ -40,12 +35,9 @@ interface Props {
 export const Filters = ({
   onTypeIdChange,
   onSearchChange,
-  onFilterChange,
   onFilterClear,
   onDateChange,
-  multiChoiceFilters,
   filters,
-  organizations,
   numberOfDocuments,
 }: Props) => {
   const [typeId, setTypeId] = useState<string | undefined>(undefined)

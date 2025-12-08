@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  FilterMultiChoice,
   Filter,
   FilterInput,
   Hidden,
@@ -15,7 +14,6 @@ import { debounceTime } from '@island.is/shared/constants'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { statusMapper } from '../../shared/utils'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { format as formatNationalId } from 'kennitala'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -39,10 +37,8 @@ export const InstitutionFilters = ({
   onTypeIdChange,
   onSearchStrChange,
   onSearchChange,
-  onFilterChange,
   onFilterClear,
   onDateChange,
-  multiChoiceFilters,
   filters,
   numberOfDocuments,
   useAdvancedSearch,
