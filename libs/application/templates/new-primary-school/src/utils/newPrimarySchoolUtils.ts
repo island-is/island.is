@@ -369,6 +369,32 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
+
+  const fieldInspection = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservation[0]',
+    NO,
+  )
+
+  const additionalDataProvisioning = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservationAdditionalInfo[0]',
+    NO,
+  )
+
+  const outsideSpecialist = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.callInExpert[0]',
+    NO,
+  )
+
+  const childViewOnApplication = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.childViews[0]',
+    NO,
+  )
+
   return {
     applicationType,
     childNationalId,
@@ -440,6 +466,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   }
 }
 
