@@ -27,7 +27,6 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
-import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
