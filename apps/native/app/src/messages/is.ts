@@ -191,7 +191,7 @@ export const is = {
   'home.vehicleModule.button': 'Mín ökutæki',
   'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
   'homeBanner.vehicleMileage.description':
-    'Hægt er að skrá kílómetrastöðu ökutækja þinna undir Ökutæki í valmyndinni.',
+    'Skráðu kílómetrastöðu þinna ökutækja',
   'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 

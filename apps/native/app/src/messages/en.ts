@@ -191,7 +191,7 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.button': 'My vehicles',
   'homeBanner.vehicleMileage.title': 'Register mileage',
   'homeBanner.vehicleMileage.description':
-    'You can register the mileage of your vehicles under Vehicles in the menu.',
+    'Register the mileage of your vehicles',
   'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
