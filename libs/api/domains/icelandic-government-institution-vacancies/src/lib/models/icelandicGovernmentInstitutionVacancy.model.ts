@@ -44,6 +44,12 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
 
   @Field({ nullable: true })
   logoUrl?: string
+
+  @Field({ nullable: true })
+  creationDate?: string
+
+  @Field({ nullable: true })
+  updatedDate?: string
 }
 
 @ObjectType()
