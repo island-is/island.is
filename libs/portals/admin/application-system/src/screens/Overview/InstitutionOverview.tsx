@@ -49,7 +49,7 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
-  const useAdvancedSearch = !!filters.typeId
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const {
     data: response,
@@ -67,7 +67,7 @@ const InstitutionOverview = () => {
             : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeId: filters.typeId,
+        typeIdValue: filters.typeIdValue,
         searchStr:
           useAdvancedSearch && filters.searchStr
             ? filters.searchStr.replace('-', '')
@@ -87,10 +87,10 @@ const InstitutionOverview = () => {
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
-  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeIdValue']) => {
     setFilters((prev) => ({
       ...prev,
-      typeId: typeId,
+      typeIdValue: typeId,
     }))
   }
 

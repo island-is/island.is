@@ -148,7 +148,7 @@ export class ApplicationService {
     institutionNationalId?: string,
     from?: string,
     to?: string,
-    typeId?: string,
+    typeIdValue?: string,
     searchStr?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
@@ -156,7 +156,7 @@ export class ApplicationService {
     const fromDate = from ? new Date(from) : undefined
 
     const { typeIds: applicationTypeIds, returnEmpty } =
-      await this.resolveApplicationTypeIds(institutionNationalId, typeId)
+      await this.resolveApplicationTypeIds(institutionNationalId, typeIdValue)
 
     if (returnEmpty) {
       return {

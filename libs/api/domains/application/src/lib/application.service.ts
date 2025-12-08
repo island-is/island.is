@@ -94,7 +94,7 @@ export class ApplicationService {
       status: filters.status?.join(','),
       from: filters.from,
       to: filters.to,
-      typeId: filters.typeId,
+      typeIdValue: filters.typeIdValue,
       searchStr: filters.searchStr,
     })
   }
@@ -114,7 +114,7 @@ export class ApplicationService {
       applicantNationalId: filters.applicantNationalId,
       from: filters.from,
       to: filters.to,
-      typeId: filters.typeId,
+      typeIdValue: filters.typeIdValue,
       searchStr: filters.searchStr,
     })
   }

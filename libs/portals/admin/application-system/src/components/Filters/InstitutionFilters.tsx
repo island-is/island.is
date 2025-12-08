@@ -23,7 +23,7 @@ import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.g
 import { BffUser } from '@island.is/shared/types'
 
 interface Props {
-  onTypeIdChange: (period: ApplicationFilters['typeId']) => void
+  onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
   onSearchStrChange: (query: string) => void
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
@@ -94,10 +94,10 @@ export const InstitutionFilters = ({
   }, [width])
 
   useEffect(() => {
-    if (!filters.typeId) setTypeId(undefined)
+    if (!filters.typeIdValue) setTypeId(undefined)
     if (!filters.nationalId) setNationalId('')
     if (!filters.searchStr) setSearchStr('')
-  }, [filters.typeId, filters.nationalId, filters.searchStr])
+  }, [filters.typeIdValue, filters.nationalId, filters.searchStr])
 
   const institutionTypeIds = useMemo(() => {
     return (

@@ -60,7 +60,7 @@ const Overview = () => {
     ssr: false,
   })
 
-  const useAdvancedSearch = !!filters.typeId
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const { data, loading: queryLoading } = useGetApplicationsSuperAdminQuery({
     ssr: false,
@@ -74,7 +74,7 @@ const Overview = () => {
             : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeId: filters.typeId,
+        typeIdValue: filters.typeIdValue,
         searchStr:
           useAdvancedSearch && filters.searchStr
             ? filters.searchStr.replace('-', '')
@@ -85,7 +85,7 @@ const Overview = () => {
     onCompleted: (q) => {
       // Initialize available applications from the initial response
       // So that we can use them to filter by
-      const names = q.applicationApplicationsAdmin
+      const names = q.applicationApplicationsAdmin?.rows
         ?.filter((x) => !!x.name)
         .map((x) => x.name ?? '')
       if (names) {
@@ -183,17 +183,17 @@ const Overview = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
-      <Filters
-        onSearchChange={handleSearchChange}
-        onFilterChange={handleMultiChoiceFilterChange}
-        onDateChange={handleDateChange}
-        onFilterClear={clearFilters}
-        multiChoiceFilters={multiChoiceFilters}
-        filters={filters}
-        applications={availableApplications ?? []}
-        organizations={availableOrganizations ?? []}
-        numberOfDocuments={applicationAdminList?.length}
-      />
+      {/*<Filters*/}
+      {/*  onSearchChange={handleSearchChange}*/}
+      {/*  onFilterChange={handleMultiChoiceFilterChange}*/}
+      {/*  onDateChange={handleDateChange}*/}
+      {/*  onFilterClear={clearFilters}*/}
+      {/*  multiChoiceFilters={multiChoiceFilters}*/}
+      {/*  filters={filters}*/}
+      {/*  applications={availableApplications ?? []}*/}
+      {/*  organizations={availableOrganizations ?? []}*/}
+      {/*  numberOfDocuments={applicationAdminList?.length}*/}
+      {/*/>*/}
       {isLoading && applicantNationalId.length === 10 ? (
         <SkeletonLoader
           height={60}

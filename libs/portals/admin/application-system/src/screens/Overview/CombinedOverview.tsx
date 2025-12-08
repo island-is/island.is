@@ -67,7 +67,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     ssr: false,
   })
 
-  const useAdvancedSearch = !!filters.typeId
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const commonVariables = {
     input: {
@@ -79,7 +79,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
           : '',
       from: filters.period.from?.toISOString(),
       to: filters.period.to?.toISOString(),
-      typeId: filters.typeId,
+      typeIdValue: filters.typeIdValue,
       searchStr:
         useAdvancedSearch && filters.searchStr
           ? filters.searchStr.replace('-', '')
@@ -142,10 +142,10 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     }
   }
 
-  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+  const handleTypeIdChange = (typeIdValue: ApplicationFilters['typeIdValue']) => {
     setFilters((prev) => ({
       ...prev,
-      typeId: typeId,
+      typeIdValue: typeIdValue,
     }))
   }
 

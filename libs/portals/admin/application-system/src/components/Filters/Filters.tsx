@@ -25,7 +25,7 @@ import {
 } from '../../queries/overview.generated'
 
 interface Props {
-  onTypeIdChange: (period: ApplicationFilters['typeId']) => void
+  onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
@@ -79,8 +79,8 @@ export const Filters = ({
   }, [width])
 
   useEffect(() => {
-    if (!filters.typeId) setTypeId(undefined)
-  }, [filters.typeId, filters.nationalId, filters.searchStr])
+    if (!filters.typeIdValue) setTypeId(undefined)
+  }, [filters.typeIdValue, filters.nationalId, filters.searchStr])
 
   const institutionTypeIds = useMemo(() => {
     return (

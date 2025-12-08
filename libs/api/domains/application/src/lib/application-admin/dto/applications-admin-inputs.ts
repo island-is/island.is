@@ -23,7 +23,7 @@ export class ApplicationsAdminFilters {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  typeId?: string
+  typeIdValue?: string
 
   @Field(() => String, { nullable: true })
   @IsOptional()

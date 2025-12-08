@@ -86,7 +86,6 @@ export class AdminController {
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  //todo sleppa bypass?
   @BypassDelegation()
   @Get('admin/applications/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
@@ -134,7 +133,7 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
-        typeId: {
+        typeIdValue: {
           type: 'string',
           required: false,
           description: 'To filter applications by typeId',
@@ -161,7 +160,7 @@ export class AdminController {
     @Query('institutionNationalId') institutionNationalId?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
-    @Query('typeId') typeId?: string,
+    @Query('typeIdValue') typeIdValue?: string,
     @Query('searchStr') searchStr?: string,
   ) {
     return this.applicationService.findAllByAdminFilters(
@@ -172,7 +171,7 @@ export class AdminController {
       institutionNationalId,
       from,
       to,
-      typeId,
+      typeIdValue,
       searchStr,
     )
   }
@@ -225,7 +224,7 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
-        typeId: {
+        typeIdValue: {
           type: 'string',
           required: false,
           description: 'To filter applications by typeId',
@@ -246,7 +245,7 @@ export class AdminController {
     @Query('applicantNationalId') applicantNationalId?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
-    @Query('typeId') typeId?: string,
+    @Query('typeIdValue') typeIdValue?: string,
     @Query('searchStr') searchStr?: string,
   ) {
     return this.applicationService.findAllByAdminFilters(
@@ -257,7 +256,7 @@ export class AdminController {
       user.nationalId,
       from,
       to,
-      typeId,
+      typeIdValue,
       searchStr,
     )
   }
