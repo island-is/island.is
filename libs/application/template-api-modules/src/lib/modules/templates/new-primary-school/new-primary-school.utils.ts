@@ -207,6 +207,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applyForPreferredSchool,
     payerName,
     payerNationalId,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -344,6 +349,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
+      childCircumstances: {
+        fieldInspection: fieldInspection === YES,
+        additionalDataProvisioning: additionalDataProvisioning === YES,
+        outsideSpecialist: outsideSpecialist === YES,
+        childViewOnApplication: childViewOnApplication === YES,
+      },
+      terms: terms === YES,
     },
   }
 
