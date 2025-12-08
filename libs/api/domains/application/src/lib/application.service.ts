@@ -135,7 +135,6 @@ export class ApplicationService {
   async findAllApplicationTypesSuperAdmin(
     user: User,
     locale: Locale,
-    input: ApplicationTypesInstitutionAdminInput,
   ) {
     return this.applicationApiWithAuth(
       user,

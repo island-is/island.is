@@ -73,12 +73,10 @@ export class ApplicationAdminResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('input') input: ApplicationTypesInstitutionAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
     return this.applicationService.findAllApplicationTypesSuperAdmin(
       user,
       locale,
-      input,
     )
   }
 
