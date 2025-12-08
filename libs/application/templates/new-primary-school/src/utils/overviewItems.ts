@@ -751,3 +751,85 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...baseItems2,
   ]
 }
+
+export const supportSpecialSchoolDisabilityItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const {
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
+    hasBeenTreatedBySpecialist,
+    specialist,
+  } = getApplicationAnswers(answers)
+
+  const speciallistBaseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        newPrimarySchoolMessages.differentNeeds.hasBeenTreatedBySpecialist,
+      valueText:
+        hasBeenTreatedBySpecialist === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const specialistItems: Array<KeyValueItem> =
+    hasBeenTreatedBySpecialist === YES
+      ? [
+          {
+            width: 'full',
+            keyText: newPrimarySchoolMessages.differentNeeds.specialistTitle,
+            valueText: specialist,
+          },
+        ]
+      : []
+
+  const welfareContactItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: newPrimarySchoolMessages.differentNeeds.hasIntegratedServices,
+      valueText:
+        hasIntegratedServices === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const caseManagerItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: newPrimarySchoolMessages.differentNeeds.hasCaseManager,
+      valueText:
+        hasCaseManager === YES
+          ? newPrimarySchoolMessages.shared.yes
+          : newPrimarySchoolMessages.shared.no,
+    },
+  ]
+
+  const caseManagerFieldsItems: Array<KeyValueItem> =
+    hasCaseManager === YES
+      ? [
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+            valueText: caseManagerName,
+          },
+          {
+            width: 'half',
+            keyText: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+            valueText: caseManagerEmail,
+          },
+        ]
+      : []
+
+  return [
+    ...speciallistBaseItems,
+    ...specialistItems,
+    ...welfareContactItems,
+    ...caseManagerItems,
+    ...caseManagerFieldsItems,
+  ]
+}

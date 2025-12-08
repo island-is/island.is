@@ -3,9 +3,15 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { healthProtectionSubSection } from './healthProtectionSubSection'
 import { languageSubSection } from './languageSubSection'
 import { supportSubSection } from './supportSubSection'
+import { supportSpecialSchoolDisabilitySubSection } from './supportSpecialSchoolDisabilitySubSection'
 
 export const differentNeedsSection = buildSection({
   id: 'differentNeedsSection',
   title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
-  children: [languageSubSection, healthProtectionSubSection, supportSubSection],
+  children: [
+    languageSubSection,
+    healthProtectionSubSection,
+    supportSubSection,
+    supportSpecialSchoolDisabilitySubSection,
+  ],
 })

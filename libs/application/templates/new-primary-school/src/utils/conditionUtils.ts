@@ -13,11 +13,13 @@ export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
 }
 
 export const isWelfareContactSelected = (answers: FormValue): boolean => {
-  const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
+  const { hasDiagnoses, hasHadSupport, hasWelfareContact, isSerdeild } =
     getApplicationAnswers(answers)
 
   return (
-    (hasDiagnoses === YES || hasHadSupport === YES) && hasWelfareContact === YES
+    (isSerdeild && hasWelfareContact === YES) ||
+    ((hasDiagnoses === YES || hasHadSupport === YES) &&
+      hasWelfareContact === YES)
   )
 }
 

@@ -252,8 +252,10 @@ export const dataSchema = z.object({
     ),
   support: z
     .object({
-      hasDiagnoses: z.enum([YES, NO]),
-      hasHadSupport: z.enum([YES, NO]),
+      hasDiagnoses: z.enum([YES, NO]).optional(),
+      hasHadSupport: z.enum([YES, NO]).optional(),
+      hasBeenTreatedBySpecialist: z.enum([YES, NO]).optional(),
+      // specialist: z.string().optional(),
       hasWelfareContact: z.string().optional(),
       welfareContact: z
         .object({
@@ -310,8 +312,9 @@ export const dataSchema = z.object({
         hasCaseManager,
         caseManager,
       }) =>
-        (hasDiagnoses === YES || hasHadSupport === YES) &&
-        hasWelfareContact === YES &&
+        ((!hasDiagnoses && !hasHadSupport) || //support special school disability
+          ((hasDiagnoses === YES || hasHadSupport === YES) &&
+            hasWelfareContact === YES)) &&
         hasCaseManager === YES
           ? caseManager && !!caseManager.name?.trim()
           : true,
@@ -325,8 +328,9 @@ export const dataSchema = z.object({
         hasCaseManager,
         caseManager,
       }) =>
-        (hasDiagnoses === YES || hasHadSupport === YES) &&
-        hasWelfareContact === YES &&
+        ((!hasDiagnoses && !hasHadSupport) || //support special school disability
+          ((hasDiagnoses === YES || hasHadSupport === YES) &&
+            hasWelfareContact === YES)) &&
         hasCaseManager === YES
           ? caseManager && !!caseManager.email?.trim()
           : true,
@@ -347,6 +351,16 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+  // .refine(
+  //   ({ hasBeenTreatedBySpecialist, specialist }) =>
+  //     hasBeenTreatedBySpecialist === YES
+  //       ? !!specialist && specialist.length > 0
+  //       : true,
+  //   {
+  //     path: ['specialist'],
+  //   },
+  // )
+  // .optional(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
