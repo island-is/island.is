@@ -141,6 +141,15 @@ const Overview = () => {
     }))
   }
 
+  const handleTypeIdChange = (
+    typeIdValue: ApplicationFilters['typeIdValue'],
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeIdValue: typeIdValue,
+    }))
+  }
+
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
       // Clear all filters (except nationalId)
@@ -183,17 +192,18 @@ const Overview = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
-      {/*<Filters*/}
-      {/*  onSearchChange={handleSearchChange}*/}
-      {/*  onFilterChange={handleMultiChoiceFilterChange}*/}
-      {/*  onDateChange={handleDateChange}*/}
-      {/*  onFilterClear={clearFilters}*/}
-      {/*  multiChoiceFilters={multiChoiceFilters}*/}
-      {/*  filters={filters}*/}
-      {/*  applications={availableApplications ?? []}*/}
-      {/*  organizations={availableOrganizations ?? []}*/}
-      {/*  numberOfDocuments={applicationAdminList?.length}*/}
-      {/*/>*/}
+      <Filters
+        onTypeIdChange={handleTypeIdChange}
+        onSearchChange={handleSearchChange}
+        onFilterChange={handleMultiChoiceFilterChange}
+        onDateChange={handleDateChange}
+        onFilterClear={clearFilters}
+        multiChoiceFilters={multiChoiceFilters}
+        filters={filters}
+        applications={availableApplications ?? []}
+        organizations={availableOrganizations ?? []}
+        numberOfDocuments={applicationAdminList?.length}
+      />
       {isLoading && applicantNationalId.length === 10 ? (
         <SkeletonLoader
           height={60}
