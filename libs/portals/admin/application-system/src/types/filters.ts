@@ -14,5 +14,5 @@ export type ApplicationFilters = {
   }
   institution?: string
   status?: string[]
-  typeId?: string
+  typeIdValue?: string
 }
