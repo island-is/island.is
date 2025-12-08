@@ -199,6 +199,12 @@ describe('CaseController - Extend rules', () => {
   verifyRolesRules(CaseController, 'extend', [prosecutorRule])
 })
 
+describe('CaseController - Split defendant from case rules', () => {
+  verifyRolesRules(CaseController, 'splitDefendantFromCase', [
+    districtCourtJudgeRule,
+  ])
+})
+
 describe('CaseController - Create court case rules', () => {
   verifyRolesRules(CaseController, 'createCourtCase', [
     districtCourtJudgeRule,

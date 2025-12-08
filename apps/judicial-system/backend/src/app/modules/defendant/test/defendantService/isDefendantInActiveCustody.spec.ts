@@ -4,7 +4,11 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, Defendant } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+} from '../../../repository'
 
 interface Then {
   result: boolean
@@ -14,14 +18,14 @@ interface Then {
 type GivenWhenThen = (defendants?: Defendant[]) => Promise<Then>
 
 describe('DefendantService - isDefendantInActiveCustody', () => {
-  let mockDefendantModel: typeof Defendant
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { defendantModel, defendantService } =
+    const { defendantRepositoryService, defendantService } =
       await createTestingDefendantModule()
 
-    mockDefendantModel = defendantModel
+    mockDefendantRepositoryService = defendantRepositoryService
 
     givenWhenThen = async (defendants?: Defendant[]) => {
       const then = {} as Then
@@ -62,7 +66,7 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
     ] as Defendant[]
 
     beforeEach(async () => {
-      mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll = mockDefendantRepositoryService.findAll as jest.Mock
       mockFindAll.mockResolvedValue([
         {
           case: { id: '123' },
@@ -98,7 +102,7 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
     ] as Defendant[]
 
     beforeEach(async () => {
-      mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll = mockDefendantRepositoryService.findAll as jest.Mock
       mockFindAll.mockResolvedValue([{}, {}, {}] as Defendant[])
       then = await givenWhenThen(defendants)
     })
@@ -130,7 +134,7 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
     ] as Defendant[]
 
     beforeEach(async () => {
-      mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll = mockDefendantRepositoryService.findAll as jest.Mock
       mockFindAll.mockResolvedValue([] as Defendant[])
       then = await givenWhenThen(defendants)
     })

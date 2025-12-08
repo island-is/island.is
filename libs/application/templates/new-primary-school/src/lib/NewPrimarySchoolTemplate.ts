@@ -22,15 +22,25 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi, SchoolsApi } from '../dataProviders'
-import { hasForeignLanguages } from '../utils/conditionUtils'
+import {
+  hasForeignLanguages,
+  hasOtherPayer,
+  hasSpecialEducationSubType,
+  isWelfareContactSelected,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
+  showCaseManagerFields,
+} from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
-  OrganizationSubType,
   ReasonForApplicationOptions,
   Roles,
   States,
@@ -39,10 +49,18 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationType,
-  getSelectedSchoolSubType,
+  getOtherGuardian,
+  otherGuardianApprovalStatePendingAction,
+  payerApprovalStatePendingAction,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages, statesMessages } from './messages'
+import {
+  assigneeMessages,
+  historyMessages,
+  newPrimarySchoolMessages,
+  pendingActionMessages,
+  statesMessages,
+} from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,6 +73,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
   featureFlag: Features.newPrimarySchool,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -99,6 +122,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
               delete: true,
               api: [
                 NationalRegistryUserApi,
@@ -110,17 +134,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+            actions: 'setApplicationType',
+          },
         },
       },
       [States.DRAFT]: {
-        entry: ['setApplicationType'],
         exit: [
+          'clearAlternativeSpecialEducationDepartment',
           'clearApplicationIfReasonForApplication',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
           'clearExpectedEndDate',
+          'clearPayer',
         ],
         meta: {
           name: States.DRAFT,
@@ -134,11 +162,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.sendApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -154,23 +177,261 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
               delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.OTHER_GUARDIAN_APPROVAL,
+              cond: (context) =>
+                needsOtherGuardianApproval(context?.application),
+            },
+            {
+              target: States.PAYER_APPROVAL,
+              cond: (context) => needsPayerApproval(context?.application),
+            },
+            {
+              target: States.SUBMITTED,
+            },
+          ],
+        },
+      },
+      [States.OTHER_GUARDIAN_APPROVAL]: {
+        entry: ['assignOtherGuardian'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.OTHER_GUARDIAN_APPROVAL,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: otherGuardianApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: historyMessages.otherGuardianApprovalApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: historyMessages.otherGuardianApprovalRejected,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignOtherGuardian,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeApproval').then((val) =>
+                  Promise.resolve(val.AssigneeApproval),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: assigneeMessages.shared.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: assigneeMessages.shared.approve,
+                  type: 'primary',
+                },
+              ],
+              read: {
+                answers: ['childInfo', 'newSchool'],
+                externalData: ['schools'],
+              },
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.PAYER_APPROVAL,
+              cond: (context) => needsPayerApproval(context?.application),
+            },
+            {
+              target: States.SUBMITTED,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.OTHER_GUARDIAN_REJECTED },
+        },
+      },
+      [States.OTHER_GUARDIAN_REJECTED]: {
+        meta: {
+          name: States.OTHER_GUARDIAN_REJECTED,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: pendingActionMessages.otherGuardianRejectedTitle,
+              content: pendingActionMessages.otherGuardianRejectedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: historyMessages.applicationEdited,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action:
+              ApiModuleActions.notifyApplicantOfRejectionFromOtherGuardian,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AssigneeRejected').then((val) =>
+                  Promise.resolve(val.AssigneeRejected),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: assigneeMessages.shared.editApplication,
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
+      },
+      [States.PAYER_APPROVAL]: {
+        entry: ['assignPayer'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.PAYER_APPROVAL,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: payerApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: historyMessages.payerApprovalApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: historyMessages.payerApprovalRejected,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignPayer,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeApproval').then((val) =>
+                  Promise.resolve(val.AssigneeApproval),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: assigneeMessages.shared.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: assigneeMessages.shared.approve,
+                  type: 'primary',
+                },
+              ],
+              read: {
+                answers: ['childInfo', 'newSchool'],
+                externalData: ['schools'],
+              },
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.SUBMITTED },
+          [DefaultEvents.REJECT]: { target: States.PAYER_REJECTED },
+        },
+      },
+      [States.PAYER_REJECTED]: {
+        meta: {
+          name: States.PAYER_REJECTED,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: pendingActionMessages.payerRejectedTitle,
+              content: pendingActionMessages.payerRejectedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: historyMessages.applicationEdited,
+              },
+            ],
+          },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromPayer,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AssigneeRejected').then((val) =>
+                  Promise.resolve(val.AssigneeRejected),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: assigneeMessages.shared.editApplication,
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.SUBMITTED]: {
         entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.SUBMITTED,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: statesMessages.applicationReceivedTitle,
+              label: statesMessages.applicationReceivedTag,
             },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
@@ -180,14 +441,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.applicationApproved,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
             ],
           },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -218,8 +483,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
-              content: statesMessages.applicationApprovedDescription,
+              title: coreHistoryMessages.applicationApproved,
+              content: pendingActionMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
           },
@@ -242,8 +507,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           status: FormModes.REJECTED,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationRejected,
-              content: statesMessages.applicationRejectedDescription,
+              title: coreHistoryMessages.applicationRejected,
+              content: pendingActionMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
           },
@@ -273,6 +538,22 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           getApplicationType(application.answers, application.externalData),
         )
 
+        return context
+      }),
+      clearAlternativeSpecialEducationDepartment: assign((context) => {
+        const { application } = context
+
+        if (
+          !shouldShowAlternativeSpecialEducationDepartment(
+            application.answers,
+            application.externalData,
+          )
+        ) {
+          unset(
+            application.answers,
+            'newSchool.alternativeSpecialEducationDepartment',
+          )
+        }
         return context
       }),
       // Clear answers depending on what is selected as reason for application
@@ -324,23 +605,32 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearSupport: assign((context) => {
         const { application } = context
-        const {
-          hasDiagnoses,
-          hasHadSupport,
-          hasIntegratedServices,
-          hasCaseManager,
-        } = getApplicationAnswers(application.answers)
+        const { hasDiagnoses, hasHadSupport } = getApplicationAnswers(
+          application.answers,
+        )
 
-        if (hasDiagnoses !== YES && hasHadSupport !== YES) {
+        if (
+          hasSpecialEducationSubType(
+            application.answers,
+            application.externalData,
+          )
+        ) {
+          unset(application.answers, 'support')
+        }
+        if (!(hasDiagnoses === YES || hasHadSupport === YES)) {
+          unset(application.answers, 'support.hasWelfareContact')
+          unset(application.answers, 'support.welfareContact')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
           unset(application.answers, 'support.hasIntegratedServices')
+        }
+        if (!isWelfareContactSelected(application.answers)) {
+          unset(application.answers, 'support.welfareContact')
           unset(application.answers, 'support.hasCaseManager')
           unset(application.answers, 'support.caseManager')
+          unset(application.answers, 'support.hasIntegratedServices')
         }
-        if (hasIntegratedServices !== YES) {
-          unset(application.answers, 'support.hasCaseManager')
-          unset(application.answers, 'support.caseManager')
-        }
-        if (hasCaseManager !== YES) {
+        if (!showCaseManagerFields(application.answers)) {
           unset(application.answers, 'support.caseManager')
         }
         return context
@@ -349,23 +639,33 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
         const { temporaryStay } = getApplicationAnswers(application.answers)
 
-        const selectedSchoolSubType = getSelectedSchoolSubType(
-          application.answers,
-          application.externalData,
-        )
-
         if (
-          selectedSchoolSubType !== OrganizationSubType.INTERNATIONAL_SCHOOL
+          !shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          )
         ) {
           unset(application.answers, 'startingSchool.temporaryStay')
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
         if (
-          selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+          shouldShowExpectedEndDate(
+            application.answers,
+            application.externalData,
+          ) &&
           temporaryStay !== YES
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
+        return context
+      }),
+      clearPayer: assign((context) => {
+        const { application } = context
+
+        if (!hasOtherPayer(application.answers)) {
+          unset(application.answers, 'payer.other')
+        }
+
         return context
       }),
       assignOrganization: assign((context) => {
@@ -385,6 +685,40 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignOtherGuardian: assign((context) => {
+        const { application } = context
+        const otherGuardian = getOtherGuardian(
+          application.answers,
+          application.externalData,
+        )
+
+        if (
+          otherGuardian &&
+          otherGuardian.nationalId !== undefined &&
+          otherGuardian.nationalId !== ''
+        ) {
+          set(application, 'assignees', [otherGuardian.nationalId])
+        }
+
+        return context
+      }),
+      assignPayer: assign((context) => {
+        const { application } = context
+        const { payerNationalId } = getApplicationAnswers(application.answers)
+
+        if (payerNationalId !== undefined && payerNationalId !== '') {
+          set(application, 'assignees', [payerNationalId])
+        }
+
+        return context
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
 
@@ -392,7 +726,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    const { applicant, assignees } = application
+
+    if (nationalId === applicant) {
       return Roles.APPLICANT
     }
 
@@ -400,6 +736,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
     ) {
       return Roles.ORGANIZATION_REVIEWER
+    }
+
+    if (assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
     }
 
     return undefined
