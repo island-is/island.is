@@ -17,6 +17,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { m } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,9 +25,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.HH_COURSES,
-  name: 'HH courses template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Heilsugæslan á höfuðborgarsvæðinu', // TODO: Change to the correct institution
+  name: m.applicationTitle,
+  codeOwner: CodeOwners.Stefna,
+  institution: 'Heilsugæsla höfuðborgarsvæðisins',
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
   dataSchema,

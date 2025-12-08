@@ -4,32 +4,40 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { getOverviewItems } from '../../utils/getOverviewItems'
+import {
+  getPayerOverviewItems,
+  getParticipantOverviewItems,
+} from '../../utils/getOverviewItems'
+import { m } from '../../lib/messages'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: m.overviewSectionHeading,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: 'Overview',
+      title: m.overviewSectionHeading,
       children: [
         buildOverviewField({
-          id: 'overview',
-          title: 'Overview',
-          description: 'This is an overview, should come from messages.ts',
-          backId: 'idToSomeField',
+          id: 'participantOverview',
           bottomLine: false,
-          items: getOverviewItems,
+          title: m.overviewSectionParticipantHeading,
+          items: getParticipantOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'payerOverview',
+          bottomLine: false,
+          title: m.overviewSectionPayerHeading,
+          items: getPayerOverviewItems,
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
+          title: m.overviewSectionSubmit,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: m.overviewSectionSubmit,
               type: 'primary',
             },
           ],

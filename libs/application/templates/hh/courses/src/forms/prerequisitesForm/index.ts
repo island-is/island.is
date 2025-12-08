@@ -7,7 +7,8 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
+import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -16,18 +17,16 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: m.mainSectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: m.mainSectionTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              title: m.prerequisitesNationalRegistryTitle,
+              subTitle: m.prerequisitesNationalRegistrySubTitle,
             }),
-            // Add more data providers as needed
           ],
           submitField: buildSubmitField({
             id: 'submit',

@@ -1,73 +1,68 @@
-import { ExternalData } from '@island.is/application/types'
-
-import { FormValue } from '@island.is/application/types'
-
+import type {
+  ExternalData,
+  KeyValueItem,
+  FormValue,
+} from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { KeyValueItem } from '@island.is/application/types'
 
-export const getOverviewItems = (
+import { m } from '../lib/messages'
+
+export const getParticipantOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   return [
     {
       width: 'full',
-      keyText: 'Full width',
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
-    },
-    {
-      width: 'half',
-      keyText: 'Half width',
+      keyText: m.overviewSectionParticipantName,
       valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
-    },
-    {
-      width: 'half',
-      keyText: 'Half width',
-      valueText: 'Hvassaleiti 5',
+        getValueViaPath<string>(answers, 'participantNationalIdAndName.name') ??
+        '',
     },
     {
       width: 'full',
-      // empty item to end line
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'test@test.is',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
+      keyText: m.overviewSectionParticipantNationalId,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'participantNationalIdAndName.nationalId',
+        ) ?? '',
     },
     {
       width: 'full',
-      // empty item to end line
+      keyText: m.overviewSectionParticipantEmail,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'participantNationalIdAndName.email',
+        ) ?? '',
     },
     {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'Reykjavík',
+      width: 'full',
+      keyText: m.overviewSectionParticipantPhone,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'participantNationalIdAndName.phone',
+        ) ?? '',
+    },
+  ]
+}
+
+export const getPayerOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  return [
+    {
+      width: 'full',
+      keyText: m.overviewSectionPayerName,
+      valueText: getValueViaPath<string>(answers, 'payerNationalId') ?? '',
     },
     {
-      width: 'half',
-      keyText: 'Half width',
-      valueText: 'test@test.is',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'test@test.is',
+      width: 'full',
+      keyText: m.overviewSectionPayerNationalId,
+      valueText: getValueViaPath<string>(answers, 'payerNationalId') ?? '',
     },
   ]
 }
