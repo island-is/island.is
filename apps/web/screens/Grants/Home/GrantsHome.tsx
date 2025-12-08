@@ -15,7 +15,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { GrantsHeader } from '@island.is/web/components'
+import { CustomPageLayoutHeader } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -90,39 +90,44 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
 
   return (
     <Box>
-      <GrantsHeader
+      <CustomPageLayoutHeader
         title={customPageData?.ogTitle ?? formatMessage(m.home.title)}
         description={
           customPageData?.ogDescription ?? formatMessage(m.home.description)
         }
         searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
         searchUrl={searchUrl}
-        shortcutsTitle={formatMessage(m.home.mostVisited)}
-        featuredImage={formatMessage(m.home.featuredImage)}
-        featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
+        shortcuts={{
+          title: formatMessage(m.home.mostVisited),
+          variant: 'tags',
+          items: [
+            {
+              title: formatMessage(m.bullets.open),
+              href: searchUrl + '?status=open',
+            },
+            {
+              title: formatMessage(m.bullets.nativeFunds),
+              href: searchUrl + '?category=grant-category-native',
+            },
+            {
+              title: formatMessage(m.bullets.technologyDevelopmentFund),
+              href: searchUrl + '?query=tækniþróunar',
+            },
+            {
+              title: formatMessage(m.bullets.financing),
+              href: searchUrl + '?type=grant-type-financing',
+            },
+            {
+              title: formatMessage(m.bullets.companies),
+              href: searchUrl + '?query=fyrirtæki',
+            },
+          ],
+        }}
+        featuredImage={{
+          src: formatMessage(m.home.featuredImage),
+          alt: formatMessage(m.home.featuredImageAlt),
+        }}
         offset
-        quickLinks={[
-          {
-            title: formatMessage(m.bullets.open),
-            href: searchUrl + '?status=open',
-          },
-          {
-            title: formatMessage(m.bullets.nativeFunds),
-            href: searchUrl + '?category=grant-category-native',
-          },
-          {
-            title: formatMessage(m.bullets.technologyDevelopmentFund),
-            href: searchUrl + '?query=tækniþróunar',
-          },
-          {
-            title: formatMessage(m.bullets.financing),
-            href: searchUrl + '?type=grant-type-financing',
-          },
-          {
-            title: formatMessage(m.bullets.companies),
-            href: searchUrl + '?query=fyrirtæki',
-          },
-        ]}
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs
