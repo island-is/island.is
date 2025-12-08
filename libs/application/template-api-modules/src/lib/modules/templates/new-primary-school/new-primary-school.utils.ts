@@ -346,9 +346,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         fieldInspection: fieldInspection === YES,
         additionalDataProvisioning: additionalDataProvisioning === YES,
         outsideSpecialist: outsideSpecialist == YES,
-        childViewOnApplication: childViewOnApplication == YES, 
+        childViewOnApplication: childViewOnApplication == YES,
       },
-      terms: terms === YES
+      terms: terms === YES,
     },
   }
 
