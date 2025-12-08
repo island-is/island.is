@@ -12,7 +12,7 @@ import * as m from './messages'
 import { rentalPeriodSchema } from './schemas/rentalPeriodSchema'
 import { specialProvisionsSchema } from './schemas/specialProvisionsSchema'
 import { conditionSchema } from './schemas/conditionSchema'
-import { isValidMobileNumber, isValidPhoneNumber } from '../utils/utils'
+import { isValidMobileNumber } from '../utils/utils'
 
 const applicant = z.object({
   nationalId: z
