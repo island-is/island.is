@@ -515,17 +515,18 @@
             "description": "Reason ID for application",
             "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
           },
+          "visitedAndResearched": { "type": "boolean" },
           "terms": { "type": "boolean" },
-          "consents": { "$ref": "#/components/schemas/ConsentInput" }
+          "childCircumstances": { "$ref": "#/components/schemas/ConsentInput" }
         },
-        "required": ["applicant", "selectedOrganizationId", "expectedStartDate"]
+        "required": ["applicant", "selectedOrganizationId"]
       },
       "RegistrationApplicationInput": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "The unique ID of the application being submitted"
+            "description": "The unique ID in island.is of the application being submitted"
           },
           "registration": { "$ref": "#/components/schemas/RegistrationInput" },
           "applicationType": {
