@@ -68,14 +68,14 @@ export class ApplicationAdminResolver {
   }
 
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationTypesSuperAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: ApplicationTypesInstitutionAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
+    return this.applicationService.findAllApplicationTypesSuperAdmin(
       user,
       locale,
       input,
