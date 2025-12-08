@@ -103,7 +103,7 @@ export const mapCaseStateToTagVariant = (
       // TODO: this will be fixed when we have considered ruling decision per defendant
       if (
         theCase.defendants &&
-        c.defendants.length > 0 &&
+        theCase.defendants.length > 0 &&
         theCase.defendants?.every((d) => d.verdict?.isDefaultJudgement)
       ) {
         return {
