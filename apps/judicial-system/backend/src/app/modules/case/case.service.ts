@@ -1152,7 +1152,7 @@ export class CaseService {
   ): Promise<void> {
     const messages: Message[] = []
 
-    // No need to deliver case files if cempleting after corection
+    // No need to deliver case files if completing after correction
     if (theCase.state !== CaseState.CORRECTING) {
       for (const caseFile of updatedCase.caseFiles?.filter(
         (caseFile) =>
