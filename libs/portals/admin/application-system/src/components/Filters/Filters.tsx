@@ -19,7 +19,10 @@ import { m } from '../../lib/messages'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
+import {
+  useGetInstitutionApplicationTypesQuery,
+  useGetSuperApplicationTypesQuery,
+} from '../../queries/overview.generated'
 
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeId']) => void
@@ -50,21 +53,15 @@ export const Filters = ({
   const { formatMessage } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-  const userInfo = useUserInfo()
+  // const userInfo = useUserInfo()
 
-  const asInstitutions = Object.values(InstitutionTypes)
-  const availableOrganizations = organizations
-    .filter((x) => asInstitutions.findIndex((y) => y === x.slug) !== -1)
-    .sort((a, b) => a.title.localeCompare(b.title))
+  // const asInstitutions = Object.values(InstitutionTypes)
+  // const availableOrganizations = organizations
+  //   .filter((x) => asInstitutions.findIndex((y) => y === x.slug) !== -1)
+  //   .sort((a, b) => a.title.localeCompare(b.title))
 
   const { data: typeData, loading: typesLoading } =
-    useGetInstitutionApplicationTypesQuery({
-      variables: {
-        input: {
-          nationalId: userInfo.profile.nationalId,
-        },
-      },
-    })
+    useGetSuperApplicationTypesQuery({})
 
   useDebounce(
     () => {
@@ -87,7 +84,7 @@ export const Filters = ({
 
   const institutionTypeIds = useMemo(() => {
     return (
-      typeData?.applicationTypesInstitutionAdmin
+      typeData?.applicationTypesSuperAdmin
         ?.map((type) => ({
           value: type.id,
           label: type.name ?? '',
@@ -101,11 +98,11 @@ export const Filters = ({
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
-      flexDirection={['column', 'column', 'column', 'row']}
+      flexDirection="column"
       marginBottom={4}
     >
       <Filter
-        variant={isMobile ? 'dialog' : 'popover'}
+        variant={isMobile ? 'dialog' : 'default'}
         align="left"
         reverse
         resultCount={numberOfDocuments}
@@ -124,7 +121,7 @@ export const Filters = ({
               width="full"
               marginBottom={3}
             >
-              <Box width="half">
+              {/* <Box width="half">
                 <Select
                   id={MultiChoiceFilter.INSTITUTION}
                   label={formatMessage(m.institution)}
@@ -144,8 +141,8 @@ export const Filters = ({
                     label: x.title,
                   }))}
                 />
-              </Box>
-              <Box width="half" marginLeft={3}>
+              </Box> */}
+              <Box width="full">
                 <Select
                   id={MultiChoiceFilter.TYPE_ID}
                   label={formatMessage(m.applicationType)}
@@ -210,11 +207,18 @@ export const Filters = ({
       ></Filter>
 
       {numberOfDocuments !== undefined && (
-        <Hidden below="md">
-          <Text variant="small" fontWeight="semiBold" whiteSpace="nowrap">
-            {formatMessage(m.resultCount, { count: numberOfDocuments })}
-          </Text>
-        </Hidden>
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="flexEnd"
+          width="full"
+        >
+          <Hidden below="md">
+            <Text variant="small" fontWeight="semiBold" whiteSpace="nowrap">
+              {formatMessage(m.resultCount, { count: numberOfDocuments })}
+            </Text>
+          </Hidden>
+        </Box>
       )}
     </Box>
   )

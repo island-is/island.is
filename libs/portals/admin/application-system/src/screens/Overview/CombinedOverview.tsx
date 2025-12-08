@@ -107,7 +107,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     variables: commonVariables,
     skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
     onCompleted: (q) => {
-      const names = q.applicationApplicationsAdmin
+      const names = q.applicationApplicationsAdmin?.rows
         ?.filter((x) => !!x.name)
         ?.map((x) => x.name ?? '')
 
@@ -119,7 +119,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
 
   const isLoading = loadingSuper || loadingInstitution || orgsLoading
   const applicationApplicationsAdmin = isSuperAdmin
-    ? superData?.applicationApplicationsAdmin
+    ? superData?.applicationApplicationsAdmin?.rows
     : institutionData?.applicationApplicationsInstitutionAdmin?.rows
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
@@ -183,7 +183,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
       // Clear all filters (except nationalId)
-      setFilters((prev) => ({ ...prev, period: {}, searchStr: '' }))
+      setFilters(defaultFilters)
       setMultiChoiceFilters(defaultMultiChoiceFilters)
       setInstitutionFilters(undefined)
       return
