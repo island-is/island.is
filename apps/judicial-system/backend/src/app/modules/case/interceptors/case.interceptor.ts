@@ -181,6 +181,7 @@ const transformCase = (theCase: Case, user?: User) => {
       theCase.eventLogs,
     ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
+    eventLogs: undefined,
   }
 }
 
