@@ -1,30 +1,8 @@
-import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
 @InputType()
-class FiltersAdminInput {
-  @Field(() => [String], { nullable: true })
-  @IsOptional()
-  typeId?: string[]
-
-  @Field(() => [String], { nullable: true })
-  @IsOptional()
-  status?: string[]
-}
-
-@InputType()
-export class ApplicationApplicationsAdminInput extends PartialType(
-  FiltersAdminInput,
-) {
-  @Field(() => String)
-  nationalId!: string
-}
-
-@InputType()
-export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
-  FiltersAdminInput,
-  ['typeId'],
-) {
+export class ApplicationsAdminFilters {
   @Field(() => Number)
   page!: number
 
@@ -43,18 +21,27 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   @IsOptional()
   to?: string
 
-  // Note: Need to create new field (typeIdValue) instead of using typeId because of DelegationGuard
   @Field(() => String, { nullable: true })
   @IsOptional()
   typeIdValue?: string
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  searchStrValue?: string
+  searchStr?: string
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  status?: string[]
 }
 
 @InputType()
-export class ApplicationApplicationsAdminStatisticsInput {
+export class ApplicationsSuperAdminFilters extends ApplicationsAdminFilters {
+  @Field(() => String, { nullable: true })
+  institutionNationalId?: string
+}
+
+@InputType()
+export class ApplicationsAdminStatisticsInput {
   @Field(() => String)
   startDate!: string
   @Field(() => String)
