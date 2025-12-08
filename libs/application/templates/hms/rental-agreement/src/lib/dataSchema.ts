@@ -12,6 +12,7 @@ import * as m from './messages'
 import { rentalPeriodSchema } from './schemas/rentalPeriodSchema'
 import { specialProvisionsSchema } from './schemas/specialProvisionsSchema'
 import { conditionSchema } from './schemas/conditionSchema'
+import { isValidPhoneNumber } from '..'
 
 const applicant = z.object({
   nationalId: z
@@ -19,6 +20,8 @@ const applicant = z.object({
     .refine((val) => (val ? kennitala.isValid(val) : false), {
       params: m.dataSchema.nationalId,
     }),
+  email: z.string().email(),
+  phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
 })
 
 const preSignatureInfo = z.object({
