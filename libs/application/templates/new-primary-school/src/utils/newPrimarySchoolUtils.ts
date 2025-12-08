@@ -369,32 +369,28 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
-  const terms = getValueViaPath<YesOrNo>(
-    answers, 
-    'acceptTerms[0]',
-    NO,
-  )
+  const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
 
   const fieldInspection = getValueViaPath<YesOrNo>(
-    answers, 
+    answers,
     'childCircumstances.onSiteObservation[0]',
     NO,
   )
 
   const additionalDataProvisioning = getValueViaPath<YesOrNo>(
-    answers, 
+    answers,
     'childCircumstances.onSiteObservationAdditionalInfo[0]',
     NO,
   )
 
   const outsideSpecialist = getValueViaPath<YesOrNo>(
-    answers, 
+    answers,
     'childCircumstances.callInExpert[0]',
     NO,
   )
 
   const childViewOnApplication = getValueViaPath<YesOrNo>(
-    answers, 
+    answers,
     'childCircumstances.childViews[0]',
     NO,
   )

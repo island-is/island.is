@@ -348,7 +348,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         outsideSpecialist: outsideSpecialist === YES,
         childViewOnApplication: childViewOnApplication === YES, 
       },
-      terms: terms === YES
+      terms: terms === YES,
     },
   }
 
