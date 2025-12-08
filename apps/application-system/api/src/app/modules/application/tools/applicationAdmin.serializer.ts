@@ -257,7 +257,7 @@ export class ApplicationTypeAdminSerializer
   constructor(
     private intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    ) {}
+  ) {}
 
   intercept(
     context: ExecutionContext,
@@ -266,26 +266,16 @@ export class ApplicationTypeAdminSerializer
     const locale = getCurrentLocale(context)
 
     return next.handle().pipe(
-      map(
-        async (
-          res:
-            | ApplicationTypeAdmin
-            | Array<ApplicationTypeAdmin>,
-        ) => {
-          const isArray = Array.isArray(res)
+      map(async (res: ApplicationTypeAdmin | Array<ApplicationTypeAdmin>) => {
+        const isArray = Array.isArray(res)
 
-          if (isArray) {
-            const applicationTypes =
-              res as Array<ApplicationTypeAdmin>
-            return this.serializeArray(applicationTypes, locale)
-          } else {
-            return this.serialize(
-              res as ApplicationTypeAdmin,
-              locale,
-            )
-          }
-        },
-      ),
+        if (isArray) {
+          const applicationTypes = res as Array<ApplicationTypeAdmin>
+          return this.serializeArray(applicationTypes, locale)
+        } else {
+          return this.serialize(res as ApplicationTypeAdmin, locale)
+        }
+      }),
     )
   }
 
