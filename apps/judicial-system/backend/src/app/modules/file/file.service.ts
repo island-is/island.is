@@ -5,6 +5,7 @@ import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -71,6 +72,7 @@ export class FileService {
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
     private readonly courtDocumentService: CourtDocumentService,
+    @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
     private readonly config: ConfigType<typeof fileModuleConfig>,
