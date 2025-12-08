@@ -270,6 +270,11 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
           setPage={setPage}
           pageSize={pageSize}
           shouldShowCardButtons={false}
+          numberOfItems={
+            isSuperAdmin
+              ? superData?.applicationApplicationsAdmin?.count
+              : institutionData?.applicationApplicationsInstitutionAdmin?.count
+          }
         />
       )}
     </Box>
