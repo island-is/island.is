@@ -1,14 +1,14 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { createPkPassDataInput } from './huntingLicenseClientMapper'
+import { FetchError } from '@island.is/clients/middlewares'
+import { NvsPermitsClientService } from '@island.is/clients/nvs-permits'
 import {
   Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   LicenseClient,
   LicensePkPassAvailability,
@@ -17,7 +17,8 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import { NvsPermitsClientService } from '@island.is/clients/nvs-permits'
+import { createPkPassDataInput } from './huntingLicenseClientMapper'
+import { HuntingLicenseVerifyExtraData } from './huntingLicenseExtraData.types'
 import { mapHuntingLicenseDto } from './mapper'
 import { HuntingLicenseDto } from './types'
 
@@ -259,6 +260,23 @@ export class HuntingLicenseClient
     return {
       ok: true,
       data: result.data,
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<HuntingLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.holderName) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.holderNationalId ?? '',
+      name: license.data.holderName,
+      picture: license.data.holderPhoto,
     }
   }
 }

@@ -173,6 +173,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               {
                 logMessage: m.confirmedBySpouse2,
                 onEvent: DefaultEvents.PAYMENT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: {

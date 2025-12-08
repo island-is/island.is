@@ -155,13 +155,6 @@ export class Form extends Model<Form> {
   })
   dependencies?: Dependency[]
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-    defaultValue: () => [],
-  })
-  allowedLoginTypes!: string[]
-
   @HasMany(() => Section)
   sections!: Section[]
 
