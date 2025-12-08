@@ -132,10 +132,7 @@ export class ApplicationService {
     })
   }
 
-  async findAllApplicationTypesSuperAdmin(
-    user: User,
-    locale: Locale,
-  ) {
+  async findAllApplicationTypesSuperAdmin(user: User, locale: Locale) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesSuperAdmin({
