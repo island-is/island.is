@@ -43,7 +43,7 @@ import {
 } from '../utils/application'
 import {
   ApplicationListAdminResponseDto,
-  ApplicationTypeAdminInstitution,
+  ApplicationTypeAdmin,
 } from '../dto/applicationAdmin.response.dto'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -252,13 +252,16 @@ export class ApplicationAdminSerializer
 
 @Injectable()
 export class ApplicationTypeAdminSerializer
-  implements NestInterceptor<ApplicationTypeAdminInstitution, Promise<unknown>>
+  implements NestInterceptor<ApplicationTypeAdmin, Promise<unknown>>
 {
-  constructor(private intlService: IntlService) {}
+  constructor(
+    private intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    ) {}
 
   intercept(
     context: ExecutionContext,
-    next: CallHandler<ApplicationTypeAdminInstitution>,
+    next: CallHandler<ApplicationTypeAdmin>,
   ): Observable<Promise<unknown>> {
     const locale = getCurrentLocale(context)
 
@@ -266,18 +269,18 @@ export class ApplicationTypeAdminSerializer
       map(
         async (
           res:
-            | ApplicationTypeAdminInstitution
-            | Array<ApplicationTypeAdminInstitution>,
+            | ApplicationTypeAdmin
+            | Array<ApplicationTypeAdmin>,
         ) => {
           const isArray = Array.isArray(res)
 
           if (isArray) {
             const applicationTypes =
-              res as Array<ApplicationTypeAdminInstitution>
+              res as Array<ApplicationTypeAdmin>
             return this.serializeArray(applicationTypes, locale)
           } else {
             return this.serialize(
-              res as ApplicationTypeAdminInstitution,
+              res as ApplicationTypeAdmin,
               locale,
             )
           }
@@ -286,10 +289,21 @@ export class ApplicationTypeAdminSerializer
     )
   }
 
-  async serialize(type: ApplicationTypeAdminInstitution, locale: Locale) {
-    const template = await getApplicationTemplateByTypeId(
-      type.id as ApplicationTypes,
-    )
+  async serialize(type: ApplicationTypeAdmin, locale: Locale) {
+    let template
+
+    try {
+      template = await getApplicationTemplateByTypeId(
+        type.id as ApplicationTypes,
+      )
+    } catch (error) {
+      this.logger.warn(
+        `Could not serialize application type: ${type.id}`,
+        error,
+      )
+      return undefined
+    }
+
     const namespaces = [
       'application.system',
       ...(template?.translationNamespaces ?? []),
@@ -303,12 +317,12 @@ export class ApplicationTypeAdminSerializer
   }
 
   async serializeArray(
-    applicationTypes: ApplicationTypeAdminInstitution[],
+    applicationTypes: ApplicationTypeAdmin[],
     locale: Locale,
   ) {
     return Promise.all(
       applicationTypes.map((item) => this.serialize(item, locale)),
-    )
+    ).then((results) => results.filter((result) => result !== undefined))
   }
 }
 
