@@ -39,7 +39,7 @@ import {
   CaseState,
   CaseType,
   DefenderSubRole,
-  getIndictmentAppealDeadlineDate,
+  getIndictmentAppealDeadline,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -1890,7 +1890,7 @@ export class CaseNotificationService extends BaseNotificationService {
     }
     const subject = `Úthlutun máls ${theCase.courtCaseNumber} til yfirlestrar`
 
-    const deadline = getIndictmentAppealDeadlineDate({
+    const { deadlineDate } = getIndictmentAppealDeadline({
       baseDate: rulingDate,
       isFine:
         theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
@@ -1898,7 +1898,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const html = `Þér hefur verið úthlutað máli ${
       theCase.courtCaseNumber
     } til yfirlestrar. Áfrýjunarfrestur er til ${formatDate(
-      deadline,
+      deadlineDate,
     )}. Sjá nánar á <a href="${
       this.config.clientUrl
     }${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${
