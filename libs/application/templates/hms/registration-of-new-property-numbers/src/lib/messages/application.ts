@@ -39,9 +39,4 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in prerequisites',
   },
-  sentInWithActor: {
-    id: 'ronp.application:sentInWithActor',
-    defaultMessage: 'Umsókn send inn fyrir hönd {subject} af {actor}',
-    description: 'History log message when application has an actor',
-  },
 })

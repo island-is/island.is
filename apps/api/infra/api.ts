@@ -22,8 +22,8 @@ import {
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
+  PoliceCases,
   HousingBenefitCalculator,
-  Hunting,
   IcelandicGovernmentInstitutionVacancies,
   Inna,
   IntellectualProperties,
@@ -53,6 +53,7 @@ import {
   TransportAuthority,
   UniversityCareers,
   Vehicles,
+  NVSPermits,
   VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
@@ -62,6 +63,7 @@ import {
   PracticalExams,
   FireCompensation,
   VMSTUnemployment,
+  GoProVerdicts,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -395,6 +397,7 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY',
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -469,7 +472,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
-      Hunting,
+      PoliceCases,
       Firearm,
       Disability,
       Base,
@@ -481,6 +484,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
@@ -529,6 +533,7 @@ export const serviceSetup = (services: {
       LSH,
       PracticalExams,
       VMSTUnemployment,
+      GoProVerdicts,
     )
     .ingress({
       primary: {

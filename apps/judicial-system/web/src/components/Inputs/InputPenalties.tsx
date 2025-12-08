@@ -1,12 +1,9 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction, useRef, useState } from 'react'
+import { useDebounce } from 'react-use'
 
 import { Input } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import SectionHeading from '../SectionHeading/SectionHeading'
 
@@ -18,8 +15,27 @@ interface Props {
 const InputPenalties: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
+  const hasRunDebounce = useRef<boolean>(false)
+  const [value, setValue] = useState<string>(workingCase.penalties ?? '')
 
-  useDeb(workingCase, 'penalties')
+  useDebounce(
+    async () => {
+      if (!hasRunDebounce.current) {
+        hasRunDebounce.current = true
+        return
+      }
+
+      setWorkingCase((currentWorkingCase) => ({
+        ...currentWorkingCase,
+        penalties: value ?? null,
+      }))
+      await updateCase(workingCase.id, {
+        penalties: value ?? null,
+      })
+    },
+    200,
+    [value],
+  )
 
   return (
     <>
@@ -31,24 +47,10 @@ const InputPenalties: FC<Props> = (props) => {
         name="penalties"
         label="Athugasemdir"
         placeholder="Hver er hæfileg refsing að mati ákæruvalds?"
-        value={workingCase.penalties ?? ''}
-        onChange={(event) =>
-          removeTabsValidateAndSet(
-            'penalties',
-            event.target.value,
-            [],
-            setWorkingCase,
-          )
-        }
-        onBlur={(event) =>
-          validateAndSendToServer(
-            'penalties',
-            event.target.value,
-            [],
-            workingCase,
-            updateCase,
-          )
-        }
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }}
         textarea
         autoComplete="off"
         rows={10}

@@ -74,7 +74,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationnewsoverview')
 
   const n = useNamespaceStrict(namespace)
 
