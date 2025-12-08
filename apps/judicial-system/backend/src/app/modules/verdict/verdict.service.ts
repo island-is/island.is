@@ -116,9 +116,11 @@ export class VerdictService {
     const currentVerdict = await this.verdictModel.findOne({
       where: { defendantId: verdict.defendantId },
     })
+
     if (!currentVerdict) {
       return this.verdictModel.create({ caseId, ...verdict }, { transaction })
     }
+
     return currentVerdict
   }
 
