@@ -1,25 +1,18 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { SafeAreaView, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components/native'
-import { useIntl } from 'react-intl'
 
-import {
-  Alert,
-  Close,
-  Heading,
-  Typography,
-  ViewPager,
-  WelcomeCard,
-} from '../../ui'
 import illustration1 from '../../assets/illustrations/digital-services-m3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
 import illustration2 from '../../assets/illustrations/le-retirement-s3-large.png'
 import illustration4 from '../../assets/illustrations/le_jobs_s5.png'
+import { DISMISSED_KEYS } from '../../constants/dissmissed-keys'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { DISMISSED_KEYS } from '../../constants/dissmissed-keys'
+import { Close, Heading, ViewPager, WelcomeCard } from '../../ui'
 import { HomeBanner } from './home-banner'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 export const OnboardingModule = React.memo(() => {
   const theme = useTheme()
