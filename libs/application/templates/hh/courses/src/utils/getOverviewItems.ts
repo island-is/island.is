@@ -6,6 +6,7 @@ import type {
 import { getValueViaPath } from '@island.is/application/core'
 
 import { m } from '../lib/messages'
+import { formatPhoneNumber } from './formatPhoneNumber'
 
 export const getParticipantOverviewItems = (
   answers: FormValue,
@@ -40,11 +41,12 @@ export const getParticipantOverviewItems = (
     {
       width: 'full',
       keyText: m.overviewSectionParticipantPhone,
-      valueText:
+      valueText: formatPhoneNumber(
         getValueViaPath<string>(
           answers,
           'participantNationalIdAndName.phone',
         ) ?? '',
+      ),
     },
   ]
 }
@@ -57,7 +59,7 @@ export const getPayerOverviewItems = (
     {
       width: 'full',
       keyText: m.overviewSectionPayerName,
-      valueText: getValueViaPath<string>(answers, 'payerNationalId') ?? '',
+      valueText: getValueViaPath<string>(answers, 'payerName') ?? '',
     },
     {
       width: 'full',

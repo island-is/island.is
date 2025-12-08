@@ -50,7 +50,7 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: 'Prerequisites',
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
