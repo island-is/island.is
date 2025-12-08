@@ -544,13 +544,13 @@ export const serviceSetup = (services: {
     })
     .resources({
       limits: { cpu: '1200m', memory: '2500Mi' },
-      requests: { cpu: '800m', memory: '1500Mi' },
+      requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
       default: 3,
       max: 50,
       min: 3,
-      cpuAverageUtilization: 75,
+      cpuAverageUtilization: 70,
     })
     .grantNamespaces(
       'nginx-ingress-external',

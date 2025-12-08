@@ -460,7 +460,7 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 75
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -495,8 +495,8 @@ api:
       cpu: '1200m'
       memory: '2500Mi'
     requests:
-      cpu: '800m'
-      memory: '1500Mi'
+      cpu: '900m'
+      memory: '2000Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -4192,7 +4192,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'prod'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
@@ -4214,7 +4214,7 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 75
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -4248,11 +4248,11 @@ web:
     min: 3
   resources:
     limits:
-      cpu: '1200m'
-      memory: '768Mi'
+      cpu: '1800m'
+      memory: '1500Mi'
     requests:
-      cpu: '800m'
-      memory: '512Mi'
+      cpu: '1200m'
+      memory: '1024Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'

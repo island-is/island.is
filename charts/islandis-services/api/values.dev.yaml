@@ -213,7 +213,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 75
+      cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -248,8 +248,8 @@ resources:
     cpu: '1200m'
     memory: '2500Mi'
   requests:
-    cpu: '800m'
-    memory: '1500Mi'
+    cpu: '900m'
+    memory: '2000Mi'
 secrets:
   ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
   ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
