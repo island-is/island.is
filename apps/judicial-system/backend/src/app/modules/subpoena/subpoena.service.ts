@@ -6,10 +6,9 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -47,6 +46,7 @@ import {
   Defendant,
   Institution,
   Subpoena,
+  SubpoenaRepositoryService,
   User,
 } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
@@ -86,7 +86,7 @@ export const include: Includeable[] = [
 export class SubpoenaService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -94,6 +94,7 @@ export class SubpoenaService {
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtDocumentService: CourtDocumentService,
     private readonly courtService: CourtService,
@@ -110,7 +111,7 @@ export class SubpoenaService {
     location?: string,
     subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
-    return this.subpoenaModel.create(
+    return this.subpoenaRepositoryService.create(
       {
         defendantId,
         caseId,
@@ -123,23 +124,18 @@ export class SubpoenaService {
   }
 
   async setHash(
-    id: string,
+    caseId: string,
+    defendantId: string,
+    subpoenaId: string,
     hash: string,
     hashAlgorithm: HashAlgorithm,
   ): Promise<void> {
-    const [numberOfAffectedRows] = await this.subpoenaModel.update(
+    await this.subpoenaRepositoryService.update(
+      caseId,
+      defendantId,
+      subpoenaId,
       { hash, hashAlgorithm },
-      { where: { id } },
     )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena hash for subpoena ${id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(`Could not update subpoena ${id}`)
-    }
   }
 
   private async addMessagesForSubpoenaUpdateToQueue(
@@ -196,18 +192,16 @@ export class SubpoenaService {
     } = update
 
     await this.sequelize.transaction(async (transaction) => {
-      const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
-        where: { id: subpoena.id },
-        returning: true,
-        transaction,
-      })
-
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
-        )
-      }
+      await this.subpoenaRepositoryService.update(
+        theCase.id,
+        defendant.id,
+        subpoena.id,
+        update,
+        {
+          transaction,
+          throwOnZeroRows: false,
+        },
+      )
 
       if (
         defenderChoice ||
@@ -286,7 +280,7 @@ export class SubpoenaService {
   }
 
   async findById(subpoenaId: string): Promise<Subpoena> {
-    const subpoena = await this.subpoenaModel.findOne({
+    const subpoena = await this.subpoenaRepositoryService.findOne({
       include,
       where: { id: subpoenaId },
     })
@@ -299,7 +293,7 @@ export class SubpoenaService {
   }
 
   async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
-    const subpoena = await this.subpoenaModel.findOne({
+    const subpoena = await this.subpoenaRepositoryService.findOne({
       include,
       where: { policeSubpoenaId },
     })
@@ -314,7 +308,7 @@ export class SubpoenaService {
   }
 
   async findByCaseId(caseId: string): Promise<Subpoena[]> {
-    return this.subpoenaModel.findAll({
+    return this.subpoenaRepositoryService.findAll({
       include,
       where: { caseId },
     })
@@ -364,16 +358,13 @@ export class SubpoenaService {
         return { delivered: false }
       }
 
-      const [numberOfAffectedRows] = await this.subpoenaModel.update(
+      await this.subpoenaRepositoryService.update(
+        theCase.id,
+        defendant.id,
+        subpoena.id,
         { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
-        { where: { id: subpoena.id } },
+        { throwOnZeroRows: false },
       )
-
-      if (numberOfAffectedRows !== 1) {
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
-        )
-      }
 
       this.logger.info(
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
@@ -550,5 +541,17 @@ export class SubpoenaService {
     }
 
     return this.update(theCase, defendant, subpoena, subpoenaInfo)
+  }
+
+  transferDefendantSubpoenasToCase(
+    newCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<number> {
+    return this.subpoenaRepositoryService.updateMany(
+      { caseId: defendant.caseId, defendantId: defendant.id },
+      { caseId: newCase.id },
+      { transaction },
+    )
   }
 }
