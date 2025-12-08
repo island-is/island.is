@@ -1,9 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  institutionName: {
+    id: 'hh.courses.application:institutionName',
+    defaultMessage: 'Heilsugæsla höfuðborgarsvæðisins',
+    description: 'Name of institution',
+  },
+  confirmButtonLabel: {
+    id: 'hh.courses.application:confirmButtonLabel',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm button label',
+  },
   applicationTitle: {
     id: 'hh.courses.application:applicationTitle',
-    defaultMessage: 'Skráning á námskeið',
+    defaultMessage: 'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
     description: 'Title of application',
   },
   prerequisitesNationalRegistryTitle: {

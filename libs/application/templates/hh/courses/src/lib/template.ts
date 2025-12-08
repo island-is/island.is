@@ -27,10 +27,13 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.HH_COURSES,
   name: m.applicationTitle,
   codeOwner: CodeOwners.Stefna,
-  institution: 'Heilsugæsla höfuðborgarsvæðisins',
+  institution: m.institutionName,
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
   dataSchema,
+  allowMultipleApplicationsInDraft: true,
+  // TODO: look into reading courseId and date from queryparams, initialQueryParameter: 'courseId',
+  // TODO: Store what course the applicant has applied for and what date
   // Note: only use this if any data should remain after pruning for better visibility in the admin portal
   // adminDataConfig: {
   //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
@@ -88,7 +91,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MainForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.confirmButtonLabel,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
