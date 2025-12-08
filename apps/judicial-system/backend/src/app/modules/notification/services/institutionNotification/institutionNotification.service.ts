@@ -12,7 +12,10 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { INDICTMENTS_TO_REVIEW } from '@island.is/judicial-system/consts'
+import {
+  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  INDICTMENTS_TO_REVIEW,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
@@ -111,18 +114,21 @@ export class InstitutionNotificationService extends BaseNotificationService {
         continue
       }
       const areMultipleCases = cases.length > 1
-      const curtCaseNumbers = cases
+      const courtCaseNumbers = cases
         .map((theCase) => theCase.courtCaseNumber)
         .join(', ')
 
+      const redirectUrl = areMultipleCases
+        ? INDICTMENTS_TO_REVIEW
+        : `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${cases[0].id}`
       const subject = 'Áminning um yfirlestur'
       const html = `Áminning um yfirlestur á mál${
         areMultipleCases ? 'um:' : 'i'
-      } ${curtCaseNumbers}. Áfrýjunarfrestur er til ${formatDate(
+      } ${courtCaseNumbers}. Áfrýjunarfrestur er til ${formatDate(
         targetDate,
       )}. Sjá nánar í <a href="${
         this.config.clientUrl
-      }${INDICTMENTS_TO_REVIEW}">Réttarvörslugátt.</a>`
+      }${redirectUrl}">Réttarvörslugátt.</a>`
 
       const recipient = this.sendEmail({
         subject,
