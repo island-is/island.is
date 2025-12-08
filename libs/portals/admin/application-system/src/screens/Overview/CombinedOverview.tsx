@@ -142,7 +142,9 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     }
   }
 
-  const handleTypeIdChange = (typeIdValue: ApplicationFilters['typeIdValue']) => {
+  const handleTypeIdChange = (
+    typeIdValue: ApplicationFilters['typeIdValue'],
+  ) => {
     setFilters((prev) => ({
       ...prev,
       typeIdValue: typeIdValue,
