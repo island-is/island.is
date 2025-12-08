@@ -217,6 +217,7 @@ export class ApplicationService {
     }
 
     // From here on, institutionNationalId is defined
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const institutionTypeIds = getTypeIdsForInstitution(institutionNationalId!)
 
     // If the institution has no types at all, no applications can match
