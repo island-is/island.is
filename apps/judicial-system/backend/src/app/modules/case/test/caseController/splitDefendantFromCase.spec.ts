@@ -104,6 +104,7 @@ describe('CaseController - Split defendant from case', () => {
       comments,
       creatingProsecutorId,
       prosecutorId,
+      defendants: [defendantToSplit, { id: uuid() } as Defendant],
     } as Case
     const splitCaseId = uuid()
     const splitCase = { ...theCase, id: splitCaseId } as Case
@@ -131,6 +132,7 @@ describe('CaseController - Split defendant from case', () => {
           comments,
           creatingProsecutorId,
           prosecutorId,
+          splitCaseId: caseId,
         },
         { transaction },
       )
