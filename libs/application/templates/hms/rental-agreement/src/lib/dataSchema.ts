@@ -12,7 +12,7 @@ import * as m from './messages'
 import { rentalPeriodSchema } from './schemas/rentalPeriodSchema'
 import { specialProvisionsSchema } from './schemas/specialProvisionsSchema'
 import { conditionSchema } from './schemas/conditionSchema'
-import { isValidPhoneNumber } from '..'
+import { isValidMobileNumber, isValidPhoneNumber } from '../utils/utils'
 
 const applicant = z.object({
   nationalId: z
@@ -21,7 +21,9 @@ const applicant = z.object({
       params: m.dataSchema.nationalId,
     }),
   email: z.string().email(),
-  phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
+  phoneNumber: z.string().refine((v) => isValidMobileNumber(v), {
+    params: m.landlordAndTenantDetails.phoneNumberMobileError,
+  }),
 })
 
 const preSignatureInfo = z.object({
