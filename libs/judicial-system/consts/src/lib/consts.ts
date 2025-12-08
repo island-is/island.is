@@ -209,6 +209,7 @@ export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
+export const INDICTMENTS_TO_REVIEW = '/malalistar/sakamal-til-yfirlestrar'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes

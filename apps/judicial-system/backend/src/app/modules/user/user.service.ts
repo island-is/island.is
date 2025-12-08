@@ -138,4 +138,14 @@ export class UserService {
       },
     })
   }
+
+  async getProsecutorUsers(prosecutorsOfficeId: string): Promise<User[]> {
+    return this.userModel.findAll({
+      where: {
+        active: true,
+        role: UserRole.PROSECUTOR,
+        institutionId: prosecutorsOfficeId,
+      },
+    })
+  }
 }
