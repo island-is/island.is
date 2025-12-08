@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
@@ -19,6 +26,9 @@ interface Props {
   placeholder?: string
   isRequired?: boolean
   shouldInitializeSelector?: boolean
+  onMenuOpen?: () => void
+  onMenuClose?: () => void
+  onProsecutorsLoaded?: (count: number) => void
 }
 
 const ProsecutorSelection: FC<Props> = ({
@@ -26,6 +36,9 @@ const ProsecutorSelection: FC<Props> = ({
   placeholder,
   isRequired,
   shouldInitializeSelector,
+  onMenuOpen,
+  onMenuClose,
+  onProsecutorsLoaded,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isCaseUpToDate } =
@@ -104,6 +117,14 @@ const ProsecutorSelection: FC<Props> = ({
     [data?.users, onChange, setWorkingCase, workingCase.id],
   )
 
+  const handleChange = (value: SingleValue<Option<string | undefined>>) => {
+    const id = value?.value
+
+    if (id && typeof id === 'string') {
+      handleUpdate(id)
+    }
+  }
+
   // Before we can set the default prosecutor we need to make sure
   // that the case has been loaded and that we have the list of users
   useOnceOn(isCaseUpToDate, () => setCaseLoaded(true))
@@ -113,13 +134,11 @@ const ProsecutorSelection: FC<Props> = ({
     }
   })
 
-  const handleChange = (value: SingleValue<Option<string | undefined>>) => {
-    const id = value?.value
-
-    if (id && typeof id === 'string') {
-      handleUpdate(id)
+  useEffect(() => {
+    if (eligibleProsecutors.length > 0 && onProsecutorsLoaded) {
+      onProsecutorsLoaded(eligibleProsecutors.length)
     }
-  }
+  }, [eligibleProsecutors, onProsecutorsLoaded])
 
   return (
     <Select
@@ -138,6 +157,8 @@ const ProsecutorSelection: FC<Props> = ({
       onChange={handleChange}
       isDisabled={loading}
       required={isRequired === undefined ? true : isRequired}
+      onMenuOpen={onMenuOpen}
+      onMenuClose={onMenuClose}
     />
   )
 }

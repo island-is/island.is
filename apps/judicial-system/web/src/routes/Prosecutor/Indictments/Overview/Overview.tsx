@@ -61,6 +61,8 @@ const Overview: FC = () => {
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
+  const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
 
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -161,6 +163,19 @@ const Overview: FC = () => {
     router.push(getStandardUserDashboardRoute(user))
   }
 
+  const calculateMargin = (count: number) => {
+    if (count === 0) {
+      return 40
+    }
+
+    const cappedCount = Math.min(count, 5)
+    const baseMargin = 50
+    const marginPerProsecutor = 65
+    const margin = baseMargin + (cappedCount - 2) * marginPerProsecutor
+
+    return Math.max(2, margin)
+  }
+
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
@@ -181,7 +196,7 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentDeniedExplanationTitle)}
               message={workingCase.indictmentDeniedExplanation}
               type="info"
-            ></AlertMessage>
+            />
           </Box>
         )}
         {workingCase.indictmentReturnedExplanation && (
@@ -190,7 +205,7 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentReturnedExplanationTitle)}
               message={workingCase.indictmentReturnedExplanation}
               type="warning"
-            ></AlertMessage>
+            />
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
@@ -418,13 +433,22 @@ const Overview: FC = () => {
               onClick: () => setModal('noModal'),
             }}
           >
-            <Box marginBottom={2}>
+            <div
+              style={{
+                marginBottom: menuIsOpen
+                  ? calculateMargin(prosecutorsCount)
+                  : 40,
+              }}
+            >
               <ProsecutorSelection
                 placeholder="Veldu ákæranda til að taka við málinu"
                 isRequired={false}
                 shouldInitializeSelector={true}
+                onMenuOpen={() => setMenuIsOpen(true)}
+                onMenuClose={() => setMenuIsOpen(false)}
+                onProsecutorsLoaded={(count) => setProsecutorsCount(count)}
               />
-            </Box>
+            </div>
           </Modal>
         ) : null}
       </AnimatePresence>
