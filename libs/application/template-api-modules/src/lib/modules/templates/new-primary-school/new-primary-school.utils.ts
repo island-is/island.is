@@ -3,17 +3,28 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedSchoolSubType,
+  getOtherGuardian,
+  hasBehaviorSchoolOrDepartmentSubType,
+  hasSpecialEducationCaseManager,
+  hasSpecialEducationSubType,
+  hasSpecialEducationWelfareContact,
   LanguageEnvironmentOptions,
-  OrganizationSubType,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   ReasonForApplicationOptions,
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
+  shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
+  CaseWorkerInput,
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
   RegistrationApplicationInputApplicationTypeEnum,
 } from '@island.is/clients/mms/frigg'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -38,15 +49,15 @@ export const getSocialProfile = (application: Application) => {
       hasIntegratedServices: hasIntegratedServices === YES,
       caseWorkers: [
         {
-          name: welfareContactName ?? '',
-          email: welfareContactEmail ?? '',
+          name: welfareContactName || '',
+          email: welfareContactEmail || '',
           type: CaseWorkerInputTypeEnum.SupportManager,
         },
         ...(hasCaseManager === YES
           ? [
               {
-                name: caseManagerName ?? '',
-                email: caseManagerEmail ?? '',
+                name: caseManagerName || '',
+                email: caseManagerEmail || '',
                 type: CaseWorkerInputTypeEnum.CaseManager,
               },
             ]
@@ -64,6 +75,102 @@ export const getSocialProfile = (application: Application) => {
   }
 }
 
+export const getSpecialEducationSocialProfile = (application: Application) => {
+  const {
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
+  } = getApplicationAnswers(application.answers)
+
+  const caseWorkers: CaseWorkerInput[] = []
+  const previousSocialServices: string[] = []
+  const ongoingSocialServices: string[] = []
+
+  const hasBehaviorSubType = hasBehaviorSchoolOrDepartmentSubType(
+    application.answers,
+    application.externalData,
+  )
+
+  if (hasSpecialEducationWelfareContact(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationWelfareContactName || '',
+      email: specialEducationWelfareContactEmail || '',
+      type: CaseWorkerInputTypeEnum.SupportManager,
+    })
+  }
+
+  if (hasSpecialEducationCaseManager(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationCaseManagerName || '',
+      email: specialEducationCaseManagerEmail || '',
+      type: CaseWorkerInputTypeEnum.CaseManager,
+    })
+  }
+
+  if (hasAssessmentOfSupportNeeds === YES) {
+    previousSocialServices.push(supportNeedsAssessmentBy || '')
+  } else if (isAssessmentOfSupportNeedsInProgress === YES) {
+    ongoingSocialServices.push(supportNeedsAssessmentBy || '')
+  }
+
+  if (hasConfirmedDiagnosis === YES) {
+    previousSocialServices.push(...diagnosticians)
+  } else if (isDiagnosisInProgress === YES) {
+    ongoingSocialServices.push(...diagnosticians)
+  }
+
+  if (hasOtherSpecialists === YES) {
+    previousSocialServices.push(...specialists)
+  }
+
+  if (hasReceivedServicesFromMunicipality === YES) {
+    previousSocialServices.push(...servicesFromMunicipality)
+  }
+
+  if (hasBehaviorSubType) {
+    if (hasReceivedChildAndAdolescentPsychiatryServices === YES) {
+      previousSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+      previousSocialServices.push(
+        ...childAndAdolescentPsychiatryServicesReceived,
+      )
+    } else if (isOnWaitlistForServices === YES) {
+      ongoingSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+    }
+  }
+
+  return {
+    caseWorkers: caseWorkers,
+    hasIntegratedServices: specialEducationHasIntegratedServices === YES,
+    previousSocialServices: previousSocialServices,
+    ongoingSocialServices: ongoingSocialServices,
+    ...(hasBehaviorSubType && {
+      previousChildProtectionCase:
+        hasBeenReportedToChildProtectiveServices === YES,
+      ...(hasBeenReportedToChildProtectiveServices === YES && {
+        openChildProtectionCase: isCaseOpenWithChildProtectiveServices === YES,
+      }),
+    }),
+  }
+}
+
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
 ): RegistrationApplicationInput => {
@@ -74,6 +181,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     relatives,
     reasonForApplication,
     reasonForApplicationId,
+    counsellingRegardingApplication,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -92,11 +200,29 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     temporaryStay,
     expectedEndDate,
     selectedSchoolId,
+    alternativeSpecialEducationDepartment,
     currentSchoolId,
     applyForPreferredSchool,
+    payerName,
+    payerNationalId,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
+
+  const alternativeSpecialEducationDepartmentIds =
+    alternativeSpecialEducationDepartment
+      .filter((item) => item.department)
+      .map((item) => item.department)
+
+  const isSpecialEducation = hasSpecialEducationSubType(
+    application.answers,
     application.externalData,
   )
 
@@ -104,6 +230,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     id: application.id,
     applicationType: mapApplicationType(applicationType),
     approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
       applicant: {
         nationalId: childInfo?.nationalId || '',
@@ -139,16 +269,23 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         (applyForPreferredSchool === YES
           ? preferredSchool?.id
           : selectedSchoolId) || '',
+      ...(shouldShowAlternativeSpecialEducationDepartment(
+        application.answers,
+        application.externalData,
+      ) &&
+        alternativeSpecialEducationDepartmentIds.length > 0 && {
+          alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
+        }),
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
             expectedStartDate: expectedStartDate
               ? new Date(expectedStartDate)
               : new Date(),
-            ...(getSelectedSchoolSubType(
+            ...(shouldShowExpectedEndDate(
               application.answers,
               application.externalData,
-            ) === OrganizationSubType.INTERNATIONAL_SCHOOL &&
+            ) &&
               temporaryStay === YES && {
                 expectedEndDate: expectedEndDate
                   ? new Date(expectedEndDate)
@@ -158,7 +295,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reasonId: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
+      ...(shouldShowReasonForApplicationPage(application.answers) && {
+        reasonId: isSpecialEducation
+          ? counsellingRegardingApplication
+          : reasonForApplicationId,
+      }),
       health: {
         ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
           foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,
@@ -174,7 +315,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: getSocialProfile(application),
+      social: isSpecialEducation
+        ? getSpecialEducationSocialProfile(application)
+        : getSocialProfile(application),
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
@@ -188,6 +331,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               languages: ['is'],
             }),
       },
+      ...(needsPayerApproval(application) && {
+        payer: {
+          name: payerName || '',
+          nationalId: payerNationalId || '',
+        },
+      }),
     },
   }
 
@@ -200,5 +349,19 @@ export const mapApplicationType = (
   if (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL)
     return RegistrationApplicationInputApplicationTypeEnum.Transfer
 
+  if (applicationType === ApplicationType.CONTINUING_ENROLLMENT)
+    return RegistrationApplicationInputApplicationTypeEnum.Continuation
+
   return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./new-primary-school-assets/${file}`)
 }
