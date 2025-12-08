@@ -1,7 +1,7 @@
 import { HttpMethod, Response } from '@anev/ts-mountebank'
+import { uuid } from 'uuidv4'
 import { Frigg } from '../../../../../../../../infra/src/dsl/xroad'
 import { addXroadMock } from '../../../../../support/wire-mocks'
-import { uuid } from 'uuidv4'
 
 export const loadNewPrimarySchoolXroadMocks = async () => {
   await addXroadMock({
@@ -10,48 +10,75 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
     apiPath: '/students/1111111119',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody({
-      id: 'fda34e23-f838-4a59-8bb9-90a0b52a6cd4',
+      id: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
       nationalId: '1111111119',
+      nationalIdType: 'individual',
+      nationality: 'ER',
       name: 'Stubbur Maack',
       preferredName: null,
-      pronouns: [],
-      email: null,
-      primaryOrgId: '05ffcc36-7e44-45f0-8cb2-8f296a7f0808',
-      memberships: [
-        {
-          id: 'cda47c98-ae75-4939-8659-1b7fe45c8097',
-          role: 'student',
-          beginDate: '2024-08-26T01:48:24.888Z',
-          endDate: null,
-          organization: {
-            id: '05ffcc36-7e44-45f0-8cb2-8f296a7f0808',
-            name: 'Hlíðaskóli',
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '5509244710',
-            type: 'school',
-          },
-        },
-      ],
       agents: [
         {
-          id: '982afa53-0b47-4f57-8eec-53f16563bc93',
-          nationalId: '0101303019',
+          id: 'a8fa8072-3180-4a5c-aa98-1864a1f7b4b3',
+          relationTypeId: null,
+          type: 'guardian',
           name: 'Gervimaður Afríka',
-          phone: '555-1234',
-          email: 'frika@gervimadur.is',
-          role: 'guardian',
-          domicile: {
-            id: 'fb94c164-c037-49ac-ae31-7501c9a90467',
-            address: 'S 4th Street 66',
-            municipality: 'Dillontown',
-            postCode: '103',
-            country: 'IS',
-            createdAt: '2025-02-05T15:52:53.728Z',
-            updatedAt: '2025-02-05T15:52:53.728Z',
+          nationalId: '0101303019',
+          preferredName: null,
+          nationality: 'KP',
+          pronouns: [],
+          requiresInterpreter: false,
+          preferredLanguage: 'de',
+        },
+        {
+          id: 'f02d7b50-5a42-40e7-b793-a4db5ab8c9a2',
+          relationTypeId: null,
+          type: 'guardian',
+          name: 'Gervimaður útlönd',
+          nationalId: '0101307789',
+          preferredName: null,
+          nationality: 'NO',
+          pronouns: [],
+          requiresInterpreter: false,
+          preferredLanguage: 'de',
+        },
+      ],
+      affiliations: [
+        {
+          id: '2858fa15-118f-4961-8e0a-add30b928769',
+          role: 'student',
+          beginDate: '2024-11-27T23:04:21.517Z',
+          endDate: null,
+          email: null,
+          phone: null,
+          organization: {
+            id: '0f34ddd5-4fe5-40cb-976e-f092e93bceff',
+            // eslint-disable-next-line local-rules/disallow-kennitalas
+            nationalId: '5901821929',
+            name: 'Hlíðaskóli',
+            type: 'school',
+            subType: 'generalSchool',
+            sector: 'public',
           },
         },
       ],
+      pronouns: [],
       gradeLevel: '01',
+      primaryOrgId: '0f34ddd5-4fe5-40cb-976e-f092e93bceff',
+    }),
+  })
+  await addXroadMock({
+    config: Frigg,
+    prefix: 'XROAD_MMS_FRIGG_PATH',
+    apiPath: '/students/1111111119/preferred-schools',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      id: '0f34ddd5-4fe5-40cb-976e-f092e93bceff',
+      unitId: 'G-1247-A',
+      name: 'Hlíðaskóli',
+      type: 'school',
+      subType: 'generalSchool',
+      sector: 'public',
+      gradeLevels: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
     }),
   })
   await addXroadMock({
@@ -64,17 +91,17 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'pronoun',
         options: [
           {
-            id: '6bb71a28-2177-496b-a38b-034c83ae5f6a',
+            id: '3f2e1543-6640-4350-87b2-ca6a7c7db80b',
             key: 'he',
             value: [
               {
                 content: 'He/Him',
-                language: 'is',
+                language: 'en',
               },
             ],
           },
           {
-            id: '105b1208-fd7b-4b18-9bb2-041dbc65f580',
+            id: '9f5a1b91-6771-4721-8638-32f962413fc9',
             key: 'hes',
             value: [
               {
@@ -84,7 +111,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'de4ca207-7add-4a50-9411-2bb298dbde14',
+            id: 'e0e75084-94a5-4b4b-864c-a7b390af93d0',
             key: 'hun',
             value: [
               {
@@ -94,17 +121,17 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '13def032-c733-48cf-b214-122c249313db',
+            id: 'bce83310-7976-4edd-b10e-e7f4be5cf4f0',
             key: 'she',
             value: [
               {
                 content: 'She/Her',
-                language: 'is',
+                language: 'en',
               },
             ],
           },
           {
-            id: 'f92087e5-f020-46af-959f-572b7f95a400',
+            id: '68c8fdce-4ab6-4cfe-a12a-d5c9541c5d4f',
             key: 'hin',
             value: [
               {
@@ -114,17 +141,17 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '4330c443-29b6-4773-a870-f35e485449f7',
+            id: 'ea7d625e-8a81-42ca-a453-48c24aa7366e',
             key: 'they',
             value: [
               {
                 content: 'They/Them',
-                language: 'is',
+                language: 'en',
               },
             ],
           },
           {
-            id: 'ed47b45a-f733-47ce-92c2-8409f5c39178',
+            id: 'f045321d-516f-490e-9173-bcb3622c85a3',
             key: 'hann',
             value: [
               {
@@ -134,7 +161,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'eaa15c86-f7cd-493e-b368-2d66da2ab809',
+            id: 'e133d945-1c5e-4176-aac2-a2cb20de92af',
             key: 'hed',
             value: [
               {
@@ -144,7 +171,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'f7f7f6a5-2e29-4eae-8345-03d3af73a6b6',
+            id: '56ca5fb5-129a-4027-b8e5-9cd5337b044a',
             key: 'han',
             value: [
               {
@@ -154,7 +181,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '0f16870b-c796-4fde-8cfc-a015ce6e5662',
+            id: '86a1b4a3-8968-4447-a901-ad7e83a0da2a',
             key: 'thad',
             value: [
               {
@@ -164,7 +191,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '454440af-e3d4-4e28-9810-30ab9a79957d',
+            id: '44679dbf-a1fe-4666-b5da-5d74f7b9863b',
             key: 'thau',
             value: [
               {
@@ -187,7 +214,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'relation',
         options: [
           {
-            id: '4fc642a2-6268-4de5-8f78-8f6a66840a95',
+            id: '2ebab655-5f3c-4904-9625-3084ed75c690',
             key: 'parent',
             value: [
               {
@@ -201,7 +228,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'c66345c5-22af-47a9-891c-a8ab6a9f487d',
+            id: '7a7fb161-ee0a-4293-831c-532cf818f314',
             key: 'grandparent',
             value: [
               {
@@ -215,7 +242,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '451a61ee-80b2-4d4f-ae26-9bcb6c23dc7a',
+            id: 'b3acc6d0-9818-43ad-856d-7e2a5f58d4a8',
             key: 'stepParent',
             value: [
               {
@@ -229,11 +256,11 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '0063446c-ecbf-42c6-a277-c2b82bcbdeef',
+            id: 'f3cf7a83-0168-4f8e-b4aa-73cafbedbb18',
             key: 'relative',
             value: [
               {
-                content: 'Frænd fólk',
+                content: 'Frændfólk',
                 language: 'is',
               },
               {
@@ -243,7 +270,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '3734709c-a6a4-4c00-9a0f-a6466983e353',
+            id: 'da93fec9-8b6c-431d-b3d9-10ae0d3c8725',
             key: 'sibling',
             value: [
               {
@@ -257,7 +284,21 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'cc09ed0e-af86-4ef7-a18d-6d6a40ed9eec',
+            id: '270e2b6b-05f7-436e-b56b-236b5c41750c',
+            key: 'fosterParent',
+            value: [
+              {
+                content: 'Fósturforeldri',
+                language: 'is',
+              },
+              {
+                content: 'Foster parent',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '2faef52f-dc65-4991-9506-ef63ec28ada0',
             key: 'other',
             value: [
               {
@@ -271,7 +312,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'a9ad6d6f-59b6-47ca-a5b9-7261f3f7f4b5',
+            id: '59c82abb-a66a-4554-9765-c71034c98dcb',
             key: 'friend',
             value: [
               {
@@ -298,7 +339,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'registrationReason',
         options: [
           {
-            id: '6352fa7a-03d2-45b2-9d48-6e19448a64b2',
+            id: '4ccf4dfa-db38-4a8a-9d76-a95f66146f65',
             key: 'custodianParliamentarianship',
             value: [
               {
@@ -312,7 +353,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '203eea2b-df15-4d60-a2ef-24b1bf948707',
+            id: 'ec8bdd62-be1b-4672-a9c1-f3a830a5d2e6',
             key: 'livesInTwoPlaces',
             value: [
               {
@@ -326,7 +367,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'de0d4b39-824a-4ea3-83cd-8e020fd3ac91',
+            id: 'd103e34d-d27c-4ec4-9d83-b78c56cb0728',
             key: 'temporaryFoster',
             value: [
               {
@@ -340,7 +381,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '1062a711-1970-4c62-b89e-0abeadf86266',
+            id: '32bb4e56-1f2d-4c6b-909c-afa82b2b565c',
             key: 'specialService',
             value: [
               {
@@ -354,7 +395,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'f05096f6-5d2d-4ae7-ae59-b81087829f39',
+            id: '114fa891-4e22-4181-8dde-df17173437ff',
             key: 'hospitalization',
             value: [
               {
@@ -368,7 +409,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'd6f66018-bfd7-46bc-8c47-3412d1734f4a',
+            id: '4c6db4ae-62ba-495d-9aba-f08092f705f5',
             key: 'movingMuniciplaity',
             value: [
               {
@@ -382,7 +423,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'e82101e6-bd18-41d4-b123-758e9c4315ff',
+            id: '85b18dc9-ffa4-4a43-a427-4cccbdba725c',
             key: 'custodianStudyStay',
             value: [
               {
@@ -396,7 +437,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'bc87de56-9999-4b91-ab59-7ff832c6d987',
+            id: 'c2ddef92-c7ef-4f9d-85f0-14429e01e69d',
             key: 'other',
             value: [
               {
@@ -410,7 +451,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '5efdbc33-56d5-4c1f-824f-8d469c19dfb6',
+            id: '5fd059f2-9019-49e7-be43-a88421f95635',
             key: 'generalSchoolPolicy',
             value: [
               {
@@ -424,7 +465,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '900bbc89-a459-444c-943f-f6ff55291e33',
+            id: '1e1ad64d-1626-42d8-8448-45661816a0f0',
             key: 'siblingsInSameSchool',
             value: [
               {
@@ -433,6 +474,20 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
               },
               {
                 content: 'Siblings in the same school',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '98f41e34-7c95-4412-976d-4fe3023a65f6',
+            key: 'personalReasons',
+            value: [
+              {
+                content: 'Persónulegar ástæður',
+                language: 'is',
+              },
+              {
+                content: 'Personal reasons',
                 language: 'en',
               },
             ],
@@ -451,7 +506,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'languageEnvironment',
         options: [
           {
-            id: '8622c1fa-0ba0-46d8-a621-016202d1e648',
+            id: '7237f5e1-4d3d-4459-8809-b2069b6f9e74',
             key: 'onlyIcelandic',
             value: [
               {
@@ -465,7 +520,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '7d1fc5a1-18b5-45dc-98d3-96f6cf4bf366',
+            id: '68d9d4b2-6f3f-4519-92dd-4af8c163cf2a',
             key: 'icelandicAndOther',
             value: [
               {
@@ -478,9 +533,8 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
               },
             ],
           },
-
           {
-            id: '70a48a9b-f671-4f69-9d19-bc2d5becb377',
+            id: 'bdec05bf-ced2-4ad2-b708-e7bcb5c00379',
             key: 'onlyOtherThanIcelandic',
             value: [
               {
@@ -507,7 +561,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'foodAllergyAndIntolerance',
         options: [
           {
-            id: '4b6a6815-ffa2-4c62-824f-5611de1b20b8',
+            id: 'a8c70062-fe9c-4cbf-929b-8acd8e5c8860',
             key: 'meat',
             value: [
               {
@@ -521,7 +575,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'd3e54e41-db09-4af6-862a-1b226440a560',
+            id: '25871a50-561a-4839-b9bd-39ab79070bbf',
             key: 'dairy',
             value: [
               {
@@ -535,7 +589,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: 'c3f5d18e-9a2c-4d37-b697-814d815f3f75',
+            id: '9092c358-207e-4b18-bea9-8a9aed438675',
             key: 'vegetables',
             value: [
               {
@@ -543,13 +597,13 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
                 language: 'is',
               },
               {
-                content: 'Vegetable',
+                content: 'Vegetables',
                 language: 'en',
               },
             ],
           },
           {
-            id: 'c8530592-a490-471b-8d6d-24ab630ffb4b',
+            id: 'e12761e5-4cfb-4449-ba49-602612d9cfa0',
             key: 'other',
             value: [
               {
@@ -557,13 +611,13 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
                 language: 'is',
               },
               {
-                content: 'Another',
+                content: 'Other',
                 language: 'en',
               },
             ],
           },
           {
-            id: '545ab73d-dcb2-4ed7-83ee-f2a813fa208a',
+            id: 'd6453939-3c18-4bb8-969c-e7d866f9899d',
             key: 'egg',
             value: [
               {
@@ -577,22 +631,22 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '9e6ba6af-32a5-492f-8258-73ca55ca9e6a',
+            id: 'a4c38d10-3950-411d-8bd1-a0dd348744e4',
             key: 'fish',
             value: [
               {
-                content: 'Fiskur/fiskafurðir',
+                content: 'Fiskur',
                 language: 'is',
               },
               {
-                content: 'Fish/fish products',
+                content: 'Fish',
                 language: 'en',
               },
             ],
           },
           {
-            id: '4c5f5e1b-06e1-403b-b216-e1017ee258e9',
-            key: 'cocunut',
+            id: '56cc7690-ecfd-44ae-9808-182567f7183e',
+            key: 'coconut',
             value: [
               {
                 content: 'Kókos',
@@ -605,21 +659,21 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '8736bceb-2a30-4cfb-82e5-dcd916904ffd',
-            key: 'nuts',
+            id: 'a1be3cf7-3bf7-48f0-9a5e-2c4e18aeaf25',
+            key: 'peanuts',
             value: [
               {
-                content: 'Hnetur/Möndlur',
+                content: 'Hnetur',
                 language: 'is',
               },
               {
-                content: 'Nuts/almonds',
+                content: 'Peanuts',
                 language: 'en',
               },
             ],
           },
           {
-            id: 'd45bdda2-145c-458d-8c6a-cdedac984df5',
+            id: 'c80807c4-9c8e-4a27-9b9c-4ae70c5d3ddc',
             key: 'sesame',
             value: [
               {
@@ -627,13 +681,13 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
                 language: 'is',
               },
               {
-                content: 'Sesame seed',
+                content: 'Sesame seeds',
                 language: 'en',
               },
             ],
           },
           {
-            id: 'a9bbb0a9-e17e-4a41-8610-73938838e75b',
+            id: '02b740f1-110c-43a1-98dd-95cad6ce3fc9',
             key: 'fruits',
             value: [
               {
@@ -641,27 +695,27 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
                 language: 'is',
               },
               {
-                content: 'Fruit',
+                content: 'Fruits',
                 language: 'en',
               },
             ],
           },
           {
-            id: '4b0105b6-7c1a-412b-80fa-4360654972d9',
+            id: '5299d73b-1bcd-42ef-ad40-8d6d6c0f13ee',
             key: 'wheat',
             value: [
               {
-                content: 'Hveiti/glúten',
+                content: 'Hveiti',
                 language: 'is',
               },
               {
-                content: 'Wheat/gluten',
+                content: 'Wheat',
                 language: 'en',
               },
             ],
           },
           {
-            id: 'afadc899-035d-4689-8e69-21ac21264fa8',
+            id: '0957e2c4-78d3-47e3-9c94-a0ce31d923ed',
             key: 'soy',
             value: [
               {
@@ -675,7 +729,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '3ba5b679-172a-4ae9-bcb3-3dedd2bebc7d',
+            id: '1a7c7c93-9dee-4277-92bb-5ec8bb72a47a',
             key: 'beans',
             value: [
               {
@@ -702,7 +756,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         type: 'allergy',
         options: [
           {
-            id: '8d1e5882-b126-4f74-a915-a61e0d073584',
+            id: 'e88699d3-6695-40d5-8853-4b0ed0ba11e8',
             key: 'antiInflammatoryDrugs',
             value: [
               {
@@ -710,13 +764,13 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
                 language: 'is',
               },
               {
-                content: 'Anti inflammatory drugs',
+                content: 'Anti-inflammatory drugs',
                 language: 'en',
               },
             ],
           },
           {
-            id: 'f1f6b800-a3c2-4ad5-8ea7-dff44aefadca',
+            id: 'f13cc515-1186-4983-bc4b-4b3965f368e6',
             key: 'wasp',
             value: [
               {
@@ -730,7 +784,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '98f92024-90a7-486d-99cc-6b91c5e87e4c',
+            id: '43e04eff-e981-4225-8e04-0b9cf7c12de0',
             key: 'pollen',
             value: [
               {
@@ -744,7 +798,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '5869aa4d-809e-4d57-9640-a2387f5aad3e',
+            id: 'da6978a0-8ebd-40e2-bb32-482a8469a4c4',
             key: 'latex',
             value: [
               {
@@ -758,7 +812,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '64d65290-179d-401e-ad5a-4dcd51455989',
+            id: 'b2e847a8-ebcb-46ca-85b7-f66a8a35f7d2',
             key: 'nickel',
             value: [
               {
@@ -772,7 +826,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '56256b3f-6a83-4511-893e-e760f039ff13',
+            id: 'f6ce169d-9791-44cc-976b-43cd428af823',
             key: 'animals',
             value: [
               {
@@ -786,7 +840,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
             ],
           },
           {
-            id: '535ba7a7-82ad-4e38-9edf-73e6c9758b63',
+            id: '7267c3ae-ebb1-4622-86f2-a426b36dbe53',
             key: 'other',
             value: [
               {
@@ -806,88 +860,378 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
   await addXroadMock({
     config: Frigg,
     prefix: 'XROAD_MMS_FRIGG_PATH',
-    apiPath: '/schools',
+    apiPath: '/organizations?type=school&limit=1000',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody([
       {
-        id: '86ee7c01-bbfb-428c-b4c6-801f8525a70a',
-        // eslint-disable-next-line local-rules/disallow-kennitalas
-        nationalId: '5612241530',
-        name: 'Kópavogur',
-        type: 'municipality',
-        children: [
-          {
-            id: 'cf2b139b-11af-466f-8705-54d341deae88',
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '6403244490',
-            name: 'Smáraskóli',
-            type: 'school',
-            gradeLevels: [
-              '01',
-              '02',
-              '03',
-              '04',
-              '05',
-              '06',
-              '07',
-              '08',
-              '09',
-              '10',
-            ],
-            children: null,
-          },
-        ],
+        id: '0ccde57c-debd-4c94-a25e-c47a12ce8631',
+        unitId: 'G-1356-A',
+        name: 'Hvassaleitisskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: ['01', '02', '03', '04', '05', '06', '07'],
+        settings: {
+          applicationConfigs: [
+            {
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+          ],
+        },
       },
       {
-        id: '9b9b9989-72d4-4310-b206-0069ffbdcc1b',
-        // eslint-disable-next-line local-rules/disallow-kennitalas
-        nationalId: '6605247030',
-        name: 'Reykjavíkurborg',
-        type: 'municipality',
-        children: [
-          {
-            id: '05ffcc36-7e44-45f0-8cb2-8f296a7f0808',
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '5509244710',
-            name: 'Hlíðaskóli',
-            type: 'school',
-            gradeLevels: [
-              '01',
-              '02',
-              '03',
-              '04',
-              '05',
-              '06',
-              '07',
-              '08',
-              '09',
-              '10',
-            ],
-            children: null,
-          },
-          {
-            id: 'f4819ff5-ca00-40db-8bd6-a7dc41a82fe3',
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '4801253980',
-            name: 'Háteigsskóli',
-            type: 'school',
-            gradeLevels: ['01', '02', '03', '04'],
-            children: null,
-          },
+        id: '0f34ddd5-4fe5-40cb-976e-f092e93bceff',
+        unitId: 'G-1247-A',
+        name: 'Hlíðaskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
         ],
+        settings: {
+          applicationConfigs: [
+            {
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: '29e6e2b3-6563-4dd3-ac87-cc18813bfe9c',
+        unitId: 'G-1438-A',
+        name: 'Árbæjarskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
+        ],
+        settings: {
+          applicationConfigs: [
+            {
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: '65438698-6b8c-4369-a854-5c78dff445a8',
+        unitId: 'G-1269-A',
+        name: 'Háteigsskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
+        ],
+        settings: {
+          applicationConfigs: [
+            {
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+          ],
+        },
       },
     ]),
   })
   await addXroadMock({
     config: Frigg,
     prefix: 'XROAD_MMS_FRIGG_PATH',
-    apiPath: '/forms',
+    apiPath: '/organizations?type=municipality&limit=1000',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody([
+      {
+        id: '8145246a-3ea7-4d64-8518-1247f22d1a7a',
+        unitId: '1000',
+        name: 'Kópavogsbær',
+        type: 'municipality',
+        subType: null,
+        sector: null,
+        settings: null,
+      },
+      {
+        id: '91a3d936-15f3-4cae-9df1-6bdad7b012be',
+        unitId: '1300',
+        name: 'Garðabær',
+        type: 'municipality',
+        subType: null,
+        sector: null,
+        settings: null,
+      },
+      {
+        id: '9694a721-b042-4f0e-877b-7dd559012f00',
+        unitId: '1400',
+        name: 'Hafnarfjarðarkaupstaður',
+        type: 'municipality',
+        subType: null,
+        sector: null,
+        settings: null,
+      },
+      {
+        id: 'fb432b1e-4899-475d-8dcf-3d27271bf1d7',
+        unitId: '0000',
+        name: 'Reykjavíkurborg',
+        type: 'municipality',
+        subType: null,
+        sector: null,
+        settings: null,
+      },
+    ]),
+  })
+  await addXroadMock({
+    config: Frigg,
+    prefix: 'XROAD_MMS_FRIGG_PATH',
+    apiPath:
+      '/organizations?type=school&municipalityCode=0000&gradeLevels=01%2C02&limit=1000',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody([
+      {
+        id: '0ccde57c-debd-4c94-a25e-c47a12ce8631',
+        unitId: 'G-1356-A',
+        name: 'Hvassaleitisskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: ['01', '02', '03', '04', '05', '06', '07'],
+        settings: null,
+      },
+      {
+        id: '0f34ddd5-4fe5-40cb-976e-f092e93bceff',
+        unitId: 'G-1247-A',
+        name: 'Hlíðaskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
+        ],
+        settings: null,
+      },
+      {
+        id: '29e6e2b3-6563-4dd3-ac87-cc18813bfe9c',
+        unitId: 'G-1438-A',
+        name: 'Árbæjarskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
+        ],
+        settings: null,
+      },
+      {
+        id: '65438698-6b8c-4369-a854-5c78dff445a8',
+        unitId: 'G-1269-A',
+        name: 'Háteigsskóli',
+        type: 'school',
+        subType: 'generalSchool',
+        sector: 'public',
+        gradeLevels: [
+          '01',
+          '02',
+          '03',
+          '04',
+          '05',
+          '06',
+          '07',
+          '08',
+          '09',
+          '10',
+        ],
+        settings: null,
+      },
+    ]),
+  })
+  await addXroadMock({
+    config: Frigg,
+    prefix: 'XROAD_MMS_FRIGG_PATH',
+    apiPath: '/forms/registrations',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody({
+      applicationId: uuid(),
       state: 'pending',
-      formId: uuid(),
-      reviewId: uuid(),
-      reviewSourceId: uuid(),
     }),
     method: HttpMethod.POST,
   })

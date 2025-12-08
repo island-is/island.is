@@ -40,7 +40,7 @@ export const siblingsSubSection = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               searchPersons: true,
-              dataTestId: 'sibling-national-id-with-name',
+              customNameLabel: newPrimarySchoolMessages.shared.fullName,
             },
           },
           table: {

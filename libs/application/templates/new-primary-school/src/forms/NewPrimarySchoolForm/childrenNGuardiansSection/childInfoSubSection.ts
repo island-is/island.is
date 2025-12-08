@@ -110,6 +110,7 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.preferredName',
           title:
             newPrimarySchoolMessages.childrenNGuardians.childInfoPreferredName,
+          doesNotRequireAnswer: true,
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 

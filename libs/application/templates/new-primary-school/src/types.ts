@@ -201,6 +201,7 @@ export type Organization = {
   subType: OrganizationSubType
   sector: OrganizationSector
   gradeLevels: string[]
+  address?: AddressModel
   unitId: string | null
   settings: ApplicationSettings | null
 }

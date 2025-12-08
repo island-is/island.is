@@ -54,7 +54,7 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           nationalIdWithName: {
             component: 'nationalIdWithName',
             searchPersons: true,
-            dataTestId: 'relative-national-id-with-name',
+            customNameLabel: newPrimarySchoolMessages.shared.fullName,
           },
           phoneNumber: {
             component: 'input',
