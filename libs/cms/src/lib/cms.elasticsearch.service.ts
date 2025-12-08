@@ -408,7 +408,18 @@ export class CmsElasticsearchService {
     try {
       const vacancyResponse = await this.elasticService.findById(index, id)
       const response = vacancyResponse.body?._source?.response
-      return response ? JSON.parse(response) : null
+      if (!response) return null
+
+      const vacancy = JSON.parse(response)
+      // Fallback: Use Elasticsearch metadata if vacancy doesn't have createdAt/updatedAt
+      const source = vacancyResponse.body?._source
+      if (vacancy && !vacancy.createdAt && source?.dateCreated) {
+        vacancy.createdAt = source.dateCreated
+      }
+      if (vacancy && !vacancy.updatedAt && source?.dateUpdated) {
+        vacancy.updatedAt = source.dateUpdated
+      }
+      return vacancy
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error?.statusCode === 404) return null
@@ -827,9 +838,18 @@ export class CmsElasticsearchService {
       },
     )
     return vacanciesResponse.hits.hits
-      .map<Vacancy>((response) =>
-        JSON.parse(response._source.response ?? 'null'),
-      )
+      .map<Vacancy>((response) => {
+        const vacancy = JSON.parse(response._source.response ?? 'null')
+        // Fallback: Use Elasticsearch metadata if vacancy doesn't have createdAt/updatedAt
+        // This handles legacy indexed data before these fields were added to the model
+        if (vacancy && !vacancy.createdAt && response._source.dateCreated) {
+          vacancy.createdAt = response._source.dateCreated
+        }
+        if (vacancy && !vacancy.updatedAt && response._source.dateUpdated) {
+          vacancy.updatedAt = response._source.dateUpdated
+        }
+        return vacancy
+      })
       .filter(Boolean)
   }
 
