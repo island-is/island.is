@@ -437,6 +437,25 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+    include: [{ model: User, as: 'judge' }],
+  },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -2747,7 +2766,10 @@ export class CaseService {
 
     try {
       const splitCase = await this.createCase(
-        pick(theCase, copiedSplitIndictmentCaseFields),
+        {
+          ...pick(theCase, copiedSplitIndictmentCaseFields),
+          splitCaseId: theCase.id,
+        },
         transaction,
       )
 
