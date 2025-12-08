@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Op } from 'sequelize'
@@ -72,8 +76,10 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
@@ -95,6 +101,9 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
+          pruneAt: new Date(
+            Date.now() + form.daysUntilApplicationPrune * 24 * 60 * 60 * 1000,
+          ),
         } as Application,
         { transaction },
       )
@@ -169,7 +178,8 @@ export class ApplicationsService {
 
       newApplicationId = newApplication.id
     })
-    const applicationDto = await this.getApplication(newApplicationId, null)
+    const applicationDto = await this.getApplication(newApplicationId, '', null)
+
     return applicationDto
   }
 
@@ -256,7 +266,7 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const applicationResponseDto = await this.getApplication(id, null)
+    const applicationResponseDto = await this.getApplication(id, '', null)
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
     }
@@ -354,6 +364,7 @@ export class ApplicationsService {
 
   async getApplication(
     applicationId: string,
+    slug: string,
     user: User | null,
   ): Promise<ApplicationResponseDto> {
     const application = await this.applicationModel.findOne({
@@ -381,12 +392,15 @@ export class ApplicationsService {
     const form = await this.getApplicationForm(
       application.formId,
       applicationId,
+      slug,
     )
+
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
       if (
-        !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
+        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
       ) {
         const responseDto = new ApplicationResponseDto()
@@ -418,16 +432,23 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
     }
 
-    const existingApplications = await this.findAllByUserAndForm(user, form.id)
+    const existingApplications = await this.findAllByUserAndForm(
+      user,
+      form.id,
+      slug,
+    )
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
+    responseDto.isLoginTypeAllowed = true
     return responseDto
   }
 
@@ -493,6 +514,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    slug: string,
   ): Promise<ApplicationDto[]> {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
@@ -520,6 +542,7 @@ export class ApplicationsService {
     for (const application of applicationsByUser) {
       const applicationResponseDto = await this.getApplication(
         application.id,
+        slug,
         null,
       )
       if (!applicationResponseDto.application) {
@@ -532,6 +555,31 @@ export class ApplicationsService {
     }
 
     return applicationDtos
+  }
+
+  private async getAllowedLoginTypes(form: Form): Promise<string[]> {
+    const result: string[] = []
+
+    const partySection = form.sections.find(
+      (section) => section.sectionType === SectionTypes.PARTIES,
+    )
+
+    if (!partySection) {
+      throw new NotFoundException(
+        `Party section not found in form with id '${form.id}'`,
+      )
+    }
+
+    for (const screen of partySection.screens ?? []) {
+      for (const field of screen.fields ?? []) {
+        const applicantType = field?.fieldSettings?.applicantType
+        if (applicantType) {
+          result.push(applicantType)
+        }
+      }
+    }
+
+    return result
   }
 
   private isLoginAllowed(
@@ -601,6 +649,7 @@ export class ApplicationsService {
   private async getApplicationForm(
     formId: string,
     applicationId: string,
+    slug: string,
   ): Promise<Form> {
     const form = await this.formModel.findOne({
       where: { id: formId },
@@ -667,6 +716,16 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    if (slug && form.slug !== slug) {
+      throw new NotFoundException(
+        `Form with slug '${slug}' not found for application '${applicationId}'`,
+      )
+    }
+
+    if (form.status === FormStatus.ARCHIVED) {
+      throw new ConflictException(`Form with id '${formId}' is archived`)
     }
 
     return form

@@ -22,7 +22,8 @@ import {
   DateType,
   DefendantEventType,
   EventType,
-  getIndictmentAppealDeadlineDate,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
@@ -35,8 +36,8 @@ import {
   isRestrictionCase,
   isSuccessfulServiceStatus,
   PunishmentType,
-  ServiceRequirement,
   type User as TUser,
+  VerdictInfo,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -961,7 +962,7 @@ const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const deadlineDate = getIndictmentAppealDeadlineDate({
+    const { deadlineDate } = getIndictmentAppealDeadline({
       baseDate: c.rulingDate,
       isFine: c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
     })
@@ -990,23 +991,24 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       return generateCell()
     }
 
-    // TODO: fix this in the database so we can always fetch the service date
-    const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
-      true,
-      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? c.rulingDate
-        : d.verdict?.serviceDate,
-    ])
-    const [
-      indictmentVerdictViewedByAll,
-      indictmentVerdictAppealDeadlineExpired,
-    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
+    const verdictInfo: VerdictInfo[] | undefined = c.defendants?.map((d) => ({
+      canAppealVerdict: true,
+      serviceDate: getDefendantServiceDate({
+        verdict: d.verdict,
+        fallbackDate: c.rulingDate,
+      }),
+    }))
 
-    if (!indictmentVerdictViewedByAll) {
+    const {
+      isVerdictViewedByAllRequiredDefendants,
+      hasVerdictAppealDeadlineExpiredForAll,
+    } = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
+
+    if (!isVerdictViewedByAllRequiredDefendants) {
       return generateCell({ color: 'red', text: 'Óbirt' }, 'A')
     }
 
-    if (indictmentVerdictAppealDeadlineExpired) {
+    if (hasVerdictAppealDeadlineExpiredForAll) {
       return generateCell({ color: 'mint', text: 'Frestur liðinn' }, 'B')
     }
 
