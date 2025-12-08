@@ -28,7 +28,7 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
   ApplicationStatistics,
-  ApplicationTypeAdminInstitution,
+  ApplicationTypeAdmin,
 } from './dto/applicationAdmin.response.dto'
 import {
   ApplicationAdminSerializer,
@@ -269,7 +269,7 @@ export class AdminController {
     description: 'Get application types for a specific institution',
     response: {
       status: 200,
-      type: [ApplicationTypeAdminInstitution],
+      type: [ApplicationTypeAdmin],
     },
     request: {
       params: {
@@ -297,7 +297,7 @@ export class AdminController {
     description: 'Get all application types',
     response: {
       status: 200,
-      type: [ApplicationTypeAdminInstitution],
+      type: [ApplicationTypeAdmin],
     },
   })
   async getApplicationTypesSuperAdmin() {
