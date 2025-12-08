@@ -15,3 +15,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}

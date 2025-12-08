@@ -9,8 +9,9 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
+import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -101,6 +102,12 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+          ],
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              throwOnError: true,
+            }),
           ],
         },
         on: {
