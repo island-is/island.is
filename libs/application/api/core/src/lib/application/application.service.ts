@@ -155,7 +155,10 @@ export class ApplicationService {
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(institutionNationalId, typeIdValue)
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
+      institutionNationalId,
+      typeIdValue,
+    )
 
     if (returnEmpty) {
       return {
