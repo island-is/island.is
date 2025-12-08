@@ -565,6 +565,13 @@ export class DefendantService {
       )
     }
 
+    await this.defendantEventLogRepositoryService.transferDefendantEventLogsToCase(
+      defendant.caseId,
+      defendant.id,
+      newCase.id,
+      { transaction },
+    )
+
     return updatedDefendant
   }
 }

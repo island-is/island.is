@@ -2346,8 +2346,7 @@ export class CaseService {
             theCase.defendants.map((defendant) => {
               if (defendant.verdict) {
                 return this.verdictService.deleteVerdict(
-                  theCase.id,
-                  defendant.id,
+                  defendant.verdict,
                   transaction,
                 )
               }
