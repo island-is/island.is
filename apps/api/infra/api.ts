@@ -543,8 +543,8 @@ export const serviceSetup = (services: {
       timeoutSeconds: 5,
     })
     .resources({
-      limits: { cpu: '1200m', memory: '2500Mi' },
-      requests: { cpu: '800m', memory: '1500Mi' },
+      limits: { cpu: '1500m', memory: '4096Mi' },
+      requests: { cpu: '1000m', memory: '3072Mi' },
     })
     .replicaCount({
       default: 3,
