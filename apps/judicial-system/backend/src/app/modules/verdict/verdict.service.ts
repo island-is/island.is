@@ -154,13 +154,15 @@ export class VerdictService {
   }
 
   async deleteVerdict(
-    caseId: string,
-    defendantId: string,
+    verdict: Verdict,
     transaction: Transaction,
   ): Promise<boolean> {
-    await this.verdictRepositoryService.delete(caseId, defendantId, {
-      transaction,
-    })
+    await this.verdictRepositoryService.delete(
+      verdict.caseId,
+      verdict.defendantId,
+      verdict.id,
+      { transaction },
+    )
 
     return true
   }
