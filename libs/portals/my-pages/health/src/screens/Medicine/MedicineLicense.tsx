@@ -1,9 +1,4 @@
-import {
-  AlertMessage,
-  Box,
-  SkeletonLoader,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
