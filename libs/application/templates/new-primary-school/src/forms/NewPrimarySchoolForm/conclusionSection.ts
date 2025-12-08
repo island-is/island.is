@@ -12,6 +12,11 @@ export const conclusionSection = buildFormConclusionSection({
       application.answers,
     )
 
+    if (applicationType === ApplicationType.CONTINUING_ENROLLMENT) {
+      return newPrimarySchoolMessages.conclusion
+        .continuingEnrollmentExpandableDescription
+    }
+
     if (
       applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
       applyForPreferredSchool === YES
