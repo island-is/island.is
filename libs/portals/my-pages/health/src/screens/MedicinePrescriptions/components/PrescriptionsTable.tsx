@@ -205,6 +205,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                         <DispensingContainer
                           backgroundColor="blue"
                           showMedicineName
+                          showStrength
                           label={formatMessage(messages.dispenseHistory)}
                           data={item.dispensations.map((dispensation, di) => ({
                             date: formatDate(dispensation?.date),

@@ -69,7 +69,7 @@ const MedicinePrescriptionHistory = () => {
       )}
       marginBottom={6}
     >
-      {!loading && !error && history && history.length > 0 && (
+      {!error && (
         <SortableTable
           title=""
           labels={{
@@ -84,6 +84,7 @@ const MedicinePrescriptionHistory = () => {
           sortBy="descending"
           mobileTitleKey="medicine"
           ellipsisLength={22}
+          tableLoading={loading}
           items={
             history?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -92,7 +93,7 @@ const MedicinePrescriptionHistory = () => {
               lastDispensed: formatDate(item?.lastDispensationDate),
               numberOfDispensations: item.dispensationCount,
               children: (
-                <Box padding={1} background={'blue100'}>
+                <Box padding={1} background="blue100">
                   <DispensingContainer
                     backgroundColor="blue"
                     label={formatMessage(messages.dispenseHistory)}
@@ -199,9 +200,8 @@ const MedicinePrescriptionHistory = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {!error && history && history.length === 0 && (
+      {!error && !loading && history && history.length === 0 && (
         <EmptyTable
-          loading={loading}
           message={formatMessage(messages.noDataFound, {
             arg: formatMessage(messages.medicineTitle).toLowerCase(),
           })}
