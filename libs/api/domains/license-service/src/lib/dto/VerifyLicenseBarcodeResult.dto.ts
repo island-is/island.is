@@ -6,6 +6,9 @@ import {
 } from '@nestjs/graphql'
 import { GenericLicenseType } from '../licenceService.type'
 import { DriverLicenseData } from './licenses/DriverLicenseData.dto'
+import { FirearmLicenseData } from './licenses/FirearmLicenseData.dto'
+import { GeneralLicenseData } from './licenses/GeneralLicenseData.dto'
+import { HuntingLicenseData } from './licenses/HuntingLicenseData.dto'
 
 export enum VerifyLicenseBarcodeError {
   // When the license barcode is expired, e.g. token expired or the JSON string data includes an expired expiration date field value
@@ -33,12 +36,25 @@ registerEnumType(VerifyLicenseBarcodeType, {
 
 export const VerifyLicenseBarcodeDataUnion = createUnionType({
   name: 'VerifyLicenseBarcodeDataUnion',
-  types: () => [DriverLicenseData] as const,
+  types: () =>
+    [
+      DriverLicenseData,
+      FirearmLicenseData,
+      GeneralLicenseData,
+      HuntingLicenseData,
+    ] as const,
   resolveType: (value) => {
     switch (value.type) {
       case GenericLicenseType.DriversLicense:
         return DriverLicenseData
-
+      case GenericLicenseType.FirearmLicense:
+        return FirearmLicenseData
+      case GenericLicenseType.HuntingLicense:
+        return HuntingLicenseData
+      case GenericLicenseType.AdrLicense:
+      case GenericLicenseType.MachineLicense:
+      case GenericLicenseType.DisabilityLicense:
+        return GeneralLicenseData
       default:
         return null
     }

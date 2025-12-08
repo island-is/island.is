@@ -40,9 +40,9 @@ export const application = defineMessages({
     defaultMessage: 'Senda umsókn',
     description: 'submit button label',
   },
-  historyWaitingForParentB: {
-    id: 'id.application:historyWaitingForParentB',
-    defaultMessage: 'Beðið eftir samþykki forráðamanns',
-    description: 'History waiting for parentB',
+  historyLogApprovedByParentB: {
+    id: 'id.application:historyLogApprovedByParentB',
+    defaultMessage: 'Samþykkt af forsjáraðila 2',
+    description: 'History log approved by parentB',
   },
 })

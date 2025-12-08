@@ -29,10 +29,9 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
   indictmentCases,
-  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -45,10 +44,6 @@ import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import {
-  VerdictService,
-  VerdictServiceCertificateDelivery,
-} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -56,6 +51,10 @@ import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdict
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from './verdict.service'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -73,10 +72,11 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – No ruling date has been set for case ${caseId}`,
     )
   }
-  const isServiceRequired =
-    verdict.serviceRequirement === ServiceRequirement.REQUIRED
-  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+
+  const baseDate = getDefendantServiceDate({
+    verdict,
+    fallbackDate: rulingDate,
+  })
 
   // this can only be thrown if service date is not set
   if (!baseDate) {
@@ -84,13 +84,13 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate({
+  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
     baseDate: new Date(baseDate),
-    isFine,
+    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
   })
-  if (hasDatePassed(appealDeadline)) {
+  if (isDeadlineExpired) {
     throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
     )
   }
 }
