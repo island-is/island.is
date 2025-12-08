@@ -27,7 +27,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
-  ApplicationListAdminResponseDto,
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
 } from './dto/applicationAdmin.response.dto'
@@ -53,10 +52,10 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
-  @Get('admin/applications-statistics')
+  @Get('admin/applications/statistics')
   @UseInterceptors(ApplicationAdminStatisticsSerializer)
   @Documentation({
-    description: 'Get applications statistics',
+    description: 'Get applications statistics for entire application system',
     response: {
       status: 200,
       type: [ApplicationStatistics],
@@ -88,59 +87,98 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
-  @Get('admin/:nationalId/applications')
+  @Get('admin/applications/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationListAdminResponseDto[]>({
-    resources: (apps) => apps.map((app) => app.id),
+  @Audit<ApplicationAdminPaginatedResponse>({
+    resources: (apps) => apps.rows.map((app) => app.id),
   })
   @Documentation({
-    description: 'Get applications for a specific user',
+    description: 'Get applications for super admin overview',
     response: {
       status: 200,
-      type: [ApplicationListAdminResponseDto],
+      type: ApplicationAdminPaginatedResponse,
     },
     request: {
       params: {
-        nationalId: {
-          type: 'string',
+        page: {
+          type: 'number',
           required: true,
-          description: `To get the applications for a specific user's national id.`,
+          description: `The page to fetch`,
+        },
+        count: {
+          type: 'number',
+          required: true,
+          description: `Number of items to fetch`,
         },
       },
       query: {
-        typeId: {
-          type: 'string',
-          required: false,
-          description:
-            'To filter applications by type. Comma-separated for multiple values.',
-        },
         status: {
           type: 'string',
           required: false,
           description:
             'To filter applications by status. Comma-separated for multiple values.',
         },
+        applicantNationalId: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by applicant nationalId.',
+        },
+        from: {
+          type: 'string',
+          required: false,
+          description: 'Only return results created after specified date',
+        },
+        to: {
+          type: 'string',
+          required: false,
+          description: 'Only return results created before specified date',
+        },
+        typeIdValue: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by typeId',
+        },
+        institutionNationalId: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by nationalId of institution',
+        },
+        searchStr: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by any search string',
+        },
       },
     },
   })
-  async findAllAdmin(
-    @Param('nationalId') nationalId: string,
-    @Query('typeId') typeId?: string,
+  async findAllSuperAdmin(
+    @CurrentUser() user: User,
+    @Param('page') page: number,
+    @Param('count') count: number,
     @Query('status') status?: string,
+    @Query('applicantNationalId') applicantNationalId?: string,
+    @Query('institutionNationalId') institutionNationalId?: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+    @Query('typeIdValue') typeIdValue?: string,
+    @Query('searchStr') searchStr?: string,
   ) {
-    this.logger.debug(`Getting applications with status ${status}`)
-
-    return this.applicationService.findAllByNationalIdAndFilters(
-      nationalId,
-      typeId,
+    return this.applicationService.findAllByAdminFilters(
+      page ?? 1,
+      count ?? 12,
       status,
-      true, // Show pruned applications
+      applicantNationalId,
+      institutionNationalId,
+      from,
+      to,
+      typeIdValue,
+      searchStr,
     )
   }
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/institution/applications/:page/:count')
+  @Get('admin/applications/overview/institution/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
     resources: (apps) => apps.rows.map((app) => app.id),
@@ -191,7 +229,7 @@ export class AdminController {
           required: false,
           description: 'To filter applications by typeId',
         },
-        searchStrValue: {
+        searchStr: {
           type: 'string',
           required: false,
           description: 'To filter applications by any search string',
@@ -208,24 +246,24 @@ export class AdminController {
     @Query('from') from?: string,
     @Query('to') to?: string,
     @Query('typeIdValue') typeIdValue?: string,
-    @Query('searchStrValue') searchStrValue?: string,
+    @Query('searchStr') searchStr?: string,
   ) {
-    return this.applicationService.findAllByInstitutionAndFilters(
-      user.nationalId,
+    return this.applicationService.findAllByAdminFilters(
       page ?? 1,
       count ?? 12,
       status,
       applicantNationalId,
+      user.nationalId,
       from,
       to,
       typeIdValue,
-      searchStrValue,
+      searchStr,
     )
   }
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/institution/:nationalId/application-types')
+  @Get('admin/applications/application-types/:nationalId/')
   @UseInterceptors(ApplicationTypeAdminSerializer)
   @Documentation({
     description: 'Get application types for a specific institution',
@@ -249,5 +287,20 @@ export class AdminController {
     return this.applicationService.getAllApplicationTypesInstitutionAdmin(
       nationalId,
     )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications/application-types')
+  @UseInterceptors(ApplicationTypeAdminSerializer)
+  @Documentation({
+    description: 'Get all application types',
+    response: {
+      status: 200,
+      type: [ApplicationTypeAdminInstitution],
+    },
+  })
+  async getApplicationTypesSuperAdmin() {
+    return this.applicationService.getAllApplicationTypesSuperAdmin()
   }
 }
