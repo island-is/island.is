@@ -51,12 +51,6 @@ export class Vacancy {
 
   @CacheField(() => GraphQLJSON, { nullable: true })
   contacts?: { email?: string; name?: string; phone?: string }[] | null
-
-  @Field({ nullable: true })
-  createdAt?: string
-
-  @Field({ nullable: true })
-  updatedAt?: string
 }
 
 export const mapVacancy = ({ fields, sys }: IVacancy): Vacancy => ({
@@ -94,6 +88,4 @@ export const mapVacancy = ({ fields, sys }: IVacancy): Vacancy => ({
       )) ??
     null,
   contacts: (fields.contacts as Vacancy['contacts']) ?? [],
-  createdAt: sys.createdAt,
-  updatedAt: sys.updatedAt,
 })

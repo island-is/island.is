@@ -1,10 +1,10 @@
-import { Configuration, VacancyApi } from '../../gen/fetch'
+import { Configuration, DefaultApi } from '../../gen/fetch'
 import { ApiConfig } from './apiConfig'
 
 export const ApiProvider = {
-  provide: VacancyApi,
+  provide: DefaultApi,
   useFactory: (config: Configuration) => {
-    return new VacancyApi(config)
+    return new DefaultApi(config)
   },
   inject: [ApiConfig.provide],
 }

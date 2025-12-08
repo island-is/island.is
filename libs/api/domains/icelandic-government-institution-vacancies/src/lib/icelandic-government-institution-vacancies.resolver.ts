@@ -1,9 +1,11 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import {
-  VacancyApi,
-  VacancyResponseDto,
-} from '@island.is/clients/financial-management-authority'
+  DefaultApi,
+  VacanciesGetAcceptEnum,
+  VacanciesVacancyIdGetAcceptEnum,
+  VacanciesVacancyIdGetLanguageEnum,
+} from '@island.is/clients/icelandic-government-institution-vacancies'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
@@ -17,6 +19,8 @@ import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicG
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import {
   CMS_ID_PREFIX,
+  DefaultApiVacanciesListItem,
+  DefaultApiVacancyDetails,
   EXTERNAL_SYSTEM_ID_PREFIX,
   mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem,
   mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem,
@@ -35,53 +39,29 @@ const defaultLang = 'is'
 @Resolver()
 export class IcelandicGovernmentInstitutionVacanciesResolver {
   constructor(
-    private readonly api: VacancyApi,
+    private readonly api: DefaultApi,
     private readonly cmsElasticService: CmsElasticsearchService,
     private readonly cmsContentfulService: CmsContentfulService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   private async getVacanciesFromExternalSystem(
-    _input: IcelandicGovernmentInstitutionVacanciesInput,
+    input: IcelandicGovernmentInstitutionVacanciesInput,
   ) {
     let errorOccurred = false
-    const vacancies: VacancyResponseDto[] = []
+    let vacancies: DefaultApiVacanciesListItem[] = []
 
     try {
-      const pageSize = 100
-      let rowOffset = 0
-
-      // The external API is paginated and only returns 25 results by default
-      // when no pagination parameters are supplied. We need to keep fetching
-      // until no more data is returned.
-      // Note: We are currently not applying any additional filters from input.
-      // If filtering is added in the future, it should be included in the
-      // request parameters inside this loop.
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const page = (await this.api.v1VacancyGetVacancyListGet({
-          rowOffset,
-          fetchSize: pageSize,
-        })) as VacancyResponseDto[]
-
-        if (!page || page.length === 0) {
-          break
-        }
-
-        vacancies.push(...page)
-
-        if (page.length < pageSize) {
-          // Fewer results than requested means we've reached the end.
-          break
-        }
-
-        rowOffset += page.length
-      }
+      vacancies = (await this.api.vacanciesGet({
+        accept: VacanciesGetAcceptEnum.Json,
+        language: input.language,
+        stofnun: input.institution,
+      })) as DefaultApiVacanciesListItem[]
     } catch (error) {
       errorOccurred = true
       if (error instanceof FetchError) {
         this.logger.error(
-          'Fetch error occurred when getting vacancies from the Financial Management Authority',
+          'Fetch error occurred when getting vacancies from xroad',
           {
             message: error.message,
             statusCode: error.status,
@@ -89,7 +69,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         )
       } else {
         this.logger.error(
-          'Error occurred when getting vacancies from the Financial Management Authority',
+          'Error occurred when getting vacancies from xroad',
           error,
         )
       }
@@ -211,11 +191,16 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     }
   }
 
-  private async getVacancyFromExternalSystem(id: string) {
-    const item = (await this.api.v1VacancyGetVacancyGet({
+  private async getVacancyFromExternalSystem(
+    id: number,
+    language?: VacanciesVacancyIdGetLanguageEnum,
+  ) {
+    const item = (await this.api.vacanciesVacancyIdGet({
       vacancyId: id,
-    })) as VacancyResponseDto
-    if (!item) {
+      accept: VacanciesVacancyIdGetAcceptEnum.Json,
+      language: language,
+    })) as DefaultApiVacancyDetails
+    if (!item?.starfsauglysing) {
       return { vacancy: null }
     }
 
@@ -261,16 +246,18 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (input.id.startsWith(CMS_ID_PREFIX)) {
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
-      const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
-      if (id === '') return null
-      return this.getVacancyFromExternalSystem(id)
+      const numericId = Number(input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length))
+      if (isNaN(numericId)) return null
+      return this.getVacancyFromExternalSystem(numericId, input.language)
     }
 
-    // If no prefix is present then we first try the CMS and then the external service.
-    const vacancyFromCms = await this.getVacancyFromCms(input.id)
-    if (vacancyFromCms.vacancy === null) {
-      return this.getVacancyFromExternalSystem(input.id)
+    // If no prefix is present then we determine what service to call depending on if the id is numeric
+    const numericId = Number(input.id)
+
+    if (isNaN(numericId)) {
+      return this.getVacancyFromCms(input.id)
     }
-    return vacancyFromCms
+
+    return this.getVacancyFromExternalSystem(numericId)
   }
 }
