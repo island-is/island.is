@@ -793,6 +793,77 @@ export interface IContactUs extends Entry<IContactUsFields> {
   }
 }
 
+export interface ICourseFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
+
+  /** Categories */
+  categories?: IGenericTag[] | undefined
+}
+
+export interface ICourse extends Entry<ICourseFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'course'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseInstanceFields {
+  /** Course */
+  course: ICourse
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Start Date */
+  startDate: string
+
+  /** Price */
+  price?: IPrice | undefined
+
+  /** Max Registrations */
+  maxRegistrations?: number | undefined
+
+  /** Description */
+  description?: string | undefined
+}
+
+export interface ICourseInstance extends Entry<ICourseInstanceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseInstance'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ICustomPageFields {
   /** Parent Page */
   parentPage?: ICustomPage | undefined
@@ -5379,6 +5450,8 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'course'
+  | 'courseInstance'
   | 'customPage'
   | 'districts'
   | 'emailSignup'

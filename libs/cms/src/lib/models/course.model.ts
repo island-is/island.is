@@ -1,0 +1,93 @@
+import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { ICourse, ICourseInstance } from '../generated/contentfulTypes'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { GenericTag, mapGenericTag } from './genericTag.model'
+import { mapPrice, Price } from './price.model'
+import { GetCoursesInput } from '../dto/getCourses.input'
+
+@ObjectType()
+export class CourseInstance {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  startDate!: string
+
+  @CacheField(() => Price, { nullable: true })
+  price?: Price | null
+
+  @Field(() => String)
+  description!: string
+}
+
+const mapCourseInstance = ({
+  fields,
+  sys,
+}: ICourseInstance): CourseInstance => ({
+  id: sys.id,
+  startDate: fields.startDate ?? '',
+  price: fields.price ? mapPrice(fields.price) : null,
+  description: fields.description ?? '',
+})
+
+@ObjectType()
+export class Course {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @CacheField(() => [SliceUnion])
+  description!: Array<typeof SliceUnion>
+
+  @CacheField(() => [GenericTag])
+  categories!: GenericTag[]
+
+  @CacheField(() => [CourseInstance])
+  instances!: CourseInstance[]
+
+  @Field(() => String)
+  organizationId!: string
+}
+
+export const mapCourse = ({ fields, sys }: ICourse): Course => {
+  return {
+    id: sys.id,
+    title: (fields.title ?? '').trim(),
+    description: fields.description
+      ? mapDocument(fields.description, `${sys.id}:description`)
+      : [],
+    categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
+    instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
+    organizationId: fields.organization?.sys?.id ?? '',
+  }
+}
+
+@ObjectType()
+export class CourseList {
+  @Field(() => Int)
+  total!: number
+
+  @CacheField(() => [Course])
+  items!: Course[]
+
+  @CacheField(() => GetCoursesInput)
+  input!: GetCoursesInput
+}
+
+@ObjectType()
+class CourseCategory {
+  @Field(() => String)
+  key!: string
+
+  @Field(() => String)
+  label!: string
+}
+
+@ObjectType()
+export class CourseCategoriesResponse {
+  @CacheField(() => [CourseCategory])
+  items!: CourseCategory[]
+}

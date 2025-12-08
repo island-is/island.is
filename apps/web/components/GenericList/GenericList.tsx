@@ -245,6 +245,7 @@ interface GenericListProps {
   totalItems: number
   displayError: boolean
   showSearchInput?: boolean
+  showSearchFilters?: boolean
 }
 
 export const GenericList = ({
@@ -259,6 +260,7 @@ export const GenericList = ({
   displayError,
   children,
   showSearchInput = true,
+  showSearchFilters = true,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -376,12 +378,12 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          {showSearchInput && (
+          {(showSearchInput || showSearchFilters) && (
             <Box ref={ref}>
-              {filterCategories.length > 1 && (
+              {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
-                    {isMobile && filterInputComponent}
+                    {isMobile && showSearchInput && filterInputComponent}
                     <Filter
                       resultCount={totalItems}
                       labelClear={
@@ -471,49 +473,54 @@ export const GenericList = ({
                 </Stack>
               )}
 
-              {filterCategories.length <= 1 && (
-                <Stack space={4}>
-                  <Stack space={3}>
-                    {filterInputComponent}
-                    {selectedFilters.length > 0 && selectedFiltersComponent}
+              {(showSearchFilters || showSearchInput) &&
+                filterCategories.length <= 1 && (
+                  <Stack space={4}>
+                    <Stack space={3}>
+                      {showSearchInput && filterInputComponent}
+                      {showSearchFilters &&
+                        selectedFilters.length > 0 &&
+                        selectedFiltersComponent}
+                    </Stack>
+                    {showSearchFilters && (
+                      <Inline space={1}>
+                        {filterCategories[0]?.filters
+                          ?.filter((tag) => {
+                            const isActive = Boolean(
+                              selectedFilters.find(
+                                (filter) => filter.value === tag.value,
+                              ),
+                            )
+                            return !isActive
+                          })
+                          .map((tag) => {
+                            const category = filterCategories[0]?.id
+                            const value = tag.value
+                            const label = tag.label
+                            return (
+                              <Tag
+                                key={tag.value}
+                                onClick={() => {
+                                  if (!category) {
+                                    return
+                                  }
+                                  setPage(null)
+                                  setParameters((prevParameters) => ({
+                                    ...prevParameters,
+                                    [category]: (
+                                      prevParameters?.[category] ?? []
+                                    ).concat(value),
+                                  }))
+                                }}
+                              >
+                                {label}
+                              </Tag>
+                            )
+                          })}
+                      </Inline>
+                    )}
                   </Stack>
-                  <Inline space={1}>
-                    {filterCategories[0]?.filters
-                      ?.filter((tag) => {
-                        const isActive = Boolean(
-                          selectedFilters.find(
-                            (filter) => filter.value === tag.value,
-                          ),
-                        )
-                        return !isActive
-                      })
-                      .map((tag) => {
-                        const category = filterCategories[0]?.id
-                        const value = tag.value
-                        const label = tag.label
-                        return (
-                          <Tag
-                            key={tag.value}
-                            onClick={() => {
-                              if (!category) {
-                                return
-                              }
-                              setPage(null)
-                              setParameters((prevParameters) => ({
-                                ...prevParameters,
-                                [category]: (
-                                  prevParameters?.[category] ?? []
-                                ).concat(value),
-                              }))
-                            }}
-                          >
-                            {label}
-                          </Tag>
-                        )
-                      })}
-                  </Inline>
-                </Stack>
-              )}
+                )}
             </Box>
           )}
 
@@ -659,6 +666,7 @@ export const GenericListWrapper = ({
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
       showSearchInput={showSearchInput}
+      showSearchFilters={showSearchInput}
     >
       <GridContainer>
         <GridRow rowGap={3}>
