@@ -155,8 +155,7 @@ export class ApplicationService {
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    const { typeIds: applicationTypeIds, returnEmpty } =
-      await this.resolveApplicationTypeIds(institutionNationalId, typeIdValue)
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(institutionNationalId, typeIdValue)
 
     if (returnEmpty) {
       return {
@@ -202,10 +201,10 @@ export class ApplicationService {
     })
   }
 
-  private async resolveApplicationTypeIds(
+  private resolveApplicationTypeIds(
     institutionNationalId?: string,
     typeId?: string,
-  ): Promise<{ typeIds?: string[]; returnEmpty: boolean }> {
+  ): { applicationTypeIds?: string[]; returnEmpty: boolean } {
     // Case 1: neither institution nor typeId -> no type filter at all
     if (!institutionNationalId && !typeId) {
       return { returnEmpty: false }
@@ -213,7 +212,7 @@ export class ApplicationService {
 
     // Case 2: only typeId -> filter by that typeId only
     if (!institutionNationalId && typeId) {
-      return { typeIds: [typeId], returnEmpty: false }
+      return { applicationTypeIds: [typeId], returnEmpty: false }
     }
 
     // From here on, institutionNationalId is defined
@@ -227,7 +226,7 @@ export class ApplicationService {
 
     // Case 3: institution only -> all types belonging to that institution
     if (!typeId) {
-      return { typeIds: institutionTypeIds, returnEmpty: false }
+      return { applicationTypeIds: institutionTypeIds, returnEmpty: false }
     }
 
     // Case 4: both institution and typeId -> typeId must belong to the institution
@@ -236,7 +235,7 @@ export class ApplicationService {
     }
 
     // Valid institution+typeId combination
-    return { typeIds: [typeId], returnEmpty: false }
+    return { applicationTypeIds: [typeId], returnEmpty: false }
   }
 
   async getAllApplicationTypesInstitutionAdmin(
