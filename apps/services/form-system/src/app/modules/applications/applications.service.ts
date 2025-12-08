@@ -76,8 +76,10 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
@@ -393,10 +395,12 @@ export class ApplicationsService {
       slug,
     )
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
       if (
-        !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
+        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
       ) {
         const responseDto = new ApplicationResponseDto()
@@ -428,8 +432,10 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
@@ -549,6 +555,31 @@ export class ApplicationsService {
     }
 
     return applicationDtos
+  }
+
+  private async getAllowedLoginTypes(form: Form): Promise<string[]> {
+    const result: string[] = []
+
+    const partySection = form.sections.find(
+      (section) => section.sectionType === SectionTypes.PARTIES,
+    )
+
+    if (!partySection) {
+      throw new NotFoundException(
+        `Party section not found in form with id '${form.id}'`,
+      )
+    }
+
+    for (const screen of partySection.screens ?? []) {
+      for (const field of screen.fields ?? []) {
+        const applicantType = field?.fieldSettings?.applicantType
+        if (applicantType) {
+          result.push(applicantType)
+        }
+      }
+    }
+
+    return result
   }
 
   private isLoginAllowed(

@@ -3,6 +3,7 @@ import { CaseTable, pickColumns } from '../caseTableTypes'
 
 const publicProsecutionOfficeIndictmentsNewColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
+  'rulingDate',
   'defendants',
   'rulingType',
   'indictmentAppealDeadline',
