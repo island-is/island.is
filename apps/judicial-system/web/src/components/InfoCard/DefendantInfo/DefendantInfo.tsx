@@ -99,7 +99,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Text>
         </LinkV2>
       ) : (
-        <Text as="span" whiteSpace="pre">
+        <Text
+          as="span"
+          whiteSpace="pre"
+          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
+        >
           {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
             connectedCase.court?.name,
           )})`}
@@ -187,7 +191,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             </Box>
             {connectedCases.map((connectedCase, i) => {
               return (
-                <Box component="span">
+                <Box component="span" key={i}>
                   {connectedCase}
                   {i < connectedCases.length - 1 && (
                     <Text as="span" whiteSpace="pre">{`, `}</Text>
