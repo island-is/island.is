@@ -14,7 +14,8 @@ export const strings = defineMessages({
   appealDateNotBegun: {
     id: 'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
     defaultMessage: '{deadlineType} dómfellda er ekki hafinn',
-    description: 'Notaður til að láta vita að frestur dómfellda er ekki hafinn.',
+    description:
+      'Notaður til að láta vita að frestur dómfellda er ekki hafinn.',
   },
   defender: {
     id: 'judicial.system.core:info_card.defendant_info.defender',
