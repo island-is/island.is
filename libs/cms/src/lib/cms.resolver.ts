@@ -155,6 +155,16 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
+import {
+  Course,
+  CourseCategoriesResponse,
+  CourseList,
+} from './models/course.model'
+import {
+  GetCourseCategoriesInput,
+  GetCoursesInput,
+} from './dto/getCourses.input'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -795,6 +805,34 @@ export class CmsResolver {
     @Args('input') input: GetBloodDonationRestrictionDetailsInput,
   ): Promise<BloodDonationRestrictionDetails | null> {
     return this.cmsContentfulService.getBloodDonationRestrictionDetails(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseList, { nullable: true })
+  getCourses(@Args('input') input: GetCoursesInput): Promise<CourseList> {
+    return this.cmsElasticsearchService.getCourseList(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseCategoriesResponse)
+  getCourseCategories(
+    @Args('input') input: GetCourseCategoriesInput,
+  ): Promise<CourseCategoriesResponse> {
+    return this.cmsElasticsearchService.getCourseCategories(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Course, { nullable: true })
+  getCourseById(
+    @Args('input') input: GetCourseByIdInput,
+  ): Promise<Course | null> {
+    return this.cmsContentfulService.getCourseById(input)
   }
 }
 
