@@ -8,12 +8,13 @@ import {
   ServiceWebHeader,
   ServiceWebSearchSection,
   WatsonChatPanel,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { Organization, ServiceWebPage } from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
-import config, { watsonConfig } from '../config'
+import config, { watsonConfig, zendeskConfig } from '../config'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import * as styles from './Wrapper.css'
 
@@ -147,6 +148,9 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
+      {organization?.id in zendeskConfig[activeLocale] && (
+        <ZendeskChatPanel {...zendeskConfig[activeLocale][organization.id]} />
+      )}
       {organization?.id in watsonConfig[activeLocale] && (
         <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
       )}
