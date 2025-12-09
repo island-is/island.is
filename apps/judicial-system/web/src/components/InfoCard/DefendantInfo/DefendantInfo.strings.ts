@@ -9,12 +9,12 @@ export const strings = defineMessages({
   appealDateExpired: {
     id: 'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
     defaultMessage: '{deadlineType} dómfellda var til {appealExpirationDate}',
-    description: 'Notað til að láta vita að frestu í ákæru er útrunninn.',
+    description: 'Notað til að láta vita að frestur í ákæru er útrunninn.',
   },
   appealDateNotBegun: {
     id: 'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
     defaultMessage: '{deadlineType} dómfellda er ekki hafinn',
-    description: 'Notaður til að láta vita að frestu dómfellda er ekki hafinn.',
+    description: 'Notaður til að láta vita að frestur dómfellda er ekki hafinn.',
   },
   defender: {
     id: 'judicial.system.core:info_card.defendant_info.defender',
