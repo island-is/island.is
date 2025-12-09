@@ -78,6 +78,8 @@ const Completed: FC = () => {
   )
 
   const completeCaseConfirmation = useCallback(async () => {
+    setIsLoading(true)
+
     const eventLogCreated = createEventLog({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -94,6 +96,8 @@ const Completed: FC = () => {
   }, [createEventLog, workingCase.id, user])
 
   const completeCaseConfirmationWithVerdictDelivery = useCallback(async () => {
+    setIsLoading(true)
+
     const results = await deliverCaseVerdict(workingCase.id)
 
     if (!results) {
@@ -129,6 +133,7 @@ const Completed: FC = () => {
     if (requiresVerdictDeliveryToDefendants) {
       // If verdicts have already been sent, then we ask
       if (workingCase.indictmentSentToPublicProsecutorDate) {
+        setIsLoading(false)
         setModalVisible('DELIVER_VERDICTS')
         return
       }
@@ -371,10 +376,12 @@ const Completed: FC = () => {
           primaryButton={{
             text: 'Já, senda',
             icon: 'checkmark',
+            isLoading: isLoading,
             onClick: completeCaseConfirmationWithVerdictDelivery,
           }}
           secondaryButton={{
             text: 'Nei',
+            isLoading: isLoading,
             onClick: completeCaseConfirmation,
           }}
         />
