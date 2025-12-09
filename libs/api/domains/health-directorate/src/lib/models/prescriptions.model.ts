@@ -18,6 +18,9 @@ export class Prescription {
   type?: string
 
   @Field({ nullable: true })
+  strength?: string
+
+  @Field({ nullable: true })
   form?: string
 
   @Field({ nullable: true })

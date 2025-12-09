@@ -10,10 +10,10 @@ export const getAppealExpirationInfo = ({
   isVerdictAppealDeadlineExpired,
   serviceRequirement,
 }: {
-  verdictAppealDeadline?: string | null
+  verdictAppealDeadline?: Date | string | null
   isVerdictAppealDeadlineExpired?: boolean | null
   serviceRequirement?: ServiceRequirement | null
-} = {}) => {
+}) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
     return { message: strings.serviceNotRequired, date: null }
   }

@@ -1,0 +1,73 @@
+openapi: 3.0.1
+info:
+  title: MittLogreglan.API
+  version: v1
+paths:
+  /api/getcases/{socialsecuritynumber}:
+    get:
+      tags: [MittLogreglan.API]
+      parameters:
+        [
+          {
+            name: socialsecuritynumber,
+            in: path,
+            required: true,
+            schema: { type: string },
+          },
+        ]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/casesDto'
+components:
+  schemas:
+    casesDto:
+      type: object
+      properties:
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/caseDto'
+    caseDto:
+      type: object
+      properties:
+        personId:
+          type: number
+          format: decimal
+        caseNumber:
+          type: string
+        contact:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+        courtAdvocate:
+          type: string
+        receivedDate:
+          type: string
+          format: date-time
+        recievedLocation:
+          type: string
+        modified:
+          type: string
+          format: date-time
+        lokaferillMa:
+          type: string
+        deildFerils:
+          type: string
+        ldts:
+          type: string
+          format: date-time
+        embaetti:
+          type: string
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: 'X-API-KEY: apikey12345'
+      name: X-API-KEY
+      in: header
+security: [ApiKey: []]

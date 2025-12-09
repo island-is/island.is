@@ -183,6 +183,12 @@
               "$ref": "#/components/schemas/DraftPartyContact"
             }
           },
+          "signingParties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
           "landlordRepresentatives": {
             "type": "array",
             "items": {
@@ -893,6 +899,12 @@
             "type": "string"
           },
           "landlords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "signingParties": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Person"

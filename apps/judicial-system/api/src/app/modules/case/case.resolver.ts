@@ -1,13 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,7 +12,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { isProsecutionUser, type User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
@@ -30,6 +22,7 @@ import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
+import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
@@ -64,15 +57,6 @@ export class CaseResolver {
       backendService.getCase(input.id),
       input.id,
     )
-  }
-
-  @ResolveField(() => String, { name: 'penalties', nullable: true })
-  getPenalties(@Parent() theCase: Case, @CurrentGraphQlUser() user: User) {
-    if (isProsecutionUser(user)) {
-      return theCase.penalties
-    }
-
-    return null
   }
 
   @Query(() => [Case], { nullable: true })
@@ -268,6 +252,27 @@ export class CaseResolver {
       user.id,
       AuditedAction.EXTEND_CASE,
       backendService.extendCase(input.id),
+      (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
+  splitDefendantFromCase(
+    @Args('input', { type: () => SplitDefendantFromCaseInput })
+    input: SplitDefendantFromCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case> {
+    const { id, defendantId } = input
+
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${id}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SPLIT_DEFENDANT_FROM_CASE,
+      backendService.splitDefendantFromCase(id, defendantId),
       (theCase) => theCase.id,
     )
   }

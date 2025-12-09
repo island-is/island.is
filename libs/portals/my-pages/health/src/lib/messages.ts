@@ -64,6 +64,10 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
+  dateAndTime: {
+    id: 'sp.health:date-and-time',
+    defaultMessage: 'Dagsetning og tími',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -1730,9 +1734,25 @@ export const messages = defineMessages({
     defaultMessage: 'Mitt heilsuyfirlit',
     id: 'sp.health:my-health-overview',
   },
+  appointments: {
+    defaultMessage: 'Tímabókanir',
+    id: 'sp.health:appointments',
+  },
+  appointmentDetail: {
+    defaultMessage: 'Upplýsingar um tímabókun',
+    id: 'sp.health:appointment-detail',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
+  },
+  appointmentsIntro: {
+    defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
+    id: 'sp.health:appointments-intro',
+  },
+  appointmentsDetailIntro: {
+    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -1995,8 +2015,13 @@ export const messages = defineMessages({
     id: 'sp.health:no-permit',
   },
   noPermitsRegistered: {
-    defaultMessage: 'Þú ert ekki með neinar heimildir',
+    defaultMessage: 'Þú ert ekki með neinar heimildir.',
     id: 'sp.health:no-permits-registered',
+  },
+  noActivePermitsRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+    id: 'sp.health:no-active-permits-registered',
   },
   active: {
     defaultMessage: 'Virk',
@@ -2050,5 +2075,145 @@ export const messages = defineMessages({
   dispensationPlaces: {
     id: 'sp.health:dispensation-places',
     defaultMessage: 'Afgreiðslustaðir',
+  },
+  allAppointments: {
+    id: 'sp.health:all-appointments',
+    defaultMessage: 'Allar tímabókanir',
+  },
+  noAppointmentsTitle: {
+    id: 'sp.health:no-appointments-title',
+    defaultMessage: 'Engir tímar',
+  },
+  noAppointmentsText: {
+    id: 'sp.health:no-appointments',
+    defaultMessage: 'Engar tímabókanir framundan',
+  },
+  appointmentAt: {
+    id: 'sp.health:appointment-at',
+    defaultMessage: 'Tími hjá: {arg} ',
+  },
+  appointmentAtSimple: {
+    id: 'sp.health:appointment-at-simple',
+    defaultMessage: 'Tími hjá',
+  },
+  locationAddress: {
+    id: 'sp.health:location-address',
+    defaultMessage: 'Staðsetning',
+  },
+  instructions: {
+    id: 'sp.health:instructions',
+    defaultMessage: 'Leiðbeiningar',
+  },
+  appointmentSearchPlaceholder: {
+    id: 'sp.health:appointment-search-placeholder',
+    defaultMessage: 'Leita að tíma eða stað',
+  },
+  appointmentStatusArrived: {
+    id: 'sp.health:appointment-status-arrived',
+    defaultMessage: 'Mætt/ur',
+  },
+  appointmentStatusBooked: {
+    id: 'sp.health:appointment-status-booked',
+    defaultMessage: 'Bókaður',
+  },
+  appointmentStatusCancelled: {
+    id: 'sp.health:appointment-status-cancelled',
+    defaultMessage: 'Afbókaður',
+  },
+  appointmentStatusCheckedIn: {
+    id: 'sp.health:appointment-status-checked-in',
+    defaultMessage: 'Skráður inn',
+  },
+  appointmentStatusDeleted: {
+    id: 'sp.health:appointment-status-deleted',
+    defaultMessage: 'Eytt',
+  },
+  appointmentStatusEnteredInError: {
+    id: 'sp.health:appointment-status-entered-in-error',
+    defaultMessage: 'Skráður fyrir mistök',
+  },
+  appointmentStatusFulfilled: {
+    id: 'sp.health:appointment-status-fulfilled',
+    defaultMessage: 'Uppfylltur',
+  },
+  appointmentStatusNoShow: {
+    id: 'sp.health:appointment-status-no-show',
+    defaultMessage: 'Mætti ekki',
+  },
+  appointmentStatusPending: {
+    id: 'sp.health:appointment-status-pending',
+    defaultMessage: 'Í bið',
+  },
+  appointmentStatusProposed: {
+    id: 'sp.health:appointment-status-proposed',
+    defaultMessage: 'Fyrirhugaður',
+  },
+  appointmentStatusWaitlist: {
+    id: 'sp.health:appointment-status-waitlist',
+    defaultMessage: 'Á biðlista',
+  },
+  prescriptionBlockedIsRegiment: {
+    defaultMessage: 'Ekki er hægt að endurnýja lyfjakúr',
+    id: 'sp.health:prescription-blocked-is-regiment',
+  },
+  prescriptionBlockedNoMedCard: {
+    defaultMessage: 'Ekkert lyfjakort skráð',
+    id: 'sp.health:prescription-blocked-no-med-card',
+  },
+  prescriptionBlockedNoHealthClinic: {
+    defaultMessage: 'Engin heilsugæslustöð skráð',
+    id: 'sp.health:prescription-blocked-no-health-clinic',
+  },
+  prescriptionBlockedNotFullyDispensed: {
+    defaultMessage: 'Ekki öll lyf sótt',
+    id: 'sp.health:prescription-blocked-not-fully-dispensed',
+  },
+  prescriptionBlockedPendingRequest: {
+    defaultMessage: 'Beiðni um endurnýjun í vinnslu',
+    id: 'sp.health:prescription-blocked-pending-request',
+  },
+  prescriptionBlockedRejectedRequest: {
+    defaultMessage: 'Beiðni um endurnýjun hafnað',
+    id: 'sp.health:prescription-blocked-rejected-request',
+  },
+  prescriptionBlockedDismissedRequest: {
+    defaultMessage: 'Beiðni um endurnýjun vísað frá',
+    id: 'sp.health:prescription-blocked-dismissed-request',
+  },
+  prescriptionBlockedAlreadyRequested: {
+    defaultMessage: 'Endurnýjun þegar í vinnslu',
+    id: 'sp.health:prescription-blocked-already-requested',
+  },
+  prescriptionBlockedOther: {
+    defaultMessage: 'Óþekkt ástæða',
+    id: 'sp.health:prescription-blocked-other',
+  },
+  weekdayMondayAcc: {
+    defaultMessage: 'Mánudaginn',
+    id: 'sp.health:weekday-monday-acc',
+  },
+  weekdayTuesdayAcc: {
+    defaultMessage: 'Þriðjudaginn',
+    id: 'sp.health:weekday-tuesday-acc',
+  },
+  weekdayWednesdayAcc: {
+    defaultMessage: 'Miðvikudaginn',
+    id: 'sp.health:weekday-wednesday-acc',
+  },
+  weekdayThursdayAcc: {
+    defaultMessage: 'Fimmtudaginn',
+    id: 'sp.health:weekday-thursday-acc',
+  },
+  weekdayFridayAcc: {
+    defaultMessage: 'Föstudaginn',
+    id: 'sp.health:weekday-friday-acc',
+  },
+  weekdaySaturdayAcc: {
+    defaultMessage: 'Laugardaginn',
+    id: 'sp.health:weekday-saturday-acc',
+  },
+  weekdaySundayAcc: {
+    defaultMessage: 'Sunnudaginn',
+    id: 'sp.health:weekday-sunday-acc',
   },
 })

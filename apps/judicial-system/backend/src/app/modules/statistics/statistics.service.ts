@@ -40,6 +40,7 @@ import {
   Notification,
   Offense,
   Subpoena,
+  SubpoenaRepositoryService,
   Verdict,
 } from '../repository'
 import {
@@ -120,7 +121,7 @@ export class StatisticsService {
   constructor(
     @InjectModel(Institution)
     private readonly institutionModel: typeof Institution,
-    @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -216,7 +217,7 @@ export class StatisticsService {
     }
 
     // fetch only the earliest subpoena with the base filter
-    const earliestCase = await this.subpoenaModel.findOne({
+    const earliestCase = await this.subpoenaRepositoryService.findOne({
       where,
       order: [['created', 'ASC']],
       attributes: ['created'],
@@ -248,12 +249,12 @@ export class StatisticsService {
       })
     }
 
-    const subpoenas = await this.subpoenaModel.findAll({
+    const subpoenas = await this.subpoenaRepositoryService.findAll({
       where,
       include,
     })
 
-    const grouped = (await this.subpoenaModel.findAll({
+    const grouped = (await this.subpoenaRepositoryService.findAll({
       where,
       include,
       attributes: [
