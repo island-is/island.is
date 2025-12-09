@@ -235,8 +235,6 @@ const Completed: FC = () => {
           <Box marginBottom={5}>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
             <RulingInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               rows={8}
               label="Dómsorð"
               placeholder="Hvert er dómsorðið?"

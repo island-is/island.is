@@ -335,10 +335,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isProsecutionUser(user) && (
             <Box component="section">
-              <InputPenalties
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
+              <InputPenalties />
             </Box>
           )}
         </Box>

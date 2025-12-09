@@ -50,6 +50,7 @@ import {
   formatDateForServer,
   useCase,
   useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -109,12 +110,17 @@ const CourtRecord: FC = () => {
   } = useContext(FormContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
-    useState<string>('')
+  const sessionBookingValidation: Validation[] =
+    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+      ? []
+      : ['empty']
+  const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
+  const sessionBookingsInput = useDebouncedInput(
+    'sessionBookings',
+    sessionBookingValidation,
+  )
 
   useDeb(workingCase, [
-    'courtAttendees',
-    'sessionBookings',
     'accusedAppealAnnouncement',
     'prosecutorAppealAnnouncement',
     'endOfSessionBookings',
@@ -225,10 +231,6 @@ const CourtRecord: FC = () => {
   useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
-  const sessionBookingValidation: Validation[] =
-    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
-      ? []
-      : ['empty']
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -382,19 +384,9 @@ const CourtRecord: FC = () => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={workingCase.courtAttendees || ''}
             placeholder="Skrifa hér..."
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'courtAttendees',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              updateCase(workingCase.id, { courtAttendees: event.target.value })
-            }
+            value={courtAttendeesInput.value ?? ''}
+            onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
@@ -420,32 +412,15 @@ const CourtRecord: FC = () => {
               data-testid="sessionBookings"
               name="sessionBookings"
               label={formatMessage(m.sections.sessionBookings.label)}
-              value={workingCase.sessionBookings || ''}
+              value={sessionBookingsInput.value ?? ''}
               placeholder={formatMessage(
                 m.sections.sessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  setWorkingCase,
-                  sessionBookingsErrorMessage,
-                  setSessionBookingsMessage,
-                )
+              onChange={(evt) =>
+                sessionBookingsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  workingCase,
-                  updateCase,
-                  setSessionBookingsMessage,
-                )
-              }
-              errorMessage={sessionBookingsErrorMessage}
-              hasError={sessionBookingsErrorMessage !== ''}
+              errorMessage={sessionBookingsInput.errorMessage}
+              hasError={sessionBookingsInput.hasError}
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}

@@ -116,17 +116,10 @@ const Indictment = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const demandsInput = useDebouncedInput('demands', workingCase.demands, [
-    'empty',
-  ])
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const civilDemandsInput = useDebouncedInput('civilDemands', ['empty'])
   const indictmentIntroductionInput = useDebouncedInput(
     'indictmentIntroduction',
-    workingCase.indictmentIntroduction,
-    ['empty'],
-  )
-  const civilDemandsInput = useDebouncedInput(
-    'civilDemands',
-    workingCase.civilDemands,
     ['empty'],
   )
 
@@ -571,10 +564,7 @@ const Indictment = () => {
             </Box>
           )}
           <Box component="section">
-            <InputPenalties
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            <InputPenalties />
           </Box>
           <Box marginBottom={10}>
             <PdfButton

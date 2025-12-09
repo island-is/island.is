@@ -17,7 +17,10 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDebouncedInput,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isNullOrUndefined } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealSections as m } from './AppealSections.strings'
@@ -50,6 +53,15 @@ const AppealSections: FC<Props> = ({
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
+
+  const accusedAppealAnnouncementInput = useDebouncedInput(
+    'accusedAppealAnnouncement',
+    [],
+  )
+  const prosecutorAppealAnnouncementInput = useDebouncedInput(
+    'prosecutorAppealAnnouncement',
+    [],
+  )
 
   const handleChange = (update: {
     accusedAppealDecision?: CaseAppealDecision

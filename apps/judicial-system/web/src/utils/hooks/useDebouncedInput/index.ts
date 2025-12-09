@@ -12,15 +12,17 @@ import { UpdateCase, useCase } from '..'
 
 const useDebouncedInput = <T extends keyof UpdateCase>(
   fieldName: T,
-  initialValue: UpdateCase[T],
   validations: Validation[] = [],
   delay = 500,
 ) => {
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const initialValue = workingCase[
+    fieldName as keyof typeof workingCase
+  ] as string
   const [value, setValue] = useState(initialValue)
   const [errorMessage, setErrorMessage] = useState('')
   const [hasUserEdited, setHasUserEdited] = useState(false)
   const { updateCase } = useCase()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
 
   useEffect(() => {
     if (!hasUserEdited && initialValue !== value) {
