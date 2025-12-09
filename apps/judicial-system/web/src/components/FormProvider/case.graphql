@@ -4,6 +4,13 @@ query Case($input: CaseQueryInput!) {
     created
     modified
     type
+    splitCases {
+      id
+      courtCaseNumber
+      defendants {
+        name
+      }
+    }  
     indictmentSubtypes
     state
     description

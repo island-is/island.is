@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
-import { Text } from '@island.is/island-ui/core'
+import { LinkV2, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -23,6 +23,7 @@ import {
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
+import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
@@ -244,6 +245,25 @@ const useInfoCardItems = () => {
     values: [mergedCase.court?.name],
   })
 
+  const splitCases: Item = {
+    id: 'split-cases-item',
+    title: 'Klofinn frá',
+    values:
+      workingCase.splitCases?.map((splitCase) =>
+        splitCase.defendants?.map((defendant) => (
+          <>
+            <Text key={defendant.id}>{defendant.name}</Text>
+
+            <LinkComponent
+              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+            >
+              {splitCase.courtCaseNumber}
+            </LinkComponent>
+          </>
+        )),
+      ) || [],
+  }
+
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
@@ -427,6 +447,7 @@ const useInfoCardItems = () => {
     indictmentReviewedDate,
     parentCaseValidToDate,
     civilClaimants,
+    splitCases,
     victims,
   }
 }
