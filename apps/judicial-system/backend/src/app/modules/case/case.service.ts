@@ -3,6 +3,7 @@ import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -98,7 +99,7 @@ import {
   Victim,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
-import { VerdictService } from '../verdict/verdict.service'
+import { VerdictService } from '../verdict'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { MinimalCase } from './models/case.types'
@@ -436,6 +437,25 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+    include: [{ model: User, as: 'judge' }],
+  },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -527,11 +547,13 @@ export class CaseService {
     private readonly caseStringModel: typeof CaseString,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
     private readonly courtSessionService: CourtSessionService,
     private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
+    @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -851,6 +873,22 @@ export class CaseService {
         user,
         caseId: theCase.id,
         body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      },
+    ])
+  }
+
+  private addMessagesForPublicProsecutorReviewerAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        },
       },
     ])
   }
@@ -1771,6 +1809,19 @@ export class CaseService {
         user,
       )
     }
+
+    // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE &&
+      updatedCase.indictmentReviewerId &&
+      updatedCase.indictmentReviewerId !== theCase.indictmentReviewerId &&
+      isIndictment
+    ) {
+      await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
+        updatedCase,
+        user,
+      )
+    }
   }
 
   private allAppealRolesAssigned(updatedCase: Case) {
@@ -2314,8 +2365,7 @@ export class CaseService {
             theCase.defendants.map((defendant) => {
               if (defendant.verdict) {
                 return this.verdictService.deleteVerdict(
-                  theCase.id,
-                  defendant.id,
+                  defendant.verdict,
                   transaction,
                 )
               }
@@ -2716,10 +2766,18 @@ export class CaseService {
 
     try {
       const splitCase = await this.createCase(
-        pick(theCase, copiedSplitIndictmentCaseFields),
+        {
+          ...pick(theCase, copiedSplitIndictmentCaseFields),
+          splitCaseId: theCase.id,
+        },
         transaction,
       )
-      // defendant subpoenas eventLogs verdict
+
+      await this.defendantService.transferDefendantToCase(
+        splitCase,
+        defendant,
+        transaction,
+      )
 
       await transaction.commit()
 
