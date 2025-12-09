@@ -14,7 +14,7 @@ import { canHaveAttachments } from '../../../utils/conditionUtils'
 
 export const attachmentSubSection = buildSubSection({
   id: 'attachmentSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
+  title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
   // show attachment page only if feature is enabled (only enabled for Special School and
   // Special Department) and application type is not continuing enrollment
   condition: (answer, externalData) => canHaveAttachments(answer, externalData),
