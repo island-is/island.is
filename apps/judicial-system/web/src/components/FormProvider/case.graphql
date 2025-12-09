@@ -8,6 +8,7 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
       defendants {
+        id
         name
       }
     }
