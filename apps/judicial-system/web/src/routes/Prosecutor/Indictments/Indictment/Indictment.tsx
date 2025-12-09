@@ -45,7 +45,6 @@ import {
   UpdateCase,
   UpdateIndictmentCount,
   useCase,
-  useDeb,
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -188,6 +187,16 @@ const Indictment = () => {
   const demandsInput = useDebouncedInput('demands', workingCase.demands, [
     'empty',
   ])
+  const indictmentIntroductionInput = useDebouncedInput(
+    'indictmentIntroduction',
+    workingCase.indictmentIntroduction,
+    ['empty'],
+  )
+  const civilDemandsInput = useDebouncedInput(
+    'civilDemands',
+    workingCase.civilDemands,
+    ['empty'],
+  )
 
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -197,11 +206,6 @@ const Indictment = () => {
     deleteIndictmentCount,
     updateIndictmentCountState,
   } = useIndictmentCounts()
-  const [
-    indictmentIntroductionErrorMessage,
-    setIndictmentIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const gender = getDefaultDefendantGender(workingCase.defendants)
 
@@ -216,7 +220,9 @@ const Indictment = () => {
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return undefined
-      } else return data as PoliceCaseInfo[]
+      } else {
+        return data as PoliceCaseInfo[]
+      }
     },
   })
 
@@ -226,8 +232,6 @@ const Indictment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
-
-  useDeb(workingCase, ['indictmentIntroduction'])
 
   const getDemands = useCallback(
     (
@@ -520,27 +524,10 @@ const Indictment = () => {
                 strings.indictmentIntroductionPlaceholder,
               )}
               value={workingCase.indictmentIntroduction || ''}
-              errorMessage={indictmentIntroductionErrorMessage}
-              hasError={indictmentIntroductionErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'indictmentIntroduction',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  indictmentIntroductionErrorMessage,
-                  setIndictmentIntroductionErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'indictmentIntroduction',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setIndictmentIntroductionErrorMessage,
-                )
+              errorMessage={indictmentIntroductionInput.errorMessage}
+              hasError={indictmentIntroductionInput.hasError}
+              onChange={(evt) =>
+                indictmentIntroductionInput.onChange(evt.target.value)
               }
               textarea
               required
@@ -640,28 +627,9 @@ const Indictment = () => {
                 label={formatMessage(strings.civilDemandsLabel)}
                 placeholder={formatMessage(strings.civilDemandsPlaceholder)}
                 value={workingCase.civilDemands ?? ''}
-                errorMessage={civilDemandsErrorMessage}
-                hasError={civilDemandsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    civilDemandsErrorMessage,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
+                errorMessage={civilDemandsInput.errorMessage}
+                hasError={civilDemandsInput.hasError}
+                onChange={(evt) => civilDemandsInput.onChange(evt.target.value)}
                 textarea
                 autoComplete="off"
                 required
