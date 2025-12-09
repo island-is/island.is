@@ -23,6 +23,7 @@ export {
   EuPatientConsentDto,
   EuPatientConsentStatus,
   PrescriptionCommissionStatus,
+  CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
   DispensationHistoryItemDto,

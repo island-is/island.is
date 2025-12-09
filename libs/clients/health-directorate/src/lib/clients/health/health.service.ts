@@ -390,22 +390,12 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
-    if (!input.validTo || !input.validFrom) {
-      this.logger.debug('Missing validTo or validFrom in createPermit input')
-      return null
-    }
-
     this.logger.info('Creating permit with input:', input)
 
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
-          body: {
-            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
-            countryCodes: input.countryCodes,
-            validFrom: input.validFrom,
-            validTo: input.validTo,
-          },
+          body: input,
         }),
       ),
     )

@@ -8,6 +8,7 @@ import {
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
+  CreateEuPatientConsentDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
@@ -557,12 +558,13 @@ export class HealthDirectorateService {
     auth: Auth,
     input: PermitInput,
   ): Promise<PermitReturn | null> {
-    const response = await this.healthApi.createPermit(auth, {
-      codes: input.codes,
+    const mappedInput: CreateEuPatientConsentDto = {
+      codes: ['PATIENT_SUMMARY'],
       countryCodes: input.countryCodes,
       validFrom: new Date(input.validFrom),
       validTo: new Date(input.validTo),
-    })
+    }
+    const response = await this.healthApi.createPermit(auth, mappedInput)
     return response ? { status: true } : null
   }
 
