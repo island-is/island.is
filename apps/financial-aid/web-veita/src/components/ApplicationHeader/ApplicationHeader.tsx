@@ -19,7 +19,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import Link from 'next/link'
+import LinkV2 from 'next/link'
 
 interface ApplicantProps {
   application: Application
@@ -169,7 +169,7 @@ const ApplicationHeader = ({
             <Box marginX={1}>
               <Text variant="small">·</Text>
             </Box>
-            <Link
+            <LinkV2
               href={Routes.printApplicationProfile(application.id)}
               target="_blank"
               className={styles.button}
@@ -178,7 +178,7 @@ const ApplicationHeader = ({
                 <Icon icon="print" type="outline" size="small" />
               </Box>
               <span>Prenta umsókn </span>
-            </Link>
+            </LinkV2>
           </>
         )}
       </Box>

@@ -5,6 +5,7 @@ import {
   Box,
   GridContainer,
   DropdownMenu,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
@@ -23,7 +24,7 @@ const Header = () => {
     <GridContainer>
       <header className={`${styles.header}`}>
         <Box display="flex" height="full" alignItems="center">
-          <Link
+          <LinkV2
             href={
               user?.currentApplicationId
                 ? Routes.statusPage(user?.currentApplicationId as string)
@@ -46,7 +47,7 @@ const Header = () => {
                 <Logo width={40} iconOnly />
               </div>
             </Box>
-          </Link>
+          </LinkV2>
 
           <Box
             height="full"
