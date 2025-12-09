@@ -193,7 +193,7 @@ export class VerdictService {
       currentVerdict.serviceDate
     ) {
       throw new BadRequestException(
-        `Cannot update service requirement to ${update.serviceRequirement} - verdict ${verdictId} has already be served`,
+        `Cannot update service requirement to ${update.serviceRequirement} - verdict ${verdictId} has already been served`,
       )
     }
     // in case of repeated update, we ensure that service date is not set for specific service requirements
@@ -357,6 +357,7 @@ export class VerdictService {
     if (verdict.externalPoliceDocumentId) {
       return { delivered: true }
     }
+
     // get verdict file
     const verdictFile = theCase.caseFiles?.find(
       (caseFile) => caseFile.category === CaseFileCategory.RULING,
