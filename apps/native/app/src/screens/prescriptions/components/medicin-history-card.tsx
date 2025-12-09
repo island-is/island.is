@@ -10,7 +10,7 @@ import {
   useGetMedicineDispensationForAtcLazyQuery,
 } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
-import { Button, ExpandableCard, Typography } from '../../../ui'
+import { Badge, Button, ExpandableCard, Loader, Typography } from '../../../ui'
 import arrowRightIcon from '../../../ui/assets/icons/arrow.png'
 import checkmarkIcon from '../../../ui/assets/icons/check.png'
 
@@ -21,6 +21,16 @@ const TableRow = styled.View`
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-color: ${({ theme }) => theme.color.blue200};
   border-bottom-width: 1px;
+`
+
+const NoDispensations = styled.View`
+  padding: ${({ theme }) => theme.spacing[3]}px;
+  justify-content: center;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-color: ${({ theme }) => theme.color.blue200};
+  border-radius: ${({ theme }) => theme.border.radius.large};
 `
 const RowItem = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
@@ -49,6 +59,12 @@ const MoreInfoLink = styled.View`
   border-bottom-color: ${({ theme }) => theme.color.blue400};
   align-self: center;
   margin-vertical: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const Loading = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  align-self: center;
 `
 
 type MedicineHistoryCardProps = {
@@ -223,29 +239,65 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
                   </Pressable>
                 </View>
               ))}
+
+              {atcLoading ? (
+                <Loading>
+                  <Loader />
+                </Loading>
+              ) : (
+                <Button
+                  isUtilityButton
+                  isOutlined
+                  disabled={atcLoading || dispensations.fullyLoaded}
+                  title={intl.formatMessage({
+                    id: 'health.prescriptions.fetchMoreDispensations',
+                  })}
+                  compactPadding
+                  style={{
+                    alignSelf: 'center',
+                    marginBottom: theme.spacing[2],
+                  }}
+                  onPress={() => {
+                    if (medicine.atcCode) {
+                      getDispensationForAtc({
+                        variables: {
+                          input: { atcCode: medicine.atcCode },
+                        },
+                      })
+                    }
+                  }}
+                />
+              )}
             </>
           ) : (
-            <Typography variant="body3">Engar afgreiðslur fundust</Typography>
+            <NoDispensations>
+              <Badge
+                variant="blue"
+                title={intl.formatMessage({
+                  id: 'health.vaccinations.directorateOfHealth',
+                })}
+              />
+              <Typography
+                variant="heading5"
+                textAlign="center"
+                style={{ marginTop: theme.spacing[1] }}
+              >
+                {intl.formatMessage({
+                  id: 'health.prescriptions.noDispensations',
+                  defaultMessage: 'Engar afgreiðslur fundust',
+                })}
+              </Typography>
+              <Typography variant="body3" textAlign="center">
+                {intl.formatMessage({
+                  id: 'health.prescriptions.noDispensationsDescription',
+                  defaultMessage:
+                    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+                })}
+              </Typography>
+            </NoDispensations>
           )}
         </View>
       </View>
-      <Button
-        isUtilityButton
-        isOutlined
-        disabled={atcLoading || dispensations.fullyLoaded}
-        title={intl.formatMessage({
-          id: 'health.prescriptions.fetchMoreDispensations',
-        })}
-        onPress={() => {
-          if (medicine.atcCode) {
-            getDispensationForAtc({
-              variables: {
-                input: { atcCode: medicine.atcCode },
-              },
-            })
-          }
-        }}
-      />
     </ExpandableCard>
   )
 }

@@ -820,7 +820,7 @@ export const is = {
   'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
   'health.prescriptions.lastDispensationDate': 'Síðast afgreitt: {date}',
   'health.prescriptions.dispensationCount': '{count} afgreiðslur',
-  'health.prescriptions.fetchMoreDispensations': 'Ná í fleiri afgreiðslur',
+  'health.prescriptions.fetchMoreDispensations': 'Sjá meira',
   'health.prescriptions.completedDispensation': '{number}. afgreiðsla',
   'health.prescriptions.history.table.date': 'Dags.',
   'health.prescriptions.history.table.dispensery': 'Afhendingarstaður',
@@ -828,5 +828,8 @@ export const is = {
   'health.prescriptions.history.table.quantity': 'Magn',
   'health.prescriptions.history.table.moreInfo': 'Nánar um afgreiðslu',
   'health.prescriptions.dispensationDetail.title': 'Upplýsingar um afgreiðslu',
+  'health.prescriptions.noDispensations': 'Engar afgreiðslur fundust',
+  'health.prescriptions.noDispensationsDescription':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'health.medicineHistory.title': 'Lyfjasaga',
 }

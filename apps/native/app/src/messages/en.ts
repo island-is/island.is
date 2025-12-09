@@ -822,7 +822,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.dispensationNumber': '{number}. dispensation:',
   'health.prescriptions.lastDispensationDate': 'Last dispensed: {date}',
   'health.prescriptions.dispensationCount': '{count} dispensations',
-  'health.prescriptions.fetchMoreDispensations': 'Fetch more dispensations',
+  'health.prescriptions.fetchMoreDispensations': 'See more',
   'health.prescriptions.completedDispensation': '{number}. dispensation',
   'health.prescriptions.dispensationDetail.title': 'Dispensation information',
   'health.prescriptions.history.table.date': 'Date',
@@ -830,6 +830,8 @@ export const en: TranslatedMessages = {
   'health.prescriptions.history.table.drug': 'Medicine',
   'health.prescriptions.history.table.quantity': 'Quantity',
   'health.prescriptions.history.table.moreInfo': 'More info',
-
   'health.medicineHistory.title': 'Medicine history',
+  'health.prescriptions.noDispensations': 'No dispensations recorded',
+  'health.prescriptions.noDispensationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
 }
