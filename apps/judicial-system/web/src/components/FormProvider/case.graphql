@@ -10,7 +10,7 @@ query Case($input: CaseQueryInput!) {
       defendants {
         name
       }
-    }  
+    }
     indictmentSubtypes
     state
     description
