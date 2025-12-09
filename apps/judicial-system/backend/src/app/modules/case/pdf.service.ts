@@ -403,7 +403,13 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
+        .setHash(
+          theCase.id,
+          defendant.id,
+          subpoena.id,
+          subpoenaHash.hash,
+          subpoenaHash.hashAlgorithm,
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,

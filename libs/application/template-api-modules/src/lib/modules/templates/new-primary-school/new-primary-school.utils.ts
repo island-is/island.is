@@ -182,6 +182,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplication,
     reasonForApplicationId,
     counsellingRegardingApplication,
+    hasVisitedSchool,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -202,9 +203,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     alternativeSpecialEducationDepartment,
     currentSchoolId,
+    currentNursery,
     applyForPreferredSchool,
     payerName,
     payerNationalId,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -228,7 +235,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
-    applicationType: mapApplicationType(applicationType),
+    applicationType: mapApplicationType(application),
     approvalRequester: application.applicant,
     ...(needsOtherGuardianApproval(application) &&
       otherGuardian && {
@@ -262,11 +269,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         phone: relative.phoneNumber,
         relationTypeId: relative.relation,
       })),
-      ...((primaryOrgId || currentSchoolId) && {
-        defaultOrganizationId: primaryOrgId || currentSchoolId,
-      }),
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
+            defaultOrganizationId: currentNursery,
+          }),
       selectedOrganizationId:
-        (applyForPreferredSchool === YES
+        (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+          ? selectedSchoolId
+          : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+          ? primaryOrgId
+          : applyForPreferredSchool === YES
           ? preferredSchool?.id
           : selectedSchoolId) || '',
       ...(shouldShowAlternativeSpecialEducationDepartment(
@@ -277,28 +290,27 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
       requestingMeeting: requestingMeeting === YES,
-      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? {
-            expectedStartDate: expectedStartDate
-              ? new Date(expectedStartDate)
-              : new Date(),
-            ...(shouldShowExpectedEndDate(
-              application.answers,
-              application.externalData,
-            ) &&
-              temporaryStay === YES && {
-                expectedEndDate: expectedEndDate
-                  ? new Date(expectedEndDate)
-                  : undefined,
-              }),
-          }
-        : {
-            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
+        expectedStartDate: expectedStartDate
+          ? new Date(expectedStartDate)
+          : undefined,
+        ...(shouldShowExpectedEndDate(
+          application.answers,
+          application.externalData,
+        ) &&
+          temporaryStay === YES && {
+            expectedEndDate: expectedEndDate
+              ? new Date(expectedEndDate)
+              : undefined,
           }),
+      }),
       ...(shouldShowReasonForApplicationPage(application.answers) && {
-        reasonId: isSpecialEducation
-          ? counsellingRegardingApplication
-          : reasonForApplicationId,
+        ...(isSpecialEducation
+          ? {
+              reasonId: counsellingRegardingApplication,
+              visitedAndResearched: hasVisitedSchool === YES,
+            }
+          : { reasonId: reasonForApplicationId }),
       }),
       health: {
         ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
@@ -337,22 +349,39 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
+      childCircumstances: {
+        fieldInspection: fieldInspection === YES,
+        additionalDataProvisioning: additionalDataProvisioning === YES,
+        outsideSpecialist: outsideSpecialist === YES,
+        childViewOnApplication: childViewOnApplication === YES,
+      },
+      terms: terms === YES,
     },
   }
 
   return newPrimarySchoolDTO
 }
 
-export const mapApplicationType = (
-  applicationType: ApplicationType | undefined,
-) => {
-  if (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL)
-    return RegistrationApplicationInputApplicationTypeEnum.Transfer
+export const mapApplicationType = (application: Application) => {
+  const { applicationType, applyForPreferredSchool } = getApplicationAnswers(
+    application.answers,
+  )
 
-  if (applicationType === ApplicationType.CONTINUING_ENROLLMENT)
-    return RegistrationApplicationInputApplicationTypeEnum.Continuation
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return RegistrationApplicationInputApplicationTypeEnum.Transfer
 
-  return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return RegistrationApplicationInputApplicationTypeEnum.Continuation
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? RegistrationApplicationInputApplicationTypeEnum.Enrollment
+        : RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+    default:
+      return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+  }
 }
 
 export const pathToAsset = (file: string) => {

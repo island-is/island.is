@@ -26,7 +26,7 @@ env:
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
 grantNamespaces:
@@ -48,7 +48,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 75
+      cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -79,11 +79,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '1200m'
-    memory: '768Mi'
+    cpu: '1800m'
+    memory: '1500Mi'
   requests:
-    cpu: '800m'
-    memory: '512Mi'
+    cpu: '1200m'
+    memory: '1024Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'

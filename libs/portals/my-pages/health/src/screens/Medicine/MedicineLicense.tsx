@@ -1,9 +1,4 @@
-import {
-  AlertMessage,
-  Box,
-  SkeletonLoader,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -35,9 +30,12 @@ export const MedicineLicense = () => {
       ) : (
         <Box marginY={5}>
           {data?.rightsPortalDrugCertificates.length === 0 ? (
-            <AlertMessage
-              type="info"
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.noData)}
               message={formatMessage(messages.medicineNoIssuedCertificates)}
+              imgSrc="./assets/images/nodata.svg"
             />
           ) : (
             <Stack space={3}>
