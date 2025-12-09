@@ -225,7 +225,7 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
               )
             },

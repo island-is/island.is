@@ -17,12 +17,25 @@ const getPendingReviewersText = (
   }
 }
 
+const isCurrentUserReviewPending = (
+  currentUser: string,
+  reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
+)=> {
+  const currentReviewer = reviewers.find((x) => x.nationalId === currentUser)
+  return currentReviewer?.hasApproved === false;
+}
+
+/**
+ *
+ * @param currentUser - nationalId of the currently logged in user
+ * @param reviewers - array of all reviewers for this state, if the reviewer has approved reviewer.hasApproved must be TRUE
+ */
 export const getReviewStatePendingAction = (
-  hasCurrentReviewerApproved: boolean,
-  reviewers?: { nationalId: string; name?: string; hasApproved: boolean }[],
+  currentUser: string,
+  reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
 ): PendingAction => {
-  // If the current user has not yet approved, return "you need to review" message
-  if (!hasCurrentReviewerApproved) {
+  // If the current user needs to review, return "you need to review" message
+  if (isCurrentUserReviewPending(currentUser, reviewers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -30,9 +43,9 @@ export const getReviewStatePendingAction = (
     }
   }
 
-  // If the current user has approved and someone else needs to review, return message with list of reviewers that need to review
-  const pendingReviewersContent =
-    reviewers && getPendingReviewersText(reviewers)
+  // If the current user either has reviewed or their review isn't needed and some reviewer(s) need to review
+  // return message with list of reviewers that need to review
+  const pendingReviewersContent = getPendingReviewersText(reviewers)
   if (pendingReviewersContent) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
@@ -41,7 +54,9 @@ export const getReviewStatePendingAction = (
     }
   }
 
-  // Default "waiting for review" message
+  // Should only reach here if application is in review state and no reviewers
+  // are yet to review indicating some sort of error. Since we can't know why the application is still in review state
+  // we return a generic "waiting for review" message.
   return {
     title: corePendingActionMessages.waitingForReviewTitle,
     content: corePendingActionMessages.waitingForReviewDescription,
