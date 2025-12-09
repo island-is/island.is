@@ -66,14 +66,19 @@ const Completed: FC = () => {
   const [modalVisible, setModalVisible] = useState<modal>()
 
   const isSentToPublicProsecutor = Boolean(
-    workingCase.indictmentSentToPublicProsecutorDate,
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
   )
+
   const handleCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
     const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
+
     if (uploadResult !== 'ALL_SUCCEEDED') {
       setIsLoading(false)
       return
@@ -83,6 +88,7 @@ const Completed: FC = () => {
       ({ verdict }) =>
         verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
     )
+
     if (requiresVerdictDeliveryToDefendants) {
       const results = await deliverCaseVerdict(workingCase.id)
       if (!results) {
@@ -95,10 +101,12 @@ const Completed: FC = () => {
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
     })
+
     if (!eventLogCreated) {
       setIsLoading(false)
       return
     }
+
     router.push(getStandardUserDashboardRoute(user))
     setIsLoading(false)
   }, [

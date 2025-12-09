@@ -142,6 +142,7 @@ const transformCase = (theCase: Case, user?: User) => {
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),
+    caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
@@ -180,7 +181,10 @@ const transformCase = (theCase: Case, user?: User) => {
       EventType.REQUEST_COMPLETED,
       theCase.eventLogs,
     ),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    indictmentCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
+    ),
     eventLogs: undefined,
   }
 }
