@@ -975,13 +975,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
 
     // Attachments
-    attachmentsPageTitle: {
-      id: 'nps.application:attachments.page.title',
+    attachmentsSubSectionTitle: {
+      id: 'nps.application:attachments.sub.section.title',
       defaultMessage: 'Fylgiskjöl',
       description: 'Attachments',
     },
-    attachmentsPageDescription: {
-      id: 'nps.application:attachments.page.description#markdown',
+    attachmentsSubSectionDescription: {
+      id: 'nps.application:attachments.sub.section.description#markdown',
       defaultMessage:
         'Til þess að skólinn geti metið hvort að úrræðið sem sótt er um henti barni og sé líklegt til að skila tilætluðum árangri, þarf forsjáraðili að skila nauðsynlegum gögnum með umsókn. \n\nFrá viðurkenndum greiningaraðilum: \n\n* Staðfest greining á fötlun barns eða staðfesting á að barnið sé í greiningarferli \n\n* Staðlað mat á stuðningsþörf barns (s.s. SIS-mat) eða staðfesting á að barnið sé í greiningarferli \n\nFrá núverandi skóla barns: \n\n* Þjónustuáætlun eða eftir atvikum stuðningsáætlun barns \n\n* Einstaklingsnámskrá barns \n\n* Skýrsla frá núverandi skóla sem felur í sér: \n\n * Mat á náms- og félagslegri stöðu barns og líðan þess \n\n * Lýsing á styrkleikum barns og verndandi þáttum \n\n * Ástæður þess af hverju skólinn telji sig ekki geta mætt þörfum barnsins \n\n * Hvaða stuðningur hafi verið veittur eða aðgerðum hafi verið beitt \n\n * Hvernig unnið hafi verið með barn að öðru leiti og hvaða árangri það hafi skilað \n\n * Óskir foreldra og barns að teknu tilliti til aldurs og þroska þess',
       description:
