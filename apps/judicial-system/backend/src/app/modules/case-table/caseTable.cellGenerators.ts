@@ -328,6 +328,15 @@ const generateIndictmentCaseStateTag = (
       )
     }
 
+    // TODO: this will be fixed when we have considered ruling decision per defendant
+    if (
+      c.defendants &&
+      c.defendants.length > 0 &&
+      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+    ) {
+      return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
+    }
+
     return generateIndictmentRulingDecisionTag(c, user)
   }
 
@@ -628,6 +637,10 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
           attributes: ['serviceStatus'],
           order: [['created', 'DESC']],
           separate: true,
+        },
+        verdict: {
+          model: Verdict,
+          attributes: ['isDefaultJudgement'],
         },
       },
       separate: true,
@@ -1076,8 +1089,31 @@ const indictmentRulingDecision: CaseTableCellGenerator<
   TagValue | TagPairValue
 > = {
   attributes: ['state', 'indictmentRulingDecision'],
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
-    generateIndictmentRulingDecisionTag(c, user),
+  includes: {
+    defendants: {
+      model: Defendant,
+      order: [['created', 'ASC']],
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['isDefaultJudgement'],
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> => {
+    // TODO: this will be fixed when we have considered ruling decision per defendant
+    if (
+      c.defendants &&
+      c.defendants.length > 0 &&
+      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+    ) {
+      return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
+    }
+
+    return generateIndictmentRulingDecisionTag(c, user)
+  },
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {

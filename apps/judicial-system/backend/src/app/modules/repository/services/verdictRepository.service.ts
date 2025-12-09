@@ -147,9 +147,10 @@ export class VerdictRepositoryService {
     options?: UpdateVerdictOptions,
   ): Promise<Verdict> {
     try {
-      this.logger.debug(`Updating verdict ${verdictId} with data:`, {
-        data: Object.keys(data),
-      })
+      this.logger.debug(
+        `Updating verdict ${verdictId} of defendant ${defendantId} and case ${caseId} with data:`,
+        { data: Object.keys(data) },
+      )
 
       const updateOptions: UpdateOptions = {
         where: { id: verdictId, caseId, defendantId },
@@ -174,25 +175,21 @@ export class VerdictRepositoryService {
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating verdict ${verdictId} with data:`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating verdict ${verdictId} of defendant ${defendantId} and case ${caseId} with data:`,
           { data: Object.keys(data) },
         )
       }
 
-      this.logger.debug(`Updated verdict ${verdictId}`)
-
-      if (!updatedVerdicts || updatedVerdicts.length === 0) {
-        throw new InternalServerErrorException(
-          `Verdict ${verdictId} not found after update`,
-        )
-      }
+      this.logger.debug(
+        `Updated verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
+      )
 
       return updatedVerdicts[0]
     } catch (error) {
-      this.logger.error(`Error updating verdict ${verdictId} with data:`, {
-        data: Object.keys(data),
-        error,
-      })
+      this.logger.error(
+        `Error updating verdict ${verdictId} of defendant ${defendantId} and case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
 
       throw error
     }
@@ -201,15 +198,16 @@ export class VerdictRepositoryService {
   async delete(
     caseId: string,
     defendantId: string,
+    verdictId: string,
     options?: DeleteVerdictOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
-        `Deleting verdict for defendant ${defendantId} of case ${caseId}`,
+        `Deleting verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
       )
 
       const updateOptions: UpdateOptions = {
-        where: { defendantId, caseId },
+        where: { id: verdictId, defendantId, caseId },
       }
 
       if (options?.transaction) {
@@ -222,23 +220,23 @@ export class VerdictRepositoryService {
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
-          `Could not delete verdict of ${defendantId} of case ${caseId}`,
+          `Could not delete verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
         )
       }
 
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting verdict for defendant ${defendantId} of case ${caseId}`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
         )
       }
 
       this.logger.debug(
-        `Deleted verdict for defendant ${defendantId} of case ${caseId}`,
+        `Deleted verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
       )
     } catch (error) {
       this.logger.error(
-        `Error deleting verdict for defendant ${defendantId} of case ${caseId}:`,
+        `Error deleting verdict ${verdictId} of defendant ${defendantId} and case ${caseId}:`,
         { error },
       )
 

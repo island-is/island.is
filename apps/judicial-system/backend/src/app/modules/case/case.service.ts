@@ -438,6 +438,25 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+    include: [{ model: User, as: 'judge' }],
+  },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -855,6 +874,22 @@ export class CaseService {
         user,
         caseId: theCase.id,
         body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      },
+    ])
+  }
+
+  private addMessagesForPublicProsecutorReviewerAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        },
       },
     ])
   }
@@ -1782,6 +1817,19 @@ export class CaseService {
         user,
       )
     }
+
+    // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE &&
+      updatedCase.indictmentReviewerId &&
+      updatedCase.indictmentReviewerId !== theCase.indictmentReviewerId &&
+      isIndictment
+    ) {
+      await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
+        updatedCase,
+        user,
+      )
+    }
   }
 
   private allAppealRolesAssigned(updatedCase: Case) {
@@ -2328,8 +2376,7 @@ export class CaseService {
             theCase.defendants.map((defendant) => {
               if (defendant.verdict) {
                 return this.verdictService.deleteVerdict(
-                  theCase.id,
-                  defendant.id,
+                  defendant.verdict,
                   transaction,
                 )
               }
@@ -2730,7 +2777,10 @@ export class CaseService {
 
     try {
       const splitCase = await this.createCase(
-        pick(theCase, copiedSplitIndictmentCaseFields),
+        {
+          ...pick(theCase, copiedSplitIndictmentCaseFields),
+          splitCaseId: theCase.id,
+        },
         transaction,
       )
 
