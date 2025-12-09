@@ -136,6 +136,21 @@ export const needsOtherGuardianApproval = (application: Application) => {
   )
 }
 
+export const hasAttachments = (application: Application) => {
+  // Check if the attachments page is shown, if there are any attachments uploaded
+  // and application type is not CONTINUING_ENROLLMENT
+  return (
+    shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
+    getApplicationAnswers(application.answers).attachmentsFiles?.length > 0 &&
+    application.answers.applicationType !==
+      ApplicationType.CONTINUING_ENROLLMENT
+  )
+}
+
 export const shouldShowExpectedEndDate = (
   answers: FormValue,
   externalData: ExternalData,
