@@ -5,6 +5,26 @@ import {
   WatsonChatPanelProps,
 } from '../../ChatPanel'
 
+export const zendeskConfig: Record<
+  Locale,
+  Record<string, { snippetUrl: string }>
+> = {
+  is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+  en: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+}
+
 export const liveChatIncConfig: Record<
   Locale,
   Record<string, LiveChatIncChatPanelProps>
@@ -119,28 +139,8 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
-
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
   },
   is: {
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
-
     // Skatturinn - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
     '4yJlHgCMTqpgRSj4p6LuBQ': {
