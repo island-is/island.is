@@ -1,5 +1,6 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'motion/react'
@@ -41,6 +42,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  UpdateCase,
   UpdateIndictmentCount,
   useCase,
   useDeb,
@@ -48,7 +50,10 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
-import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isIndictmentStepValid,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
@@ -111,6 +116,66 @@ const getSuspensionOffenses = (
   return new Set(offenses)
 }
 
+// TODO : Move to utils
+const useDebouncedInput = <T extends keyof UpdateCase>(
+  fieldName: T,
+  initialValue: UpdateCase[T],
+  validations: Validation[] = [],
+  delay = 500,
+) => {
+  const [value, setValue] = useState(initialValue)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [hasUserEdited, setHasUserEdited] = useState(false)
+  const { updateCase } = useCase()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+
+  useEffect(() => {
+    if (!hasUserEdited && initialValue !== value) {
+      setValue(initialValue)
+    }
+  }, [initialValue, hasUserEdited, value])
+
+  useDebounce(
+    () => {
+      if (hasUserEdited) {
+        validateAndSendToServer(
+          fieldName,
+          value,
+          validations,
+          workingCase,
+          updateCase,
+          setErrorMessage,
+        )
+      }
+    },
+    delay,
+    [value],
+  )
+
+  const handleChange = useCallback(
+    (newValue: UpdateCase[T]) => {
+      setValue(newValue)
+      setHasUserEdited(true)
+      removeTabsValidateAndSet(
+        fieldName,
+        newValue,
+        validations,
+        setWorkingCase,
+        errorMessage,
+        setErrorMessage,
+      )
+    },
+    [fieldName, validations, setWorkingCase, errorMessage],
+  )
+
+  return {
+    value,
+    errorMessage,
+    hasError: errorMessage !== '',
+    onChange: handleChange,
+  }
+}
+
 const Indictment = () => {
   const {
     workingCase,
@@ -119,6 +184,10 @@ const Indictment = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+
+  const demandsInput = useDebouncedInput('demands', workingCase.demands, [
+    'empty',
+  ])
 
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -132,7 +201,6 @@ const Indictment = () => {
     indictmentIntroductionErrorMessage,
     setIndictmentIntroductionErrorMessage,
   ] = useState<string>('')
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
   const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const gender = getDefaultDefendantGender(workingCase.defendants)
@@ -159,7 +227,7 @@ const Indictment = () => {
     [workingCase.id],
   )
 
-  useDeb(workingCase, ['indictmentIntroduction', 'demands'])
+  useDeb(workingCase, ['indictmentIntroduction'])
 
   const getDemands = useCallback(
     (
@@ -550,34 +618,15 @@ const Indictment = () => {
                 name="demands"
                 label={formatMessage(strings.demandsLabel)}
                 placeholder={formatMessage(strings.demandsPlaceholder)}
-                value={workingCase.demands ?? ''}
-                errorMessage={demandsErrorMessage}
-                hasError={demandsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'demands',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    demandsErrorMessage,
-                    setDemandsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'demands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setDemandsErrorMessage,
-                  )
-                }
-                textarea
+                value={demandsInput.value ?? ''}
+                onChange={(event) => demandsInput.onChange(event.target.value)}
+                errorMessage={demandsInput.errorMessage}
+                hasError={demandsInput.hasError}
                 autoComplete="off"
-                required
                 rows={7}
                 autoExpand={{ on: true, maxHeight: 300 }}
+                textarea
+                required
               />
             </BlueBox>
           </Box>
