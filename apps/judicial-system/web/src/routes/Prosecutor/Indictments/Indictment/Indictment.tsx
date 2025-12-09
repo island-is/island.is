@@ -1,6 +1,5 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'motion/react'
@@ -38,21 +37,14 @@ import {
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  UpdateCase,
   UpdateIndictmentCount,
   useCase,
+  useDebouncedInput,
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
-import {
-  isIndictmentStepValid,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
@@ -115,66 +107,6 @@ const getSuspensionOffenses = (
   return new Set(offenses)
 }
 
-// TODO : Move to utils
-const useDebouncedInput = <T extends keyof UpdateCase>(
-  fieldName: T,
-  initialValue: UpdateCase[T],
-  validations: Validation[] = [],
-  delay = 500,
-) => {
-  const [value, setValue] = useState(initialValue)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [hasUserEdited, setHasUserEdited] = useState(false)
-  const { updateCase } = useCase()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
-
-  useEffect(() => {
-    if (!hasUserEdited && initialValue !== value) {
-      setValue(initialValue)
-    }
-  }, [initialValue, hasUserEdited, value])
-
-  useDebounce(
-    () => {
-      if (hasUserEdited) {
-        validateAndSendToServer(
-          fieldName,
-          value,
-          validations,
-          workingCase,
-          updateCase,
-          setErrorMessage,
-        )
-      }
-    },
-    delay,
-    [value],
-  )
-
-  const handleChange = useCallback(
-    (newValue: UpdateCase[T]) => {
-      setValue(newValue)
-      setHasUserEdited(true)
-      removeTabsValidateAndSet(
-        fieldName,
-        newValue,
-        validations,
-        setWorkingCase,
-        errorMessage,
-        setErrorMessage,
-      )
-    },
-    [fieldName, validations, setWorkingCase, errorMessage],
-  )
-
-  return {
-    value,
-    errorMessage,
-    hasError: errorMessage !== '',
-    onChange: handleChange,
-  }
-}
-
 const Indictment = () => {
   const {
     workingCase,
@@ -199,7 +131,7 @@ const Indictment = () => {
   )
 
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const {
     createIndictmentCount,
     updateIndictmentCount,
