@@ -18,14 +18,14 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun',
+        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
       )
     })
 
@@ -35,14 +35,14 @@ describe('DefendantInfo', () => {
 
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun',
+        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
       )
     })
 
@@ -51,11 +51,11 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.NOT_REQUIRED
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.service_not_required',
@@ -67,14 +67,14 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
+        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -84,14 +84,14 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
+        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -101,14 +101,14 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = true
       const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired',
+        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
       )
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })
@@ -118,14 +118,14 @@ describe('DefendantInfo', () => {
       const isVerdictAppealDeadlineExpired = true
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
-      const dataSections = getAppealExpirationInfo(
+      const dataSections = getAppealExpirationInfo({
         verdictAppealDeadline,
         isVerdictAppealDeadlineExpired,
         serviceRequirement,
-      )
+      })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired',
+        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
       )
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })

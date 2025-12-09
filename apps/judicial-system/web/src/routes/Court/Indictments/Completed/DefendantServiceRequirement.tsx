@@ -126,41 +126,43 @@ export const DefendantServiceRequirement = ({
           tooltip={formatMessage(strings.serviceRequirementNotRequiredTooltip)}
         />
         <AnimatePresence>
-          {verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE && (
-            <motion.div
-              key="verdict-appeal-decision"
-              className={styles.motionBox}
-              initial={{
-                opacity: 0,
-                height: 0,
-              }}
-              animate={{
-                opacity: 1,
-                height: 'auto',
-                transition: {
-                  opacity: { delay: 0.2 },
-                },
-              }}
-              exit={{
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: { delay: 0.2 },
-                },
-              }}
-            >
-              <SectionHeading
-                heading="h4"
-                title="Afstaða dómfellda til dóms"
-                marginBottom={2}
-                required
-              />
-              <VerdictAppealDecisionChoice
-                defendant={defendant}
-                verdict={verdict}
-              />
-            </motion.div>
-          )}
+          {!verdict.isDefaultJudgement &&
+            verdict.serviceRequirement ===
+              ServiceRequirement.NOT_APPLICABLE && (
+              <motion.div
+                key="verdict-appeal-decision"
+                className={styles.motionBox}
+                initial={{
+                  opacity: 0,
+                  height: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  transition: {
+                    opacity: { delay: 0.2 },
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  height: 0,
+                  transition: {
+                    height: { delay: 0.2 },
+                  },
+                }}
+              >
+                <SectionHeading
+                  heading="h4"
+                  title="Afstaða dómfellda til dóms"
+                  marginBottom={2}
+                  required
+                />
+                <VerdictAppealDecisionChoice
+                  defendant={defendant}
+                  verdict={verdict}
+                />
+              </motion.div>
+            )}
         </AnimatePresence>
       </BlueBox>
     </Box>
