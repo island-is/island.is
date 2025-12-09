@@ -2,7 +2,7 @@ import { Fragment, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
-import { LinkV2, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,

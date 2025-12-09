@@ -41,7 +41,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
-  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
