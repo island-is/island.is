@@ -47,7 +47,10 @@ import { DefendantServiceRequirement } from './DefendantServiceRequirement'
 import { InformationForDefendant } from './InformationForDefendant'
 import strings from './Completed.strings'
 
-type modal = 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' | 'REOPEN'
+type modal =
+  | 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'
+  | 'DELIVER_VERDICTS'
+  | 'REOPEN'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
@@ -65,6 +68,8 @@ const Completed: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
 
+  // If the case has not been sent to the public prosecutor after completion/correction
+  // then show the send to public prosecutor button
   const isSentToPublicProsecutor = Boolean(
     workingCase.indictmentCompletedDate &&
       workingCase.indictmentSentToPublicProsecutorDate &&
@@ -72,31 +77,7 @@ const Completed: FC = () => {
         workingCase.indictmentCompletedDate,
   )
 
-  const handleCaseConfirmation = useCallback(async () => {
-    setIsLoading(true)
-    const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
-
-    if (uploadResult !== 'ALL_SUCCEEDED') {
-      setIsLoading(false)
-      return
-    }
-
-    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
-      ({ verdict }) =>
-        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-    )
-
-    if (requiresVerdictDeliveryToDefendants) {
-      const results = await deliverCaseVerdict(workingCase.id)
-      if (!results) {
-        setIsLoading(false)
-        return
-      }
-    }
-
+  const completeCaseConfirmation = useCallback(async () => {
     const eventLogCreated = createEventLog({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -108,17 +89,63 @@ const Completed: FC = () => {
     }
 
     router.push(getStandardUserDashboardRoute(user))
+
     setIsLoading(false)
+  }, [createEventLog, workingCase.id, user])
+
+  const completeCaseConfirmationWithVerdictDelivery = useCallback(async () => {
+    const results = await deliverCaseVerdict(workingCase.id)
+
+    if (!results) {
+      setIsLoading(false)
+      return
+    }
+
+    completeCaseConfirmation()
+  }, [completeCaseConfirmation, deliverCaseVerdict, workingCase.id])
+
+  // TODO: It would probably make sense to separate delivering verdicts
+  //       from sending to the public prosecutor - that way we can
+  //       create some logic around changes service requirements
+  const handleCaseConfirmation = useCallback(async () => {
+    setIsLoading(true)
+
+    const uploadResult = await handleUpload(
+      uploadFiles.filter((file) => file.percent === 0),
+      updateUploadFile,
+    )
+
+    if (uploadResult !== 'ALL_SUCCEEDED') {
+      setIsLoading(false)
+      return
+    }
+
+    // The verdict needs to be delivered to some defendants
+    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+      ({ verdict }) =>
+        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+    )
+
+    if (requiresVerdictDeliveryToDefendants) {
+      // If verdicts have already been sent, then we ask
+      if (workingCase.indictmentSentToPublicProsecutorDate) {
+        setModalVisible('DELIVER_VERDICTS')
+        return
+      }
+
+      completeCaseConfirmationWithVerdictDelivery()
+      return
+    }
+
+    completeCaseConfirmation()
   }, [
-    deliverCaseVerdict,
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    createEventLog,
-    workingCase.id,
     workingCase.defendants,
-    user,
-    setIsLoading,
+    workingCase.indictmentSentToPublicProsecutorDate,
+    completeCaseConfirmation,
+    completeCaseConfirmationWithVerdictDelivery,
   ])
 
   const handleNavigationTo = useCallback(
@@ -334,6 +361,21 @@ const Completed: FC = () => {
           secondaryButton={{
             text: 'Hætta við',
             onClick: () => setModalVisible(undefined),
+          }}
+        />
+      )}
+      {modalVisible === 'DELIVER_VERDICTS' && (
+        <Modal
+          title="Viltu senda dóm aftur í birtingu?"
+          text="Hægt er að senda nýtt eintak af dómi í birtingu ef þörf krefur."
+          primaryButton={{
+            text: 'Já, senda',
+            icon: 'checkmark',
+            onClick: completeCaseConfirmationWithVerdictDelivery,
+          }}
+          secondaryButton={{
+            text: 'Nei',
+            onClick: completeCaseConfirmation,
           }}
         />
       )}
