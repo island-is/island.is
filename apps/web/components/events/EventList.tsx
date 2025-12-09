@@ -84,10 +84,7 @@ export const EventList = ({
               endDate,
             )
 
-            const link = linkResolver('event', [
-              parentPageSlug,
-              event.slug,
-            ])
+            const link = linkResolver('event', [parentPageSlug, event.slug])
 
             const detailLines: Array<{
               icon: IconMapIcon

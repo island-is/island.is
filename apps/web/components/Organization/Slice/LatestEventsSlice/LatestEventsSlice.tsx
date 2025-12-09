@@ -88,9 +88,7 @@ export const LatestEventsSlice = ({
                   startTime={time.startTime ?? ''}
                   endTime={time.endTime ?? ''}
                   endDate={time.endDate ?? ''}
-                  href={
-                    linkResolver('event', [slug, eventSlug]).href
-                  }
+                  href={linkResolver('event', [slug, eventSlug]).href}
                   date={startDate}
                   location={location}
                   namespace={namespace}
