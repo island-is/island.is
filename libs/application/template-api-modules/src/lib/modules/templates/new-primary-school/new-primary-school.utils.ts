@@ -5,6 +5,7 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   hasBehaviorSchoolOrDepartmentSubType,
+  hasSpecialEducationBehaviorSubType,
   hasSpecialEducationCaseManager,
   hasSpecialEducationSubType,
   hasSpecialEducationWelfareContact,
@@ -233,6 +234,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const isSpecialEducationBehavior = hasSpecialEducationBehaviorSubType(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
     applicationType: mapApplicationType(application),
@@ -289,7 +295,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      requestingMeeting: requestingMeeting === YES,
+      ...(!isSpecialEducation &&
+        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -349,13 +358,19 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      childCircumstances: {
-        fieldInspection: fieldInspection === YES,
-        additionalDataProvisioning: additionalDataProvisioning === YES,
-        outsideSpecialist: outsideSpecialist === YES,
-        childViewOnApplication: childViewOnApplication === YES,
-      },
-      terms: terms === YES,
+      ...(isSpecialEducation &&
+        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
+          childCircumstances: {
+            fieldInspection: fieldInspection === YES,
+            additionalDataProvisioning: additionalDataProvisioning === YES,
+            outsideSpecialist: outsideSpecialist === YES,
+            childViewOnApplication: childViewOnApplication === YES,
+          },
+        }),
+      ...(isSpecialEducationBehavior &&
+        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
+          terms: terms === YES,
+        }),
     },
   }
 
