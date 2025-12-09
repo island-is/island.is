@@ -38,13 +38,7 @@ export const InvolvedPartyScreen = ({
         data.officialJournalOfIcelandApplicationGetUserInvolvedParties
           .involvedParties
 
-      const userIsInvolvedParty =
-        involvedParties?.some(
-          (involvedParty) =>
-            involvedParty.nationalId === user?.profile?.nationalId,
-        ) ?? false
-
-      if (involvedParties.length === 1 || userIsInvolvedParty) {
+      if (involvedParties.length === 1) {
         const involvedParty = involvedParties[0]
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
