@@ -244,7 +244,7 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
                 <Loading>
                   <Loader />
                 </Loading>
-              ) : (
+              ) : !dispensations.fullyLoaded ? (
                 <Button
                   isUtilityButton
                   isOutlined
@@ -267,7 +267,7 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
                     }
                   }}
                 />
-              )}
+              ) : null}
             </>
           ) : (
             <NoDispensations>
