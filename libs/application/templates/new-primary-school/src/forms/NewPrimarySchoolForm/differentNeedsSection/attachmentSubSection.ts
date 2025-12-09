@@ -50,7 +50,7 @@ export const attachmentSubSection = buildSubSection({
         }),
         buildFileUploadField({
           id: 'attachments.files',
-          title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
+          title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText:
             newPrimarySchoolMessages.differentNeeds.attachmentMaxSizeError,
