@@ -263,6 +263,19 @@ const useInfoCardItems = () => {
       ) || [],
   }
 
+  const splitCase: Item = {
+    id: 'split-case-item',
+    title: 'Klofið frá',
+    values: [
+      <LinkComponent
+        href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase?.id}`}
+        key={workingCase.splitCase?.id}
+      >
+        {workingCase.splitCase?.courtCaseNumber}
+      </LinkComponent>,
+    ],
+  }
+
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
@@ -447,6 +460,7 @@ const useInfoCardItems = () => {
     parentCaseValidToDate,
     civilClaimants,
     splitCases,
+    splitCase,
     victims,
   }
 }

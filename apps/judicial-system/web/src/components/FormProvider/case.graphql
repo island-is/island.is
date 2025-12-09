@@ -11,6 +11,10 @@ query Case($input: CaseQueryInput!) {
         name
       }
     }
+    splitCase {
+      id
+      courtCaseNumber
+    }
     indictmentSubtypes
     state
     description
