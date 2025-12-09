@@ -7,4 +7,5 @@ export default NewPrimarySchoolTemplate
 export * from './utils/newPrimarySchoolUtils'
 export * from './utils/conditionUtils'
 export * from './utils/constants'
+export * from './types'
 export * from './lib/messages'

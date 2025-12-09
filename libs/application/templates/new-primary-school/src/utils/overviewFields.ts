@@ -19,6 +19,7 @@ import {
   counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
+  attachmentItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
@@ -187,6 +188,12 @@ export const overviewFields = (editable?: boolean) => {
           externalData,
           ApplicationFeatureKey.PAYMENT_INFO,
         ),
+    }),
+    buildOverviewField({
+      id: 'overview.attachments',
+      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+      attachments: attachmentItems,
+      hideIfEmpty: true,
     }),
   ]
 }

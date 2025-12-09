@@ -4,6 +4,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
   ApplicationType,
+  AttachmentOptions,
   LanguageEnvironmentOptions,
   PayerOption,
 } from '../utils/constants'
@@ -349,6 +350,9 @@ export const dataSchema = z.object({
           : true,
       { path: ['hasIntegratedServices'] },
     ),
+  attachments: z.object({
+    answer: z.nativeEnum(AttachmentOptions),
+  }),
   specialEducationSupport: z
     .object({
       hasWelfareContact: z.enum([YES, NO]),
