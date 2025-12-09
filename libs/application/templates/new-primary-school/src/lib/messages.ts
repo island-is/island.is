@@ -974,7 +974,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Request meeting with the school',
     },
 
-    //Attachments
+    // Attachments
     attachmentsPageTitle: {
       id: 'nps.application:attachments.page.title',
       defaultMessage: 'Fylgiskjöl',
