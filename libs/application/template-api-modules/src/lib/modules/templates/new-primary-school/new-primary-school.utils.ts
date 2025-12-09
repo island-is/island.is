@@ -16,7 +16,7 @@ import {
   shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
   AttachmentOptions,
-  hasAttachments,
+  canHaveAttachments,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -362,7 +362,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       terms: terms === YES,
     },
-    ...(hasAttachments(application) &&
+    ...(canHaveAttachments(application.answers, application.externalData) &&
       attachmentsAnswer && {
         files: attachmentFiles,
         fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),

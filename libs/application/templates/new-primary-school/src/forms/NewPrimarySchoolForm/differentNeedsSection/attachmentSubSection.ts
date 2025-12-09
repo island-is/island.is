@@ -5,23 +5,19 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
-  ApplicationFeatureKey,
-  ApplicationType,
   AttachmentOptions,
   FILE_SIZE_LIMIT,
   UPLOAD_ACCEPT,
 } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { shouldShowPage } from '../../../utils/conditionUtils'
+import { canHaveAttachments } from '../../../utils/conditionUtils'
 
 export const attachmentSubSection = buildSubSection({
   id: 'attachmentSubSection',
   title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
   // show attachment page only if feature is enabled (only enabled for Special School and
   // Special Department) and application type is not continuing enrollment
-  condition: (answers, externalData) =>
-    shouldShowPage(answers, externalData, ApplicationFeatureKey.ATTACHMENTS) &&
-    answers.applicationType !== ApplicationType.CONTINUING_ENROLLMENT,
+  condition: (answer, externalData) => canHaveAttachments(answer, externalData),
   children: [
     buildMultiField({
       id: 'attachments',
