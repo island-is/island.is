@@ -137,7 +137,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
         </GridRow>
       )}
       <GridRow>
-        <GridColumn span={childrenWidthFull ? '12/12' : '10/12'}>
+        <GridColumn span={childrenWidthFull || isMobile ? '12/12' : '10/12'}>
           {props.children}
         </GridColumn>
       </GridRow>
