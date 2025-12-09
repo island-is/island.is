@@ -39,6 +39,26 @@ export const liveChatIncConfig: Record<
   },
 }
 
+export const zendeskConfig: Record<
+  Locale,
+  Record<string, { snippetUrl: string }>
+> = {
+  is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+  en: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+}
+
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
   is: {
     integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
@@ -63,23 +83,6 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   en: {
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-        )
-      },
-    },
     // Name giving
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/lGjmpafx2P4yiA6Re3Nxd
     lGjmpafx2P4yiA6Re3Nxd: {
@@ -290,16 +293,6 @@ export const watsonConfig: Record<
           defaultWatsonConfig.en.integrationID,
         )
       },
-    },
-
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
     },
   },
   is: {
@@ -560,69 +553,6 @@ export const watsonConfig: Record<
           instance,
           'adeldast',
           '580730f3-3d88-4c5a-92e6-30e79ea09f24',
-        )
-      },
-    },
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
-
-    // Uppfletting í ökutækjaskrá
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5tyHpCXpWGZnhCCbP6eTb0
-    '5tyHpCXpWGZnhCCbP6eTb0': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'uppfletting-i-oekutaekjaskra',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skútan - skipaskráningar og lögskráningarkerfi
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3wmGcP61YJePBL92ITgY64
-    '3wmGcP61YJePBL92ITgY64': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skutan-skipaskra-og-logskraning',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
         )
       },
     },

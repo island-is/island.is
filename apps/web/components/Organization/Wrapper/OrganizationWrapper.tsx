@@ -44,6 +44,7 @@ import {
   SidebarShipSearchInput,
   Sticky,
   Webreader,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import {
@@ -95,7 +96,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -856,6 +857,18 @@ export const OrganizationChatPanel = ({
         endpoint={
           organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
         }
+      />
+    )
+  }
+
+  const organizationIdWithZendesk = organizationIds.find((id) => {
+    return id in zendeskConfig[activeLocale]
+  })
+
+  if (organizationIdWithZendesk) {
+    return (
+      <ZendeskChatPanel
+        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
       />
     )
   }
