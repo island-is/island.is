@@ -13,16 +13,15 @@ const UserProfile = () => {
   const { profile } = useUserInfo()
 
   return (
-    <>
-      <IntroWrapper
-        marginBottom={[4, 4, 6]}
-        title={formatMessage(m.mySettings)}
-        intro={formatMessage(msg.overlayIntro)}
-        serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
-        serviceProviderSlug={ISLANDIS_SLUG}
-      />
+    <IntroWrapper
+      marginBottom={[4, 4, 6]}
+      title={formatMessage(m.mySettings)}
+      intro={formatMessage(msg.overlayIntro)}
+      serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
+      serviceProviderSlug={ISLANDIS_SLUG}
+    >
       <ProfileForm showIntroText={false} title={profile.name || ''} />
-    </>
+    </IntroWrapper>
   )
 }
 
