@@ -23,7 +23,8 @@ export const attachmentSubSection = buildSubSection({
       id: 'attachments',
       title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
       description:
-        newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionDescription,
+        newPrimarySchoolMessages.differentNeeds
+          .attachmentsSubSectionDescription,
       children: [
         buildRadioField({
           id: 'attachments.answer',
@@ -50,7 +51,8 @@ export const attachmentSubSection = buildSubSection({
         }),
         buildFileUploadField({
           id: 'attachments.files',
-          title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+          title:
+            newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText:
             newPrimarySchoolMessages.differentNeeds.attachmentMaxSizeError,
