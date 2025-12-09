@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -251,15 +251,14 @@ const useInfoCardItems = () => {
     values:
       workingCase.splitCases?.map((splitCase) =>
         splitCase.defendants?.map((defendant) => (
-          <>
-            <Text key={defendant.id}>{defendant.name}</Text>
-
+          <Fragment key={splitCase.id}>
+            <Text>{defendant.name}</Text>
             <LinkComponent
               href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
             >
               {splitCase.courtCaseNumber}
             </LinkComponent>
-          </>
+          </Fragment>
         )),
       ) || [],
   }
