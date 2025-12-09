@@ -38,9 +38,9 @@ export const grid = recipe({
       15: { marginBottom: theme.spacing[15] },
       20: { marginBottom: theme.spacing[20] },
     },
-    defaultVariants: {
-      gap: theme.spacing[2],
-      marginBottom: theme.spacing[0],
-    },
+  },
+  defaultVariants: {
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[0],
   },
 })
