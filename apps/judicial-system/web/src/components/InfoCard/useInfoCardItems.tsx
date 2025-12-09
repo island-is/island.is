@@ -249,9 +249,9 @@ const useInfoCardItems = () => {
     id: 'split-cases-item',
     title: 'Klofinn frá',
     values:
-      workingCase.splitCases?.map((splitCase) =>
+      workingCase.splitCases?.flatMap((splitCase) =>
         splitCase.defendants?.map((defendant) => (
-          <Fragment key={splitCase.id}>
+          <Fragment key={defendant.id}>
             <Text>{defendant.name}</Text>
             <LinkComponent
               href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
