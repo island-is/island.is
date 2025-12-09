@@ -426,7 +426,7 @@ export class HealthDirectorateHealthService {
         meAppointmentControllerGetPatientAppointmentsV1({
           query: {
             fromStartTime: from ?? defaultFrom,
-            statuses: statuses,
+            status: statuses,
           },
         }),
       ),
