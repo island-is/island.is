@@ -26,7 +26,18 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
-import { Appointment, Appointments } from './models/appointments.model'
+import {
+  mapAppointmentStatus,
+  mapVaccinationStatus,
+} from './mappers/basicInformationMapper'
+import {
+  mapDelegationStatus,
+  mapDispensationItem,
+  mapPrescriptionCategory,
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+} from './mappers/medicineMapper'
+import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -48,17 +59,7 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import {
-  mapAppointmentStatus,
-  mapCountryPermitStatus,
-  mapDelegationStatus,
-  mapDispensationItem,
-  mapPermit,
-  mapPrescriptionCategory,
-  mapPrescriptionRenewalBlockedReason,
-  mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
+import { Appointment, Appointments } from './models/appointments.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -276,15 +277,15 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          type: item.productType,
-          form: item.productForm,
-          strength: item.productStrength,
-          url: item.productUrl,
-          quantity: item.productQuantity?.toString(),
-          prescriberName: item.prescriberName,
-          medCardDrugId: item.medCardDrugId,
+          id: item.product.id,
+          name: item.product.name,
+          type: item.product.type,
+          form: item.product.form,
+          strength: item.product.strength,
+          url: item.product.url,
+          quantity: item.product.quantity?.toString(),
+          prescriberName: item.prescriber.name,
+          medCardDrugId: item.medCard?.id,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -293,12 +294,12 @@ export class HealthDirectorateService {
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
-          isRenewable: item.isRenewable,
-          renewalBlockedReason: item.renewalBlockedReason
-            ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
+          isRenewable: item.renewal.isRenewable,
+          renewalBlockedReason: item.renewal.blockedReason
+            ? mapPrescriptionRenewalBlockedReason(item.renewal.blockedReason)
             : undefined,
-          renewalStatus: item.renewalStatus
-            ? mapPrescriptionRenewalStatus(item.renewalStatus)
+          renewalStatus: item.renewal.status
+            ? mapPrescriptionRenewalStatus(item.renewal.status)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
           dispensations: item.dispensations.map((dispensation) => {
@@ -381,10 +382,10 @@ export class HealthDirectorateService {
     const medicineHistory: Array<MedicineHistoryItem> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          strength: item.productStrength,
-          atcCode: item.productAtcCode,
+          id: item.product.id,
+          name: item.product.name,
+          strength: item.product.strength,
+          atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,

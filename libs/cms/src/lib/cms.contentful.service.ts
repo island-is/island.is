@@ -102,6 +102,8 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { mapCourse } from './models/course.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1558,5 +1560,40 @@ export class CmsContentfulService {
       )
 
     return items
+  }
+
+  async getCourseById(input: GetCourseByIdInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'course') {
+      return null
+    }
+
+    const mappedCourse = mapCourse(response as types.ICourse)
+
+    // Filter out instances that are in the past
+    const today = new Date()
+    mappedCourse.instances = mappedCourse.instances.filter(
+      (instance) =>
+        Boolean(instance.startDate) && new Date(instance.startDate) > today,
+    )
+
+    // Sort instances in ascending start date order
+    mappedCourse.instances.sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
+
+    return mappedCourse
   }
 }

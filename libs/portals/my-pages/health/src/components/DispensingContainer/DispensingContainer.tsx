@@ -15,6 +15,7 @@ import DispensingItem, { DispensingItemProps } from './DispensingItem'
 interface Props {
   label: string
   showMedicineName?: boolean
+  showStrength?: boolean
   data: DispensingItemProps[]
   backgroundColor?: 'blue' | 'white'
 }
@@ -23,6 +24,7 @@ const DispensingContainer: React.FC<Props> = ({
   label,
   data,
   showMedicineName = false,
+  showStrength = false,
   backgroundColor,
 }) => {
   const { formatMessage } = useLocale()
@@ -101,7 +103,11 @@ const DispensingContainer: React.FC<Props> = ({
                   ? formatMessage(messages.medicineTitle)
                   : undefined
               }
-              strength={formatMessage(messages.medicineStrength)}
+              strength={
+                showStrength
+                  ? formatMessage(messages.medicineStrength)
+                  : undefined
+              }
               bold
               icon={undefined}
             />

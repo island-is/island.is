@@ -22,6 +22,7 @@ import {
   DateType,
   DefendantEventType,
   EventType,
+  getDefendantServiceDate,
   getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
@@ -35,8 +36,8 @@ import {
   isRestrictionCase,
   isSuccessfulServiceStatus,
   PunishmentType,
-  ServiceRequirement,
   type User as TUser,
+  VerdictInfo,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -316,6 +317,15 @@ const generateIndictmentCaseStateTag = (
         },
         isInReview ? 'H' : 'G',
       )
+    }
+
+    // TODO: this will be fixed when we have considered ruling decision per defendant
+    if (
+      c.defendants &&
+      c.defendants.length > 0 &&
+      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+    ) {
+      return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
     }
 
     return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
@@ -617,6 +627,10 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue> = {
           attributes: ['serviceStatus'],
           order: [['created', 'DESC']],
           separate: true,
+        },
+        verdict: {
+          model: Verdict,
+          attributes: ['isDefaultJudgement'],
         },
       },
       separate: true,
@@ -980,23 +994,24 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       return generateCell()
     }
 
-    // TODO: fix this in the database so we can always fetch the service date
-    const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
-      true,
-      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? c.rulingDate
-        : d.verdict?.serviceDate,
-    ])
-    const [
-      indictmentVerdictViewedByAll,
-      indictmentVerdictAppealDeadlineExpired,
-    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
+    const verdictInfo: VerdictInfo[] | undefined = c.defendants?.map((d) => ({
+      canAppealVerdict: true,
+      serviceDate: getDefendantServiceDate({
+        verdict: d.verdict,
+        fallbackDate: c.rulingDate,
+      }),
+    }))
 
-    if (!indictmentVerdictViewedByAll) {
+    const {
+      isVerdictViewedByAllRequiredDefendants,
+      hasVerdictAppealDeadlineExpiredForAll,
+    } = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
+
+    if (!isVerdictViewedByAllRequiredDefendants) {
       return generateCell({ color: 'red', text: 'Óbirt' }, 'A')
     }
 
-    if (indictmentVerdictAppealDeadlineExpired) {
+    if (hasVerdictAppealDeadlineExpiredForAll) {
       return generateCell({ color: 'mint', text: 'Frestur liðinn' }, 'B')
     }
 
@@ -1062,8 +1077,30 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
 
 const indictmentRulingDecision: CaseTableCellGenerator<TagValue> = {
   attributes: ['indictmentRulingDecision'],
-  generate: (c: Case): CaseTableCell<TagValue> =>
-    generateIndictmentRulingDecisionTag(c.indictmentRulingDecision),
+  includes: {
+    defendants: {
+      model: Defendant,
+      order: [['created', 'ASC']],
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['isDefaultJudgement'],
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): CaseTableCell<TagValue> => {
+    // TODO: this will be fixed when we have considered ruling decision per defendant
+    if (
+      c.defendants &&
+      c.defendants.length > 0 &&
+      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+    ) {
+      return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
+    }
+    return generateIndictmentRulingDecisionTag(c.indictmentRulingDecision)
+  },
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
