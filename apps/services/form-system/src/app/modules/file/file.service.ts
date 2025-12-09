@@ -85,6 +85,7 @@ export class FileService {
           await value.save()
 
           this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
+          return
         } catch (error) {
           this.logger.error(`❌ Copy failed: ${error}`)
           throw error
