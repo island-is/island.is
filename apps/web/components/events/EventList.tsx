@@ -84,7 +84,7 @@ export const EventList = ({
               endDate,
             )
 
-            const link = linkResolver('organizationevent', [
+            const link = linkResolver('event', [
               parentPageSlug,
               event.slug,
             ])
@@ -145,7 +145,7 @@ export const EventList = ({
               eventItem.startDate,
               endDate,
             )
-            const eventHref = linkResolver('organizationevent', [
+            const eventHref = linkResolver('event', [
               parentPageSlug,
               eventItem.slug,
             ]).href
@@ -181,7 +181,7 @@ export const EventList = ({
         <Stack space={[3, 3, 4]}>
           {eventList.map((eventItem) => {
             const endDate = eventItem.time?.endDate
-            const eventHref = linkResolver('organizationevent', [
+            const eventHref = linkResolver('event', [
               parentPageSlug,
               eventItem.slug,
             ]).href

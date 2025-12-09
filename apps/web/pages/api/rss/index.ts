@@ -194,7 +194,7 @@ export default async function handler(
           fullUrl: organization
             ? `${baseUrl}${
                 linkResolver(
-                  'organizationevent',
+                  'event',
                   [organization, item.slug],
                   locale,
                 ).href
