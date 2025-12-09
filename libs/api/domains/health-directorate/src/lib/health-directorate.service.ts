@@ -23,6 +23,15 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
+import { mapVaccinationStatus } from './mappers/basicInformationMapper'
+import {
+  mapDelegationStatus,
+  mapDispensationItem,
+  mapPrescriptionCategory,
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+} from './mappers/medicineMapper'
+import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -44,16 +53,6 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import {
-  mapCountryPermitStatus,
-  mapDelegationStatus,
-  mapDispensationItem,
-  mapPermit,
-  mapPrescriptionCategory,
-  mapPrescriptionRenewalBlockedReason,
-  mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {

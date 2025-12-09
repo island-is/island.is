@@ -66,7 +66,8 @@ export const mapOrganizationParentSubpage = ({
             page.fields.organizationPage?.sys?.id ===
               fields.organizationPage?.sys?.id &&
             Boolean(page.fields.organizationPage?.fields?.slug) &&
-            Boolean(page.fields.slug),
+            Boolean(page.fields.slug) &&
+            Boolean(page.fields.title),
         )
         .map((page) => ({
           id: page.sys.id,

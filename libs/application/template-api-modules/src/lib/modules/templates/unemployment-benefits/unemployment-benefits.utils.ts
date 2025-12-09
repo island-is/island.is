@@ -122,7 +122,10 @@ export const getEducationInformation = (answers: FormValue) => {
       lastSemesterEducationInAnswers.sameAsAboveEducation?.includes(YES) &&
       currentEducation
     ) {
-      lastSemesterEducation = currentEducation
+      lastSemesterEducation = {
+        ...currentEducation,
+        credits: parseInt(lastSemesterEducationInAnswers?.units || ''),
+      }
     } else {
       lastSemesterEducation = {
         educationId: lastSemesterEducationInAnswers?.levelOfStudy,
@@ -143,7 +146,17 @@ export const getEducationInformation = (answers: FormValue) => {
       ) &&
       lastSemesterEducation
     ) {
-      graduationLastTwelveMonthsEducation = lastSemesterEducation
+      graduationLastTwelveMonthsEducation = {
+        ...lastSemesterEducation,
+        yearFinished: lastSemesterEducationInAnswers?.endDate
+          ? parseInt(lastSemesterEducationInAnswers?.endDate || '')
+          : parseInt(
+              graduationLastTwelveMonthsEducationInAnswers?.endDate || '',
+            ),
+        credits: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.units || '',
+        ),
+      }
     } else {
       graduationLastTwelveMonthsEducation = {
         educationId: graduationLastTwelveMonthsEducationInAnswers?.levelOfStudy,
