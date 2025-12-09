@@ -1076,30 +1076,30 @@ export const m = defineMessages({
     id: 'form.system:has-description',
     defaultMessage: 'Hefur lýsingu',
     description: 'Has description',
-    inProgress: {
-      id: 'form.system:in-progress',
-      defaultMessage: 'Í vinnslu',
-      description: 'In progress',
-    },
-    publishedInProgress: {
-      id: 'form.system:published-in-progress',
-      defaultMessage: 'Útgefið í vinnslu',
-      description: 'Published in progress',
-    },
-    published: {
-      id: 'form.system:published',
-      defaultMessage: 'Útgefið',
-      description: 'Published',
-    },
-    slugNotFound: {
-      id: 'form.system:slug-not-found',
-      defaultMessage: 'Tegund umsóknar fannst ekki',
-      description: 'Application type not found',
-    },
-    checkUrlPlease: {
-      id: 'form.system:check-url-please',
-      defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
-      description: 'Please check the URL.',
-    },
+  },
+  inProgress: {
+    id: 'form.system:in-progress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  publishedInProgress: {
+    id: 'form.system:published-in-progress',
+    defaultMessage: 'Útgefið í vinnslu',
+    description: 'Published in progress',
+  },
+  published: {
+    id: 'form.system:published',
+    defaultMessage: 'Útgefið',
+    description: 'Published',
+  },
+  slugNotFound: {
+    id: 'form.system:slug-not-found',
+    defaultMessage: 'Tegund umsóknar fannst ekki',
+    description: 'Application type not found',
+  },
+  checkUrlPlease: {
+    id: 'form.system:check-url-please',
+    defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
+    description: 'Please check the URL.',
   },
 })
