@@ -11,6 +11,7 @@ import {
   Request,
 } from './nodeFetch'
 import { EnhancedFetchAPI, AuthSource } from './types'
+import { logger } from '@island.is/logging'
 
 /**
  * Converts a globalThis.Request (browser-style Request) to a node-fetch Request.
@@ -34,12 +35,19 @@ const toNodeFetchRequest = async (
   const globalReqBody = globalReq.body
 
   let body: undefined | Readable = undefined
+  let alternativeBody: undefined | string = undefined
 
   // If the request is a globalThis.Request, the body will always be a ReadableStream
   if (globalReqBody instanceof ReadableStream) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body = Readable.fromWeb(globalReqBody as any)
   }
+  if (globalReqBody) {
+    alternativeBody = await globalReq.text()
+  }
+
+  logger.info('Converted globalThis.Request to node-fetch Request', body)
+  logger.info('Alternative body content:', alternativeBody)
 
   return new NodeFetchRequest(globalReq.url, {
     method: globalReq.method,
