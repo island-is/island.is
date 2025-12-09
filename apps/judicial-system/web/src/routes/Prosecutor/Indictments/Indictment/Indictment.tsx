@@ -455,7 +455,7 @@ const Indictment = () => {
               placeholder={formatMessage(
                 strings.indictmentIntroductionPlaceholder,
               )}
-              value={workingCase.indictmentIntroduction || ''}
+              value={indictmentIntroductionInput.value ?? ''}
               errorMessage={indictmentIntroductionInput.errorMessage}
               hasError={indictmentIntroductionInput.hasError}
               onChange={(evt) =>
@@ -558,7 +558,7 @@ const Indictment = () => {
                 name="civilDemands"
                 label={formatMessage(strings.civilDemandsLabel)}
                 placeholder={formatMessage(strings.civilDemandsPlaceholder)}
-                value={workingCase.civilDemands ?? ''}
+                value={civilDemandsInput.value ?? ''}
                 errorMessage={civilDemandsInput.errorMessage}
                 hasError={civilDemandsInput.hasError}
                 onChange={(evt) => civilDemandsInput.onChange(evt.target.value)}
