@@ -21,9 +21,9 @@ export const attachmentSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'attachments',
-      title: newPrimarySchoolMessages.differentNeeds.attachmentsPageTitle,
+      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
       description:
-        newPrimarySchoolMessages.differentNeeds.attachmentsPageDescription,
+        newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionDescription,
       children: [
         buildRadioField({
           id: 'attachments.answer',
