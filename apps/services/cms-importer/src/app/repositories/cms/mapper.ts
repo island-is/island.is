@@ -29,7 +29,7 @@ export const mapEnergyGrantToGenericListItem = (
     UOS_TAGS[data.tagOne],
     data.tagTwo ? UOS_TAGS[data.tagTwo] : undefined,
     data.tagThree ? UOS_TAGS[data.tagThree] : undefined,
-    YEAR_TAGS[data.year]
+    YEAR_TAGS[data.year],
   ]
     .filter(isDefined)
     .map((tagId) => ({
