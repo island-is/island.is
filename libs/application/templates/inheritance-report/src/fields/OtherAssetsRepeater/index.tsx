@@ -46,7 +46,7 @@ export const OtherAssetsRepeater: FC<
     index = 0,
   ) =>
     application.answers.applicationFor === PREPAID_INHERITANCE
-      ? {}
+      ? ''
       : getEstateDataFromApplication(application)?.inheritanceReportInfo
           ?.otherAssets?.[index]?.[fieldName] ?? ''
 
