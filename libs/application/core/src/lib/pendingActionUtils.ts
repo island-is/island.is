@@ -27,8 +27,9 @@ const isCurrentUserReviewPending = (
 
 /**
  *
- * @param currentUser - nationalId of the currently logged in user
+ * @param currentUser - nationalId of the currently logged-in user
  * @param reviewers - array of all reviewers for this state, if the reviewer has approved reviewer.hasApproved must be TRUE
+ * @returns a message telling the user to review if they need to, otherwise a list of reviewers yet to review.
  */
 export const getReviewStatePendingAction = (
   currentUser: string,
