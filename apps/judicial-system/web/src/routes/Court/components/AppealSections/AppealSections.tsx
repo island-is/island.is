@@ -257,7 +257,7 @@ const AppealSections: FC<Props> = ({
               }}
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </BlueBox>
         </Box>
@@ -396,7 +396,7 @@ const AppealSections: FC<Props> = ({
               }}
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </Box>
         </BlueBox>

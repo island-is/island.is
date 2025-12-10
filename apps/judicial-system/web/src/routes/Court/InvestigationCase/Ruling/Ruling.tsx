@@ -202,7 +202,7 @@ const Ruling = () => {
             hasError={introductionEM !== ''}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
+            autoExpand={{ on: true, maxHeight: 1300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -245,7 +245,7 @@ const Ruling = () => {
             hasError={prosecutorDemandsEM !== ''}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
+            autoExpand={{ on: true, maxHeight: 1300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -290,7 +290,7 @@ const Ruling = () => {
               hasError={courtCaseFactsEM !== ''}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -338,7 +338,7 @@ const Ruling = () => {
               hasError={courtLegalArgumentsEM !== ''}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -437,7 +437,7 @@ const Ruling = () => {
               )
             }
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
+            autoExpand={{ on: true, maxHeight: 1300 }}
             textarea
             disabled={!isRulingRequired}
           />

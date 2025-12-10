@@ -347,7 +347,7 @@ export const PoliceDemands = () => {
               required
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </Box>
         )}
@@ -406,7 +406,7 @@ export const PoliceDemands = () => {
               }
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </BlueBox>
         </Box>
@@ -515,7 +515,7 @@ export const PoliceDemands = () => {
                   )
                 }
                 rows={10}
-                autoExpand={{ on: true, maxHeight: 500 }}
+                autoExpand={{ on: true, maxHeight: 1300 }}
                 textarea
               />
             </BlueBox>

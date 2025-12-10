@@ -337,7 +337,7 @@ const CourtOfAppealRuling = () => {
                 textarea
                 rows={7}
                 required
-                autoExpand={{ on: true, maxHeight: 300 }}
+                autoExpand={{ on: true, maxHeight: 1300 }}
                 hasError={appealConclusionErrorMessage !== ''}
                 errorMessage={appealConclusionErrorMessage}
               />

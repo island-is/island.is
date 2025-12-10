@@ -478,7 +478,7 @@ const Indictment = () => {
               required
               autoComplete="off"
               rows={10}
-              autoExpand={{ on: true, maxHeight: 300 }}
+              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </Box>
           <AnimatePresence>
@@ -577,7 +577,7 @@ const Indictment = () => {
                 autoComplete="off"
                 required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
+                autoExpand={{ on: true, maxHeight: 1300 }}
               />
             </BlueBox>
           </Box>
@@ -617,7 +617,7 @@ const Indictment = () => {
                 autoComplete="off"
                 required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
+                autoExpand={{ on: true, maxHeight: 1300 }}
               />
             </Box>
           )}
