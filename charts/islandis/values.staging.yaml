@@ -1080,6 +1080,11 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-form'
+    create: true
+    name: 'application-system-form'
 cms-importer-energy-fund-import:
   args:
     - 'main.js'
@@ -1114,7 +1119,8 @@ cms-importer-energy-fund-import:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
