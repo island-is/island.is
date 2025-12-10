@@ -39,12 +39,19 @@ const useInfoCardItems = () => {
   const showItem = (item: Item) =>
     isNonEmptyArray(item.values) && !!item.values[0]
 
-  const defendants = (
-    caseType?: CaseType | null,
-    displayAppealExpirationInfo?: boolean,
-    displayVerdictViewDate?: boolean,
-    displaySentToPrisonAdminDate?: boolean,
-  ): Item => {
+  const defendants = ({
+    caseType,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+    displaySentToPrisonAdminDate,
+    displayOpenCaseReference,
+  }: {
+    caseType?: CaseType | null
+    displayAppealExpirationInfo?: boolean
+    displayVerdictViewDate?: boolean
+    displaySentToPrisonAdminDate?: boolean
+    displayOpenCaseReference?: boolean
+  }): Item => {
     const defendants = workingCase.defendants
     const isMultipleDefendants = defendants && defendants.length > 1
 
@@ -78,6 +85,8 @@ const useInfoCardItems = () => {
             >
               <DefendantInfo
                 defendant={defendant}
+                workingCaseId={workingCase.id}
+                courtId={workingCase.court?.id}
                 defender={{
                   name: workingCase.defenderName,
                   email: workingCase.defenderEmail,
@@ -87,6 +96,7 @@ const useInfoCardItems = () => {
                 displayAppealExpirationInfo={displayAppealExpirationInfo}
                 displayVerdictViewDate={displayVerdictViewDate}
                 displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
+                displayOpenCaseReference={displayOpenCaseReference}
               />
             </div>
           ))

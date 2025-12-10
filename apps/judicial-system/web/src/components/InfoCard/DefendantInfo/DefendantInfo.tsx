@@ -1,14 +1,20 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
+import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  districtCourtAbbreviation,
+  formatDate,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useConnectedCasesQuery } from '@island.is/judicial-system-web/src/routes/Court/Indictments/Conclusion/connectedCases.generated'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import {
@@ -17,6 +23,7 @@ import {
 } from './DefendantInfo.logic'
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
+import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
 
 interface Defender {
   name?: string | null
@@ -28,18 +35,24 @@ interface Defender {
 
 interface DefendantInfoProps {
   defendant: Defendant
+  workingCaseId: string
+  courtId?: string
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
+  displayOpenCaseReference?: boolean
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
+    workingCaseId,
+    courtId,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
     displaySentToPrisonAdminDate = true,
+    displayOpenCaseReference,
     defender,
   } = props
   const { formatMessage } = useIntl()
@@ -59,6 +72,44 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     isVerdictAppealDeadlineExpired: defendant.isVerdictAppealDeadlineExpired,
     serviceRequirement: defendant.verdict?.serviceRequirement,
   })
+
+  const { data: connectedCasesData } = useConnectedCasesQuery({
+    variables: {
+      input: {
+        id: workingCaseId,
+      },
+    },
+  })
+  const connectedCases = connectedCasesData?.connectedCases
+    ?.filter((connectedCase) =>
+      connectedCase?.defendants?.some(
+        (d) => d.nationalId === defendant.nationalId,
+      ),
+    )
+    .map((connectedCase) => {
+      const hasCourtAccess = courtId === connectedCase.court?.id
+      return hasCourtAccess ? (
+        <LinkV2
+          href={`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
+          className={link}
+          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
+        >
+          <Text as="span" whiteSpace="pre">
+            {connectedCase.courtCaseNumber}
+          </Text>
+        </LinkV2>
+      ) : (
+        <Text
+          as="span"
+          whiteSpace="pre"
+          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
+        >
+          {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
+            connectedCase.court?.name,
+          )})`}
+        </Text>
+      )
+    })
 
   return (
     <>
@@ -123,6 +174,36 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
           })}
         </Text>
+      )}
+      {displayOpenCaseReference && connectedCases && (
+        <Box marginTop={1}>
+          <Box display="flex" flexWrap="wrap">
+            <Box
+              display="inlineFlex"
+              columnGap={1}
+              alignItems="center"
+              marginRight={1}
+            >
+              <Icon
+                icon="warning"
+                size="medium"
+                color="blue400"
+                type="outline"
+              />
+              <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
+            </Box>
+            {connectedCases.map((connectedCase, i) => {
+              return (
+                <Box component="span" key={i}>
+                  {connectedCase}
+                  {i < connectedCases.length - 1 && (
+                    <Text as="span" whiteSpace="pre">{`, `}</Text>
+                  )}
+                </Box>
+              )
+            })}
+          </Box>
+        </Box>
       )}
     </>
   )
