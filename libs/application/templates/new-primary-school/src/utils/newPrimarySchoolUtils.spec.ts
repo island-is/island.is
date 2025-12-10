@@ -326,7 +326,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(true)
   })
-  it('Should return false if the application config with application type TRANSFER for the selected school includes key', () => {
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key', () => {
     application.answers = {
       applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
       newSchool: {
@@ -356,7 +356,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(true)
   })
-  it('Should return false if the application config with application type CONTINUATION for the current school includes key', () => {
+  it('Should return false if the application config with application type CONTINUATION for the current school does not include key', () => {
     application.answers = {
       applicationType: ApplicationType.CONTINUING_ENROLLMENT,
     }
@@ -385,7 +385,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(true)
   })
-  it('Should return false if the application config with application type ENROLLMENT for the preferred school includes key', () => {
+  it('Should return false if the application config with application type ENROLLMENT for the preferred school does not include key', () => {
     application.answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: {
@@ -421,7 +421,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(true)
   })
-  it('Should return false if the application config with application type TRANSFER for the selected school includes key', () => {
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key', () => {
     application.answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: {
