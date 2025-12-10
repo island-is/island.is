@@ -21,7 +21,9 @@ const isCurrentUserReviewPending = (
   currentUserNationalId: string,
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
 ) => {
-  const currentReviewer = reviewers.find((x) => x.nationalId === currentUserNationalId)
+  const currentReviewer = reviewers.find(
+    (x) => x.nationalId === currentUserNationalId,
+  )
   return currentReviewer?.hasApproved === false
 }
 
