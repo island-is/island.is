@@ -1,8 +1,17 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemForm } from '@island.is/api/schema'
+import { FormStatus } from '@island.is/form-system/enums'
 import { CREATE_FORM } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { Box, Button, GridRow } from '@island.is/island-ui/core'
-import { useContext, useEffect } from 'react'
+import {
+  Box,
+  Button,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
+  GridRow,
+} from '@island.is/island-ui/core'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
@@ -10,6 +19,12 @@ import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
 import { TableHeader } from './components/Table/TableHeader'
 import { TableRow } from './components/Table/TableRow'
+
+const defaultFormState = [
+  FormStatus.IN_DEVELOPMENT,
+  FormStatus.PUBLISHED,
+  FormStatus.PUBLISHED_BEING_CHANGED,
+]
 
 export const Forms = () => {
   const {
@@ -21,6 +36,35 @@ export const Forms = () => {
   } = useContext(FormsContext)
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
+  const [filter, setFilter] = useState<{
+    name: string
+    formState: Array<string>
+  }>({
+    name: '',
+    formState: defaultFormState,
+  })
+
+  const categories = [
+    {
+      id: 'formState',
+      label: 'Staða',
+      selected: filter.formState,
+      filters: [
+        {
+          value: FormStatus.IN_DEVELOPMENT,
+          label: 'Í vinnslu',
+        },
+        {
+          value: FormStatus.PUBLISHED,
+          label: 'Útgefin',
+        },
+        {
+          value: FormStatus.PUBLISHED_BEING_CHANGED,
+          label: 'Útgefin í vinnslu',
+        },
+      ],
+    },
+  ]
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
@@ -63,12 +107,24 @@ export const Forms = () => {
     }
   }, [])
 
+  const formFilter = (form: FormSystemForm) => {
+    const matchesStatus =
+      filter.formState.length === 0 || filter.formState.includes(form.status)
+
+    const matchesName =
+      filter.name.length === 0 ||
+      (form.name?.is &&
+        form.name.is.toLowerCase().includes(filter.name.toLowerCase()))
+
+    return matchesStatus && matchesName
+  }
+
   return (
     <>
       <GridRow>
         <Box
           marginTop={4}
-          marginBottom={8}
+          marginBottom={3}
           marginRight={1}
           marginLeft={2}
           display="flex"
@@ -90,23 +146,77 @@ export const Forms = () => {
           </Box>
         </Box>
       </GridRow>
+      <Box
+        display="flex"
+        width="full"
+        marginBottom={3}
+        justifyContent="flexEnd"
+      >
+        <Filter
+          labelClearAll="Hreinsa allar síur"
+          labelClear="Hreinsa síu"
+          labelOpen="Opna síu"
+          labelClose="Loka síu"
+          labelTitle="Sía API Vörulista"
+          labelResult="Sýna niðurstöður"
+          align="right"
+          onFilterClear={() =>
+            setFilter({
+              name: '',
+              formState: defaultFormState,
+            })
+          }
+          variant="popover"
+          filterInput={
+            <FilterInput
+              name="filter-input"
+              placeholder="Sía eftir leitarorði"
+              value={filter.name}
+              onChange={(value) => setFilter({ ...filter, name: value })}
+              button={{
+                label: 'Search',
+                onClick: () => undefined,
+              }}
+            />
+          }
+        >
+          <FilterMultiChoice
+            labelClear="Hreinsa val"
+            categories={categories}
+            onChange={(event) =>
+              setFilter({
+                ...filter,
+                [event.categoryId]: event.selected,
+              })
+            }
+            onClear={(categoryId) =>
+              setFilter({
+                ...filter,
+                [categoryId]: defaultFormState,
+              })
+            }
+          />
+        </Filter>
+      </Box>
       <TableHeader />
       {forms &&
-        forms?.map((f) => {
-          return (
-            <TableRow
-              key={f?.id}
-              id={f?.id}
-              name={f?.name?.is ?? ''}
-              isHeader={false}
-              translated={f?.isTranslated ?? false}
-              slug={f?.slug ?? ''}
-              beenPublished={f?.beenPublished ?? false}
-              setFormsState={setForms}
-              status={f?.status}
-            />
-          )
-        })}
+        forms
+          ?.filter((form) => formFilter(form))
+          .map((f) => {
+            return (
+              <TableRow
+                key={f?.id}
+                id={f?.id}
+                name={f?.name?.is ?? ''}
+                isHeader={false}
+                translated={f?.isTranslated ?? false}
+                slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
+                setFormsState={setForms}
+                status={f?.status}
+              />
+            )
+          })}
     </>
   )
 }
