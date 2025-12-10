@@ -565,15 +565,11 @@ export class VerdictService {
           }),
       )
 
-      if (!messages || messages.length === 0) {
-        return { queued: false }
-      }
-
       await transaction.commit()
 
       await this.messageService.sendMessagesToQueue(messages)
 
-      return { queued: true }
+      return { queued: messages.length > 0 }
     } catch (error) {
       this.logger.error(
         `Failed to add messages for case ${theCase.id} verdict delivery to queue`,
@@ -582,7 +578,7 @@ export class VerdictService {
 
       await transaction.rollback()
 
-      return { queued: false }
+      throw error
     }
   }
 
