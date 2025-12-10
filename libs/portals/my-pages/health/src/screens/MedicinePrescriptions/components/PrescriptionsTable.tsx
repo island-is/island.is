@@ -209,6 +209,11 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                           label={formatMessage(messages.dispenseHistory)}
                           data={item.dispensations.map((dispensation, di) => ({
                             date: formatDate(dispensation?.date),
+                            medicine: dispensation.name ?? '',
+                            strength: dispensation.strength ?? '',
+                            number: (di + 1).toString() ?? '',
+                            pharmacy: dispensation?.pharmacy ?? '',
+                            quantity: dispensation?.amount ?? '',
                             icon: (
                               <Icon
                                 icon={
@@ -221,17 +226,6 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                                 type="outline"
                               />
                             ),
-                            medicine:
-                              dispensation.items
-                                ?.map((item) => item.name)
-                                .join(', ') ?? '',
-                            strength:
-                              dispensation.items
-                                ?.map((item) => item.strength)
-                                .join(', ') ?? '',
-                            number: (di + 1).toString() ?? '',
-                            pharmacy: dispensation?.agentName ?? '',
-                            quantity: dispensation?.count.toString() ?? '',
                           }))}
                         />
                       )}
