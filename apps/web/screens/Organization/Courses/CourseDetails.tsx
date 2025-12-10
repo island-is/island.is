@@ -121,7 +121,9 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                       </Text>
                       <Text>{instance.description}</Text>
                     </Stack>
-                    <Text>{formatCurrency(instance.price?.amount ?? 0)}</Text>
+                    {Boolean(instance.price?.amount) && (
+                      <Text>{formatCurrency(instance.price?.amount ?? 0)}</Text>
+                    )}
                   </Stack>
                 </Box>
               ))}
