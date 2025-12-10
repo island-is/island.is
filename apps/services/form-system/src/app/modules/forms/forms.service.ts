@@ -127,6 +127,8 @@ export class FormsService {
       'invalidationDate',
       'created',
       'modified',
+      'submissionServiceUrl',
+      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -253,6 +255,9 @@ export class FormsService {
 
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
+
+    updateFormDto.submissionServiceUrl ??= ''
+    updateFormDto.validationServiceUrl ??= ''
 
     Object.assign(form, updateFormDto)
 
@@ -541,6 +546,7 @@ export class FormsService {
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
+      submissionUrls: await this.getSubmissionUrls(form.organizationId),
       submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
       validationUrls: await this.getUrls(
         form.organizationId,
@@ -557,6 +563,21 @@ export class FormsService {
     }
 
     return response
+  }
+
+  private async getSubmissionUrls(organizationId: string): Promise<string[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['submissionServiceUrl'],
+      where: { organizationId },
+    })
+
+    const urls = forms
+      .map((f) => f.submissionServiceUrl ?? '')
+      .map((u) => u.trim())
+      .filter((u) => u.length > 0 && u !== 'zendesk')
+
+    // Return unique values preserving insertion order
+    return Array.from(new Set(urls))
   }
 
   private async getUrls(
@@ -706,6 +727,8 @@ export class FormsService {
       'status',
       'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
+      'submissionServiceUrl',
+      'validationServiceUrl',
       'hasSummaryScreen',
       'completedSectionInfo',
       'dependencies',

@@ -397,7 +397,7 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Málakerfi',
+    defaultMessage: 'Innsendingarslóðir',
     description: 'Submission URLs',
   },
   validationUrls: {
