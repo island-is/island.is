@@ -15,7 +15,6 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   DefenderChoice,
-  EventType,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 
