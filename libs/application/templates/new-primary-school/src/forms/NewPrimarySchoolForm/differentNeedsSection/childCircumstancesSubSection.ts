@@ -12,6 +12,7 @@ export const childCircumstancesSubSection = buildSubSection({
   id: 'childCircumstancesSubSection',
   title:
     newPrimarySchoolMessages.differentNeeds.childCircumstancesSubSectionTitle,
+  // TODO: Hide section if CONTINUING_ENROLLMENT
   condition: (answers, externalData) =>
     shouldShowPage(
       answers,

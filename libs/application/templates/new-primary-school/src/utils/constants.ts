@@ -2,10 +2,9 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const FIRST_GRADE_AGE = 6
 export const TENTH_GRADE_AGE = 16
-
 export const NU_UNIT_ID = 'G-2236-A'
-
 export const RVK_MUNICIPALITY_ID = '0000'
+export const OTHER_OPTION = 'other'
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
@@ -123,7 +122,9 @@ export enum OrganizationSector {
 }
 
 export enum ApplicationFeatureConfigType {
-  REGISTRATION = 'registration',
+  ENROLLMENT = 'enrollment',
+  TRANSFER = 'transfer',
+  CONTINUATION = 'continuation',
 }
 
 export enum PayerOption {

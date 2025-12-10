@@ -34,6 +34,7 @@ import {
 export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
   title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
+  // TODO: Hide section if CONTINUING_ENROLLMENT
   condition: (answers, externalData) =>
     !hasSpecialEducationSubType(answers, externalData),
   children: [
