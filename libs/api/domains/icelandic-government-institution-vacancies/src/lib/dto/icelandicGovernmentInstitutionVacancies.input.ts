@@ -1,10 +1,14 @@
-import { Field, InputType } from '@nestjs/graphql'
-import { VacancyLanguageEnum } from '../models/enums'
+import { VacanciesGetLanguageEnum } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+
+registerEnumType(VacanciesGetLanguageEnum, {
+  name: 'VacanciesGetLanguageEnum',
+})
 
 @InputType()
 export class IcelandicGovernmentInstitutionVacanciesInput {
-  @Field(() => VacancyLanguageEnum, { nullable: true })
-  language?: VacancyLanguageEnum
+  @Field(() => VacanciesGetLanguageEnum, { nullable: true })
+  language?: VacanciesGetLanguageEnum
 
   @Field({ nullable: true })
   institution?: string

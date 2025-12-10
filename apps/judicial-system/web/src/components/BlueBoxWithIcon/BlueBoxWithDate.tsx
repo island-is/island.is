@@ -107,23 +107,23 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   const appealExpirationInfo = useMemo(() => {
     const { verdictAppealDeadline, isVerdictAppealDeadlineExpired } = defendant
-    const appealDeadlineResult =
-      verdictAppealDeadline != null
-        ? {
-            deadlineDate: verdictAppealDeadline,
-            isDeadlineExpired: !!isVerdictAppealDeadlineExpired,
-          }
-        : dates.serviceDate
-        ? getIndictmentAppealDeadline({
-            baseDate: dates.serviceDate,
-            isFine: false,
-          })
-        : undefined
+    const appealDeadlineResult = verdictAppealDeadline
+      ? {
+          deadlineDate: verdictAppealDeadline,
+          isDeadlineExpired: !!isVerdictAppealDeadlineExpired,
+        }
+      : dates.serviceDate
+      ? getIndictmentAppealDeadline({
+          baseDate: dates.serviceDate,
+          isFine: false,
+        })
+      : undefined
 
-    const deadlineDate = appealDeadlineResult?.deadlineDate
-    const isDeadlineExpired = appealDeadlineResult?.isDeadlineExpired ?? false
-
-    return getAppealExpirationInfo(deadlineDate, isDeadlineExpired)
+    return getAppealExpirationInfo({
+      verdictAppealDeadline: appealDeadlineResult?.deadlineDate,
+      isVerdictAppealDeadlineExpired:
+        appealDeadlineResult?.isDeadlineExpired ?? false,
+    })
   }, [dates.serviceDate, defendant])
 
   const serviceRequirementText = useMemo(
@@ -163,6 +163,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       texts.push(
         formatMessage(appealExpirationInfo.message, {
           appealExpirationDate: appealExpirationInfo.date,
+          deadlineType: verdict?.isDefaultJudgement
+            ? 'Endurupptökufrestur'
+            : 'Áfrýjunarfrestur',
         }),
       )
 

@@ -1,21 +1,34 @@
-import { buildOverviewField, NO, YES } from '@island.is/application/core'
+import { buildOverviewField, YES } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import {
+  hasSpecialEducationSubType,
+  shouldShowPage,
+  shouldShowReasonForApplicationPage,
+} from './conditionUtils'
+import {
+  ApplicationFeatureKey,
+  ApplicationType,
+  ReasonForApplicationOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from './newPrimarySchoolUtils'
 import {
   childItems,
+  counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
+  attachmentItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
+  payerItems,
   reasonForApplicationItems,
   relativesTable,
   schoolItems,
   siblingsTable,
+  specialEducationSupportItems,
   supportItems,
 } from './overviewItems'
 
@@ -70,7 +83,10 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.CONTINUING_ENROLLMENT
+        )
       },
     }),
     buildOverviewField({
@@ -98,21 +114,30 @@ export const overviewFields = (editable?: boolean) => {
           : undefined
       },
       items: schoolItems,
+      condition: (answers) => {
+        const { applicationType } = getApplicationAnswers(answers)
+
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        )
+      },
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
-      condition: (answers) => {
-        const { applicationType, applyForPreferredSchool } =
-          getApplicationAnswers(answers)
-
-        return (
-          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-          (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-            applyForPreferredSchool === NO)
-        )
-      },
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.counsellingRegardingApplication',
+      backId: editable ? 'counsellingRegardingApplication' : undefined,
+      loadItems: counsellingRegardingApplicationItems,
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',
@@ -142,6 +167,33 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+      condition: (answers, externalData) =>
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.specialEducationSupport',
+      backId: editable ? 'specialEducationSupport' : undefined,
+      loadItems: specialEducationSupportItems,
+      condition: (answers, externalData) =>
+        hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.payer',
+      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      backId: editable ? 'payer' : undefined,
+      items: payerItems,
+      condition: (answers, externalData) =>
+        shouldShowPage(
+          answers,
+          externalData,
+          ApplicationFeatureKey.PAYMENT_INFO,
+        ),
+    }),
+    buildOverviewField({
+      id: 'overview.attachments',
+      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+      attachments: attachmentItems,
+      hideIfEmpty: true,
     }),
   ]
 }

@@ -4,7 +4,7 @@ import { VerdictServiceStatus } from '@island.is/judicial-system/types'
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
-import { Case, Verdict } from '../../../repository'
+import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
 
 interface Then {
@@ -32,7 +32,12 @@ describe('InternalVerdictController - Update verdict', () => {
     caseFiles: [caseFile],
     courtCaseNumber,
   } as Case
-  const verdict = { id: verdictId, externalPoliceDocumentId } as Verdict
+  const verdict = {
+    id: verdictId,
+    caseId,
+    defendantId: defendantId1,
+    externalPoliceDocumentId,
+  } as Verdict
 
   const dto = {
     serviceDate: new Date(2025, 1, 1),
@@ -40,15 +45,15 @@ describe('InternalVerdictController - Update verdict', () => {
     comment: 'test',
   } as PoliceUpdateVerdictDto
 
-  let mockVerdictModel: typeof Verdict
+  let mockVerdictRepositoryService: VerdictRepositoryService
 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { internalVerdictController, verdictModel } =
+    const { internalVerdictController, verdictRepositoryService } =
       await createTestingVerdictModule()
 
-    mockVerdictModel = verdictModel
+    mockVerdictRepositoryService = verdictRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
@@ -68,20 +73,20 @@ describe('InternalVerdictController - Update verdict', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFind = mockVerdictModel.findOne as jest.Mock
-      mockFind.mockResolvedValueOnce([1, [verdict]])
-
-      const mockUpdate = mockVerdictModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedVerdict]])
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedVerdict)
 
       then = await givenWhenThen()
     })
 
     it('should update the verdict ', () => {
-      expect(mockVerdictModel.update).toHaveBeenCalledWith(dto, {
-        where: { id: verdictId },
-        returning: true,
-      })
+      expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId1,
+        verdictId,
+        dto,
+        { transaction: undefined },
+      )
       expect(then.result).toBe(updatedVerdict)
     })
   })

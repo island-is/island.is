@@ -70,6 +70,24 @@ enum Organization {
   TRANSPORT_AUTHORITY = '6IZT17s7stKJAmtPutjpD7',
 }
 
+export const zendeskConfig: Record<
+  Locale,
+  Record<string, { snippetUrl: string }>
+> = {
+  is: {
+    [Organization.TRANSPORT_AUTHORITY]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+  en: {
+    [Organization.TRANSPORT_AUTHORITY]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+}
+
 export const watsonConfig: Record<
   Locale,
   Record<string, WatsonChatPanelProps>
@@ -107,14 +125,6 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
-    [Organization.TRANSPORT_AUTHORITY]: {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
@@ -140,14 +150,6 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
-    },
-    [Organization.TRANSPORT_AUTHORITY]: {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
     },
   },
 }
