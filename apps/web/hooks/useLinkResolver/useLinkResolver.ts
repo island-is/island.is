@@ -155,7 +155,7 @@ export const routesTemplate = {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
   },
-  organizationevent: {
+  event: {
     is: '/s/[organization]/vidburdir/[slug]',
     en: '/en/o/[organization]/events/[slug]',
   },
