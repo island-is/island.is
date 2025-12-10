@@ -175,7 +175,7 @@ const Ruling = () => {
             onChange={(evt) => introductionInput.onChange(evt.target.value)}
             onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
             errorMessage={introductionInput.errorMessage}
-            hasError={introductionInput.errorMessage !== ''}
+            hasError={introductionInput.hasError}
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
@@ -202,7 +202,7 @@ const Ruling = () => {
             }
             onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
             errorMessage={prosecutorDemandsInput.errorMessage}
-            hasError={prosecutorDemandsInput.errorMessage !== ''}
+            hasError={prosecutorDemandsInput.hasError}
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
