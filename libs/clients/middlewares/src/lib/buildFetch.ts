@@ -11,7 +11,6 @@ import {
   Request,
 } from './nodeFetch'
 import { EnhancedFetchAPI, AuthSource } from './types'
-import { logger } from '@island.is/logging'
 
 /**
  * Converts a globalThis.Request (browser-style Request) to a node-fetch Request.
@@ -25,43 +24,33 @@ import { logger } from '@island.is/logging'
  *   as node-fetch expects a Node.js stream for the body.
  * - Returns a new node-fetch Request instance with the same URL, method, headers, body and redirect policy as the original request.
  */
+const toNodeFetchRequest = async (
+  globalReq: globalThis.Request,
+  init?: RequestInit,
+): Promise<NodeFetchRequest> => {
+  const headers = new NodeFetchHeaders()
+  globalReq.headers.forEach((value, key) => headers.set(key, value))
 
-// const toNodeFetchRequest = async (
-//   globalReq: globalThis.Request,
-//   init?: RequestInit,
-// ): Promise<NodeFetchRequest> => {
-//   const headers = new NodeFetchHeaders()
-//   globalReq.headers.forEach((value, key) => headers.set(key, value))
+  const globalReqBody = globalReq.body
 
-//   let body: undefined | string | Buffer = undefined
+  let body: undefined | Readable = undefined
 
-//   if (globalReq.body) {
-//     const contentType = globalReq.headers.get('content-type') || ''
+  // If the request is a globalThis.Request, the body will always be a ReadableStream
+  if (globalReqBody instanceof ReadableStream) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body = Readable.fromWeb(globalReqBody as any)
+  }
 
-//     if (
-//       contentType.includes('application/json') ||
-//       contentType.includes('text/') ||
-//       contentType.includes('application/x-www-form-urlencoded')
-//     ) {
-//       // Text-based content
-//       body = await globalReq.text()
-//     } else {
-//       // Binary content (images, files, etc.)
-//       body = Buffer.from(await globalReq.arrayBuffer())
-//     }
-//   }
+  return new NodeFetchRequest(globalReq.url, {
+    method: globalReq.method,
+    headers,
+    body,
+    redirect: globalReq.redirect,
+    signal: globalReq.signal,
+    ...init,
+  })
+}
 
-//   return new NodeFetchRequest(globalReq.url, {
-//     method: globalReq.method,
-//     headers,
-//     body,
-//     redirect: globalReq.redirect,
-//     signal: globalReq.signal,
-//     ...init,
-//   })
-// }
-
-// eslint-disable-next-line func-style
 export function buildFetch(actualFetch: NodeFetchAPI, authSource?: AuthSource) {
   let nextMiddleware: MiddlewareAPI = actualFetch
   const result = {
@@ -71,11 +60,21 @@ export function buildFetch(actualFetch: NodeFetchAPI, authSource?: AuthSource) {
       // Maps between DOM fetch API types and Node Fetch API types.
       return async (input, init?) => {
         // Normalize Request.
-        const request: Request = new Request(
-          input as RequestInfo,
-          init as RequestInit,
-          authSource,
-        )
+        let request: Request
+
+        if (input instanceof globalThis.Request) {
+          const nodeFetchRequest = await toNodeFetchRequest(
+            input,
+            init as RequestInit,
+          )
+          request = new Request(nodeFetchRequest, undefined, authSource)
+        } else {
+          request = new Request(
+            input as RequestInfo,
+            init as RequestInit,
+            authSource,
+          )
+        }
 
         const response = firstMiddleware(request)
         return response as unknown as Promise<Response>
