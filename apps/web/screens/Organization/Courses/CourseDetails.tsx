@@ -6,6 +6,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { formatCurrency } from '@island.is/shared/utils'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import type {
   Course,
@@ -113,11 +114,16 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   border="standard"
                   borderRadius="large"
                 >
-                  <Stack space={2}>
-                    <Text variant="h3" as="h3">
-                      {format(new Date(instance.startDate), 'do MMMM yyyy')}
-                    </Text>
-                    <Text>{instance.description}</Text>
+                  <Stack space={3}>
+                    <Stack space={2}>
+                      <Text variant="h3" as="h3">
+                        {format(new Date(instance.startDate), 'do MMMM yyyy')}
+                      </Text>
+                      <Text>{instance.description}</Text>
+                    </Stack>
+                    {Boolean(instance.price?.amount) && (
+                      <Text>{formatCurrency(instance.price?.amount ?? 0)}</Text>
+                    )}
                   </Stack>
                 </Box>
               ))}
