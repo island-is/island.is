@@ -58,7 +58,7 @@ export const Ruling = () => {
   const prosecutorDemandsInput = useDebouncedInput('prosecutorDemands', [
     'empty',
   ])
-  const conclusionInput = useDebouncedInput('conclusion', ['empty'])
+  const conclusionInput = useDebouncedInput('conclusion', [])
   const courtCaseFactsInput = useDebouncedInput('courtCaseFacts', ['empty'])
   const courtLegalArgumentsInput = useDebouncedInput('courtLegalArguments', [
     'empty',
@@ -293,6 +293,7 @@ export const Ruling = () => {
               strings.sections.introduction.placeholder,
             )}
             onChange={(evt) => introductionInput.onChange(evt.target.value)}
+            onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
             errorMessage={introductionInput.errorMessage}
             hasError={introductionInput.hasError}
             textarea
@@ -318,6 +319,7 @@ export const Ruling = () => {
             onChange={(evt) =>
               prosecutorDemandsInput.onChange(evt.target.value)
             }
+            onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
             errorMessage={prosecutorDemandsInput.errorMessage}
             hasError={prosecutorDemandsInput.hasError}
             textarea
@@ -345,6 +347,7 @@ export const Ruling = () => {
                 strings.sections.courtCaseFacts.placeholder,
               )}
               onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
               errorMessage={courtCaseFactsInput.errorMessage}
               hasError={courtCaseFactsInput.hasError}
               textarea
@@ -376,6 +379,9 @@ export const Ruling = () => {
               )}
               onChange={(evt) =>
                 courtLegalArgumentsInput.onChange(evt.target.value)
+              }
+              onBlur={(evt) =>
+                courtLegalArgumentsInput.onBlur(evt.target.value)
               }
               errorMessage={courtLegalArgumentsInput.errorMessage}
               hasError={courtLegalArgumentsInput.hasError}

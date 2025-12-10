@@ -327,6 +327,7 @@ const CourtRecord: FC = () => {
               value={courtLocationInput.value || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
               onChange={(evt) => courtLocationInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtLocationInput.onBlur(evt.target.value)}
               errorMessage={courtLocationInput.errorMessage}
               hasError={courtLocationInput.hasError}
               autoComplete="off"
@@ -393,6 +394,7 @@ const CourtRecord: FC = () => {
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
+              onBlur={(evt) => sessionBookingsInput.onBlur(evt.target.value)}
               errorMessage={sessionBookingsInput.errorMessage}
               hasError={sessionBookingsInput.hasError}
               textarea

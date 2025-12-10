@@ -454,6 +454,9 @@ const Indictment = () => {
               onChange={(evt) =>
                 indictmentIntroductionInput.onChange(evt.target.value)
               }
+              onBlur={(evt) =>
+                indictmentIntroductionInput.onBlur(evt.target.value)
+              }
               textarea
               required
               autoComplete="off"
@@ -531,7 +534,8 @@ const Indictment = () => {
                 label={formatMessage(strings.demandsLabel)}
                 placeholder={formatMessage(strings.demandsPlaceholder)}
                 value={demandsInput.value ?? ''}
-                onChange={(event) => demandsInput.onChange(event.target.value)}
+                onChange={(evt) => demandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
                 errorMessage={demandsInput.errorMessage}
                 hasError={demandsInput.hasError}
                 autoComplete="off"
@@ -555,6 +559,7 @@ const Indictment = () => {
                 errorMessage={civilDemandsInput.errorMessage}
                 hasError={civilDemandsInput.hasError}
                 onChange={(evt) => civilDemandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => civilDemandsInput.onBlur(evt.target.value)}
                 textarea
                 autoComplete="off"
                 required

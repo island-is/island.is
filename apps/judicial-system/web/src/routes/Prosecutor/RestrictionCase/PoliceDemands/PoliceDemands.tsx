@@ -322,6 +322,7 @@ export const PoliceDemands = () => {
               errorMessage={lawsBrokenInput.errorMessage}
               hasError={lawsBrokenInput.hasError}
               onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+              onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
               required
               textarea
               rows={7}

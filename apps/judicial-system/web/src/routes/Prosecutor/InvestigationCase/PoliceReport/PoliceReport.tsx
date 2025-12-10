@@ -101,6 +101,7 @@ const PoliceReport = () => {
             hasError={caseFactsInput.hasError}
             value={caseFactsInput.value || ''}
             onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
+            onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
             required
             rows={14}
             autoExpand={{ on: true, maxHeight: 600 }}
@@ -130,6 +131,7 @@ const PoliceReport = () => {
               errorMessage={legalArgumentsInput.errorMessage}
               hasError={legalArgumentsInput.hasError}
               onChange={(evt) => legalArgumentsInput.onChange(evt.target.value)}
+              onBlur={(evt) => legalArgumentsInput.onBlur(evt.target.value)}
               required
               textarea
               rows={14}

@@ -173,6 +173,7 @@ const Ruling = () => {
             placeholder={formatMessage(m.sections.introduction.placeholder)}
             value={introductionInput.value || ''}
             onChange={(evt) => introductionInput.onChange(evt.target.value)}
+            onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
             errorMessage={introductionInput.errorMessage}
             hasError={introductionInput.errorMessage !== ''}
             textarea
@@ -199,6 +200,7 @@ const Ruling = () => {
             onChange={(evt) =>
               prosecutorDemandsInput.onChange(evt.target.value)
             }
+            onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
             errorMessage={prosecutorDemandsInput.errorMessage}
             hasError={prosecutorDemandsInput.errorMessage !== ''}
             textarea
@@ -225,6 +227,7 @@ const Ruling = () => {
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
               value={courtCaseFactsInput.value || ''}
               onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
               errorMessage={courtCaseFactsInput.errorMessage}
               hasError={courtCaseFactsInput.hasError}
               textarea
@@ -255,6 +258,9 @@ const Ruling = () => {
               )}
               onChange={(evt) =>
                 courtLegalArgumentsInput.onChange(evt.target.value)
+              }
+              onBlur={(evt) =>
+                courtLegalArgumentsInput.onBlur(evt.target.value)
               }
               errorMessage={courtLegalArgumentsInput.errorMessage}
               hasError={courtLegalArgumentsInput.hasError}

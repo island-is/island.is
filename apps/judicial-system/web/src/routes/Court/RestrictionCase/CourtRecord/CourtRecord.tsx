@@ -75,7 +75,7 @@ export const CourtRecord: FC = () => {
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  const courtAttendeesInput = useDebouncedInput('courtAttendees', ['empty'])
+  const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
   const sessionBookingsInput = useDebouncedInput('sessionBookings', ['empty'])
   const endOfSessionBookingsInput = useDebouncedInput(
     'endOfSessionBookings',
@@ -392,6 +392,7 @@ export const CourtRecord: FC = () => {
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
+              onBlur={(evt) => sessionBookingsInput.onBlur(evt.target.value)}
               errorMessage={sessionBookingsInput.errorMessage}
               hasError={sessionBookingsInput.hasError}
               textarea

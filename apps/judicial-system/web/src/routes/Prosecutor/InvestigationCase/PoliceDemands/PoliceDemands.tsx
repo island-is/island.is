@@ -203,6 +203,7 @@ const PoliceDemands = () => {
             errorMessage={demandsInput.errorMessage}
             hasError={demandsInput.hasError}
             onChange={(evt) => demandsInput.onChange(evt.target.value)}
+            onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
             required
             textarea
             rows={7}
@@ -228,6 +229,7 @@ const PoliceDemands = () => {
             errorMessage={lawsBrokenInput.errorMessage}
             hasError={lawsBrokenInput.hasError}
             onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+            onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
             required
             textarea
             rows={7}
@@ -251,6 +253,7 @@ const PoliceDemands = () => {
             errorMessage={legalBasisInput.errorMessage}
             hasError={legalBasisInput.hasError}
             onChange={(event) => legalBasisInput.onChange(event.target.value)}
+            onBlur={(event) => legalBasisInput.onBlur(event.target.value)}
             required
             textarea
             rows={7}

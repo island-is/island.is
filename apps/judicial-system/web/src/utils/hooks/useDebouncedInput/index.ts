@@ -6,6 +6,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  validateAndSetErrorMessage,
 } from '../../formHelper'
 import { Validation } from '../../validate'
 import { UpdateCase, useCase } from '..'
@@ -33,6 +34,10 @@ const useDebouncedInput = <T extends keyof UpdateCase>(
   useDebounce(
     () => {
       if (hasUserEdited) {
+        if (value === '') {
+          return
+        }
+
         validateAndSendToServer(
           fieldName,
           value,
@@ -63,11 +68,18 @@ const useDebouncedInput = <T extends keyof UpdateCase>(
     [fieldName, validations, setWorkingCase, errorMessage],
   )
 
+  const handleBlur = useCallback(
+    (value: UpdateCase[T]) =>
+      validateAndSetErrorMessage(validations, value, setErrorMessage),
+    [validations],
+  )
+
   return {
     value,
     errorMessage,
     hasError: errorMessage !== '',
     onChange: handleChange,
+    onBlur: handleBlur,
   }
 }
 
