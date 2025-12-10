@@ -1,4 +1,5 @@
 import {
+  ActionCard,
   AlertMessage,
   Box,
   SkeletonLoader,
@@ -6,7 +7,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  ActionCard,
   IntroWrapper,
   m,
   SJUKRATRYGGINGAR_SLUG,
@@ -15,10 +15,11 @@ import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
+import { useNavigate } from 'react-router-dom'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
@@ -69,11 +70,19 @@ export const MedicineLicense = () => {
                     cta={{
                       label: formatMessage(m.view),
                       variant: 'text',
-                      url: certificate.id
-                        ? HealthPaths.HealthMedicineCertificate.replace(
-                            ':name',
-                            certificate.drugName ?? certificate.id.toString(),
-                          ).replace(':id', certificate.id.toString())
+                      onClick: certificate.id
+                        ? () =>
+                            navigate(
+                              HealthPaths.HealthMedicineCertificate.replace(
+                                ':name',
+                                certificate.drugName ??
+                                  certificate.id?.toString() ??
+                                  '',
+                              ).replace(
+                                ':id',
+                                certificate.id?.toString() ?? '',
+                              ),
+                            )
                         : undefined,
                     }}
                   />

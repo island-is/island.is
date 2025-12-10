@@ -1,7 +1,6 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   HUGVERKASTOFAN_SLUG,
   IntroWrapper,
@@ -12,11 +11,12 @@ import { isDefined } from '@island.is/shared/utils'
 import { ipMessages } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
+import { useNavigate } from 'react-router-dom'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const { loading, data, error } = useGetIntellectualPropertiesQuery()
 
   const generateActionCard = (
@@ -34,7 +34,7 @@ const IntellectualPropertiesOverview = () => {
         cta={{
           label: formatMessage(m.view),
           variant: 'text',
-          url: url ?? '',
+          onClick: () => navigate(url ?? ''),
         }}
         tag={{
           variant: 'blue',
