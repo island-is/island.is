@@ -20,9 +20,9 @@ const getPendingReviewersText = (
 const isCurrentUserReviewPending = (
   currentUser: string,
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
-)=> {
+) => {
   const currentReviewer = reviewers.find((x) => x.nationalId === currentUser)
-  return currentReviewer?.hasApproved === false;
+  return currentReviewer?.hasApproved === false
 }
 
 /**
