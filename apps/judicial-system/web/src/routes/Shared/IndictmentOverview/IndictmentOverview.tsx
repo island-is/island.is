@@ -107,7 +107,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { user } = useContext(UserContext)

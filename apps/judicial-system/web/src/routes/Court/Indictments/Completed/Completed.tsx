@@ -52,7 +52,7 @@ const Completed: FC = () => {
   const { deliverCaseVerdict } = useVerdict()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =

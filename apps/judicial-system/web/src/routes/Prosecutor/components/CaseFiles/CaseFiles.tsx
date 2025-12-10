@@ -30,7 +30,6 @@ import {
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
-  useCase,
   useDebouncedInput,
   useFileList,
   useS3Upload,
@@ -81,7 +80,6 @@ export const CaseFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { updateCase } = useCase()
 
   const caseFilesComments = useDebouncedInput('caseFilesComments', [])
 
