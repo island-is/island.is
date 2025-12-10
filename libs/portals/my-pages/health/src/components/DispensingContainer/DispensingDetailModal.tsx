@@ -80,29 +80,33 @@ const DispensingDetailModal: React.FC<Props> = ({
                   value={activeDispensation.name}
                 />
                 <DispensingDetailModalItem
+                  label={formatMessage(messages.medicineStrength)}
+                  value={activeDispensation.strength}
+                />
+                <DispensingDetailModalItem
+                  blue
                   label={formatMessage(messages.type)}
                   value={activeDispensation.type}
                 />
                 <DispensingDetailModalItem
-                  blue
                   label={formatMessage(messages.prescribedAmount)}
                   value={activeDispensation.quantity}
                 />
                 <DispensingDetailModalItem
+                  blue
                   label={formatMessage(messages.usageInstructions)}
                   value={activeDispensation.dosageInstructions}
                 />
                 <DispensingDetailModalItem
-                  blue
                   label={formatMessage(messages.usedFor)}
                   value={activeDispensation.indication}
                 />
                 <DispensingDetailModalItem
+                  blue
                   label={formatMessage(messages.publicationDate)}
                   value={formatDate(activeDispensation.issueDate)}
                 />
                 <DispensingDetailModalItem
-                  blue
                   label={formatMessage(messages.medicineValidTo)}
                   value={formatDate(activeDispensation.expirationDate)}
                   tag={
@@ -118,6 +122,7 @@ const DispensingDetailModal: React.FC<Props> = ({
                   }
                 />
                 <DispensingDetailModalItem
+                  blue
                   label={formatMessage(messages.doctor)}
                   value={activeDispensation.prescriberName}
                 />

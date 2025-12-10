@@ -94,7 +94,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
         items={
           prescriptions?.map((item, i) => ({
             id: `${item.id}-${i}`,
-            medicine: item?.name ?? '',
+            medicine: item?.name + ' ' + item?.strength,
             usedFor: item?.indication ?? '',
             process: item?.amountRemaining ?? '',
             validTo: formatDate(item?.expiryDate) ?? '',
@@ -125,115 +125,109 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             children: (
               <Box background="blue100" paddingBottom={1}>
                 <Stack space={2}>
-                  {pdfLoading &&
-                  (!item.documents || item.documents.length === 0) ? (
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      padding={3}
-                    >
-                      <LoadingDots />
-                    </Box>
-                  ) : (
-                    <>
-                      <NestedInfoLines
+                  <>
+                    <NestedInfoLines
+                      backgroundColor="blue"
+                      label={formatMessage(messages.moreDetailedInfo)}
+                      data={[
+                        {
+                          title: formatMessage(messages.medicineTitle),
+                          value: item?.name ?? '',
+                          href: item?.url ?? '',
+                          type: 'link',
+                        },
+                        {
+                          title: formatMessage(messages.medicineStrength),
+                          value: item?.strength ?? '',
+                        },
+                        {
+                          title: formatMessage(messages.usedFor),
+                          value: item?.indication ?? '',
+                        },
+                        {
+                          title: formatMessage(messages.usage),
+                          value: item?.dosageInstructions ?? '',
+                        },
+                        ...(pdfLoading
+                          ? [
+                              {
+                                title: formatMessage(messages.fylgiskjalNr, {
+                                  arg: 1,
+                                }),
+                                value: <LoadingDots />,
+                              },
+                            ]
+                          : item.documents?.map((doc, index) => ({
+                              title: formatMessage(messages.fylgiskjalNr, {
+                                arg: index + 1,
+                              }),
+                              value: formatMessage(messages.openFylgiskjalNr, {
+                                arg: index + 1,
+                              }),
+                              type: 'link' as const,
+                              href: doc.url ?? '',
+                            })) ?? []),
+                        {
+                          title: formatMessage(messages.type),
+                          value: item?.type ?? '',
+                        },
+                        {
+                          title: formatMessage(messages.medicineForm),
+                          value: item?.form ?? '',
+                        },
+
+                        {
+                          title: formatMessage(messages.prescribedAmount),
+                          value: item?.totalPrescribedAmount ?? '',
+                        },
+                      ]}
+                    />
+                    <NestedInfoLines
+                      backgroundColor="blue"
+                      label={formatMessage(messages.version)}
+                      data={[
+                        {
+                          title: formatMessage(messages.publicationDate),
+                          value: formatDate(item?.issueDate) ?? '',
+                        },
+                        {
+                          title: formatMessage(messages.doctor),
+                          value: item?.prescriberName ?? '',
+                        },
+                        {
+                          title: formatMessage(messages.medicineValidTo),
+                          value: formatDate(item?.expiryDate) ?? '',
+                        },
+                      ]}
+                    />
+                    {item.dispensations.length > 0 && (
+                      <DispensingContainer
                         backgroundColor="blue"
-                        label={formatMessage(messages.moreDetailedInfo)}
-                        data={[
-                          {
-                            title: formatMessage(messages.medicineTitle),
-                            value: item?.name ?? '',
-                            href: item?.url ?? '',
-                            type: 'link',
-                          },
-                          {
-                            title: formatMessage(messages.medicineStrength),
-                            value: item?.strength ?? '',
-                          },
-                          ...(item.documents?.map((doc, index) => ({
-                            title: formatMessage(messages.fylgiskjalNr, {
-                              arg: index + 1,
-                            }),
-                            value: formatMessage(messages.openFylgiskjalNr, {
-                              arg: index + 1,
-                            }),
-                            type: 'link' as const,
-                            href: doc.url ?? '',
-                          })) ?? []),
-                          {
-                            title: formatMessage(messages.type),
-                            value: item?.type ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.medicineForm),
-                            value: item?.form ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.usedFor),
-                            value: item?.indication ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.prescribedAmount),
-                            value: item?.totalPrescribedAmount ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.usage),
-                            value: item?.dosageInstructions ?? '',
-                          },
-                        ]}
+                        showMedicineName
+                        showStrength
+                        label={formatMessage(messages.dispenseHistory)}
+                        data={item.dispensations.map((dispensation, di) => ({
+                          id:
+                            dispensation.id.toString() ??
+                            dispensation.name + '-' + di.toString(),
+                          date: formatDate(dispensation?.date),
+                          medicine: dispensation.name ?? '',
+                          strength: dispensation.strength ?? '',
+                          number: (di + 1).toString() ?? '',
+                          pharmacy: dispensation?.pharmacy ?? '',
+                          quantity: dispensation?.amount ?? '',
+                          icon: (
+                            <Icon
+                              icon={dispensation?.date ? 'checkmark' : 'remove'}
+                              size="medium"
+                              color={dispensation?.date ? 'mint600' : 'dark300'}
+                              type="outline"
+                            />
+                          ),
+                        }))}
                       />
-                      <NestedInfoLines
-                        backgroundColor="blue"
-                        label={formatMessage(messages.version)}
-                        data={[
-                          {
-                            title: formatMessage(messages.publicationDate),
-                            value: formatDate(item?.issueDate) ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.doctor),
-                            value: item?.prescriberName ?? '',
-                          },
-                          {
-                            title: formatMessage(messages.medicineValidTo),
-                            value: formatDate(item?.expiryDate) ?? '',
-                          },
-                        ]}
-                      />
-                      {item.dispensations.length > 0 && (
-                        <DispensingContainer
-                          backgroundColor="blue"
-                          showMedicineName
-                          showStrength
-                          label={formatMessage(messages.dispenseHistory)}
-                          data={item.dispensations.map((dispensation, di) => ({
-                            id:
-                              dispensation.id.toString() ??
-                              dispensation.name + '-' + di.toString(),
-                            date: formatDate(dispensation?.date),
-                            medicine: dispensation.name ?? '',
-                            strength: dispensation.strength ?? '',
-                            number: (di + 1).toString() ?? '',
-                            pharmacy: dispensation?.pharmacy ?? '',
-                            quantity: dispensation?.amount ?? '',
-                            icon: (
-                              <Icon
-                                icon={
-                                  dispensation?.date ? 'checkmark' : 'remove'
-                                }
-                                size="medium"
-                                color={
-                                  dispensation?.date ? 'mint600' : 'dark300'
-                                }
-                                type="outline"
-                              />
-                            ),
-                          }))}
-                        />
-                      )}
-                    </>
-                  )}
+                    )}
+                  </>
                 </Stack>
               </Box>
             ),

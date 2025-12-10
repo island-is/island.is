@@ -108,5 +108,6 @@ export const mapDispensationItem = (
     expirationDate: item.expirationDate,
     isExpired: item.isExpired,
     date: item.dispensationDate,
+    strength: item.product.strength ?? '',
   }
 }

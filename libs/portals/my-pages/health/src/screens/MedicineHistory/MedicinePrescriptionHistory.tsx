@@ -98,6 +98,7 @@ const MedicinePrescriptionHistory = () => {
                     backgroundColor="blue"
                     label={formatMessage(messages.dispenseHistory)}
                     showMedicineName
+                    showStrength
                     data={(dispensations && dispensations.id === item.atcCode
                       ? dispensations.data
                       : item.dispensations
@@ -120,7 +121,7 @@ const MedicinePrescriptionHistory = () => {
                         date: subItem.date
                           ? formatDate(new Date(subItem.date))
                           : '',
-
+                        strength: subItem.strength ?? '',
                         medicine:
                           subItem?.name ??
                           item.name ??
