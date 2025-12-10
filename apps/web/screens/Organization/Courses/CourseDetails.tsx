@@ -121,9 +121,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                       </Text>
                       <Text>{instance.description}</Text>
                     </Stack>
-                    <Text fontWeight="semiBold">
-                      {formatCurrency(instance.price?.amount ?? 0)}
-                    </Text>
+                    <Text>{formatCurrency(instance.price?.amount ?? 0)}</Text>
                   </Stack>
                 </Box>
               ))}
