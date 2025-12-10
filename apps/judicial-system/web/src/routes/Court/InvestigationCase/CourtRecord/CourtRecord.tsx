@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -43,13 +43,8 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   formatDateForServer,
   useCase,
-  useDeb,
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -99,7 +94,7 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord: FC = () => {
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -109,22 +104,20 @@ const CourtRecord: FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationEM, setCourtLocationEM] = useState<string>('')
   const sessionBookingValidation: Validation[] =
     workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
       ? []
       : ['empty']
   const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
+  const courtLocationInput = useDebouncedInput('courtLocation', ['empty'])
   const sessionBookingsInput = useDebouncedInput(
     'sessionBookings',
     sessionBookingValidation,
   )
-
-  useDeb(workingCase, [
-    'accusedAppealAnnouncement',
-    'prosecutorAppealAnnouncement',
+  const endOfSessionBookingsInput = useDebouncedInput(
     'endOfSessionBookings',
-  ])
+    [],
+  )
 
   const hasMissingInfoInRulingStep = workingCase.isCompletedWithoutRuling
     ? !workingCase.decision
@@ -331,30 +324,11 @@ const CourtRecord: FC = () => {
               name="courtLocation"
               tooltip={formatMessage(m.sections.courtLocation.tooltip)}
               label={formatMessage(m.sections.courtLocation.label)}
-              value={workingCase.courtLocation || ''}
+              value={courtLocationInput.value || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLocationEM,
-                  setCourtLocationEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLocationEM,
-                )
-              }
-              errorMessage={courtLocationEM}
-              hasError={courtLocationEM !== ''}
+              onChange={(evt) => courtLocationInput.onChange(evt.target.value)}
+              errorMessage={courtLocationInput.errorMessage}
+              hasError={courtLocationInput.hasError}
               autoComplete="off"
               required
             />
@@ -458,26 +432,12 @@ const CourtRecord: FC = () => {
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
               label={formatMessage(m.sections.endOfSessionBookings.label)}
-              value={workingCase.endOfSessionBookings || ''}
+              value={endOfSessionBookingsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.endOfSessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
+              onChange={(evt) =>
+                endOfSessionBookingsInput.onChange(evt.target.value)
               }
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
