@@ -535,13 +535,13 @@ export class VerdictService {
             defendant.verdicts?.[0]?.serviceRequirement ===
             ServiceRequirement.REQUIRED,
         )
-        .map((defendant) => {
+        .map(async (defendant) => {
           // Only the latest verdict is relevant
           const verdict = defendant.verdicts?.[0]
 
           if (verdict?.externalPoliceDocumentId) {
             // Replace the verdict if an older one has already been sent to police
-            this.verdictRepositoryService.create(
+            await this.verdictRepositoryService.create(
               {
                 defendantId: defendant.id,
                 caseId: theCase.id,
