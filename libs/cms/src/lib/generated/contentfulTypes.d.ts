@@ -800,14 +800,17 @@ export interface ICourseFields {
   /** Title */
   title: string
 
+  /** Card Intro */
+  cardIntro?: Document | undefined
+
   /** Description */
   description?: Document | undefined
 
-  /** Instances */
-  instances?: ICourseInstance[] | undefined
-
   /** Categories */
   categories?: IGenericTag[] | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
 }
 
 export interface ICourse extends Entry<ICourseFields> {
@@ -828,9 +831,6 @@ export interface ICourse extends Entry<ICourseFields> {
 }
 
 export interface ICourseInstanceFields {
-  /** Course */
-  course: ICourse
-
   /** Internal Title */
   internalTitle?: string | undefined
 

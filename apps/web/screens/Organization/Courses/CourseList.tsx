@@ -194,7 +194,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
                     item={{
                       title: item.title,
                       slug: item.id,
-                      cardIntro: [],
+                      cardIntro: item.cardIntro,
                       id: item.id,
                       filterTags: item.categories.map((category) => ({
                         id: category.id,

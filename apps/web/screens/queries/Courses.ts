@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { slices } from './fragments'
+import { htmlFields, slices } from './fragments'
 
 export const GET_ORGANIZATION_COURSES_QUERY = gql`
   query GetCourses($input: GetCoursesInput!) {
@@ -9,6 +9,9 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
       items {
         id
         title
+        cardIntro {
+          ...HtmlFields
+        }
         categories {
           id
           title
@@ -23,6 +26,7 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
       }
     }
   }
+  ${htmlFields}
 `
 
 export const GET_COURSE_CATEGORIES_QUERY = gql`
