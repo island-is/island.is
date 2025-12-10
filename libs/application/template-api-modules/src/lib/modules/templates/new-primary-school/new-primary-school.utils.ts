@@ -5,7 +5,6 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   hasBehaviorSchoolOrDepartmentSubType,
-  hasSpecialEducationBehaviorSubType,
   hasSpecialEducationCaseManager,
   hasSpecialEducationSubType,
   hasSpecialEducationWelfareContact,
@@ -234,7 +233,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
-  const isSpecialEducationBehavior = hasSpecialEducationBehaviorSubType(
+  const isSpecialEducationBehavior = hasBehaviorSchoolOrDepartmentSubType(
     application.answers,
     application.externalData,
   )

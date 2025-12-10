@@ -173,29 +173,6 @@ export const hasSpecialEducationSubType = (
   )
 }
 
-export const hasSpecialEducationBehaviorSubType = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
-
-  if (
-    !selectedSchoolSubType ||
-    selectedSchoolSubType ===
-      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT ||
-    selectedSchoolSubType ===
-      OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL
-  )
-    return false
-
-  return (
-    selectedSchoolSubType ===
-      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT ||
-    selectedSchoolSubType ===
-      OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL
-  )
-}
-
 export const shouldShowAlternativeSpecialEducationDepartment = (
   answers: FormValue,
   externalData: ExternalData,
