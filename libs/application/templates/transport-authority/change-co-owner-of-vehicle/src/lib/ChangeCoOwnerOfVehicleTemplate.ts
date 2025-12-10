@@ -41,7 +41,6 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
-  hasReviewerApproved,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
