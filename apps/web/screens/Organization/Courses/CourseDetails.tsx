@@ -97,31 +97,33 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           {course.title}
         </Text>
         <Box>{webRichText(course.description)}</Box>
-        <Stack space={3}>
-          <Text variant="h2" as="h2">
-            {n(
-              'courseInstancesLabel',
-              activeLocale === 'is' ? 'Dagsetningar' : 'Dates',
-            )}
-          </Text>
+        {course.instances.length > 0 && (
           <Stack space={3}>
-            {course.instances.map((instance) => (
-              <Box
-                key={instance.id}
-                padding={2}
-                border="standard"
-                borderRadius="large"
-              >
-                <Stack space={2}>
-                  <Text variant="h3" as="h3">
-                    {format(new Date(instance.startDate), 'do MMMM yyyy')}
-                  </Text>
-                  <Text>{instance.description}</Text>
-                </Stack>
-              </Box>
-            ))}
+            <Text variant="h2" as="h2">
+              {n(
+                'courseInstancesLabel',
+                activeLocale === 'is' ? 'Dagsetningar' : 'Dates',
+              )}
+            </Text>
+            <Stack space={3}>
+              {course.instances.map((instance) => (
+                <Box
+                  key={instance.id}
+                  padding={2}
+                  border="standard"
+                  borderRadius="large"
+                >
+                  <Stack space={2}>
+                    <Text variant="h3" as="h3">
+                      {format(new Date(instance.startDate), 'do MMMM yyyy')}
+                    </Text>
+                    <Text>{instance.description}</Text>
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
           </Stack>
-        </Stack>
+        )}
       </Stack>
     </OrganizationWrapper>
   )

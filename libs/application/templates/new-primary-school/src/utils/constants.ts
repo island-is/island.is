@@ -2,6 +2,8 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const FIRST_GRADE_AGE = 6
 export const TENTH_GRADE_AGE = 16
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png'
+export const FILE_SIZE_LIMIT = 5000000 // 5MB
 export const NU_UNIT_ID = 'G-2236-A'
 export const RVK_MUNICIPALITY_ID = '0000'
 export const OTHER_OPTION = 'other'
@@ -105,6 +107,12 @@ export enum ApplicationType {
 export enum CaseWorkerInputTypeEnum {
   CaseManager = 'caseManager',
   SupportManager = 'supportManager',
+}
+
+export enum AttachmentOptions {
+  ATTACHMENTS = 'attachments', // only electronic
+  PHYSICAL = 'physical', // only on paper
+  ATTACHMENTS_AND_PHYSICAL = 'attachmentsAndPhysical', // electronic and on paper
 }
 
 export enum OrganizationSubType {

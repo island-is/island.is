@@ -22,6 +22,7 @@ import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -36,6 +37,7 @@ import {
   AgentType,
   ApplicationFeatureConfigType,
   ApplicationType,
+  AttachmentOptions,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   OptionsType,
@@ -370,6 +372,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const attachmentsFiles =
+    getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
+
+  const attachmentsAnswer = getValueViaPath<AttachmentOptions>(
+    answers,
+    'attachments.answer',
+  )
+
   const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
 
   const fieldInspection = getValueViaPath<YesOrNo>(
@@ -467,6 +477,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachmentsFiles,
+    attachmentsAnswer,
     terms,
     fieldInspection,
     additionalDataProvisioning,
