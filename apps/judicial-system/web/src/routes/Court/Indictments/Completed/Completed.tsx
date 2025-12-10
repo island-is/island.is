@@ -80,7 +80,7 @@ const Completed: FC = () => {
   const completeCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
 
-    const eventLogCreated = createEventLog({
+    const eventLogCreated = await createEventLog({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
     })
