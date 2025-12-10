@@ -529,38 +529,41 @@ export class VerdictService {
     const transaction = await this.sequelize.transaction()
 
     try {
-      const messages = theCase.defendants
-        ?.filter(
-          (defendant) =>
-            defendant.verdicts?.[0]?.serviceRequirement ===
-            ServiceRequirement.REQUIRED,
-        )
-        .map(async (defendant) => {
-          // Only the latest verdict is relevant
-          const verdict = defendant.verdicts?.[0]
+      const defendants = theCase.defendants ?? []
+      const messages = await Promise.all(
+        defendants
+          .filter(
+            (defendant) =>
+              defendant.verdicts?.[0]?.serviceRequirement ===
+              ServiceRequirement.REQUIRED,
+          )
+          .map(async (defendant) => {
+            // Only the latest verdict is relevant
+            const verdict = defendant.verdicts?.[0]
 
-          if (verdict?.externalPoliceDocumentId) {
-            // Replace the verdict if an older one has already been sent to police
-            await this.verdictRepositoryService.create(
-              {
-                defendantId: defendant.id,
-                caseId: theCase.id,
-                serviceRequirement: ServiceRequirement.REQUIRED,
-                serviceInformationForDefendant:
-                  verdict.serviceInformationForDefendant,
-                isDefaultJudgement: verdict.isDefaultJudgement,
-              },
-              { transaction },
-            )
-          }
+            if (verdict?.externalPoliceDocumentId) {
+              // Replace the verdict if an older one has already been sent to police
+              await this.verdictRepositoryService.create(
+                {
+                  defendantId: defendant.id,
+                  caseId: theCase.id,
+                  serviceRequirement: ServiceRequirement.REQUIRED,
+                  serviceInformationForDefendant:
+                    verdict.serviceInformationForDefendant,
+                  isDefaultJudgement: verdict.isDefaultJudgement,
+                },
+                { transaction },
+              )
+            }
 
-          return {
-            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-            user,
-            caseId: theCase.id,
-            elementId: [defendant.id],
-          }
-        })
+            return {
+              type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id],
+            }
+          }),
+      )
 
       if (!messages || messages.length === 0) {
         return { queued: false }
