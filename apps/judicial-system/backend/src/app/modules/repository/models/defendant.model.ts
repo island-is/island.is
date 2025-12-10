@@ -217,7 +217,7 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   alternativeServiceDescription?: string
 
-  @HasOne(() => Verdict, { foreignKey: 'defendantId' })
-  @ApiPropertyOptional({ type: () => Verdict })
-  verdict?: Verdict
+  @HasMany(() => Verdict, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => Verdict, isArray: true })
+  verdicts?: Verdict[]
 }

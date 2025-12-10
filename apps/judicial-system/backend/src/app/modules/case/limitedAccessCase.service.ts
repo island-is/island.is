@@ -197,8 +197,10 @@ export const include: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
       {
         model: DefendantEventLog,

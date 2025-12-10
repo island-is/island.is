@@ -332,7 +332,10 @@ const generateIndictmentCaseStateTag = (
     if (
       c.defendants &&
       c.defendants.length > 0 &&
-      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+      c.defendants?.every(
+        // Only the latest verdict is relevant
+        (d) => d.verdicts?.[0]?.isDefaultJudgement,
+      )
     ) {
       return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
     }
@@ -638,9 +641,11 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
           order: [['created', 'DESC']],
           separate: true,
         },
-        verdict: {
+        verdicts: {
           model: Verdict,
           attributes: ['isDefaultJudgement'],
+          order: [['created', 'DESC']],
+          separate: true,
         },
       },
       separate: true,
@@ -992,9 +997,11 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       order: [['created', 'ASC']],
       separate: true,
       includes: {
-        verdict: {
+        verdicts: {
           model: Verdict,
           attributes: ['serviceRequirement', 'serviceDate'],
+          order: [['created', 'DESC']],
+          separate: true,
         },
       },
     },
@@ -1007,7 +1014,8 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
     const verdictInfo: VerdictInfo[] | undefined = c.defendants?.map((d) => ({
       canAppealVerdict: true,
       serviceDate: getDefendantServiceDate({
-        verdict: d.verdict,
+        // Only the latest verdict is relevant
+        verdict: d.verdicts?.[0],
         fallbackDate: c.rulingDate,
       }),
     }))
@@ -1094,9 +1102,11 @@ const indictmentRulingDecision: CaseTableCellGenerator<
       model: Defendant,
       order: [['created', 'ASC']],
       includes: {
-        verdict: {
+        verdicts: {
           model: Verdict,
           attributes: ['isDefaultJudgement'],
+          order: [['created', 'DESC']],
+          separate: true,
         },
       },
       separate: true,
@@ -1107,7 +1117,10 @@ const indictmentRulingDecision: CaseTableCellGenerator<
     if (
       c.defendants &&
       c.defendants.length > 0 &&
-      c.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+      c.defendants?.every(
+        // Only the latest verdict is relevant
+        (d) => d.verdicts?.[0]?.isDefaultJudgement,
+      )
     ) {
       return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
     }
@@ -1124,9 +1137,11 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
       order: [['created', 'ASC']],
       separate: true,
       includes: {
-        verdict: {
+        verdicts: {
           model: Verdict,
           attributes: ['appealDate'],
+          order: [['created', 'DESC']],
+          separate: true,
         },
       },
     },
@@ -1142,7 +1157,10 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
           : 'Una',
     }
 
-    const defendantAppealed = c.defendants?.some((d) => d.verdict?.appealDate)
+    const defendantAppealed = c.defendants?.some(
+      // Only the latest verdict is relevant
+      (d) => d.verdicts?.[0]?.appealDate,
+    )
 
     const secondTag = defendantAppealed
       ? { color: 'red', text: 'Ákærði áfrýjar' }

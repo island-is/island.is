@@ -1,3 +1,6 @@
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -217,8 +220,10 @@ export const include: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
     ],
     separate: true,
@@ -371,8 +376,10 @@ export const include: Includeable[] = [
           },
           {
             model: Verdict,
-            as: 'verdict',
+            as: 'verdicts',
             required: false,
+            order: [['created', 'DESC']],
+            separate: true,
           },
         ],
         separate: true,
@@ -484,8 +491,10 @@ export const caseListInclude: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
     ],
     separate: true,
@@ -2335,7 +2344,7 @@ export class CaseService {
         if (completingIndictmentCaseWithRuling && theCase.defendants) {
           await Promise.all(
             theCase.defendants.map((defendant) => {
-              if (!defendant.verdict) {
+              if (!defendant.verdicts || defendant.verdicts.length === 0) {
                 return this.verdictService.createVerdict(
                   theCase.id,
                   { defendantId: defendant.id },
@@ -2348,7 +2357,6 @@ export class CaseService {
 
         // if ruling decision is changed to other decision
         // we have to clean up idle verdicts
-
         const hasNewDecision =
           theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
           !!update.indictmentDecision &&
@@ -2373,13 +2381,19 @@ export class CaseService {
 
         if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
           await Promise.all(
-            theCase.defendants.map((defendant) => {
-              if (defendant.verdict) {
-                return this.verdictService.deleteVerdict(
-                  defendant.verdict,
-                  transaction,
-                )
-              }
+            theCase.defendants.flatMap((defendant) => {
+              pipe(
+                defendant.verdicts ?? [],
+                filterMap((verdict) => {
+                  if (verdict) {
+                    return option.some(
+                      this.verdictService.deleteVerdict(verdict, transaction),
+                    )
+                  }
+
+                  return option.none
+                }),
+              )
             }),
           )
         }

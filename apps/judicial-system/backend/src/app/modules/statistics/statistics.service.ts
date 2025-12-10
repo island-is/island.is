@@ -626,8 +626,10 @@ export class StatisticsService {
             },
             {
               model: Verdict,
-              as: 'verdict',
+              as: 'verdicts',
               required: false,
+              order: [['created', 'DESC']],
+              separate: true,
             },
           ],
           separate: true,

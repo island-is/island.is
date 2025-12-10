@@ -342,7 +342,6 @@ const Completed: FC = () => {
           }
           actionButtonText="Leiðrétta mál"
           actionButtonColorScheme="default"
-          actionButtonIcon="pencil"
           actionButtonVariant="primary"
           onActionButtonClick={() => setModalVisible('REOPEN')}
           hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}

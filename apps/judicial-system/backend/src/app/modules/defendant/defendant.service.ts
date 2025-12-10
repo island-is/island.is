@@ -544,34 +544,31 @@ export class DefendantService {
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Defendant> {
-    const updatedDefendant = await this.defendantRepositoryService.update(
-      defendant.caseId,
-      defendant.id,
-      { caseId: newCase.id },
-      { transaction },
-    )
-
-    await this.subpoenaService.transferDefendantSubpoenasToCase(
-      newCase,
-      defendant,
-      transaction,
-    )
-
-    if (defendant.verdict) {
-      await this.verdictService.transferDefendantVerdictToCase(
+    const updates = await Promise.all([
+      this.defendantRepositoryService.update(
+        defendant.caseId,
+        defendant.id,
+        { caseId: newCase.id },
+        { transaction },
+      ),
+      this.subpoenaService.transferDefendantSubpoenasToCase(
         newCase,
-        defendant.verdict,
+        defendant,
         transaction,
-      )
-    }
+      ),
+      this.verdictService.transferDefendantVerdictsToCase(
+        newCase,
+        defendant,
+        transaction,
+      ),
+      this.defendantEventLogRepositoryService.transferDefendantEventLogsToCase(
+        defendant.caseId,
+        defendant.id,
+        newCase.id,
+        { transaction },
+      ),
+    ])
 
-    await this.defendantEventLogRepositoryService.transferDefendantEventLogsToCase(
-      defendant.caseId,
-      defendant.id,
-      newCase.id,
-      { transaction },
-    )
-
-    return updatedDefendant
+    return updates[0]
   }
 }

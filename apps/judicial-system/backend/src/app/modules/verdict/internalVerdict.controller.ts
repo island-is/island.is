@@ -185,10 +185,12 @@ export class InternalVerdictController {
     this.logger.info(
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
+
     const updatedVerdict = await this.verdictService.updatePoliceDelivery(
       verdict,
       update,
     )
+
     if (
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
@@ -198,6 +200,7 @@ export class InternalVerdictController {
         Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
       })
     }
+
     return updatedVerdict
   }
 
@@ -246,9 +249,12 @@ export class InternalVerdictController {
     this.logger.debug(
       `Get verdict supplements for police document id ${policeDocumentId}`,
     )
+
+    // Todo: Use CurrentVerdict decorator to avoid querying for the verdict again
     const verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }

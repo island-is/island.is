@@ -37,7 +37,9 @@ export const transformDefendants = ({
   rulingDate?: Date
 }) => {
   return defendants?.map((defendant) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =
@@ -68,6 +70,7 @@ export const transformDefendants = ({
             },
           }
         : {}),
+      verdicts: undefined,
       verdictAppealDeadline: appealDeadline,
       isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin

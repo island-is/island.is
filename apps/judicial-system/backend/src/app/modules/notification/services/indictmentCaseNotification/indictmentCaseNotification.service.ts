@@ -165,7 +165,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             : '',
         courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
-          theCase.defendants?.[0]?.verdict?.serviceRequirement,
+          theCase.defendants?.[0]?.verdicts?.[0]?.serviceRequirement,
         caseOrigin: theCase.origin,
       },
     )

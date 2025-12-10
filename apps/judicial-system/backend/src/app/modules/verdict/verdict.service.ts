@@ -139,9 +139,11 @@ export class VerdictService {
     return this.sequelize.transaction(async (transaction) => {
       return await Promise.all(
         verdicts.map((verdict) => {
+          // Only the latest verdict is relevant
           const currentVerdict = defendants?.find(
             (defendant) => verdict.defendantId === defendant.id,
-          )?.verdict
+          )?.verdicts?.[0]
+
           if (currentVerdict) {
             const { defendantId, ...update } = verdict
             return this.updateVerdict(currentVerdict, update, transaction)
@@ -405,6 +407,7 @@ export class VerdictService {
         verdict,
       ),
     })
+
     if (!createdDocument) {
       return { delivered: false }
     }
@@ -450,7 +453,10 @@ export class VerdictService {
         continue
       }
 
-      const { verdict } = defendant
+      // Only the latest verdict is relevant
+      const { verdicts } = defendant
+      const verdict = verdicts?.[0]
+
       if (!verdict) {
         this.logger.warn(
           `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
@@ -520,34 +526,70 @@ export class VerdictService {
   }
 
   async addMessagesForCaseVerdictDeliveryToQueue(theCase: Case, user: TUser) {
-    const messages = theCase.defendants
-      ?.filter(
-        (defendant) =>
-          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-      )
-      .map((defendant) => ({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-        user,
-        caseId: theCase.id,
-        elementId: [defendant.id],
-      }))
+    const transaction = await this.sequelize.transaction()
 
-    if (messages && messages.length > 0) {
-      this.messageService.sendMessagesToQueue(messages)
+    try {
+      const messages = theCase.defendants
+        ?.filter(
+          (defendant) =>
+            defendant.verdicts?.[0]?.serviceRequirement ===
+            ServiceRequirement.REQUIRED,
+        )
+        .map((defendant) => {
+          // Only the latest verdict is relevant
+          const verdict = defendant.verdicts?.[0]
+
+          if (verdict?.externalPoliceDocumentId) {
+            // Replace the verdict if an older one has already been sent to police
+            this.verdictRepositoryService.create(
+              {
+                defendantId: defendant.id,
+                caseId: theCase.id,
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                serviceInformationForDefendant:
+                  verdict.serviceInformationForDefendant,
+                isDefaultJudgement: verdict.isDefaultJudgement,
+              },
+              { transaction },
+            )
+          }
+
+          return {
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id],
+          }
+        })
+
+      if (!messages || messages.length === 0) {
+        return { queued: false }
+      }
+
+      await transaction.commit()
+
+      await this.messageService.sendMessagesToQueue(messages)
+
       return { queued: true }
+    } catch (error) {
+      this.logger.error(
+        `Failed to add messages for case ${theCase.id} verdict delivery to queue`,
+        { error },
+      )
+
+      await transaction.rollback()
+
+      return { queued: false }
     }
-    return { queued: false }
   }
 
-  transferDefendantVerdictToCase(
+  transferDefendantVerdictsToCase(
     newCase: Case,
-    verdict: Verdict,
+    defendant: Defendant,
     transaction: Transaction,
-  ): Promise<Verdict> {
-    return this.verdictRepositoryService.update(
-      verdict.caseId,
-      verdict.defendantId,
-      verdict.id,
+  ): Promise<number> {
+    return this.verdictRepositoryService.updateMany(
+      { caseId: defendant.caseId, defendantId: defendant.id },
       { caseId: newCase.id },
       { transaction },
     )
