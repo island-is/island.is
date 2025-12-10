@@ -18,7 +18,7 @@ export const serviceSetup =
       .serviceAccount('endorsement-system-api')
       .codeOwner(CodeOwners.Juni)
       .command('node')
-      .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
+      .args('--tls-min-v1.0', 'main.cjs')
       .db({ name: 'services-endorsements-api' })
       .migrations()
       .env({

@@ -5,7 +5,7 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
     .namespace('github-actions-cache')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
+    .args('--tls-min-v1.0', 'main.cjs')
 
     .env({
       REDIS_NODES:
