@@ -37,7 +37,6 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
-  hasReviewerApproved,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
