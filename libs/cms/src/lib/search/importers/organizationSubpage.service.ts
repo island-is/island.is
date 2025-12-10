@@ -1,4 +1,3 @@
-import { Entry } from 'contentful'
 import { Injectable } from '@nestjs/common'
 import isCircular from 'is-circular'
 import { MappedData } from '@island.is/content-search-indexer/types'
@@ -17,18 +16,36 @@ export class OrganizationSubpageSyncService
   implements CmsSyncProvider<IOrganizationSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationSubpage>) {
-    return entries.filter(
-      (entry: Entry<any>): entry is IOrganizationSubpage =>
-        entry.sys.contentType.sys.id === 'organizationSubpage' &&
+    const entriesToUpdate: IOrganizationSubpage[] = []
+    const entriesToDelete: string[] = []
+
+    for (const entry of entries) {
+      if (entry.sys.contentType.sys.id !== 'organizationSubpage') {
+        continue
+      }
+
+      if (
         !!entry.fields.title &&
         !!entry.fields.slug &&
         !!entry.fields.organizationPage?.fields?.slug &&
         // Standalone organization pages have their own search, we don't want subpages there to be found in the global search
         entry.fields.organizationPage.fields.theme !== 'standalone' &&
         // Subpage should not be searchable if the organization frontpage isn't searchable
-        (entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
-          true),
-    )
+        (entry.fields.organizationPage.fields.organization?.fields
+          ?.canPagesBeFoundInSearchResults ??
+          entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
+          true) &&
+        // Subpages should not be searchable if they belong to a parent subpage
+        !entry.fields.organizationParentSubpage
+      )
+        entriesToUpdate.push(entry as IOrganizationSubpage)
+      else entriesToDelete.push(entry.sys.id)
+    }
+
+    return {
+      entriesToUpdate,
+      entriesToDelete,
+    }
   }
 
   doMapping(entries: IOrganizationSubpage[]) {

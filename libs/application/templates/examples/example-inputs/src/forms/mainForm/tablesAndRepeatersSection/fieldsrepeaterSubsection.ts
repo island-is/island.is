@@ -1,11 +1,12 @@
+import { Query } from '@island.is/api/schema'
 import {
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildSubSection,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/sampleQuery'
 
 export const fieldsRepeaterSubsection = buildSubSection({
   id: 'fieldsRepeaterSubsection',
@@ -51,6 +52,11 @@ export const fieldsRepeaterSubsection = buildSubSection({
                 { label: 'Option 3', value: 'option3' },
               ],
             },
+            titleAboveCheckbox: {
+              component: 'description',
+              title: 'Title above checkbox',
+              titleVariant: 'h5',
+            },
             checkbox: {
               component: 'checkbox',
               options: [
@@ -76,16 +82,17 @@ export const fieldsRepeaterSubsection = buildSubSection({
             selectAsyncPrimary: {
               component: 'selectAsync',
               label: 'Primary Select Async',
+              placeholder: 'Placeholder...',
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
-                const { data } =
-                  await apolloClient.query<FriggSchoolsByMunicipality>({
-                    query: friggSchoolsByMunicipalityQuery,
-                  })
+                const { data } = await apolloClient.query<Query>({
+                  query: friggOrganizationsByTypeQuery,
+                })
 
                 return (
-                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name}`,
-                    label: `${municipality.name}`,
+                  data?.friggOrganizationsByType?.map((organization) => ({
+                    value: `${organization.name}`,
+                    label: `${organization.name}`,
                   })) ?? []
                 )
               },
@@ -94,19 +101,25 @@ export const fieldsRepeaterSubsection = buildSubSection({
               component: 'selectAsync',
               label: 'Reliant Select Async',
               updateOnSelect: ['selectAsyncPrimary'],
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient, selectedValues }) => {
-                const { data } =
-                  await apolloClient.query<FriggSchoolsByMunicipality>({
-                    query: friggSchoolsByMunicipalityQuery,
-                  })
+                const { data } = await apolloClient.query<Query>({
+                  query: friggOrganizationsByTypeQuery,
+                })
 
                 return (
-                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name} ${selectedValues?.[0] || ''}`,
-                    label: `${municipality.name} ${selectedValues?.[0] || ''}`,
+                  data?.friggOrganizationsByType?.map((organization) => ({
+                    value: `${organization.name} ${selectedValues?.[0] || ''}`,
+                    label: `${organization.name} ${selectedValues?.[0] || ''}`,
                   })) ?? []
                 )
               },
+            },
+            inputWithIndexinLabel: {
+              component: 'input',
+              label: (index) => `Regular input with index in label: ${index}`,
+              width: 'full',
+              type: 'text',
             },
           },
         }),

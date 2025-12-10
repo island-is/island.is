@@ -105,11 +105,13 @@ const convertFooterItemsToFooterColumns = (footerItems: FooterItem[]) => {
 interface HeilbrigdisstofnunSudurlandsFooterProps {
   footerItems: FooterItem[]
   namespace: Record<string, string>
+  title: string
 }
 
 const HeilbrigdisstofnunSudurlandsFooter = ({
   footerItems,
   namespace,
+  title,
 }: HeilbrigdisstofnunSudurlandsFooterProps) => {
   const n = useNamespace(namespace)
   const footerColumns = useMemo(
@@ -123,17 +125,12 @@ const HeilbrigdisstofnunSudurlandsFooter = ({
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
-              <img
-                src={n(
-                  'hsuFooterLogo',
-                  'https://images.ctfassets.net/8k0h54kbe6bj/4OcAjYnwPUP4dwFA6duFaB/f188b1c188b535ec464f37cae87733a3/HSU-footer.png?h=250',
-                )}
-                alt="heilbrigdisstofnun-sudurlands-logo"
-                width={590}
-              />
+              <Text marginBottom={[3, 3, 5]} variant="h2" color="white">
+                {title}
+              </Text>
             </GridRow>
 
-            <GridRow className={styles.line}>
+            <GridRow>
               {footerColumns.map((columnProps, index) => (
                 <FooterColumn key={index} {...columnProps} />
               ))}

@@ -1,0 +1,27 @@
+fragment Waitlist on HealthDirectorateWaitlist {
+  id
+  name
+  waitBegan
+  lastUpdated
+  organization
+  status
+}
+
+query GetWaitlists($locale: String) {
+  healthDirectorateWaitlists(locale: $locale) {
+    waitlists {
+      ...Waitlist
+    }
+  }
+}
+
+query GetWaitlistDetail(
+  $locale: String
+  $input: HealthDirectorateWaitlistInput!
+) {
+  healthDirectorateWaitlist(locale: $locale, input: $input) {
+    data {
+      ...Waitlist
+    }
+  }
+}

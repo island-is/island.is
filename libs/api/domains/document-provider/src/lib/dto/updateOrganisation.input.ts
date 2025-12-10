@@ -27,4 +27,9 @@ export class UpdateOrganisationInput {
   @IsString()
   @IsOptional()
   phoneNumber?: string
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  zendeskId?: string
 }

@@ -15,11 +15,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { Institution } from '../institution'
+import { Institution, User } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { userModuleConfig } from './user.config'
-import { User } from './user.model'
 
 @Injectable()
 export class UserService {
@@ -135,6 +134,16 @@ export class UserService {
       where: {
         active: true,
         canConfirmIndictment: true,
+        institutionId: prosecutorsOfficeId,
+      },
+    })
+  }
+
+  async getProsecutorUsers(prosecutorsOfficeId: string): Promise<User[]> {
+    return this.userModel.findAll({
+      where: {
+        active: true,
+        role: UserRole.PROSECUTOR,
         institutionId: prosecutorsOfficeId,
       },
     })

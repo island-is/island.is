@@ -1,11 +1,12 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  ArraignmentAlert,
   CourtArrangements,
   CourtCaseInfo,
   DefenderInfo,
@@ -104,42 +105,33 @@ export const HearingArrangements = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      await sendCourtDateToServer()
-
-      const isCorrectingRuling = workingCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      )
-
-      if (
-        isCorrectingRuling ||
-        (hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent &&
-          !courtDateHasChanged)
-      ) {
-        router.push(`${destination}/${workingCase.id}`)
-      } else {
-        setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
-      }
-    },
-    [
-      sendCourtDateToServer,
-      workingCase.notifications,
-      workingCase.id,
-      courtDateHasChanged,
-    ],
+  const courtDateNotification = useMemo(
+    () =>
+      hasSentNotification(
+        NotificationType.COURT_DATE,
+        workingCase.notifications,
+      ),
+    [workingCase.notifications],
   )
+
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
+
+  const handleNavigationTo = async (destination: keyof stepValidationsType) => {
+    await sendCourtDateToServer()
+
+    if (
+      isCorrectingRuling ||
+      (courtDateNotification.hasSent && !courtDateHasChanged)
+    ) {
+      router.push(`${destination}/${workingCase.id}`)
+    } else {
+      setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
+    }
+  }
 
   const stepIsValid = isCourtHearingArrangemenstStepValidRC(
     workingCase,
     courtDate,
-  )
-
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
@@ -154,15 +146,7 @@ export const HearingArrangements = () => {
         title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
       />
       <FormContentContainer>
-        {workingCase.comments && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.comments.title)}
-              message={workingCase.comments}
-            />
-          </Box>
-        )}
+        <ArraignmentAlert />
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
@@ -216,39 +200,42 @@ export const HearingArrangements = () => {
               courtDateHasChanged,
             },
           )}
-          isPrimaryButtonLoading={
-            isSendingNotification &&
-            modalButtonLoading === ModalButtonLoading.PRIMARY
-          }
-          isSecondaryButtonLoading={
-            isSendingNotification &&
-            modalButtonLoading === ModalButtonLoading.SECONDARY
-          }
-          onSecondaryButtonClick={() => {
-            setModalButtonLoading(ModalButtonLoading.SECONDARY)
+          primaryButton={{
+            text: formatMessage(m.modal.shared.primaryButtonText),
+            onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
-            router.push(`${navigateTo}/${workingCase.id}`)
-          }}
-          onPrimaryButtonClick={async () => {
-            setModalButtonLoading(ModalButtonLoading.PRIMARY)
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+              )
 
-            const notificationSent = await sendNotification(
-              workingCase.id,
-              NotificationType.COURT_DATE,
-            )
-
-            if (notificationSent) {
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }
-          }}
-          primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}
-          secondaryButtonText={formatMessage(
-            m.modal.shared.secondaryButtonText,
-            {
-              courtDateHasChanged,
+              if (notificationSent) {
+                router.push(`${navigateTo}/${workingCase.id}`)
+              }
             },
-          )}
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.PRIMARY,
+          }}
+          secondaryButton={{
+            text: formatMessage(m.modal.shared.secondaryButtonText, {
+              courtDateHasChanged,
+            }),
+            onClick: () => {
+              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
+              sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+                true,
+              )
+              router.push(`${navigateTo}/${workingCase.id}`)
+            },
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.SECONDARY,
+          }}
           errorMessage={
             sendNotificationError
               ? formatMessage(errors.sendNotification)

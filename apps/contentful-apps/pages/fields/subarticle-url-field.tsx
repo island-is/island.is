@@ -4,13 +4,13 @@ import { EntryProps, SysLink } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Spinner, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
   DEFAULT_LOCALE,
 } from '../../constants'
+import { slugify } from '../../utils'
 
 type Article = EntryProps<{
   subArticles: { [DEFAULT_LOCALE]: SysLink[] }

@@ -74,8 +74,8 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
   setBeforeSubmitCallback?.(async () => {
     setDisplayError(false)
     const techInfoAnswer = techInfoItems?.map(
-      ({ variableName, required, label, labelEn, maxLength, type }, index) => {
-        const answer = variableName ? watchTechInfoFields[variableName] : ''
+      ({ name, required, label, labelEn, maxLength, type }, index) => {
+        const answer = name ? watchTechInfoFields[name] : ''
         if (
           (required && answer.length === 0) ||
           (required &&
@@ -104,13 +104,13 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
             : type === 'float'
             ? parseFloat(answer).toLocaleString()
             : answer
-        setValue(`techInfo[${index}].variableName`, variableName)
+        setValue(`techInfo[${index}].variableName`, name)
         setValue(`techInfo[${index}].value.nameIs`, isAnswer)
         setValue(`techInfo[${index}].value.nameEn`, enAnswer)
         setValue(`techInfo[${index}].label`, label)
         setValue(`techInfo[${index}].labelEn`, labelEn)
         return {
-          variableName,
+          variableName: name,
           value: {
             nameIs: isAnswer,
             nameEn: enAnswer,
@@ -157,12 +157,12 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
       <GridRow>
         {loading && (
           <Box padding={2}>
-            <LoadingDots large />
+            <LoadingDots size="large" />
           </Box>
         )}
         {techInfoItems?.map((item) => {
           return (
-            <GridColumn key={item.variableName} span={['1/1', '1/2']}>
+            <GridColumn key={item.name} span={['1/1', '1/2']}>
               {formFieldMapper({
                 item,
                 props,

@@ -1,15 +1,16 @@
 import {
   defineTemplateApi,
   PaymentCatalogApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 
 import { IdentityApi as IdsApi } from '@island.is/application/types'
-const FISKISTOFA_NATIONAL_ID = '6608922069'
 
 export const DepartmentOfFisheriesPaymentCatalogApi =
   PaymentCatalogApi.configure({
     params: {
-      organizationId: FISKISTOFA_NATIONAL_ID,
+      organizationId: InstitutionNationalIds.FISKISTOFA,
+      enableMockPayment: false,
     },
     externalDataId: 'feeInfoProvider',
   })
@@ -22,3 +23,8 @@ export const ShipRegistryApi = defineTemplateApi({
 export const IdentityApi = IdsApi.configure({
   externalDataId: 'identity',
 })
+
+export {
+  MockPaymentCatalog as MockablePaymentCatalogApi,
+  MockPaymentCatalog,
+} from './mockPaymentCatalog'

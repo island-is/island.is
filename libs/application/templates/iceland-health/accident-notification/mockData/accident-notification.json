@@ -1,0 +1,705 @@
+{
+  "uuid": "0e9cf5cd-5e69-4dc2-bc91-e525de6d7503",
+  "lastMigration": 32,
+  "name": "Accident Notification Mock",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 8081,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "42d7f07c-46e8-4493-89e6-4816d2d9fdd8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399",
+      "responses": [
+        {
+          "uuid": "6133acb8-d9b3-435f-b4da-ac94678af423",
+          "body": "{\n  \"kennitala\": \"0101302399\",\n  \"nafn\": \"Gervimaður Færeyjar\",\n  \"eiginnafn\": \"Gervimaður\",\n  \"millinafn\": null,\n  \"kenninafn\": \"Færeyjar\",\n  \"fulltNafn\": \"Gervimaður Færeyjar\",\n  \"kynkodi\": \"2\",\n  \"bannmerking\": false,\n  \"faedingardagur\": \"1930-01-01T00:00:00\",\n  \"logheimili\": {\n    \"heiti\": \"Hvassaleiti 5\",\n    \"postnumer\": \"103\",\n    \"stadur\": \"Reykjavík\",\n    \"sveitarfelagsnumer\": \"0000\"\n  },\n  \"adsetur\": null\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:08:35 GMT"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "ASP.NET"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-0f8b9f04-d4a7-4972-ae1a-77cbf02fe0d1"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "D8lJ3C5w1uh2VqhD9VHvEKKYewOuGCbTB+IywUjB2IAwkkLtQBGn0cQKP00GYqkM/Vipl2/vCpliWkmdydzY7g=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "a19c8d73-dc63-430d-946a-79631b13f57f"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
+            },
+            {
+              "key": "content-length",
+              "value": "420"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "fe102e29-9a5b-4d45-832e-b38f0ad6edd0",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/rikisfang",
+      "responses": [
+        {
+          "uuid": "50f3665d-7a2c-4ad7-a037-ddb2e4f86246",
+          "body": "{\n  \"kodi\": \"IS\",\n  \"land\": \"Ísland\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:08:36 GMT"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "ASP.NET"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-e24a23de-7f4f-4e19-a1e1-c3c25f5f48ce"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "sQUVOHfOFTVtX0taRWUS66aufTy1kbelhIz0ex8ROlPehBop5ArfGZ55gzrRVKygvHjV+77e9mDBy7NcI9REvA=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "fe288053-efff-4089-a868-0c643d7a2978"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
+            },
+            {
+              "key": "content-length",
+              "value": "38"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "601df49a-d91b-456b-8aef-5a213fb5cbc7",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/hjuskapur",
+      "responses": [
+        {
+          "uuid": "eb329673-6a49-40b5-9575-be05ea1569e5",
+          "body": "{\n  \"kennitalaMaka\": \"0101302989\",\n  \"nafnMaka\": \"Gervimaður Ameríku \",\n  \"hjuskaparkodi\": \"3\",\n  \"breytt\": \"1992-09-02T00:00:00\",\n  \"sambud\": false,\n  \"sambudBreytt\": \"0001-01-01T00:00:00\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:08:36 GMT"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "ASP.NET"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-e27d0558-2ccd-438d-b240-a505b92f4cdf"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "6fJVsD7a1BqVSGO6BfrXTxayXIoUEGrr5JQKID8z7WcAAsFz7z++bsfqv8AtwH3l/hgFQ5C7ipBVcdo/+UxIFw=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "72ddff81-318a-4f36-a923-baff9f5aa413"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
+            },
+            {
+              "key": "content-length",
+              "value": "191"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "0ac7bb26-0434-44a7-81ad-31d9fb9aa75a",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/lyklar/hjuskaparkodar/3/2",
+      "responses": [
+        {
+          "uuid": "ed6235bb-5bc2-4dd1-ab1d-2e0ce7f1cba9",
+          "body": "{\n  \"kodi\": \"3\",\n  \"lysing\": \"Gift\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:08:36 GMT"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "ASP.NET"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-9535774a-6010-4edd-be1b-5d6f3e34bc8e"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "wTaxncneXwWyhtkqpkcC/qNgwsGck/YGNr6L/YUMvLoTj3d+tuNLevNcTqK0op3IK3Lkr7bWjI1Ew1qFW3j8hQ=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "e49084ae-a103-4846-b638-458cd6125bdc"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
+            },
+            {
+              "key": "content-length",
+              "value": "37"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "5fdce260-0de1-4d0b-a182-eafbc5b8c417",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/islandis/v1/person/0101302399/ishealthinsured/2024-07-09",
+      "responses": [
+        {
+          "uuid": "5187ef52-870f-4619-8b54-794424addb1a",
+          "body": "{\n  \"numberIHI\": 245507092,\n  \"isHealthInsured\": 0,\n  \"date\": null,\n  \"isOnWaitPeriod\": 0\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:20:44 GMT"
+            },
+            {
+              "key": "strict-transport-security",
+              "value": "max-age=2592000, max-age=31536000;"
+            },
+            {
+              "key": "x-instanceid",
+              "value": "devapp03"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-2b8b9f90-f49c-4644-abca-4092ab0f1597"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "jZpJFopL2TBVmuCWDPJKO8c5CjaVXI+8TGhYD25AHMxnhsSCH4bs/xpzadnuhqNxAadbdzvm+rdjl1+D7nwIvg=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "19e44d01-0be8-4d61-8041-63eb63a32fa6"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10007/SJUKRA-Protected/islandis"
+            },
+            {
+              "key": "content-length",
+              "value": "91"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "1b8aa531-be1a-4aef-a15e-6d90d3b17fb5",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/islandis/v1/document",
+      "responses": [
+        {
+          "uuid": "14fe67f5-c00d-436d-9c15-be2cf8c1ac2c",
+          "body": "{\n  \"success\": 1,\n  \"errorDesc\": \"null\",\n  \"numberIHI\": 245507093,\n  \"ihiDocumentID\": 156842415,\n  \"errorList\": []\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:22:27 GMT"
+            },
+            {
+              "key": "location",
+              "value": "https://trstws.sjukra.is/internal/islandrg/v1/document"
+            },
+            {
+              "key": "strict-transport-security",
+              "value": "max-age=2592000, max-age=31536000;"
+            },
+            {
+              "key": "x-instanceid",
+              "value": "devapp03"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-83f0ab64-a830-44d6-9c1f-24bec8e70d14"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "ODSwXlqCq/6MeKfCuPvdQIym0SjkB3Dyy0216yKpP4/Z9WanvmIFGbqzXh7F/dZGC7lhXRiUd9gJjZ+XLqyi9w=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "31255d63-b7fa-457a-953c-48563bf2598e"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10007/SJUKRA-Protected/islandis"
+            },
+            {
+              "key": "content-length",
+              "value": "116"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "422c1a7f-46dd-4d7a-ae4f-a1ee43d680db",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/islandis/v1/document/156842415/getaccidentstatus",
+      "responses": [
+        {
+          "uuid": "70797e7b-39c6-4444-bb63-a281f40ba900",
+          "body": "{\n  \"numberIHI\": 245507094,\n  \"status\": 2,\n  \"attachments\": [\n    {\n      \"isReceived\": 0,\n      \"attachmentType\": 1\n    },\n    {\n      \"isReceived\": 1,\n      \"attachmentType\": 2\n    },\n    {\n      \"isReceived\": 1,\n      \"attachmentType\": 3\n    }\n  ],\n  \"confirmations\": [\n    {\n      \"isReceived\": 1,\n      \"confirmationType\": 1\n    },\n    {\n      \"isReceived\": 1,\n      \"confirmationType\": 2\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "api-supported-versions",
+              "value": "1.0"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "date",
+              "value": "Wed, 10 Jul 2024 13:24:56 GMT"
+            },
+            {
+              "key": "strict-transport-security",
+              "value": "max-age=2592000, max-age=31536000;"
+            },
+            {
+              "key": "x-instanceid",
+              "value": "devapp03"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-79961606-b875-4f28-a0a9-dd2e448c8772"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "bDHRkLXiPS/sYDf9LkHhXqPGG+QCUG7nPp3XMcM0TzvgwcLVAKPlAzu2VW2r6XbIqB+iTXbsOYkQfc5A3/HNtA=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "1863c9c2-37bb-4f37-a2b3-422c101cc0da"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10007/SJUKRA-Protected/islandis"
+            },
+            {
+              "key": "content-length",
+              "value": "405"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "42d7f07c-46e8-4493-89e6-4816d2d9fdd8"
+    },
+    {
+      "type": "route",
+      "uuid": "fe102e29-9a5b-4d45-832e-b38f0ad6edd0"
+    },
+    {
+      "type": "route",
+      "uuid": "601df49a-d91b-456b-8aef-5a213fb5cbc7"
+    },
+    {
+      "type": "route",
+      "uuid": "0ac7bb26-0434-44a7-81ad-31d9fb9aa75a"
+    },
+    {
+      "type": "route",
+      "uuid": "5fdce260-0de1-4d0b-a182-eafbc5b8c417"
+    },
+    {
+      "type": "route",
+      "uuid": "1b8aa531-be1a-4aef-a15e-6d90d3b17fb5"
+    },
+    {
+      "type": "route",
+      "uuid": "422c1a7f-46dd-4d7a-ae4f-a1ee43d680db"
+    }
+  ],
+  "proxyMode": true,
+  "proxyHost": "http://localhost:8082",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

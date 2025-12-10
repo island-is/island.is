@@ -2,12 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   applicationTitle: {
-    id: 'ep.application:string',
+    id: 'ep.application:applicationTitle',
     defaultMessage: 'Umsókn um greiðslu',
     description: 'Title of the application',
   },
   doneTitle: {
-    id: 'ep.application:string',
+    id: 'ep.application:doneTitle',
     defaultMessage: 'Umsókn móttekin',
     description: 'Application was received',
   },
@@ -20,6 +20,16 @@ export const m = defineMessages({
     id: 'ep.application:payUp',
     defaultMessage: 'Greiða',
     description: 'Label for payment button',
+  },
+  forPaymentLabel: {
+    id: 'ep.application:forPaymentLabel',
+    defaultMessage: 'Til greiðslu',
+    description: 'title for payment overview component',
+  },
+  totalLabel: {
+    id: 'ep.application:totalLabel',
+    defaultMessage: 'Samtals til greiðslu',
+    description: 'total label for payment overview component',
   },
   feeProviderError: {
     id: 'ep.application:feeProviderError',
@@ -48,6 +58,11 @@ export const draft = defineMessages({
     id: 'ep.application:draft.informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'info',
+  },
+  paymentOverviewTitle: {
+    id: 'ep.application:draft.paymentOverviewTitle',
+    defaultMessage: 'Greiðsluyfirlit',
+    description: 'payment overview title',
   },
   selectFieldTitle: {
     id: 'ep.application:draft.selectFieldTitle',

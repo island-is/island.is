@@ -1,0 +1,1245 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "LeigusamningarService API",
+    "description": "API for handling rental contracts PDF generation and signing.",
+    "version": "v1"
+  },
+  "paths": {
+    "/contract": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/contract/send-draft": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/contract/kt/{kt}": {
+      "get": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "kt",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contract/cancel": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/contract/terminate": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DraftRequest": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string"
+          },
+          "landlords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "signingParties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "landlordRepresentatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "addressCode": {
+                  "type": "number"
+                },
+                "appraisalUnitCode": {
+                  "type": "number"
+                },
+                "fireInsuranceValuation": {
+                  "type": "number"
+                },
+                "propertyCode": {
+                  "type": "number"
+                },
+                "propertyUsageDescription": {
+                  "type": "string"
+                },
+                "propertyValue": {
+                  "type": "number"
+                },
+                "size": {
+                  "type": "number"
+                },
+                "sizeUnit": {
+                  "type": "string"
+                },
+                "unitCode": {
+                  "type": "string"
+                },
+                "checked": {
+                  "type": "boolean"
+                },
+                "changedSize": {
+                  "type": "number"
+                },
+                "numOfRooms": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "isIndexConnected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "indexDate": {
+            "type": "string"
+          },
+          "indexRate": {
+            "type": "string"
+          },
+          "paymentMethodOther": {
+            "type": "string"
+          },
+          "paymentDateOptions": {
+            "type": "string"
+          },
+          "paymentDayOther": {
+            "type": "string"
+          },
+          "paymentMethodOptions": {
+            "type": "string"
+          },
+          "paymentMethodBankAccountNumber": {
+            "type": "object",
+            "properties": {
+              "bankNumber": {
+                "type": "string"
+              },
+              "ledger": {
+                "type": "string"
+              },
+              "accountNumber": {
+                "type": "string"
+              }
+            }
+          },
+          "securityDepositRequired": {
+            "type": "string"
+          },
+          "securityType": {
+            "type": "string"
+          },
+          "bankGuaranteeInfo": {
+            "type": "string"
+          },
+          "thirdPartyGuaranteeInfo": {
+            "type": "string"
+          },
+          "insuranceCompanyInfo": {
+            "type": "string"
+          },
+          "mutualFundInfo": {
+            "type": "string"
+          },
+          "otherInfo": {
+            "type": "string"
+          },
+          "securityDepositAmount": {
+            "type": "string"
+          },
+          "securityAmountOther": {
+            "type": "string"
+          },
+          "securityAmountCalculated": {
+            "type": "string"
+          },
+          "categoryType": {
+            "type": "string"
+          },
+          "categoryClass": {
+            "type": "string"
+          },
+          "categoryClassGroup": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "string"
+          },
+          "conditionDescription": {
+            "type": "string"
+          },
+          "inspector": {
+            "type": "string"
+          },
+          "inspectorName": {
+            "type": "string"
+          },
+          "smokeDetectors": {
+            "type": "string"
+          },
+          "fireExtinguisher": {
+            "type": "string"
+          },
+          "fireBlanket": {
+            "type": "string"
+          },
+          "emergencyExits": {
+            "type": "string"
+          },
+          "housingFundPayee": {
+            "type": "string"
+          },
+          "housingFundAmount": {
+            "type": "string"
+          },
+          "electricityCostPayee": {
+            "type": "string"
+          },
+          "electricityCostMeterStatusDate": {
+            "type": "string"
+          },
+          "electricityCostMeterNumber": {
+            "type": "string"
+          },
+          "electricityCostMeterStatus": {
+            "type": "string"
+          },
+          "heatingCostPayee": {
+            "type": "string"
+          },
+          "heatingCostMeterStatusDate": {
+            "type": "string"
+          },
+          "heatingCostMeterNumber": {
+            "type": "string"
+          },
+          "heatingCostMeterStatus": {
+            "type": "string"
+          },
+          "otherCostPayedByTenant": {
+            "type": "string"
+          },
+          "otherCostItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DraftPartyContact": {
+        "type": "object",
+        "properties": {
+          "nationalIdWithName": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "nationalId": {
+                "type": "string"
+              }
+            }
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppraisalUnit": {
+        "required": ["appraisalUnitId", "rooms", "size"],
+        "type": "object",
+        "properties": {
+          "appraisalUnitId": {
+            "type": "string",
+            "nullable": true
+          },
+          "apartmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "floor": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "number",
+            "format": "float"
+          },
+          "rooms": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CancelContract": {
+        "required": [
+          "cancelOn",
+          "contractId",
+          "document",
+          "documentFilename",
+          "documentMime"
+        ],
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "document": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentMime": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentFilename": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Contract": {
+        "type": "object",
+        "properties": {
+          "contract_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parent_contract_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_ref": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_from": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_to": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_changed_on": {
+            "type": "string",
+            "nullable": true
+          },
+          "base_amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "contract_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_interval_m": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "base_index": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "signature_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "received_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_manual_end": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractParty"
+            },
+            "nullable": true
+          },
+          "contract_collateral": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractCollateral"
+            },
+            "nullable": true
+          },
+          "contract_property": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractProperty"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractCollateral": {
+        "type": "object",
+        "properties": {
+          "contract_collateral_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "collateral_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_desc": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency_code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractParty": {
+        "type": "object",
+        "properties": {
+          "contract_party_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "party_type_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "party_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "address_1": {
+            "type": "string",
+            "nullable": true
+          },
+          "address_2": {
+            "type": "string",
+            "nullable": true
+          },
+          "town": {
+            "type": "string",
+            "nullable": true
+          },
+          "postal_code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractProperty": {
+        "type": "object",
+        "properties": {
+          "contract_property_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mvs_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_property_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "property_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "postal_code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "street_and_house_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "area_m2": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "no_of_rooms": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "floor": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "apartment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "special_group_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "appraisal_unit_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_property_desc": {
+            "type": "string",
+            "nullable": true
+          },
+          "special_type_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "special_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "property_details": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepositAmount": {
+        "enum": ["OneMonth", "TwoMonths", "ThreeMonths", "Other"],
+        "type": "string"
+      },
+      "FireProtections": {
+        "type": "object",
+        "properties": {
+          "fireBlanket": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "emergencyExits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "smokeDetectors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fireExtinguisher": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HousingFund": {
+        "type": "object",
+        "properties": {
+          "payedBy": {
+            "$ref": "#/components/schemas/Payer"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectorType": {
+        "enum": ["ContractParties", "Indipendant"],
+        "type": "string"
+      },
+      "Lease": {
+        "required": [
+          "condition",
+          "fireProtections",
+          "otherFees",
+          "payment",
+          "rent",
+          "securityDeposit"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "type": "string",
+            "nullable": true
+          },
+          "condition": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectorType": {
+            "$ref": "#/components/schemas/InspectorType"
+          },
+          "hasInspectionFiles": {
+            "type": "boolean"
+          },
+          "indipendantInspector": {
+            "type": "string",
+            "nullable": true
+          },
+          "fireProtections": {
+            "$ref": "#/components/schemas/FireProtections"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isFixedTerm": {
+            "type": "boolean"
+          },
+          "rent": {
+            "$ref": "#/components/schemas/Rent"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/Payment"
+          },
+          "securityDeposit": {
+            "$ref": "#/components/schemas/SecurityDeposit"
+          },
+          "otherFees": {
+            "$ref": "#/components/schemas/OtherFees"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LeaseApplication": {
+        "required": [
+          "applicationId",
+          "initiatorNationalId",
+          "landlords",
+          "lease",
+          "property",
+          "tenants"
+        ],
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "initiatorNationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "landlords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "signingParties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "property": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "lease": {
+            "$ref": "#/components/schemas/Lease"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MeteredCost": {
+        "type": "object",
+        "properties": {
+          "payedBy": {
+            "$ref": "#/components/schemas/Payer"
+          },
+          "meterNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "meterStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "meterStatusDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MiscellaneousFees": {
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherFees": {
+        "required": [
+          "electricityCost",
+          "heatingCost",
+          "housingFund",
+          "miscellaneousFees"
+        ],
+        "type": "object",
+        "properties": {
+          "housingFund": {
+            "$ref": "#/components/schemas/HousingFund"
+          },
+          "electricityCost": {
+            "$ref": "#/components/schemas/MeteredCost"
+          },
+          "heatingCost": {
+            "$ref": "#/components/schemas/MeteredCost"
+          },
+          "miscellaneousFees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MiscellaneousFees"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Payer": {
+        "enum": ["Landlord", "Tenant"],
+        "type": "string"
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "otherMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDay": {
+            "$ref": "#/components/schemas/PaymentDay"
+          },
+          "otherPaymentDay": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalIdOfAccountOwner": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentDay": {
+        "enum": ["First", "Last", "Other"],
+        "type": "string"
+      },
+      "PaymentMethod": {
+        "enum": ["BankTransfer", "PaymentSlip", "Other"],
+        "type": "string"
+      },
+      "Person": {
+        "required": ["address", "email", "name", "nationalId", "phone"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "phone": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "isRepresentative": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Property": {
+        "required": [
+          "address",
+          "appraisalUnits",
+          "municipality",
+          "part",
+          "propertyId",
+          "specialGroup",
+          "type",
+          "zip"
+        ],
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "propertyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appraisalUnits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppraisalUnit"
+            },
+            "nullable": true
+          },
+          "part": {
+            "$ref": "#/components/schemas/PropertyPart"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PropertyType"
+          },
+          "specialGroup": {
+            "$ref": "#/components/schemas/SpecialGroup"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PropertyPart": {
+        "enum": ["Whole", "Part"],
+        "type": "string"
+      },
+      "PropertyType": {
+        "enum": ["House_Apartment", "Room", "Commercial"],
+        "type": "string"
+      },
+      "Rent": {
+        "required": ["amount"],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "index": {
+            "$ref": "#/components/schemas/RentIndex"
+          },
+          "indexRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentIndex": {
+        "enum": ["None", "ConsumerPriceIndex"],
+        "type": "string"
+      },
+      "SecurityDeposit": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SecurityDepositType"
+          },
+          "otherType": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "$ref": "#/components/schemas/DepositAmount"
+          },
+          "otherAmount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityDepositType": {
+        "enum": [
+          "None",
+          "BankGuarantee",
+          "Capital",
+          "ThirdPartyGuarantee",
+          "InsuranceCompany",
+          "LandlordMutualFund",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "SpecialGroup": {
+        "enum": [
+          "No",
+          "Student",
+          "Elderly",
+          "Disabled",
+          "HalfwayHouse",
+          "IncomeRestricted"
+        ],
+        "type": "string"
+      },
+      "TerminateContract": {
+        "required": [
+          "contractId",
+          "document",
+          "documentFilename",
+          "documentMime",
+          "reasonUseCode",
+          "terminateOn"
+        ],
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "nullable": true
+          },
+          "terminateOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "reasonUseCode": {
+            "$ref": "#/components/schemas/TerminationReason"
+          },
+          "document": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentMime": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentFilename": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminationReason": {
+        "enum": [
+          "OWNER_IN_BUILDING",
+          "FURNISHED_RENT",
+          "OWNER_TAKING_BACK",
+          "OWNER_RELATIVES",
+          "OWNER_SELLING",
+          "SIGNIFICANT_REPAIRS",
+          "TENANT_EMPLOYEE",
+          "TENANT_NON_COMPLIANCE",
+          "TENANT_BEHAVIOR",
+          "BOTH_PARTIES_INTERESTS",
+          "NON_PROFIT_TENANT",
+          "TENANT_TERMINATION"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}

@@ -30,7 +30,12 @@ const populateError = (
       const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
       if (includeNamespace) {
-        message = formatMessage(element.params as StaticTextObject)
+        const staticTextObject = element.params as StaticTextObject
+        if (staticTextObject.values) {
+          message = formatMessage(staticTextObject, staticTextObject.values)
+        } else {
+          message = formatMessage(staticTextObject)
+        }
       } else if (!defaultZodError) {
         message = element.message
       }
@@ -60,11 +65,15 @@ const populateError = (
       return undefined
     }
 
+    // log to help with debug
     console.info(relevantErrors)
+
     return relevantErrors
   }
 
+  // log to help with debug
   console.info(errorObject)
+
   return errorObject
 }
 

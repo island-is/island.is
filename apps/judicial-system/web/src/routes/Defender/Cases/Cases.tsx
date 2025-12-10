@@ -2,15 +2,16 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Tabs } from '@island.is/island-ui/core'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   PageHeader,
-  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import SectionHeading from '../../../components/SectionHeading/SectionHeading'
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
@@ -72,7 +73,7 @@ export const Cases: FC = () => {
   }
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.defender.cases)} />
       {error ? (
         <div
@@ -86,12 +87,13 @@ export const Cases: FC = () => {
           />
         </div>
       ) : (
-        <Box marginBottom={5}>
-          <Text as="h1" variant="h1" marginBottom={1}>
-            {formatMessage(m.casesTitle)}
-          </Text>
-          <Text as="h4"> {formatMessage(m.casesSubtitle)}</Text>
-        </Box>
+        <SectionHeading
+          heading="h1"
+          variant="h1"
+          title="Málin þín"
+          description="Hér er yfirlit yfir mál sem þú átt aðild að í umboði skjólstæðinga."
+          marginBottom={5}
+        />
       )}
 
       <Tabs
@@ -156,7 +158,7 @@ export const Cases: FC = () => {
           },
         ]}
       />
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 

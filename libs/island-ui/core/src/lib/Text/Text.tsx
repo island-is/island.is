@@ -63,6 +63,7 @@ export interface TextProps {
   translate?: 'yes' | 'no'
   textAlign?: 'left' | 'right' | 'center' | 'justify'
   disabled?: boolean
+  className?: string
 }
 
 type GetTextStylesProps = Pick<
@@ -131,6 +132,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
       capitalizeFirstLetter,
       translate,
       disabled,
+      className,
     },
     ref,
   ) => {
@@ -146,17 +148,20 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
         paddingBottom={paddingBottom}
         paddingY={paddingY}
         data-testid={dataTestId}
-        className={getTextStyles({
-          color,
-          truncate,
-          fontWeight,
-          lineHeight,
-          variant,
-          strikethrough,
-          whiteSpace,
-          textAlign,
-          capitalizeFirstLetter,
-        })}
+        className={cn(
+          getTextStyles({
+            color,
+            truncate,
+            fontWeight,
+            lineHeight,
+            variant,
+            strikethrough,
+            whiteSpace,
+            textAlign,
+            capitalizeFirstLetter,
+          }),
+          className,
+        )}
         ref={ref}
         title={title}
         translate={translate}

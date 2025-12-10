@@ -162,7 +162,7 @@ export const sortedFilesInChapter = (
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
         status: FileUploadStatus.done,
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'] as const,
         size: file.size,
       }
     })
@@ -210,8 +210,13 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       return
     }
 
-    // Prevents text selection when dragging
-    evt.preventDefault()
+    const target = evt.target as HTMLElement
+    const tag = target.tagName.toLowerCase()
+
+    if (tag !== 'input') {
+      // Prevents text selection when dragging
+      evt.preventDefault()
+    }
 
     setIsDragging(true)
     controls.start(evt)
@@ -355,7 +360,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             canOpen: Boolean(caseFile.key),
             status: FileUploadStatus.done,
             size: caseFile.size,
-            canEdit: true,
+            canEdit: ['fileName', 'displayDate'] as const,
           }
         }),
     ])

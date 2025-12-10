@@ -11,6 +11,7 @@ export const serviceSetup = (services: {
   const web = service('web')
   web
     .namespace('islandis')
+    .serviceAccount('web')
     .codeOwner(CodeOwners.Stefna)
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
@@ -55,16 +56,21 @@ export const serviceSetup = (services: {
         paths: ['/'],
       },
     })
-    .liveness('/liveness')
+    .liveness({
+      path: '/liveness',
+      initialDelaySeconds: 10,
+      timeoutSeconds: 5,
+    })
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '1000m', memory: '768Mi' },
-      requests: { cpu: '300m', memory: '384Mi' },
+      limits: { cpu: '1800m', memory: '1500Mi' },
+      requests: { cpu: '1200m', memory: '1024Mi' },
     })
     .replicaCount({
-      default: 2,
+      default: 3,
       max: 50,
-      min: 2,
+      min: 3,
+      cpuAverageUtilization: 70,
     })
     .extraAttributes({
       dev: {},

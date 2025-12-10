@@ -124,4 +124,96 @@ describe('generateChargeFJSPayload', () => {
     expect(result.chargeItemSubject).toBe(chargeItemSubjectId)
     expect(result.chargeItemSubject).not.toBe(input.paymentFlow.id)
   })
+
+  it('should calculate the amount as priceAmount * quantity', () => {
+    const oneItemOneQuantity = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 1,
+        chargeType: 'A',
+        priceAmount: 1000,
+      },
+    ]
+
+    const oneItemTwoQuantity = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 2,
+        chargeType: 'A',
+        priceAmount: 1000,
+      },
+    ]
+
+    const twoItemsOneQuantity = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 1,
+        chargeType: 'A',
+        priceAmount: 1000,
+      },
+      {
+        chargeItemCode: 'B101',
+        quantity: 1,
+        chargeType: 'B',
+        priceAmount: 1000,
+      },
+    ]
+
+    const twoItemsTwoQuantity = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 2,
+        chargeType: 'A',
+        priceAmount: 1000,
+      },
+      {
+        chargeItemCode: 'B101',
+        quantity: 2,
+        chargeType: 'B',
+        priceAmount: 1000,
+      },
+    ]
+
+    const oneItemOneQuantityResult = generateChargeFJSPayload({
+      ...sampleInput,
+      charges: oneItemOneQuantity,
+    })
+
+    expect(oneItemOneQuantityResult.charges[0].priceAmount).toBe(1000)
+    expect(oneItemOneQuantityResult.charges[0].amount).toBe(1000)
+    expect(oneItemOneQuantityResult.charges[0].quantity).toBe(1)
+
+    const oneItemTwoQuantityResultResult = generateChargeFJSPayload({
+      ...sampleInput,
+      charges: oneItemTwoQuantity,
+    })
+
+    expect(oneItemTwoQuantityResultResult.charges[0].priceAmount).toBe(1000)
+    expect(oneItemTwoQuantityResultResult.charges[0].amount).toBe(2000)
+    expect(oneItemTwoQuantityResultResult.charges[0].quantity).toBe(2)
+
+    const twoItemsOneQuantityResult = generateChargeFJSPayload({
+      ...sampleInput,
+      charges: twoItemsOneQuantity,
+    })
+
+    expect(twoItemsOneQuantityResult.charges[0].priceAmount).toBe(1000)
+    expect(twoItemsOneQuantityResult.charges[0].amount).toBe(1000)
+    expect(twoItemsOneQuantityResult.charges[0].quantity).toBe(1)
+    expect(twoItemsOneQuantityResult.charges[1].priceAmount).toBe(1000)
+    expect(twoItemsOneQuantityResult.charges[1].amount).toBe(1000)
+    expect(twoItemsOneQuantityResult.charges[1].quantity).toBe(1)
+
+    const twoItemsTwoQuantityResult = generateChargeFJSPayload({
+      ...sampleInput,
+      charges: twoItemsTwoQuantity,
+    })
+
+    expect(twoItemsTwoQuantityResult.charges[0].priceAmount).toBe(1000)
+    expect(twoItemsTwoQuantityResult.charges[0].amount).toBe(2000)
+    expect(twoItemsTwoQuantityResult.charges[0].quantity).toBe(2)
+    expect(twoItemsTwoQuantityResult.charges[1].priceAmount).toBe(1000)
+    expect(twoItemsTwoQuantityResult.charges[1].amount).toBe(2000)
+    expect(twoItemsTwoQuantityResult.charges[1].quantity).toBe(2)
+  })
 })

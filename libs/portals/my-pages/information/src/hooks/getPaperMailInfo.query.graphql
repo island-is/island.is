@@ -1,0 +1,6 @@
+query GetPaperMailInfo {
+  getPaperMailInfo {
+    wantsPaper
+    nationalId
+  }
+}

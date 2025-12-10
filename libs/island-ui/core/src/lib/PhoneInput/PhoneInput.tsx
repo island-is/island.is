@@ -17,7 +17,7 @@ import { StringOption } from '../Select/Select.types'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { countryCodesIS, countryCodesEN } from './countryCodes'
-import { parse } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useEffectOnce } from 'react-use'
 import { Locale } from '@island.is/shared/types'
 
@@ -67,7 +67,7 @@ const getDefaultValue = (
  */
 const getDefaultCountryCode = (lang: Locale, phoneNumber?: string) => {
   if (!phoneNumber) return DEFAULT_COUNTRY_CODE
-  const parsedPhoneNumber = parse(phoneNumber)
+  const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber)
   const countryCodeList = lang === 'is' ? countryCodesIS : countryCodesEN
 
   if (parsedPhoneNumber && parsedPhoneNumber.country) {

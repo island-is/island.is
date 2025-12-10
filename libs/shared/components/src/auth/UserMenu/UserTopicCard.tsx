@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from 'react'
 import {
   Box,
+  FocusableBox,
   Icon,
   IconProps,
   Link,
@@ -34,7 +35,7 @@ export const UserTopicCard: React.FC<
   React.PropsWithChildren<UserTopicCardProps>
 > = ({ children, colorScheme = 'blue', href, icon, onClick }) => {
   return (
-    <Box
+    <FocusableBox
       className={styles.userTopicCardBox}
       alignItems="center"
       background={colorSchemes[colorScheme].backgroundColor}
@@ -62,6 +63,6 @@ export const UserTopicCard: React.FC<
       <Box marginLeft={2} className={styles.userDelegationsText}>
         {children}
       </Box>
-    </Box>
+    </FocusableBox>
   )
 }

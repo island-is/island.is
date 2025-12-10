@@ -17,9 +17,8 @@ import {
   CivilClaimantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
+import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
-import { CivilClaimant } from './models/civilClaimant.model'
 
 @Injectable()
 export class CivilClaimantService {
@@ -64,7 +63,7 @@ export class CivilClaimantService {
       await this.civilClaimantModel.update(update, {
         where: {
           id: civilClaimant.id,
-          caseId: caseId,
+          caseId,
         },
         returning: true,
       })
@@ -93,7 +92,7 @@ export class CivilClaimantService {
     const numberOfAffectedRows = await this.civilClaimantModel.destroy({
       where: {
         id: civilClaimantId,
-        caseId: caseId,
+        caseId,
       },
     })
 
@@ -109,6 +108,12 @@ export class CivilClaimantService {
     }
 
     return true
+  }
+
+  async deleteAll(caseId: string): Promise<void> {
+    await this.civilClaimantModel.destroy({
+      where: { caseId },
+    })
   }
 
   findLatestClaimantBySpokespersonNationalId(

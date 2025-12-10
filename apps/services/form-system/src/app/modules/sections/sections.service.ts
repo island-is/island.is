@@ -8,12 +8,20 @@ import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDispla
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Form } from '../forms/models/form.model'
+import {
+  filterArrayDependency,
+  filterDependency,
+} from '../../../utils/dependenciesHelper'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class SectionsService {
   constructor(
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
@@ -26,6 +34,12 @@ export class SectionsService {
       pick(newSection, keys),
       zipObject(keys, Array(keys.length).fill(null)),
     ) as SectionDto
+
+    const form = await this.formModel.findByPk(section.formId)
+    if (form) {
+      form.draftTotalSteps++
+      await form.save()
+    }
 
     return sectionDto
   }
@@ -59,6 +73,13 @@ export class SectionsService {
         )
       }
 
+      if (
+        section.sectionType === SectionTypes.SUMMARY ||
+        section.sectionType === SectionTypes.PAYMENT ||
+        section.sectionType === SectionTypes.COMPLETED
+      )
+        continue
+
       await section.update({
         displayOrder: i,
       })
@@ -70,6 +91,34 @@ export class SectionsService {
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
+    }
+
+    const form = await this.formModel.findByPk(section.formId)
+
+    if (form) {
+      const { dependencies } = form
+      const screens = await section.$get('screens', {
+        attributes: ['id'],
+      })
+      if (Array.isArray(screens) && screens.length) {
+        const screenIds = screens.map((screen: { id: string }) => screen.id)
+        const fieldsPerScreen = await Promise.all(
+          screens.map((s) => s.$get('fields', { attributes: ['id'] })),
+        )
+        const fieldIds = fieldsPerScreen
+          .flat()
+          .map((field: { id: string }) => field.id)
+        const newDependencies = filterArrayDependency(dependencies, [
+          ...screenIds,
+          ...fieldIds,
+          id,
+        ])
+        form.dependencies = newDependencies
+      } else {
+        form.dependencies = filterDependency(dependencies, id)
+      }
+      form.draftTotalSteps--
+      await form.save()
     }
 
     section.destroy()

@@ -153,7 +153,7 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
   requirePkce: true,
   promptDelegations: true,
   singleSession: true,
-  sso: ClientSso.Enabled
+  sso: ClientSso.Enabled,
 }
 
 describe('MeClientsController with auth', () => {
@@ -919,7 +919,7 @@ describe('MeClientsController with auth', () => {
             },
           ],
           allowedAcr: ['some-acr-value'],
-          sso: ClientSso.Enabled
+          sso: ClientSso.Enabled,
         }
 
         // Act

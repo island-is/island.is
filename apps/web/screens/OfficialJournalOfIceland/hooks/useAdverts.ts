@@ -1,9 +1,6 @@
 import { useQuery } from '@apollo/client'
 
-import {
-  OfficialJournalOfIcelandAdvert,
-  OfficialJournalOfIcelandAdvertsResponse,
-} from '@island.is/web/graphql/schema'
+import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 
 import { ADVERTS_QUERY } from '../../queries/OfficialJournalOfIceland'
 import { getAdvertParams } from '../lib/advert-params.mapper'
@@ -22,6 +19,7 @@ export type UseAdvertsVariables = {
   involvedParty?: Array<string>
   dateFrom?: string
   dateTo?: string
+  year?: string
 }
 
 export type UseAdvertsInput = {
@@ -30,7 +28,7 @@ export type UseAdvertsInput = {
 
 export type UseAdvertsParams = {
   vars?: UseAdvertsVariables
-  fallbackData?: OfficialJournalOfIcelandAdvert[]
+  fallbackData?: OfficialJournalOfIcelandAdvertsResponse['adverts']
 }
 
 export const useAdverts = ({ vars, fallbackData }: UseAdvertsParams) => {
@@ -40,8 +38,10 @@ export const useAdverts = ({ vars, fallbackData }: UseAdvertsParams) => {
     UseAdvertsResponse,
     UseAdvertsInput
   >(ADVERTS_QUERY, {
-    fetchPolicy: 'no-cache',
-    nextFetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-first',
+    returnPartialData: true,
+    notifyOnNetworkStatusChange: true,
     variables: { input: variables },
   })
 

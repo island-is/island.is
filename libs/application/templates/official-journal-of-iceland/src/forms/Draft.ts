@@ -47,6 +47,10 @@ export const Draft: Form = buildForm({
           id: 'attachments',
           component: 'AttachmentsScreen',
         }),
+        buildCustomField({
+          id: 'supportingDocument',
+          component: 'SupportingDocScreen',
+        }),
       ],
     }),
     buildSection({

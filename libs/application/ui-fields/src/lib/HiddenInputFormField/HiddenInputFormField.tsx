@@ -16,26 +16,56 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
   application,
   field,
 }) => {
-  const { register, setValue, watch } = useFormContext()
-  const { watchValue, defaultValue, id, valueModifier } = field
-  const defaultVal =
-    typeof defaultValue === 'function'
-      ? defaultValue(application, field)
-      : defaultValue
+  const { register, setValue, getValues, watch } = useFormContext()
+  const { watchValue, defaultValue: getDefaultValue, id, valueModifier } = field
+  const defaultValue =
+    typeof getDefaultValue === 'function'
+      ? getDefaultValue(application, field)
+      : getDefaultValue
   const watchedValue = watchValue
-    ? watch(watchValue, defaultVal ?? undefined)
+    ? watch(watchValue, defaultValue ?? undefined)
     : undefined
 
   useEffect(() => {
     if (watchedValue) {
       const finalValue = valueModifier
-        ? valueModifier(watchedValue)
+        ? valueModifier(watchedValue, application)
         : watchedValue
       setValue(id, finalValue)
-    } else {
-      setValue(id, defaultVal)
+    } else if (getDefaultValue !== undefined) {
+      setValue(id, defaultValue)
     }
-  }, [application, defaultVal, id, setValue, watchedValue, valueModifier])
+  }, [
+    application,
+    defaultValue,
+    id,
+    setValue,
+    watchedValue,
+    valueModifier,
+    getDefaultValue,
+  ])
+
+  // Initialize field with undefined when:
+  // - getDefaultValue is undefined, and
+  //   - the current value is an empty string, OR
+  //   - the field has dontDefaultToEmptyString enabled and is undefined/null.
+  // This prevents non-string types (e.g. boolean or number) from being defaulted
+  // to an empty string by react-hook-form, which would otherwise cause validation
+  // issues (with Zod).
+  useEffect(() => {
+    if (getDefaultValue !== undefined) return
+
+    const oldValue = getValues(id)
+    const isEmptyString = oldValue === ''
+    const isNullOrUndefinedWithFlag =
+      (oldValue === null || oldValue === undefined) &&
+      field.dontDefaultToEmptyString
+
+    if (isEmptyString || isNullOrUndefinedWithFlag) {
+      setValue(id, undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return <input type="hidden" {...register(field.id)} />
 }

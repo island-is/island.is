@@ -11,8 +11,8 @@ import { Icon, Text } from '@island.is/island-ui/core'
 
 import { ReactSelectOption } from '../../types'
 
-export const ClearIndicator = (
-  props: ClearIndicatorProps<ReactSelectOption>,
+export const ClearIndicator = <T extends ReactSelectOption>(
+  props: ClearIndicatorProps<T>,
 ) => {
   return (
     <components.ClearIndicator {...props}>
@@ -21,8 +21,8 @@ export const ClearIndicator = (
   )
 }
 
-export const DropdownIndicator = (
-  props: DropdownIndicatorProps<ReactSelectOption>,
+export const DropdownIndicator = <T extends ReactSelectOption>(
+  props: DropdownIndicatorProps<T>,
 ) => {
   return (
     <components.DropdownIndicator {...props}>
@@ -31,7 +31,9 @@ export const DropdownIndicator = (
   )
 }
 
-export const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
+export const Placeholder = <T extends ReactSelectOption>(
+  props: PlaceholderProps<T>,
+) => {
   return (
     <components.Placeholder {...props}>
       <Text color="dark300" variant="small">
@@ -41,7 +43,9 @@ export const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
   )
 }
 
-export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
+export const SingleValue = <T extends ReactSelectOption>(
+  props: SingleValueProps<T>,
+) => {
   return (
     <components.SingleValue {...props}>
       <Text variant="small">{props.children}</Text>
@@ -49,10 +53,12 @@ export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
   )
 }
 
-export const Option = (props: OptionProps<ReactSelectOption>) => {
+export const Option = <T extends ReactSelectOption>(props: OptionProps<T>) => {
   return (
     <components.Option {...props}>
-      <Text variant="small">{props.children}</Text>
+      <Text variant="small" color={!props.data.value ? 'dark300' : 'dark400'}>
+        {props.children}
+      </Text>
     </components.Option>
   )
 }

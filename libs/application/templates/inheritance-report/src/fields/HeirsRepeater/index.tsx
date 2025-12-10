@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -14,7 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { Answers, EstateMember, heirAgeValidation } from '../../types'
+import {
+  Answers,
+  EstateMember,
+  heirAgeValidation,
+  heirNationalIdSameAsExecutorValidation,
+} from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -34,6 +39,7 @@ import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
   PrePaidHeirsRelations,
+  RelationCharity,
   RelationSpouse,
 } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
@@ -52,19 +58,28 @@ export const HeirsRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue, clearErrors } = useFormContext()
-  const values = getValues()
+  const { getValues, setError, setValue, clearErrors, control } =
+    useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
 
-  const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
-
-  const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
-    return x.relation
+  // Watch heirs data to avoid calling getValues() on every render
+  const heirsData = useWatch({ control, name: 'heirs.data', defaultValue: [] })
+  const estateMembers = useWatch({
+    control,
+    name: 'estate.estateMembers',
+    defaultValue: [],
   })
 
-  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+  const [
+    hasHeirWithNationalIdSameAsExecutor,
+    setHasHeirWithNationalIdSameAsExecutor,
+  ] = useState(false)
+
+  const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
+
+  const hasEstateMemberUnder18 = (estateMembers ?? []).some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
       const birthDate = member?.dateOfBirth
@@ -81,7 +96,7 @@ export const HeirsRepeater: FC<
     },
   )
 
-  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+  const hasEstateMemberUnder18withoutRep = (estateMembers ?? []).some(
     (member: EstateMember) => {
       const advocateAge =
         member.advocate && info(member.advocate.nationalId)?.age
@@ -107,6 +122,13 @@ export const HeirsRepeater: FC<
         type: 'custom',
       })
       return [false, 'invalid member age']
+    }
+
+    if (hasHeirWithNationalIdSameAsExecutor) {
+      setError(heirNationalIdSameAsExecutorValidation, {
+        type: 'custom',
+      })
+      return [false, 'heir nationalId matches executor nationalId']
     }
 
     return [true, null]
@@ -247,28 +269,28 @@ export const HeirsRepeater: FC<
       const withCustomPercentage =
         (100 - Number(customSpouseSharePercentage)) * 2
 
+      const isCharity = currentHeir?.relation === RelationCharity
+
       // This is a complicated calculation that's difficult to reason about.
       // It's been confirmed to work to DC's standards and thus it remains
       // functionally unaltered when calculating the augmented percentageSplit
       // for heir percentages that finally add up to 100 (during user input)
       let taxFreeInheritanceValue
-      if (roughlySumsTo100) {
-        const taxablePropertySplit = integerPercentageSplit(
-          inheritanceTaxFreeLimit,
-          heirPercentages,
-        )
-        const heirSplit = taxablePropertySplit[index ?? 0]
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * heirSplit
-          : heirSplit
+
+      if (isCharity) {
+        taxFreeInheritanceValue = inheritanceValue
+      } else if (isSpouse) {
+        taxFreeInheritanceValue = inheritanceValue
       } else {
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
+        const baseAmount = roughlySumsTo100
+          ? integerPercentageSplit(inheritanceTaxFreeLimit, heirPercentages)[
+              index ?? 0
+            ]
           : inheritanceTaxFreeLimit * percentage
+
+        taxFreeInheritanceValue = customSpouseSharePercentage
+          ? (withCustomPercentage / 100) * baseAmount
+          : baseAmount
       }
 
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
@@ -298,6 +320,7 @@ export const HeirsRepeater: FC<
 
       calculateTotal()
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [answers, calculateTotal, getValues, inheritanceTaxFreeLimit, setValue],
   )
 
@@ -309,9 +332,14 @@ export const HeirsRepeater: FC<
     })
   }, [fields, getValues, id, updateValues])
 
+  // Only run initialLoad on mount and when fields length changes from 0
+  // Do NOT include heirsRelations as it causes infinite loop
   useEffect(() => {
-    initialLoad()
-  }, [heirsRelations, initialLoad])
+    if (fields.length > 0) {
+      initialLoad()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length])
 
   useEffect(() => {
     if (!hasEstateMemberUnder18) {
@@ -320,11 +348,15 @@ export const HeirsRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!hasHeirWithNationalIdSameAsExecutor) {
+      clearErrors(heirNationalIdSameAsExecutorValidation)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
+    hasHeirWithNationalIdSameAsExecutor,
     clearErrors,
   ])
 
@@ -352,7 +384,26 @@ export const HeirsRepeater: FC<
       replace(heirsData)
       setValue('heirs.hasModified', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    const executorNationalId = getValueViaPath(
+      answers,
+      'executors.executor.nationalId',
+    )
+    const spouseNationalId = getValueViaPath(
+      answers,
+      'executors.spouse.nationalId',
+    )
+
+    const match = (heirsData ?? []).some(
+      (field: any) =>
+        field.nationalId === executorNationalId ||
+        field.nationalId === spouseNationalId,
+    )
+    setHasHeirWithNationalIdSameAsExecutor(match)
+  }, [answers, heirsData])
 
   return (
     <Box>
@@ -500,7 +551,7 @@ export const HeirsRepeater: FC<
                             disabled={!member.enabled}
                             label={formatMessage(customField.title)}
                             onAfterChange={(val) => {
-                              updateValues(fieldIndex, val, customFieldIndex)
+                              updateValues(fieldIndex, val, mainIndex)
                             }}
                             hasError={
                               error && error[mainIndex]
@@ -642,7 +693,7 @@ export const HeirsRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error[index] ?? null}
+              error={error[index] ?? error}
               isPrepaid={isPrePaidApplication}
             />
           </Box>
@@ -664,6 +715,12 @@ export const HeirsRepeater: FC<
         <Box marginTop={4}>
           <InputError
             errorMessage={formatMessage(m.inheritanceAgeValidation)}
+          />
+        </Box>
+      ) : errors && errors[heirNationalIdSameAsExecutorValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.heirNationalIdValidation)}
           />
         </Box>
       ) : null}

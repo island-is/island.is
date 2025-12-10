@@ -1,17 +1,18 @@
 import {
-  buildSection,
   buildMultiField,
-  buildDescriptionField,
-  buildSubmitField,
   buildOverviewField,
+  buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { m } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { m } from '../../../lib/messages'
 import {
   getAttachmentsData,
   getOverviewItems,
+  getOverviewLoadItems,
   getSumItems,
   getTableData,
+  getLoadTableData,
 } from '../../../utils/overviewUtils'
 
 export const overviewSection = buildSection({
@@ -20,12 +21,9 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overviewMultiField',
+      title: 'Overview',
+      description: m.overviewDescriptionText,
       children: [
-        buildDescriptionField({
-          id: 'overview',
-          title: 'Overview',
-          description: m.overviewDescriptionText,
-        }),
         buildOverviewField({
           id: 'overviewX',
           title: 'Upplýsingar um þig',
@@ -33,6 +31,13 @@ export const overviewSection = buildSection({
           backId: 'tableRepeater',
           bottomLine: false,
           items: getOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'overviewXAsync',
+          title: 'Async upplýsingar',
+          backId: 'tableRepeater',
+          bottomLine: false,
+          loadItems: getOverviewLoadItems,
         }),
         buildOverviewField({
           id: 'overviewY',
@@ -46,6 +51,12 @@ export const overviewSection = buildSection({
           title: 'Table overview',
           backId: 'tableRepeater',
           tableData: getTableData,
+        }),
+        buildOverviewField({
+          id: 'overviewZAsync',
+          title: 'Async Table overview',
+          backId: 'tableRepeater',
+          loadTableData: getLoadTableData,
         }),
         buildOverviewField({
           id: 'overviewXX',

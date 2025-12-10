@@ -793,6 +793,77 @@ export interface IContactUs extends Entry<IContactUsFields> {
   }
 }
 
+export interface ICourseFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
+
+  /** Categories */
+  categories?: IGenericTag[] | undefined
+}
+
+export interface ICourse extends Entry<ICourseFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'course'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseInstanceFields {
+  /** Course */
+  course: ICourse
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Start Date */
+  startDate: string
+
+  /** Price */
+  price?: IPrice | undefined
+
+  /** Max Registrations */
+  maxRegistrations?: number | undefined
+
+  /** Description */
+  description?: string | undefined
+}
+
+export interface ICourseInstance extends Entry<ICourseInstanceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseInstance'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ICustomPageFields {
   /** Parent Page */
   parentPage?: ICustomPage | undefined
@@ -1296,6 +1367,50 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Items */
+  items?: IGenericListItem[] | undefined
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+
+  /** Automatically fetch items */
+  automaticallyFetchItems?: boolean | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+export interface IFeaturedGenericListItems
+  extends Entry<IFeaturedGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredGenericListItems'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedLinksFields {
   /** Internal Title */
   internalTitle?: string | undefined
@@ -1432,6 +1547,9 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Email subject */
+  emailSubject?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -1473,6 +1591,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   /** Required */
   required?: boolean | undefined
@@ -1666,6 +1785,9 @@ export interface IGenericListFields {
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
 
+  /** Alphabetically Order Filter Tags */
+  alphabeticallyOrderFilterTags?: boolean | undefined
+
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
@@ -1674,6 +1796,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1990,7 +2115,7 @@ export interface IGrantCardsListFields {
   /** Funds */
   grantCardListFunds?: IFund[] | undefined
 
-  /** Max number of cards */
+  /** Max number of results */
   grantCardsListMaxNumberOfCards?: number | undefined
 
   /** Sorting */
@@ -1998,6 +2123,9 @@ export interface IGrantCardsListFields {
     | 'Alphabetical'
     | 'Most recently updated first'
     | undefined
+
+  /** Always display results as cards */
+  grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
@@ -2197,6 +2325,7 @@ export interface IIntroLinkImageFields {
     | ILinkUrl
     | INews
     | IAnchorPage
+    | IOrganizationSubpage
     | undefined
 
   /** Open Link in New Tab */
@@ -2452,11 +2581,19 @@ export interface ILink extends Entry<ILinkFields> {
 }
 
 export interface ILinkedPageFields {
+  /** Internal Title */
+  internalTitle: string
+
   /** Title */
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews
+  page:
+    | IArticle
+    | IArticleCategory
+    | INews
+    | IOrganizationSubpage
+    | IOrganizationParentSubpage
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -2916,6 +3053,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Image text */
+  imageText?: string | undefined
+
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined
 
@@ -3017,7 +3157,7 @@ export interface IOneColumnTextFields {
   content?: Document | undefined
 
   /** Link */
-  link?: ILink | undefined
+  link?: ILink | ILinkedPage | undefined
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
@@ -3217,6 +3357,9 @@ export interface IOrganizationFields {
 
   /** News Bottom Slices */
   newsBottomSlices?: IEmailSignup[] | undefined
+
+  /** Can pages be found in search results */
+  canPagesBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3403,6 +3546,9 @@ export interface IOrganizationParentSubpageFields {
 
   /** Displayed Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug?: string | undefined
@@ -4245,6 +4391,7 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'Personuvernd/SearchInput'
     | undefined
 
   /** Localized JSON */
@@ -5303,6 +5450,8 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'course'
+  | 'courseInstance'
   | 'customPage'
   | 'districts'
   | 'emailSignup'
@@ -5316,6 +5465,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredEvents'
+  | 'featuredGenericListItems'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'

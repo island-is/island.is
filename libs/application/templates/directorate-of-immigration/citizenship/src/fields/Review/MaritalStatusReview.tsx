@@ -12,6 +12,7 @@ import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { formatDate } from '../../utils'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -46,7 +47,11 @@ export const MaritalStatusReview: FC<Props> = ({
               },
             })}
             <Text>{answers?.maritalStatus?.status}</Text>
-            <Text>{answers?.maritalStatus?.dateOfMaritalStatusStr}</Text>
+            <Text>
+              {formatDate(
+                new Date(answers?.maritalStatus?.dateOfMaritalStatusStr),
+              )}
+            </Text>
           </GridColumn>
           <GridColumn span="1/2">
             {DescriptionFormField({

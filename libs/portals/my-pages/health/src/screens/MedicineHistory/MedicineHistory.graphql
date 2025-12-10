@@ -1,0 +1,44 @@
+query GetMedicineHistory($locale: String) {
+  healthDirectorateMedicineHistory(locale: $locale) {
+    medicineHistory {
+      id
+      name
+      strength
+      atcCode
+      indication
+      lastDispensationDate
+      dispensationCount
+      dispensations {
+        ...dispensation
+      }
+    }
+  }
+}
+
+query GetMedicineDispensationForATC(
+  $locale: String
+  $input: MedicineDispensationsATCInput!
+) {
+  healthDirectorateMedicineDispensationsATC(locale: $locale, input: $input) {
+    dispensations {
+      ...dispensation
+    }
+  }
+}
+
+fragment dispensation on HealthDirectorateMedicineHistoryDispensation {
+  id
+  name
+  agentName
+  date
+  strength
+  quantity
+  unit
+  type
+  indication
+  dosageInstructions
+  issueDate
+  prescriberName
+  expirationDate
+  isExpired
+}

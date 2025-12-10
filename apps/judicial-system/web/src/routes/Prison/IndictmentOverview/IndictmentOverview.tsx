@@ -1,12 +1,25 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  Box,
+  ButtonTypes,
+  IconMapIcon,
+  RadioButton,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  hasGeneratedCourtRecordPdf,
+  isCompletedCase,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -16,8 +29,12 @@ import {
   PageTitle,
   PdfButton,
   RenderFiles,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import {
+  getIdAndTitleForPdfButtonForRulingSentToPrisonPdf,
+  useSentToPrisonAdminDate,
+} from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -25,6 +42,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
+  useCase,
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -32,8 +50,12 @@ import {
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const { updateCase, isUpdatingCase } = useCase()
+
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
 
@@ -65,11 +87,15 @@ const IndictmentOverview = () => {
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { pdfTitle, isCompletedWithRulingOrFine } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      workingCase.indictmentRulingDecision ?? undefined,
+      sentToPrisonAdminDate,
+    )
 
   const displaySentToPrisonAdminFiles =
-    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    (isCompletedWithRulingOrFine && sentToPrisonAdminDate) ||
     isNonEmptyArray(sentToPrisonAdminFiles)
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
@@ -81,6 +107,55 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
+  // We show a court record pdf button if the case does not have a ruling
+  // and it should have court sessions (not an uploaded court record)
+  const showGeneratedCourtRecord = !hasRuling && workingCase.withCourtSessions
+  // We disable the court record pdf button if the court record pdf does not exist (should not happen)
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
+    workingCase.courtSessions,
+    user,
+  )
+  const savePunishmentType = async () => {
+    const updatedCase = await updateCase(workingCase.id, {
+      isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
+    })
+
+    if (!updatedCase) {
+      toast.error('Tókst ekki að skrá í fangelsiskerfi')
+      return
+    }
+
+    toast.success(
+      !updatedCase.isRegisteredInPrisonSystem
+        ? 'Dómur afskráður'
+        : 'Dómur skráður',
+    )
+
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      isRegisteredInPrisonSystem: updatedCase.isRegisteredInPrisonSystem,
+    }))
+  }
+
+  const footerNextButtonText: {
+    title: string
+    colorScheme: ButtonTypes['colorScheme']
+    icon: IconMapIcon
+  } = !workingCase?.isRegisteredInPrisonSystem
+    ? {
+        title: 'Dómur skráður',
+        colorScheme: 'default',
+        icon: 'checkmark',
+      }
+    : {
+        title: 'Afskrá dóm',
+        colorScheme: 'destructive',
+        icon: 'close',
+      }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -89,7 +164,7 @@ const IndictmentOverview = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <PageTitle previousUrl={constants.PRISON_CASES_ROUTE}>
+        <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
           {formatMessage(strings.title, {
             isFine:
               workingCase.indictmentRulingDecision ===
@@ -124,6 +199,22 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {isCompletedCase(workingCase.state) &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) &&
+          workingCase.courtSessions?.at(-1)?.ruling && (
+            <Box component="section" marginBottom={5}>
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
@@ -141,6 +232,16 @@ const IndictmentOverview = () => {
               hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
             )}
           </Text>
+          {showGeneratedCourtRecord && (
+            <PdfButton
+              caseId={workingCase.id}
+              title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+              pdfType="courtRecord"
+              renderAs="row"
+              elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
+            />
+          )}
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
@@ -149,6 +250,27 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
+          {workingCase.defendants?.map((defendant) => {
+            if (
+              !defendant.verdict?.serviceDate ||
+              !defendant.verdict?.externalPoliceDocumentId
+            ) {
+              return null
+            }
+
+            const serviceCertificateFileName = `Birtingarvottorð ${defendant.name}.pdf`
+
+            return (
+              <PdfButton
+                key={defendant.id}
+                caseId={workingCase.id}
+                title={serviceCertificateFileName}
+                pdfType="verdictServiceCertificate"
+                elementId={[defendant.id, serviceCertificateFileName]}
+                renderAs="row"
+              />
+            )
+          })}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
@@ -161,14 +283,13 @@ const IndictmentOverview = () => {
                 caseFiles={sentToPrisonAdminFiles}
               />
             )}
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={'Dómur til fullnustu'}
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}
@@ -267,7 +388,14 @@ const IndictmentOverview = () => {
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={constants.PRISON_CASES_ROUTE} hideNextButton />
+        <FormFooter
+          previousUrl={getStandardUserDashboardRoute(user)}
+          nextButtonText={footerNextButtonText.title}
+          onNextButtonClick={savePunishmentType}
+          nextButtonColorScheme={footerNextButtonText.colorScheme}
+          nextButtonIcon={footerNextButtonText.icon}
+          nextIsLoading={isUpdatingCase}
+        />
       </FormContentContainer>
     </PageLayout>
   )

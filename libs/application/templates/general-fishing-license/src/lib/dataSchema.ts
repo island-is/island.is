@@ -59,6 +59,7 @@ export const GeneralFishingLicenseSchema = z.object({
         FishingLicenseEnum.COMMONWHELK,
         FishingLicenseEnum.OCEANQUAHOGIN,
         FishingLicenseEnum.CRUSTACEANS,
+        FishingLicenseEnum.URCHIN,
         FishingLicenseEnum.UNKNOWN,
       ])
       .refine((x) => x, {

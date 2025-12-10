@@ -12,3 +12,9 @@ export const subpoenaTypeGrid = style({
     },
   },
 })
+
+export const pdfButtonGrid = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+  justifyContent: 'left',
+})

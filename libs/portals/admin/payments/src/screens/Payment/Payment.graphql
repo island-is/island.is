@@ -1,0 +1,22 @@
+query GetPayment($id: String!, $includeEvents: Boolean) {
+  paymentsGetFlowAdmin(input: { id: $id, includeEvents: $includeEvents }) {
+    id
+    payerName
+    payerNationalId
+    productTitle
+    productPrice
+    paymentStatus
+    events {
+      id
+      paymentFlowId
+      type
+      reason
+      paymentMethod
+      occurredAt
+      message
+      metadata
+      created
+      modified
+    }
+  }
+}

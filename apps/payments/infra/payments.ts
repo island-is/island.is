@@ -12,10 +12,22 @@ export const serviceSetup = (services: {
   service(serviceName)
     .image(image)
     .namespace(namespace)
+    .serviceAccount('payments')
     .env({
       BASEPATH: basepath,
       API_INTERNAL_BASEPATH: ref((h) => `http://${h.svc(services.api)}`),
       API_EXTERNAL_BASEPATH: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is`,
+        ),
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
+      APP_EXTERNAL_BASEPATH: {
+        local: 'http://localhost:4200',
         dev: ref(
           (ctx) =>
             `https://${

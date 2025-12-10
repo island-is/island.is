@@ -1,7 +1,7 @@
-import { AdvertSignatureTypeEnum } from '@island.is/clients/official-journal-of-iceland'
+import { AdvertSignatureType } from '@island.is/clients/official-journal-of-iceland'
 import { InputType, Field, registerEnumType, Int } from '@nestjs/graphql'
 
-registerEnumType(AdvertSignatureTypeEnum, {
+registerEnumType(AdvertSignatureType, {
   name: 'OfficialJournalOfIcelandAdvertSignatureType',
 })
 
@@ -33,6 +33,9 @@ export class AdvertsInput {
 
   @Field(() => String, { nullable: true })
   dateTo?: string
+
+  @Field(() => String, { nullable: true })
+  year?: string
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')
@@ -104,8 +107,8 @@ export class AdvertSignatureData {
 }
 @InputType('OfficialJournalOfIcelandAdvertSignature')
 export class AdvertSignature {
-  @Field(() => AdvertSignatureTypeEnum)
-  type!: AdvertSignatureTypeEnum
+  @Field(() => AdvertSignatureType)
+  type!: AdvertSignatureType
 
   @Field(() => String, { nullable: true })
   additional?: string

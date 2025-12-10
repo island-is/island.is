@@ -88,7 +88,7 @@ This starts a server on `localhost:4200`
 yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'relative/path/to/file/containing/translations'
 ```
 
-Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations
+Currently, in this project, only the `Custom Page` and `Connected Component` content types utilizes the `Translation Namespace` content type for translations
 
 ## Further Documentation
 

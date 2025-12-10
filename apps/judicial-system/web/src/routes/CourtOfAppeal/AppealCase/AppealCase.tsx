@@ -31,7 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { CaseNumberInput } from '../components'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
@@ -252,17 +252,23 @@ const AppealCase: FC = () => {
                 ? strings.notificationsFailedModalMessage
                 : strings.modalMessage,
             )}
-            primaryButtonText={formatMessage(strings.modalPrimaryButton)}
-            onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
-            onSecondaryButtonClick={() => {
-              sendNotifications()
+            primaryButton={{
+              text: formatMessage(strings.modalPrimaryButton),
+              onClick: () => router.push(`${navigateTo}/${id}`),
             }}
-            secondaryButtonText={
+            secondaryButton={
               sendNotificationError
-                ? formatMessage(strings.notificationFailedModalSecondaryButton)
+                ? {
+                    text: formatMessage(
+                      strings.notificationFailedModalSecondaryButton,
+                    ),
+                    onClick: () => {
+                      sendNotifications()
+                    },
+                    isLoading: isSendingNotification,
+                  }
                 : undefined
             }
-            isSecondaryButtonLoading={isSendingNotification}
           />
         )}
       </AnimatePresence>

@@ -2,7 +2,19 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { regulationContentStyling } from '@island.is/regulations/styling'
 
-export const bodyText = style({})
+export const departmentDate = style({
+  marginTop: '3.5em',
+  textAlign: 'center',
+})
+
+export const advertDescription = style({
+  width: '90%',
+  margin: '0 auto',
+})
+
+export const bodyText = style({
+  marginTop: '1.6em',
+})
 regulationContentStyling(bodyText)
 
 globalStyle(

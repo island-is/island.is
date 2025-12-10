@@ -5,8 +5,15 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { AwsS3Module, CaseModule, CourtModule, UserModule } from '../index'
-import { CaseFile } from './models/file.model'
+import { CaseFile } from '../repository'
+import {
+  AwsS3Module,
+  CaseModule,
+  CourtModule,
+  CourtSessionModule,
+  CriminalRecordModule,
+  UserModule,
+} from '..'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { InternalFileController } from './internalFile.controller'
@@ -16,6 +23,8 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
   imports: [
     CmsTranslationsModule,
     MessageModule,
+    forwardRef(() => CriminalRecordModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => UserModule),
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),

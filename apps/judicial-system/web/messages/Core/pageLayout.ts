@@ -33,7 +33,7 @@ export const pageLayout = {
       id: 'judicial.system.core:page_layout.shared.overview_link_title',
       defaultMessage: 'Fara á yfirlitssíðu.',
       description:
-        'Nota[ur sem titill á tengli til að fara aftur á yfirlitssíðu',
+        'Notaður sem titill á tengli til að fara aftur á yfirlitssíðu',
     }),
   },
 }

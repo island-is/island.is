@@ -1,5 +1,5 @@
-import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { style, styleVariants } from '@vanilla-extract/css'
 
 const base = style({
   border: `1px solid ${theme.border.color.blue200}`,
@@ -12,6 +12,7 @@ const base = style({
     fontWeight: 'bolder',
   },
   cursor: 'grab',
+  flexShrink: 0,
 })
 
 export const step = style({
@@ -69,9 +70,14 @@ export const navComponent = styleVariants({
 
 const baseBackground = style({
   width: '25px',
+  minWidth: '25px',
   height: '44px',
   borderRadius: `${theme.border.radius.standard} 0 0 ${theme.border.radius.standard}`,
   textAlign: 'center',
+  flex: '0 0 25px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 })
 
 export const navBackgroundActive = styleVariants({
@@ -114,4 +120,12 @@ export const customBackgroundDropdown = style({
 
 export const selectableComponent = style({
   paddingTop: '10px',
+})
+
+export const chevronStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 18,
+  width: 18,
 })

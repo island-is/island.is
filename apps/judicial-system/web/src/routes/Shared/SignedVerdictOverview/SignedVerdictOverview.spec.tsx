@@ -1,4 +1,3 @@
-import { createIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import {
@@ -10,6 +9,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import {
   getExtensionInfoText,
@@ -99,10 +99,7 @@ describe('shouldHideNextButton', () => {
 })
 
 describe('getExtensionInfoText', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn,
-  }).formatMessage
+  const formatMessage = createFormatMessage()
 
   const prosecutor = {
     role: UserRole.PROSECUTOR,

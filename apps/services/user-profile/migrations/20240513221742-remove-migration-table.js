@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.dropTable('user_profile_advania')
   },
 
-  async down(queryInterface, Sequelize) {
+  async down() {
     /**
      * This migration is cleaning up the migration table used when we migrated from the old user profile database.
      *

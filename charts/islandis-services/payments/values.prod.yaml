@@ -21,6 +21,7 @@ enabled: true
 env:
   API_EXTERNAL_BASEPATH: 'https://island.is'
   API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
+  APP_EXTERNAL_BASEPATH: 'https://island.is'
   BASEPATH: '/greida'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -65,7 +66,10 @@ ingress:
           - '/greida'
 namespace: 'payments'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 3
@@ -87,3 +91,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/payments'
+  create: true
+  name: 'payments'

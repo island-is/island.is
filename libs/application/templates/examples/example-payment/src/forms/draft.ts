@@ -6,8 +6,11 @@ import {
   buildSubmitField,
   buildForm,
   buildSection,
+  buildPaymentChargeOverviewField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
+  Application,
   DefaultEvents,
   Form,
   FormModes,
@@ -54,6 +57,41 @@ export const draft: Form = buildForm({
           title: m.draft.informationTitle,
           space: 1,
           children: [
+            buildRadioField({
+              id: 'userSelectedChargeItemCode',
+              title: m.draft.selectFieldTitle,
+              options: chargeItemCodeRadioOptions,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'paymentOverviewSection',
+      title: m.step.paymentTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentOverviewMultiField',
+          title: m.draft.paymentOverviewTitle,
+          space: 1,
+          children: [
+            buildPaymentChargeOverviewField({
+              id: 'paymentOverviewMultiField',
+              forPaymentLabel: m.m.forPaymentLabel,
+              totalLabel: m.m.totalLabel,
+              getSelectedChargeItems: (application: Application) => {
+                const userSelectedChargeItemCode = getValueViaPath<string>(
+                  application.answers,
+                  'userSelectedChargeItemCode',
+                )
+                return [
+                  {
+                    chargeItemCode: userSelectedChargeItemCode || '',
+                    chargeItemQuantity: 2,
+                  },
+                ]
+              },
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -67,24 +105,9 @@ export const draft: Form = buildForm({
                 },
               ],
             }),
-            buildRadioField({
-              id: 'userSelectedChargeItemCode',
-              title: m.draft.selectFieldTitle,
-              options: chargeItemCodeRadioOptions,
-            }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: m.step.paymentTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: m.step.confirmTitle,
-      children: [],
     }),
   ],
 })

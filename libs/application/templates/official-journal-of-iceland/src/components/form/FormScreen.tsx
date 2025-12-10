@@ -22,6 +22,7 @@ type WarningProps = {
 type Props = {
   title?: string
   intro?: React.ReactNode
+  description?: React.ReactNode
   button?: React.ReactNode
   warning?: WarningProps
   children?: React.ReactNode
@@ -32,6 +33,7 @@ type Props = {
 export const FormScreen = ({
   title,
   intro,
+  description,
   button,
   children,
   warning,
@@ -113,6 +115,11 @@ export const FormScreen = ({
             {intro && <Text>{intro}</Text>}
           </Box>
         )}
+        {description && (
+          <Box marginBottom={4} className={styles.contentWrapper}>
+            {description}
+          </Box>
+        )}
         {warning && (
           <Box>
             <AlertMessage
@@ -133,11 +140,13 @@ export const FormScreen = ({
       ) : (
         <Box>
           <Box className={styles.childrenWrapper}>{children}</Box>
-          <LinkV2 href={helpHref}>
-            <Button variant="text" size="small" icon="arrowForward">
-              Skoða hjálparsíðu
-            </Button>
-          </LinkV2>
+          <Box paddingTop={1}>
+            <LinkV2 href={helpHref}>
+              <Button variant="text" size="small" icon="arrowForward">
+                Skoða hjálparsíðu
+              </Button>
+            </LinkV2>
+          </Box>
         </Box>
       )}
     </>

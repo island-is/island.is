@@ -8,9 +8,17 @@ type Props = {
 
 export const FileItem = ({ fileName, fileSize, fileType }: Props) => {
   return (
-    <Box paddingY={2}>
+    <Box>
       <ActionCard
         heading={fileName}
+        renderHeading={(headingEl) => (
+          <Box
+            minWidth={0}
+            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+          >
+            {headingEl}
+          </Box>
+        )}
         text={fileSize ?? ''}
         headingVariant="h4"
         cta={{

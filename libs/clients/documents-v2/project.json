@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl ${POSTHOLF_BASE_PATH}/swagger/docs/v1 -H \"accept: application/json\" -H \"Authorization:Bearer $(curl -X POST ${POSTHOLF_TOKEN_URL} -d grant_type='client_credentials&client_id=${POSTHOLF_CLIENTID}&client_secret=${POSTHOLF_CLIENT_SECRET}&scope={POSTHOLF_BASE_PATH}/.default' | jq .access_token -r  )\" > src/clientConfig.json",
+          "curl ${POSTHOLF_BASE_PATH}/swagger/v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

@@ -6,17 +6,18 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
+import { OwnerRequirementsApi, LatestCollectionApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const CreateListTemplate: ApplicationTemplate<
@@ -59,7 +60,7 @@ const CreateListTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 OwnerRequirementsApi,
-                CurrentCollectionApi,
+                LatestCollectionApi,
               ],
             },
           ],
@@ -112,12 +113,11 @@ const CreateListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          // Todo: add back when needed again
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

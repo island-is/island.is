@@ -32,6 +32,9 @@ class EventTime {
 
   @Field(() => String, { nullable: true })
   endTime?: string | null
+
+  @Field(() => String, { nullable: true })
+  endDate?: string | null
 }
 
 @ObjectType()
@@ -85,7 +88,15 @@ export class Event {
 export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
   let endDate = ''
 
-  if (fields.startDate && fields.time?.endTime) {
+  if (fields.time?.endDate) {
+    const date = new Date(fields.time.endDate)
+    if (fields.time.endTime) {
+      const [hours, minutes] = fields.time.endTime.split(':')
+      date.setHours(Number(hours))
+      date.setMinutes(Number(minutes))
+    }
+    endDate = date.getTime().toString()
+  } else if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
     const [hours, minutes] = fields.time.endTime.split(':')
     date.setHours(Number(hours))
@@ -99,7 +110,11 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     title: fields.title ?? '',
     startDate: fields.startDate ?? '',
     endDate,
-    time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
+    time: (fields.time as Event['time']) ?? {
+      startTime: '',
+      endTime: '',
+      endDate: '',
+    },
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',

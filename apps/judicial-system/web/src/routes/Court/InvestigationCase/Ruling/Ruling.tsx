@@ -114,6 +114,7 @@ const Ruling = () => {
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -446,6 +447,7 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            elementId={formatMessage(core.pdfButtonRuling)}
             disabled={!isRulingRequired}
           />
         </Box>

@@ -1,5 +1,4 @@
 import {
-  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -29,6 +28,10 @@ const getCodes = (application: Application): BasicChargeItem[] => {
   // This is where you'd pick and validate that you are going to create a charge for a
   // particular charge item code. Note that creating these charges creates an actual "krafa"
   // with FJS
+  // NOTE: This is a simplified example, in a real application you should inspect the application
+  // answers and external data to pick the correct charge item code.
+  // Furthermore you should not generate the chargeItemCode from any answer in the
+  // application, but rather recalculate it to avoid payment manipulation in the graphql
   const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
     application.answers,
     'userSelectedChargeItemCode',
@@ -92,7 +95,12 @@ const template: ApplicationTemplate<
           status: 'completed',
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000,
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: [
             VerifyPaymentApi.configure({
               order: 0,
@@ -107,6 +115,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
+              delete: true,
             },
           ],
         },

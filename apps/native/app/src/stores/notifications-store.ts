@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-community/async-storage'
-import messaging from '@react-native-firebase/messaging'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getToken } from '@react-native-firebase/messaging'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -20,6 +20,7 @@ import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
 import { preferencesStore } from './preferences-store'
+import { app } from '../lib/firebase'
 
 interface NotificationsState extends State {
   unseenCount: number
@@ -48,7 +49,7 @@ export const notificationsStore = create<NotificationsStore>(
 
       async syncToken() {
         const client = await getApolloClientAsync()
-        const token = await messaging().getToken()
+        const token = await getToken(app.messaging())
         const { pushToken: oldToken, deletePushToken } = get()
 
         if (oldToken !== token) {

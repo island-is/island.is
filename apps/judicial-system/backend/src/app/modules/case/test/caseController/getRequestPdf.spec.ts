@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { getRequestPdfAsBuffer } from '../../../../formatters'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 jest.mock('../../../../formatters/requestPdf')
 

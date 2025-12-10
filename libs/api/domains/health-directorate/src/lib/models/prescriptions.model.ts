@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
   PrescribedItemCategoryEnum,
@@ -18,6 +18,9 @@ export class Prescription {
   type?: string
 
   @Field({ nullable: true })
+  strength?: string
+
+  @Field({ nullable: true })
   form?: string
 
   @Field({ nullable: true })
@@ -32,10 +35,13 @@ export class Prescription {
   @Field({ nullable: true })
   prescriberName?: string
 
-  @Field(() => Date)
+  @Field({ nullable: true })
+  medCardDrugId?: string
+
+  @Field(() => GraphQLISODateTime)
   issueDate!: Date
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   expiryDate!: Date
 
   @Field({ nullable: true })

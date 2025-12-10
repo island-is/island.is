@@ -1,17 +1,31 @@
 # Add files here to ignore them from prettier formatting
+# Uses .gitignore syntax
 
-/dist
-/coverage
+# CI/.github
 .github/actions/dist*
 .github/workflows/stale-prs.yml
+
+# Schema and generated
 /libs/api/domains/application/gen
+gen/
+*.generated.ts
+/infra/helm/
+/dist
+/coverage
+
+# Cache, temp
 /tmp
 /cache
 /.cache
+/*-cache
+/.cypress-cache
+/.nx/cache
+/.nx/workspace-data
+
+# Tooling?
 /tools/**/*.js
 **/*.hbs
 .yarn
-/infra/helm/
-/.nx/cache
-/.nx/workspace-data
+
+# Assets
 apps/web/public/assets/pdf.worker.min.mjs

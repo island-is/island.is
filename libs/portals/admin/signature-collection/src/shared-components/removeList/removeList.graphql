@@ -1,0 +1,8 @@
+mutation signatureCollectionAdminRemoveList(
+  $input: SignatureCollectionListIdInput!
+) {
+  signatureCollectionAdminRemoveList(input: $input) {
+    success
+    reasons
+  }
+}

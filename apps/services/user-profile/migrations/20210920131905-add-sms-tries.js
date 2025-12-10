@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
+    return queryInterface.sequelize.transaction(() =>
       Promise.all([
         queryInterface.addColumn('sms_verification', 'tries', {
           type: Sequelize.INTEGER,
@@ -13,8 +13,8 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
+  down: (queryInterface) => {
+    return queryInterface.sequelize.transaction(() =>
       Promise.all([queryInterface.removeColumn('sms_verification', 'tries')]),
     )
   },

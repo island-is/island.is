@@ -2,6 +2,6 @@
   "name": "island-ui-fonts",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "targets": {},
-  "tags": ["lib:dom", "scope:dom"]
+  "tags": ["lib:dom", "scope:dom"],
+  "targets": {}
 }

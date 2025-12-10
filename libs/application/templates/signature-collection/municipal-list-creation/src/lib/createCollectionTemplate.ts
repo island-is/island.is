@@ -7,10 +7,11 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
@@ -22,9 +23,7 @@ import {
   CandidateApi,
   IsDelegatedToCompanyApi,
   MunicipalCollectionApi,
-  MunicipalIdentityApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const createListTemplate: ApplicationTemplate<
@@ -41,11 +40,6 @@ const createListTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
-  ],
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
   ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -78,7 +72,6 @@ const createListTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CandidateApi,
                 MunicipalCollectionApi,
-                MunicipalIdentityApi,
                 IsDelegatedToCompanyApi,
               ],
             },
@@ -132,7 +125,11 @@ const createListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          //Todo: Add onEntry once ready
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

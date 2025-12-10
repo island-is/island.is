@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Inject,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -24,17 +25,15 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
-import { Defendant } from '../defendant/models/defendant.model'
+import { Case, Defendant, Subpoena } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/internal')
@@ -54,9 +53,23 @@ export class InternalSubpoenaController {
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by police subpoena id ${policeSubpoenaId}`)
+    this.logger.debug(
+      `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
+    )
 
-    return this.subpoenaService.update(subpoena, update)
+    if (!subpoena.case || !subpoena.defendant) {
+      // This should never happen because of the PoliceSubpoenaExistsGuard
+      throw new InternalServerErrorException(
+        `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
+      )
+    }
+
+    return this.subpoenaService.update(
+      subpoena.case,
+      subpoena.defendant,
+      subpoena,
+      update,
+    )
   }
 
   @UseGuards(
@@ -65,16 +78,18 @@ export class InternalSubpoenaController {
     DefendantExistsGuard,
     SubpoenaExistsGuard,
   )
-  @Post(
+  @Post([
     `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]
+      messageEndpoint[
+        MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA
+      ]
     }/:defendantId/:subpoenaId`,
-  )
+  ])
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a subpoena to the police centralized file service',
   })
-  deliverSubpoenaToPolice(
+  deliverSubpoenaToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -88,7 +103,7 @@ export class InternalSubpoenaController {
     )
 
     // callback function to fetch the updated subpoena fields after delivering subpoena to police
-    const getDeliveredSubpoenaFileToPoliceLogDetails = async (
+    const getDeliveredSubpoenaNationalCommissionersOfficeLogDetails = async (
       results: DeliverResponse,
     ) => {
       const currentSubpoena = await this.subpoenaService.findById(subpoena.id)
@@ -105,15 +120,15 @@ export class InternalSubpoenaController {
 
     return this.auditTrailService.audit(
       deliverDto.user.id,
-      AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
-      this.subpoenaService.deliverSubpoenaToPolice(
+      AuditedAction.DELIVER_SUBPOENA_TO_NATIONAL_COMMISSIONERS_OFFICE,
+      this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice(
         theCase,
         defendant,
         subpoena,
         deliverDto.user,
       ),
       caseId,
-      getDeliveredSubpoenaFileToPoliceLogDetails,
+      getDeliveredSubpoenaNationalCommissionersOfficeLogDetails,
     )
   }
 
@@ -231,16 +246,19 @@ export class InternalSubpoenaController {
     DefendantExistsGuard,
     SubpoenaExistsGuard,
   )
-  @Post(
+  @Post([
     `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
+      messageEndpoint[
+        MessageType
+          .DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION
+      ]
     }/:defendantId/:subpoenaId`,
-  )
+  ])
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers subpoena revocation to police',
   })
-  deliverSubpoenaRevocationToPolice(
+  deliverSubpoenaRevocationToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -249,10 +267,10 @@ export class InternalSubpoenaController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering subpoena revocation of ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
+      `Delivering subpoena revocation of ${subpoenaId} to national commissioners office for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaRevocationToPolice(
+    return this.subpoenaService.deliverSubpoenaRevocationToNationalCommissionersOffice(
       theCase,
       subpoena,
       deliverDto.user,

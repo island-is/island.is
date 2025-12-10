@@ -21,9 +21,8 @@ export const stringifyBankData = (obj: any) => {
 }
 
 export const bankInfoObject = (bankInfo: string) => {
-  const bankInfoString = formatBankInfo(bankInfo)
-  const bankArray = bankInfoString.split('-')
-  if (bankInfoString) {
+  const bankArray = bankInfo.trim().split('-')
+  if (bankArray.length === 3) {
     return {
       bank: bankArray[0],
       l: bankArray[1],

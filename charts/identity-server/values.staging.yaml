@@ -55,7 +55,10 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -75,6 +78,11 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/auth-admin-web'
+    create: true
+    name: 'auth-admin-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -90,13 +98,14 @@ identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
     ad.datadoghq.com/identity-server.init_configs: '[{}]'
-    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]'
     ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
+    ActorUserProfileApiSettings__BaseAddress: 'http://service-portal-api.service-portal.svc.cluster.local'
     Application__AllowedRedirectUris: 'https://beta.staging01.devland.is/minarsidur,https://beta.staging01.devland.is/umsoknir'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
@@ -109,6 +118,7 @@ identity-server:
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     DD_TRACE_DEBUG: 'true'
     Datadog__Metrics__Port: '5003'
+    EmailsApiSettings__BaseAddress: 'http://service-portal-api.service-portal.svc.cluster.local'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
@@ -165,7 +175,8 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -244,7 +255,7 @@ services-auth-admin-api:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -287,7 +298,10 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -320,6 +334,11 @@ services-auth-admin-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-admin-api'
+    create: true
+    name: 'services-auth-admin-api'
 services-auth-delegation-api:
   enabled: true
   env:
@@ -347,7 +366,7 @@ services-auth-delegation-api:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -359,6 +378,7 @@ services-auth-delegation-api:
     - 'islandis'
     - 'service-portal'
     - 'user-notification-worker'
+    - 'user-notification-birthday-worker'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -390,7 +410,10 @@ services-auth-delegation-api:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -417,6 +440,11 @@ services-auth-delegation-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/auth-delegation-api'
+    create: true
+    name: 'auth-delegation-api'
 services-auth-ids-api:
   enabled: true
   env:
@@ -454,10 +482,10 @@ services-auth-ids-api:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -525,7 +553,10 @@ services-auth-ids-api:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -554,9 +585,14 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -597,7 +633,10 @@ services-auth-ids-api-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -617,6 +656,11 @@ services-auth-ids-api-cleanup:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-ids-api-cleanup'
+    create: true
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
@@ -642,7 +686,7 @@ services-auth-personal-representative:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -681,7 +725,10 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -707,6 +754,11 @@ services-auth-personal-representative:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-personal-representative'
+    create: true
+    name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
   enabled: true
   env:
@@ -750,7 +802,10 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -769,6 +824,11 @@ services-auth-personal-representative-public:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-personal-representative-public'
+    create: true
+    name: 'services-auth-personal-representative-public'
 services-auth-public-api:
   enabled: true
   env:
@@ -801,11 +861,11 @@ services-auth-public-api:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -845,11 +905,15 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.staging01.devland.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -876,3 +940,8 @@ services-auth-public-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-public-api'
+    create: true
+    name: 'services-auth-public-api'

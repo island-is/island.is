@@ -21,6 +21,7 @@ import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,
   IdentityApi,
+  MockPaymentCatalog,
 } from '../dataProviders'
 import {
   coreHistoryMessages,
@@ -32,6 +33,7 @@ import { Features } from '@island.is/feature-flags'
 import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
 import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
+import { FishingLicenseChargeType } from '../shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
@@ -60,13 +62,23 @@ export const getExtraData = (application: Application): ExtraData[] => {
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   const answers = application.answers as GeneralFishingLicenseAnswers
-  const chargeItemCode = getValueViaPath(
+  const chargeItemCode = getValueViaPath<string>(
     answers,
     'fishingLicense.chargeType',
-  ) as string
+  )
+  const licenseType = getValueViaPath<string>(answers, 'fishingLicense.license')
 
   if (!chargeItemCode) {
     throw new Error('Vörunúmer fyrir FJS vantar.')
+  }
+
+  if (
+    chargeItemCode !==
+    FishingLicenseChargeType[
+      licenseType as keyof typeof FishingLicenseChargeType
+    ]
+  ) {
+    throw new Error('Vörunúmer fyrir FJS rangt.')
   }
 
   const result: BasicChargeItem[] = [{ code: chargeItemCode }]
@@ -90,9 +102,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   name: application.general.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.GeneralFishingLicense.translation,
-  ],
   dataSchema: GeneralFishingLicenseSchema,
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },
@@ -134,6 +145,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 DepartmentOfFisheriesPaymentCatalogApi,
+                MockPaymentCatalog,
                 ShipRegistryApi,
                 IdentityApi,
               ],

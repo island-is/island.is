@@ -25,8 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
-import { UpdateCase } from '../case.service'
-import { Case } from '../models/case.model'
+import { Case, UpdateCase } from '../../repository'
 
 type Actor = 'Prosecution' | 'Defence' | 'Neutral'
 
@@ -188,11 +187,19 @@ const indictmentCaseStateMachine: Map<
 
 const requestCaseCompletionSideEffect =
   (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime = update.courtEndTime ?? theCase.courtEndTime
+    const currentCourtEndTime =
+      update.courtEndTime ?? theCase.courtEndTime ?? nowFactory()
     const newUpdate: UpdateCase = {
       ...update,
       state,
       rulingDate: currentCourtEndTime,
+    }
+
+    // Handle completed without ruling
+    const isCompletedWithoutRuling =
+      update.isCompletedWithoutRuling ?? theCase.isCompletedWithoutRuling
+    if (isCompletedWithoutRuling) {
+      newUpdate.rulingSignatureDate = null
     }
 
     // Handle appealed in court

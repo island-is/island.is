@@ -1,26 +1,31 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView, TouchableHighlight } from 'react-native'
+import {
+  SafeAreaView,
+  ScrollView,
+  TouchableHighlight,
+  View,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 
-import { FamilyMemberCard, MoreCard } from '../../ui'
+import airplaneIcon from '../../assets/icons/airplane.png'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
-import vehicleIcon from '../../assets/icons/vehicle.png'
-import airplaneIcon from '../../assets/icons/airplane.png'
 import healthIcon from '../../assets/icons/health.png'
+import vehicleIcon from '../../assets/icons/vehicle.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useAuthStore } from '../../stores/auth-store'
-import { testIDs } from '../../utils/test-ids'
+import { FamilyMemberCard, MoreCard } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
-import { isIos } from '../../utils/devices'
+import { testIDs } from '../../utils/test-ids'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -30,27 +35,20 @@ const Row = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({ icons: ['settings'], theme: theme as any })
-          : [],
+        rightButtons: getRightButtons({ icons: ['settings'], theme }),
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'profile.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'profile.bottomTabText' }),
       },
     }),
     {
       topBar: {
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -69,24 +67,44 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  const authStore = useAuthStore()
+
   const intl = useIntl()
   const theme = useTheme()
-  const [hiddenContent, setHiddenContent] = useState(isIos)
+  const authStore = useAuthStore()
+  const myPagesLinks = useMyPagesLinks()
 
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['settings'] }),
   })
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
+  const externalLinks = [
+    {
+      link: myPagesLinks.accessControl,
+      title: intl.formatMessage({ id: 'profile.accessControl' }),
+      icon: require('../../assets/icons/lock.png'),
+    },
+    {
+      link: myPagesLinks.supportPayments,
+      title: intl.formatMessage({ id: 'profile.supportPayments' }),
+      icon: require('../../assets/icons/cardSuccess.png'),
+    },
+    {
+      link: myPagesLinks.education,
+      title: intl.formatMessage({ id: 'profile.education' }),
+      icon: require('../../assets/icons/education.png'),
+    },
+    {
+      link: myPagesLinks.lawAndOrder,
+      title: intl.formatMessage({ id: 'profile.lawAndOrder' }),
+      icon: require('../../assets/icons/lawAndOrder.png'),
+    },
+    {
+      link: myPagesLinks.occupationalLicenses,
+      title: intl.formatMessage({ id: 'profile.occupationalLicenses' }),
+      icon: require('../../assets/icons/scroll.png'),
+    },
+  ]
 
   return (
     <>
@@ -148,7 +166,18 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo('/air-discount')}
           />
         </Row>
+        <View
+          style={{
+            marginTop: theme.spacing[3],
+          }}
+        >
+          <MoreInfoContiner
+            externalLinks={externalLinks}
+            componentId={componentId}
+          />
+        </View>
       </ScrollView>
+
       <BottomTabsIndicator index={4} total={5} />
     </>
   )

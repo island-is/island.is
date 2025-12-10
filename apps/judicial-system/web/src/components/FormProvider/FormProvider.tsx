@@ -10,7 +10,13 @@ import {
 } from 'react'
 import { useRouter } from 'next/router'
 
-import { USERS_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  CREATE_INDICTMENT_ROUTE,
+  CREATE_INVESTIGATION_CASE_ROUTE,
+  CREATE_RESTRICTION_CASE_ROUTE,
+  CREATE_TRAVEL_BAN_ROUTE,
+  USERS_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseOrigin,
@@ -19,6 +25,7 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { api } from '../../services'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseQuery, useCaseLazyQuery } from './case.generated'
 import {
@@ -27,6 +34,7 @@ import {
 } from './limitedAccessCase.generated'
 
 type ProviderState =
+  | 'creating'
   | 'fetch'
   | 'refresh'
   | 'up-to-date'
@@ -113,11 +121,19 @@ const FormProvider = ({ children }: Props) => {
 
   // Used in exported indicators
   const id = typeof router.query.id === 'string' ? router.query.id : undefined
+  const isCreatingCase = [
+    CREATE_RESTRICTION_CASE_ROUTE,
+    CREATE_TRAVEL_BAN_ROUTE,
+    CREATE_INVESTIGATION_CASE_ROUTE,
+    CREATE_INDICTMENT_ROUTE,
+  ].includes(router.pathname)
   const replacingCase = id && id !== caseId
   const replacingPath = router.pathname !== pathname
 
   useEffect(() => {
-    if (!id) {
+    if (isCreatingCase) {
+      setState('creating')
+    } else if (!id) {
       // Not working on a case
       setState(undefined)
     } else if (id === caseId) {
@@ -161,6 +177,8 @@ const FormProvider = ({ children }: Props) => {
 
             if (theCase) {
               onCompleted(theCase)
+            } else {
+              onError()
             }
           }
         })
@@ -170,6 +188,13 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
+    const isRoot = /^\/?$/.test(window.location.pathname)
+    if (!isRoot && !isAuthenticated) {
+      window.location.assign(
+        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+      )
+    }
+
     if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&
@@ -222,7 +247,8 @@ const FormProvider = ({ children }: Props) => {
         // Not found until we navigate to a different page
         caseNotFound: !replacingPath && state === 'not-found',
         isCaseUpToDate:
-          !replacingCase && !replacingPath && state === 'up-to-date',
+          isCreatingCase ||
+          (!replacingCase && !replacingPath && state === 'up-to-date'),
         refreshCase: () => setState('refresh'),
         getCase,
       }}

@@ -12,21 +12,6 @@ export const done: Form = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
-      id: 'externalData',
-      title: m.step.externalDataTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'info',
-      title: m.step.info,
-      children: [],
-    }),
-    buildSection({
-      id: 'awaitingPayment',
-      title: m.step.paymentTitle,
-      children: [],
-    }),
-    buildSection({
       id: 'done',
       title: m.step.confirmTitle,
       children: [

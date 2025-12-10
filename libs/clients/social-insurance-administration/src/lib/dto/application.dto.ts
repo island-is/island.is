@@ -1,4 +1,4 @@
-import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../..'
+import { TrWebContractsExternalDigitalIcelandDocumentsDocument } from '../..'
 import {
   Period,
   DomesticBankInfo,
@@ -24,11 +24,13 @@ export interface ApplicationDTO {
   isSailorPension?: boolean
   isRental?: boolean
   hasAStudyingAdolescenceResident?: boolean
-  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
+  uploads?: Array<TrWebContractsExternalDigitalIcelandDocumentsDocument>
   employment?: string
   employers?: Array<Employer>
   deceasedNationalId?: string
   childrenNationalIds?: string[]
   spouseTaxCardUsage?: SpouseTaxCardUsage
   incomePlan?: IncomePlanInfo
+  livesAloneUserReply?: boolean
+  livesAloneNationalRegistryData?: boolean
 }

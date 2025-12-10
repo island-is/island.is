@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,10 +12,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
@@ -112,7 +113,7 @@ const getNextButtonText = (
     ? formatMessage(m.sections.caseExtension.buttonLabel, {
         caseType: workingCase.type,
       })
-    : capitalize(formatMessage(strings.nextButtonReopenText))
+    : 'Leiðrétta þingbók eða úrskurð'
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
@@ -250,7 +251,9 @@ export const SignedVerdictOverview: FC = () => {
    */
   const canModifyCaseDates = useCallback(() => {
     return (
-      (isProsecutionUser(user) || isDistrictCourtUser(user)) &&
+      (isProsecutionUser(user) ||
+        isDistrictCourtUser(user) ||
+        isPrisonAdminUser(user)) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -445,13 +448,7 @@ export const SignedVerdictOverview: FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() =>
-                  router.push(
-                    isPrisonSystemUser(user)
-                      ? constants.PRISON_CASES_ROUTE
-                      : constants.CASES_ROUTE,
-                  )
-                }
+                onClick={() => router.push(getStandardUserDashboardRoute(user))}
               >
                 {formatMessage(core.back)}
               </Button>
@@ -637,7 +634,7 @@ export const SignedVerdictOverview: FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             hideNextButton={shouldHideNextButton(workingCase, user)}
             nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
             onNextButtonClick={() => handleNextButtonClick()}
@@ -649,19 +646,28 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={shareCaseModal.title}
             text={shareCaseModal.text}
-            primaryButtonText={formatMessage(core.closeModal)}
-            onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
+            primaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => setSharedCaseModal(undefined),
+            }}
           />
         )}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {isModifyingDates && (
-            <ModifyDatesModal
-              workingCase={workingCase}
-              onSubmit={onModifyDatesSubmit}
-              isSendingNotification={isSendingNotification}
-              isUpdatingCase={isUpdatingCase}
-              setIsModifyingDates={setIsModifyingDates}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              key="modify-dates-modal"
+            >
+              <ModifyDatesModal
+                workingCase={workingCase}
+                onSubmit={onModifyDatesSubmit}
+                isSendingNotification={isSendingNotification}
+                isUpdatingCase={isUpdatingCase}
+                closeModal={() => setIsModifyingDates(false)}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
         {requestCourtRecordSignatureResponse && (
@@ -710,14 +716,14 @@ export const SignedVerdictOverview: FC = () => {
                 formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
               )
             }
-            primaryButtonText={
-              courtRecordSignatureConfirmationResponse
+            primaryButton={{
+              text: courtRecordSignatureConfirmationResponse
                 ? formatMessage(core.closeModal)
-                : ''
-            }
-            onPrimaryButtonClick={() => {
-              setRequestCourtRecordSignatureResponse(undefined)
-              setCourtRecordSignatureConfirmationResponse(undefined)
+                : '',
+              onClick: () => {
+                setRequestCourtRecordSignatureResponse(undefined)
+                setCourtRecordSignatureConfirmationResponse(undefined)
+              },
             }}
           />
         )}
@@ -744,17 +750,18 @@ export const SignedVerdictOverview: FC = () => {
             text={formatMessage(
               m.sections.confirmAppealAfterDeadlineModal.text,
             )}
-            primaryButtonText={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            primaryButton={{
+              text: formatMessage(
+                m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
+              ),
+              onClick: () =>
+                router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`),
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
+              ),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}
@@ -764,17 +771,18 @@ export const SignedVerdictOverview: FC = () => {
               strings.confirmStatementAfterDeadlineModalTitle,
             )}
             text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`)
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () =>
+                router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`),
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}
@@ -782,11 +790,9 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={formatMessage(m.sections.appealReceived.title)}
             text={formatMessage(m.sections.appealReceived.text)}
-            primaryButtonText={formatMessage(
-              m.sections.appealReceived.primaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              setModalVisible('NoModal')
+            primaryButton={{
+              text: formatMessage(m.sections.appealReceived.primaryButtonText),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}

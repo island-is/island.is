@@ -1,5 +1,6 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -28,7 +29,11 @@ describe('LimitedAccessCaseController - Update guards', () => {
     expect(new guards[2]()).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
     expect(guards[3]).toEqual({
-      allowedCaseTypes: [...restrictionCases, ...investigationCases],
+      allowedCaseTypes: [
+        ...restrictionCases,
+        ...investigationCases,
+        ...indictmentCases,
+      ],
     })
     expect(new guards[4]()).toBeInstanceOf(CaseWriteGuard)
     expect(new guards[5]()).toBeInstanceOf(CaseCompletedGuard)

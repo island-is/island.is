@@ -1,4 +1,4 @@
-import {  ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsArray,
@@ -228,5 +228,4 @@ export const superUserFields = [
   'customClaims',
   'singleSession',
   'allowedAcr',
-  'sso',
 ]

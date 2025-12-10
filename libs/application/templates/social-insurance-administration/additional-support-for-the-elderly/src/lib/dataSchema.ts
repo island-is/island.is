@@ -88,6 +88,9 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.period, path: ['month'] },
     ),
+  higherPayments: z.object({
+    question: z.enum([YES, NO]),
+  }),
   infoCheckbox: z.array(z.enum([YES])).nonempty(),
 })
 

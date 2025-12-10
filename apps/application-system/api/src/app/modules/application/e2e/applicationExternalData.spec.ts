@@ -79,7 +79,7 @@ describe('Application External Data ', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -102,7 +102,7 @@ describe('Application External Data ', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -141,7 +141,7 @@ describe('Application External Data ', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 

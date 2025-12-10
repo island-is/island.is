@@ -39,10 +39,12 @@ import {
   Footer as WebFooter,
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
+  OrganizationSearchInput,
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
   Webreader,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import {
@@ -69,7 +71,6 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
@@ -95,7 +96,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -272,16 +273,6 @@ export const OrganizationHeader: React.FC<
           image={n(
             'hsnHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'hsu':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsuHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
           )}
         />
       )
@@ -644,6 +635,7 @@ export const OrganizationFooter: React.FC<
     case 'hsu':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -684,15 +676,6 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
-        />
-      )
-      break
-    case 'fjarsysla-rikisins':
-    case 'the-financial-management-authority':
-      OrganizationFooterComponent = (
-        <FjarsyslaRikisinsFooter
-          namespace={namespace}
-          title={organization.title}
         />
       )
       break
@@ -878,6 +861,18 @@ export const OrganizationChatPanel = ({
     )
   }
 
+  const organizationIdWithZendesk = organizationIds.find((id) => {
+    return id in zendeskConfig[activeLocale]
+  })
+
+  if (organizationIdWithZendesk) {
+    return (
+      <ZendeskChatPanel
+        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
+      />
+    )
+  }
+
   return null
 }
 
@@ -915,26 +910,6 @@ const SecondaryMenu = ({
   </Box>
 )
 
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  const clientUrlWithoutHashOrQueryParams = clientUrl
-    .split('?')[0]
-    .split('#')[0]
-
-  for (const item of navigationItems) {
-    if (clientUrlWithoutHashOrQueryParams === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
-
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
@@ -968,6 +943,11 @@ const renderConnectedComponent = (slice) => {
     case 'Fiskistofa/ShipSearchSidebarInput':
       connectedComponent = <SidebarShipSearchInput key={slice?.id} />
       break
+    case 'Personuvernd/SearchInput':
+      connectedComponent = (
+        <OrganizationSearchInput key={slice?.id} {...slice?.json} />
+      )
+      break
     case 'OrganizationSearchBox':
       connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
       break
@@ -991,10 +971,10 @@ export const OrganizationWrapper: React.FC<
   pageDescription,
   pageFeaturedImage,
   organizationPage,
-  breadcrumbItems,
+  breadcrumbItems: breadcrumbItemsProp,
   mainContent,
   sidebarContent,
-  navigationData,
+  navigationData: navigationDataProp,
   fullWidthContent = false,
   stickySidebar = true,
   children,
@@ -1008,9 +988,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
-
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
@@ -1021,11 +999,6 @@ export const OrganizationWrapper: React.FC<
       href: url,
       active: router.asPath === url,
     })) ?? []
-
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
-  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -1047,7 +1020,69 @@ export const OrganizationWrapper: React.FC<
   const n = useNamespace(namespace)
 
   const indexableBySearchEngine =
-    organizationPage.canBeFoundInSearchResults ?? true
+    organizationPage.organization?.canPagesBeFoundInSearchResults ??
+    organizationPage.canBeFoundInSearchResults ??
+    true
+
+  const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
+    'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
+    false,
+  )
+
+  const { breadcrumbItems, navigationData } = useMemo(() => {
+    if (!sitemapContentTypeDeterminesNavigationAndBreadcrumbs) {
+      return {
+        breadcrumbItems: breadcrumbItemsProp ?? [],
+        navigationData: navigationDataProp,
+      }
+    }
+
+    const breadcrumbItems: BreadCrumbItem[] = (
+      organizationPage.navigationLinks?.breadcrumbs ?? []
+    ).map((breadcrumb) => ({
+      title: breadcrumb.label,
+      href: breadcrumb.href,
+    }))
+
+    const pathname = new URL(router.asPath, 'https://island.is').pathname
+
+    const navigationData: NavigationData = {
+      title: navigationDataProp.title,
+      items: (organizationPage.navigationLinks?.topLinks ?? []).map(
+        (topLink) => {
+          let isAnyChildActive = false
+          const midLinks = (topLink.midLinks ?? []).map((midLink) => {
+            const isActive = midLink.isActive || pathname === midLink.href
+            if (isActive) isAnyChildActive = true
+            return {
+              title: midLink.label,
+              href: midLink.href,
+              active: isActive,
+            }
+          })
+          return {
+            title: topLink.label,
+            href: topLink.href,
+            active:
+              topLink.isActive || pathname === topLink.href || isAnyChildActive,
+            items: midLinks,
+          }
+        },
+      ),
+    }
+
+    return {
+      breadcrumbItems,
+      navigationData,
+    }
+  }, [
+    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
+    organizationPage.navigationLinks?.breadcrumbs,
+    organizationPage.navigationLinks?.topLinks,
+    router.asPath,
+    navigationDataProp,
+    breadcrumbItemsProp,
+  ])
 
   return (
     <>
@@ -1099,7 +1134,6 @@ export const OrganizationWrapper: React.FC<
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
                       link
@@ -1178,7 +1212,6 @@ export const OrganizationWrapper: React.FC<
                   isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href} legacyBehavior>

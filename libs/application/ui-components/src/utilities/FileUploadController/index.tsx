@@ -82,6 +82,7 @@ interface FileUploadControllerProps {
   readonly maxSize?: number
   readonly maxSizeErrorText?: string
   readonly totalMaxSize?: number
+  readonly maxFileCount?: number
   readonly forImageUpload?: boolean
 }
 
@@ -97,6 +98,7 @@ export const FileUploadController = ({
   maxSize,
   maxSizeErrorText,
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
+  maxFileCount = Number.MAX_SAFE_INTEGER, // Default to no limit
   forImageUpload,
   onRemove,
 }: FileUploadControllerProps) => {
@@ -116,9 +118,14 @@ export const FileUploadController = ({
     { skip: true },
   )
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
+
   const initialUploadFiles: UploadFileDeprecated[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
+
+  const [sumOfFileCount, setSumOfFileCount] = useState(
+    initialUploadFiles?.length ?? 0,
+  )
 
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
@@ -218,7 +225,20 @@ export const FileUploadController = ({
       return
     }
 
+    if (
+      maxFileCount &&
+      sumOfFileCount + addedUniqueFiles.length > maxFileCount
+    ) {
+      setUploadError(
+        formatMessage(coreErrorMessages.fileMaxCountLimitExceeded, {
+          maxFileCount,
+        }),
+      )
+      return
+    }
+
     setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
+    setSumOfFileCount(addedUniqueFiles.length + sumOfFileCount)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
       fileToObjectDeprecated(f, 'uploading'),
@@ -314,6 +334,7 @@ export const FileUploadController = ({
           fileToRemove,
         },
       })
+      setSumOfFileCount(sumOfFileCount - 1)
     }
 
     if (overwriteError) setUploadError(undefined)

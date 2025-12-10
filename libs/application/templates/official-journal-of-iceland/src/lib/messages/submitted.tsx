@@ -67,5 +67,10 @@ export const submitted = {
         'Ef auglýsingin þarfnast einhverra breytinga færð þú tilkynningu um það.',
       description: 'Second bullet of the submitted screen',
     },
+    expectedPublishDate: {
+      id: 'ojoi.application:submitted.bullets.expectedPublishDate',
+      defaultMessage: 'Áætlaður birtingardagur auglýsingar:',
+      description: 'expectedPublishDate bullet of the submitted screen',
+    },
   }),
 }

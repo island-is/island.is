@@ -97,6 +97,12 @@ export const paymentArrangement = {
         'Ekki er hægt að skrá námskeið í reikning. Vinsamlegast hafðu samband við Vinnueftirlitið.',
       description: 'Contact organization alert label on conclusion screen',
     },
+    webServiceFailure: {
+      id: 'aosh.sem.application:paymentArrangement.labels.webServiceFailure',
+      defaultMessage:
+        'Vefþjónustan skilaði villu. Reyndu aftur síðar. Ef vandamálið varir, vinsamlegast hafðu samband við Vinnueftirlitið.',
+      description: 'Web service failed to respond',
+    },
     explanation: {
       id: 'aosh.sem.application:paymentArrangement.labels.explanation',
       defaultMessage: 'Skýring',

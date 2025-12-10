@@ -1,7 +1,3 @@
-import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
 import {
   Box,
   Button,
@@ -16,27 +12,32 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
   FootNote,
-  SAMGONGUSTOFA_SLUG,
-  IntroHeader,
   icelandLocalTime,
+  IntroHeader,
+  m,
+  SAMGONGUSTOFA_SLUG,
   SimpleBarChart,
 } from '@island.is/portals/my-pages/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 
-import { isReadDateToday } from '../../utils/readDate'
+import { VehicleMileageDetail } from '@island.is/api/schema'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import format from 'date-fns/format'
+import VehicleCO2 from '../../components/VehicleCO2'
 import { vehicleMessage as messages } from '../../lib/messages'
+import { displayWithUnit } from '../../utils/displayWithUnit'
+import { isReadDateToday } from '../../utils/readDate'
 import {
+  useGetCo2Query,
   useGetUsersMileageQuery,
   usePostVehicleMileageMutation,
   usePutVehicleMileageMutation,
 } from './VehicleDetail.generated'
-import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
-import { Problem } from '@island.is/react-spa/shared'
-import { VehicleMileageDetail } from '@island.is/api/schema'
-import format from 'date-fns/format'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -64,6 +65,18 @@ const VehicleMileage = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>()
+
+  const { data: co2 } = useGetCo2Query({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 1,
+        includeNextMainInspectionDate: false,
+        filterOnlyVehiclesUserCanRegisterMileage: true,
+        query: id,
+      },
+    },
+  })
 
   const [showChart, setShowChart] = useState<boolean>(false)
   const featureFlagClient = useFeatureFlagClient()
@@ -147,16 +160,10 @@ const VehicleMileage = () => {
   const hasData = details && details?.length > 0
   const isFormEditable = data?.vehicleMileageDetails?.editing
   const canRegisterMileage = data?.vehicleMileageDetails?.canRegisterMileage
-  const requiresMileageRegistration =
-    data?.vehicleMileageDetails?.requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
   const hasUserPostAccess =
     data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
-
-  if ((error || requiresMileageRegistration === false) && !loading) {
-    return <Problem type="not_found" />
-  }
 
   const parseChartData = (
     data: Array<VehicleMileageDetail>,
@@ -448,6 +455,7 @@ const VehicleMileage = () => {
             </>
           )}
         </Stack>
+        <VehicleCO2 co2={co2?.vehiclesListV3?.vehicleList?.[0]?.co2 ?? '0'} />
       </Box>
 
       <FootNote

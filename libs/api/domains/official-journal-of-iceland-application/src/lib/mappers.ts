@@ -43,6 +43,9 @@ export const mapAttachmentType = (
     case AddApplicationAttachmentTypeEnum.Frumrit:
     case GetPresignedUrlTypeEnum.Frumrit:
       return AddApplicationAttachmentTypeEnum.Frumrit
+    case AddApplicationAttachmentTypeEnum.Fylgigogn:
+    case GetPresignedUrlTypeEnum.Fylgigogn:
+      return AddApplicationAttachmentTypeEnum.Fylgigogn
     case AddApplicationAttachmentTypeEnum.Fylgiskjol:
     case GetPresignedUrlTypeEnum.Fylgiskjol:
       return AddApplicationAttachmentTypeEnum.Fylgiskjol
@@ -72,6 +75,8 @@ export const mapGetAttachmentType = (
       return GetApplicationAttachmentsTypeEnum.Frumrit
     case GetApplicationAttachmentsTypeEnum.Fylgiskjol:
       return GetApplicationAttachmentsTypeEnum.Fylgiskjol
+    case GetApplicationAttachmentsTypeEnum.Fylgigogn:
+      return GetApplicationAttachmentsTypeEnum.Fylgigogn
     default:
       return GetApplicationAttachmentsTypeEnum.Fylgiskjol
   }

@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Group, Item } from './MultiSelectDropdownController'
 import { Box, Select } from '@island.is/island-ui/core'
-import { Option } from '../Components/types'
+import { Option } from './types'
 import { useLocale } from '@island.is/localization'
 import { causeAndConsequences } from '../../lib/messages'
 

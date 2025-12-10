@@ -1,4 +1,4 @@
-import { Area, mapArea } from './area.dto'
+import { Area } from './area.dto'
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
@@ -42,6 +42,11 @@ const collectionTypeTable = {
   9: CollectionType.ResidentPoll,
 }
 
+// Typeguard
+export const isCollectionType = (value: unknown): value is CollectionType => {
+  return Object.values(CollectionType).includes(value as CollectionType)
+}
+
 export const getCollectionTypeFromNumber = (number: number): CollectionType => {
   const index = number as keyof typeof collectionTypeTable
   if (collectionTypeTable?.[index]) {
@@ -71,6 +76,7 @@ export interface Collection {
   processed: boolean
   status: CollectionStatus
   collectionType: CollectionType
+  electionId?: string
 }
 
 const getStatus = ({
@@ -110,6 +116,7 @@ const getStatus = ({
 
 export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
+  participatingAreas: Area[],
 ): Collection => {
   const {
     id,
@@ -142,6 +149,10 @@ export const mapCollection = (
     hasActiveLists,
     hasExtendedLists,
   })
+  const governmentalArea =
+    collectionType === CollectionType.LocalGovernmental && areas.length > 0
+      ? areas[0].id?.toString()
+      : undefined
   return {
     id: id.toString(),
     name: collection.kosningNafn ?? '',
@@ -150,11 +161,12 @@ export const mapCollection = (
     isActive,
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
-      ? candidates.map((candidate) => mapCandidate(candidate))
+      ? candidates.map((candidate) => mapCandidate(candidate, governmentalArea))
       : [],
-    areas: areas.map((area) => mapArea(area)),
+    areas: participatingAreas,
     processed,
     status,
     collectionType,
+    electionId: kosning?.id?.toString(),
   }
 }

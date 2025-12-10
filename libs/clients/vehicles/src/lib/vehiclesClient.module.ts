@@ -1,20 +1,17 @@
 import { Module } from '@nestjs/common'
-import { VehiclesApiPDFProvider } from './vehiclesClientPdf.service'
-import { VehiclesApiProvider, PublicVehiclesApiProvider } from './providers'
 import { VehiclesClientService } from './vehiclesClient.service'
+import { ApiConfig, PublicApiConfig } from './api.config'
+import { apiProviders, publicApiProviders } from './providers'
+import { PublicVehicleSearchApi, VehicleSearchApi } from '../../gen/fetch'
 
 @Module({
   providers: [
-    VehiclesApiProvider,
-    PublicVehiclesApiProvider,
-    VehiclesApiPDFProvider,
+    ApiConfig,
+    PublicApiConfig,
+    ...apiProviders,
+    ...publicApiProviders,
     VehiclesClientService,
   ],
-  exports: [
-    VehiclesApiProvider,
-    PublicVehiclesApiProvider,
-    VehiclesApiPDFProvider,
-    VehiclesClientService,
-  ],
+  exports: [VehiclesClientService, VehicleSearchApi, PublicVehicleSearchApi],
 })
 export class VehiclesClientModule {}

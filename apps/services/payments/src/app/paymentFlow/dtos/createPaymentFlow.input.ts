@@ -12,16 +12,15 @@ import {
   IsPositive,
   ValidateNested,
   IsBoolean,
+  IsUrl,
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+  IsNotEmpty,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { PaymentMethod } from '../../../types'
-
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from 'class-validator'
 
 export class ExtraDataItem {
   @IsString()
@@ -121,6 +120,7 @@ export class CreatePaymentFlowInput {
   organisationId!: string
 
   @IsString()
+  @IsNotEmpty({ message: 'onUpdateUrl cannot be empty' })
   @ApiProperty({
     description:
       'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
@@ -155,14 +155,19 @@ export class CreatePaymentFlowInput {
   })
   existingInvoiceId?: string
 
-  @IsString()
-  @IsOptional()
   @ApiPropertyOptional({
-    description:
-      'URL to redirect the payer to after the payment flow has been completed successfully',
-    type: String,
+    description: 'The url to redirect to on successful payment',
   })
+  @IsOptional()
+  @IsUrl()
   returnUrl?: string
+
+  @ApiPropertyOptional({
+    description: 'The url to redirect to on cancellation',
+  })
+  @IsOptional()
+  @IsUrl()
+  cancelUrl?: string
 
   @IsBoolean()
   @IsOptional()

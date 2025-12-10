@@ -1,16 +1,18 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { Field as FieldModel } from './field.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import {
   FormCertificationType,
   FormCertificationTypeDto,
 } from './certification.model'
-import { FormApplicant } from './formApplicant.model'
-import { Section } from './section.model'
-import { ListType } from './listItem.model'
-import { LanguageType } from './languageType.model'
-import { Screen as ScreenModel } from './screen.model'
+import { CompletedSectionInfo } from './completedSectionInfo'
+import { Field as FieldModel } from './field.model'
 import { FieldType } from './fieldType.model'
+import { FormApplicant } from './formApplicant.model'
+import { LanguageType } from './languageType.model'
+import { ListType } from './listItem.model'
 import { Option } from './option.model'
+import { OrganizationUrl } from './organizationUrl.model'
+import { Screen as ScreenModel } from './screen.model'
+import { Section } from './section.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -22,30 +24,6 @@ export class Dependency {
 
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
-}
-
-@ObjectType('FormSystemFormUrl')
-export class FormUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @ObjectType('FormSystemForm')
@@ -96,13 +74,19 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Field(() => Boolean)
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
-  @Field(() => LanguageType, { nullable: true })
-  completedMessage?: LanguageType
+  @Field(() => Boolean)
+  hasSummaryScreen!: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isZendeskEnabled?: boolean
+
+  @Field(() => CompletedSectionInfo, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfo
 
   @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDto[]
@@ -125,29 +109,8 @@ export class Form {
   @Field(() => String)
   status!: string
 
-  @Field(() => [FormUrl], { nullable: 'itemsAndList' })
-  urls?: FormUrl[]
-}
-
-@ObjectType('FormSystemOrganizationUrl')
-export class OrganizationUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -171,7 +134,10 @@ export class FormResponse {
   forms?: Form[]
 
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  urls?: OrganizationUrl[]
+  submitUrls?: OrganizationUrl[]
+
+  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
+  validationUrls?: OrganizationUrl[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

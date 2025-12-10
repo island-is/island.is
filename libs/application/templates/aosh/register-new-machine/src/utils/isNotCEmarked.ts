@@ -1,4 +1,4 @@
-import { getValueViaPath, NO, YES, } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
 export const isNotCEmarked = (answers: FormValue) => {

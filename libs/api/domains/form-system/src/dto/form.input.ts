@@ -1,15 +1,17 @@
+import { FormUrlDto } from '@island.is/form-system/shared'
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { SectionInput } from './section.input'
-import { ScreenInput } from './screen.input'
-import { FieldInput } from './field.input'
-import { LanguageTypeInput } from './languageType.input'
-import { FieldTypeInput } from './fieldType.input'
-import { ListTypeInput } from './listType.input'
 import { FormApplicantInput } from './applicant.input'
 import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
+import { CompletedSectionInfoInput } from './completedSectionInfo.input'
+import { FieldInput } from './field.input'
+import { FieldTypeInput } from './fieldType.input'
+import { LanguageTypeInput } from './languageType.input'
+import { ListTypeInput } from './listType.input'
+import { ScreenInput } from './screen.input'
+import { SectionInput } from './section.input'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -21,12 +23,6 @@ export class DependencyInput {
 
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
-}
-
-@InputType('FormSystemDeleteFormInput')
-export class DeleteFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
 }
 
 @InputType('FormSystemCreateFormInput')
@@ -45,30 +41,6 @@ export class GetFormInput {
 export class GetFormsInput {
   @Field(() => String, { nullable: true })
   nationalId?: string
-}
-
-@InputType('FormSystemFormUrlInput')
-export class FormUrlInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @InputType('FormSystemOrganizationUrlInput')
@@ -116,22 +88,22 @@ export class UpdateFormDtoInput {
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  completedMessage?: LanguageTypeInput
+  @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
+
+  @Field(() => CompletedSectionInfoInput, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfoInput
 
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => [FormUrlInput], { nullable: true })
-  urls?: FormUrlInput[]
 }
 
 @InputType('FormSystemUpdateFormInput')
@@ -176,16 +148,16 @@ export class FormInput {
   beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  completedMessage?: LanguageTypeInput
+  @Field(() => CompletedSectionInfoInput, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfoInput
 
   @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDtoInput[]
@@ -208,8 +180,8 @@ export class FormInput {
   @Field(() => String, { nullable: true })
   status?: string
 
-  @Field(() => [FormUrlInput], { nullable: 'itemsAndList' })
-  urls?: FormUrlInput[]
+  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
+  urls?: FormUrlDto[]
 }
 
 @InputType('FormSystemFormResponseInput')

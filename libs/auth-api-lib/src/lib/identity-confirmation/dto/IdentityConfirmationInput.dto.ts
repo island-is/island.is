@@ -15,4 +15,9 @@ export class IdentityConfirmationInputDto {
   @ApiProperty()
   @IsOptional()
   number?: string
+
+  @IsString()
+  @ApiProperty()
+  @IsOptional()
+  lang?: 'is' | 'en'
 }

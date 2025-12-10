@@ -17,6 +17,7 @@ import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { OrganizationParentSubpageSyncService } from './importers/organizationParentSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
@@ -34,6 +35,7 @@ import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
 import { GrantsSyncService } from './importers/grants.service'
 import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
+import { CourseSyncService } from './importers/course.service'
 
 @Module({
   imports: [
@@ -58,6 +60,7 @@ import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRe
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,
+    OrganizationParentSubpageSyncService,
     ProjectPageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,
@@ -72,6 +75,7 @@ import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRe
     GenericListItemSyncService,
     TeamListSyncService,
     BloodDonationRestrictionSyncService,
+    CourseSyncService,
     MappingService,
   ],
   exports: [CmsSyncService],

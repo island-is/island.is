@@ -64,6 +64,7 @@ export const arrangeRoutes = async ({
       userInfo,
       client,
       formatMessage,
+      featureFlagClient,
     })
   })
 

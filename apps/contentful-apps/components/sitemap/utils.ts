@@ -1,14 +1,30 @@
+import { EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
 import {
   SitemapTree as Tree,
   SitemapTreeNode as TreeNode,
   SitemapTreeNodeType as TreeNodeType,
+  SitemapUrlType,
 } from '@island.is/shared/types'
 
 export { type Tree, type TreeNode, TreeNodeType }
 
-export const ENTRY_CONTENT_TYPE_ID = 'organizationParentSubpage'
+export type EntryType = 'organizationParentSubpage' | 'organizationSubpage'
+
+export const ENTRY_CONTENT_TYPE_IDS: EntryType[] = [
+  'organizationParentSubpage',
+  'organizationSubpage',
+]
+
+export const optionMap = {
+  [TreeNodeType.CATEGORY]: 'Category',
+  [TreeNodeType.ENTRY]: 'Page',
+  [TreeNodeType.URL]: 'Link',
+}
+
+export const URL_DIALOG_MIN_HEIGHT = 730
+export const CATEGORY_DIALOG_MIN_HEIGHT = 830
 
 const getHighestId = (tree: Tree) => {
   let highestId = tree.id
@@ -119,19 +135,26 @@ export const addNode = async (
   type: TreeNodeType,
   sdk: FieldExtensionSDK,
   root: Tree,
-  createNew?: boolean,
+  createNew: boolean,
+  entryType: EntryType = 'organizationParentSubpage',
+  entries: Record<string, EntryProps>,
 ) => {
   let entryId = ''
 
   let label = ''
+  let labelEN = ''
   let slug = ''
+  let slugEN = ''
   let description = ''
-
+  let descriptionEN = ''
   let url = ''
+  let urlEN = ''
+  let urlType: SitemapUrlType = 'custom'
+  let chosenEntryType = entryType
 
   if (type === TreeNodeType.ENTRY) {
     if (createNew) {
-      const entry = await sdk.navigator.openNewEntry(ENTRY_CONTENT_TYPE_ID, {
+      const entry = await sdk.navigator.openNewEntry(entryType, {
         slideIn: { waitForClose: true },
       })
       if (!entry?.entity?.sys?.id) {
@@ -140,9 +163,9 @@ export const addNode = async (
       entryId = entry.entity.sys.id
     } else {
       const entry = await sdk.dialogs.selectSingleEntry<{
-        sys: { id: string }
+        sys: { id: string; contentType: { sys: { id: string } } }
       } | null>({
-        contentTypes: [ENTRY_CONTENT_TYPE_ID],
+        contentTypes: ENTRY_CONTENT_TYPE_IDS,
       })
       if (!entry?.sys?.id) {
         return
@@ -164,8 +187,35 @@ export const addNode = async (
       }
 
       entryId = entry.sys.id
+      chosenEntryType = entry.sys.contentType.sys.id as EntryType
     }
   } else if (type === TreeNodeType.CATEGORY) {
+    const otherCategoriesAndEntryNodes = parentNode.childNodes.filter(
+      (child) =>
+        child.type === TreeNodeType.CATEGORY ||
+        child.type === TreeNodeType.ENTRY,
+    )
+
+    const otherSlugs = otherCategoriesAndEntryNodes
+      .map((child) =>
+        child.type === TreeNodeType.CATEGORY
+          ? child.slug
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['is-IS']
+          : '',
+      )
+      .filter(Boolean)
+
+    const otherSlugsEN = otherCategoriesAndEntryNodes
+      .map((child) =>
+        child.type === TreeNodeType.CATEGORY
+          ? child.slugEN
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['en']
+          : '',
+      )
+      .filter(Boolean)
+
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
         node: {
@@ -173,9 +223,14 @@ export const addNode = async (
           label: '',
           description: '',
           slug: '',
+          labelEN: '',
+          slugEN: '',
+          descriptionEN: '',
         },
+        otherSlugs,
+        otherSlugsEN,
       },
-      minHeight: 400,
+      minHeight: CATEGORY_DIALOG_MIN_HEIGHT,
     })
 
     if (!data) {
@@ -183,8 +238,11 @@ export const addNode = async (
     }
 
     label = data.label
+    labelEN = data.labelEN
     slug = data.slug
+    slugEN = data.slugEN
     description = data.description
+    descriptionEN = data.descriptionEN
   } else if (type === TreeNodeType.URL) {
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
@@ -193,7 +251,7 @@ export const addNode = async (
           url: '',
         },
       },
-      minHeight: 400,
+      minHeight: URL_DIALOG_MIN_HEIGHT,
     })
 
     if (!data) {
@@ -201,7 +259,12 @@ export const addNode = async (
     }
 
     label = data.label
+    labelEN = data.labelEN
     url = data.url
+    urlEN = data.urlEN
+    urlType = data.urlType
+    description = data.description
+    descriptionEN = data.descriptionEN
   }
 
   const node: TreeNode = {
@@ -211,6 +274,7 @@ export const addNode = async (
       ? {
           type: TreeNodeType.ENTRY,
           entryId,
+          contentType: chosenEntryType,
           // It's the primary location if the same entry isn't already present in the sitemap
           primaryLocation: !findNode(
             root,
@@ -223,13 +287,23 @@ export const addNode = async (
       ? {
           type: TreeNodeType.CATEGORY,
           label,
+          labelEN,
           slug,
+          slugEN,
           description,
+          descriptionEN,
+          status: 'draft',
         }
       : {
           type: TreeNodeType.URL,
           label,
+          labelEN,
           url,
+          urlEN,
+          urlType,
+          description,
+          descriptionEN,
+          status: 'draft',
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)
@@ -242,4 +316,87 @@ export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
   if (nodeIndex >= 0) {
     parentNode.childNodes[nodeIndex] = updatedNode
   }
+}
+
+export const findEntryNodePaths = (
+  root: Tree,
+  entryId: string,
+  entries: Record<string, EntryProps>,
+  language: 'is-IS' | 'en' = 'is-IS',
+) => {
+  const nodePaths: { node: TreeNode; path: string[] }[] = []
+
+  // DFS down until we find a node with the entryId and keep track of the path
+  const findEntryNodePathsRecursive = (
+    node: TreeNode,
+    currentPath: string[],
+  ) => {
+    if (node.type === TreeNodeType.ENTRY && node.entryId === entryId) {
+      nodePaths.push({
+        node,
+        path: [
+          ...currentPath,
+          entries[entryId]?.fields?.title?.[language] ?? '',
+        ],
+      })
+      return
+    }
+
+    if (node.type === TreeNodeType.CATEGORY) {
+      for (const child of node.childNodes) {
+        findEntryNodePathsRecursive(child, [
+          ...currentPath,
+          language === 'is-IS' ? node.label : node.labelEN,
+        ])
+      }
+    }
+  }
+
+  for (const child of root.childNodes) {
+    findEntryNodePathsRecursive(child, [])
+  }
+
+  return nodePaths
+}
+
+export const extractNodeContent = (
+  node: TreeNode,
+  language: 'is-IS' | 'en',
+  entries: Record<string, EntryProps>,
+) => {
+  const label: string =
+    node.type !== TreeNodeType.ENTRY
+      ? language === 'en'
+        ? node.labelEN
+        : node.label
+      : entries[node.entryId]?.fields?.shortTitle?.[language] ||
+        entries[node.entryId]?.fields?.title?.[language] ||
+        ''
+  const slug =
+    node.type === TreeNodeType.CATEGORY
+      ? language === 'en'
+        ? node.slugEN
+        : node.slug
+      : node.type === TreeNodeType.URL
+      ? language === 'en'
+        ? node.urlEN
+        : node.url
+      : entries[node.entryId]?.fields?.slug?.[language] || ''
+  const entryContentType =
+    node.type === TreeNodeType.ENTRY
+      ? entries[node.entryId]?.sys?.contentType?.sys?.id ?? node.contentType
+      : ''
+
+  return { label, slug, entryContentType }
+}
+
+export const findParentNode = (root: Tree, nodeId: number) => {
+  for (const child of root.childNodes) {
+    if (child.id === nodeId) {
+      return root
+    }
+    const parent = findParentNode(child, nodeId)
+    if (parent) return parent
+  }
+  return null
 }

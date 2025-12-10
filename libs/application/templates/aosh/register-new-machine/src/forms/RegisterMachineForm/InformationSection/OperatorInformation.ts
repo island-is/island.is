@@ -6,7 +6,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildAlertMessageField,
-  NO, 
+  NO,
   YES,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'

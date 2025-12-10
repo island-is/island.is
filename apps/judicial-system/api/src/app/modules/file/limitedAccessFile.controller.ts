@@ -21,6 +21,18 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
+import {
+  ALL_FILES_ENDPOINTS,
+  CASE_FILES_RECORD_ENDPOINTS,
+  COURT_RECORD_ENDPOINTS,
+  CUSTODY_NOTICE_ENDPOINTS,
+  INDICTMENT_ENDPOINTS,
+  REQUEST_ENDPOINTS,
+  RULING_ENDPOINTS,
+  RULING_SENT_TO_PRISON_ADMIN_ENDPOINTS,
+  SUBPOENA_ENDPOINTS,
+  VERDICT_SERVICE_CERTIFICATE_ENDPOINTS,
+} from './file.constants'
 import { FileService } from './file.service'
 
 @UseGuards(JwtInjectBearerAuthGuard)
@@ -31,7 +43,7 @@ export class LimitedAccessFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get('request')
+  @Get(REQUEST_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getRequestPdf(
     @Param('id') id: string,
@@ -52,10 +64,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get([
-    'caseFilesRecord/:policeCaseNumber',
-    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
-  ])
+  @Get(CASE_FILES_RECORD_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getCaseFilesRecordPdf(
     @Param('id') id: string,
@@ -82,10 +91,11 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('courtRecord')
+  @Get(COURT_RECORD_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -94,18 +104,22 @@ export class LimitedAccessFileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'limitedAccess/courtRecord',
+      `limitedAccess/${mergedCaseInjection}courtRecord`,
       req,
       res,
       'pdf',
     )
   }
 
-  @Get('ruling')
+  @Get(RULING_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
@@ -126,7 +140,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('custodyNotice')
+  @Get(CUSTODY_NOTICE_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getCustodyNoticePdf(
     @Param('id') id: string,
@@ -149,12 +163,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get([
-    'indictment',
-    'indictment/:fileName',
-    'mergedCase/:mergedCaseId/indictment',
-    'mergedCase/:mergedCaseId/indictment/:fileName',
-  ])
+  @Get(INDICTMENT_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   async getIndictmentPdf(
     @Param('id') id: string,
@@ -180,10 +189,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get([
-    'subpoena/:defendantId/:subpoenaId',
-    'subpoena/:defendantId/:subpoenaId/:fileName',
-  ])
+  @Get(SUBPOENA_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
@@ -208,7 +214,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get(['rulingSentToPrisonAdmin', 'rulingSentToPrisonAdmin/:fileName'])
+  @Get(RULING_SENT_TO_PRISON_ADMIN_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getIndictmentRulingSentToPrisonAdminPdf(
     @Param('id') id: string,
@@ -231,7 +237,7 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('allFiles')
+  @Get(ALL_FILES_ENDPOINTS)
   @Header('Content-Type', 'application/zip')
   async getAllFiles(
     @Param('id') id: string,
@@ -249,6 +255,30 @@ export class LimitedAccessFileController {
       req,
       res,
       'zip',
+    )
+  }
+
+  @Get(VERDICT_SERVICE_CERTIFICATE_ENDPOINTS)
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for verdict of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_VERDICT_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/verdict/serviceCertificate`,
+      req,
+      res,
+      'pdf',
     )
   }
 }

@@ -22,7 +22,7 @@ export const useLazyMachineDetails = () => {
 export const useLazyMachineDetailsByRegno = () => {
   return useLazyQuery<
     {
-      getWorkerMachineDetailsByRegno: MachineDto
+      getWorkerMachineDetailsByRegno: MachineDto | null
     },
     {
       regno: string

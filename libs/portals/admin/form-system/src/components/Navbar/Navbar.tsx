@@ -1,36 +1,45 @@
+import { useMutation } from '@apollo/client'
 import { DndContext, DragOverlay, UniqueIdentifier } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useContext, useMemo } from 'react'
-import { createPortal } from 'react-dom'
-import { Box, Button } from '@island.is/island-ui/core'
-import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import {
-  FormSystemScreen,
   FormSystemField,
+  FormSystemScreen,
   FormSystemSection,
   Maybe,
 } from '@island.is/api/schema'
-import { ControlContext, IControlContext } from '../../context/ControlContext'
-import { ItemType } from '../../lib/utils/interfaces'
-import { removeTypename } from '../../lib/utils/removeTypename'
-import { useIntl } from 'react-intl'
-import { NavComponent } from '../NavComponent/NavComponent'
+import { SectionTypes } from '@island.is/form-system/enums'
 import {
   CREATE_SECTION,
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { Box, Button } from '@island.is/island-ui/core'
+import cn from 'classnames'
+import { Fragment, useContext, useMemo } from 'react'
+import AnimateHeight from 'react-animate-height'
+import { createPortal } from 'react-dom'
+import { useIntl } from 'react-intl'
+import { ControlContext, IControlContext } from '../../context/ControlContext'
+import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
+import { ItemType } from '../../lib/utils/interfaces'
+import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
+import { NavComponent } from '../NavComponent/NavComponent'
+import * as styles from './Navbar.css'
 
 export const Navbar = () => {
-  const { control, controlDispatch, inSettings } = useContext(
-    ControlContext,
-  ) as IControlContext
+  const {
+    control,
+    controlDispatch,
+    inSettings,
+    setOpenComponents,
+    openComponents,
+  } = useContext(ControlContext) as IControlContext
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
-
+  const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
+  const { hasPayment } = form
   const sectionIds = useMemo(
     () =>
       sections
@@ -115,6 +124,22 @@ export const Navbar = () => {
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
+    if (type === 'Section') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        sections: prev.sections.includes(id as string)
+          ? prev.sections.filter((sectionId) => sectionId !== id)
+          : [...prev.sections, id as string],
+      }))
+    } else if (type === 'Screen') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        screens: prev.screens.includes(id as string)
+          ? prev.screens.filter((screenId) => screenId !== id)
+          : [...prev.screens, id as string],
+      }))
+    }
+
     if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -143,7 +168,12 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter((s) => s.sectionType !== SectionTypes.INPUT)
+      .filter(
+        (s) =>
+          s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.SUMMARY &&
+          s.sectionType !== SectionTypes.PAYMENT,
+      )
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
@@ -190,7 +220,13 @@ export const Navbar = () => {
             focusComponent={focusComponent}
           />
           <SortableContext items={fieldsIds ?? []}>
-            {renderFieldsForScreen(screen)}
+            <AnimateHeight
+              duration={300}
+              height={openComponents.screens.includes(screen.id) ? 'auto' : 0}
+              easing="ease-in-out"
+            >
+              {renderFieldsForScreen(screen)}
+            </AnimateHeight>
           </SortableContext>
         </Box>
       ))
@@ -212,7 +248,13 @@ export const Navbar = () => {
             focusComponent={focusComponent}
           />
           <SortableContext items={screenIds ?? []}>
-            {renderScreensForSection(section)}
+            <AnimateHeight
+              duration={300}
+              height={openComponents.sections.includes(section.id) ? 'auto' : 0}
+              easing="ease-in-out"
+            >
+              {renderScreensForSection(section)}
+            </AnimateHeight>
           </SortableContext>
         </Box>
       ))
@@ -234,41 +276,59 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <SortableContext items={sectionIds ?? []}>
-          {renderInputSections()}
-        </SortableContext>
+      <Box className={cn(styles.navbarContainer)}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <SortableContext items={sectionIds ?? []}>
+            {renderInputSections()}
+          </SortableContext>
 
-        {createPortal(
-          <DragOverlay
-            dropAnimation={{
-              duration: 500,
-              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-            }}
-          >
-            {activeItem && (
-              <NavComponent
-                type={activeItem.type}
-                data={
-                  activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
-                }
-                active
-                focusComponent={focusComponent}
-              />
-            )}
-          </DragOverlay>,
-          document.body,
-        )}
-      </DndContext>
-      <Box display="flex" justifyContent="center" paddingTop={3}>
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
+                  }
+                  active
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      </Box>
+      {payment && hasPayment && (
+        <Fragment>
+          <NavComponent
+            type="Section"
+            data={payment}
+            active={activeItem.data?.id === payment.id}
+            focusComponent={focusComponent}
+          />
+          {renderScreensForSection(payment as FormSystemSection)}
+        </Fragment>
+      )}
+      <Box
+        display="flex"
+        justifyContent="center"
+        paddingTop={3}
+        className={cn(styles.addSectionButton)}
+      >
         <Button variant="ghost" size="small" onClick={addSection}>
           {formatMessage(m.addSection)}
         </Button>

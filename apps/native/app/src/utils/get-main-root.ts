@@ -10,7 +10,7 @@ import {
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
-type Icons = 'notifications' | 'settings' | 'licenseScan' | 'options'
+type Icons = 'notifications' | 'settings' | 'licenseScan' | 'options' | 'dots'
 
 type RightButtonProps = {
   unseenCount?: number
@@ -73,6 +73,14 @@ export const getRightButtons = ({
         color: theme.color.blue400,
         iconBackground,
       })
+    } else if (icon === 'dots') {
+      rightButtons.push({
+        id: ButtonRegistry.HomeScreenDropdownButton,
+        testID: testIDs.TOPBAR_DROPDOWN_BUTTON,
+        icon: require('../assets/icons/Ellipsis-vertical.png'),
+        color: theme.color.blue400,
+        iconBackground,
+      })
     }
   })
   return rightButtons
@@ -92,7 +100,7 @@ export function getMainRoot(): Layout {
         bottomTabs: {
           testID: testIDs.TABBAR_MAIN,
           currentTabIndex: 2,
-          tabsAttachMode: 'together',
+          tabsAttachMode: 'onSwitchToTab',
         },
       },
       children: [

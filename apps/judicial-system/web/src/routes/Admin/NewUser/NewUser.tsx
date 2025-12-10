@@ -50,11 +50,11 @@ export const NewUser = () => {
         variables: {
           input: {
             name: user.name,
-            nationalId: user.nationalId,
+            nationalId: user.nationalId?.replace('-', ''),
             role: user.role,
             institutionId: user.institution.id,
             title: user.title,
-            mobileNumber: user.mobileNumber,
+            mobileNumber: user.mobileNumber?.replace('-', ''),
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,

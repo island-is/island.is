@@ -11,8 +11,6 @@ import {
   useGetUserProfileQuery,
 } from './UserOnboarding.generated'
 
-const isDevelopment = process.env.NODE_ENV === 'development'
-
 const UserOnboarding = () => {
   const userInfo = useUserInfo()
   // Use userRef to store the userProfile data to preserve the initial value after re-fetch.

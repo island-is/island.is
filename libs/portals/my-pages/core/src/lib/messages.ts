@@ -381,6 +381,11 @@ export const m = defineMessages({
     id: 'service.portal:my-vehicles-mileage',
     defaultMessage: 'Kílómetrastaða',
   },
+  vehicleMileageDescription: {
+    id: 'service.portal:my-vehicles-mileage-description',
+    defaultMessage:
+      'Hér getur þú skráð kílómetrastöðu ökutækja þinna. Einnig má finna ökutækin þín undir Eignir og tæki.',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -871,7 +876,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
-    defaultMessage: 'Sláðu inn leitarorð',
+    defaultMessage: 'Skrifaðu leitarorð',
   },
   searchByNationalId: {
     id: 'service.portal:search-by-national-id',
@@ -1225,10 +1230,6 @@ export const m = defineMessages({
     id: 'service.portal:close-finance-detail',
     defaultMessage: 'Loka sundurliðun',
   },
-  islykill: {
-    id: 'service.portal:islykill',
-    defaultMessage: 'Íslykill',
-  },
   saveInfo: {
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',
@@ -1292,6 +1293,14 @@ export const m = defineMessages({
   datepickLabel: {
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
+  },
+  datepickPeriodLabel: {
+    id: 'service.portal:datepicker-period-placeholder',
+    defaultMessage: 'Veldu tímabil',
+  },
+  datepickPeriod: {
+    id: 'service.portal:datepicker-period',
+    defaultMessage: 'Tímabil',
   },
   pick: {
     id: 'service.portal:pick',
@@ -1464,7 +1473,7 @@ export const m = defineMessages({
   },
   medicineDelegation: {
     id: 'service.portal:medicine-delegation',
-    defaultMessage: 'Lyfjaumboð',
+    defaultMessage: 'Lyfjaheimildir',
   },
   medicinePaymentParticipation: {
     id: 'service.portal:medicine-payment-participation',
@@ -1623,6 +1632,11 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
+  nationalPoliceCommissionerTooltip: {
+    id: 'service.portal:national-police-commissioner-tooltip',
+    defaultMessage:
+      'Ríkislögreglustjóri hefur umsjón með gögnum um dómsmál og þeim tengt.',
+  },
   domsmalaraduneytidTooltip: {
     id: 'service.portal:dmr-tooltip',
     defaultMessage:
@@ -1672,6 +1686,14 @@ export const m = defineMessages({
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
+  },
+  reply: {
+    id: 'service.portal:reply',
+    defaultMessage: 'Svara',
+  },
+  replyDocument: {
+    id: 'service.portal:reply-document',
+    defaultMessage: 'Svara pósti',
   },
   goToArg: {
     id: 'service.portal:go-to-arg',
@@ -1905,9 +1927,34 @@ export const m = defineMessages({
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
   },
+  myCases: {
+    id: 'service.portal:my-cases',
+    defaultMessage: 'Mín mál',
+  },
+  myCasesIntro: {
+    id: 'service.portal:my-cases-intro',
+    defaultMessage: 'Mín mál',
+  },
+  myPoliceCases: {
+    id: 'service.portal:my-police-cases',
+    defaultMessage: 'Mín lögreglumál',
+  },
+  myPoliceCasesIntro: {
+    id: 'service.portal:my-police-cases-intro',
+    defaultMessage:
+      'Hér getur þú fundið upplýsingar yfir stöðu þinna mála hjá lögreglunni',
+  },
+  policeCases: {
+    id: 'service.portal:police-cases',
+    defaultMessage: 'Lögreglumál',
+  },
   subpoena: {
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
+  },
+  case: {
+    id: 'service.portal:case',
+    defaultMessage: 'Dómur',
   },
   urgent: {
     id: 'service.portal:urgent',
@@ -1922,16 +1969,16 @@ export const m = defineMessages({
     defaultMessage: 'Lesa meira um {arg}',
   },
   acknowledgeTitle: {
-    id: 'sp.service.portal:acknowledge-title',
+    id: 'service.portal:acknowledge-title',
     defaultMessage: 'Staðfesting á móttöku',
   },
   acknowledgeText: {
-    id: 'sp.service.portal:acknowledge-text',
+    id: 'service.portal:acknowledge-text',
     defaultMessage:
       'Þú ert að opna erindi frá {arg}. Veljir þú að opna erindið fá viðeigandi aðilar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu viðeigandi aðilar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
   },
   acknowledgementCompleted: {
-    id: 'sp.service.portal:acknowledgement-completed',
+    id: 'service.portal:acknowledgement-completed',
     defaultMessage: 'Staðfesting á móttöku tókst',
   },
   submit: {
@@ -1941,6 +1988,38 @@ export const m = defineMessages({
   sortBy: {
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
+  },
+  bloodtype: {
+    id: 'service.portal:bloodtype',
+    defaultMessage: 'Blóðflokkur',
+  },
+  type: {
+    id: 'service.portal:type',
+    defaultMessage: 'Tegund',
+  },
+  sjukratryggingar: {
+    id: 'service.portal:sjukratryggingar',
+    defaultMessage: 'Sjúkratryggingar',
+  },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
+  copy: {
+    id: 'service.portal:copy',
+    defaultMessage: 'Afrita',
+  },
+  copied: {
+    id: 'service.portal:copied',
+    defaultMessage: 'Afritað!',
+  },
+  forward: {
+    id: 'service.portal:forward',
+    defaultMessage: 'Áfram',
   },
 })
 
@@ -2045,6 +2124,38 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthReferrals: {
+    id: 'sp.search.tags:health-referrals',
+    defaultMessage: 'Vísanir',
+  },
+  healthWaiting: {
+    id: 'sp.search.tags:health-waitlist',
+    defaultMessage: 'Bíða',
+  },
+  healthInsuranceCard: {
+    id: 'sp.search.tags:health-insurance-card',
+    defaultMessage: 'Sjúkrakort',
+  },
+  healthInsuranceEhicCard: {
+    id: 'sp.search.tags:health-insurance-ehic-card',
+    defaultMessage: 'Sjúkratrygging',
+  },
+  healthInsuranceEhicCardLong: {
+    id: 'sp.search.tags:health-insurance-ehic-card-eu',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
+  healthPaymentParticipation: {
+    id: 'sp.search.tags:health-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  healthPaymentOverview: {
+    id: 'sp.search.tags:health-payment-overview',
+    defaultMessage: 'Greiðsluyfirlit',
+  },
+  healthPatientData: {
+    id: 'sp.search.tags:health-patient-data',
+    defaultMessage: 'Sjúkraupplýsingar',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',
@@ -2060,5 +2171,13 @@ export const searchTagsMessages = defineMessages({
   assetsMachines: {
     id: 'sp.search.tags:assets-machines',
     defaultMessage: 'Vélar',
+  },
+  medicineDelegationOther: {
+    id: 'sp.search.tags:medicine-delegation-other',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicineDelegationOtherNew: {
+    id: 'sp.search.tags:medicine-delegation-other-new',
+    defaultMessage: 'Nýtt lyfjaumboð',
   },
 })

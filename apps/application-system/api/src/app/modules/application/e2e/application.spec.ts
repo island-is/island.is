@@ -77,11 +77,6 @@ const mockConfig = {
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
     },
-    islykill: {
-      cert: '',
-      passphrase: '',
-      basePath: '',
-    },
   },
 }
 
@@ -130,7 +125,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -176,7 +171,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -233,7 +228,7 @@ describe('Application system API', () => {
         applicant: nationalId,
         state: 'draft',
         attachments: {},
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         assignees: [nationalId],
         answers: {
           careerHistoryDetails: {
@@ -256,7 +251,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -308,7 +303,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -377,7 +372,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -429,7 +424,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -476,7 +471,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -532,7 +527,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -565,7 +560,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -696,7 +691,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -720,7 +715,7 @@ describe('Application system API', () => {
       expect.arrayContaining([
         expect.objectContaining({
           applicant: nationalId,
-          typeId: ApplicationTypes.EXAMPLE,
+          typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         }),
       ]),
     )
@@ -825,7 +820,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 
@@ -917,7 +912,7 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
     const answers = {

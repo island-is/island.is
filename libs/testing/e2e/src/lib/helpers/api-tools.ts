@@ -1,4 +1,4 @@
-import { Page, BrowserContext } from '@playwright/test'
+import { Page } from '@playwright/test'
 
 /**
  * Waits for a network request to complete and verifies its operation name.
@@ -20,20 +20,4 @@ export const verifyRequestCompletion = async (
   )
 
   return await response.json()
-}
-
-/**
- * Creates a new page in the given browser context and navigates to the specified URL.
- *
- * @param context - The browser context in which to create the new page.
- * @param url - The URL to navigate to.
- * @returns A promise that resolves to the created page.
- */
-export const createPageAndNavigate = async (
-  context: BrowserContext,
-  url: string,
-) => {
-  const page = await context.newPage()
-  await page.goto(url)
-  return page
 }

@@ -3,9 +3,10 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/death-benefits/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -33,6 +34,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/death-benefits/src/lib/messages.ts'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

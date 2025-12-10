@@ -200,6 +200,9 @@ describe('UserAccessGuard', () => {
             id: '1',
             name: 'Test',
             nationalId: user.nationalId,
+            ownerName: 'Test',
+            ownerBirthDate: new Date(),
+            hasActiveLists: true,
           },
         })
       })
@@ -212,8 +215,13 @@ describe('UserAccessGuard', () => {
   })
 
   afterEach(() => {
+    jest.resetModules()
     jest.clearAllMocks()
     jest.restoreAllMocks()
+  })
+
+  afterAll(async () => {
+    await app.close()
   })
 
   const gqlQuery = (query: string) =>

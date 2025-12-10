@@ -243,6 +243,7 @@ interface Props {
   onRetry?: (file: UploadFile) => void
   onChange?: (files: File[], uploadCount?: number) => void
   onUploadRejection?: (files: FileRejection[]) => void
+  onOpenFile?: (file: UploadFile) => void
   errorMessage?: string
   defaultFileBackgroundColor?: StatusColor
 }
@@ -263,6 +264,7 @@ export const InputFileUpload: FC<Props> = (props) => {
     onRemove,
     onRetry,
     onUploadRejection,
+    onOpenFile,
     errorMessage,
     defaultFileBackgroundColor,
   } = props
@@ -337,6 +339,7 @@ export const InputFileUpload: FC<Props> = (props) => {
               hideIcons={hideIcons}
               onRemoveClick={onRemove}
               onRetryClick={onRetry}
+              onOpenFile={onOpenFile}
             />
           </Box>
         ))}

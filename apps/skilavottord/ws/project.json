@@ -8,12 +8,15 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/skilavottord/ws",
         "showCircularDependencies": false,
         "main": "apps/skilavottord/ws/src/main.ts",
         "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           "apps/skilavottord/ws/src/assets",
           {
@@ -36,14 +39,12 @@
             "input": "apps/skilavottord/ws",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -119,8 +120,8 @@
         "parallel": true
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

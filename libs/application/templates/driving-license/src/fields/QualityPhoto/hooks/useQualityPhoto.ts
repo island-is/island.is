@@ -21,7 +21,6 @@ const FAKE_QUALITY_PHOTO = {
   error: undefined,
 }
 
-
 const hasFakeQualityPhoto = (application: Application): boolean => {
   // If running locally or on dev allow for fake data
   const useFakeData = getValueViaPath<'yes' | 'no'>(

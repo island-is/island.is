@@ -213,9 +213,15 @@ const TeamMemberAccordionList = ({
   )
 }
 
-export const TeamList = ({ teamMembers, variant = 'card' }: TeamListProps) => {
+export const TeamList = ({
+  teamMembers,
+  variant = 'card',
+  prefixes,
+}: TeamListProps) => {
   if (variant === 'accordion') {
-    return <TeamMemberAccordionList teamMembers={teamMembers} />
+    return (
+      <TeamMemberAccordionList teamMembers={teamMembers} prefixes={prefixes} />
+    )
   }
   return <TeamMemberCardList teamMembers={teamMembers} />
 }

@@ -29,4 +29,17 @@ describe('valueToNumber', () => {
     expect(valueToNumber({})).toBe(0)
     expect(valueToNumber([])).toBe(0)
   })
+
+  it('should return a negative value if number is negative', () => {
+    expect(valueToNumber('-123')).toBe(-123)
+    expect(valueToNumber('-123.123.123', '.')).toBe(-123.123123)
+    expect(valueToNumber('-123,123,123', ',')).toBe(-123.123123)
+    expect(valueToNumber('-12.123.421.123,4233 kr.', ',')).toBe(
+      -12123421123.4233,
+    )
+    expect(valueToNumber('-12.123.421.123,4233 kr.', '.')).toBe(
+      -12.1234211234233,
+    )
+    expect(valueToNumber('-1.123.123 kr', ',')).toBe(-1123123)
+  })
 })

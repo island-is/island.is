@@ -19,4 +19,7 @@ export class OJOIAApplicationCaseResponse {
 
   @Field()
   html!: string
+
+  @Field({ nullable: true })
+  expectedPublishDate?: string
 }

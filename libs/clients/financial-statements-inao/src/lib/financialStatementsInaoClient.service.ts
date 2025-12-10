@@ -311,8 +311,6 @@ export class FinancialStatementsInaoClientService {
       star_phone: input.digitalSignee.phone,
     }
 
-    this.logger.info('FinancialStatement request body', body)
-
     const financialStatementId = await this.postFinancialStatement(body)
 
     if (!financialStatementId) {
@@ -391,8 +389,6 @@ export class FinancialStatementsInaoClientService {
       star_phone: digitalSignee.phone,
     }
 
-    this.logger.info('FinancialStatement request body', body)
-
     const financialStatementId = await this.postFinancialStatement(body)
 
     if (!financialStatementId) {
@@ -466,8 +462,6 @@ export class FinancialStatementsInaoClientService {
       star_email: digitalSignee.email,
       star_phone: digitalSignee.phone,
     }
-
-    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 

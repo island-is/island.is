@@ -13,6 +13,7 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -34,10 +35,10 @@ import {
   UserProfileApiWithValidation,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
+import { getReviewers } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -61,13 +62,19 @@ const template: ApplicationTemplate<
       ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE
     ].translation,
   dataSchema: TrainingLicenseOnAWorkMachineAnswersSchema,
-  featureFlag: Features.TrainingLicenseOnAWorkMachineEnabled,
   allowedDelegations: [
     {
       type: AuthDelegationType.Custom,
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
+  adminDataConfig: {
+    answers: [
+      // fields that we need to keep after pruning for pending action to work properly
+      { key: 'assigneeInformation.$.assignee.nationalId', isListed: false },
+      { key: 'approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -192,12 +199,20 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
+                includeSubjectAndActor: true,
               },
             ],
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+              )
+            },
           },
           lifecycle: {
             pruneMessage: {

@@ -4,12 +4,13 @@ query vehiclesList($input: VehiclesListInputV3!) {
     pageSize
     totalPages
     totalRecords
-    data {
+    vehicleList {
       vehicleId
       registration {
         number
       }
       make
+      co2
       color {
         name
       }
@@ -21,6 +22,15 @@ query vehiclesList($input: VehiclesListInputV3!) {
         requiresMileageRegistration
       }
     }
+  }
+}
+
+query vehiclesListCount($input: VehiclesListInputV3!) {
+  vehiclesListV3(input: $input) {
+    pageNumber
+    pageSize
+    totalPages
+    totalRecords
   }
 }
 

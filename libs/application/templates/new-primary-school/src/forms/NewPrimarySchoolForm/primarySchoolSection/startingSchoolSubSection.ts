@@ -8,10 +8,11 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../lib/constants'
+import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
+import { shouldShowExpectedEndDate } from '../../../utils/conditionUtils'
 
 export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
@@ -30,12 +31,13 @@ export const startingSchoolSubSection = buildSubSection({
       children: [
         buildDateField({
           id: 'startingSchool.expectedStartDate',
-          title: newPrimarySchoolMessages.shared.date,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+          title: newPrimarySchoolMessages.primarySchool.expectedStartDateTitle,
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedStartDatePlaceholder,
           defaultValue: null,
           minDate: () => new Date(),
         }),
-        // Only show for International school types
+        // Only show for International schools and special education - behavior school/dept types
         buildRadioField({
           id: 'startingSchool.temporaryStay',
           title: newPrimarySchoolMessages.primarySchool.temporaryStay,
@@ -52,10 +54,8 @@ export const startingSchoolSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
-            const { selectedSchoolType } = getApplicationAnswers(answers)
-
-            return selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+          condition: (answers, externalData) => {
+            return shouldShowExpectedEndDate(answers, externalData)
           },
         }),
         buildDescriptionField({
@@ -64,15 +64,15 @@ export const startingSchoolSubSection = buildSubSection({
             newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -81,23 +81,25 @@ export const startingSchoolSubSection = buildSubSection({
         buildDateField({
           id: 'startingSchool.expectedEndDate',
           title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-          condition: (answers) => {
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.expectedEndDatePlaceholder,
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
           },
           minDate: (application: Application) =>
             new Date(
-              getApplicationAnswers(application.answers).expectedStartDate,
+              getApplicationAnswers(application.answers).expectedStartDate ??
+                '',
             ),
         }),
         buildHiddenInputWithWatchedValue({

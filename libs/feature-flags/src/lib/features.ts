@@ -19,6 +19,7 @@ export enum Features {
   homeSupport = 'isHomeSupportEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  legalGazette = 'isLegalGazetteEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
@@ -27,31 +28,40 @@ export enum Features {
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
-  IncomePlanEnabled = 'isIncomePlanEnabled',
   rentalAgreement = 'isRentalAgreementEnabled',
-  SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
-  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
-  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
+  medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
+  disabilityPension = 'isDisabilityPensionEnabled',
+  disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
+  pensionSupplementEnabled = 'isPensionSupplementEnabled',
+  fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
+  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
+  TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
+  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
+  RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
+  servicePortalHealthPatientPermitsPageEnabled = 'isServicePortalHealthPatientPermitsPageEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
-  servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
-  servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
   servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
   servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
+  servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
+  servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
+  isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
+  servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
+  // Health Aid and Nutrition Renewal feature enabled
+  servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
-
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
   //New License service fetch enabled
@@ -70,6 +80,9 @@ export enum Features {
   isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
   isHolarUniversityEnabled = 'isHolarUniversityEnabled',
   isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
+
+  //License service license scanner disabled
+  isLicenseScannerDisabled = 'isLicenseScannerDisabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
@@ -108,6 +121,7 @@ export enum Features {
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
+  isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -116,6 +130,8 @@ export enum Features {
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
+
+  isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 }
 
 export enum ServerSideFeature {

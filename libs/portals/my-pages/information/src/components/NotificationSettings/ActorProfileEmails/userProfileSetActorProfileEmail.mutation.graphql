@@ -1,0 +1,7 @@
+mutation UserProfileSetActorProfileEmail(
+  $input: UserProfileSetActorProfileEmailInput!
+) {
+  userProfileSetActorProfileEmail(input: $input) {
+    email
+  }
+}

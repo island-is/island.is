@@ -18,6 +18,9 @@ export enum Roles {
 
 export enum States {
   PREREQUISITES = 'prerequisites',
+
+  NOT_ELIGIBLE = 'notEligible',
+
   DRAFT = 'draft',
 
   TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
@@ -149,6 +152,16 @@ export const INCOME = 'Atvinnutekjur'
 export enum RatioType {
   YEARLY = 'yearly',
   MONTHLY = 'monthly',
+}
+
+export enum OptionsValueEnum {
+  NONE = 'NONE',
+  LITTLE = 'LITTLE',
+  MODERATE = 'MODERATE',
+  SEVERE = 'SEVERE',
+  EXTREME = 'EXTREME',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  REFUSE_TO_ANSWER = 'REFUSE_TO_ANSWER',
 }
 
 export const defaultIncomeTypes = [

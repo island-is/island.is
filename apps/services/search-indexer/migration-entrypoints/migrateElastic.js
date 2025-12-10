@@ -1,2 +1,2 @@
-const { migrateElastic } = require('./main')
+const { migrateElastic } = require('./main.cjs')
 migrateElastic()

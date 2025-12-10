@@ -79,6 +79,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       title
       hasALandingPage
       trackingDomain
+      canPagesBeFoundInSearchResults
       logo {
         title
         url
@@ -135,6 +136,33 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           href
         }
       }
+      navigationLinks {
+        activeCategory {
+          label
+          description
+          icelandicSlug
+          englishSlug
+          childLinks {
+            label
+            href
+            description
+          }
+        }
+        breadcrumbs {
+          label
+          href
+        }
+        topLinks {
+          label
+          href
+          isActive
+          midLinks {
+            label
+            href
+            isActive
+          }
+        }
+      }
       defaultHeaderImage {
         url
         contentType
@@ -178,6 +206,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         email
         phone
         trackingDomain
+        canPagesBeFoundInSearchResults
         publishedMaterialSearchFilterGenericTags {
           id
           title

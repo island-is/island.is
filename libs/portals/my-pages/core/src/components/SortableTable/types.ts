@@ -31,9 +31,11 @@ export type SortableTableProps = {
   tagOutlined?: boolean // If tags are set, should they be filled or outlined
   expandable?: boolean // Uses "children" key for expandable rows
   defaultSortByKey: string // Starting sort key, use one of keys in SortableData
+  sortBy?: 'ascending' | 'descending' // Default sort order
   mobileTitleKey?: string // Key to use for mobile title
   inner?: boolean // Is the table inside another table
   align?: 'left' | 'right'
   ellipsisLength?: number
   emptyTableMessage?: string
+  tableLoading?: boolean
 }

@@ -37,6 +37,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -59,6 +60,9 @@ const AppealFiles = () => {
     updateUploadFile,
   } = useUploadFiles()
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
   const { sendNotification } = useCase()
 
   const appealCaseFilesType = isDefenceUser(user)
@@ -179,6 +183,7 @@ const AppealFiles = () => {
             onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
+            onOpenFile={(file) => onOpenFile(file)}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -207,9 +212,9 @@ const AppealFiles = () => {
           text={formatMessage(strings.appealCaseFilesUpdatedModalText, {
             isDefenceUser: isDefenceUser(user),
           })}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => {
-            router.push(previousUrl)
+          secondaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(previousUrl),
           }}
         />
       )}

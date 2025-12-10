@@ -5,6 +5,7 @@ import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { ArgumentDto } from '../dto/createHnippNotification.dto'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
   EinstaklingurDTONafnItar,
@@ -129,12 +130,14 @@ export class NotificationsWorkerService {
     formattedTemplate,
     fullName,
     subjectId,
+    processedArgs,
   }: {
     isEnglish: boolean
     recipientEmail: string | null
     formattedTemplate: HnippTemplate
     fullName: string
     subjectId?: string
+    processedArgs: ArgumentDto[]
   }): Message {
     if (!recipientEmail) {
       throw new Error('Missing recipient email address')
@@ -214,7 +217,9 @@ export class NotificationsWorkerService {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.title,
+      subject:
+        processedArgs.find((arg) => arg.key === 'subject')?.value ||
+        formattedTemplate.title,
       template: {
         title: formattedTemplate.title,
         body: generateBody(),
@@ -289,6 +294,7 @@ export class NotificationsWorkerService {
         recipientEmail: profile.email ?? null,
         fullName,
         subjectId: message.onBehalfOf?.subjectId,
+        processedArgs: message.args,
       })
 
       await this.emailService.sendEmail(emailContent)
@@ -311,32 +317,40 @@ export class NotificationsWorkerService {
         this.logger.info('Message received by worker', { messageId })
 
         const notification = { messageId, ...message }
-        let dbNotification = await this.notificationModel.findOne({
-          where: { messageId },
-          attributes: ['id'],
-        })
+        let dbNotification = null
 
-        if (dbNotification) {
-          // messageId exists in db, do nothing
-          this.logger.info('notification with messageId already exists in db', {
-            messageId,
+        // Only save notifications for the main recipient, delegation notifications are not saved since they should not show up under the user's notifications
+        if (!message.onBehalfOf) {
+          dbNotification = await this.notificationModel.findOne({
+            where: { messageId },
+            attributes: ['id'],
           })
-        } else {
-          // messageId does not exist
-          // write to db
-          try {
-            dbNotification = await this.notificationModel.create(notification)
-            if (dbNotification) {
-              this.logger.info('notification written to db', {
-                notification,
+
+          if (dbNotification) {
+            // messageId exists in db, do nothing
+            this.logger.info(
+              'notification with messageId already exists in db',
+              {
+                messageId,
+              },
+            )
+          } else {
+            // messageId does not exist
+            // write to db
+            try {
+              dbNotification = await this.notificationModel.create(notification)
+              if (dbNotification) {
+                this.logger.info('notification written to db', {
+                  notification,
+                  messageId,
+                })
+              }
+            } catch (e) {
+              this.logger.error('error writing notification to db', {
+                e,
                 messageId,
               })
             }
-          } catch (e) {
-            this.logger.error('error writing notification to db', {
-              e,
-              messageId,
-            })
           }
         }
 
@@ -407,6 +421,17 @@ export class NotificationsWorkerService {
               if (delegations.data.length > 0) {
                 recipientName = await this.getName(message.recipient)
               }
+
+              // Filter out duplicate delegations that have the same fromNationalId and toNationalId
+              delegations.data = delegations.data.filter(
+                (delegation, index, self) =>
+                  index ===
+                  self.findIndex(
+                    (d) =>
+                      d.fromNationalId === delegation.fromNationalId &&
+                      d.toNationalId === delegation.toNationalId,
+                  ),
+              )
 
               await Promise.all(
                 delegations.data.map((delegation) =>

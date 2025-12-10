@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { createIntl, IntlFormatters, useIntl } from 'react-intl'
+import { IntlFormatters, useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
@@ -11,6 +11,7 @@ import { LocaleProvider } from '@island.is/localization'
 
 import { formatCustodyRestrictions } from './restrictions'
 import { formatRequestedCustodyRestrictions } from './restrictions'
+import { createFormatMessage } from './testHelpers.logic'
 
 interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
@@ -174,10 +175,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn(),
-  }).formatMessage
+  const formatMessage = createFormatMessage()
 
   it('should return empty string if no custody restrictions', () => {
     const caseType = CaseType.CUSTODY

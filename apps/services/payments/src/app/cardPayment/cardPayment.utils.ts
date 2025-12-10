@@ -7,7 +7,6 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { CardErrorCode } from '@island.is/shared/constants'
 
-import { environment } from '../../environments'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
@@ -56,10 +55,12 @@ export const generateVerificationRequestOptions = ({
   verifyCardInput,
   md,
   paymentApiConfig,
+  webOrigin,
 }: {
   verifyCardInput: VerifyCardInput
   md: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  webOrigin: string
 }) => {
   const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
   const {
@@ -83,7 +84,7 @@ export const generateVerificationRequestOptions = ({
       cardholderDeviceType: 'WWW',
       amount: iskToAur(amount),
       currency: 'ISK',
-      authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      authenticationUrl: `${webOrigin}/api/card/callback`,
       MD: md,
       systemCalling,
     }),
@@ -198,6 +199,9 @@ export const getPayloadFromMd = ({
 }
 
 export function mapToCardErrorCode(originalCode: string): CardErrorCode {
+  // Only the first two characters are used to map the error code
+  const firstTwoCharacters = originalCode?.slice(0, 2)
+
   const errorCodeMap: Record<string, CardErrorCode> = {
     '51': CardErrorCode.InsufficientFunds,
     '54': CardErrorCode.ExpiredCard,
@@ -222,7 +226,7 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
   }
 
   // Return the mapped value or the default
-  return errorCodeMap[originalCode] || CardErrorCode.GenericDecline
+  return errorCodeMap[firstTwoCharacters] || CardErrorCode.GenericDecline
 }
 
 export const generateCardChargeFJSPayload = ({

@@ -8,17 +8,19 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     icon: 'receipt',
   },
   description: m.signatureListsDescription,
-  path: SignatureCollectionPaths.ParliamentaryRoot,
+  path: SignatureCollectionPaths.MunicipalRoot,
   children: [
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalRoot,
+    },
     {
       name: m.parliamentaryCollectionTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      activeIfExact: true,
     },
     {
       name: m.collectionTitle,
-      path: SignatureCollectionPaths.PresidentialLists,
-      activeIfExact: true,
+      path: SignatureCollectionPaths.PresidentialListOfCandidates,
     },
   ],
 }

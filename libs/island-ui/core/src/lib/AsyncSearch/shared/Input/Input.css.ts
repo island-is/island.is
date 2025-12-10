@@ -28,9 +28,6 @@ export const input = style({
     [`&:focus:hover`]: {
       borderColor: theme.color.transparent,
     },
-    [`&::placeholder`]: {
-      color: theme.color.dark400,
-    },
   },
 })
 

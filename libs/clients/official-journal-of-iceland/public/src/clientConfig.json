@@ -4,7 +4,6 @@
     "/api/v1/adverts/{id}": {
       "get": {
         "operationId": "getAdvertById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -22,13 +21,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/adverts/similar/{id}": {
       "get": {
         "operationId": "getSimilarAdvertsById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -48,13 +47,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/adverts": {
       "get": {
         "operationId": "getAdverts",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -83,6 +82,13 @@
             "in": "query",
             "description": "One or more departments (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "description": "Year (signature year) to filter by",
+            "schema": { "type": "string" }
           },
           {
             "name": "type",
@@ -129,13 +135,103 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
+      }
+    },
+    "/api/v1/adverts-lean": {
+      "get": {
+        "operationId": "getAdvertsLean",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in adverts.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "department",
+            "required": false,
+            "in": "query",
+            "description": "One or more departments (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "description": "Year (signature year) to filter by",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "One or more types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "One or more categories (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "involvedParty",
+            "required": false,
+            "in": "query",
+            "description": "One or more involved parties (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLeanAdvertsResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": ""
       }
     },
     "/api/v1/departments/{id}": {
       "get": {
         "operationId": "getDepartmentById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -155,13 +251,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/departments": {
       "get": {
         "operationId": "getDepartments",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -196,13 +292,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/maincategories": {
       "get": {
         "operationId": "getMainCategories",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -247,13 +343,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/categories": {
       "get": {
         "operationId": "getCategories",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -298,13 +394,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/institutions": {
       "get": {
         "operationId": "getInstitutions",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -349,13 +445,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/signatures": {
       "get": {
         "operationId": "getSignatures",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -369,16 +465,14 @@
             "required": false,
             "in": "query",
             "description": "Search for a specific signature by type",
-            "example": "Regular",
-            "schema": { "type": "string" }
+            "schema": { "example": "Regular", "type": "string" }
           },
           {
             "name": "search",
             "required": false,
             "in": "query",
             "description": "Search for a specific signature",
-            "example": "Dagur B. Eggertsson",
-            "schema": { "type": "string" }
+            "schema": { "example": "Dagur B. Eggertsson", "type": "string" }
           },
           {
             "name": "page",
@@ -399,13 +493,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/cases": {
       "get": {
         "operationId": "getCasesInProgress",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -450,13 +544,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/rss/{id}": {
       "get": {
         "operationId": "getRssFeed",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -472,13 +566,13 @@
             },
             "description": ""
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/{id}": {
       "get": {
         "operationId": "getPDFFromAdvert",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -512,13 +606,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types": {
       "get": {
         "operationId": "getTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -602,13 +696,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types": {
       "get": {
         "operationId": "getMainTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -692,13 +786,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types/{id}": {
       "get": {
         "operationId": "getTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -740,13 +834,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types/{id}": {
       "get": {
         "operationId": "getMainTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -788,13 +882,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}": {
       "get": {
         "operationId": "getPdfByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -812,13 +906,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}": {
       "get": {
         "operationId": "getPdfByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -843,13 +937,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -867,13 +961,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -891,12 +985,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_",
+        "operationId": "HealthController__v1",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
       }
@@ -955,6 +1050,21 @@
           }
         },
         "required": ["id", "title", "slug", "department"]
+      },
+      "AdvertStatus": {
+        "type": "string",
+        "enum": [
+          "Virk",
+          "Afturkölluð",
+          "Drög",
+          "Eldri auglýsing",
+          "Hafnað",
+          "Í bið",
+          "Í vinnslu",
+          "Innsend",
+          "Tilbúin til útgáfu",
+          "Útgefin"
+        ]
       },
       "AdvertPublicationNumber": {
         "type": "object",
@@ -1082,6 +1192,10 @@
         },
         "required": ["isLegacy", "html"]
       },
+      "AdvertSignatureType": {
+        "type": "string",
+        "enum": ["Hefðbundin", "Nefnd"]
+      },
       "AdvertSignatureMember": {
         "type": "object",
         "properties": {
@@ -1156,10 +1270,9 @@
             "example": "00000000-0000-0000-0000-000000000000"
           },
           "type": {
-            "type": "string",
             "description": "Type of the signature",
-            "enum": ["Hefðbundin", "Nefnd"],
-            "example": "Hefðbundin"
+            "example": "Hefðbundin",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertSignatureType" }]
           },
           "additional": {
             "type": "string",
@@ -1196,6 +1309,23 @@
           }
         },
         "required": ["name", "type", "url"]
+      },
+      "CaseAddition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "title": { "type": "string", "description": "Title of the addition" },
+          "html": { "type": "string", "description": "HTML of the addition" },
+          "order": {
+            "type": "number",
+            "description": "HTML of the addition",
+            "default": 0
+          }
+        },
+        "required": ["id", "title", "html", "order"]
       },
       "AdvertCorrection": {
         "type": "object",
@@ -1275,22 +1405,10 @@
             "example": "GJALDSKRÁ fyrir hundahald í Reykjavíkurborg."
           },
           "status": {
-            "type": "string",
-            "enum": [
-              "Virk",
-              "Afturkölluð",
-              "Drög",
-              "Eldri auglýsing",
-              "Hafnað",
-              "Í bið",
-              "Í vinnslu",
-              "Innsend",
-              "Tilbúin til útgáfu",
-              "Útgefin"
-            ],
             "description": "Status of the advert",
             "nullable": false,
-            "example": "Virk"
+            "example": "Virk",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertStatus" }]
           },
           "publicationNumber": {
             "description": "Publication number of the advert",
@@ -1347,6 +1465,11 @@
             "description": "Attachments for the advert.",
             "type": "array",
             "items": { "$ref": "#/components/schemas/AdvertAttachment" }
+          },
+          "additions": {
+            "description": "Additions for the advert.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseAddition" }
           },
           "corrections": {
             "description": "Corrections made to the advert.",
@@ -1488,6 +1611,94 @@
             "description": "List of adverts",
             "type": "array",
             "items": { "$ref": "#/components/schemas/Advert" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["adverts", "paging"]
+      },
+      "AdvertLean": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "department": {
+            "description": "The department the advert is for.",
+            "nullable": false,
+            "example": "A deild",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          },
+          "type": {
+            "description": "Type of the advert.",
+            "example": "GJALDSKRÁ",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the advert, always dependant on the `type`.",
+            "example": "fyrir hundahald í Reykjavíkurborg."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert with both `type` and `subject`.",
+            "example": "GJALDSKRÁ fyrir hundahald í Reykjavíkurborg."
+          },
+          "status": {
+            "description": "Status of the advert",
+            "nullable": false,
+            "example": "Virk",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertStatus" }]
+          },
+          "publicationNumber": {
+            "description": "Publication number of the advert",
+            "nullable": true,
+            "allOf": [
+              { "$ref": "#/components/schemas/AdvertPublicationNumber" }
+            ]
+          },
+          "publicationDate": {
+            "type": "string",
+            "description": "Date the advert was signed, can be null. ISO 8601 date and time format in UTC.",
+            "nullable": true,
+            "example": "2024-01-20T09:00:00Z"
+          },
+          "categories": {
+            "description": "List of advert categories.",
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
+          },
+          "involvedParty": {
+            "description": "Involved party for the advert.",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
+          }
+        },
+        "required": [
+          "id",
+          "department",
+          "type",
+          "title",
+          "status",
+          "publicationNumber",
+          "publicationDate",
+          "categories",
+          "involvedParty"
+        ]
+      },
+      "GetLeanAdvertsResponse": {
+        "type": "object",
+        "properties": {
+          "adverts": {
+            "description": "List of adverts where minimal data is returned",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertLean" }
           },
           "paging": {
             "description": "Paging info",

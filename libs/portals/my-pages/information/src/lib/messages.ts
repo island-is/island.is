@@ -142,6 +142,10 @@ export const spmm = defineMessages({
     id: 'sp.family:edit-link',
     defaultMessage: 'Breyta hjá Þjóðskrá',
   },
+  legalResidenceTooltip: {
+    id: 'sp.family:legal-residence-tooltip',
+    defaultMessage: 'Götuheiti, Húsnúmer, Íbúðarnúmer, Póstnúmer, Sveitarfélag',
+  },
 })
 
 export const mInformationNotifications = defineMessages({
@@ -432,5 +436,179 @@ export const mNotifications = defineMessages({
   noDelegationsDescriptions: {
     id: 'sp.notifications:no-delegations-description',
     defaultMessage: 'Stillingar fyrir umboð munu birtast hér.',
+  },
+  paperMailTitle: {
+    id: 'sp.notifications:paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
+  },
+  paperMailDescription: {
+    id: 'sp.notifications:paper-mail-description',
+    defaultMessage:
+      'Hér getur þú óskað eftir því að erindi frá hinu opinbera sem birtast í stafræna pósthólfinu þínu verði jafnframt send til þín í bréfpósti.',
+  },
+  paperMailAriaLabel: {
+    id: 'sp.notifications:paper-mail-aria-label',
+    defaultMessage: 'Fá tilkynningar í bréfpósti?',
+  },
+})
+
+export const emailsMsg = defineMessages({
+  registerEmail: {
+    id: 'sp.settings:register-email',
+    defaultMessage: 'Skrá netfang',
+  },
+  addEmail: {
+    id: 'sp.settings:add-email',
+    defaultMessage: 'Bæta við netfangi',
+  },
+  verificationCodeButtonAria: {
+    id: 'sp.settings:verification-code-button-aria',
+    defaultMessage: 'Valmynd fyrir staðfestingarkóða',
+  },
+  emails: {
+    id: 'sp.settings:emails',
+    defaultMessage: 'Netföng',
+  },
+  emailListText: {
+    id: 'sp.settings:email-list-text',
+    defaultMessage:
+      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér. Þú getur stillt {link}',
+  },
+  emailListTextLink: {
+    id: 'sp.settings:email-list-text-link',
+    defaultMessage: 'tilkynningar hér.',
+  },
+  close: {
+    id: 'sp.settings:close',
+    defaultMessage: 'Loka',
+  },
+  emailCardPopover: {
+    id: 'sp.settings:email-card-popover',
+    defaultMessage: 'Aðgerðalisti fyrir netfang',
+  },
+  emailMakePrimary: {
+    id: 'sp.settings:email-make-primary',
+    defaultMessage: 'Gera að aðalnetfangi',
+  },
+  emailDelete: {
+    id: 'sp.settings:email-delete',
+    defaultMessage: 'Eyða netfangi',
+  },
+  emailMakePrimarySuccess: {
+    id: 'sp.settings:email-make-primary-success',
+    defaultMessage: 'Aðalnetfangi breytt',
+  },
+  emailSetActorProfileSuccess: {
+    id: 'sp.settings:email-set-actor-profile-success',
+    defaultMessage: 'Netfang tengt umboði',
+  },
+  emailDeleteSuccess: {
+    id: 'sp.settings:email-delete-success',
+    defaultMessage: 'Netfangi eytt',
+  },
+  unverified: {
+    id: 'sp.settings:unverified',
+    defaultMessage: 'Óstaðfest',
+  },
+  connectedToDelegation: {
+    id: 'sp.settings:connected_to_delegation',
+    defaultMessage: 'Tengt umboði',
+  },
+  primary: {
+    id: 'sp.settings:primary',
+    defaultMessage: 'Aðalnetfang',
+  },
+  emailDeleteError: {
+    id: 'sp.settings:email-delete-error',
+    defaultMessage: 'Ekki tókst að eyða netfangi',
+  },
+  emailMakePrimaryError: {
+    id: 'sp.settings:email-make-primary-error',
+    defaultMessage: 'Ekki tókst að setja aðalnetfang',
+  },
+  emailSetActorProfileError: {
+    id: 'sp.settings:email-set-actor-profile-error',
+    defaultMessage: 'Ekki tókst að tengja netfang við umboð',
+  },
+  connectEmailToDelegation: {
+    id: 'sp.settings:connect-email-to-delegation',
+    defaultMessage: 'Tengja netfang við umboð',
+  },
+  confirmEmail: {
+    id: 'sp.settings:confirm-email',
+    defaultMessage: 'Staðfesta netfang',
+  },
+  cancel: {
+    id: 'sp.settings:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  noCodeReceived: {
+    id: 'sp.settings:no-code-received',
+    defaultMessage: 'Fékk ekki sendan kóða?',
+  },
+  codeSentSuccess: {
+    id: 'sp.settings:code-sent-success',
+    defaultMessage: 'Kóði hefur verið sendur',
+  },
+  addEmailSuccess: {
+    id: 'sp.settings:add-email-success',
+    defaultMessage: 'Netfang skráð',
+  },
+  securityCode: {
+    id: 'ids:security-code',
+    defaultMessage: 'Öryggiskóði',
+  },
+  securityCodeSpecialIS: {
+    id: 'sp.settings:security-code-special-is',
+    defaultMessage: 'Öryggiskóði',
+  },
+  wrongCodeTitle: {
+    id: 'sp.settings:wrong-code-title',
+    defaultMessage: 'Rangur kóði sleginn inn',
+  },
+  confirm: {
+    id: 'sp.settings:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  ariaLabelVerifyingCode: {
+    id: 'sp.settings:aria-label-verifying-code',
+    defaultMessage: 'Staðfesta kóða',
+  },
+  ariaSubmitButtonDisabled: {
+    id: 'sp.settings:aria-submit-button-disabled',
+    defaultMessage: 'Staðfesta hnappur óvirkur, {label} vantar',
+  },
+  ariaLabelTwoFactorDigit: {
+    id: 'ids:aria-label-two-factor-digit',
+    defaultMessage:
+      'Vinsamlega sláðu inn staðfestingarkóðann fyrir tölu {num}.',
+  },
+  ariaLabelTwoFactorDigitSimple: {
+    id: 'ids:aria-label-two-factor-digit-simple',
+    defaultMessage: 'Tala {num}',
+  },
+  securityCodeEmailIntro: {
+    id: 'ids:security-code-email-intro',
+    defaultMessage: 'Sláðu inn kóðann sem við sendum þér á {br}{email}',
+  },
+  errorOccured: {
+    id: 'ids:error-occured',
+    defaultMessage: 'Villa kom upp',
+  },
+  errorOccuredDescription: {
+    id: 'ids:error-occured-description',
+    defaultMessage: 'Ekki tókst að senda kóðann',
+  },
+  validateTwoFactorError: {
+    id: 'ids:validate-two-factor-error',
+    defaultMessage: 'Kóði er ekki á réttu formi',
+  },
+  noAttemptsLeftError: {
+    id: 'ids:no-attempts-left-error',
+    defaultMessage: 'Engar tilraunir eftir.',
+  },
+  emailAlreadyExists: {
+    id: 'ids:email-already-exists',
+    defaultMessage: 'Netfang er nú þegar til',
   },
 })

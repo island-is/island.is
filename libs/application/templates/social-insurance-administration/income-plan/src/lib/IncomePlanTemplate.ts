@@ -30,7 +30,6 @@ import {
   defineTemplateApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import isEmpty from 'lodash/isEmpty'
 import set from 'lodash/set'
@@ -65,7 +64,6 @@ const IncomePlanTemplate: ApplicationTemplate<
   name: incomePlanFormMessage.shared.applicationTitle,
   codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,

@@ -18,15 +18,14 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
 import {
-  CivilClaimant,
   CivilClaimantExistsGuard,
   CurrentCivilClaimant,
   CurrentDefendant,
-  Defendant,
   DefendantExistsGuard,
 } from '../defendant'
+import { Case, CivilClaimant, Defendant } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'
@@ -81,6 +80,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       notificationDto.user,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -104,6 +104,7 @@ export class InternalNotificationController {
     return this.indictmentCaseNotificationService.sendIndictmentCaseNotification(
       notificationDto.type,
       theCase,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -160,6 +161,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       defendant,
+      notificationDto.user,
     )
   }
 
@@ -228,6 +230,7 @@ export class InternalNotificationController {
     return this.notificationDispatchService.dispatchEventNotification(
       notificationDto.type,
       theCase,
+      notificationDto.userDescriptor,
     )
   }
 

@@ -1,16 +1,18 @@
+import { useContext } from 'react'
+import type { EntryProps } from 'contentful-management'
 import { Button, Menu } from '@contentful/f36-components'
 import { ChevronDownIcon, PlusIcon } from '@contentful/f36-icons'
 
-import { TreeNodeType } from './utils'
-
-const optionMap = {
-  [TreeNodeType.CATEGORY]: 'Category',
-  [TreeNodeType.ENTRY]: 'Page',
-  [TreeNodeType.URL]: 'URL',
-}
+import { EntryContext } from './entryContext'
+import { type EntryType, optionMap, TreeNodeType } from './utils'
 
 interface AddNodeButtonProps {
-  addNode: (type: TreeNodeType, createNew?: boolean) => void
+  addNode: (
+    type: TreeNodeType,
+    entries: Record<string, EntryProps>,
+    createNew?: boolean,
+    entryType?: EntryType,
+  ) => void
   options?: TreeNodeType[]
 }
 
@@ -18,6 +20,7 @@ export const AddNodeButton = ({
   addNode,
   options = [TreeNodeType.CATEGORY, TreeNodeType.ENTRY, TreeNodeType.URL],
 }: AddNodeButtonProps) => {
+  const { entries } = useContext(EntryContext)
   return (
     <Menu>
       <Menu.Trigger>
@@ -32,7 +35,7 @@ export const AddNodeButton = ({
               <Menu.Item
                 key={option}
                 onClick={() => {
-                  addNode(option)
+                  addNode(option, entries)
                 }}
               >
                 {optionMap[option]}
@@ -45,14 +48,21 @@ export const AddNodeButton = ({
               <Menu.List>
                 <Menu.Item
                   onClick={() => {
-                    addNode(option, true)
+                    addNode(option, entries, true, 'organizationParentSubpage')
                   }}
                 >
-                  Create new
+                  Create new organization parent subpage
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => {
-                    addNode(option, false)
+                    addNode(option, entries, true, 'organizationSubpage')
+                  }}
+                >
+                  Create new organization subpage
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    addNode(option, entries, false)
                   }}
                 >
                   Add existing

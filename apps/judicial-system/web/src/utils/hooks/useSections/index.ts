@@ -245,11 +245,29 @@ const useSections = (
         ? []
         : [
             {
-              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              name: 'Efni kröfu',
               isActive:
                 isActive(constants.CREATE_INVESTIGATION_CASE_ROUTE) ||
-                isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE),
+                isActive(constants.INVESTIGATION_CASE_REGISTRATION_ROUTE),
+              href: `${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${id}`,
+            },
+            {
+              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              isActive: isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE),
               href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      )
+                  : undefined,
             },
             {
               name: formatMessage(
@@ -955,6 +973,29 @@ const useSections = (
                   : undefined,
             },
             {
+              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              isActive: isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE),
+              href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_COURT_RECORD_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
               name: formatMessage(sections.indictmentsCourtSection.conclusion),
               isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
               href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
@@ -967,6 +1008,7 @@ const useSections = (
                     constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
                     constants.INDICTMENTS_SUBPOENA_ROUTE,
                     constants.INDICTMENTS_DEFENDER_ROUTE,
+                    constants.INDICTMENTS_COURT_RECORD_ROUTE,
                   ],
                   workingCase,
                 ) &&

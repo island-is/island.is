@@ -4,15 +4,19 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
+  isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -31,6 +35,8 @@ import {
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -101,7 +107,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { user } = useContext(UserContext)
@@ -167,6 +173,20 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.defendants?.map(
+            (defendant) =>
+              defendant.verdict && (
+                <Box
+                  key={`${defendant.id}${defendant.verdict.id}`}
+                  marginBottom={2}
+                >
+                  <VerdictStatusAlert
+                    defendant={defendant}
+                    verdict={defendant.verdict}
+                  />
+                </Box>
+              ),
+          )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
               <>
@@ -227,6 +247,19 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
+          {isCompletedCase(workingCase.state) &&
+            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            )}
           {(hasLawsBroken || hasMergeCases) && (
             <Box marginBottom={5}>
               {/* 
@@ -300,11 +333,19 @@ const IndictmentOverview: FC = () => {
               />
             </Box>
           )}
+          {isProsecutionUser(user) && (
+            <Box component="section">
+              <InputPenalties
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </Box>
+          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!shouldDisplayReviewDecision}
           nextButtonText={formatMessage(strings.completeReview)}
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}

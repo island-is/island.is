@@ -49,7 +49,7 @@ export const ChangeUser = () => {
             id: user.id,
             name: user.name,
             title: user.title,
-            mobileNumber: user.mobileNumber,
+            mobileNumber: user.mobileNumber?.replace('-', ''),
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,

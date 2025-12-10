@@ -75,7 +75,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

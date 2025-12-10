@@ -25,3 +25,12 @@ export const ProcessPermitsApi = defineTemplateApi({
   action: ApiActions.processPermits,
   externalDataId: 'permitOptions',
 })
+
+export const InnaApi = defineTemplateApi({
+  action: 'getInnaDiplomas',
+  externalDataId: 'innaEducation',
+  namespace: 'EducationShared',
+  params: {
+    allowEmpty: true,
+  },
+})

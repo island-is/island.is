@@ -80,9 +80,15 @@ const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   return null
 }
 
-const generateOrganizationSubpageLink = (
+export const generateOrganizationSubpageLink = (
   subpage: IOrganizationSubpage | IOrganizationParentSubpage,
 ) => {
+  if (
+    !subpage?.fields?.organizationPage?.fields?.slug ||
+    !subpage?.fields?.slug
+  )
+    return null
+
   const prefix = getOrganizationPageUrlPrefix(subpage.sys.locale)
 
   return mapLink({
@@ -97,9 +103,7 @@ const generateOrganizationSubpageLink = (
       },
     },
     fields: {
-      text:
-        (subpage as IOrganizationSubpage).fields.shortTitle ||
-        subpage.fields.title,
+      text: subpage.fields.shortTitle || subpage.fields.title,
       url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
     },
   })

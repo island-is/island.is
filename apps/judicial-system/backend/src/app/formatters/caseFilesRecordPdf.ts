@@ -8,8 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
+import { Case, Defendant } from '../modules/repository'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export const formatDefendant = (defendant: Defendant) => {
@@ -109,11 +108,18 @@ export const createCaseFilesRecord = async (
       titleFontSize,
       { alignment: Alignment.Center, bold: true },
     )
-    .addText(formatMessage(caseFilesRecord.accused), textFontSize, {
-      bold: true,
-      marginTop: 7,
-      newLine: false,
-    })
+    .addText(
+      formatMessage(caseFilesRecord.accused, {
+        suffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'ur',
+      }),
+      textFontSize,
+      {
+        bold: true,
+        marginTop: 7,
+        newLine: false,
+      },
+    )
 
   for (const defendant of theCase.defendants ?? []) {
     pdfDocument.addParagraph(
@@ -224,7 +230,7 @@ export const createCaseFilesRecord = async (
       const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)/g)
 
       for (const chunk of nameChunks ?? []) {
-        pdfDocument.addText(chunk, textFontSize, {
+        pdfDocument.addText(chunk.trimStart(), textFontSize, {
           newLine: true,
           pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },
@@ -250,7 +256,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
-  pdfDocument.addPageNumbers()
+  pdfDocument.addPageNumbers(tableOfContentsPageCount)
 
   return pdfDocument.getContents()
 }

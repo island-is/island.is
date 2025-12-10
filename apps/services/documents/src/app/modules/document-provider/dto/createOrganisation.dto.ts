@@ -30,6 +30,11 @@ export class CreateOrganisationDto {
   phoneNumber?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  zendeskId?: string
+
+  @IsOptional()
   @ApiPropertyOptional()
   administrativeContact?: CreateContactDto
 

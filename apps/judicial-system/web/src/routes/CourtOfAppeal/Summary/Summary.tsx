@@ -33,7 +33,7 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 
@@ -104,7 +104,9 @@ const Summary: FC = () => {
         <PageHeader title={formatMessage(strings.htmlTitle)} />
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
+
           <CaseNumbers />
+
           <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.title)}
@@ -137,11 +139,13 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
-            secondaryButtonText={formatMessage(core.closeModal)}
-            onSecondaryButtonClick={() => {
-              router.push(
-                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-              )
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(
+                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
           />
         )}
@@ -155,11 +159,13 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealDiscontinuedModalTitle)}
             text={formatMessage(strings.appealDiscontinuedModalText)}
-            secondaryButtonText={formatMessage(core.closeModal)}
-            onSecondaryButtonClick={() => {
-              router.push(
-                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-              )
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(
+                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
           />
         )}

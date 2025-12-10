@@ -25,6 +25,7 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   ProcessPermitsApi,
+  InnaApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
@@ -40,9 +41,8 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.HealthcareWorkPermit.translation,
-  ],
   dataSchema: HealthcareWorkPermitSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -90,6 +90,7 @@ const template: ApplicationTemplate<
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,
                 ProcessPermitsApi,
+                InnaApi,
               ],
             },
           ],

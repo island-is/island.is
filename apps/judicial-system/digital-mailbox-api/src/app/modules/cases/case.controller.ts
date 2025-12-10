@@ -23,9 +23,11 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { SubpoenaResponse } from './models/subpoena.response'
+import { VerdictResponse } from './models/verdict.response'
 import { CaseService } from './case.service'
 
 const CommonApiResponses = applyDecorators(
@@ -53,7 +55,6 @@ const ApiLocaleQuery = applyDecorators(
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
-
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -69,7 +70,7 @@ export class CaseController {
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
   ): Promise<CasesResponse[]> {
-    this.logger.debug('Getting all cases')
+    this.logger.debug(`Getting all cases for user`)
 
     return this.caseService.getCases(user.nationalId, query?.locale)
   }
@@ -90,7 +91,7 @@ export class CaseController {
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
   ): Promise<CaseResponse> {
-    this.logger.debug('Getting case by id')
+    this.logger.debug(`Getting case by id ${caseId}`)
 
     return this.caseService.getCase(caseId, user.nationalId, query?.locale)
   }
@@ -137,12 +138,65 @@ export class CaseController {
     @Body() defenderAssignment: UpdateSubpoenaDto,
     @Query() query?: { locale: string },
   ): Promise<SubpoenaResponse> {
-    this.logger.debug(`Assigning defender to subpoena ${caseId}`)
+    this.logger.debug(`Updating subpoena for case id ${caseId}`)
 
     return this.caseService.updateSubpoena(
-      user.nationalId,
       caseId,
+      user.nationalId,
       defenderAssignment,
+      query?.locale,
+    )
+  }
+
+  @Get('case/:caseId/verdict')
+  @ApiOkResponse({
+    type: () => VerdictResponse,
+    description: 'Returns verdict by case id',
+  })
+  @CommonApiResponses
+  @ApiResponse({
+    status: 404,
+    description: 'Verdict for given case id and authenticated user not found',
+  })
+  @ApiLocaleQuery
+  getRuling(
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+    @CurrentUser() user: User,
+    @Query() query?: { locale: string },
+  ): Promise<VerdictResponse> {
+    this.logger.debug(`Getting verdict by case id ${caseId}`)
+
+    return this.caseService.getVerdict(caseId, user.nationalId, query?.locale)
+  }
+
+  @Patch('case/:caseId/verdict/appeal-decision')
+  @ApiOkResponse({
+    type: () => VerdictResponse,
+    description: 'Submits verdict appeal decision',
+  })
+  @CommonApiResponses
+  @ApiResponse({
+    status: 404,
+    description: 'Case for given case id and authenticated user not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'User is not allowed to submit verdict appeal or deadline has passed',
+  })
+  @ApiLocaleQuery
+  submitVerdictAppeal(
+    @CurrentUser() user: User,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+    @Body() verdictAppeal: UpdateVerdictAppealDecisionDto,
+    @Query() query?: { locale: string },
+  ): Promise<VerdictResponse> {
+    this.logger.debug(`Submitting verdict appeal for case id ${caseId}`)
+
+    return this.caseService.updateVerdictAppeal(
+      caseId,
+      user.nationalId,
+      verdictAppeal,
       query?.locale,
     )
   }

@@ -43,9 +43,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     checkboxProvider: {
       id: 'sia.application:prerequisites.checkbox.provider',
-      defaultMessage: 'Ég samþykki gagnaöflun í umsóknarferlinu',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description:
-        'I agree to the collection of data as a part of the application process',
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
@@ -158,6 +159,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:info.applicant.address',
       defaultMessage: 'Póstfang',
       description: 'Postal address',
+    },
+    applicantApartmentNumber: {
+      id: 'sia.application:info.applicant.apartment.number',
+      defaultMessage: 'Íbúðarnúmer',
+      description: 'Apartment number',
     },
     applicantPostalcode: {
       id: 'sia.application:info.applicant.postalcode',
@@ -322,6 +328,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Heimili banka',
       description: 'Bank address',
     },
+    personalAllowancePlaceholder: {
+      id: 'sia.application:payment.personal.allowance.placeholder',
+      defaultMessage: '1%',
+      description: '1%',
+    },
     currency: {
       id: 'sia.application:payment.currency',
       defaultMessage: 'Mynt',
@@ -482,11 +493,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description: 'Income Plan',
     },
     description: {
-      id: 'sia.application:income.plan.description',
+      id: 'sia.application:income.plan.description#markdown',
       defaultMessage:
-        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila.',
+        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila. Mikilvægt er að fjárhæðir í tekjuáætlun endurspegli sem best raunveruleikann, til að tryggja skilvirka  úrvinnslu.',
       description:
-        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties.',
+        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties. It is important that the amounts in the income plan reflect reality as best as possible, in order to ensure efficient processing.',
     },
     registerIncome: {
       id: 'sia.application:income.plan.register.income',
@@ -706,6 +717,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
     description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
+  bankAccountType: {
+    id: 'sia.application:error.bankAccountType',
+    defaultMessage: 'Nauðsynlegt er að velja tegund reiknings',
+    description: 'You must choose a bank account type',
+  },
   period: {
     id: 'sia.application:error.period',
     defaultMessage: 'Ógildur mánuður.',
@@ -726,6 +742,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },
+  personalAllowanceUse: {
+    id: 'sia.application:personal.allowance.use',
+    defaultMessage: 'Nauðsynlegt er að velja hvort nýta skal persónuafslátt',
+    description: 'You must choose whether to use your personal allowance',
+  },
   personalAllowance: {
     id: 'sia.application:personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
@@ -740,6 +761,11 @@ export const errorMessages = defineMessages({
     id: 'sia.application:error.income.plan.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
     description: 'You must add at least one income type',
+  },
+  selfAssessmentQuestionRequired: {
+    id: 'sia.application:error.self.assessment.questionnaire.required',
+    defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
+    description: 'You have to fill in a field on this page.',
   },
 })
 
@@ -788,6 +814,11 @@ export const statesMessages = defineMessages({
     id: 'sia.application:applicationRejected',
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
+  },
+  applicationDismissed: {
+    id: 'sia.application:applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'Application dismissed',
   },
   applicationApproved: {
     id: 'sia.application:applicationApproved',

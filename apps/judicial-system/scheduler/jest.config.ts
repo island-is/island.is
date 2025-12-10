@@ -14,4 +14,5 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/scheduler',
   testEnvironment: 'node',
+  detectLeaks: false,
 }

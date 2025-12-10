@@ -18,8 +18,8 @@ import {
   MyMockProvider,
   NationalRegistryApi,
   ReferenceDataApi,
+  SendNotification,
 } from '../dataProviders'
-import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
@@ -100,6 +100,7 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
+          onEntry: [SendNotification],
           actionCard: {
             title: 'Test titill draft',
             description: 'Test description draft',
@@ -128,6 +129,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [SendNotification],
             },
           ],
         },
@@ -168,22 +170,14 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

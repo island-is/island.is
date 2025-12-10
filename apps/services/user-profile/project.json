@@ -8,11 +8,14 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           "apps/services/user-profile/src/assets",
           {
@@ -35,14 +38,12 @@
             "input": "libs/email-service/src/tools/design",
             "output": "./email-service-assets"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -120,8 +121,8 @@
         "parallel": true
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "service-service-portal-api": {}
   }

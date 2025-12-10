@@ -1,12 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  nextButtonReopenText: {
-    id: 'judicial.system.core:signed_verdict_overview.next_button_reopen_text',
-    defaultMessage: 'Leiðrétta þingbók og úrskurð',
-    description:
-      'Notaður sem texti á next takka fyrir dómara og dómritara í yfirliti lokins máls.',
-  },
   confirmStatementAfterDeadlineModalTitle: {
     id: 'judicial.system.core:signed_verdict_overview.confirm_statement_after_deadline_modal_title',
     defaultMessage: 'Frestur til að skila greinargerð er liðinn',

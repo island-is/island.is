@@ -13,30 +13,6 @@ export const strings = {
     description:
       'Notaður sem titill á "Afstaða sakbornings til sakarefnis" hlutann á Málsmeðferðarskjánum.',
   }),
-  defendantName: defineMessage({
-    id: 'judicial.system.indictments:processing.defendant_name',
-    defaultMessage: 'Ákærði {name}',
-    description:
-      'Notaður sem undirtitill á "Afstaða sakbornings til sakarefnis" hlutann á Málsmeðferðarskjánum.',
-  }),
-  pleaGuilty: defineMessage({
-    id: 'judicial.system.indictments:processing.plea_guilty',
-    defaultMessage: 'Játar sök',
-    description:
-      'Notaður sem texti í "Játar" valmöguleikanum á Málsmeðferðarskjánum.',
-  }),
-  pleaNotGuilty: defineMessage({
-    id: 'judicial.system.indictments:processing.plea_not_guilty',
-    defaultMessage: 'Neitar sök',
-    description:
-      'Notaður sem texti í "Neitar" valmöguleikanum á Málsmeðferðarskjánum.',
-  }),
-  pleaNoPlea: defineMessage({
-    id: 'judicial.system.indictments:processing.plea_no_plea',
-    defaultMessage: 'Tjáir sig ekki / óljóst',
-    description:
-      'Notaður sem texti í "Tekur ekki afstöðu" valmöguleikanum á Málsmeðferðarskjánum.',
-  }),
   yes: defineMessage({
     id: 'judicial.system.indictments:processing.yes',
     defaultMessage: 'Já',

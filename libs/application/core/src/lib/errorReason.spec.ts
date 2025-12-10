@@ -4,25 +4,6 @@ import {
   isTranslationObject,
 } from './errorReasonUtils'
 import { coreErrorMessages } from './messages'
-import {
-  Application,
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/types'
-
-const application: Application = {
-  id: '123',
-  assignees: [],
-  state: 'draft',
-  applicant: '111111-3000',
-  applicantActors: [],
-  typeId: ApplicationTypes.EXAMPLE,
-  modified: new Date(),
-  created: new Date(),
-  answers: {},
-  externalData: {},
-  status: ApplicationStatus.IN_PROGRESS,
-}
 
 describe('dataProviderUtils', () => {
   it('Should not fail when providing custom error message with various test inputs for the error reason', async () => {

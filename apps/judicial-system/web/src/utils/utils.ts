@@ -205,9 +205,20 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+
 // Use the gender of the single defendant if there is only one,
 // otherwise default to male
 export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+export const isPartiallyVisible = (el: HTMLElement): boolean => {
+  const rect = el.getBoundingClientRect()
+  return (
+    rect.bottom >= 0 &&
+    rect.right >= 0 &&
+    rect.top <= window.innerHeight &&
+    rect.left <= window.innerWidth
+  )
+}

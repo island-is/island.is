@@ -17,25 +17,23 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
     data {
       ...ListDocument
     }
+    categories {
+      id
+      name
+    }
+    senders {
+      id
+      name
+    }
     totalCount
     unreadCount
-  }
-}
-
-query GetDocumentsCategoriesAndSenders {
-  getDocumentCategories {
-    id
-    name
-  }
-  getDocumentSenders {
-    id
-    name
   }
 }
 
 query GetDocument($input: DocumentInput!, $locale: String) {
   documentV2(input: $input, locale: $locale) {
     ...ListDocument
+    ...DocumentTicket
     content {
       type
       value
@@ -53,5 +51,12 @@ query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
   documentV2ConfirmActions(input: $input) {
     id
     confirmed
+  }
+}
+
+mutation DocumentReply($input: DocumentReplyInput!) {
+  documentsV2Reply(input: $input) {
+    id
+    email
   }
 }

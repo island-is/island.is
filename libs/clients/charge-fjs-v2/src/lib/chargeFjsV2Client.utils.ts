@@ -9,9 +9,10 @@ export const getPaymentIdFromExternalData = (application: Application) => {
     return
   }
 
-  const { id: chargeId } = externalData.createCharge.data as {
-    id: string
+  const { paymentUrl } = externalData.createCharge.data as {
+    paymentUrl: string
   }
-
-  return chargeId
+  const url = new URL(paymentUrl)
+  const id = url.pathname.split('/').pop()
+  return id ?? ''
 }

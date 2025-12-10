@@ -52,6 +52,8 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -111,6 +113,7 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
+    clearOnChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -121,6 +124,7 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
+    clearOnChange,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -251,6 +255,8 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
+    required,
   } = data
 
   return {
@@ -266,6 +272,8 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
+    required,
   }
 }
 
@@ -299,6 +307,7 @@ export const buildTextField = (
     placeholder,
     variant = 'text',
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -310,14 +319,17 @@ export const buildTextField = (
     rightAlign,
     tooltip,
     onChange,
+    allowNegative,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
+    allowNegative,
     placeholder,
     backgroundColor,
     variant,
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -389,6 +401,7 @@ export const buildFileUploadField = (
     maxSize,
     maxSizeErrorText,
     totalMaxSize,
+    maxFileCount,
     forImageUpload,
   } = data
   return {
@@ -408,6 +421,7 @@ export const buildFileUploadField = (
     maxSize: maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
     maxSizeErrorText,
     totalMaxSize: totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
+    maxFileCount,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
@@ -589,6 +603,16 @@ export const buildFieldRequired = (
   return maybeRequired
 }
 
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
+}
+
 export const buildRedirectToServicePortalField = (data: {
   id: string
   title?: FormText
@@ -657,8 +681,13 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
-    data
+  const {
+    message,
+    alertType,
+    links,
+    shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -668,6 +697,7 @@ export const buildAlertMessageField = (
     component: FieldComponents.ALERT_MESSAGE,
     links,
     shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
   }
 }
 
@@ -697,13 +727,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -816,6 +859,7 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
   }
 }
 
@@ -843,6 +887,7 @@ export const buildNationalIdWithNameField = (
     emailLabel,
     titleVariant,
     description,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -869,6 +914,7 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
+    readOnly,
   }
 }
 
@@ -941,6 +987,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   } = data
@@ -958,6 +1008,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   }
@@ -1156,16 +1210,28 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    required,
+    defaultValue,
+  } = data
+
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
@@ -1179,8 +1245,13 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    loadTableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1190,8 +1261,13 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    loadTableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,
@@ -1212,5 +1288,35 @@ export const buildCopyLinkField = (
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
+  }
+}
+
+export const buildVehiclePermnoWithInfoField = (
+  data: Omit<VehiclePermnoWithInfoField, 'type' | 'component' | 'children'>,
+): VehiclePermnoWithInfoField => {
+  const {
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
+    isTrailer,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+    component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
+    isTrailer,
   }
 }

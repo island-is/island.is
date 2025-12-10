@@ -1,0 +1,10 @@
+query UserProfileActorProfiles {
+  userProfileActorProfiles {
+    data {
+      fromNationalId
+      fromName
+      emailNotifications
+      emailsId
+    }
+  }
+}

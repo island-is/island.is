@@ -23,7 +23,7 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
+import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/Modals/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
   CaseState,
@@ -115,6 +115,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}
               pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
             />
           </li>
         )}
@@ -129,6 +130,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonCustodyNotice)}
               pdfType="custodyNotice"
+              elementId={formatMessage(core.pdfButtonCustodyNotice)}
             />
           </li>
         )}
@@ -138,6 +140,7 @@ const CaseDocuments: FC<Props> = ({
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           >
             {isInvestigationCase(workingCase.type) &&
               (workingCase.courtRecordSignatory ? (
@@ -169,6 +172,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRuling)}
               pdfType="ruling"
+              elementId={formatMessage(core.pdfButtonRuling)}
               disabled={!isRulingRequired}
             >
               {isRulingRequired &&

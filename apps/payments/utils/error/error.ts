@@ -154,6 +154,11 @@ export const paymentErrorToTitleAndMessage = (
         title: genericError.amountMismatchTitle,
         message: genericError.amountMismatch,
       }
+    case CardErrorCode.RefundedBecauseOfSystemError:
+      return {
+        title: cardError.refundedBecauseOfSystemErrorTitle,
+        message: cardError.refundedBecauseOfSystemError,
+      }
     default:
       return {
         title: cardError.unknownTitle,

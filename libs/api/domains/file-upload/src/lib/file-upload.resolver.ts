@@ -18,16 +18,16 @@ export class FileUploadResolver {
     let scanStatus = undefined
     for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
       const tags = await this.fileStorageService.getFileTags(filename)
-      scanStatus = tags.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')
-      
-      if(scanStatus !== undefined) {
+      scanStatus = tags.find((tag) => tag.Key === 'GuardDutyMalwareScanStatus')
+
+      if (scanStatus !== undefined) {
         break
       }
 
-      const waitTimeThisLoop = MALWARE_MIN_MS_BETWEEN_FETCHES * (Math.pow(2, i))
+      const waitTimeThisLoop = MALWARE_MIN_MS_BETWEEN_FETCHES * Math.pow(2, i)
       await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
     }
-    
+
     if (!scanStatus) {
       return MalwareScanStatus.UNKNOWN
     }

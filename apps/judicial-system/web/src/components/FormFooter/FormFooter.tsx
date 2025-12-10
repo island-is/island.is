@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
-import cn from 'classnames'
 import router from 'next/router'
 
 import {
@@ -63,16 +62,9 @@ const FormFooter: FC<Props> = ({
   const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   return (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      flexDirection={['row', 'row', 'columnReverse', 'row']}
-      alignItems="center"
-      data-testid="formFooter"
-      className={cn(styles.button)}
-    >
+    <Box data-testid="formFooter" className={styles.formFooter}>
       {!hidePreviousButton && (
-        <Box className={styles.button}>
+        <Box display="flex" alignItems="center">
           <Button
             variant="ghost"
             disabled={previousIsDisabled}
@@ -83,57 +75,55 @@ const FormFooter: FC<Props> = ({
             circle={isMobile}
             aria-label={previousButtonText || formatMessage(core.back)}
             data-testid="previousButton"
-            fluid
+            fluid={isMobile}
           >
             {!isMobile && (previousButtonText || formatMessage(core.back))}
           </Button>
         </Box>
       )}
-      {!hideActionButton && actionButtonText && (
-        <Box className={cn(styles.button, styles.actionButton)}>
-          <Button
-            onClick={onActionButtonClick}
-            variant="ghost"
-            colorScheme={actionButtonColorScheme ?? 'destructive'}
-            disabled={actionButtonIsDisabled}
-            fluid={isTablet}
-          >
-            {actionButtonText}
-          </Button>
-        </Box>
-      )}
-      {(!hideNextButton || infoBoxText) && (
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          className={cn(styles.button, styles.continueButton)}
-        >
-          {!hideNextButton && (
+      <Box className={styles.buttonContainer}>
+        {!hideActionButton && actionButtonText && (
+          <Box className={styles.actionButton}>
             <Button
-              data-testid="continueButton"
-              icon={nextButtonIcon}
-              disabled={nextIsDisabled}
-              colorScheme={nextButtonColorScheme ?? 'default'}
-              loading={nextIsLoading}
-              onClick={() => {
-                if (onNextButtonClick) {
-                  onNextButtonClick()
-                } else if (nextUrl) {
-                  router.push(nextUrl)
-                }
-              }}
-              fluid
+              onClick={onActionButtonClick}
+              variant="ghost"
+              colorScheme={actionButtonColorScheme ?? 'destructive'}
+              disabled={actionButtonIsDisabled}
+              fluid={isTablet}
             >
-              {nextButtonText ?? formatMessage(core.continue)}
+              {actionButtonText}
             </Button>
-          )}
-          {infoBoxText && (
-            <div className={styles.infoBoxContainer}>
-              <InfoBox text={infoBoxText} />
-            </div>
-          )}
-        </Box>
-      )}
+          </Box>
+        )}
+        {(!hideNextButton || infoBoxText) && (
+          <Box className={styles.continueButton}>
+            {!hideNextButton && (
+              <Button
+                data-testid="continueButton"
+                icon={nextButtonIcon}
+                disabled={nextIsDisabled}
+                colorScheme={nextButtonColorScheme ?? 'default'}
+                loading={nextIsLoading}
+                onClick={() => {
+                  if (onNextButtonClick) {
+                    onNextButtonClick()
+                  } else if (nextUrl) {
+                    router.push(nextUrl)
+                  }
+                }}
+                fluid
+              >
+                {nextButtonText ?? formatMessage(core.continue)}
+              </Button>
+            )}
+            {infoBoxText && (
+              <div className={styles.infoBoxContainer}>
+                <InfoBox text={infoBoxText} />
+              </div>
+            )}
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }

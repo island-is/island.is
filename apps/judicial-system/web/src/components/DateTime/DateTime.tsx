@@ -1,13 +1,15 @@
 import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
+import { DATE_PICKER_TIME } from '@island.is/judicial-system/consts'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { BlueBox, TimeInputField } from '../../components'
+import { BlueBox } from '../../components'
 import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
@@ -26,6 +28,7 @@ interface Props {
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
   dateOnly?: boolean
+  timeOnly?: boolean
   defaultTime?: string
   onChange: (date: Date | undefined, valid: boolean) => void
 }
@@ -45,6 +48,7 @@ const DateTime: FC<Props> = ({
   backgroundColor = 'white',
   size = 'md',
   dateOnly = false,
+  timeOnly = false,
   defaultTime = '',
   onChange,
 }) => {
@@ -117,7 +121,9 @@ const DateTime: FC<Props> = ({
     )
   }
 
-  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onTimeChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const newTime = event.target.value
 
     setCurrentTime(newTime)
@@ -133,7 +139,9 @@ const DateTime: FC<Props> = ({
     sendToParent(currentDate, newTime)
   }
 
-  const onTimeBlur = (event: FocusEvent<HTMLInputElement>) => {
+  const onTimeBlur = (
+    event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const time = event.target.value
 
     const validations: Validation[] = ['empty', 'time-format']
@@ -174,48 +182,49 @@ const DateTime: FC<Props> = ({
     return (
       <div
         data-testid="date-time"
-        className={dateOnly ? undefined : styles.dateTimeContainer}
+        className={dateOnly || timeOnly ? undefined : styles.dateTimeContainer}
       >
-        <DatePicker
-          id={name}
-          label={datepickerLabel}
-          placeholderText={datepickerPlaceholder}
-          locale="is"
-          errorMessage={datepickerErrorMessage}
-          hasError={datepickerErrorMessage !== undefined}
-          icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
-          minDate={minDate}
-          maxDate={maxDate}
-          selected={currentDate ? new Date(currentDate) : undefined}
-          disabled={disabled || locked}
-          handleCloseCalendar={onCalendarClose}
-          required={required}
-          backgroundColor={backgroundColor}
-          size={size}
-        />
-        {!dateOnly && (
-          <TimeInputField
+        {!timeOnly && (
+          <DatePicker
+            id={name}
+            label={datepickerLabel}
+            placeholderText={datepickerPlaceholder}
+            locale="is"
+            errorMessage={datepickerErrorMessage}
+            hasError={datepickerErrorMessage !== undefined}
+            icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
+            minDate={minDate}
+            maxDate={maxDate}
+            selected={currentDate ? new Date(currentDate) : undefined}
+            disabled={disabled || locked}
+            handleCloseCalendar={onCalendarClose}
+            required={required}
+            backgroundColor={backgroundColor}
+            size={size}
+          />
+        )}
+        {(!dateOnly || timeOnly) && (
+          <InputMask
+            component={Input}
+            mask={DATE_PICKER_TIME}
+            showMask
+            replacement={{ ' ': /\d/ }}
             disabled={disabled || locked || currentDate === undefined}
             onChange={onTimeChange}
             onBlur={onTimeBlur}
             value={currentTime}
-          >
-            <Input
-              data-testid={`${name}-time`}
-              name={`${name}-time`}
-              label={timeLabel ?? formatMessage(strings.timeLabel)}
-              placeholder={formatMessage(strings.timePlaceholder)}
-              errorMessage={timeErrorMessage}
-              hasError={timeErrorMessage !== undefined}
-              icon={
-                locked ? { name: 'lockClosed', type: 'outline' } : undefined
-              }
-              required={required}
-              backgroundColor={backgroundColor}
-              size={size}
-              autoComplete="off"
-            />
-          </TimeInputField>
+            data-testid={`${name}-time`}
+            name={`${name}-time`}
+            label={timeLabel ?? formatMessage(strings.timeLabel)}
+            placeholder={formatMessage(strings.timePlaceholder)}
+            errorMessage={timeErrorMessage}
+            hasError={timeErrorMessage !== undefined}
+            icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
+            required={required}
+            backgroundColor={backgroundColor}
+            size={size}
+            autoComplete="off"
+          />
         )}
       </div>
     )

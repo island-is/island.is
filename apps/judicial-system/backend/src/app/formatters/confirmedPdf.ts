@@ -36,7 +36,7 @@ const createRulingConfirmation = async (
 
   const { height } = doc.getSize()
   const shadowHeight = calculatePt(70)
-  const institutionWidth = calculatePt(160)
+  const institutionWidth = calculatePt(297)
   const confirmedByWidth = institutionWidth + calculatePt(48)
   const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
@@ -269,7 +269,7 @@ export const createConfirmedPdf = async (
   pdf: Buffer,
   fileType: ConfirmableCaseFileCategories,
 ) => {
-  const pdfDoc = await PDFDocument.load(pdf)
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
 
   switch (fileType) {
     case CaseFileCategory.RULING: {

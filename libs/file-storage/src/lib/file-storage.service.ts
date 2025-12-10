@@ -78,6 +78,17 @@ export class FileStorageService {
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
 
+  async fileExists(key: string): Promise<boolean> {
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
+    }
+
+    return this.s3Service.fileExists({
+      bucket: this.config.uploadBucket,
+      key,
+    })
+  }
+
   async getFileTags(filename: string): Promise<Tag[]> {
     if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')

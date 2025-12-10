@@ -16,10 +16,8 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseListQueryInput } from './dto/caseList.input'
-import { CaseStatisticsInput } from './dto/caseStatistics.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
-import { CaseStatistics } from './models/caseStatistics.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => [CaseListEntry])
@@ -57,31 +55,6 @@ export class CaseListResolver {
         ),
       )
     }
-
-    return result
-  }
-
-  @Query(() => CaseStatistics, { nullable: true })
-  caseStatistics(
-    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
-    input: CaseStatisticsInput,
-    @CurrentGraphQlUser()
-    user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<CaseStatistics> {
-    this.logger.debug('Getting case statistics')
-
-    const result = this.auditTrailService.audit(
-      user.id,
-      AuditedAction.GET_CASES_STATISTICS,
-      backendService.getCaseStatistics(
-        input.fromDate,
-        input.toDate,
-        input.institutionId,
-      ),
-      (caseStatistics: CaseStatistics) => caseStatistics.count.toString(),
-    )
 
     return result
   }

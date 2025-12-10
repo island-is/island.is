@@ -26,7 +26,7 @@ export const LocationSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        !hasReviewerApproved(reviewerNationalId, answers) &&
+        !hasReviewerApproved(answers, reviewerNationalId) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addLocationButton)
           : undefined
@@ -40,8 +40,10 @@ export const LocationSection: FC<
             {formatMessage(overview.labels.locationTitle)}
           </Text>
           <Text color="dark400">
-            {location?.address && location?.postCode
-              ? `${location.address} - ${location.postCode}`
+            {location?.address || location?.postCode
+              ? [location.address, location.postCode]
+                  .filter(Boolean)
+                  .join(' - ')
               : formatMessage(overview.labels.noLocation)}
           </Text>
           <Text color="dark400">

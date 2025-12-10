@@ -25,6 +25,8 @@ jest.mock('next/router', () => ({
   },
 }))
 
+window.scrollTo = jest.fn()
+
 describe('BlueBoxWithDate', () => {
   const name = faker.name.firstName()
   const rulingDate = new Date().toISOString()
@@ -34,7 +36,7 @@ describe('BlueBoxWithDate', () => {
     id: faker.datatype.uuid(),
   }
 
-  it('renders correctly when ruling decision is FINE', () => {
+  it('renders correctly when ruling decision is FINE', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -52,11 +54,11 @@ describe('BlueBoxWithDate', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.getByText('Viðurlagaákvörðun')).toBeInTheDocument()
-    expect(screen.getByText(name)).toBeInTheDocument()
+    expect(await screen.findByText('Viðurlagaákvörðun')).toBeInTheDocument()
+    expect(await screen.findByText(name)).toBeInTheDocument()
   })
 
-  it('renders correctly when ruling decision is RULING', () => {
+  it('renders correctly when ruling decision is RULING', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -74,7 +76,7 @@ describe('BlueBoxWithDate', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.getByText('Birting dóms')).toBeInTheDocument()
-    expect(screen.getByText(name)).toBeInTheDocument()
+    expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
+    expect(await screen.findByText(name)).toBeInTheDocument()
   })
 })

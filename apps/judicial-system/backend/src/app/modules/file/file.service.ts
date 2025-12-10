@@ -1,10 +1,11 @@
 import { Base64 } from 'js-base64'
-import { Op, Sequelize } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Op, Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -25,6 +26,8 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
+  CaseState,
+  CourtDocumentType,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -34,15 +37,15 @@ import {
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
-import { Case } from '../case/models/case.model'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { CourtDocumentService } from '../court-session'
 import { PoliceDocumentType } from '../police'
+import { Case, CaseFile, EventLog } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { DeliverResponse } from './models/deliver.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
@@ -68,6 +71,8 @@ export class FileService {
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
+    private readonly courtDocumentService: CourtDocumentService,
+    @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
     private readonly config: ConfigType<typeof fileModuleConfig>,
@@ -173,8 +178,9 @@ export class FileService {
       return undefined // This should never happen
     }
 
-    const completedEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
+    const completedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
     )
 
     return createConfirmedPdf(
@@ -182,7 +188,7 @@ export class FileService {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: completedEvent?.created || theCase.rulingDate,
+        date: completedDate ?? theCase.rulingDate,
       },
       pdf,
       file.category,
@@ -245,6 +251,28 @@ export class FileService {
     return this.awsS3Service.getObject(theCase.type, file.key)
   }
 
+  mimeTypeToExtension: Record<string, string> = {
+    'application/pdf': '.pdf',
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+  }
+
+  private buildValidFilename = (baseName: string, mimeType: string): string => {
+    const ext = this.mimeTypeToExtension[mimeType]
+
+    if (!ext) {
+      return baseName
+    }
+
+    const lowerBase = baseName.toLowerCase()
+
+    const alreadyHasValidExt = Object.values(this.mimeTypeToExtension).some(
+      (knownExt) => lowerBase.endsWith(knownExt),
+    )
+
+    return alreadyHasValidExt ? baseName : `${baseName}${ext}`
+  }
+
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
@@ -255,8 +283,18 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.getCaseFileFromS3(theCase, file)
+    const rawFileName =
+      theCase.caseFiles
+        ?.find((f) => f.key === file.key)
+        ?.userGeneratedFilename?.trim() || file.name
 
+    // We need to do this because if there is no file extension in
+    // the file name, the court file upload fails.
+    // This also handles adding .jpg to files with .jpeg endings
+    // (because the court system also rejects .jpeg)
+    const fileName = this.buildValidFilename(rawFileName, file.type)
+
+    const content = await this.getCaseFileFromS3(theCase, file)
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
@@ -265,8 +303,8 @@ export class FileService {
       theCase.courtId,
       theCase.courtCaseNumber,
       courtDocumentFolder,
-      file.name,
-      file.name,
+      fileName,
+      fileName,
       file.type,
       content,
     )
@@ -319,15 +357,12 @@ export class FileService {
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
-    const file = await this.fileModel.create({
-      ...createFile,
-      state: CaseFileState.STORED_IN_RVG,
-      caseId: theCase.id,
-      name: fileName,
-      userGeneratedFilename:
-        createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
-      submittedBy: user.name,
-    })
+    const file = await this.createCaseFileInDatabase(
+      createFile,
+      theCase,
+      fileName,
+      user,
+    )
 
     if (
       theCase.appealCaseNumber &&
@@ -357,6 +392,9 @@ export class FileService {
       [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       ].includes(file.category)
     ) {
       const messages: Message[] = []
@@ -383,6 +421,57 @@ export class FileService {
     }
 
     return file
+  }
+
+  private async createCaseFileInDatabase(
+    createFile: CreateFile,
+    theCase: Case,
+    fileName: string,
+    user: User,
+  ): Promise<CaseFile> {
+    return this.sequelize.transaction(async (transaction) => {
+      const file = await this.fileModel.create(
+        {
+          ...createFile,
+          state: CaseFileState.STORED_IN_RVG,
+          caseId: theCase.id,
+          name: fileName,
+          userGeneratedFilename:
+            createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+          submittedBy: user.name,
+        },
+        { transaction },
+      )
+
+      // Only add a court document if a court session exists
+      if (
+        isIndictmentCase(theCase.type) &&
+        theCase.state === CaseState.RECEIVED &&
+        theCase.withCourtSessions &&
+        theCase.courtSessions &&
+        theCase.courtSessions.length > 0 &&
+        file.category &&
+        [
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        ].includes(file.category)
+      ) {
+        await this.courtDocumentService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+            name: file.userGeneratedFilename ?? file.name,
+            caseFileId: file.id,
+          },
+          transaction,
+        )
+      }
+
+      return file
+    })
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {

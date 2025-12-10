@@ -5,6 +5,7 @@ export enum NationalRegistryScope {
   signatureCollection = '@skra.is/signature-collection',
   signatureCollectionProcess = '@skra.is/signature-collection:process',
   signatureCollectionManage = '@skra.is/signature-collection:manage',
+  signatureCollectionMunicipality = '@skra.is/signature-collection:municipality',
 }
 
 const schema = z.object({
@@ -12,6 +13,7 @@ const schema = z.object({
   scope: z.array(z.string()),
   scopeAdmin: z.array(z.string()),
   scopeManager: z.array(z.string()),
+  scopeMunicipality: z.array(z.string()),
   clientId: z.string(),
 })
 
@@ -28,6 +30,7 @@ export const SignatureCollectionClientConfig = defineConfig<
     scope: [NationalRegistryScope.signatureCollection],
     scopeAdmin: [NationalRegistryScope.signatureCollectionProcess],
     scopeManager: [NationalRegistryScope.signatureCollectionManage],
+    scopeMunicipality: [NationalRegistryScope.signatureCollectionMunicipality],
     clientId: '@island.is/clients/api',
   }),
 })

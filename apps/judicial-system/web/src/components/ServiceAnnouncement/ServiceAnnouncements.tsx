@@ -195,10 +195,9 @@ const ServiceAnnouncements: FC<ServiceAnnouncementsProps> = (props) => {
 
   return defendants?.map((defendant) => {
     return (
-      <>
+      <Box key={defendant.id}>
         {defendant.alternativeServiceDescription && (
           <AlternativeServiceAnnouncement
-            key={defendant.id}
             alternativeServiceDescription={
               defendant.alternativeServiceDescription
             }
@@ -212,7 +211,7 @@ const ServiceAnnouncements: FC<ServiceAnnouncementsProps> = (props) => {
             defendantName={defendant.name}
           />
         ))}
-      </>
+      </Box>
     )
   })
 }

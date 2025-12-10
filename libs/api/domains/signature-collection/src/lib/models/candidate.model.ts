@@ -11,6 +11,15 @@ export class SignatureCollectionCandidate {
   @Field()
   name!: string
 
+  @Field()
+  ownerName!: string
+
+  @Field(() => Boolean)
+  hasActiveLists!: boolean
+
+  @Field(() => Date, { nullable: true })
+  ownerBirthDate!: Date | null
+
   @Field({ nullable: true })
   phone?: string
 
@@ -22,4 +31,7 @@ export class SignatureCollectionCandidate {
 
   @Field({ nullable: true })
   partyBallotLetter?: string
+
+  @Field({ nullable: true })
+  areaId?: string
 }

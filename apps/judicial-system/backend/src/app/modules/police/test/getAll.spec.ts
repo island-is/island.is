@@ -7,7 +7,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 import { PoliceCaseFile } from '../models/policeCaseFile.model'
 
 jest.mock('isomorphic-fetch')

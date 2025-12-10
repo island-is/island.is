@@ -1,0 +1,33 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as TooltipStories from './Tooltip.stories'
+
+import { DescriptionFigma } from '../../utils/withFigma'
+import { Inline } from '../Inline/Inline'
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
+import { Tooltip } from './Tooltip'
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+<DescriptionFigma name="Tooltip" />
+
+export const tooltipText =
+  'Check out this cool tooltip. It has some text in it that you can read for more details.'
+
+### With default icon
+
+<Canvas>
+  <Story of={TooltipStories.Default} />
+</Canvas>
+
+### With children
+
+<Canvas>
+  <Story of={TooltipStories.WithChildren} />
+</Canvas>
+
+# Props
+
+<Controls />

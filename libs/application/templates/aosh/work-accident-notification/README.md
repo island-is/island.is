@@ -12,8 +12,8 @@ The Work Accident Notification application allows both individual users and user
 
 ### Clients and template-api-modules
 
-- [Client]('https://github.com/island-is/island.is/tree/main/libs/clients/work-accident-ver/src/lib/workAccident.service.ts')
-- [Template-api-module]('https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/work-accident-notification/work-accident-notification.service.ts')
+- [Client](https://github.com/island-is/island.is/tree/main/libs/clients/work-accident-ver/src/lib/workAccident.service.ts)
+- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/work-accident-notification/work-accident-notification.service.ts)
 
 ### States
 
@@ -33,7 +33,7 @@ User recieves confirmation that reports has been successfully submitted and a PD
 
 All localisation can be found on Contentful.
 
-- [Work Accident Notification translation]('https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.wan.application')
+- [Work Accident Notification translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.wan.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ### Test users
@@ -42,6 +42,6 @@ All localisation can be found on Contentful.
 
 ### Codeowners
 
-- [Origo]('https://github.com/orgs/island-is/teams/origo')
-  - [Baldur Óli]('https://github.com/Ballioli')
-  - [Sigrún Tinna]('https://github.com/sigruntg')
+- [Origo](https://github.com/orgs/island-is/teams/origo)
+  - [Baldur Óli](https://github.com/Ballioli)
+  - [Sigrún Tinna](https://github.com/sigruntg)

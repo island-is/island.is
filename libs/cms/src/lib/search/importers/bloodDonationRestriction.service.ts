@@ -12,11 +12,15 @@ export class BloodDonationRestrictionSyncService
   implements CmsSyncProvider<IBloodDonationRestriction>
 {
   processSyncData(entries: processSyncDataInput<IBloodDonationRestriction>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry) =>
         entry.sys.contentType.sys.id === 'bloodDonationRestriction' &&
         !!entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IBloodDonationRestriction[]) {
@@ -72,7 +76,7 @@ export class BloodDonationRestrictionSyncService
 
           return {
             _id: mapped.id,
-            title: entry.fields.title || '',
+            title: (entry.fields.title || '').trim(),
             content,
             contentWordCount: content.split(' ').length,
             type: 'webBloodDonationRestriction',

@@ -1,8 +1,10 @@
 import { Allow, IsOptional } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
 import { EventType } from '@island.is/judicial-system/types'
+
+registerEnumType(EventType, { name: 'EventType' })
 
 @InputType()
 export class CreateEventLogInput {

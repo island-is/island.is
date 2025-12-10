@@ -19,9 +19,11 @@ import {
   PreregisterResponse,
   PreregistrationInput,
   IdentityDocumentTypes,
+  PassportsCollection,
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import { PassThrough } from 'stream'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
@@ -226,6 +228,21 @@ export class PassportsService {
     }
   }
 
+  async getAllIdentityDocuments(
+    user: User,
+    type?: IdentityDocumentTypes,
+  ): Promise<PassportsCollection> {
+    const [userPassports, childPassports] = await Promise.all([
+      this.getIdentityDocument(user, type),
+      this.getIdentityDocumentChildren(user, type),
+    ])
+
+    return {
+      userPassports: userPassports ?? [],
+      childPassports: childPassports ?? [],
+    }
+  }
+
   async getCurrentPassport(
     user: User,
     type?: IdentityDocumentTypes,
@@ -337,7 +354,9 @@ export class PassportsService {
       .moveDown()
       .text('guId: ' + guid)
 
+    const stream = new PassThrough()
+    doc.pipe(stream)
     doc.end()
-    return await getStream.buffer(doc)
+    return await getStream.buffer(stream)
   }
 }

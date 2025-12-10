@@ -1,15 +1,20 @@
 export * from './occupational-license'
 export * from './vaccinations'
 export {
-  HealthDirectorateOrganDonationService,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateOrganDonationService,
   OrganDonorDto,
   Locale as organLocale,
 } from './organ-donation'
 export {
   HealthDirectorateHealthClientConfig,
   HealthDirectorateHealthService,
-  PrescribedItemDtoRenewalBlockedReasonEnum,
-  PrescribedItemDtoRenewalStatusEnum,
-  PrescribedItemDtoCategoryEnum,
+  PrescribedItemCategory,
+  PrescriptionRenewalBlockedReason,
+  PrescriptionRenewalStatus,
+  PrescriptionRenewalRequestDto,
+  PrescriptionCommissionDto,
+  EuPatientConsentStatus,
+  EuPatientConsentDto,
+  PrescriptionCommissionStatus,
 } from './health'

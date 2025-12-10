@@ -1,6 +1,11 @@
 import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
+  // General buttons
+  'button.change': 'Change',
+  'button.open': 'Open',
+  'button.moreInfoHere': 'More info here',
+
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
@@ -24,6 +29,7 @@ export const en: TranslatedMessages = {
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
   'applock.attempts': 'attempts left',
+  'applock.attempt': 'attempt left',
 
   // onboarding
   'onboarding.notifications.title':
@@ -257,6 +263,30 @@ export const en: TranslatedMessages = {
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
   'documentDetail.errorUnknown': 'Error occurred while loading document',
+  'documentDetail.buttonReply': 'Reply',
+  'documentDetail.buttonCommunications': 'Communications',
+
+  // document reply
+  'documentReply.to': 'To',
+  'documentReply.from': 'From',
+  'documentReply.message': 'Message',
+  'documentReply.messagePlaceholder': 'Write message here',
+  'documentReply.uploadAttachment': 'Upload document',
+  'documentReply.sendMessage': 'Send message',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.initialReply':
+    'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
+  'documentCommunications.cannotReply':
+    'This message cannot be replied to because the sender has blocked further replies in this conversation.',
+
+  // register email
+  'registerEmail.title': 'Please register your email',
+  'registerEmail.description':
+    'To reply to email, you need to register an email',
+  'registerEmail.button': 'Register email',
+  'registerEmail.cancel': 'Cancel',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -288,9 +318,9 @@ export const en: TranslatedMessages = {
 
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
-  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorFailedToFetch': 'Unable to fetch barcode',
   'walletPass.barcodeErrorBadSession':
-    'Too little time since license was accessed on another device',
+    'The barcode was recently retrieved on another device. Please try again later.',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
   'walletPass.errorFetchingLicense': 'Could not update license',
@@ -299,20 +329,24 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.driversLicense.alert.title': 'Are you traveling abroad?',
+  'licenseDetail.driversLicense.alert.description':
+    'Remember to bring the card since the digital driver license is not valid outside of Iceland.',
   'licenseDetail.ehic.alert.title': 'Remember the card!',
   'licenseDetail.ehic.alert.description':
     'This summary is not valid as a European Health Insurance card.',
-  'licenseDetail.passport.alert.title': 'Remember the passport!',
+  'licenseDetail.passport.alert.title':
+    'This is for information only and is not valid for identification or travel',
   'licenseDetail.passport.alert.description':
-    'This summary is not valid as a travel document.',
+    'Only the physical document is valid for identification and travel.',
   'licenseDetail.identityDocument.alert.title':
     'This is for information only and is not valid for identification purposes',
   'licenseDetail.identityDocument.alert.description':
     'Only the physical document is valid for identification.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Please remember your travel document!',
+    'This is for information only and is not valid for identification or travel',
   'licenseDetail.identityTravelDocument.alert.description':
-    'This is not valid as a travel document.',
+    'Only the physical document is valid for identification and travel.',
   'licenseDetail.warning.title': 'Expires within 6 months',
   'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
@@ -386,6 +420,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -394,6 +434,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -443,11 +484,30 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Order number plate',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Order registration certificate',
+  'vehicle.links.dropdown.changeCoOwner': 'Change co-owner',
+  'vehicle.links.dropdown.changeOperator': 'Change operator',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Vehicle history report',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -475,6 +535,10 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
+  'finance.links.status': 'Status',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
@@ -613,6 +677,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Loftbru closed',
+  'airDiscount.disabledDescription':
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',
@@ -680,6 +747,12 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.basicInformation': 'Basic information',
+  'health.overview.bloodType': 'Blood group',
+  'health.overview.bloodTypeDescription': 'Your blood group is {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'No blood type registered',
+  'health.overview.dentist': 'Dentist',
+  'health.overview.noDentistRegistered': 'No dentist registered',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',

@@ -1,5 +1,18 @@
 'use strict'
 
+const generateUsers = () => {
+  const users = []
+  for (let index = 0; index < 666; index++) {
+    users.push({
+      national_id: '8888888888' + index.toString(),
+      name: 'User - ' + index,
+      role: 'recyclingCompany',
+      partner_id: '9999999999',
+    })
+  }
+  return users
+}
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
@@ -24,6 +37,7 @@ module.exports = {
           partner_id: '9999999999',
           email: 'essgje@island.is',
         },
+        ...generateUsers(),
       ],
       {},
     )

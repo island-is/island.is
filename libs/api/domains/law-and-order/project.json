@@ -3,9 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/law-and-order/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/law-and-order/**/*.ts"]
@@ -31,6 +32,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/law-and-order/src/lib/messages.ts'"
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

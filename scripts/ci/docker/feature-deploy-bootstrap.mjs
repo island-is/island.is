@@ -58,13 +58,13 @@ async function main() {
   console.log('Namespaces to add:', namespacesToAdd)
   console.log('NS grants to add:', nsGrantsToAdd)
 
-  const directoryPath =  path.join(directory, "bootstrap")
+  const directoryPath = path.join(directory, 'bootstrap')
   mkdirSync(directoryPath, { recursive: true })
 
   const content = {
     namespaces: Array.from(namespacesToAdd),
     grantNamespacesEnabled: true,
-    grantNamespaces: Array.from(nsGrantsToAdd)
+    grantNamespaces: Array.from(nsGrantsToAdd),
   }
   writeFileSync(
     `${directoryPath}/values.bootstrap.yaml`,

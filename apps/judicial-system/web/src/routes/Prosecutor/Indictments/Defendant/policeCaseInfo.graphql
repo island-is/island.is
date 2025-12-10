@@ -1,8 +1,0 @@
-query PoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
-  policeCaseInfo(input: $input) {
-    policeCaseNumber
-    place
-    date
-    licencePlate
-  }
-}

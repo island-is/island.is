@@ -197,8 +197,7 @@ export class ApiClientPaymentDetails {
   @ApiProperty()
   readonly message!: string
 
-  @ValidateNested()
-  @Type(() => ApiClientEventMetadata)
+  @IsObject()
   @ApiProperty()
   readonly eventMetadata!: ApiClientEventMetadata
 }
@@ -212,8 +211,7 @@ export class ApiClientCallback {
   @ApiProperty()
   readonly paymentFlowId!: string
 
-  @ValidateNested()
-  @Type(() => ApiClientCallbackMetadata)
+  @IsObject()
   @ApiProperty()
   readonly paymentFlowMetadata!: ApiClientCallbackMetadata
 

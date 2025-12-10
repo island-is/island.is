@@ -1,5 +1,11 @@
 import { DiseaseVaccinationDtoVaccinationStatusEnum } from '@island.is/clients/health-directorate'
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { VaccinationStatusEnum } from './enums'
 
 registerEnumType(DiseaseVaccinationDtoVaccinationStatusEnum, {
@@ -23,7 +29,7 @@ export class Info {
   @Field({ nullable: true })
   name?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   date?: Date | null
 
   @Field(() => Age, { nullable: true })
@@ -65,7 +71,7 @@ export class Vaccination {
   @Field({ nullable: true })
   statusColor?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastVaccinationDate?: Date | null
 
   @Field(() => [Info], { nullable: true })

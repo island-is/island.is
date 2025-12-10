@@ -114,3 +114,27 @@ nx run native-app:codegen/frontend-client
   - lint
   - build
   - test
+
+## License Widgets
+
+The license widget have hard-coded values for the license type, its display name, background and agency image.
+So if you need to support new license types, or update existing ones, you need to update the corresponding files:
+
+### `ios/LicenseWidget/AppIntent.swift`
+
+Add or update license types, display names, background and agency image in the `LicenseType` enum.
+
+### `android/app/main/java/is/island/app/LicenseWidgetConfigActivity.java`
+
+Edit the `LICENSE_TYPES` and `LICENSE_DISPLAY_NAMES`.
+
+### `android/app/main/java/is/island/app/LicenseWidgetProvider.java`
+
+Edit the following methods:
+- `getLicenseDisplayTitle`
+- `getAgencyIconResource`
+- `getBackgroundColors`
+
+### `android/app/src/main/res/drawable`
+
+If you need to add new agency images, add them to the `drawable` folder. The images should be named according to the license type they represent, e.g., `license_type_name.png`, see example files.

@@ -1,39 +1,65 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
+  PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
 } from '@island.is/clients/health-directorate'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
-import { Donor, DonorInput, Organ } from './models/organ-donation.model'
-
-import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Prescription, Prescriptions } from './models/prescriptions.model'
-import { Referral, Referrals } from './models/referrals.model'
-import { Vaccination, Vaccinations } from './models/vaccinations.model'
-import { Waitlist, Waitlists } from './models/waitlists.model'
+import isNumber from 'lodash/isNumber'
+import sortBy from 'lodash/sortBy'
 import {
+  MedicineDelegationCreateOrDeleteInput,
+  MedicineDelegationInput,
+} from './dto/medicineDelegation.input'
+import {
+  InvalidatePermitInput,
+  PermitInput,
+  PermitsInput,
+} from './dto/permit.input'
+import { HealthDirectorateResponse } from './dto/response.dto'
+import { mapVaccinationStatus } from './mappers/basicInformationMapper'
+import {
+  mapDelegationStatus,
+  mapDispensationItem,
   mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
+} from './mappers/medicineMapper'
+import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { PermitStatusEnum } from './models/enums'
+import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
+  MedicineHistoryDispensation,
   MedicineHistoryItem,
 } from './models/medicineHistory.model'
-import { isDefined } from '@island.is/shared/utils'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { Donor, DonorInput, Organ } from './models/organ-donation.model'
+import { Countries } from './models/permits/country.model'
+import { Permit, PermitReturn, Permits } from './models/permits/permits'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
+import { Referral, Referrals } from './models/referrals.model'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { WaitlistDetail } from './models/waitlist.model'
+import { Waitlist, Waitlists } from './models/waitlists.model'
 
 @Injectable()
 export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     private readonly healthApi: HealthDirectorateHealthService,
+    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -60,6 +86,7 @@ export class HealthDirectorateService {
       isMinor: data.isMinor ?? false,
       isTemporaryResident: data.isTemporaryResident ?? false,
     }
+
     return donorStatus
   }
 
@@ -69,6 +96,7 @@ export class HealthDirectorateService {
   ): Promise<Array<Organ>> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+
     const limitations: Array<Organ> =
       data?.map((item) => {
         return {
@@ -156,14 +184,33 @@ export class HealthDirectorateService {
         return {
           id: item.id,
           lastUpdated: item.lastUpdated,
-          name: item.name,
+          name: item.name ?? '',
           waitBegan: item.waitBeganDate,
-          organization: item.organizationName.toString(),
-          status: item.statusDisplay?.toString(),
+          organization: item.organizationName?.toString() ?? '',
+          status: item.statusDisplay?.toString() ?? '',
         }
       }) ?? []
 
     return { waitlists }
+  }
+
+  /* Waitlist */
+  async getWaitlist(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<WaitlistDetail | null> {
+    const data = await this.getWaitlists(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const waitlist: Waitlist | undefined = data.waitlists.find(
+      (item) => item.id === id,
+    )
+
+    return { data: waitlist }
   }
 
   /* Referrals */
@@ -181,7 +228,7 @@ export class HealthDirectorateService {
           serviceName: item.serviceName,
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
-          stateDisplay: item.stateDisplay,
+          stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
@@ -189,6 +236,25 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { referrals }
+  }
+
+  /* Referral */
+  async getReferral(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<ReferralDetail | null> {
+    const data = await this.getReferrals(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const referral: Referral | undefined = data.referrals.find(
+      (item) => item.id === id,
+    )
+
+    return { data: referral }
   }
 
   /* Prescriptions */
@@ -201,46 +267,46 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
-
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          type: item.productType,
-          form: item.productForm,
-          url: item.productUrl,
-          quantity: item.productQuantity?.toString(),
-          prescriberName: item.prescriberName,
+          id: item.product.id,
+          name: item.product.name,
+          type: item.product.type,
+          form: item.product.form,
+          strength: item.product.strength,
+          url: item.product.url,
+          quantity: item.product.quantity?.toString(),
+          prescriberName: item.prescriber.name,
+          medCardDrugId: item.medCard?.id,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
-          totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          totalPrescribedAmount: item.prescribedAmountDisplay,
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
-          isRenewable: item.isRenewable,
-          renewalBlockedReason: item.renewalBlockedReason
-            ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
+          isRenewable: item.renewal.isRenewable,
+          renewalBlockedReason: item.renewal.blockedReason
+            ? mapPrescriptionRenewalBlockedReason(item.renewal.blockedReason)
             : undefined,
-          renewalStatus: item.renewalStatus
-            ? mapPrescriptionRenewalStatus(item.renewalStatus)
+          renewalStatus: item.renewal.status
+            ? mapPrescriptionRenewalStatus(item.renewal.status)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
-          dispensations: item.dispensations.map((item) => {
+          dispensations: item.dispensations.map((dispensation) => {
             return {
-              id: item.id,
-              agentName: item.dispensingAgentName,
-              date: item.dispensationDate,
-              count: item.dispensedItemsCount,
-              items: item.dispensedItems.map((item) => {
+              id: dispensation.id,
+              agentName: dispensation.dispensingAgentName,
+              date: dispensation.dispensationDate,
+              count: item.dispensations.length,
+              items: dispensation.dispensedItems.map((dispensedItem) => {
                 return {
-                  id: item.productId,
-                  name: item.productName,
-                  strength: item.productStrength,
-                  amount: item.dispensedAmountDisplay,
-                  numberOfPackages: item.numberOfPackages?.toString(),
+                  id: dispensedItem.productId,
+                  name: dispensedItem.productName,
+                  strength: dispensedItem.productStrength,
+                  amount: dispensedItem.dispensedAmountDisplay,
                 }
               }),
             }
@@ -249,6 +315,51 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { prescriptions }
+  }
+
+  /* Renewal */
+  async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
+    const parsedInput = this.castRenewalInputToNumber(input)
+
+    if (!parsedInput) return null
+
+    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
+    await this.healthApi
+      .postRenewalPrescription(auth, input.id, {
+        medCardDrugId: input.medCardDrugId ?? input.id,
+        medCardDrugCategory: parsedInput.medCardDrugCategory,
+        prescribedItemId: parsedInput.prescribedItemId,
+      })
+      .catch((e) => {
+        return e
+      })
+      .then(() => {
+        return
+      })
+
+    return null
+  }
+
+  /* Prescription Documents */
+  async getPrescriptionDocuments(
+    auth: Auth,
+    input: MedicinePrescriptionDocumentsInput,
+  ): Promise<PrescriptionDocuments | null> {
+    const data = await this.healthApi.getPrescriptionDocuments(auth, input.id)
+
+    if (!data) {
+      return null
+    }
+
+    const documents = data.map((item) => {
+      return {
+        id: item.typeId.toString(),
+        name: item.name,
+        url: item.path,
+      }
+    })
+
+    return { documents, id: input.id }
   }
 
   /* Medicine History */
@@ -264,37 +375,218 @@ export class HealthDirectorateService {
     const medicineHistory: Array<MedicineHistoryItem> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          strength: item.productStrength,
-          atcCode: item.productAtcCode,
+          id: item.product.id,
+          name: item.product.name,
+          strength: item.product.strength,
+          atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map((subItem) => {
-            const quantity = subItem.productQuantity ?? 0
-
-            return {
-              id: subItem.productId,
-              name: subItem.productName,
-              quantity: [quantity.toString(), subItem.productUnit]
-                .filter((x) => isDefined(x))
-                .join(' '),
-              agentName: subItem.dispensingAgentName,
-              unit: subItem.productUnit,
-              type: subItem.productType,
-              indication: subItem.indication,
-              dosageInstructions: subItem.dosageInstructions,
-              issueDate: subItem.issueDate,
-              prescriberName: subItem.prescriberName,
-              expirationDate: subItem.expirationDate,
-              isExpired: subItem.isExpired,
-              date: subItem.dispensationDate,
-            }
-          }),
+          dispensations: item.dispensations.map(mapDispensationItem),
         }
       }) ?? []
 
     return { medicineHistory }
+  }
+
+  /* Medicine dispensations for specific ATC code */
+  async getMedicineDispensationsForATC(
+    auth: Auth,
+    locale: Locale,
+    input: MedicineDispensationsATCInput,
+  ): Promise<MedicineDispensationsATC | null> {
+    const data = await this.healthApi.getDispensations(
+      auth,
+      input.atcCode,
+      locale,
+    )
+    if (!data) {
+      return null
+    }
+
+    const dispensations: Array<MedicineHistoryDispensation> =
+      data.map(mapDispensationItem)
+
+    return { dispensations }
+  }
+  /* Medicine Delegations */
+  async getMedicineDelegations(
+    auth: Auth,
+    locale: Locale,
+    input: MedicineDelegationInput,
+  ): Promise<MedicineDelegations | null> {
+    const medicineDelegations = await this.healthApi.getMedicineDelegations(
+      auth,
+      locale,
+      input.status.map((status) =>
+        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+      ),
+    )
+
+    if (!medicineDelegations) {
+      return null
+    }
+
+    const data: MedicineDelegations = {
+      items: medicineDelegations.map((item) => ({
+        cacheId: [
+          item.toNationalId,
+          item.validFrom?.toISOString() || 'no-start',
+          item.validTo?.toISOString() || 'no-end',
+          item.status,
+          locale,
+        ].join('-'),
+        name: item.toName,
+        nationalId: item.toNationalId,
+        dates: {
+          from: item.validFrom,
+          to: item.validTo,
+        },
+        isActive: item.status === 'active',
+        status: mapDelegationStatus(item.status),
+        lookup: item.commissionType === 1,
+      })),
+    }
+
+    return data
+  }
+
+  async postMedicineDelegation(
+    auth: Auth,
+    input: MedicineDelegationCreateOrDeleteInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .putMedicineDelegation(auth, {
+        commissionType: input.lookup ? 1 : 0,
+        toNationalId: input.nationalId,
+        validFrom: input.from?.toISOString(),
+        validTo: input.to?.toISOString(),
+        isActive: true,
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to create medicine delegation',
+        }
+      })
+  }
+
+  async deleteMedicineDelegation(
+    auth: Auth,
+    input: MedicineDelegationCreateOrDeleteInput,
+  ): Promise<HealthDirectorateResponse> {
+    return await this.healthApi
+      .putMedicineDelegation(auth, {
+        isActive: false,
+        toNationalId: input.nationalId,
+        commissionType: input.lookup ? 1 : 0,
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch(() => {
+        return {
+          success: false,
+          message: 'Failed to deactivate medicine delegation',
+        }
+      })
+  }
+
+  /* Patient data - Permits */
+  async getPermits(
+    auth: Auth,
+    locale: Locale,
+    input: PermitsInput,
+  ): Promise<Permits | null> {
+    const permits = await this.healthApi.getPermits(
+      auth,
+      locale,
+      input.status.map((status) => mapCountryPermitStatus(status)),
+    )
+
+    if (!permits) {
+      return null
+    }
+
+    const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
+    const sorted = sortBy(data, 'status', 'asc')
+    return { data: sorted }
+  }
+
+  /* Patient data - Permit Detail */
+  async getPermit(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<Permit | null> {
+    const permit = await this.healthApi.getPermit(auth, locale, id)
+
+    if (!permit) {
+      return null
+    }
+
+    return mapPermit(permit, locale)
+  }
+
+  /* Patient data - Permit countries */
+  async getPermitCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Countries | null> {
+    const countries = await this.healthApi.getPermitCountries(auth, locale)
+
+    if (!countries) {
+      return null
+    }
+
+    return {
+      data: countries,
+    }
+  }
+
+  /* Patient data - Create approval */
+  async createPermit(
+    auth: Auth,
+    input: PermitInput,
+  ): Promise<PermitReturn | null> {
+    const response = await this.healthApi.createPermit(auth, {
+      codes: input.codes,
+      countryCodes: input.countryCodes,
+      validFrom: new Date(input.validFrom),
+      validTo: new Date(input.validTo),
+    })
+    return response ? { status: true } : null
+  }
+
+  /* Patient data - invalidate permit */
+  async invalidatePermit(
+    auth: Auth,
+    input: InvalidatePermitInput,
+  ): Promise<PermitReturn | null> {
+    const data = await this.healthApi.deactivatePermit(auth, input.id)
+    return data ? { status: true } : null
+  }
+
+  private castRenewalInputToNumber = (
+    input: HealthDirectorateRenewalInput,
+  ): PrescriptionRenewalRequestDto | null => {
+    // Trim whitespace from the string
+    const trimmedCategory = input.medCardDrugCategory.trim()
+    const trimmedId = input.prescribedItemId.trim()
+
+    // Try to convert the string to a number
+    const parsedCategory = Number(trimmedCategory)
+    const parsedId = Number(trimmedId)
+
+    if (isNumber(parsedCategory) && isNumber(parsedId)) {
+      return {
+        prescribedItemId: parsedId,
+        medCardDrugCategory: parsedCategory,
+        medCardDrugId: input.medCardDrugId,
+      }
+    } else return null
   }
 }

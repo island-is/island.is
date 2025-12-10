@@ -26,6 +26,8 @@ import { TeamListSyncService } from './importers/teamList.service'
 import type { CmsSyncProvider, processSyncDataInput } from './cmsSync.service'
 import { GrantsSyncService } from './importers/grants.service'
 import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
+import { OrganizationParentSubpageSyncService } from './importers/organizationParentSubpage.service'
+import { CourseSyncService } from './importers/course.service'
 
 @Injectable()
 export class MappingService {
@@ -57,6 +59,8 @@ export class MappingService {
     private readonly genericListItemSyncService: GenericListItemSyncService,
     private readonly teamListSyncService: TeamListSyncService,
     private readonly bloodDonationRestrictionSyncService: BloodDonationRestrictionSyncService,
+    private readonly organizationParentSubpageSyncService: OrganizationParentSubpageSyncService,
+    private readonly courseSyncService: CourseSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -84,13 +88,21 @@ export class MappingService {
       this.genericListItemSyncService,
       this.teamListSyncService,
       this.bloodDonationRestrictionSyncService,
+      this.organizationParentSubpageSyncService,
+      this.courseSyncService,
     ]
   }
 
   mapData(entries: processSyncDataInput<unknown>) {
-    return this.contentSyncProviders.map((contentSyncProvider) => {
+    const entriesToDelete = new Set<string>()
+    const mappedData = this.contentSyncProviders.map((contentSyncProvider) => {
       const data = contentSyncProvider.processSyncData(entries)
-      return contentSyncProvider.doMapping(data)
+      for (const entry of data.entriesToDelete) entriesToDelete.add(entry)
+      return contentSyncProvider.doMapping(data.entriesToUpdate)
     })
+    return {
+      mappedData,
+      entriesToDelete: Array.from(entriesToDelete),
+    }
   }
 }

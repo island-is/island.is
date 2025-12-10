@@ -16,6 +16,12 @@ export const liveChatIncConfig: Record<
       version: '2.0',
       showLauncher: false,
     },
+    // Landspítali - Organization
+    '2rIt6lQNXZNORCgEWhNonO': {
+      license: '9218745',
+      version: '2.0',
+      showLauncher: false,
+    },
   },
   en: {
     // Vinnueftirlitið - Organization
@@ -23,6 +29,32 @@ export const liveChatIncConfig: Record<
       license: '13346703',
       version: '2.0',
       showLauncher: false,
+    },
+    // Landspítali - Organization
+    '2rIt6lQNXZNORCgEWhNonO': {
+      license: '9218745',
+      version: '2.0',
+      showLauncher: false,
+    },
+  },
+}
+
+export const zendeskConfig: Record<
+  Locale,
+  Record<string, { snippetUrl: string }>
+> = {
+  is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+  },
+  en: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
     },
   },
 }
@@ -51,23 +83,6 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   en: {
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-        )
-      },
-    },
     // Name giving
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/lGjmpafx2P4yiA6Re3Nxd
     lGjmpafx2P4yiA6Re3Nxd: {
@@ -278,16 +293,6 @@ export const watsonConfig: Record<
           defaultWatsonConfig.en.integrationID,
         )
       },
-    },
-
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
     },
   },
   is: {
@@ -548,69 +553,6 @@ export const watsonConfig: Record<
           instance,
           'adeldast',
           '580730f3-3d88-4c5a-92e6-30e79ea09f24',
-        )
-      },
-    },
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
-
-    // Uppfletting í ökutækjaskrá
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5tyHpCXpWGZnhCCbP6eTb0
-    '5tyHpCXpWGZnhCCbP6eTb0': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'uppfletting-i-oekutaekjaskra',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skútan - skipaskráningar og lögskráningarkerfi
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3wmGcP61YJePBL92ITgY64
-    '3wmGcP61YJePBL92ITgY64': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skutan-skipaskra-og-logskraning',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
         )
       },
     },
@@ -1153,4 +1095,44 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // HMS
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
   '53jrbgxPKpbNtordSfEZUK',
+
+  // Sýslumenn - Organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
+  'kENblMMMvZ3DlyXw1dwxQ',
+
+  // Sýslumaðurinn á Austurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
+  'Xnes7x1ccvBvuZxInRXDm',
+
+  // Sýslumaðurinn á höfuðborgarsvæðinu
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6puIJvhGxFBzxExVHxi5sr
+  '6puIJvhGxFBzxExVHxi5sr',
+
+  // Sýslumaðurinn á Norðurlandi eystra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/12JLsyDmODBfZedYPOQXtX
+  '12JLsyDmODBfZedYPOQXtX',
+
+  // Sýslumaðurinn á Vestfjörðum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5MDZoq1DGsJospUnQz4y98
+  '5MDZoq1DGsJospUnQz4y98',
+
+  // Sýslumaðurinn í Vestmannaeyjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/145ctmpqLPrOM7rHZIpC6F
+  '145ctmpqLPrOM7rHZIpC6F',
+
+  // Sýslumaðurinn á Suðurnesjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc
+  'cRCuTTXXSrpBj27nBiLbc',
+
+  // Sýslumaðurinn á Suðurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2uyNnLcRooCNk7u6CMpsIv
+  '2uyNnLcRooCNk7u6CMpsIv',
+
+  // Sýslumaðurinn á Norðurlandi vestra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ZefqpCw4y5oy9lREilQY3
+  'ZefqpCw4y5oy9lREilQY3',
+
+  // Sýslumaðurinn á Vesturlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/43KqapFNoM9m4MNXXc8UPU
+  '43KqapFNoM9m4MNXXc8UPU',
 ]

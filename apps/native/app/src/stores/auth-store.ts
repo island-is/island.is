@@ -1,4 +1,4 @@
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
@@ -27,6 +27,8 @@ import {
 } from '../graphql/types/schema'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
+import type { User } from 'configcat-js'
+import { clearWidgetData } from '../lib/widget-sync'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -40,6 +42,10 @@ interface UserInfo {
   nationalId: string
   name: string
 }
+
+type KeychainAuthorizeCredentials = Awaited<
+  ReturnType<typeof Keychain.getGenericPassword>
+>
 
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
@@ -77,7 +83,7 @@ const clearPasskey = async (userNationalId?: string) => {
   const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
     'isPasskeyEnabled',
     false,
-    userNationalId ? { identifier: userNationalId } : undefined,
+    userNationalId ? ({ identifier: userNationalId } as User) : undefined,
   )
 
   if (isPasskeyEnabled) {
@@ -187,7 +193,10 @@ export const authStore = create<AuthStore>((set, get) => ({
     await Keychain.setGenericPassword(
       KEYCHAIN_AUTH_KEY,
       JSON.stringify(authorizeResult),
-      { service: KEYCHAIN_AUTH_KEY },
+      {
+        service: KEYCHAIN_AUTH_KEY,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      },
     )
     set({ authorizeResult })
   }),
@@ -207,7 +216,10 @@ export const authStore = create<AuthStore>((set, get) => ({
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,
         JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
+        {
+          service: KEYCHAIN_AUTH_KEY,
+          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        },
       )
       set({ authorizeResult })
       return true
@@ -217,6 +229,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
     clearAllStorages()
+
+    // Clear widgets
+    clearWidgetData()
 
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken
@@ -267,21 +282,66 @@ export const useAuthStore = createUse(authStore)
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
+  // We already have an authorization result in memory, nothing else to do.
   if (authorizeResult) {
     return
   }
 
-  try {
-    const res = await Keychain.getGenericPassword({
-      service: KEYCHAIN_AUTH_KEY,
-    })
+  // Attempt to restore the last known authorization data from the secure keychain.
+  const keychainResult = await readStoredAuthorizeCredentials()
+  if (!keychainResult) {
+    return
+  }
 
-    if (res) {
-      const authRes = JSON.parse(res.password)
-      authStore.setState({ authorizeResult: authRes })
-    }
+  const restoredAuthorizeResult = parseAuthorizeResult(keychainResult.password)
+  if (!restoredAuthorizeResult) {
+    return
+  }
+
+  // Persist the restored authorization result in memory for the rest of the session.
+  authStore.setState({ authorizeResult: restoredAuthorizeResult })
+
+  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
+  const hasOnboardedPinCode =
+    preferencesStore.getState().hasOnboardedPinCode ?? false
+
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    await forceLogoutAfterFreshInstall()
+    return
+  }
+}
+
+async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCredentials> {
+  try {
+    return await Keychain.getGenericPassword({
+      service: KEYCHAIN_AUTH_KEY,
+      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
+    return false
+  }
+}
+
+async function forceLogoutAfterFreshInstall(): Promise<void> {
+  try {
+    await authStore.getState().logout(true)
+  } catch (err) {
+    console.log('Unable to force logout after fresh install: ', err)
+  }
+}
+
+function parseAuthorizeResult(
+  serializedAuthorizeResult: string,
+): AuthorizeResult | RefreshResult | undefined {
+  try {
+    return JSON.parse(serializedAuthorizeResult) as
+      | AuthorizeResult
+      | RefreshResult
+  } catch (err) {
+    console.log('Unable to parse authorize result: ', err)
+    return undefined
   }
 }
 

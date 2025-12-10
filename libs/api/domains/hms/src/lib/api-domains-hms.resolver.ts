@@ -10,10 +10,16 @@ import {
 } from '@island.is/auth-nest-tools'
 import { HmsService } from '@island.is/clients/hms'
 import { Audit } from '@island.is/nest/audit'
-import { Addresses } from './models/hmsSearch.model'
+import { Addresses, PropertyCodeInfo } from './models/hmsSearch.model'
 import { HmsSearchInput } from './dto/hmsSearch.input'
-import { HmsPropertyInfoInput } from './dto/hmsPropertyInfo.input'
+import {
+  HmsPropertyCodeInfoInput,
+  HmsPropertyInfoInput,
+} from './dto/hmsPropertyInfo.input'
 import { PropertyInfos } from './models/hmsPropertyInfo.model'
+import { HmsPropertyByPropertyCodeInput } from './dto/hmsPropertyByPropertyCode'
+import { Fasteign as FasteignAsset } from '@island.is/clients/assets'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -39,7 +45,7 @@ export class HmsResolver {
       return { addresses: addressesArray }
     } catch (error) {
       this.logger.error('Error fetching HMS address search:', error)
-      throw new Error('Failed to get addressses')
+      throw new Error('Failed to get addresses')
     }
   }
 
@@ -56,7 +62,63 @@ export class HmsResolver {
       const propertyInfos = await this.hmsService.hmsPropertyInfo(user, {
         ...input,
       })
+      if (!propertyInfos) {
+        throw new Error('Property not found')
+      }
       return { propertyInfos }
+    } catch (error) {
+      this.logger.error('Error fetching HMS properties:', error)
+      throw new Error('Failed to fetch properties')
+    }
+  }
+
+  @Query(() => PropertyCodeInfo, {
+    name: 'hmsPropertyCodeInfo',
+    nullable: true,
+  })
+  @Audit()
+  async getHmsPropertyCodeInfo(
+    @CurrentUser() user: User,
+    @Args('input') input: HmsPropertyCodeInfoInput,
+  ): Promise<PropertyCodeInfo> {
+    let addressInfo
+    try {
+      addressInfo = await this.hmsService.hmsPropertyCodeInfo(user, {
+        ...input,
+      })
+    } catch (error) {
+      this.logger.error('Error fetching HMS properties:', error)
+      throw new Error('Failed to fetch properties')
+    }
+    if (!addressInfo) {
+      throw new Error('Property not found')
+    }
+    return { address: addressInfo }
+  }
+
+  /**
+   * Returns Array<FasteignAsset> serialized as JSON.
+   */
+  @Query(() => [GraphQLJSONObject], {
+    name: 'hmsPropertyByPropertyCode',
+    nullable: true,
+  })
+  @Audit()
+  async getHmsPropertyByPropertyCode(
+    @CurrentUser() user: User,
+    @Args('input') input: HmsPropertyByPropertyCodeInput,
+  ): Promise<Array<FasteignAsset>> {
+    try {
+      const propertyInfos = await this.hmsService.hmsPropertyByPropertyCode(
+        user,
+        {
+          ...input,
+        },
+      )
+      if (!propertyInfos) {
+        throw new Error('Property not found')
+      }
+      return propertyInfos
     } catch (error) {
       this.logger.error('Error fetching HMS properties:', error)
       throw new Error('Failed to fetch properties')

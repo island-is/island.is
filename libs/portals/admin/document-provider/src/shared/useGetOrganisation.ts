@@ -14,6 +14,7 @@ export const getOrganisationQuery = gql`
       address
       email
       phoneNumber
+      zendeskId
       administrativeContact {
         id
         name
@@ -40,9 +41,9 @@ type GetOrganisationsReturnType = {
   loading: boolean
 }
 
-export function useGetOrganisation(
+export const useGetOrganisation = (
   nationalId: string,
-): GetOrganisationsReturnType {
+): GetOrganisationsReturnType => {
   const { data, loading, error } = useQuery(getOrganisationQuery, {
     variables: {
       input: nationalId,

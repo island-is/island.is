@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { Defendant } from '../../defendant'
+import { Defendant } from '../../repository'
 
 @Injectable()
 export class SubpoenaExistsGuard implements CanActivate {

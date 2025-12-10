@@ -6,10 +6,13 @@ import { Preview } from '../Preview/Preview'
 import { FormSystemField } from '@island.is/api/schema'
 import { FieldSettings } from './components/FieldSettings/FieldSettings'
 import { ListBuilder } from './components/ListBuilder/ListBuilder'
+import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
 export const FieldContent = () => {
   const { control, inListBuilder } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
+
+  const hasZendeskSettings = control.form.isZendeskEnabled
 
   if (inListBuilder) {
     return <ListBuilder />
@@ -19,6 +22,9 @@ export const FieldContent = () => {
         <BaseInput />
         <FieldSettings />
         <Preview data={currentItem} />
+        {hasZendeskSettings && currentItem.fieldSettings && (
+          <ZendeskSettings fieldSettings={currentItem.fieldSettings} />
+        )}
       </Stack>
     )
   }

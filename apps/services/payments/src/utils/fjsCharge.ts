@@ -40,7 +40,7 @@ export const generateChargeFJSPayload = ({
     chargeItemSubject: chargeItemSubjectId.substring(0, 22),
     chargeType: charges[0].chargeType,
     charges: charges.map((charge) => ({
-      amount: charge.priceAmount,
+      amount: charge.priceAmount * charge.quantity,
       chargeItemCode: charge.chargeItemCode,
       priceAmount: charge.priceAmount,
       quantity: charge.quantity,

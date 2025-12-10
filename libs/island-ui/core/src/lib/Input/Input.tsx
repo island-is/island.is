@@ -1,6 +1,6 @@
 import cn from 'classnames'
-import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
-import { VisuallyHidden } from 'reakit'
+import React, { FC, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { VisuallyHidden } from '@ariakit/react'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
@@ -67,6 +67,8 @@ export const Input = forwardRef(
       autoExpand,
       loading,
       buttons,
+      oneDigit,
+      hideIcon = false,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -157,7 +159,12 @@ export const Input = forwardRef(
             }
           }}
         >
-          <Box flexGrow={1} className={styles.containerSizes[size]}>
+          <Box
+            flexGrow={1}
+            className={cn({
+              [styles.containerSizes[size]]: !oneDigit,
+            })}
+          >
             {size !== 'xs' && label && (
               <label
                 htmlFor={id}
@@ -186,7 +193,14 @@ export const Input = forwardRef(
             )}
             <InputComponent
               className={cn(
-                styles.input({ hasLabel, rightAlign, textarea, disabled }),
+                styles.input({
+                  hasLabel,
+                  rightAlign,
+                  textarea,
+                  disabled,
+                  oneDigit,
+                  noCaret: oneDigit && !!inputRef.current?.value,
+                }),
                 resolveResponsiveProp(
                   backgroundColor,
                   styles.inputBackgroundXs,
@@ -237,15 +251,16 @@ export const Input = forwardRef(
               {...(required && { 'aria-required': true })}
             />
           </Box>
-
-          <AsideIcons
-            icon={icon}
-            buttons={buttons}
-            size={size}
-            loading={!!loading}
-            hasError={hasError}
-            hasLabel={hasLabel}
-          />
+          {!hideIcon && (
+            <AsideIcons
+              icon={icon}
+              buttons={buttons}
+              size={size}
+              loading={!!loading}
+              hasError={hasError}
+              hasLabel={hasLabel}
+            />
+          )}
         </Box>
         {hasError && errorMessage && (
           <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
@@ -255,14 +270,8 @@ export const Input = forwardRef(
   },
 )
 
-function AsideIcons({
-  icon,
-  buttons = [],
-  size,
-  loading,
-  hasError,
-  hasLabel,
-}: AsideProps) {
+const AsideIcons: FC<AsideProps> = (props) => {
+  const { icon, buttons = [], size, loading, hasError, hasLabel } = props
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon

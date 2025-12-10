@@ -25,6 +25,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
@@ -121,7 +122,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
     icon = 'document'
   } else if (item.externalUrl) {
     href = item.externalUrl
-    icon = 'open'
+    const isInternalLink = !shouldLinkOpenInNewWindow(href)
+    if (!isInternalLink) icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
@@ -243,6 +245,7 @@ interface GenericListProps {
   totalItems: number
   displayError: boolean
   showSearchInput?: boolean
+  showSearchFilters?: boolean
 }
 
 export const GenericList = ({
@@ -257,6 +260,7 @@ export const GenericList = ({
   displayError,
   children,
   showSearchInput = true,
+  showSearchFilters = true,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -374,12 +378,12 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          {showSearchInput && (
+          {(showSearchInput || showSearchFilters) && (
             <Box ref={ref}>
-              {filterCategories.length > 1 && (
+              {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
-                    {isMobile && filterInputComponent}
+                    {isMobile && showSearchInput && filterInputComponent}
                     <Filter
                       resultCount={totalItems}
                       labelClear={
@@ -469,49 +473,54 @@ export const GenericList = ({
                 </Stack>
               )}
 
-              {filterCategories.length <= 1 && (
-                <Stack space={4}>
-                  <Stack space={3}>
-                    {filterInputComponent}
-                    {selectedFilters.length > 0 && selectedFiltersComponent}
+              {(showSearchFilters || showSearchInput) &&
+                filterCategories.length <= 1 && (
+                  <Stack space={4}>
+                    <Stack space={3}>
+                      {showSearchInput && filterInputComponent}
+                      {showSearchFilters &&
+                        selectedFilters.length > 0 &&
+                        selectedFiltersComponent}
+                    </Stack>
+                    {showSearchFilters && (
+                      <Inline space={1}>
+                        {filterCategories[0]?.filters
+                          ?.filter((tag) => {
+                            const isActive = Boolean(
+                              selectedFilters.find(
+                                (filter) => filter.value === tag.value,
+                              ),
+                            )
+                            return !isActive
+                          })
+                          .map((tag) => {
+                            const category = filterCategories[0]?.id
+                            const value = tag.value
+                            const label = tag.label
+                            return (
+                              <Tag
+                                key={tag.value}
+                                onClick={() => {
+                                  if (!category) {
+                                    return
+                                  }
+                                  setPage(null)
+                                  setParameters((prevParameters) => ({
+                                    ...prevParameters,
+                                    [category]: (
+                                      prevParameters?.[category] ?? []
+                                    ).concat(value),
+                                  }))
+                                }}
+                              >
+                                {label}
+                              </Tag>
+                            )
+                          })}
+                      </Inline>
+                    )}
                   </Stack>
-                  <Inline space={1}>
-                    {filterTags
-                      ?.filter((tag) => {
-                        const isActive = Boolean(
-                          selectedFilters.find(
-                            (filter) => filter.value === tag.slug,
-                          ),
-                        )
-                        return !isActive
-                      })
-                      .map((tag) => {
-                        const category = tag.genericTagGroup?.slug
-                        const value = tag.slug
-                        const label = tag.title
-                        return (
-                          <Tag
-                            key={tag.id}
-                            onClick={() => {
-                              if (!category) {
-                                return
-                              }
-                              setPage(null)
-                              setParameters((prevParameters) => ({
-                                ...prevParameters,
-                                [category]: (
-                                  prevParameters?.[category] ?? []
-                                ).concat(value),
-                              }))
-                            }}
-                          >
-                            {label}
-                          </Tag>
-                        )
-                      })}
-                  </Inline>
-                </Stack>
-              )}
+                )}
             </Box>
           )}
 
@@ -568,6 +577,7 @@ interface GenericListWrapperProps {
   itemType?: string | null
   filterTags?: GenericTag[] | null
   defaultOrder?: GetGenericListItemsInputOrderBy | null
+  textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
 }
 
@@ -577,6 +587,7 @@ export const GenericListWrapper = ({
   itemType,
   searchInputPlaceholder,
   defaultOrder,
+  textSearchOrder,
   showSearchInput,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
@@ -630,6 +641,10 @@ export const GenericListWrapper = ({
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        let orderBy = defaultOrder
+        if (searchValue.trim().length > 0 && textSearchOrder === 'Score') {
+          orderBy = GetGenericListItemsInputOrderBy.Score
+        }
         fetchListItems({
           variables: {
             input: {
@@ -640,7 +655,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
-              orderBy: defaultOrder,
+              orderBy,
             },
           },
         })
@@ -651,6 +666,7 @@ export const GenericListWrapper = ({
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
       showSearchInput={showSearchInput}
+      showSearchFilters={showSearchInput}
     >
       <GridContainer>
         <GridRow rowGap={3}>

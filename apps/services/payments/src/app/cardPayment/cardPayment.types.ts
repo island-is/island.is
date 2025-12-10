@@ -25,7 +25,7 @@ export interface ChargeResponse {
   authorizationCode: string
   transactionLifecycleId: string
   maskedCardNumber: string
-  isSuccess: true
+  isSuccess: boolean
   cardInformation: {
     cardScheme: string
     issuingCountry: string

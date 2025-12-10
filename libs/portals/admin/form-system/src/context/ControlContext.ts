@@ -1,19 +1,24 @@
-import { Dispatch, SetStateAction, createContext } from 'react'
-import { ControlAction, ControlState } from '../hooks/controlReducer'
-import { Maybe } from 'graphql/jsutils/Maybe'
 import {
   FormSystemFieldType,
   FormSystemForm,
   FormSystemFormApplicant,
   FormSystemFormCertificationType,
   FormSystemListType,
+  FormSystemOrganizationUrl,
 } from '@island.is/api/schema'
+import {
+  GoogleTranslation,
+  UpdateFormResponse,
+} from '@island.is/form-system/shared'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import { Dispatch, SetStateAction, createContext } from 'react'
+import { ControlAction, ControlState } from '../hooks/controlReducer'
 import {
   ActiveItem,
   ItemType,
   NavbarSelectStatus,
+  OpenComponents,
 } from '../lib/utils/interfaces'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
 
 export interface IControlContext {
   control: ControlState
@@ -23,6 +28,8 @@ export interface IControlContext {
     | undefined
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
+  submitUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
+  validationUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
   setInSettings: Dispatch<boolean>
   inSettings: boolean
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
@@ -35,6 +42,9 @@ export interface IControlContext {
   inListBuilder: boolean
   formUpdate: (updatedForm?: FormSystemForm) => Promise<UpdateFormResponse>
   applicantTypes: Maybe<Maybe<FormSystemFormApplicant>[]> | undefined
+  getTranslation: (text: string) => Promise<GoogleTranslation>
+  openComponents: OpenComponents
+  setOpenComponents: Dispatch<SetStateAction<OpenComponents>>
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -45,6 +55,8 @@ export const ControlContext = createContext<IControlContext>({
   certificationTypes: [] as Maybe<Maybe<FormSystemFormCertificationType>[]>,
   fieldTypes: [] as Maybe<Maybe<FormSystemFieldType>[]>,
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
+  submitUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
+  validationUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
   setInSettings: function (_value: boolean): void {
     throw new Error('Function not implemented.')
   },
@@ -71,4 +83,11 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicant>[]>,
+  getTranslation: function (_text: string): Promise<GoogleTranslation> {
+    throw new Error('Function not implemented.')
+  },
+  openComponents: { sections: [], screens: [] },
+  setOpenComponents: function (_value: SetStateAction<OpenComponents>): void {
+    throw new Error('Function not implemented.')
+  },
 })

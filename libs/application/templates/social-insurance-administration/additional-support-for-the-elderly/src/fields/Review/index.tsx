@@ -14,6 +14,8 @@ import { Period } from './review-groups/Period'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Payment } from './review-groups/Payment'
+import { HigherPayments } from './review-groups/HigherPayments'
+import { getApplicationAnswers } from '../../lib/additionalSupportForTheElderlyUtils'
 
 interface ReviewScreenProps {
   application: Application
@@ -34,6 +36,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
   const { state } = application
+  const { higherPayments } = getApplicationAnswers(application.answers)
 
   const hasError = (id: string) => get(errors, id) as string
 
@@ -158,6 +161,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <Period {...childProps} />
+      {higherPayments && <HigherPayments {...childProps} />}
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>

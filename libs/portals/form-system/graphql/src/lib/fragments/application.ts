@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client'
-import { SectionFragment } from './section'
+import { ApplicantTypeDtoFragment } from './applicant'
+import { CompletedSectionInfoFragment } from './completedSectionInfo'
 import { LanguageFields } from './languageFields'
+import { SectionFragment } from './section'
 
 export const ApplicationFragment = gql`
   fragment Application on FormSystemApplication {
@@ -14,14 +16,34 @@ export const ApplicationFragment = gql`
     }
     isTest
     slug
-    created
-    modified
     sections {
       ...Section
     }
-    completed
     status
+    allowProceedOnValidationFail
+    hasPayment
+    hasSummaryScreen
+    certificationTypes {
+      id
+      certificationTypeId
+    }
+    applicantTypes {
+      ...ApplicantTypeDto
+    }
+    modified
+    submittedAt
+    completed
+    dependencies {
+      parentProp
+      childProps
+      isSelected
+    }
+    completedSectionInfo {
+      ...CompletedSectionInfo
+    }
   }
+  ${ApplicantTypeDtoFragment}
   ${LanguageFields}
   ${SectionFragment}
+  ${CompletedSectionInfoFragment}
 `

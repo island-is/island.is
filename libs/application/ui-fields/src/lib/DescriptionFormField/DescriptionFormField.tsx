@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
+import * as styles from './DescriptionFormField.css'
 
 export const DescriptionFormField: FC<
   React.PropsWithChildren<{
@@ -20,10 +21,15 @@ export const DescriptionFormField: FC<
   const { getValues } = useFormContext()
   const values = getValues()
 
-  const updatedApplication = useMemo(
-    () => ({ ...application, answers: values }),
-    [application, values],
-  )
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
 
   return (
     <Box
@@ -40,7 +46,7 @@ export const DescriptionFormField: FC<
             formatMessage,
           )}
           {field.titleTooltip && (
-            <Box marginLeft={1} display="inlineBlock">
+            <Box component="span" marginLeft={1} display="inlineBlock">
               <Tooltip
                 placement="top"
                 text={formatTextWithLocale(
@@ -52,10 +58,16 @@ export const DescriptionFormField: FC<
               />
             </Box>
           )}
+          {field.showRequiredStar && field.title && (
+            <span aria-hidden="true" className={styles.isRequiredStar}>
+              {' '}
+              *
+            </span>
+          )}
         </Text>
       )}
       {(field.description || field.tooltip) && (
-        <Text>
+        <Box component="div">
           {field.description && (
             <Markdown>
               {formatTextWithLocale(
@@ -77,7 +89,7 @@ export const DescriptionFormField: FC<
               )}
             />
           )}
-        </Text>
+        </Box>
       )}
     </Box>
   )

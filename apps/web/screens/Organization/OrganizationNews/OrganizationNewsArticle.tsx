@@ -53,7 +53,7 @@ const OrganizationNewsArticle: Screen<
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, newsItem?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationnews')
 
   // We only display breadcrumbs and highlighted nav item if the news item belongs to this organization
   const newsBelongToOrganization =
@@ -181,6 +181,7 @@ OrganizationNewsArticle.getProps = async ({
             input: {
               slug: organizationPageSlug,
               lang: locale as Locale,
+              subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
             },
           },
         })
@@ -230,6 +231,18 @@ OrganizationNewsArticle.getProps = async ({
 
   if (!newsItem) {
     throw new CustomNextError(404, 'News not found')
+  }
+
+  const newsItemBelongsToOrganization =
+    Boolean(newsItem.organization?.slug) &&
+    Boolean(organizationPage.organization?.slug) &&
+    newsItem.organization?.slug === organizationPage.organization?.slug
+
+  if (!newsItemBelongsToOrganization) {
+    throw new CustomNextError(
+      404,
+      `News item ${newsItem.slug} does not belong to organization ${organizationPage.organization?.slug}`,
+    )
   }
 
   const organizationNamespace = extractNamespaceFromOrganization(

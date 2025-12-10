@@ -2,9 +2,11 @@ export enum MultiChoiceFilter {
   INSTITUTION = 'institution',
   STATUS = 'status',
   APPLICATION = 'application',
+  TYPE_ID = 'type_id',
 }
 
 export type ApplicationFilters = {
+  searchStr?: string
   nationalId?: string
   period: {
     from?: Date
@@ -12,4 +14,5 @@ export type ApplicationFilters = {
   }
   institution?: string
   status?: string[]
+  typeIdValue?: string
 }

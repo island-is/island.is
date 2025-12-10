@@ -50,7 +50,7 @@ const createBaseApplication = (): Application => ({
   id: '',
   modified: new Date(),
   state: '',
-  typeId: ApplicationTypes.EXAMPLE,
+  typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   status: ApplicationStatus.IN_PROGRESS,
 })
 
@@ -140,7 +140,7 @@ describe('answerValidators', () => {
 
       const appAnswers = {
         ...application.answers,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,

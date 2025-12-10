@@ -172,6 +172,20 @@ export const pruneEntryHyperlink = (node: any) => {
           : null,
       },
     }
+  } else if (
+    contentTypeId === 'organizationParentSubpage' &&
+    target.fields?.organizationPage?.fields
+  ) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        organizationPage: {
+          ...target.fields.organizationPage,
+          fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+        },
+      },
+    }
   } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
     node.data.target = {
       ...target,
@@ -214,6 +228,7 @@ export const pruneNonSearchableSliceUnionFields = (
       ...slice,
       json: {},
       configJson: {},
+      translationStrings: {},
     }
   }
   if ((slice as { typename?: string })?.typename === 'EmailSignup') {

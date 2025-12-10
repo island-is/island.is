@@ -14,6 +14,7 @@ import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/client'
 import { updatePaperSignaturePageNumber } from '../../../../hooks/graphql/mutations'
 import { m } from '../../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const EditPage = ({
   page,
@@ -21,12 +22,14 @@ const EditPage = ({
   nationalId,
   signatureId,
   refetchSignees,
+  collectionType,
 }: {
   page: number
   name: string
   nationalId: string
   signatureId: string
   refetchSignees: () => void
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const [newPage, setNewPage] = useState(page)
@@ -39,6 +42,7 @@ const EditPage = ({
         input: {
           pageNumber: newPage,
           signatureId: signatureId,
+          collectionType: collectionType,
         },
       },
       onCompleted: () => {

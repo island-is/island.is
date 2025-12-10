@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { VehicleMileageDetail } from './getVehicleMileage.model'
+import { DownloadServiceUrls } from './vehiclesDownloadServiceUrls.model'
 
 @ObjectType()
 export class NextInspection {
@@ -174,8 +175,8 @@ export class VehiclesList {
   })
   postStation?: string
 
-  @Field(() => String, { nullable: true })
-  downloadServiceURL?: string
+  @Field(() => DownloadServiceUrls, { nullable: true })
+  downloadServiceUrls?: DownloadServiceUrls
 
   @Field({
     nullable: true,
@@ -254,6 +255,9 @@ export class VehicleListed {
 
   @Field({ nullable: true })
   latestMileage?: number
+
+  @Field({ nullable: true })
+  vin?: string
 }
 
 @ObjectType()
@@ -264,6 +268,6 @@ export class VehiclesListV2 {
   @Field({ nullable: true })
   paging?: VehiclePaging
 
-  @Field(() => String, { nullable: true })
-  downloadServiceURL?: string
+  @Field(() => DownloadServiceUrls, { nullable: true })
+  downloadServiceUrls?: DownloadServiceUrls
 }

@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { EventLog } from './models/eventLog.model'
+import { EventLog } from '../repository'
 import { EventLogController } from './eventLog.controller'
 import { EventLogService } from './eventLog.service'
 

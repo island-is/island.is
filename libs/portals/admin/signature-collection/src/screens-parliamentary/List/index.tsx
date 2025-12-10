@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -10,21 +11,18 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
-import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
-import { PaperSignees } from './paperSignees'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
-import ActionReviewComplete from '../../shared-components/completeReview'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ListInfo from '../../shared-components/listInfoAlert'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
-const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
+const List = () => {
   const { formatMessage } = useLocale()
-  const { list, listStatus } = useLoaderData() as {
+  const { list } = useLoaderData() as {
     list: SignatureCollectionList
-    listStatus: string
   }
 
   return (
@@ -64,53 +62,31 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           </Box>
           <IntroHeader
             title={list?.title}
-            intro={
-              allowedToProcess
-                ? formatMessage(m.singleListIntro)
-                : formatMessage(m.singleListIntroManage)
-            }
+            intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            img={nationalRegistryLogo}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.LockList,
+                  Actions.ReviewComplete,
+                  Actions.ExtendDeadline,
+                  Actions.RemoveList,
+                ]}
+                withManagers
+              />
             }
+            marginBottom={3}
           />
-          <ListInfo
-            message={
-              listStatus === ListStatus.Extendable
-                ? formatMessage(m.listStatusExtendableAlert)
-                : listStatus === ListStatus.InReview
-                ? formatMessage(m.listStatusInReviewAlert)
-                : listStatus === ListStatus.Reviewed
-                ? formatMessage(m.listStatusReviewedStatusAlert)
-                : listStatus === ListStatus.Inactive
-                ? formatMessage(m.listStatusReviewedStatusAlert)
-                : formatMessage(m.listStatusActiveAlert)
-            }
-            type={
-              listStatus === ListStatus.Reviewed ||
-              listStatus === ListStatus.Inactive
-                ? 'success'
-                : undefined
-            }
-          />
-          <ActionExtendDeadline
-            listId={list.id}
-            endTime={list.endTime}
-            allowedToProcess={
-              allowedToProcess && listStatus === ListStatus.Extendable
-            }
-          />
-          {((allowedToProcess && !list.active) || !allowedToProcess) && (
-            <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          )}
-          {allowedToProcess && (
-            <Box>
-              {!list.active && !list.reviewed && (
-                <PaperSignees listId={list.id} />
-              )}
-              <ActionReviewComplete listId={list.id} listStatus={listStatus} />
-            </Box>
+          <Divider />
+          <Box marginTop={9} />
+          <Signees list={list} />
+          {!list.reviewed && (
+            <PaperSignees
+              listId={list.id}
+              collectionType={list.collectionType}
+            />
           )}
         </GridColumn>
       </GridRow>

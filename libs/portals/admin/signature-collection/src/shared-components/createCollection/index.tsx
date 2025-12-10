@@ -8,6 +8,8 @@ import {
   toast,
   GridRow,
   GridColumn,
+  Tag,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
@@ -19,41 +21,68 @@ import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
 import { useParams, useRevalidator } from 'react-router-dom'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
 const CreateCollection = ({
-  collectionId,
-  areaId,
+  collection,
 }: {
-  collectionId: string
-  areaId: string | undefined
+  collection: SignatureCollection
 }) => {
   const { formatMessage } = useLocale()
-  const { control } = useForm()
   const { revalidate } = useRevalidator()
-  const { constituencyName } = useParams() as {
-    constituencyName: string | undefined
-  }
+  const { id, collectionType } = collection
 
+  const { constituencyName, municipality } = useParams<{
+    constituencyName?: string
+    municipality?: string
+  }>()
+
+  const areaName =
+    collectionType === SignatureCollectionCollectionType.Parliamentary
+      ? constituencyName
+      : municipality
+
+  // Find the area by name if we have an area name
+  const currentArea =
+    collectionType === SignatureCollectionCollectionType.Parliamentary ||
+    (collectionType === SignatureCollectionCollectionType.LocalGovernmental &&
+      areaName)
+      ? collection.areas.find((area) => area.name === areaName)
+      : null
+
+  const { control } = useForm()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
   const [name, setName] = useState('')
+  const [collectionName, setCollectionName] = useState('')
   const [canCreate, setCanCreate] = useState(true)
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
   const [candidateLookup, { loading: loadingCandidate }] =
     useCandidateLookupLazyQuery()
+
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
-        collectionId,
+        collectionType: collectionType,
+        collectionId:
+          collectionType === SignatureCollectionCollectionType.Presidential
+            ? id
+            : collectionType === SignatureCollectionCollectionType.Parliamentary
+            ? collection?.id
+            : currentArea?.collectionId || '',
+        collectionName: collectionName || undefined,
         owner: {
           name: name,
           nationalId: nationalIdInput,
           phone: '',
           email: '',
         },
-        areas: areaId ? [{ areaId }] : null,
+        areas: currentArea?.id ? [{ areaId: currentArea.id }] : [],
       },
     },
     onCompleted: () => {
@@ -63,12 +92,16 @@ const CreateCollection = ({
 
   const createNewCollection = async () => {
     try {
-      const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionAdminCreate.slug) {
+      const { data } = await createCollection()
+      const result = data?.signatureCollectionAdminCreate
+
+      if (result?.success) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
-        toast.error(formatMessage(m.createCollectionSuccess))
+        toast.error(
+          result?.reasons?.[0] ?? formatMessage(m.createCollectionError),
+        )
       }
     } catch (e) {
       toast.error(e.message)
@@ -81,6 +114,7 @@ const CreateCollection = ({
         variables: {
           input: {
             nationalId: nationalIdInput,
+            collectionType: collectionType,
           },
         },
       }).then((res) => {
@@ -100,32 +134,41 @@ const CreateCollection = ({
       })
     } else {
       setName('')
+      setCollectionName('')
       setNationalIdInput('')
       setNationalIdNotFound(false)
       setCanCreate(true)
     }
-  }, [nationalIdInput, modalIsOpen])
+  }, [nationalIdInput, modalIsOpen, collectionType, candidateLookup])
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        style={{ minWidth: '150px' }}
-      >
-        <Button
-          variant="utility"
-          size="small"
-          nowrap
-          icon="add"
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-        >
-          {formatMessage(m.createCollection)}
-        </Button>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="add" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
+              <Text variant="h4">{formatMessage(m.createCollection)}</Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.createCollectionDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalIsOpen(true)}
+              >
+                {formatMessage(m.createCollection)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="createCollection"
         isVisible={modalIsOpen}
@@ -134,8 +177,10 @@ const CreateCollection = ({
           setModalIsOpen(false)
           setNationalIdInput('')
           setName('')
+          setCollectionName('')
           setCanCreate(true)
         }}
+        scrollType="inside"
         hideOnClickOutside={false}
         closeButtonLabel={''}
         label={''}
@@ -148,6 +193,7 @@ const CreateCollection = ({
             <Stack space={3}>
               <InputController
                 control={control as unknown as Control}
+                backgroundColor="blue"
                 type="tel"
                 id="candidateNationalId"
                 label={formatMessage(m.candidateNationalId)}
@@ -165,26 +211,38 @@ const CreateCollection = ({
               />
               <Input
                 name="candidateName"
-                label={formatMessage(m.candidateName)}
+                label={formatMessage(m.name)}
                 readOnly
                 value={name}
               />
-              {areaId && (
+              {collectionType ===
+                SignatureCollectionCollectionType.LocalGovernmental && (
+                <Input
+                  name="collectionName"
+                  id="collectionName"
+                  label={formatMessage(m.candidateName)}
+                  backgroundColor="blue"
+                  value={collectionName}
+                  onChange={(v) => setCollectionName(v.target.value)}
+                />
+              )}
+              {currentArea?.id && (
                 <Input
                   name="candidateArea"
-                  label={formatMessage(m.signatureListsConstituencyTitle)}
+                  label={
+                    collectionType ===
+                    SignatureCollectionCollectionType.Parliamentary
+                      ? formatMessage(m.signatureListsConstituencyTitle)
+                      : formatMessage(m.municipality)
+                  }
                   readOnly
-                  value={constituencyName}
+                  value={areaName}
                 />
               )}
             </Stack>
             {!canCreate && (
               <Box marginTop={3}>
-                <AlertMessage
-                  type="error"
-                  title={''}
-                  message={canCreateErrorReason}
-                />
+                <AlertMessage type="error" message={canCreateErrorReason} />
               </Box>
             )}
             <Box display="flex" justifyContent="center" marginY={5}>

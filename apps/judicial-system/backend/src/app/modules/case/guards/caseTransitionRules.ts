@@ -7,7 +7,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '..'
+import { Case } from '../../repository'
 
 type TransitionRule = (theCase: Case, user: User) => boolean
 

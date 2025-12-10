@@ -5,6 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -27,7 +28,10 @@ import {
   CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFiledCourtDocuments,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -43,25 +47,38 @@ interface Props {
 interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
+  showFiledDocumentNumber?: boolean
 }
 
 interface FileSectionProps {
   title: string
   onOpenFile: (fileId: string) => void
-  files?: CaseFile[]
+  files: CaseFile[]
   shouldRender?: boolean
 }
 
 export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
+  showFiledDocumentNumber = false,
 }) => {
+  const { prefixUploadedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
+
+  const getFileName = (file: CaseFile) => {
+    if (!showFiledDocumentNumber) {
+      return file.name
+    }
+
+    return prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? '')
+  }
+
   return (
     <>
       {caseFiles.map((file) => (
         <Box key={file.id} marginBottom={2}>
           <PdfButton
-            title={file.name}
+            title={getFileName(file)}
             renderAs="row"
             disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
@@ -75,7 +92,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
 const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
-  if ((!files?.length && !children) || !shouldRender) {
+  if ((files.length === 0 && !children) || !shouldRender) {
     return null
   }
 
@@ -87,7 +104,11 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
         heading="h4"
         variant="h4"
       />
-      {files && <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />}
+      <RenderFiles
+        caseFiles={files}
+        onOpenFile={onOpenFile}
+        showFiledDocumentNumber
+      />
       {children}
     </Box>
   )
@@ -149,6 +170,8 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewVerdictServiceCertificate:
+        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
     [user, workingCase.hasCivilClaims, workingCase.state],
   )
@@ -169,6 +192,23 @@ export const useSentToPrisonAdminDate = (workingCase: Case) => {
   }, [workingCase.defendants])
 }
 
+export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+  sentToPrisonAdminDate?: Date,
+) => {
+  const baseTitle =
+    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+      ? 'Viðurlagaákvörðun til fullnustu'
+      : 'Dómur til fullnustu'
+
+  return {
+    pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
+    isCompletedWithRulingOrFine:
+      indictmentRulingDecision === CaseIndictmentRulingDecision.RULING ||
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+  }
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -177,10 +217,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
+
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
+  const { prefixGeneratedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -191,10 +234,22 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
   const permissions = useFilePermissions(workingCase, user)
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.withCourtSessions,
+    workingCase.courtSessions,
+    user,
+  )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { pdfTitle, isCompletedWithRulingOrFine } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      workingCase.indictmentRulingDecision,
+      sentToPrisonAdminDate,
+    )
+
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
@@ -214,7 +269,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.indictmentTitle)}
+              title={prefixGeneratedDocumentNameWithDocumentOrder(
+                'indictment',
+                `Ákæra${
+                  workingCase.caseSentToCourtDate
+                    ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
+                    : ''
+                }.pdf`,
+                workingCase.id,
+              )}
               pdfType="indictment"
               renderAs="row"
               elementId="Ákæra"
@@ -250,20 +313,30 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-              <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-                <PdfButton
-                  caseId={workingCase.id}
-                  connectedCaseParentId={connectedCaseParentId}
-                  title={formatMessage(strings.caseFileButtonText, {
-                    policeCaseNumber,
-                  })}
-                  pdfType="caseFilesRecord"
-                  elementId={policeCaseNumber}
-                  renderAs="row"
-                />
-              </Box>
-            ))}
+            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+              const caseFilesRecordFileName = formatMessage(
+                strings.caseFileButtonText,
+                {
+                  policeCaseNumber,
+                },
+              )
+              return (
+                <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    connectedCaseParentId={connectedCaseParentId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `caseFilesRecord/${policeCaseNumber}`,
+                      caseFilesRecordFileName,
+                      workingCase.id,
+                    )}
+                    pdfType="caseFilesRecord"
+                    elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                    renderAs="row"
+                  />
+                </Box>
+              )
+            })}
           </Box>
           {showSubpoenaPdf && (
             <Box marginBottom={5}>
@@ -282,12 +355,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
                       date: formatDate(subpoena.created),
                     },
                   )
+                  const serviceCertificateFileName = formatMessage(
+                    strings.serviceCertificateButtonText,
+                    { name: defendant.name },
+                  )
 
                   return (
                     <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
                       <PdfButton
                         caseId={workingCase.id}
-                        title={subpoenaFileName}
+                        title={prefixGeneratedDocumentNameWithDocumentOrder(
+                          `subpoena/${defendant.id}/${subpoena.id}`,
+                          subpoenaFileName,
+                          workingCase.id,
+                        )}
                         pdfType="subpoena"
                         elementId={[
                           defendant.id,
@@ -300,14 +381,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
                         isSuccessfulServiceStatus(subpoena.serviceStatus) && (
                           <PdfButton
                             caseId={workingCase.id}
-                            title={formatMessage(
-                              strings.serviceCertificateButtonText,
-                              {
-                                name: defendant.name,
-                              },
+                            title={prefixGeneratedDocumentNameWithDocumentOrder(
+                              `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+                              serviceCertificateFileName,
+                              workingCase.id,
                             )}
-                            pdfType="serviceCertificate"
-                            elementId={[defendant.id, subpoena.id]}
+                            pdfType="subpoenaServiceCertificate"
+                            elementId={[
+                              defendant.id,
+                              subpoena.id,
+                              serviceCertificateFileName,
+                            ]}
                             renderAs="row"
                           />
                         )}
@@ -327,8 +411,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
             onOpenFile={onOpen}
             shouldRender={permissions.canViewCivilClaims}
           />
-          {filteredFiles.courtRecords?.length ||
-          filteredFiles.rulings?.length ? (
+          {(filteredFiles.courtRecords.length > 0 ||
+            hasGeneratedCourtRecord ||
+            (permissions.canViewRulings && filteredFiles.rulings.length > 0) ||
+            permissions.canViewVerdictServiceCertificate) && (
             <Box marginBottom={5}>
               <SectionHeading
                 title={formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -336,23 +422,55 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 heading="h4"
                 variant="h4"
               />
-              {filteredFiles.courtRecords &&
-                filteredFiles.courtRecords.length > 0 && (
-                  <RenderFiles
-                    caseFiles={filteredFiles.courtRecords}
-                    onOpenFile={onOpen}
-                  />
-                )}
-              {permissions.canViewRulings &&
-                filteredFiles.rulings &&
-                filteredFiles.rulings.length > 0 && (
-                  <RenderFiles
-                    caseFiles={filteredFiles.rulings}
-                    onOpenFile={onOpen}
-                  />
-                )}
+              {hasGeneratedCourtRecord && (
+                <PdfButton
+                  caseId={workingCase.id}
+                  connectedCaseParentId={connectedCaseParentId}
+                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                  pdfType="courtRecord"
+                  renderAs="row"
+                  elementId="Þingbók"
+                />
+              )}
+              <RenderFiles
+                caseFiles={filteredFiles.courtRecords}
+                onOpenFile={onOpen}
+              />
+              {permissions.canViewRulings && (
+                <RenderFiles
+                  caseFiles={filteredFiles.rulings}
+                  onOpenFile={onOpen}
+                />
+              )}
+              {permissions.canViewVerdictServiceCertificate &&
+                workingCase.defendants?.map((defendant) => {
+                  if (
+                    !defendant.verdict?.serviceDate ||
+                    !defendant.verdict?.externalPoliceDocumentId
+                  ) {
+                    return null
+                  }
+
+                  const serviceCertificateFileName = formatMessage(
+                    strings.serviceCertificateButtonText,
+                    {
+                      name: defendant.name,
+                    },
+                  )
+
+                  return (
+                    <PdfButton
+                      key={defendant.id}
+                      caseId={workingCase.id}
+                      title={serviceCertificateFileName}
+                      pdfType="verdictServiceCertificate"
+                      elementId={[defendant.id, serviceCertificateFileName]}
+                      renderAs="row"
+                    />
+                  )
+                })}
             </Box>
-          ) : null}
+          )}
           <FileSection
             title={formatMessage(caseFiles.criminalRecordUpdateSection)}
             files={filteredFiles.criminalRecordUpdate}
@@ -365,33 +483,30 @@ const IndictmentCaseFilesList: FC<Props> = ({
             onOpenFile={onOpen}
             shouldRender={permissions.canViewSentToPrisonAdminFiles}
           >
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId="Dómur til fullnustu"
+                elementId={[pdfTitle]}
                 renderAs="row"
               />
             )}
           </FileSection>
-          {filteredFiles.uploadedCaseFiles &&
-            filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box marginBottom={5}>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                />
-              </Box>
-            )}
+          {filteredFiles.uploadedCaseFiles.length > 0 && (
+            <Box marginBottom={5}>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+              />
+            </Box>
+          )}
           <AnimatePresence>
             {fileNotFound && (
               <FileNotFoundModal dismiss={dismissFileNotFound} />

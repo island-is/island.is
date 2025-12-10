@@ -153,6 +153,18 @@ import {
   BloodDonationRestrictionGenericTagList,
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
+import { GenericList } from './models/genericList.model'
+import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
+import {
+  Course,
+  CourseCategoriesResponse,
+  CourseList,
+} from './models/course.model'
+import {
+  GetCourseCategoriesInput,
+  GetCoursesInput,
+} from './dto/getCourses.input'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -278,7 +290,21 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
+    const organizationPage =
+      await this.cmsContentfulService.getOrganizationPage(
+        input.slug,
+        input.lang,
+      )
+
+    if (!organizationPage) {
+      return organizationPage
+    }
+
+    // Used in the resolver to fetch navigation links from cms
+    organizationPage.subpageSlugsInput = input.subpageSlugs
+    organizationPage.lang = input.lang
+
+    return organizationPage
   }
 
   @CacheControl(defaultCache)
@@ -780,6 +806,34 @@ export class CmsResolver {
   ): Promise<BloodDonationRestrictionDetails | null> {
     return this.cmsContentfulService.getBloodDonationRestrictionDetails(input)
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseList, { nullable: true })
+  getCourses(@Args('input') input: GetCoursesInput): Promise<CourseList> {
+    return this.cmsElasticsearchService.getCourseList(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseCategoriesResponse)
+  getCourseCategories(
+    @Args('input') input: GetCourseCategoriesInput,
+  ): Promise<CourseCategoriesResponse> {
+    return this.cmsElasticsearchService.getCourseCategories(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Course, { nullable: true })
+  getCourseById(
+    @Args('input') input: GetCourseByIdInput,
+  ): Promise<Course | null> {
+    return this.cmsContentfulService.getCourseById(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -1007,5 +1061,45 @@ export class IntroLinkImageResolver {
       return ''
     }
     return id
+  }
+}
+
+@Resolver(() => GenericList)
+export class GenericListResolver {
+  @ResolveField(() => [GenericTag])
+  async filterTags(
+    @Parent() { filterTags, alphabeticallyOrderFilterTags }: GenericList,
+  ) {
+    const tags = filterTags ?? []
+    if (alphabeticallyOrderFilterTags) {
+      tags.sort(sortAlpha('title'))
+    }
+    return tags
+  }
+}
+
+@Resolver(() => FeaturedGenericListItems)
+export class FeaturedGenericListItemsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [GenericListItem])
+  async items(
+    @Parent()
+    {
+      items: { items, input },
+      automaticallyFetchItems,
+    }: FeaturedGenericListItems,
+  ) {
+    if (!automaticallyFetchItems) {
+      return items
+    }
+    if (!input) {
+      return []
+    }
+
+    const response = await this.cmsElasticsearchService.getGenericListItems(
+      input,
+    )
+    return response.items
   }
 }

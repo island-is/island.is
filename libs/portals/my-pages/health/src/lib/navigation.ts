@@ -20,74 +20,61 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthRoot,
     },
     {
-      name: messages.overviewTitle,
+      name: messages.myHealthOverview,
       searchHide: true,
       path: HealthPaths.HealthOverview,
     },
     {
-      name: m.therapies,
-      description: m.therapiesIntro,
-      path: HealthPaths.HealthTherapies,
+      name: messages.myHealthOverview,
+      searchHide: true,
+      navHide: true,
+      path: HealthPaths.HealthBasicOld,
+    },
+    {
+      name: messages.referrals,
+      path: HealthPaths.HealthReferrals,
+      searchTags: [s.healthReferrals],
       children: [
         {
-          name: messages.physicalTherapy,
-          path: HealthPaths.HealthTherapiesPhysical,
-          navHide: true,
-        },
-        {
-          name: messages.speechTherapy,
-          path: HealthPaths.HealthTherapiesSpeech,
-          navHide: true,
-        },
-        {
-          name: messages.occupationalTherapy,
-          path: HealthPaths.HealthTherapiesOccupational,
+          name: messages.singleReferral,
+          path: HealthPaths.HealthReferralsDetail,
           navHide: true,
         },
       ],
     },
+
     {
-      name: m.payments,
+      name: messages.paymentsAndRights,
       description: m.paymentsIntro,
       path: HealthPaths.HealthPayments,
+      searchTags: [
+        s.healthInsuranceCard,
+        s.healthInsuranceEhicCard,
+        s.healthInsuranceEhicCardLong,
+        s.healthPaymentParticipation,
+        s.healthPaymentOverview,
+      ],
       children: [
         {
           name: messages.paymentParticipation,
           path: HealthPaths.HealthPaymentParticipation,
+          searchTags: [s.healthPaymentParticipation],
           navHide: true,
         },
         {
           name: messages.paymentOverview,
           path: HealthPaths.HealthPaymentOverview,
           navHide: true,
+          searchTags: [s.healthPaymentOverview],
         },
-      ],
-    },
-    {
-      name: m.aidsAndNutrition,
-      description: m.aidsAndNutritionIntro,
-      path: HealthPaths.HealthAidsAndNutrition,
-    },
-    {
-      name: m.dentists,
-      description: m.dentistsIntro,
-      path: HealthPaths.HealthDentists,
-      children: [
         {
-          name: messages.dentistRegisterationPageTitle,
-          path: HealthPaths.HealthDentistRegistration,
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: m.healthCenter,
-      description: m.healthCenterIntro,
-      path: HealthPaths.HealthCenter,
-      children: [
-        {
-          name: messages.healthCenterRegistrationTitle,
-          path: HealthPaths.HealthCenterRegistration,
+          name: messages.rights,
+          path: HealthPaths.HealthPaymentRights,
+          searchTags: [
+            s.healthInsuranceCard,
+            s.healthInsuranceEhicCard,
+            s.healthInsuranceEhicCardLong,
+          ],
           navHide: true,
         },
       ],
@@ -105,6 +92,26 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: m.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
+          searchTags: [s.medicineDelegationOther],
+          children: [
+            {
+              name: m.medicineDelegation,
+              path: HealthPaths.HealthMedicineDelegationDetail,
+              navHide: true,
+              breadcrumbHide: true,
+              searchHide: true,
+            },
+            {
+              name: messages.addDelegation,
+              path: HealthPaths.HealthMedicineDelegationAdd,
+              navHide: true,
+              breadcrumbHide: true,
+              searchTags: [
+                s.medicineDelegationOther,
+                s.medicineDelegationOtherNew,
+              ],
+            },
+          ],
         },
         {
           name: m.medicinePaymentParticipation,
@@ -146,6 +153,33 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.aidsAndNutrition,
+      description: m.aidsAndNutritionIntro,
+      path: HealthPaths.HealthAidsAndNutrition,
+    },
+    {
+      name: m.therapies,
+      path: HealthPaths.HealthTherapies,
+      children: [
+        {
+          name: messages.physicalTherapy,
+          path: HealthPaths.HealthTherapiesPhysical,
+          navHide: true,
+        },
+        {
+          name: messages.speechTherapy,
+          path: HealthPaths.HealthTherapiesSpeech,
+          navHide: true,
+        },
+        {
+          name: messages.occupationalTherapy,
+          path: HealthPaths.HealthTherapiesOccupational,
+          navHide: true,
+        },
+      ],
+    },
+
+    {
       name: m.vaccinations,
       description: m.vaccinationsIntro,
       path: HealthPaths.HealthVaccinations,
@@ -163,14 +197,85 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: m.organDonation,
-      description: m.organDonationIntro,
-      path: HealthPaths.HealthOrganDonation,
+      name: messages.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      searchTags: [s.healthWaiting],
       children: [
         {
-          name: messages.changeRegistration,
-          path: HealthPaths.HealthOrganDonationRegistration,
+          name: messages.singleWaitlist,
+          path: HealthPaths.HealthWaitlistsDetail,
           navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.patientData,
+      path: HealthPaths.HealthPatientData,
+      searchTags: [s.healthPatientData],
+      children: [
+        {
+          name: messages.patientDataPermit,
+          path: HealthPaths.HealthPatientDataPermits,
+          children: [
+            {
+              name: messages.addPermit,
+              path: HealthPaths.HealthPatientDataPermitsAdd,
+              navHide: true,
+            },
+            {
+              name: messages.permit,
+              path: HealthPaths.HealthPatientDataPermitsDetail,
+              navHide: true,
+              searchHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: messages.basicInformation,
+      path: HealthPaths.HealthBasicInformation,
+      searchHide: true,
+      children: [
+        {
+          name: m.healthCenter,
+          description: m.healthCenterIntro,
+          path: HealthPaths.HealthCenter,
+          children: [
+            {
+              name: messages.healthCenterRegistrationTitle,
+              path: HealthPaths.HealthCenterRegistration,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: m.dentists,
+          description: m.dentistsIntro,
+          path: HealthPaths.HealthDentists,
+          children: [
+            {
+              name: messages.dentistRegisterationPageTitle,
+              path: HealthPaths.HealthDentistRegistration,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: m.organDonation,
+          description: m.organDonationIntro,
+          path: HealthPaths.HealthOrganDonation,
+          children: [
+            {
+              name: m.organDonation,
+              path: HealthPaths.HealthOrganDonationRegistration,
+            },
+          ],
+        },
+        {
+          name: m.bloodtype,
+          description: m.bloodtype,
+          path: HealthPaths.HealthBloodtype,
         },
       ],
     },

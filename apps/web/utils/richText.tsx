@@ -66,6 +66,7 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
+  FeaturedGenericListItems,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
@@ -92,8 +93,11 @@ import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/Be
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
+import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
+import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
+import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -102,13 +106,14 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
 
-const TranslationNamespaceProvider = ({
+export const TranslationNamespaceProvider = ({
   messages,
   children,
 }: PropsWithChildren<TranslationNamespaceProviderProps>) => {
@@ -227,6 +232,15 @@ export const webRenderConnectedComponent = (
     case 'Trufelog/Lifsskodunarfelog':
       connectedComponent = <ReligiousOrganizationList slice={slice} />
       break
+    case 'Landspitali/MemorialCard':
+      connectedComponent = <MemorialCard slice={slice} />
+      break
+    case 'Landspitali/DirectGrants':
+      connectedComponent = <DirectGrants slice={slice} />
+      break
+    case 'Syslumenn/DrivingInstructorList':
+      connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
@@ -301,6 +315,7 @@ const defaultRenderComponent = {
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
       showSearchInput={slice.showSearchInput ?? true}
+      textSearchOrder={slice.textSearchOrder ?? 'Default'}
     />
   ),
   TeamList: (slice: TeamList) => (
@@ -325,6 +340,9 @@ const defaultRenderComponent = {
   ),
   IntroLinkImage: (slice: IntroLinkImage) => (
     <IntroLinkImageSlice slice={slice} />
+  ),
+  FeaturedGenericListItems: (slice: FeaturedGenericListItems) => (
+    <FeaturedGenericListItemsSlice slice={slice} />
   ),
 }
 

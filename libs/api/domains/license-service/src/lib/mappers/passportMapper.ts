@@ -147,6 +147,10 @@ export class PassportMapper implements GenericLicenseMapper {
         ? formatMessage(m.expiresWithin, {
             arg: formatMessage(m.sixMonths),
           })
+        : document.expirationDate
+        ? formatMessage(m.validUntil, {
+            arg: formatDate(new Date(document.expirationDate)),
+          })
         : formatMessage(m.valid),
       color: isInvalid || isExpiring ? 'red' : 'blue',
       icon: isInvalid
@@ -218,6 +222,11 @@ export class PassportMapper implements GenericLicenseMapper {
                 : formatMessage(m.otherGender),
           }
         : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =

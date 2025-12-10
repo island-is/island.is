@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -8,6 +12,7 @@ import {
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import {
+  CollectionType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -18,8 +23,12 @@ import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionCollector } from './models/collector.model'
-import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import {
+  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
+} from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionCandidateIdInput } from './dto'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -33,8 +42,12 @@ export class SignatureCollectionService {
     }
   }
 
-  async currentCollection(): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.currentCollection()
+  async getLatestCollectionForType(
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      collectionType,
+    )
   }
 
   async allOpenLists({
@@ -56,7 +69,7 @@ export class SignatureCollectionService {
   }
 
   async listsForUser(
-    { collectionId }: SignatureCollectionIdInput,
+    { collectionId, collectionType }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
@@ -68,6 +81,7 @@ export class SignatureCollectionService {
         collectionId: collectionId,
         areaId: signee.area?.id,
         onlyActive: true,
+        collectionType,
       },
       user,
     )
@@ -93,13 +107,21 @@ export class SignatureCollectionService {
     signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionList> {
     this.checkListAccess(listId, signee)
-    return await this.signatureCollectionClientService.getList(listId, user)
+    try {
+      return await this.signatureCollectionClientService.getList(listId, user)
+    } catch (e) {
+      throw new MethodNotAllowedException((e as Error).message)
+    }
   }
 
   async signedList(
     user: User,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return await this.signatureCollectionClientService.getSignedList(user)
+    return await this.signatureCollectionClientService.getSignedList(
+      collectionType,
+      user,
+    )
   }
 
   async signatures(
@@ -114,10 +136,12 @@ export class SignatureCollectionService {
 
   async signee(
     user: User,
+    collectionType: CollectionType,
     nationalId?: string,
   ): Promise<SignatureCollectionSignee> {
     return await this.signatureCollectionClientService.getSignee(
       user,
+      collectionType,
       nationalId,
     )
   }
@@ -125,8 +149,13 @@ export class SignatureCollectionService {
   async unsign(
     listId: string,
     user: User,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignList(listId, user)
+    return await this.signatureCollectionClientService.unsignList(
+      listId,
+      collectionType,
+      user,
+    )
   }
 
   async cancel(
@@ -164,6 +193,7 @@ export class SignatureCollectionService {
     const signatureSignee =
       await this.signatureCollectionClientService.getSignee(
         user,
+        input.collectionType,
         input.signeeNationalId,
       )
     const list = await this.list(input.listId, user, signee)
@@ -208,6 +238,16 @@ export class SignatureCollectionService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.signatureCollectionClientService.getCandidateSummaryReport(
+      user,
+      input.candidateId,
     )
   }
 }

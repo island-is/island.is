@@ -28,6 +28,7 @@ export const FileUploadFormField = ({
     maxSize,
     maxSizeErrorText,
     totalMaxSize,
+    maxFileCount,
     forImageUpload,
     marginTop,
     marginBottom,
@@ -83,6 +84,7 @@ export const FileUploadFormField = ({
             formatText(maxSizeErrorText, application, formatMessage)
           }
           totalMaxSize={totalMaxSize}
+          maxFileCount={maxFileCount}
           forImageUpload={forImageUpload}
           onRemove={onFileRemoveWhenInAnswers}
         />

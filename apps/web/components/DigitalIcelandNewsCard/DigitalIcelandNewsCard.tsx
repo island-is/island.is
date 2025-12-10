@@ -22,6 +22,7 @@ interface ItemProps {
   tags: string[]
   href: string
   mini?: boolean
+  titleAs?: 'h2'
 }
 
 export const DigitalIcelandNewsCard = (item: ItemProps) => {
@@ -74,7 +75,9 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
                     {formattedDate}
                   </Text>
                 )}
-                <Text variant="h3">{item.title}</Text>
+                <Text variant="h3" as={item.titleAs}>
+                  {item.title}
+                </Text>
                 <Text variant="default">
                   {shortenText(item.description ?? '', 80)}
                 </Text>
@@ -94,7 +97,7 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
             <BackgroundImage
               backgroundSize="cover"
               image={{ url: item.imageSrc }}
-              ratio="200:122"
+              ratio="10:7"
               boxProps={{
                 alignItems: 'center',
                 width: 'full',

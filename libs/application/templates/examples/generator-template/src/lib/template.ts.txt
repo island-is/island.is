@@ -17,7 +17,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -30,6 +29,17 @@ const template: ApplicationTemplate<
   institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
   translationNamespaces: [ApplicationConfigurations.--PASCAL-CASE-TEMPLATE--.translation], // TODO: Change to the correct translation namespace
   dataSchema,
+  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
+  adminDataConfig: {
+    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: 'Bílnúmer',
+      },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -111,22 +121,14 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

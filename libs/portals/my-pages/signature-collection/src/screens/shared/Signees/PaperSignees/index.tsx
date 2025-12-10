@@ -16,16 +16,21 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { toast } from 'react-toastify'
-import { useGetCanSign } from '../../../../hooks'
+import {
+  useGetCanSign,
+  useGetListSignees,
+  useGetSignatureList,
+} from '../../../../hooks'
 import { uploadPaperSignature } from '../../../../hooks/graphql/mutations'
 import { m } from '../../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 export const PaperSignees = ({
   listId,
-  refetchSignees,
+  collectionType,
 }: {
   listId: string
-  refetchSignees: () => void
+  collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -36,6 +41,10 @@ export const PaperSignees = ({
   const [page, setPage] = useState('')
   const [name, setName] = useState('')
 
+  /* refetch signees & listInfo (for total valid signees) logic */
+  const { refetchListSignees } = useGetListSignees(listId, collectionType)
+  const { refetchSignatureList } = useGetSignatureList(listId, collectionType)
+
   /* identity & canSign fetching logic */
   const { data, loading } = useIdentityQuery({
     variables: { input: { nationalId: nationalIdInput } },
@@ -43,6 +52,7 @@ export const PaperSignees = ({
     onCompleted: (data) => setName(data.identity?.name || ''),
   })
   const { canSign, loadingCanSign } = useGetCanSign(
+    collectionType,
     nationalIdInput,
     listId,
     nationalId.isValid(nationalIdInput),
@@ -69,15 +79,20 @@ export const PaperSignees = ({
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType: collectionType,
         },
       },
       onCompleted: (res) => {
-        if (res.signatureCollectionUploadPaperSignature?.success) {
+        const success = res.signatureCollectionUploadPaperSignature?.success
+
+        if (success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
-          refetchSignees()
+          refetchListSignees()
+          refetchSignatureList()
         } else {
           toast.error(formatMessage(m.paperSigneeError))
         }
+        onClearForm()
       },
       onError: () => {
         toast.error(formatMessage(m.paperSigneeError))
@@ -110,7 +125,7 @@ export const PaperSignees = ({
       </Box>
 
       <Box
-        background="blue100"
+        background="white"
         height="full"
         padding={3}
         border="standard"
@@ -127,6 +142,7 @@ export const PaperSignees = ({
                 format="######-####"
                 required
                 defaultValue={nationalIdInput}
+                backgroundColor="blue"
                 onChange={(e) => {
                   setNationalIdInput(e.target.value.replace(/\W/g, ''))
                 }}
@@ -141,6 +157,7 @@ export const PaperSignees = ({
                   id="page"
                   name="page"
                   type="number"
+                  backgroundColor="blue"
                   required
                   label={formatMessage(m.paperNumber)}
                   value={page}
@@ -155,7 +172,6 @@ export const PaperSignees = ({
                 id="name"
                 name="name"
                 label={formatMessage(m.paperSigneeName)}
-                backgroundColor="white"
                 value={!loadingCanSign ? name : ''}
                 readOnly
               />
@@ -163,9 +179,8 @@ export const PaperSignees = ({
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
             <Button
-              variant="ghost"
               size="small"
-              disabled={!canSign || !page}
+              disabled={!canSign || !page || !name}
               onClick={() => upload()}
               loading={uploadingPaperSignature}
             >

@@ -10,19 +10,17 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
 
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
   getBeginningOfMonth3MonthsAgo,
-
 } from '../lib/parentalLeaveUtils'
-
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
   title: otherParentApprovalFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -99,7 +97,8 @@ export const OtherParentApproval: Form = buildForm({
               titleVariant: 'h4',
               description: otherParentApprovalFormMessages.startDateInThePast,
               condition: (answers) => {
-                const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
+                const beginningOfMonth3MonthsAgo =
+                  getBeginningOfMonth3MonthsAgo()
                 const startDateTime = new Date(
                   getApplicationAnswers(answers).periods[0].startDate,
                 ).getTime()
@@ -122,7 +121,8 @@ export const OtherParentApproval: Form = buildForm({
                   type: 'primary',
                   event: 'APPROVE',
                   condition: (answers) => {
-                    const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
+                    const beginningOfMonth3MonthsAgo =
+                      getBeginningOfMonth3MonthsAgo()
                     const startDateTime = new Date(
                       getApplicationAnswers(answers).periods[0].startDate,
                     ).getTime()

@@ -12,6 +12,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -33,6 +34,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseState,
   CaseTransition,
@@ -141,7 +143,7 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
   }
 
   const handleAskForCancellation = async () => {
@@ -153,7 +155,7 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
   }
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -189,7 +191,9 @@ const Overview: FC = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
           <Box marginBottom={2}>
             <AlertMessage
@@ -245,19 +249,11 @@ const Overview: FC = () => {
             )}
           </Box>
         )}
-        <Box
-          marginBottom={
-            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
-          }
-        >
+        <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {userCanAddDocuments && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button
               size="small"
               icon="add"
@@ -272,7 +268,7 @@ const Overview: FC = () => {
           </Box>
         )}
         {userCanSendIndictmentToCourt && (
-          <Box marginBottom={10}>
+          <Box marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
               required
@@ -301,13 +297,19 @@ const Overview: FC = () => {
             </BlueBox>
           </Box>
         )}
+        <Box component="section" marginBottom={10}>
+          <InputPenalties
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
-              ? constants.CASES_ROUTE
+              ? getStandardUserDashboardRoute(user)
               : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
@@ -342,47 +344,51 @@ const Overview: FC = () => {
             title={formatMessage(strings.caseSubmitModalTitle)}
             text={formatMessage(strings.caseSubmitModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.caseSubmitSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleConfirmIndictment}
-            primaryButtonText={formatMessage(
-              strings.caseSubmitPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.caseSubmitPrimaryButtonText),
+              onClick: handleConfirmIndictment,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(strings.caseSubmitSecondaryButtonText),
+              onClick: () => setModal('noModal'),
+            }}
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
-            onClose={() => router.push(constants.CASES_ROUTE)}
-            onPrimaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
+            primaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(getStandardUserDashboardRoute(user))
+              },
             }}
-            primaryButtonText={formatMessage(core.closeModal)}
           />
         ) : modal === 'caseDeniedModal' ? (
           <DenyIndictmentCaseModal
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             onClose={() => setModal('noModal')}
-            onComplete={() => router.push(constants.CASES_ROUTE)}
+            onComplete={() => router.push(getStandardUserDashboardRoute(user))}
           />
         ) : modal === 'askForCancellationModal' ? (
           <Modal
             title={formatMessage(strings.askForCancellationModalTitle)}
             text={formatMessage(strings.askForCancellationModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.askForCancellationSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleAskForCancellation}
-            primaryButtonText={formatMessage(
-              strings.askForCancellationPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.askForCancellationPrimaryButtonText),
+              onClick: handleAskForCancellation,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(
+                strings.askForCancellationSecondaryButtonText,
+              ),
+              onClick: () => setModal('noModal'),
+            }}
           />
         ) : null}
       </AnimatePresence>

@@ -17,7 +17,7 @@ const FilterSignees = ({
   const { formatMessage } = useLocale()
 
   const pageNumbers = useMemo(() => {
-    return Array.from(new Set(signees.map((s) => s.pageNumber))).map(
+    return Array.from(new Set(signees?.map((s) => s.pageNumber)))?.map(
       (pageNumber) => ({
         label: String(pageNumber),
         value: String(pageNumber),
@@ -33,7 +33,7 @@ const FilterSignees = ({
         labelResult=""
         labelOpen={formatMessage(m.filter)}
         labelClearAll={formatMessage(m.clearAllFilters)}
-        resultCount={signees.length}
+        resultCount={signees?.length}
         variant="popover"
         onFilterClear={() => {
           onSetFilters({

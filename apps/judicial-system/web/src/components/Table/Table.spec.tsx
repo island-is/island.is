@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
@@ -39,10 +39,8 @@ describe('Table', () => {
   })
 
   const clickButtonByTestId = async (testId: string) => {
-    await act(async () => {
-      const testIdElement = await screen.findByTestId(testId)
-      await user.click(testIdElement)
-    })
+    const testIdElement = await screen.findByTestId(testId)
+    await user.click(testIdElement)
   }
 
   it('should sort by date', async () => {
@@ -80,11 +78,7 @@ describe('Table', () => {
       </IntlProviderWrapper>,
     )
 
-    await act(async () => {
-      await user.click(
-        await screen.findByTestId('indictmentAppealDeadlineSortButton'),
-      )
-    })
+    await clickButtonByTestId('indictmentAppealDeadlineSortButton')
 
     const tableRows = await screen.findAllByTestId('tableRow')
 

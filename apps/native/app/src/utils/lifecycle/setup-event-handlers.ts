@@ -7,7 +7,6 @@ import {
   Linking,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
-import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
@@ -28,6 +27,10 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
+    if (url.includes('wallet/')) {
+      return evaluateUrl(url)
+    }
+
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -48,16 +51,6 @@ export function setupEventHandlers() {
       Navigation.dismissAllModals()
     }
   })
-
-  if (isIos) {
-    SpotlightSearch.searchItemTapped((url) => {
-      navigateTo(url)
-    })
-
-    SpotlightSearch.getInitialSearchItem().then((url) => {
-      navigateTo(url)
-    })
-  }
 
   Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({
@@ -158,7 +151,7 @@ export function setupEventHandlers() {
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
 
   // Subscribe to network status changes
-  addEventListener(({ isConnected, type }) => {
+  addEventListener(({ isConnected }) => {
     const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {

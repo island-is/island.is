@@ -7,7 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetApplicationsQuery,
+  useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import invertBy from 'lodash/invertBy'
@@ -36,6 +36,7 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.STATUS]: undefined,
   [MultiChoiceFilter.INSTITUTION]: undefined,
   [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
 const pageSize = 12
@@ -53,21 +54,38 @@ const Overview = () => {
     defaultMultiChoiceFilters,
   )
 
-  const nationalId = filters.nationalId?.replace('-', '') ?? ''
+  const applicantNationalId = filters.nationalId?.replace('-', '') ?? ''
 
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
 
-  const { data, loading: queryLoading } = useGetApplicationsQuery({
+  const useAdvancedSearch = !!filters.typeIdValue
+
+  const { data, loading: queryLoading } = useGetApplicationsSuperAdminQuery({
     ssr: false,
     variables: {
-      input: { nationalId },
+      input: {
+        page: page,
+        count: pageSize,
+        applicantNationalId:
+          !useAdvancedSearch && filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
+        from: filters.period.from?.toISOString(),
+        to: filters.period.to?.toISOString(),
+        typeIdValue: filters.typeIdValue,
+        searchStr:
+          useAdvancedSearch && filters.searchStr
+            ? filters.searchStr.replace('-', '')
+            : undefined,
+        status: multiChoiceFilters?.status,
+      },
     },
     onCompleted: (q) => {
       // Initialize available applications from the initial response
       // So that we can use them to filter by
-      const names = q.applicationApplicationsAdmin
+      const names = q.applicationApplicationsAdmin?.rows
         ?.filter((x) => !!x.name)
         .map((x) => x.name ?? '')
       if (names) {
@@ -123,6 +141,15 @@ const Overview = () => {
     }))
   }
 
+  const handleTypeIdChange = (
+    typeIdValue: ApplicationFilters['typeIdValue'],
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeIdValue: typeIdValue,
+    }))
+  }
+
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
       // Clear all filters (except nationalId)
@@ -166,6 +193,7 @@ const Overview = () => {
         {formatMessage(m.applicationSystemApplications)}
       </Text>
       <Filters
+        onTypeIdChange={handleTypeIdChange}
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
@@ -176,14 +204,14 @@ const Overview = () => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={applicationAdminList?.length}
       />
-      {isLoading && nationalId.length === 10 ? (
+      {isLoading && applicantNationalId.length === 10 ? (
         <SkeletonLoader
           height={60}
           repeat={10}
           space={2}
           borderRadius="large"
         />
-      ) : nationalId === '' ? (
+      ) : applicantNationalId === '' ? (
         <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
           <Text variant="h4">
             {formatMessage(m.pleaseEnterValueToBeingSearch)}

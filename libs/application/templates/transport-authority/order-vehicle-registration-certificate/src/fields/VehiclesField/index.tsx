@@ -31,7 +31,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     return async (plate: string) => {
       const variables = { permno: plate }
       const result = await getVehicleDetailsFunction(variables)
-      return result.data.vehicleBasicInfoByPermno // Adjust based on your query
+      return result.data.myVehicleBasicInfoByPermno // Adjust based on your query
     }
   }
 

@@ -6,7 +6,6 @@ export const THJODSKRA_SLUG = 'thjodskra-islands'
 export const SAMGONGUSTOFA_SLUG = 'samgongustofa'
 export const HMS_SLUG = 'hms'
 export const RIKISLOGREGLUSTJORI_SLUG = 'rikislogreglustjori'
-export const UMHVERFISSTOFNUN_SLUG = 'umhverfisstofnun'
 export const VINNUEFTIRLITID_SLUG = 'vinnueftirlitid'
 export const TRYGGINGASTOFNUN_SLUG = 'tryggingastofnun'
 export const SJUKRATRYGGINGAR_SLUG = 'sjukratryggingar'
@@ -18,6 +17,8 @@ export const ISLAND_SYSLUMENN_SLUG = '/s/islandis'
 export const HEALTH_DIRECTORATE_SLUG = 'landlaeknir'
 export const HUGVERKASTOFAN_SLUG = 'hugverkastofan'
 export const DOMSMALARADUNEYTID_SLUG = 'domsmalaraduneytid'
+export const LANDLAEKNIR_SLUG = 'landlaeknir'
+
 export const DOMSMAL_DOC_ID = '12'
 export const MONTHS = [
   'january',

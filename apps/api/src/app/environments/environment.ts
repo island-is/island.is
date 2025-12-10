@@ -12,6 +12,9 @@ const prodConfig = () => ({
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
+  formSystem: {
+    baseApiUrl: process.env.FORM_SYSTEM_API_BASE_PATH,
+  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -91,11 +94,6 @@ const prodConfig = () => ({
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
   },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
 })
 
 const devConfig = () => ({
@@ -106,6 +104,9 @@ const devConfig = () => ({
   },
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
+  },
+  formSystem: {
+    baseApiUrl: 'http://localhost:3434',
   },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
@@ -201,11 +202,6 @@ const devConfig = () => ({
   },
   audit: {
     defaultNamespace: '@island.is/api',
-  },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
 

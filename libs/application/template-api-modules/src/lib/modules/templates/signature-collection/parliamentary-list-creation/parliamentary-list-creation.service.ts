@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
+  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -18,6 +19,8 @@ import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
@@ -28,23 +31,53 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  )
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
+      this.collectionType,
     )
 
     if (!candidate.hasPartyBallotLetter) {
       throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
+    }
+    if (!candidate.canCreate) {
+      if (!candidate.canCreateInfo) {
+        // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
+        throw new TemplateApiError(errorMessages.deniedByService, 400)
+      }
+      const errors: ProviderErrorReason[] = candidate.canCreateInfo?.map(
+        (key) => {
+          switch (key) {
+            case ReasonKey.UnderAge:
+              return errorMessages.age
+            case ReasonKey.NoCitizenship:
+              return errorMessages.citizenship
+            case ReasonKey.NotISResidency:
+              return errorMessages.residency
+            case ReasonKey.CollectionNotOpen:
+              return errorMessages.active
+            case ReasonKey.AlreadyOwner:
+              return errorMessages.owner
+            default:
+              return errorMessages.deniedByService
+          }
+        },
+      )
+      throw new TemplateApiError(errors, 405)
     }
 
     return candidate
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection =
-      await this.signatureCollectionClientService.currentCollection()
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
+    if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,
         405,
@@ -53,14 +86,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
-      currentCollection.candidates.some(
+      latestCollection.candidates.some(
         (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
     }
 
-    return currentCollection
+    return latestCollection
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -97,6 +130,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       .parliamentaryCollection.data as Collection
 
     const input = {
+      collectionType: this.collectionType,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]

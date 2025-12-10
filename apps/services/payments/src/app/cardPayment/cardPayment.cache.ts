@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true') {
             name: 'cardPayment',
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
-          }),
+          }) as any,
         ),
       }
     },

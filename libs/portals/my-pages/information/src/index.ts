@@ -6,6 +6,7 @@ export * from './lib/paths'
 export * from './components/FamilyMemberCard/FamilyMemberCard'
 export * from './screens/Notifications/Notifications.generated'
 export * from './utils/notificationLinkResolver'
+export * from './utils/parseDelegationTypeFeatureFlagValue'
 
 /**
  * This is a special use case.

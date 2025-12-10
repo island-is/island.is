@@ -83,28 +83,35 @@ import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import { ApplicationRights } from '@island.is/clients/vmst'
 import isSameDay from 'date-fns/isSameDay'
 
+/**
+ * Returns the most appropriate date related to the child's birth or adoption.
+ *
+ * Priority of returned value:
+ * 1. If the child is adopted, returns `adoptionDate`.
+ * 2. If the child has been born, returns `dateOfBirth`.
+ * 3. Otherwise, returns `expectedDateOfBirth`.
+ */
 export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
-  returnBirthDate = false,
 ): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
   )
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
 
   if (!selectedChild) {
     return undefined
   }
 
-  if (returnBirthDate) {
-    const { dateOfBirth } = getApplicationExternalData(application.externalData)
-
-    if (dateOfBirth?.data?.dateOfBirth) return dateOfBirth?.data?.dateOfBirth
-  }
-
+  // If the child is adopted, return the adoption date
   if (selectedChild.expectedDateOfBirth === '')
     return selectedChild.adoptionDate
 
+  // If the child has been born, return the actual date of birth
+  if (dateOfBirth?.data?.dateOfBirth) return dateOfBirth?.data?.dateOfBirth
+
+  // Otherwise, return the expected date of birth (child not yet born)
   return selectedChild.expectedDateOfBirth
 }
 
@@ -158,9 +165,9 @@ export const formatPeriods = (
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
     } else if (isThisMonth(startDateDateTime)) {
-      if (canDelete && today.getDate() >= 20) {
+      if (canDelete && today.getDate() >= 24) {
         canDelete = false
-      } else if (!canDelete && today.getDate() < 20) {
+      } else if (!canDelete && today.getDate() < 24) {
         canDelete = true
       }
     }
@@ -1346,16 +1353,16 @@ export const getLastValidPeriodEndDate = (
 
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
-    // Applicant has to start from begining of next month if today is >= 20
-    if (today.getDate() >= 20) {
+    // Applicant has to start from begining of next month if today is >= 24
+    if (today.getDate() >= 24) {
       return addMonths(beginningOfMonth, 1)
     }
 
     return lastEndDate
   }
 
-  // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month
-  if (today.getDate() >= 20 && lastEndDate.getTime() < today.getTime()) {
+  // Current Date is >= 24 and lastEndDate is in the past then Applicant could only start from next month
+  if (today.getDate() >= 24 && lastEndDate.getTime() < today.getTime()) {
     return addMonths(beginningOfMonth, 1)
   }
 
@@ -1372,7 +1379,7 @@ export const getLastValidPeriodEndDate = (
 
 export const getMinimumStartDate = (application: Application): Date => {
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
@@ -1645,7 +1652,7 @@ export const synchronizeVMSTPeriods = (
     if (period.paid) {
       newPeriods.push(obj)
     } else if (isThisMonth(new Date(period.from))) {
-      if (today.getDate() >= 20) {
+      if (today.getDate() >= 24) {
         newPeriods.push(obj)
       }
     } else if (new Date(period.from).getTime() <= today.getTime()) {

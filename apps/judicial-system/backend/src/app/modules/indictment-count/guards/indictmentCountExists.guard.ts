@@ -6,11 +6,16 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
+import { IndictmentCountService } from '../indictmentCount.service'
 
 @Injectable()
 export class IndictmentCountExistsGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  constructor(
+    private readonly indictmentCountService: IndictmentCountService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
     const theCase: Case = request.case
@@ -25,11 +30,11 @@ export class IndictmentCountExistsGuard implements CanActivate {
       throw new BadRequestException('Missing indictment count id')
     }
 
-    const indictmentCount = theCase.indictmentCounts?.find(
-      (indictmentCount) => indictmentCount.id === indictmentCountId,
+    const indictmentCount = await this.indictmentCountService.findById(
+      indictmentCountId,
     )
 
-    if (!indictmentCount) {
+    if (!indictmentCount || indictmentCount.caseId !== theCase.id) {
       throw new NotFoundException(
         `Indictment count ${indictmentCountId} of case ${theCase.id} does not exist`,
       )

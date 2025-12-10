@@ -16,15 +16,15 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { LatestCollectionApi, OwnerRequirementsApi } from '../dataProviders'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -76,7 +76,7 @@ export const Prerequisites: Form = buildForm({
               provider: OwnerRequirementsApi,
             }),
             buildDataProviderItem({
-              provider: CurrentCollectionApi,
+              provider: LatestCollectionApi,
             }),
           ],
         }),

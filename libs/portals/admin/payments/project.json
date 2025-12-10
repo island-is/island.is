@@ -1,0 +1,26 @@
+{
+  "name": "portals-admin-payments",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/admin/payments/src",
+  "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/payments"],
+      "options": {
+        "jestConfig": "libs/portals/admin/payments/jest.config.ts"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/payments/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/admin/payments/codegen.yml"
+      }
+    }
+  }
+}

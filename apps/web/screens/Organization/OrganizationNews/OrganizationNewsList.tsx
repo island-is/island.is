@@ -32,7 +32,6 @@ import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
-import { organizationHasDigitalIcelandNewsVisuals } from '@island.is/web/utils/organization'
 import { getIntParam } from '@island.is/web/utils/queryParams'
 
 import {
@@ -75,7 +74,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationnewsoverview')
 
   const n = useNamespaceStrict(namespace)
 
@@ -206,14 +205,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
-        variant={
-          organizationPage.slug === 'stafraent-island' ||
-          organizationPage.slug === 'digital-iceland' ||
-          (organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
-            (namespace?.digitalIcelandNewsVisualsEnabled ?? false))
-            ? 'digital-iceland'
-            : 'default'
-        }
+        variant="digital-iceland"
       />
     </OrganizationWrapper>
   )
@@ -251,6 +243,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
           input: {
             slug: organizationPageSlug,
             lang: locale as Locale,
+            subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
           },
         },
       }),

@@ -35,14 +35,49 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
-  historyLogApprovedByReviewer: {
-    id: 'ta.tvo.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af samþykktaraðila',
-    description: 'History log approved by reviewer',
-  },
   historyLogSentApplication: {
     id: 'ta.tvo.application:historyLogSentApplication',
     defaultMessage: 'Umsókn send á Samgöngustofu',
     description: 'History log application sent',
+  },
+  historyLogApprovedByBuyer: {
+    id: 'ta.tvo.application:historyLogApprovedByBuyer',
+    defaultMessage: 'Samþykkt af kaupanda',
+    description: 'History log when application is approved by buyer',
+  },
+  historyLogApprovedByBuyerCoOwner: {
+    id: 'ta.tvo.application:historyLogApprovedByBuyerCoOwner',
+    defaultMessage: 'Samþykkt af meðeiganda kaupanda',
+    description: 'History log when application is approved by buyer co-owner',
+  },
+  historyLogApprovedByBuyerOperator: {
+    id: 'ta.tvo.application:historyLogApprovedByBuyerOperator',
+    defaultMessage: 'Samþykkt af umráðamanni kaupanda',
+    description: 'History log when application is approved by buyer operator',
+  },
+  historyLogApprovedBySellerCoOwner: {
+    id: 'ta.tvo.application:historyLogApprovedBySellerCoOwner',
+    defaultMessage: 'Samþykkt af meðeiganda seljanda',
+    description: 'History log when application is approved by seller co-owner',
+  },
+  historyLogRejectedByBuyer: {
+    id: 'ta.tvo.application:historyLogRejectedByBuyer',
+    defaultMessage: 'Hafnað af kaupanda',
+    description: 'History log when application is rejected by buyer',
+  },
+  historyLogRejectedByBuyerCoOwner: {
+    id: 'ta.tvo.application:historyLogRejectedByBuyerCoOwner',
+    defaultMessage: 'Hafnað af meðeiganda kaupanda',
+    description: 'History log when application is rejected by buyer co-owner',
+  },
+  historyLogRejectedByBuyerOperator: {
+    id: 'ta.tvo.application:historyLogRejectedByBuyerOperator',
+    defaultMessage: 'Hafnað af umráðamanni kaupanda',
+    description: 'History log when application is rejected by buyer operator',
+  },
+  historyLogRejectedBySellerCoOwner: {
+    id: 'ta.tvo.application:historyLogRejectedBySellerCoOwner',
+    defaultMessage: 'Hafnað af meðeiganda seljanda',
+    description: 'History log when application is rejected by seller co-owner',
   },
 })

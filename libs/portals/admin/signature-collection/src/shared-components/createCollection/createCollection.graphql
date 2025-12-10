@@ -1,5 +1,7 @@
 mutation CreateCollection($input: SignatureCollectionListInput!) {
   signatureCollectionAdminCreate(input: $input) {
     slug
+    success
+    reasons
   }
 }

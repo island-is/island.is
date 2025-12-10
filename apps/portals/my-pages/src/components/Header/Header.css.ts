@@ -75,3 +75,7 @@ globalStyle(`${overview} svg`, {
     },
   },
 })
+
+export const search = style({
+  maxWidth: '286px',
+})
