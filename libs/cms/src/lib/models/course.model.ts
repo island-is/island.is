@@ -39,8 +39,8 @@ export class Course {
   @Field(() => String)
   title!: string
 
-  @CacheField(() => [SliceUnion])
-  cardIntro!: Array<typeof SliceUnion>
+  @CacheField(() => [SliceUnion], { nullable: true })
+  cardIntro?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
   description!: Array<typeof SliceUnion>
