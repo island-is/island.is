@@ -101,16 +101,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             status: undefined,
             lastNode: item?.isRenewable
               ? {
-                  type: 'action',
+                  type: 'action' as const,
                   label: formatMessage(messages.renew),
                   action: () => {
                     setActivePrescription(item)
                     setOpenModal(true)
                   },
-                  icon: { icon: 'reload', type: 'outline' },
+                  icon: { icon: 'reload' as const, type: 'outline' as const },
                 }
               : {
-                  type: 'info',
+                  type: 'info' as const,
                   label: mapBlockedStatus(
                     item.renewalBlockedReason?.toString() ?? '',
                     formatMessage,
@@ -208,6 +208,9 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                           showStrength
                           label={formatMessage(messages.dispenseHistory)}
                           data={item.dispensations.map((dispensation, di) => ({
+                            id:
+                              dispensation.id.toString() ??
+                              dispensation.name + '-' + di.toString(),
                             date: formatDate(dispensation?.date),
                             medicine: dispensation.name ?? '',
                             strength: dispensation.strength ?? '',

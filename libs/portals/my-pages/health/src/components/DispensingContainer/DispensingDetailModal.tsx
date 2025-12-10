@@ -72,7 +72,7 @@ const DispensingDetailModal: React.FC<Props> = ({
                 />
                 <DispensingDetailModalItem
                   label={formatMessage(messages.dispensations, { arg: number })}
-                  value={formatDate(activeDispensation.issueDate)}
+                  value={formatDate(activeDispensation.date)}
                 />
                 <DispensingDetailModalItem
                   blue

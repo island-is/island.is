@@ -11,6 +11,7 @@ import React, { ReactNode } from 'react'
 import * as styles from './DispensingContainer.css'
 
 export interface DispensingItemProps {
+  id: string
   number: string
   date: string
   pharmacy: string

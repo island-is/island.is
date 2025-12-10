@@ -47,7 +47,7 @@ const DispensingContainer: React.FC<Props> = ({
           <Box
             background={i % 2 === 0 ? 'white' : 'blue100'}
             padding={1}
-            key={`dispensing-item-container-${i}`}
+            key={`dispensing-item-container-${item.id}`}
           >
             <Box className={styles.text} marginBottom={'smallGutter'}>
               <Text fontWeight="medium">
@@ -94,6 +94,7 @@ const DispensingContainer: React.FC<Props> = ({
         <Box background="blue100">
           <GridContainer className={styles.grid}>
             <DispensingItem
+              id=""
               number={formatMessage(messages.vaccinesTableHeaderNr)}
               date={formatMessage(messages.vaccinesTableHeaderDate)}
               pharmacy={formatMessage(messages.dispensingPlace)}
@@ -113,6 +114,7 @@ const DispensingContainer: React.FC<Props> = ({
             />
             {data.map((item, i) => (
               <DispensingItem
+                id={item.id}
                 date={item.date}
                 icon={item.icon}
                 number={item.number}
@@ -120,7 +122,7 @@ const DispensingContainer: React.FC<Props> = ({
                 pharmacy={item.pharmacy}
                 quantity={item.quantity}
                 medicine={item.medicine}
-                key={`dispensing-item-${i}`}
+                key={`dispensing-item-${item.id}`}
                 backgroundColor={i % 2 === 0 ? 'white' : 'blue'}
                 button={item.button}
               />

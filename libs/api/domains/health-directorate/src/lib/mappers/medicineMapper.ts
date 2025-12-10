@@ -91,7 +91,9 @@ export const mapDispensationItem = (
   const quantity = item.product.quantity ?? 0
 
   return {
-    id: item.product.id,
+    id: [item.product.id, item.dispensationDate?.toISOString()]
+      .filter((x) => isDefined(x))
+      .join('-'),
     name: item.product.name,
     quantity: [quantity.toString(), item.product.unit]
       .filter((x) => isDefined(x))

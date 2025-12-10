@@ -103,6 +103,9 @@ const MedicinePrescriptionHistory = () => {
                       : item.dispensations
                     )?.map((subItem, subIndex) => {
                       return {
+                        id:
+                          subItem.id ??
+                          subItem.name + '-' + subIndex.toString(),
                         pharmacy:
                           subItem.agentName ??
                           formatMessage(messages.notRegistered),
