@@ -216,48 +216,29 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
 
   return (
     <Box>
-      <Breadcrumbs
-        items={[
-          { title: 'Ísland.is', href: '/stjornbord' },
-          {
-            title: formatMessage(m.applicationSystem),
-            href: `/stjornbord${ApplicationSystemPaths.Root}`,
-          },
-          { title: formatMessage(m.overview) },
-        ]}
-      />
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
-      {isSuperAdmin ? (
-        <Filters
-          onTypeIdChange={handleTypeIdChange}
-          onSearchChange={handleSearchChange}
-          onFilterChange={handleMultiChoiceFilterChange}
-          onDateChange={handleDateChange}
-          onFilterClear={clearFilters}
-          multiChoiceFilters={multiChoiceFilters}
-          filters={filters}
-          applications={availableApplications ?? []}
-          organizations={availableOrganizations ?? []}
-          numberOfDocuments={applicationAdminList?.length}
-        />
-      ) : (
-        <InstitutionFilters
-          onTypeIdChange={handleTypeIdChange}
-          onSearchStrChange={handleSearchStrChange}
-          onSearchChange={handleSearchChange}
-          onFilterChange={handleMultiChoiceFilterChange}
-          onDateChange={handleDateChange}
-          onFilterClear={clearFilters}
-          multiChoiceFilters={multiChoiceFilters}
-          filters={filters}
-          numberOfDocuments={applicationAdminList?.length}
-          useAdvancedSearch={useAdvancedSearch}
-        />
-      )}
 
-      {isLoading && applicantNationalId.length === 10 ? (
+      <Filters
+        onTypeIdChange={handleTypeIdChange}
+        onSearchChange={handleSearchChange}
+        onFilterChange={handleMultiChoiceFilterChange}
+        onDateChange={handleDateChange}
+        onFilterClear={clearFilters}
+        multiChoiceFilters={multiChoiceFilters}
+        filters={filters}
+        applications={availableApplications ?? []}
+        organizations={availableOrganizations ?? []}
+        numberOfDocuments={
+          isSuperAdmin
+            ? superData?.applicationApplicationsAdmin?.count
+            : institutionData?.applicationApplicationsInstitutionAdmin?.count
+        }
+        showInstitutionFilter={isSuperAdmin}
+      />
+
+      {isLoading ? (
         <SkeletonLoader
           height={60}
           repeat={10}

@@ -198,7 +198,7 @@ export const ApplicationDetails = ({
         </Box>
       </Box>
 
-      {application && (
+      {/* {application && (
         <ApplicationCard
           shouldShowCardButtons={shouldShowCardButtons}
           application={{
@@ -211,7 +211,7 @@ export const ApplicationDetails = ({
             actionCard: application.actionCard as ActionCardMetaData,
           }}
         />
-      )}
+      )} */}
     </Box>
   )
 }

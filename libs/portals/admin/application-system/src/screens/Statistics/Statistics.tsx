@@ -7,7 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
-import type { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
+import type { ApplicationFilters } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
 import { useState } from 'react'
@@ -64,16 +64,6 @@ const Statistics = () => {
 
   return (
     <Box>
-      <Breadcrumbs
-        items={[
-          { title: 'Ísland.is', href: '/stjornbord' },
-          {
-            title: formatMessage(m.applicationSystem),
-            href: `/stjornbord${ApplicationSystemPaths.Root}`,
-          },
-          { title: formatMessage(m.statistics) },
-        ]}
-      />
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
