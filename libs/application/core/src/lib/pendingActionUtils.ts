@@ -18,25 +18,25 @@ const getPendingReviewersText = (
 }
 
 const isCurrentUserReviewPending = (
-  currentUser: string,
+  currentUserNationalId: string,
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
 ) => {
-  const currentReviewer = reviewers.find((x) => x.nationalId === currentUser)
+  const currentReviewer = reviewers.find((x) => x.nationalId === currentUserNationalId)
   return currentReviewer?.hasApproved === false
 }
 
 /**
  *
- * @param currentUser - nationalId of the currently logged-in user
+ * @param currentUserNationalId - nationalId of the currently logged-in user
  * @param reviewers - array of all reviewers for this state, if the reviewer has approved reviewer.hasApproved must be TRUE
  * @returns a message telling the user to review if they need to, otherwise a list of reviewers yet to review.
  */
 export const getReviewStatePendingAction = (
-  currentUser: string,
+  currentUserNationalId: string,
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
 ): PendingAction => {
   // If the current user needs to review, return "you need to review" message
-  if (isCurrentUserReviewPending(currentUser, reviewers)) {
+  if (isCurrentUserReviewPending(currentUserNationalId, reviewers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
