@@ -284,6 +284,15 @@ type InputSettingsActions =
         update: (updatedForm: FormSystemForm) => void
       }
     }
+  | {
+      type: 'SET_ANY_FIELD_SETTING'
+      payload: {
+        property: string
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        value: any
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
 
 export type ControlAction =
   | ActiveItemActions
@@ -921,6 +930,31 @@ export const controlReducer = (
         },
       }
       update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_ANY_FIELD_SETTING': {
+      const field = activeItem.data as FormSystemField
+      const { property, value, update } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field.fieldSettings,
+          [property]: value,
+        },
+      }
+      if (update) {
+        update({ type: 'Field', data: newField })
+      }
       return {
         ...state,
         activeItem: {

@@ -77,7 +77,7 @@ const OverviewBody = ({
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayOpenCaseReference={true} />
         </Box>
         {/* 
     NOTE: Temporarily hidden while list of laws broken is not complete in
