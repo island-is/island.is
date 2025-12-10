@@ -76,7 +76,7 @@ export const partiesSubsection = buildSubSection({
         buildPhoneField({
           condition: applicantIsCompany,
           id: 'parties.signatory.phone',
-          enableCountrySelector: true,
+          enableCountrySelector: false,
           required: true,
           title: m.misc.phoneNumber,
           width: 'half',
@@ -147,7 +147,7 @@ export const partiesSubsection = buildSubSection({
         buildPhoneField({
           condition: shouldShowRepresentativeTable,
           id: 'parties.landlordInfo.representativeTable.0.phone',
-          enableCountrySelector: true,
+          enableCountrySelector: false,
           required: true,
           title: m.misc.phoneNumber,
           width: 'half',
