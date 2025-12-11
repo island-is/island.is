@@ -191,7 +191,6 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
-
   const canUserCompleteCase =
     (workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.RULING &&
