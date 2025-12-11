@@ -151,6 +151,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const formattedSubject = this.formatMessage(
       strings.indictmentCompletedWithRuling.subject,
       {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
@@ -158,6 +159,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const formattedBody = this.formatMessage(
       strings.indictmentCompletedWithRuling.body,
       {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
         policeCaseNumber:
           theCase.policeCaseNumbers.length > 0
