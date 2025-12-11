@@ -339,6 +339,7 @@ const template: ApplicationTemplate<
           actionCard: {
             tag: {
               label: sm.dismissedTag,
+              variant: 'red',
             },
             pendingAction: {
               title: m.states.applicationDismissed,
