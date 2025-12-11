@@ -33,7 +33,11 @@ export const FilesValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     isValidValue(financesDataCollectionPermission)
 
   // Set validation callback
-  setBeforeSubmitCallback &&
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) {
+      return
+    }
+
     setBeforeSubmitCallback(async () => {
       if (!allFieldsFilled) {
         setError(filesValidation, {
@@ -43,6 +47,7 @@ export const FilesValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
       return [true, null]
     })
+  }, [setBeforeSubmitCallback, allFieldsFilled, setError])
 
   // Clear errors when all fields are filled
   useEffect(() => {
