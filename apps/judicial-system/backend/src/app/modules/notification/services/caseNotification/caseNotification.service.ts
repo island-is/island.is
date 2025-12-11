@@ -2068,19 +2068,14 @@ export class CaseNotificationService extends BaseNotificationService {
     link,
     name,
     email,
-    appealDeadline,
   }: {
     courtCaseNumber?: string
     link?: string
     name?: string
     email?: string
-    appealDeadline?: Date
   } = {}) {
     const subject = `Nýr úrskurður í máli ${courtCaseNumber}`
-    const html = `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Kærufrestur rennur út ${formatDate(
-      appealDeadline,
-      'PPPp',
-    )}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a><br/>(Athugið að úrskurði í sakamálum er enn ekki hægt að kæra í gegnum Réttarvörslugátt)`
+    const html = `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a><br/>(Athugið að úrskurði í sakamálum er enn ekki hægt að kæra í gegnum Réttarvörslugátt)`
 
     return this.sendEmail({
       subject,
@@ -2094,17 +2089,17 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendRulingOrderAddedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    // get appeal deadline 
+    // get appeal deadline
     const promises = []
 
     if (theCase.registrar) {
       promises.push(
-        this.sendCaseFilesUpdatedNotification(
-          theCase.courtCaseNumber,
-          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
-          theCase.registrar.name,
-          theCase.registrar.email,
-        ),
+        this.sendRulingOrderAddedNotification({
+          courtCaseNumber: theCase.courtCaseNumber,
+          link: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          name: theCase.registrar.name,
+          email: theCase.registrar.email,
+        }),
       )
     }
 
@@ -2115,17 +2110,18 @@ export class CaseNotificationService extends BaseNotificationService {
     uniqueSpokespersons.forEach((civilClaimant) => {
       if (civilClaimant.spokespersonEmail) {
         promises.push(
-          this.sendCaseFilesUpdatedNotification(
-            theCase.courtCaseNumber,
-            civilClaimant.spokespersonNationalId &&
+          this.sendRulingOrderAddedNotification({
+            courtCaseNumber: theCase.courtCaseNumber,
+            link:
+              civilClaimant.spokespersonNationalId &&
               formatDefenderRoute(
                 this.config.clientUrl,
                 theCase.type,
                 theCase.id,
               ),
-            civilClaimant.spokespersonName,
-            civilClaimant.spokespersonEmail,
-          ),
+            name: civilClaimant.spokespersonName,
+            email: civilClaimant.spokespersonEmail,
+          }),
         )
       }
     })
@@ -2137,28 +2133,29 @@ export class CaseNotificationService extends BaseNotificationService {
     uniqueDefendants.forEach((defendant) => {
       if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
         promises.push(
-          this.sendCaseFilesUpdatedNotification(
-            theCase.courtCaseNumber,
-            defendant.defenderNationalId &&
+          this.sendRulingOrderAddedNotification({
+            courtCaseNumber: theCase.courtCaseNumber,
+            link:
+              defendant.defenderNationalId &&
               formatDefenderRoute(
                 this.config.clientUrl,
                 theCase.type,
                 theCase.id,
               ),
-            defendant.defenderName,
-            defendant.defenderEmail,
-          ),
+            name: defendant.defenderName,
+            email: defendant.defenderEmail,
+          }),
         )
       }
     })
 
     promises.push(
-      this.sendCaseFilesUpdatedNotification(
-        theCase.courtCaseNumber,
-        `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
-        theCase.prosecutor?.name,
-        theCase.prosecutor?.email,
-      ),
+      this.sendRulingOrderAddedNotification({
+        courtCaseNumber: theCase.courtCaseNumber,
+        link: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        name: theCase.prosecutor?.name,
+        email: theCase.prosecutor?.email,
+      }),
     )
 
     const recipients = await Promise.all(promises)
