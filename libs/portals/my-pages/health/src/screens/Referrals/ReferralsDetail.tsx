@@ -29,36 +29,45 @@ const ReferralsDetail: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.referrals)}
-      intro={formatMessage(messages.referralsIntro)}
+      title={referral?.serviceName ?? formatMessage(messages.referrals)}
+      intro={formatMessage(messages.referralsDetailIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirVaccinationsTooltip,
       )}
+      loading={loading}
       marginBottom={6}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
-        <InfoLineStack space={1}>
-          <InfoLine
-            label={formatMessage(messages.referralFor)}
-            content={
-              referral?.serviceName ?? formatMessage(messages.noDataRegistered)
-            }
-            loading={loading}
-          />
+        <InfoLineStack space={1} label={formatMessage(messages.information)}>
           <InfoLine
             label={formatMessage(messages.referralFrom)}
             content={
-              referral?.fromContactInfo?.name ??
-              formatMessage(messages.noDataRegistered)
+              [
+                referral?.fromContactInfo?.name,
+                referral?.fromContactInfo?.profession,
+              ]
+                .filter(Boolean)
+                .join(', ') || formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
+
           <InfoLine
-            label={formatMessage(messages.medicineValidTo)}
+            label={formatMessage(messages.publicationPlace)}
+            content={[
+              referral?.fromContactInfo?.department,
+              referral?.fromContactInfo?.institute,
+            ]
+              .filter(Boolean)
+              .join(', ')}
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.publicationDate)}
             content={
-              formatDate(referral?.validUntilDate) ??
+              formatDate(referral?.createdDate) ??
               formatMessage(messages.noDataRegistered)
             }
             loading={loading}
@@ -71,10 +80,22 @@ const ReferralsDetail: React.FC = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.recepientUpperCase)}
+            label={formatMessage(messages.medicineValidTo)}
             content={
-              referral?.toContactInfo?.name ??
+              formatDate(referral?.validUntilDate) ??
               formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.referralTo)}
+            content={
+              [
+                referral?.toContactInfo?.name,
+                referral?.toContactInfo?.profession,
+              ]
+                .filter(Boolean)
+                .join(', ') || formatMessage(messages.openReferral)
             }
             loading={loading}
           />
@@ -85,6 +106,13 @@ const ReferralsDetail: React.FC = () => {
             }
             loading={loading}
           />
+          {referral?.diagnoses && (
+            <InfoLine
+              label={formatMessage(messages.diagnoses)}
+              content={referral?.diagnoses}
+              loading={loading}
+            />
+          )}
         </InfoLineStack>
       )}
     </IntroWrapper>

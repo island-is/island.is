@@ -230,6 +230,7 @@ export class HealthDirectorateService {
           validUntilDate: item.validUntilDate,
           stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
+          diagnoses: item.diagnoses?.join(', '),
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
         }

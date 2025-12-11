@@ -431,7 +431,6 @@ export const messages = defineMessages({
     defaultMessage: 'Inneign',
     id: 'sp.health:credit',
   },
-
   debit: {
     defaultMessage: 'Skuld',
     id: 'sp.health:debit',
@@ -782,6 +781,10 @@ export const messages = defineMessages({
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
     id: 'sp.health:landlaeknir-patient-permits-tooltip',
   },
+  landlaeknirReferralTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tilvísanir.',
+    id: 'sp.health:landlaeknir-referral-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
@@ -867,6 +870,10 @@ export const messages = defineMessages({
     id: 'sp.health:referrals-intro',
     defaultMessage: 'Hér finnur þú tilvísanir ...',
   },
+  referralsDetailIntro: {
+    id: 'sp.health:referrals-detail-intro',
+    defaultMessage: 'Hér finnur þú nánari upplýsingar um tilvísunina.',
+  },
   referralFor: {
     id: 'sp.health:referral-for',
     defaultMessage: 'Tilvísun fyrir',
@@ -874,6 +881,14 @@ export const messages = defineMessages({
   referralFrom: {
     id: 'sp.health:referral-from',
     defaultMessage: 'Útgefandi',
+  },
+  referralTo: {
+    id: 'sp.health:referral-to',
+    defaultMessage: 'Viðtakandi',
+  },
+  openReferral: {
+    id: 'sp.health:open-referral',
+    defaultMessage: 'Opin tilvísun',
   },
   noReferrals: {
     id: 'sp.health:no-referrals',
@@ -2215,5 +2230,25 @@ export const messages = defineMessages({
   weekdaySundayAcc: {
     defaultMessage: 'Sunnudaginn',
     id: 'sp.health:weekday-sunday-acc',
+  },
+  profession: {
+    defaultMessage: 'Starfsheiti',
+    id: 'sp.health:profession',
+  },
+  department: {
+    defaultMessage: 'Deild',
+    id: 'sp.health:department',
+  },
+  diagnoses: {
+    defaultMessage: 'Sjúkdómsgreining',
+    id: 'sp.health:diagnoses',
+  },
+  information: {
+    defaultMessage: 'Upplýsingar',
+    id: 'sp.health:information',
+  },
+  publicationPlace: {
+    defaultMessage: 'Útgáfustaður',
+    id: 'sp.health:publication-place',
   },
 })
