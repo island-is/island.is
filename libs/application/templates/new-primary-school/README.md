@@ -36,9 +36,9 @@ If the application is for a private school, the applicant can register a payer t
 
 If for some reason the payer rejects the application, it goes to this state. The applicant needs to modify the application and resubmit it.
 
-#### Edit
+#### Submitted
 
-The application enters this state if the other guardian or the payer rejects it. From this state, the application must be modified.
+The application enters this state once all required approvals have been completed. If other guardian and/or payer approvals are required, they must be obtained before the application moves from Draft to Submitted. Otherwise, it moves directly from Draft to Submitted.
 
 #### Approved
 
