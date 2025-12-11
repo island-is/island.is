@@ -260,7 +260,6 @@ export class FileService {
     return false
   }
 
-  // TODO: also support for ruling order pdf
   async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseObject(
