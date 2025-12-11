@@ -35,6 +35,8 @@ export const ApplicationCardHistory = ({ items }: Props) => {
 
   if (!items || items.length === 0) return null
 
+  console.log('items', items)
+
   const height = historyState === 'open' ? 'auto' : maxHistoryHeight
 
   return (

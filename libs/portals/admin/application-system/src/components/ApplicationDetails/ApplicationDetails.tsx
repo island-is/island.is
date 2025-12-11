@@ -56,6 +56,7 @@ export const ApplicationDetails = ({
   onCopyApplicationLink,
   shouldShowCardButtons = true,
 }: Props) => {
+  console.log('application', application)
   const { formatMessage } = useLocale()
 
   const handleCopyApplicationId = () => {
@@ -198,7 +199,7 @@ export const ApplicationDetails = ({
         </Box>
       </Box>
 
-      {/* {application && (
+      {application && (
         <ApplicationCard
           shouldShowCardButtons={shouldShowCardButtons}
           application={{
@@ -211,7 +212,7 @@ export const ApplicationDetails = ({
             actionCard: application.actionCard as ActionCardMetaData,
           }}
         />
-      )} */}
+      )}
     </Box>
   )
 }
