@@ -39,6 +39,9 @@ export class Course {
   @Field(() => String)
   title!: string
 
+  @CacheField(() => [SliceUnion], { nullable: true })
+  cardIntro?: Array<typeof SliceUnion>
+
   @CacheField(() => [SliceUnion])
   description!: Array<typeof SliceUnion>
 
@@ -56,6 +59,9 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
   return {
     id: sys.id,
     title: (fields.title ?? '').trim(),
+    cardIntro: fields.cardIntro
+      ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
+      : [],
     description: fields.description
       ? mapDocument(fields.description, `${sys.id}:description`)
       : [],

@@ -12,6 +12,7 @@ import {
   PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import {
@@ -22,6 +23,7 @@ import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -35,6 +37,7 @@ import {
 import {
   AgentType,
   ApplicationType,
+  AttachmentOptions,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   OptionsType,
@@ -369,6 +372,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const attachmentsFiles =
+    getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
+
+  const attachmentsAnswer = getValueViaPath<AttachmentOptions>(
+    answers,
+    'attachments.answer',
+  )
+
   const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
 
   const fieldInspection = getValueViaPath<YesOrNo>(
@@ -466,6 +477,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachmentsFiles,
+    attachmentsAnswer,
     terms,
     fieldInspection,
     additionalDataProvisioning,
@@ -719,6 +732,14 @@ export const getApplicationType = (
   const nationalId = childNationalId || ''
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
+  if (
+    (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+    nationalId === '5555555559' // Bína Maack
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
 
   if (!isValid(nationalId) || !yearOfBirth) {
     return undefined

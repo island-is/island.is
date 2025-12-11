@@ -9,7 +9,7 @@ export const overviewMessages = defineMessages({
   description: {
     id: 'fca.application:overview.description',
     defaultMessage:
-      'Vinsamlegast farðu vel yfir að allar upplýsingar séu rétt skráðar inn áður en umsóknin er send inn til Húsnæðis og mannvirkjastofnunar.',
+      'Vinsamlegast farðu vel yfir að allar upplýsingar séu rétt skráðar inn áður en umsóknin er send inn til HMS.',
     description: 'Overview description',
   },
   name: {
