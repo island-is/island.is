@@ -97,8 +97,6 @@ const MedicinePrescriptionHistory = () => {
                   <DispensingContainer
                     backgroundColor="blue"
                     label={formatMessage(messages.dispenseHistory)}
-                    showMedicineName
-                    showStrength
                     data={(dispensations && dispensations.id === item.atcCode
                       ? dispensations.data
                       : item.dispensations
@@ -193,7 +191,6 @@ const MedicinePrescriptionHistory = () => {
         <DispensingDetailModal
           id={activeDispensation.id}
           activeDispensation={activeDispensation.activeDispensation}
-          number={activeDispensation.dispensationNumber}
           toggleClose={openModal}
           isVisible={openModal}
           closeModal={() => {

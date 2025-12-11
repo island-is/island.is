@@ -14,8 +14,6 @@ import DispensingItem, { DispensingItemProps } from './DispensingItem'
 
 interface Props {
   label: string
-  showMedicineName?: boolean
-  showStrength?: boolean
   data: DispensingItemProps[]
   backgroundColor?: 'blue' | 'white'
 }
@@ -23,8 +21,6 @@ interface Props {
 const DispensingContainer: React.FC<Props> = ({
   label,
   data,
-  showMedicineName = false,
-  showStrength = false,
   backgroundColor,
 }) => {
   const { formatMessage } = useLocale()
@@ -49,13 +45,6 @@ const DispensingContainer: React.FC<Props> = ({
             padding={1}
             key={`dispensing-item-container-${item.id}`}
           >
-            <Box className={styles.text} marginBottom={'smallGutter'}>
-              <Text fontWeight="medium">
-                {formatMessage(messages.dispensations, {
-                  arg: i + 1,
-                })}
-              </Text>
-            </Box>
             <Box className={styles.text} marginBottom={'smallGutter'}>
               <Text fontWeight="regular">
                 {[
@@ -95,29 +84,22 @@ const DispensingContainer: React.FC<Props> = ({
           <GridContainer className={styles.grid}>
             <DispensingItem
               id=""
-              number={formatMessage(messages.vaccinesTableHeaderNr)}
               date={formatMessage(messages.vaccinesTableHeaderDate)}
               pharmacy={formatMessage(messages.dispensingPlace)}
               quantity={formatMessage(messages.medicineQuantity)}
-              medicine={
-                showMedicineName
-                  ? formatMessage(messages.medicineTitle)
-                  : undefined
-              }
-              strength={
-                showStrength
-                  ? formatMessage(messages.medicineStrength)
+              medicine={formatMessage(messages.medicineTitle)}
+              strength={formatMessage(messages.medicineStrength)}
+              button={
+                data.some((item) => item.button)
+                  ? { text: '', onClick: () => undefined }
                   : undefined
               }
               bold
-              icon={undefined}
             />
             {data.map((item, i) => (
               <DispensingItem
                 id={item.id}
                 date={item.date}
-                icon={item.icon}
-                number={item.number}
                 strength={item.strength}
                 pharmacy={item.pharmacy}
                 quantity={item.quantity}

@@ -1,15 +1,19 @@
 import { HealthDirectoratePrescription } from '@island.is/api/schema'
-import { Box, Icon, LoadingDots, Stack } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate, SortableTable } from '@island.is/portals/my-pages/core'
+import {
+  formatDate,
+  SortableTable,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import React, { useEffect, useState } from 'react'
 import DispensingContainer from '../../../components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from '../../../components/NestedInfoLines/NestedInfoLines'
 import { messages } from '../../../lib/messages'
+import { mapBlockedStatus } from '../../../utils/mappers'
 import { PrescriptionItem } from '../../../utils/types'
 import { useGetPrescriptionDocumentsLazyQuery } from '../Prescriptions.generated'
 import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionModal'
-import { mapBlockedStatus } from '../../../utils/mappers'
 
 const STRING_MAX_LENGTH = 22
 
@@ -27,6 +31,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
   // This state is used to handle errors, but currently not displayed in the UI. Will be after service fixes
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null)
+  const isMobile = useIsMobile()
   const [prescriptions, setPrescriptions] = useState<
     Array<PrescriptionItem> | undefined
   >(data)
@@ -92,147 +97,155 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
         emptyTableMessage={formatMessage(messages.noSearchResults)}
         tableLoading={loading}
         items={
-          prescriptions?.map((item, i) => ({
-            id: `${item.id}-${i}`,
-            medicine: item?.name + ' ' + item?.strength,
-            usedFor: item?.indication ?? '',
-            process: item?.amountRemaining ?? '',
-            validTo: formatDate(item?.expiryDate) ?? '',
-            status: undefined,
-            lastNode: item?.isRenewable
-              ? {
-                  type: 'action' as const,
-                  label: formatMessage(messages.renew),
-                  action: () => {
-                    setActivePrescription(item)
-                    setOpenModal(true)
+          prescriptions?.map((item, i) => {
+            const isExpired = item.expiryDate
+              ? new Date(item.expiryDate) < new Date()
+              : false
+
+            return {
+              id: `${item.id}-${i}`,
+              medicine: item?.name + ' ' + item?.strength,
+              usedFor: item?.indication ?? '',
+              process: item?.amountRemaining ?? '',
+              validTo: isExpired ? (
+                <Tag variant="red" disabled outlined>
+                  {formatMessage(messages.expired)}
+                </Tag>
+              ) : (
+                formatDate(item?.expiryDate) ?? ''
+              ),
+              status: undefined,
+              lastNode: item?.isRenewable
+                ? {
+                    type: 'action' as const,
+                    label: formatMessage(messages.renew),
+                    action: () => {
+                      setActivePrescription(item)
+                      setOpenModal(true)
+                    },
+                    icon: { icon: 'reload' as const, type: 'outline' as const },
+                  }
+                : {
+                    type: 'info' as const,
+                    //TODO: FIX AFTER DESIGNER HAS REVIEWED
+                    label:
+                      (isMobile ? 'Enurnýjun ekki í boði: ' : '') +
+                      mapBlockedStatus(
+                        item.renewalBlockedReason?.toString() ?? '',
+                        formatMessage,
+                      ),
+                    text: formatMessage(messages.notValidForRenewal),
                   },
-                  icon: { icon: 'reload' as const, type: 'outline' as const },
-                }
-              : {
-                  type: 'info' as const,
-                  label: mapBlockedStatus(
-                    item.renewalBlockedReason?.toString() ?? '',
-                    formatMessage,
-                  ),
-                  text: formatMessage(messages.notValidForRenewal),
-                },
 
-            onExpandCallback: () => {
-              fetchPDFlink(item.id)
-            },
+              onExpandCallback: () => {
+                fetchPDFlink(item.id)
+              },
 
-            children: (
-              <Box background="blue100" paddingBottom={1}>
-                <Stack space={2}>
-                  <>
-                    <NestedInfoLines
-                      backgroundColor="blue"
-                      label={formatMessage(messages.moreDetailedInfo)}
-                      data={[
-                        {
-                          title: formatMessage(messages.medicineTitle),
-                          value: item?.name ?? '',
-                          href: item?.url ?? '',
-                          type: 'link',
-                        },
-                        {
-                          title: formatMessage(messages.medicineStrength),
-                          value: item?.strength ?? '',
-                        },
-                        {
-                          title: formatMessage(messages.usedFor),
-                          value: item?.indication ?? '',
-                        },
-                        {
-                          title: formatMessage(messages.usage),
-                          value: item?.dosageInstructions ?? '',
-                        },
-                        ...(pdfLoading
-                          ? [
-                              {
-                                title: formatMessage(messages.fylgiskjalNr, {
-                                  arg: 1,
-                                }),
-                                value: <LoadingDots />,
-                              },
-                            ]
-                          : item.documents?.map((doc, index) => ({
-                              title: formatMessage(messages.fylgiskjalNr, {
-                                arg: index + 1,
-                              }),
-                              value: formatMessage(messages.openFylgiskjalNr, {
-                                arg: index + 1,
-                              }),
-                              type: 'link' as const,
-                              href: doc.url ?? '',
-                            })) ?? []),
-                        {
-                          title: formatMessage(messages.type),
-                          value: item?.type ?? '',
-                        },
-                        {
-                          title: formatMessage(messages.medicineForm),
-                          value: item?.form ?? '',
-                        },
-
-                        {
-                          title: formatMessage(messages.prescribedAmount),
-                          value: item?.totalPrescribedAmount ?? '',
-                        },
-                      ]}
-                    />
-                    <NestedInfoLines
-                      backgroundColor="blue"
-                      label={formatMessage(messages.version)}
-                      data={[
-                        {
-                          title: formatMessage(messages.publicationDate),
-                          value: formatDate(item?.issueDate) ?? '',
-                        },
-                        {
-                          title: formatMessage(messages.doctor),
-                          value: item?.prescriberName ?? '',
-                        },
-                        {
-                          title: formatMessage(messages.medicineValidTo),
-                          value: formatDate(item?.expiryDate) ?? '',
-                        },
-                      ]}
-                    />
-                    {item.dispensations.length > 0 && (
-                      <DispensingContainer
+              children: (
+                <Box background="blue100" paddingBottom={1}>
+                  <Stack space={2}>
+                    <>
+                      <NestedInfoLines
                         backgroundColor="blue"
-                        showMedicineName
-                        showStrength
-                        label={formatMessage(messages.dispenseHistory)}
-                        data={item.dispensations.map((dispensation, di) => ({
-                          id:
-                            dispensation.id.toString() ??
-                            dispensation.name + '-' + di.toString(),
-                          date: formatDate(dispensation?.date),
-                          medicine: dispensation.name ?? '',
-                          strength: dispensation.strength ?? '',
-                          number: (di + 1).toString() ?? '',
-                          pharmacy: dispensation?.pharmacy ?? '',
-                          quantity: dispensation?.amount ?? '',
-                          icon: (
-                            <Icon
-                              icon={dispensation?.date ? 'checkmark' : 'remove'}
-                              size="medium"
-                              color={dispensation?.date ? 'mint600' : 'dark300'}
-                              type="outline"
-                            />
-                          ),
-                        }))}
+                        label={formatMessage(messages.moreDetailedInfo)}
+                        data={[
+                          {
+                            title: formatMessage(messages.medicineTitle),
+                            value: item?.name ?? '',
+                            href: item?.url ?? '',
+                            type: 'link',
+                          },
+                          {
+                            title: formatMessage(messages.medicineStrength),
+                            value: item?.strength ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.usedFor),
+                            value: item?.indication ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.usage),
+                            value: item?.dosageInstructions ?? '',
+                          },
+                          ...(pdfLoading
+                            ? [
+                                {
+                                  title: formatMessage(messages.fylgiskjalNr, {
+                                    arg: 1,
+                                  }),
+                                  value: <LoadingDots />,
+                                },
+                              ]
+                            : item.documents?.map((doc, index) => ({
+                                title: formatMessage(messages.fylgiskjalNr, {
+                                  arg: index + 1,
+                                }),
+                                value: formatMessage(
+                                  messages.openFylgiskjalNr,
+                                  {
+                                    arg: index + 1,
+                                  },
+                                ),
+                                type: 'link' as const,
+                                href: doc.url ?? '',
+                              })) ?? []),
+                          {
+                            title: formatMessage(messages.type),
+                            value: item?.type ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.medicineForm),
+                            value: item?.form ?? '',
+                          },
+
+                          {
+                            title: formatMessage(messages.prescribedAmount),
+                            value: item?.totalPrescribedAmount ?? '',
+                          },
+                        ]}
                       />
-                    )}
-                  </>
-                </Stack>
-              </Box>
-            ),
-            subTitleFirstCol: item?.dosageInstructions ?? '',
-          })) ?? []
+                      <NestedInfoLines
+                        backgroundColor="blue"
+                        label={formatMessage(messages.version)}
+                        data={[
+                          {
+                            title: formatMessage(messages.publicationDate),
+                            value: formatDate(item?.issueDate) ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.doctor),
+                            value: item?.prescriberName ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.medicineValidTo),
+                            value: formatDate(item?.expiryDate) ?? '',
+                          },
+                        ]}
+                      />
+                      {item.dispensations.length > 0 && (
+                        <DispensingContainer
+                          backgroundColor="blue"
+                          label={formatMessage(messages.dispenseHistory)}
+                          data={item.dispensations.map((dispensation, di) => ({
+                            id:
+                              dispensation.id.toString() ??
+                              dispensation.name + '-' + di.toString(),
+                            date: formatDate(dispensation?.date),
+                            medicine: dispensation.name ?? '',
+                            strength: dispensation.strength ?? '',
+                            number: (di + 1).toString() ?? '',
+                            pharmacy: dispensation?.pharmacy ?? '',
+                            quantity: dispensation?.amount ?? '',
+                          }))}
+                        />
+                      )}
+                    </>
+                  </Stack>
+                </Box>
+              ),
+              subTitleFirstCol: item?.dosageInstructions ?? '',
+            }
+          }) ?? []
         }
       />
 

@@ -19,7 +19,6 @@ import DispensingDetailModalItem from './DispensingDetailModalItem'
 interface Props {
   id: string
   activeDispensation: HealthDirectorateMedicineHistoryDispensation
-  number: number
   toggleClose?: boolean
   isVisible: boolean
   closeModal: () => void
@@ -28,7 +27,6 @@ interface Props {
 const DispensingDetailModal: React.FC<Props> = ({
   id,
   activeDispensation,
-  number,
   toggleClose,
   isVisible,
   closeModal,
@@ -71,7 +69,7 @@ const DispensingDetailModal: React.FC<Props> = ({
                   value={activeDispensation.agentName}
                 />
                 <DispensingDetailModalItem
-                  label={formatMessage(messages.dispensations, { arg: number })}
+                  label={formatMessage(messages.date)}
                   value={formatDate(activeDispensation.date)}
                 />
                 <DispensingDetailModalItem
