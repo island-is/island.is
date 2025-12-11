@@ -25,6 +25,7 @@ const NewPermit: React.FC = () => {
 
   const [createPermit, { loading }] = useCreatePatientDataPermitMutation({
     refetchQueries: ['GetPatientDataPermits'],
+    awaitRefetchQueries: true,
   })
 
   const handleSubmit = () => {

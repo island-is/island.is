@@ -23,6 +23,7 @@ const NewMedicineDelegation = () => {
   const [postMedicineDelegation, { loading }] =
     usePostMedicineDelegationMutation({
       refetchQueries: ['GetMedicineDelegations'],
+      awaitRefetchQueries: true,
     })
 
   const submit = () => {
