@@ -51,7 +51,7 @@ export const projectPurchaseSection = buildSubSection({
           width: 'full',
           required: true,
           searchCompanies: true,
-          searchPersons: false,
+          searchPersons: true,
           condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
