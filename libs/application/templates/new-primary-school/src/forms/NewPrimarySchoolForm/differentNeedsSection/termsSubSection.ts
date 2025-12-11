@@ -10,7 +10,6 @@ import { shouldShowPage } from '../../../utils/conditionUtils'
 export const termsSubSection = buildSubSection({
   id: 'termsSubSection',
   title: newPrimarySchoolMessages.differentNeeds.termsSubSectionTitle,
-  // TODO: Hide section if CONTINUING_ENROLLMENT
   condition: (answers, externalData) =>
     shouldShowPage(answers, externalData, ApplicationFeatureKey.TERMS),
   children: [
