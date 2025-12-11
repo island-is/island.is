@@ -38,7 +38,7 @@ const WaitlistsDetail: React.FC = () => {
       intro={formatMessage(messages.waitlistsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirWaitlistTooltip,
       )}
       buttonGroup={[
         <LinkResolver href={'/'} key="link-to-detail-info">

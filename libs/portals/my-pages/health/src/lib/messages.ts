@@ -781,6 +781,10 @@ export const messages = defineMessages({
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
     id: 'sp.health:landlaeknir-patient-permits-tooltip',
   },
+  landlaeknirWaitlistTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með stöðu þinni á biðlistum.',
+    id: 'sp.health:landlaeknir-waitlist-tooltip',
+  },
   landlaeknirReferralTooltip: {
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tilvísanir.',
     id: 'sp.health:landlaeknir-referral-tooltip',

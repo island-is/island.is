@@ -32,7 +32,7 @@ const Referrals: React.FC = () => {
       intro={formatMessage(messages.referralsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirReferralTooltip,
       )}
     >
       {!loading && !error && referrals?.length === 0 && (
