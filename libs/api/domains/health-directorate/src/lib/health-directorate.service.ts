@@ -446,8 +446,9 @@ export class HealthDirectorateService {
         lookup: item.commissionType === 1,
       })),
     }
+    const sorted = sortBy(data.items, 'status', 'asc')
 
-    return data
+    return { items: sorted }
   }
 
   async postMedicineDelegation(
