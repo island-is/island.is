@@ -276,14 +276,16 @@ const useInfoCardItems = () => {
   const splitCase: Item = {
     id: 'split-case-item',
     title: 'Klofið frá',
-    values: [
-      <LinkComponent
-        href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase?.id}`}
-        key={workingCase.splitCase?.id}
-      >
-        {workingCase.splitCase?.courtCaseNumber}
-      </LinkComponent>,
-    ],
+    values: workingCase.splitCase
+      ? [
+          <LinkComponent
+            href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+            key={workingCase.splitCase.id}
+          >
+            {workingCase.splitCase.courtCaseNumber}
+          </LinkComponent>,
+        ]
+      : [],
   }
 
   const appealCaseNumber: Item = {
