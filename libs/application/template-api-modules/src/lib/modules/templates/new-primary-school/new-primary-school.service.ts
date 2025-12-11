@@ -3,6 +3,8 @@ import {
   errorMessages,
   // FIRST_GRADE_AGE,
   getApplicationAnswers,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
@@ -10,6 +12,7 @@ import {
   FriggClientService,
   GetOrganizationsByTypeTypeEnum,
 } from '@island.is/clients/mms/frigg'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -17,7 +20,17 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { SharedTemplateApiService } from '../../shared'
+import {
+  generateAssignOtherGuardianEmail,
+  generateAssignPayerEmail,
+  generateOtherGuardianApprovedApplicationEmail,
+  generateOtherGuardianRejectedApplicationEmail,
+  generatePayerApprovedApplicationEmail,
+  generatePayerRejectedApplicationEmail,
+} from './emailGenerators'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
+import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -25,6 +38,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly friggClientService: FriggClientService,
     private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.NEW_PRIMARY_SCHOOL)
   }
@@ -106,14 +121,126 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     )
   }
 
-  async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
-    const newPrimarySchoolDTO =
-      transformApplicationToNewPrimarySchoolDTO(application)
+  async getAttachmentsAsBase64(
+    application: TemplateApiModuleActionProps['application'],
+  ): Promise<string[]> {
+    const { attachmentsFiles } = getApplicationAnswers(application.answers)
+    const attachmentDict = application.attachments as {
+      [key: string]: string
+    }
 
-    return await this.friggClientService.sendApplication(
+    const attachments = await Promise.all(
+      attachmentsFiles?.map(async (a) => {
+        const filename = attachmentDict[a.key]
+
+        if (!filename) {
+          throw new Error(
+            `Attachment file not found in attachmentDict for key: ${a.key}`,
+          )
+        }
+
+        const fileContent = await this.s3Service.getFileContent(
+          filename,
+          'base64',
+        )
+
+        if (!fileContent) {
+          throw new Error(
+            `File content not found in S3 for key: ${a.key}, filename: ${filename}`,
+          )
+        }
+
+        return fileContent
+      }) || [],
+    )
+
+    return attachments
+  }
+
+  async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
+    const attachments = await this.getAttachmentsAsBase64(application)
+
+    const newPrimarySchoolDTO = transformApplicationToNewPrimarySchoolDTO(
+      application,
+      attachments,
+    )
+
+    const response = await this.friggClientService.sendApplication(
       auth,
       newPrimarySchoolDTO,
     )
+
+    if (needsOtherGuardianApproval(application)) {
+      await this.sharedTemplateAPIService
+        .sendEmail(generateOtherGuardianApprovedApplicationEmail, application)
+        .catch((e) => {
+          this.logger.error('Failed to send other guardian approved email', {
+            e,
+            applicationId: application.id,
+          })
+        })
+    }
+
+    if (needsPayerApproval(application)) {
+      await this.sharedTemplateAPIService
+        .sendEmail(generatePayerApprovedApplicationEmail, application)
+        .catch((e) => {
+          this.logger.error('Failed to send payer approved email', {
+            e,
+            applicationId: application.id,
+          })
+        })
+    }
+
+    return response
+  }
+
+  async assignOtherGuardian({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignOtherGuardianEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send assign other guardian email', {
+          e,
+          applicationId: application.id,
+        })
+      })
+  }
+
+  async notifyApplicantOfRejectionFromOtherGuardian({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generateOtherGuardianRejectedApplicationEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send other guardian rejected email', {
+          e,
+          applicationId: application.id,
+        })
+      })
+  }
+
+  async assignPayer({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignPayerEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send assign payer email', {
+          e,
+          applicationId: application.id,
+        })
+      })
+  }
+
+  async notifyApplicantOfRejectionFromPayer({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService
+      .sendEmail(generatePayerRejectedApplicationEmail, application)
+      .catch((e) => {
+        this.logger.error('Failed to send payer rejected email', {
+          e,
+          applicationId: application.id,
+        })
+      })
   }
 
   async getSchools({ auth }: TemplateApiModuleActionProps) {
