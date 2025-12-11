@@ -70,24 +70,30 @@ const FriggOptionsAsyncSelectField: FC<
             },
           })
 
-          let otherIndex = -1
+          let otherContentValue = ''
 
           const options =
-            data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key, id }, index) => {
-                const content = value.find(
-                  ({ language }) => language === lang,
-                )?.content
+            data?.friggOptions
+              ?.flatMap(({ options }) =>
+                options.flatMap(({ value, key, id }) => {
+                  const content = value.find(
+                    ({ language }) => language === lang,
+                  )?.content
 
-                if (!content) return []
+                  if (!content) return []
 
-                if (key === OTHER_OPTION) otherIndex = index
+                  const contentValue = useIdAndKey ? `${id}::${key}` : id
 
-                const contentValue = useIdAndKey ? `${id}::${key}` : id
+                  if (key === OTHER_OPTION) otherContentValue = contentValue
 
-                return { value: contentValue, label: content }
-              }),
-            ) ?? []
+                  return { value: contentValue, label: content }
+                }),
+              )
+              .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+
+          const otherIndex = options.findIndex(
+            (option) => option.value === otherContentValue,
+          )
 
           if (otherIndex >= 0) {
             options.push(options.splice(otherIndex, 1)[0])
