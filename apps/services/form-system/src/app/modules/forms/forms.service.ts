@@ -256,9 +256,6 @@ export class FormsService {
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
 
-    updateFormDto.submissionServiceUrl ??= ''
-    updateFormDto.validationServiceUrl ??= ''
-
     Object.assign(form, updateFormDto)
 
     if (originalHasPayment !== form.hasPayment) {

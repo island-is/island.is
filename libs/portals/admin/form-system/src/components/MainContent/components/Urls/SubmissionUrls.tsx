@@ -26,8 +26,6 @@ export const SubmissionUrls = () => {
 
   const [showInput, setShowInput] = useState(false)
 
-  console.log('submissionUrl', form.submissionServiceUrl)
-
   return (
     <Stack space={2}>
       {!showInput && (
