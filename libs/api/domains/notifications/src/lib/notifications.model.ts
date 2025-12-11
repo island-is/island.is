@@ -135,9 +135,6 @@ export class ActorNotification {
 
   @Field(() => GraphQLISODateTime)
   created!: Date
-
-  @Field(() => GraphQLISODateTime)
-  updated!: Date
 }
 
 @InputType()

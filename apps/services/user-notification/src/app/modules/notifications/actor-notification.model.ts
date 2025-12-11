@@ -6,7 +6,6 @@ import {
   AutoIncrement,
   PrimaryKey,
   CreatedAt,
-  UpdatedAt,
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript'
@@ -22,8 +21,7 @@ import { Notification } from './notification.model'
   indexes: [
     { fields: ['user_notification_id'] },
     { fields: ['message_id'] },
-    { fields: ['recipient'] },
-    { fields: ['on_behalf_of_national_id'] },
+    { fields: ['recipient', 'id'] },
   ],
 })
 export class ActorNotification extends Model<
@@ -55,32 +53,11 @@ export class ActorNotification extends Model<
   messageId!: string
 
   @Column({
-    type: DataType.UUID,
-    allowNull: true,
-    field: 'root_message_id',
-  })
-  rootMessageId?: string
-
-  @Column({
     type: DataType.STRING,
     allowNull: false,
     field: 'recipient',
   })
   recipient!: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    field: 'on_behalf_of_national_id',
-  })
-  onBehalfOfNationalId!: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    field: 'scope',
-  })
-  scope!: string
 
   @CreatedAt
   @Column({
@@ -88,13 +65,6 @@ export class ActorNotification extends Model<
     field: 'created',
   })
   created!: CreationOptional<Date>
-
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    field: 'updated',
-  })
-  updated!: CreationOptional<Date>
 
   @BelongsTo(() => Notification)
   userNotification?: Notification

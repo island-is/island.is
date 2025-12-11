@@ -161,12 +161,23 @@ export const userProfiles = [
   companyUser,
 ]
 
-const delegations: Record<string, DelegationRecordDTO[]> = {
-  [userWithDelegations.nationalId]: [
+// Delegations keyed by nationalId and scope
+// Format: `${nationalId}:${scope}` -> DelegationRecordDTO[]
+const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
+  [`${userWithDelegations.nationalId}:@island.is/documents`]: [
     {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
+  // Fallback for backward compatibility - delegations without scope filtering
+  [userWithDelegations.nationalId]: [
+    {
+      fromNationalId: userWithDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null,
       type: AuthDelegationType.ProcurationHolder,
     },
   ],
@@ -191,10 +202,24 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
 export class MockDelegationsService {
   delegationsControllerGetDelegationRecords({
     xQueryNationalId,
+    scopes,
   }: {
     xQueryNationalId: string
+    scopes?: string | string[]
   }) {
-    return { data: delegations[xQueryNationalId] ?? [] }
+    // If scope is provided, try to get scope-specific delegations first
+    if (scopes) {
+      const scopeArray = Array.isArray(scopes) ? scopes : [scopes]
+      // Try each scope in order, return first match
+      for (const scope of scopeArray) {
+        const scopeKey = `${xQueryNationalId}:${scope}`
+        if (delegationsByScope[scopeKey]) {
+          return { data: delegationsByScope[scopeKey] }
+        }
+      }
+    }
+    // Fallback to delegations without scope filtering
+    return { data: delegationsByScope[xQueryNationalId] ?? [] }
   }
 }
 

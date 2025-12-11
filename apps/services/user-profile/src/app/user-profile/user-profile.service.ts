@@ -1237,10 +1237,10 @@ export class UserProfileService {
 
   /* Private methods */
 
-  private async getIncomingDelegations(nationalId: string, scopes?: string[]) {
+  private async getIncomingDelegations(nationalId: string) {
     return this.delegationsApi.delegationsControllerGetDelegationRecords({
       xQueryNationalId: nationalId,
-      scopes: scopes?.join(',') || notificationScopes.join(','),
+      scopes: notificationScopes.join(','),
       direction:
         DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
     })

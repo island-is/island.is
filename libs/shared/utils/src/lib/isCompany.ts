@@ -1,12 +1,13 @@
 import type { BffUser } from '@island.is/shared/types'
+import type { User } from '@island.is/auth-nest-tools'
 
 /**
  * Checks if the user is a company (legal entity)
- * @param userOrProfile - Either a BffUser object or a profile object with subjectType
+ * @param userOrProfile - Either a BffUser object, backend User object, or a profile object with subjectType
  * @returns true if the user is a company (legal entity)
  */
 export const isCompany = (
-  userOrProfile?: BffUser | BffUser['profile'] | null,
+  userOrProfile?: BffUser | BffUser['profile'] | User | null,
 ): boolean => {
   if (!userOrProfile) {
     return false
@@ -17,6 +18,10 @@ export const isCompany = (
     return userOrProfile.profile?.subjectType === 'legalEntity'
   }
 
-  // Otherwise it's a profile object
-  return userOrProfile.subjectType === 'legalEntity'
+  // Check if it has subjectType directly (backend User or profile object)
+  if ('subjectType' in userOrProfile) {
+    return userOrProfile.subjectType === 'legalEntity'
+  }
+
+  return false
 }

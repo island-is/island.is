@@ -1,6 +1,10 @@
 import { lazy } from 'react'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { m, hasNotificationScopes } from '@island.is/portals/my-pages/core'
+import {
+  ApiScope,
+  hasNotificationScopes,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'

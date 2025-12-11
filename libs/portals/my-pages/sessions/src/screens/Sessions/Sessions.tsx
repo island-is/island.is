@@ -14,7 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import { isCompany } from '@island.is/portals/my-pages/core'
+import { isCompany } from '@island.is/shared/utils'
 
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'

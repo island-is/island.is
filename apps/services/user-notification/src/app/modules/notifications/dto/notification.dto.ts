@@ -230,10 +230,6 @@ export class ActorNotificationDto {
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
   created!: Date
-
-  @ApiProperty({ example: new Date().toISOString() })
-  @IsDate()
-  updated!: Date
 }
 
 export class PaginatedActorNotificationDto {

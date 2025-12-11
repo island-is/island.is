@@ -12,12 +12,12 @@ import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
+import { hasNotificationScopes } from '@island.is/auth/scopes'
 import {
   LinkResolver,
   ServicePortalPaths,
   m,
   useScrollPosition,
-  hasNotificationScopes,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'

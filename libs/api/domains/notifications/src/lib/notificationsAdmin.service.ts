@@ -31,7 +31,7 @@ export class NotificationsAdminService {
     nationalId: string,
     user: User,
     input?: NotificationsInput,
-  ): Promise<AdminNotificationsResponse | null> {
+  ): Promise<AdminNotificationsResponse> {
     const notifications = await this.notificationsWAuth(
       user,
     ).notificationsControllerFindMany({
@@ -42,15 +42,17 @@ export class NotificationsAdminService {
       after: input?.after,
     })
 
-    if (!notifications.data) {
-      this.logger.debug('no admin notification found')
-      return null
-    }
-
     return {
-      data: notifications.data.map((item) => adminNotificationMapper(item)),
-      totalCount: notifications.totalCount,
-      pageInfo: notifications.pageInfo,
+      data: notifications.data
+        ? notifications.data.map((item) => adminNotificationMapper(item))
+        : [],
+      totalCount: notifications.totalCount ?? 0,
+      pageInfo: notifications.pageInfo ?? {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
     }
   }
 
@@ -58,7 +60,7 @@ export class NotificationsAdminService {
     nationalId: string,
     user: User,
     input?: NotificationsInput,
-  ): Promise<ActorNotificationsResponse | null> {
+  ): Promise<ActorNotificationsResponse> {
     const actorNotifications = await this.notificationsWAuth(
       user,
     ).notificationsControllerFindActorNotifications({
@@ -68,17 +70,17 @@ export class NotificationsAdminService {
       after: input?.after,
     })
 
-    if (!actorNotifications.data) {
-      this.logger.debug('no admin actor notifications found')
-      return null
-    }
-
     return {
-      data: actorNotifications.data.map((item) =>
-        actorNotificationMapper(item),
-      ),
-      totalCount: actorNotifications.totalCount,
-      pageInfo: actorNotifications.pageInfo,
+      data: actorNotifications.data
+        ? actorNotifications.data.map((item) => actorNotificationMapper(item))
+        : [],
+      totalCount: actorNotifications.totalCount ?? 0,
+      pageInfo: actorNotifications.pageInfo ?? {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
     }
   }
 }

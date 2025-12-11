@@ -74,5 +74,4 @@ export const actorNotificationMapper = (
   },
   scope: notification.scope,
   created: notification.created,
-  updated: notification.updated,
 })

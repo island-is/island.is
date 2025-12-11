@@ -243,16 +243,21 @@ export class DelegationsIndexService {
     nationalId: string
     direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
-    // Validate that all scopes exist
+    // Validate that all scopes exist and fetch their delegation types
     const apiScopes = await this.apiScopeModel.findAll({
       where: {
         name: { [Op.in]: scopes },
       },
+      include: {
+        model: ApiScopeDelegationType,
+        as: 'supportedDelegationTypes',
+        required: false,
+      },
     })
 
     if (apiScopes.length !== scopes.length) {
-      const foundScopes = apiScopes.map((s) => s.name)
-      const invalidScopes = scopes.filter((s) => !foundScopes.includes(s))
+      const foundScopes = new Set(apiScopes.map((s) => s.name))
+      const invalidScopes = scopes.filter((s) => !foundScopes.has(s))
       throw new BadRequestException(
         `Invalid scope(s): ${invalidScopes.join(', ')}`,
       )
@@ -269,57 +274,61 @@ export class DelegationsIndexService {
       validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
     }
 
-    // Process each scope individually since different scopes might support different delegation types
-    const scopePromises = apiScopes.map(async (scope) => {
-      // Get delegation types supported by this specific scope
-      const scopeDelegationTypes = await this.apiScopeDelegationTypeModel
-        .findAll({
-          where: {
-            apiScopeName: scope.name,
-          },
-        })
-        .then((x) => x.map((d) => d.delegationType))
+    const allDelegationTypes = new Set<AuthDelegationType>()
+    const customDelegationScopes = new Set<string>()
 
-      // Check if this scope supports Custom delegations
-      const scopeSupportsCustom = scopeDelegationTypes.includes(
-        AuthDelegationType.Custom,
-      )
+    for (const scope of apiScopes) {
+      const scopeDelegationTypes = (scope as any).supportedDelegationTypes
+        ? (scope as any).supportedDelegationTypes.map(
+            (d: ApiScopeDelegationType) => d.delegationType,
+          )
+        : []
 
-      const orConditions = [
-        {
-          ...where,
-          type: {
-            [Op.in]: scopeDelegationTypes.filter(
-              (d) => d !== AuthDelegationType.Custom,
-            ),
-          },
-        },
-      ] as Array<Record<string, unknown>>
+      scopeDelegationTypes.forEach((type: AuthDelegationType) => {
+        if (type === AuthDelegationType.Custom) {
+          customDelegationScopes.add(scope.name)
+        } else {
+          allDelegationTypes.add(type)
+        }
+      })
+    }
 
-      if (scopeSupportsCustom) {
+    // Build a single query with all OR conditions
+    const orConditions = [] as Array<Record<string, unknown>>
+
+    // Add condition for non-custom delegation types
+    if (allDelegationTypes.size > 0) {
+      orConditions.push({
+        ...where,
+        type: { [Op.in]: Array.from(allDelegationTypes) },
+      })
+    }
+
+    // Add conditions for custom delegations (one per scope that supports it)
+    if (customDelegationScopes.size > 0) {
+      for (const scopeName of customDelegationScopes) {
         orConditions.push({
           ...where,
           type: { [Op.in]: [AuthDelegationType.Custom] },
-          customDelegationScopes: { [Op.contains]: [scope.name] },
+          customDelegationScopes: { [Op.contains]: [scopeName] },
         })
       }
+    }
 
-      const delegations = await this.delegationIndexModel
-        .findAll({
-          where: {
-            [Op.or]: orConditions,
-          },
-        })
-        .then((d) => d.flat().map((d) => d.toDTO()))
-        .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+    // Execute a single delegation index query
+    const allDelegations =
+      orConditions.length > 0
+        ? await this.delegationIndexModel
+            .findAll({
+              where: {
+                [Op.or]: orConditions,
+              },
+            })
+            .then((d) => d.map((d) => d.toDTO()))
+            .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+        : []
 
-      return delegations
-    })
-
-    // Wait for all scope queries to complete
-    const allDelegations = (await Promise.all(scopePromises)).flat()
-
-    // Deduplicate delegations that may appear in multiple scope queries
+    // Deduplicate delegations that may match multiple scopes
     // A delegation is unique by (fromNationalId, toNationalId, type)
     const uniqueDelegations = allDelegations.filter(
       (delegation, index, self) =>

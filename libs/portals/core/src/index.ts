@@ -23,7 +23,6 @@ export * from './hooks/useSingleNavigationItem'
 
 // utils
 export * from './utils/formatNationalId'
-export * from './utils/isCompany'
 export * from './utils/modules'
 export * from './utils/plausible'
 export * from './utils/getTranslatedValue'

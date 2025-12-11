@@ -32,7 +32,10 @@ import {
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 import { UserNotificationsConfig } from '../../../../config'
-import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
+import {
+  CreateHnippNotificationDto,
+  InternalCreateHnippNotificationDto,
+} from '../dto/createHnippNotification.dto'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
@@ -52,7 +55,7 @@ type HandleNotification = {
   notificationId?: number | null
   messageId: string
   rootMessageId?: string
-  message: CreateHnippNotificationDto
+  message: InternalCreateHnippNotificationDto
   template: HnippTemplate
 }
 
@@ -306,7 +309,7 @@ export class NotificationsWorkerService {
   }
 
   private async handleActorNotification(
-    args: CreateHnippNotificationDto & { messageId: string },
+    args: InternalCreateHnippNotificationDto & { messageId: string },
   ) {
     this.logger.info('Handling actor notification', {
       messageId: args.messageId,
@@ -348,6 +351,24 @@ export class NotificationsWorkerService {
       scope,
     )
 
+    // Check if delegation email notifications are enabled for the original recipient
+    const shouldSendToDelegations = await this.featureFlagService.getValue(
+      Features.shouldSendEmailNotificationsToDelegations,
+      false,
+      { nationalId: args.onBehalfOf.nationalId } as User,
+    )
+
+    if (!shouldSendToDelegations) {
+      this.logger.info(
+        'Email notifications to delegations are disabled for user',
+        {
+          messageId: args.messageId,
+          originalRecipient: args.onBehalfOf.nationalId,
+        },
+      )
+      return
+    }
+
     const handleNotificationArgs: HandleNotification = {
       profile: { nationalId: args.recipient, ...actorProfile },
       messageId: args.messageId,
@@ -362,7 +383,7 @@ export class NotificationsWorkerService {
   }
 
   private async createActorNotificationDbRecord(
-    args: CreateHnippNotificationDto & { messageId: string },
+    args: InternalCreateHnippNotificationDto & { messageId: string },
     scope: string,
   ) {
     const { messageId, ...message } = args
@@ -406,11 +427,8 @@ export class NotificationsWorkerService {
     try {
       const created = await this.actorNotificationModel.create({
         messageId,
-        rootMessageId: message.rootMessageId,
         userNotificationId: userNotification.id,
-        onBehalfOfNationalId: message.onBehalfOf.nationalId,
         recipient: message.recipient,
-        scope,
       })
       this.logger.info('actor notification written to db', {
         messageId,
@@ -450,7 +468,7 @@ export class NotificationsWorkerService {
         return
       }
 
-      locale = (userProfile.locale as Locale) || 'is'
+      locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
     } else {
       allowCompanyUserProfileEmails = await this.featureFlagService.getValue(
         Features.shouldSendEmailNotificationsToCompanyUserProfiles,
@@ -465,7 +483,7 @@ export class NotificationsWorkerService {
           })
 
         if (userProfile) {
-          locale = (userProfile.locale as Locale) || 'is'
+          locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
         }
       }
     }
@@ -502,7 +520,7 @@ export class NotificationsWorkerService {
   }
 
   private async handleSendingNotificationsToDelegations(
-    args: CreateHnippNotificationDto & { messageId: string },
+    args: InternalCreateHnippNotificationDto & { messageId: string },
     templateScope: string,
     actorNationalId?: string,
   ) {
@@ -655,7 +673,7 @@ export class NotificationsWorkerService {
   }
 
   public async run() {
-    await this.worker.run<CreateHnippNotificationDto>(
+    await this.worker.run<InternalCreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })

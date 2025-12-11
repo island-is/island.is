@@ -4,7 +4,7 @@ import { UserProfileScope } from '@island.is/auth/scopes'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { isCompany } from '@island.is/portals/my-pages/core'
+import { isCompany } from '@island.is/shared/utils'
 import { showUserOnboardingModal } from '../../../utils/showUserOnboardingModal'
 import { UserOnboardingModal } from '../UserOnboardingModal/UserOnboardingModal'
 import {

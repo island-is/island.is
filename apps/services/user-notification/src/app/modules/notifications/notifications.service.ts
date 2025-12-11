@@ -448,11 +448,11 @@ export class NotificationsService {
   /**
    * Finds actor notifications for a specific recipient
    */
-  findActorNotifications(
+  async findActorNotifications(
     recipient: string,
     query?: ExtendedPaginationDto,
   ): Promise<PaginatedActorNotificationDto> {
-    return paginate({
+    const result = await paginate({
       Model: this.actorNotificationModel,
       limit: query?.limit || 10,
       after: query?.after || '',
@@ -460,17 +460,37 @@ export class NotificationsService {
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
       where: { recipient },
+      include: [
+        {
+          model: this.notificationModel,
+          as: 'userNotification',
+          attributes: ['messageId', 'recipient', 'scope'],
+          required: true,
+        },
+      ],
       attributes: [
         'id',
         'messageId',
-        'rootMessageId',
         'userNotificationId',
         'recipient',
-        'onBehalfOfNationalId',
-        'scope',
         'created',
-        'updated',
       ],
     })
+
+    // Map results to include fields from joined user_notification
+    const mappedData = result.data.map((item) => {
+      const actorNotification = item as any
+      return {
+        ...actorNotification.toJSON(),
+        rootMessageId: actorNotification.userNotification?.messageId,
+        onBehalfOfNationalId: actorNotification.userNotification?.recipient,
+        scope: actorNotification.userNotification?.scope,
+      }
+    })
+
+    return {
+      ...result,
+      data: mappedData as any,
+    }
   }
 }
