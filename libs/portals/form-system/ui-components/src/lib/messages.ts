@@ -1092,4 +1092,26 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
     description: 'Please check the URL.',
   },
+  urlFormatInstruction: {
+    id: 'form.system:url-format-instruction',
+    defaultMessage: 'Slóðin þarf að vera X‑Road slóð sem byrjar á',
+    description: 'The URL must be an X-Road URL starting with',
+  },
+  urlReuseEncouragement: {
+    id: 'form.system:url-reuse-encouragement',
+    defaultMessage:
+      'Vinsamlega reynið að halda fjölda slóða í lágmarki og endurnýtið þær sem fyrir eru eftir því sem unnt er.',
+    description:
+      'Please try to keep the number of URLs to a minimum and reuse existing ones as much as possible.',
+  },
+  addFormUrl: {
+    id: 'form.system:add-form-url',
+    defaultMessage: '+ Bæta við nýrri slóð fyrir þetta form',
+    description: '+ Add new URL for this form',
+  },
+  newFormUrlButton: {
+    id: 'form.system:new-form-url-button',
+    defaultMessage: 'Ný slóð fyrir innsendingar',
+    description: 'New submission URL',
+  },
 })
