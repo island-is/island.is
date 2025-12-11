@@ -173,7 +173,7 @@ const AddRulingOrder: FC = () => {
       {visibleModal === 'confirmation' && (
         <Modal
           title="Viltu staðfesta úrskurð"
-          text="Tilkynning verður send ákæranda og verjand"
+          text="Tilkynning verður send ákæranda og verjanda"
           primaryButton={{
             text: 'Staðfesta úrskurð',
             onClick: async () => {

@@ -2927,6 +2927,9 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendIndictmentReturnedNotifications(theCase)
       case CaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
+      case CaseNotificationType.RULING_ORDER_ADDED:
+        // TODO - update this one
+        return this.sendCaseFilesUpdatedNotifications(theCase, user)
       case CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       default:
