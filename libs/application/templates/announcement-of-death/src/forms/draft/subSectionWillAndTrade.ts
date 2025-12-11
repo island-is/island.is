@@ -19,7 +19,7 @@ export const subSectionWillAndTrade = buildSubSection({
           id: 'knowledgeOfOtherWills',
           title: m.testamentKnowledgeOfOtherTestament,
           width: 'full',
-          largeButtons: false,
+          largeButtons: true,
           defaultValue: '',
           options: [
             {

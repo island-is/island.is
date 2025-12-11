@@ -644,6 +644,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Veldu tengsl',
     description: 'Relation placeholder',
   },
+  addApplicantToEstateMembers: {
+    id: 'aod.application:addApplicantToEstateMembers',
+    defaultMessage: 'Bæta mér við sem erfingja',
+    description: 'Checkbox label for adding applicant to estate members list',
+  },
   cardValidityPeriod: {
     id: 'aod.application:cardValidityPeriod',
     defaultMessage: 'Gildistími',

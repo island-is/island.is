@@ -4,7 +4,9 @@ import {
   buildSelectField,
   buildTextField,
   buildSubSection,
+  buildCheckboxField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateMember } from '../../types'
@@ -79,6 +81,13 @@ export const subSectionInfo = buildSubSection({
               label: relation,
             }))
           },
+        }),
+        buildCheckboxField({
+          id: 'addApplicantToEstateMembers',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [YES],
+          options: [{ value: YES, label: m.addApplicantToEstateMembers }],
         }),
       ],
     }),

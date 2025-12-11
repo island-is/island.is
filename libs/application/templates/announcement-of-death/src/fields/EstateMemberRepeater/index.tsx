@@ -74,7 +74,17 @@ export const EstateMemberRepeater: FC<
   useEffect(() => {
     // Add currently logged in user if they don't exist in the array
     // Only runs if the applicantAddedFlag is false (meaning we haven't tried to add them yet)
-    if (fields.length > 0 && application.applicant && !applicantAddedFlag) {
+    // and only if the checkbox is checked (addApplicantToEstateMembers contains YES)
+    const shouldAddApplicant = hasYes(
+      application.answers.addApplicantToEstateMembers as string[],
+    )
+
+    if (
+      fields.length > 0 &&
+      application.applicant &&
+      !applicantAddedFlag &&
+      shouldAddApplicant
+    ) {
       const applicantExists = fields.some(
         (member: EstateMemberField) =>
           member.nationalId === application.applicant,
@@ -91,8 +101,10 @@ export const EstateMemberRepeater: FC<
           relation: (application.answers.applicantRelation as string) || '',
         })
       }
-      // Set the flag to true so we never try to add them again
-      // This persists even if they remove themselves from the list
+    }
+    // Set the flag to true so we never try to add them again
+    // This persists even if they remove themselves from the list
+    if (fields.length > 0 && application.applicant && !applicantAddedFlag) {
       setValue('estateMembers.applicantAdded', true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -21,7 +21,11 @@ export const WillValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     knowledgeOfOtherWills === 'yes' || knowledgeOfOtherWills === 'no'
 
   // Set validation callback
-  setBeforeSubmitCallback &&
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) {
+      return
+    }
+
     setBeforeSubmitCallback(async () => {
       if (!isAnswered) {
         setError(willValidation, {
@@ -31,6 +35,7 @@ export const WillValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
       return [true, null]
     })
+  }, [setBeforeSubmitCallback, isAnswered, setError])
 
   // Clear errors when the field is answered
   useEffect(() => {
@@ -45,7 +50,7 @@ export const WillValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <Box marginTop={4}>
           <AlertMessage
             type="error"
-            title={formatMessage(m.errorRoleConfirmation)}
+            title={formatMessage(m.willValidationError)}
           />
         </Box>
       )}

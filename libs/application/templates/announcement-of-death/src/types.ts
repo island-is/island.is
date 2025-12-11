@@ -27,6 +27,7 @@ export type AssetFormField = Asset & { id: string }
 
 export type Answers = {
   additionalInfo: string
+  addApplicantToEstateMembers: string[]
   applicantEmail: string
   applicantName: string
   applicantPhone: string
