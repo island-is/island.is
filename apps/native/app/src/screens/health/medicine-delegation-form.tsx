@@ -84,6 +84,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
     delegateMedicineDelegation,
     { loading: loadingDelegateMedicineDelegation },
   ] = usePostMedicineDelegationMutation({
+    refetchQueries: ['GetMedicineDelegations'],
     onCompleted: (response) => {
       console.log('response', response)
       if (response.healthDirectorateMedicineDelegationCreate.success) {

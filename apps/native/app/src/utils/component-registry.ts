@@ -71,6 +71,7 @@ export const ButtonRegistry = {
   InboxBulkSelectAllButton: `${prefix}.button.InboxBulkSelectAllButton`,
   InboxBulkSelectButton: `${prefix}.button.InboxBulkSelectButton`,
   InboxBulkSelectCancelButton: `${prefix}.button.InboxBulkSelectCancelButton`,
+  MedicineDelegationShowInactiveButton: `${prefix}.button.MedicineDelegationShowInactiveButton`,
   InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
   LoadingButton: `${prefix}.button.LoadingButton`,
   NotificationsButton: `${prefix}.button.NotificationsButton`,

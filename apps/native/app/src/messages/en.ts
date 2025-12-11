@@ -798,6 +798,12 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.listCaption':
     'Pick up medicine and view prescription.',
   'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Show inactive',
+  'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
+  'health.medicineDelegation.noActiveTitle': 'No active authorizations',
+  'health.medicineDelegation.noActiveDescription':
+    'You have no active authorizations. You can tap "Show inactive" above to view inactive authorizations.',
+  'health.medicineDelegation.labelExpired': 'Expired',
   'health.medicineDelegation.detail.delete': 'Delete authorization',
   'health.medicineDelegation.detail.issuerLabel': 'Issuer',
   'health.medicineDelegation.detail.issuerValue': 'Icelandic Health Insurance',

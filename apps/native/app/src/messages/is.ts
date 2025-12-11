@@ -796,7 +796,16 @@ export const is = {
     'Það eru engar skráðar heimildir.',
   'health.medicineDelegation.listCaption':
     'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.captionPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
   'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
+  'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
+  'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
+  'health.medicineDelegation.noActiveDescription':
+    'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+  'health.medicineDelegation.labelExpired': 'Útrunnið',
   'health.medicineDelegation.detail.delete': 'Eyða heimild',
   'health.medicineDelegation.detail.issuerLabel': 'Útgefandi',
   'health.medicineDelegation.detail.issuerValue': 'Sjúkratryggingar Íslands',
@@ -808,6 +817,9 @@ export const is = {
   'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
   'health.medicineDelegation.detail.validForValue':
     'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.detail.validForPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
   'health.medicineDelegation.detail.revoke': 'Eyða heimild',
   'health.medicineDelegation.detail.revokeError':
     'Ekki tókst að eyða lyfjaheimild. Vinsamlegast reynið aftur síðar.',

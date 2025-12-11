@@ -64,6 +64,7 @@ export const MedicineDelegationDetailScreen: NavigationFunctionComponent<{
     revokeMedicineDelegation,
     { loading: loadingRevokeMedicineDelegation },
   ] = useDeleteMedicineDelegationMutation({
+    refetchQueries: ['GetMedicineDelegations'],
     onCompleted: (response) => {
       if (response.healthDirectorateMedicineDelegationDelete.success) {
         close()
@@ -145,9 +146,13 @@ export const MedicineDelegationDetailScreen: NavigationFunctionComponent<{
       label: intl.formatMessage({
         id: 'health.medicineDelegation.detail.validFor',
       }),
-      value: intl.formatMessage({
-        id: 'health.medicineDelegation.detail.validForValue',
-      }),
+      value: delegation?.lookup
+        ? intl.formatMessage({
+            id: 'health.medicineDelegation.detail.validForPickupAndLookup',
+          })
+        : intl.formatMessage({
+            id: 'health.medicineDelegation.detail.validForPickup',
+          }),
     },
   ]
 
