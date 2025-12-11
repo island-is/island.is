@@ -23,8 +23,8 @@ import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
-import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import { SearchInput } from '../SearchInput/SearchInput'
@@ -55,10 +55,42 @@ export const Header = ({
   )
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
   const [lastScrollY, setLastScrollY] = useState<number>(0)
+  const [disableTransition, setDisableTransition] = useState<boolean>(false)
+  const location = useLocation()
+  const isNavigatingRef = useRef<boolean>(false)
+
+  // Memoize the visibility callback to prevent unnecessary re-renders
+  const notifyVisibilityChange = useCallback(
+    (visible: boolean) => {
+      isMobile && onHeaderVisibilityChange?.(visible)
+    },
+    [isMobile, onHeaderVisibilityChange],
+  )
+
+  // Reset header state when pathname changes to ensure header is visible on navigation
+  useEffect(() => {
+    if (!isMobile) return
+    isNavigatingRef.current = true
+    setDisableTransition(true)
+    setHeaderVisible(true)
+    setLastScrollY(0)
+    notifyVisibilityChange(true)
+
+    // Re-enable transitions after a brief delay
+    const timeout = setTimeout(() => {
+      setDisableTransition(false)
+      isNavigatingRef.current = false
+    }, 50)
+
+    return () => {
+      clearTimeout(timeout)
+      isNavigatingRef.current = false
+    }
+  }, [isMobile, location.pathname, notifyVisibilityChange])
 
   useScrollPosition(
     ({ currPos }) => {
-      if (!isMobile) return // Only apply scroll behavior on mobile
+      if (!isMobile || isNavigatingRef.current) return // Skip during navigation
 
       const currentScrollY = -currPos.y
       const scrollingDown = currentScrollY > lastScrollY
@@ -68,17 +100,17 @@ export const Header = ({
       // Show header when scrolling up or at top of page
       if (scrollingUp || currentScrollY < scrollThreshold) {
         setHeaderVisible(true)
-        onHeaderVisibilityChange?.(true)
+        notifyVisibilityChange(true)
       }
       // Hide header when scrolling down and past threshold
       else if (scrollingDown && currentScrollY > scrollThreshold) {
         setHeaderVisible(false)
-        onHeaderVisibilityChange?.(false)
+        notifyVisibilityChange(false)
       }
 
       setLastScrollY(currentScrollY)
     },
-    [lastScrollY, isMobile],
+    [lastScrollY, isMobile, notifyVisibilityChange],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     null,
@@ -96,6 +128,7 @@ export const Header = ({
         })}
         style={{
           top: position,
+          transition: disableTransition ? 'none' : undefined,
         }}
       >
         <GridContainer>
