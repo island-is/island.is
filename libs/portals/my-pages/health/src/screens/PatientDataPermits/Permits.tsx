@@ -14,41 +14,45 @@ import {
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import React from 'react'
+import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { permitTagSelector } from '../../utils/tagSelector'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
 import * as styles from './Permits.css'
 
-const PatientDataPermits: React.FC = () => {
+const PatientDataPermits: FC = () => {
   useNamespaces('sp.health')
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
-  const [showExpiredPermits, setShowExpiredPermits] = React.useState(false)
+  const [showExpiredPermits, setShowExpiredPermits] = useState(false)
 
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: {
       locale: lang,
       input: {
-        statuses: showExpiredPermits
-          ? [
-              HealthDirectoratePermitStatus.active,
-              HealthDirectoratePermitStatus.expired,
-              HealthDirectoratePermitStatus.inactive,
-              HealthDirectoratePermitStatus.unknown,
-              HealthDirectoratePermitStatus.awaitingApproval,
-            ]
-          : [
-              HealthDirectoratePermitStatus.active,
-              HealthDirectoratePermitStatus.awaitingApproval,
-            ],
+        status: [
+          HealthDirectoratePermitStatus.active,
+          HealthDirectoratePermitStatus.expired,
+          HealthDirectoratePermitStatus.inactive,
+          HealthDirectoratePermitStatus.unknown,
+          HealthDirectoratePermitStatus.awaitingApproval,
+        ],
       },
     },
   })
 
   const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
-  const filteredData = data?.healthDirectoratePatientDataPermits.data
+
+  const filteredData = data?.healthDirectoratePatientDataPermits?.data?.filter(
+    (item) =>
+      showExpiredPermits
+        ? item.status
+        : item.status === HealthDirectoratePermitStatus.active ||
+          item.status === HealthDirectoratePermitStatus.awaitingApproval,
+  )
+
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
@@ -70,7 +74,7 @@ const PatientDataPermits: React.FC = () => {
                 {formatMessage(messages.readAboutPermit)}
               </Button>,
               <Button
-                key={'addNewPermit'}
+                key="addNewPermit"
                 variant="utility"
                 colorScheme="primary"
                 icon="arrowForward"
@@ -86,20 +90,32 @@ const PatientDataPermits: React.FC = () => {
           : undefined
       }
     >
-      {!loading && dataLength === 0 && !error && (
+      {loading && !error && (
+        <Box marginY={3}>
+          <ActionCardLoader repeat={3} />
+        </Box>
+      )}
+
+      {!loading && !error && dataLength === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
+          imgAlt=""
           title={formatMessage(messages.noPermit)}
           message={formatMessage(messages.noPermitsRegistered)}
           imgSrc="./assets/images/empty_flower.svg"
         />
       )}
-      {loading && <ActionCardLoader repeat={3} />}
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && dataLength > 0 && (
+      {!loading && error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && dataLength > 0 && (
         <Box>
-          <Box justifyContent="spaceBetween" alignItems="center" display="flex">
+          <Box
+            justifyContent="spaceBetween"
+            alignItems="center"
+            display="flex"
+            marginBottom={2}
+            className={styles.toggleBox}
+          >
             <Text variant="medium">
               {filteredData?.length === 1
                 ? formatMessage(messages.singlePermit)
@@ -114,6 +130,18 @@ const PatientDataPermits: React.FC = () => {
               checked={showExpiredPermits}
             />
           </Box>
+          {dataLength > 0 &&
+            filteredData?.length === 0 &&
+            !showExpiredPermits && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(messages.noData)}
+                message={formatMessage(messages.noActivePermitsRegistered)}
+                imgSrc="./assets/images/empty_flower.svg"
+                imgAlt=""
+              />
+            )}
           <Stack space={2}>
             {filteredData?.map((permit) => (
               <ActionCard
@@ -132,38 +160,7 @@ const PatientDataPermits: React.FC = () => {
                   fromDate: formatDate(permit.validFrom),
                   toDate: formatDate(permit.validTo),
                 })}
-                tag={
-                  permit.status === HealthDirectoratePermitStatus.active
-                    ? {
-                        label: formatMessage(messages.active),
-                        variant: 'blue',
-                        outlined: true,
-                      }
-                    : permit.status === HealthDirectoratePermitStatus.expired
-                    ? {
-                        label: formatMessage(messages.expired),
-                        variant: 'red',
-                        outlined: true,
-                      }
-                    : permit.status === HealthDirectoratePermitStatus.inactive
-                    ? {
-                        label: formatMessage(messages.withdrawn),
-                        variant: 'purple',
-                        outlined: true,
-                      }
-                    : permit.status ===
-                      HealthDirectoratePermitStatus.awaitingApproval
-                    ? {
-                        label: formatMessage(messages.awaitingApproval),
-                        variant: 'darkerBlue',
-                        outlined: true,
-                      }
-                    : {
-                        label: formatMessage(messages.unknown),
-                        variant: 'purple',
-                        outlined: true,
-                      }
-                }
+                tag={permitTagSelector(permit.status, formatMessage)}
                 cta={{
                   size: 'small',
                   variant: 'text',

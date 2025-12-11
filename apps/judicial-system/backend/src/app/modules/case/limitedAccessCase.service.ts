@@ -2,7 +2,12 @@ import archiver from 'archiver'
 import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -36,6 +41,7 @@ import {
   CivilClaimant,
   CourtDocument,
   CourtSession,
+  CourtSessionString,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -251,6 +257,20 @@ export const include: Includeable[] = [
         order: [['documentOrder', 'ASC']],
         separate: true,
       },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -354,6 +374,22 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,
@@ -365,6 +401,20 @@ export const include: Includeable[] = [
             as: 'filedDocuments',
             required: false,
             order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
             separate: true,
           },
         ],
@@ -388,7 +438,9 @@ export const include: Includeable[] = [
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => CivilClaimantService))
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,

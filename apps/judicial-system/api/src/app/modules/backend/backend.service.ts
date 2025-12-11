@@ -29,6 +29,7 @@ import {
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
+import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
@@ -368,6 +369,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  splitDefendantFromCase(caseId: string, defendantId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/defendant/${defendantId}/split`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
   createCourtCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/court`,
@@ -618,6 +627,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
+    )
+  }
+
+  updateCourtSessionString(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSessionString: unknown,
+  ): Promise<CourtSessionString> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
+      updateCourtSessionString,
     )
   }
 

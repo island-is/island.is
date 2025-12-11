@@ -3,13 +3,13 @@ import { IsBoolean, IsDate, IsString } from 'class-validator'
 
 @InputType('HealthDirectorateMedicineDelegationInput')
 export class MedicineDelegationInput {
-  @Field()
-  @IsBoolean()
-  active!: boolean
+  @Field(() => [String])
+  @IsString({ each: true })
+  status!: string[]
 }
 
-@InputType('HealthDirectorateMedicineDelegationCreateInput')
-export class MedicineDelegationCreateInput {
+@InputType('HealthDirectorateMedicineDelegationCreateOrDeleteInput')
+export class MedicineDelegationCreateOrDeleteInput {
   @Field()
   @IsString()
   nationalId!: string
@@ -25,11 +25,4 @@ export class MedicineDelegationCreateInput {
   @Field({ nullable: true })
   @IsBoolean()
   lookup?: boolean
-}
-
-@InputType('HealthDirectorateMedicineDelegationDeleteInput')
-export class MedicineDelegationDeleteInput {
-  @Field()
-  @IsString()
-  nationalId!: string
 }

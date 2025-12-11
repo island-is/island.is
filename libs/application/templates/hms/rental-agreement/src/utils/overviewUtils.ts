@@ -85,23 +85,18 @@ const getApplicantsItem = (
   externalData: ExternalData,
   role: ApplicantsRole,
 ) => {
-  const applicantsRole = getValueViaPath<string>(
-    answers,
-    'assignApplicantParty.applicantsRole',
-  )
+  const partyRole = getValueViaPath<string>(answers, 'parties.applicantsRole')
 
-  if (applicantsRole !== role) {
+  if (partyRole !== role) {
     return []
   }
 
-  const fullName = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.fullName',
-  )
-  const nationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
+  const fullName =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName') ??
+    getValueViaPath<string>(externalData, 'identity.data.name')
+  const nationalId =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+    getValueViaPath<string>(externalData, 'identity.data.nationalId')
   const userProfile = getValueViaPath<UserProfile>(
     externalData,
     'userProfile.data',
@@ -191,6 +186,19 @@ export const landlordRepresentativeOverview = (
     : []
 
   return [...applicantRepresentative, ...items]
+}
+
+export const signatoryOverview = (answers: FormValue): Array<KeyValueItem> => {
+  const signatory = getValueViaPath<ApplicantsInfo>(
+    answers,
+    'parties.signatory',
+  )
+
+  if (!signatory) {
+    return []
+  }
+
+  return formatPartyItems([signatory])
 }
 
 export const tenantOverview = (

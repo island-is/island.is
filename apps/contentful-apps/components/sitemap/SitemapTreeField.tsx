@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDebounce } from 'react-use'
 import type { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { FormControl, Radio } from '@contentful/f36-components'
@@ -36,11 +35,9 @@ import {
 } from './utils'
 import * as styles from './SitemapTreeField.css'
 
-const DEBOUNCE_TIME = 100
-
 export const SitemapTreeField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
-  const [tree, setTree] = useState<Tree | undefined>(
+  const [tree, _setTree] = useState<Tree | undefined>(
     sdk.field.getValue() || {
       id: 0,
       childNodes: [],
@@ -51,12 +48,26 @@ export const SitemapTreeField = () => {
   const [mode, setMode] = useState<'edit' | 'select'>('edit')
   const selectedNodesRef = useRef<TreeNode[]>([])
 
-  useDebounce(
-    () => {
-      sdk.field.setValue(tree)
+  useEffect(
+    () =>
+      sdk.field.onValueChanged((value) => {
+        if (!value) return
+        _setTree(value)
+      }),
+    [sdk.field],
+  )
+
+  const updateTree = useCallback(
+    (changeFunction?: (prevTree: Tree) => Tree) => {
+      _setTree((prevTree) => {
+        const newTree = changeFunction
+          ? changeFunction(prevTree)
+          : { ...prevTree }
+        sdk.field.setValue(newTree)
+        return newTree
+      })
     },
-    DEBOUNCE_TIME,
-    [tree],
+    [sdk.field],
   )
 
   useEffect(() => {
@@ -89,19 +100,17 @@ export const SitemapTreeField = () => {
         entryType,
         entries,
       )
-      setTree((prevTree) => ({
-        ...prevTree,
-      }))
+      updateTree()
     },
-    [sdk, tree],
+    [sdk, tree, updateTree],
   )
 
   const removeNode = useCallback(
     (parentNode: Tree, idOfNodeToRemove: number) => {
       removeNodeUtil(parentNode, idOfNodeToRemove, tree)
-      setTree((prevTree) => ({ ...prevTree }))
+      updateTree()
     },
-    [tree],
+    [tree, updateTree],
   )
 
   const moveNodesToBottom = useCallback(
@@ -117,15 +126,18 @@ export const SitemapTreeField = () => {
       parentNode.childNodes.push(...nodes)
 
       selectedNodesRef.current = []
-      setTree((prevTree) => ({ ...prevTree }))
+      updateTree()
     },
-    [tree],
+    [tree, updateTree],
   )
 
-  const updateNode = useCallback((parentNode: Tree, updatedNode: TreeNode) => {
-    updateNodeUtil(parentNode, updatedNode)
-    setTree((prevTree) => ({ ...prevTree }))
-  }, [])
+  const updateNode = useCallback(
+    (parentNode: Tree, updatedNode: TreeNode) => {
+      updateNodeUtil(parentNode, updatedNode)
+      updateTree()
+    },
+    [updateTree],
+  )
 
   const onMarkEntryAsPrimary = useCallback(
     (nodeId: number, entryId: string) => {
@@ -139,9 +151,9 @@ export const SitemapTreeField = () => {
           node.primaryLocation = node.id === nodeId
         }
       }
-      setTree((prevTree) => ({ ...prevTree }))
+      updateTree()
     },
-    [tree],
+    [tree, updateTree],
   )
 
   const sensors = useSensors(useSensor(PointerSensor))
@@ -157,14 +169,14 @@ export const SitemapTreeField = () => {
           (item) => item.id === over.id,
         )
         if (oldIndex >= 0 && newIndex >= 0) {
-          setTree((prevTree) => ({
+          updateTree((prevTree) => ({
             ...prevTree,
             childNodes: arrayMove(tree.childNodes, oldIndex, newIndex),
           }))
         }
       }
     },
-    [tree],
+    [tree.childNodes, updateTree],
   )
 
   return (

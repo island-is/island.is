@@ -569,12 +569,14 @@
         "operationId": "MePrescriptionCommissionController_getPrescriptionCommissions_v1",
         "parameters": [
           {
-            "name": "active",
+            "name": "status",
             "required": true,
             "in": "query",
-            "description": "Whether to only include active commissions",
             "schema": {
-              "type": "boolean"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -635,77 +637,16 @@
         },
         "tags": ["Prescriptions"]
       },
-      "post": {
-        "description": "Create a prescription commission",
-        "operationId": "MePrescriptionCommissionController_createPrescriptionCommission_v1",
+      "put": {
+        "description": "Create or update a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createOrUpdatePrescriptionCommission_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePrescriptionCommissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Prescriptions"]
-      },
-      "delete": {
-        "description": "Deactivate a prescription commission",
-        "operationId": "MePrescriptionCommissionController_deactivatePrescriptionCommission_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeactivatePrescriptionCommissionDto"
+                "$ref": "#/components/schemas/CreateOrUpdatePrescriptionCommissionDto"
               }
             }
           }
@@ -1494,10 +1435,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "type": "string"
                 }
               }
             }
@@ -1559,7 +1497,7 @@
         "tags": ["Questionnaire"]
       }
     },
-    "/v1/me/questionnaires/{id}/{submissionId}": {
+    "/v1/me/questionnaires/{id}/submissions/{submissionId}": {
       "get": {
         "description": "Get a questionnaire submission",
         "operationId": "QuestionnaireController_getQuestionnaireSubmission_v1",
@@ -1589,10 +1527,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
-                  }
+                  "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
                 }
               }
             }
@@ -1730,10 +1665,10 @@
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
-            "name": "statuses",
+            "name": "status",
             "required": false,
             "in": "query",
-            "description": "Filter appointments by status. Can include multiple statuses.",
+            "description": "Filter appointments by status. Can include multiple statuses (comma-separated).",
             "schema": {
               "type": "array",
               "items": {
@@ -1745,10 +1680,10 @@
             "name": "fromStartTime",
             "required": false,
             "in": "query",
-            "description": "Filter appointments to only include those starting at or after this time. Use current timestamp to get only future appointments.",
+            "description": "Filter appointments to only include those starting at or after this time.",
             "schema": {
               "format": "date-time",
-              "example": "2024-01-15T10:30:00Z",
+              "example": "2024-01-15T10:30:00.000Z",
               "type": "string"
             }
           }
@@ -1890,9 +1825,10 @@
             "name": "validFrom",
             "required": false,
             "in": "query",
-            "description": "The valid from date to filter the consents",
+            "description": "The valid from date to filter the consents (ISO 8601 format, supports both date and date-time)",
             "schema": {
-              "format": "date",
+              "format": "date-time",
+              "example": "2024-01-15T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -1900,20 +1836,22 @@
             "name": "validTo",
             "required": false,
             "in": "query",
-            "description": "The valid to date to filter the consents",
+            "description": "The valid to date to filter the consents (ISO 8601 format, supports both date and date-time)",
             "schema": {
-              "format": "date",
+              "format": "date-time",
+              "example": "2024-12-31T23:59:59.999Z",
               "type": "string"
             }
           },
           {
             "name": "status",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "The statuses to filter the consents (comma-separated)",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
               }
             }
           },
@@ -1924,15 +1862,6 @@
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
-            }
-          },
-          {
-            "name": "statuses",
-            "required": false,
-            "in": "query",
-            "description": "The statuses to filter the consents",
-            "schema": {
-              "$ref": "#/components/schemas/EuPatientConsentStatus"
             }
           }
         ],
@@ -2390,25 +2319,116 @@
         },
         "required": ["id", "serviceType", "fromContactInfo"]
       },
-      "PrescribedItemCategory": {
-        "type": "string",
-        "enum": ["regular", "pn", "regiment", "owner"]
+      "ProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "form": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "PrescriberDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "MedCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "category"]
+      },
+      "PrimaryCareClinicDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
       },
       "PrescriptionRenewalBlockedReason": {
         "type": "string",
         "enum": [
           "pendingRequest",
           "rejectedRequest",
-          "dismissedRequest",
+          "alreadyRequested",
           "notFullyDispensed",
           "isRegiment",
-          "noMedCard",
-          "noHealthClinic"
+          "drugNotOnMedCard",
+          "noPrimaryCareClinic"
         ]
       },
       "PrescriptionRenewalStatus": {
         "type": "number",
         "enum": [0, 1, 2, 3]
+      },
+      "RenewalDto": {
+        "type": "object",
+        "properties": {
+          "isRenewable": {
+            "type": "boolean"
+          },
+          "blockedReason": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+              }
+            ]
+          },
+          "responseMessage": {
+            "type": "string"
+          }
+        },
+        "required": ["isRenewable"]
+      },
+      "PrescribedItemCategory": {
+        "type": "string",
+        "enum": ["regular", "pn", "regiment", "owner"]
       },
       "DispensedItemDto": {
         "type": "object",
@@ -2470,21 +2490,6 @@
           "prescriptionId": {
             "type": "number"
           },
-          "medCardDrugId": {
-            "type": "string"
-          },
-          "medCardDrugCategory": {
-            "type": "number"
-          },
-          "prescriberId": {
-            "type": "string"
-          },
-          "prescriberName": {
-            "type": "string"
-          },
-          "healthClinic": {
-            "type": "string"
-          },
           "issueDate": {
             "format": "date-time",
             "type": "string"
@@ -2497,28 +2502,20 @@
             "format": "date-time",
             "type": "string"
           },
-          "productId": {
-            "type": "string"
+          "product": {
+            "$ref": "#/components/schemas/ProductDto"
           },
-          "productName": {
-            "type": "string"
+          "prescriber": {
+            "$ref": "#/components/schemas/PrescriberDto"
           },
-          "productType": {
-            "type": "string",
-            "description": "Based on the ATC classification"
+          "medCard": {
+            "$ref": "#/components/schemas/MedCardDto"
           },
-          "productForm": {
-            "type": "string"
+          "primaryCareClinic": {
+            "$ref": "#/components/schemas/PrimaryCareClinicDto"
           },
-          "productUrl": {
-            "type": "string"
-          },
-          "productStrength": {
-            "type": "string"
-          },
-          "productQuantity": {
-            "type": "number",
-            "description": "Product quantity per package"
+          "renewal": {
+            "$ref": "#/components/schemas/RenewalDto"
           },
           "numberOfPackages": {
             "type": "number"
@@ -2548,23 +2545,6 @@
           "isRegiment": {
             "type": "boolean"
           },
-          "isRenewable": {
-            "type": "boolean"
-          },
-          "renewalBlockedReason": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
-              }
-            ]
-          },
-          "renewalStatus": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
-              }
-            ]
-          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2587,16 +2567,11 @@
         "required": [
           "prescribedItemId",
           "prescriptionId",
-          "medCardDrugId",
-          "medCardDrugCategory",
-          "prescriberId",
-          "prescriberName",
-          "healthClinic",
           "issueDate",
           "expiryDate",
-          "nextDispensationDate",
-          "productId",
-          "isRenewable",
+          "product",
+          "prescriber",
+          "renewal",
           "isFullyDispensed",
           "dispensations"
         ]
@@ -2631,6 +2606,50 @@
         },
         "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
+      "DispensationHistoryProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "DispensationHistoryItemProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
       "DispensationHistoryItemDto": {
         "type": "object",
         "properties": {
@@ -2644,24 +2663,8 @@
             "format": "date-time",
             "type": "string"
           },
-          "productStrength": {
-            "type": "string"
-          },
-          "productName": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "productQuantity": {
-            "type": "number"
-          },
-          "productUnit": {
-            "type": "string"
-          },
-          "productType": {
-            "type": "string",
-            "description": "Based on the ATC classification"
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryItemProductDto"
           },
           "indication": {
             "type": "string"
@@ -2684,22 +2687,13 @@
             "type": "boolean"
           }
         },
-        "required": ["prescriberName", "isExpired"]
+        "required": ["product", "prescriberName", "isExpired"]
       },
       "DispensationHistoryDto": {
         "type": "object",
         "properties": {
-          "productName": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "productStrength": {
-            "type": "string"
-          },
-          "productAtcCode": {
-            "type": "string"
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryProductDto"
           },
           "indication": {
             "type": "string"
@@ -2718,12 +2712,17 @@
             }
           }
         },
-        "required": ["dispensationCount", "dispensations"]
+        "required": ["product", "dispensationCount", "dispensations"]
       },
       "CommissionType": {
         "type": "number",
         "enum": [0, 1],
         "description": "The type of commission. 0 is deliver, 1 is deliver and information."
+      },
+      "PrescriptionCommissionStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired", "pending"],
+        "description": "Status of the commission."
       },
       "UserType": {
         "type": "number",
@@ -2759,9 +2758,13 @@
             "type": "string",
             "description": "The end date and time the commission is valid until. If not defined, the commission is valid until canceled."
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "Status of the commission."
+          "status": {
+            "description": "Status of the commission.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionCommissionStatus"
+              }
+            ]
           },
           "comment": {
             "type": "string",
@@ -2780,11 +2783,11 @@
           "toNationalId",
           "toName",
           "commissionType",
-          "isActive",
+          "status",
           "userType"
         ]
       },
-      "CreatePrescriptionCommissionDto": {
+      "CreateOrUpdatePrescriptionCommissionDto": {
         "type": "object",
         "properties": {
           "toNationalId": {
@@ -2806,19 +2809,13 @@
           "validTo": {
             "type": "string",
             "description": "The end date and time the commission is valid until."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the commission is active."
           }
         },
         "required": ["toNationalId", "commissionType"]
-      },
-      "DeactivatePrescriptionCommissionDto": {
-        "type": "object",
-        "properties": {
-          "toNationalId": {
-            "type": "string",
-            "description": "The national ID of the person receiving the commission"
-          }
-        },
-        "required": ["toNationalId"]
       },
       "OrganDto": {
         "type": "object",
@@ -2885,10 +2882,12 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "createdDate": {
             "format": "date-time",
@@ -2896,7 +2895,8 @@
           },
           "expiryDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "numRepliesAllowed": {
             "type": "number",
@@ -2909,9 +2909,17 @@
           "lastSubmitted": {
             "format": "date-time",
             "type": "string"
+          },
+          "hasDraft": {
+            "type": "boolean"
           }
         },
-        "required": ["questionnaireId", "numRepliesAllowed", "numSubmissions"]
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "hasDraft"
+        ]
       },
       "QuestionType": {
         "type": "string",
@@ -3491,8 +3499,8 @@
           },
           "answer": {
             "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
           }
         },
         "required": ["questionId", "answer"]
@@ -3601,8 +3609,8 @@
                       },
                       "answer": {
                         "type": "string",
-                        "format": "date",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3668,11 +3676,13 @@
           },
           "lastUpdatedDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "submittedDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "required": ["id", "questionnaireId", "isDraft", "createdDate"]
@@ -3730,10 +3740,12 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "createdDate": {
             "format": "date-time",
@@ -3741,7 +3753,8 @@
           },
           "expiryDate": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "numRepliesAllowed": {
             "type": "number",
@@ -3755,8 +3768,12 @@
             "format": "date-time",
             "type": "string"
           },
+          "hasDraft": {
+            "type": "boolean"
+          },
           "hint": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "daysBetweenReplies": {
             "type": "number",
@@ -3771,9 +3788,6 @@
             "items": {
               "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
             }
-          },
-          "hasDraft": {
-            "type": "boolean"
           },
           "groups": {
             "type": "array",
@@ -3834,10 +3848,10 @@
           "questionnaireId",
           "numRepliesAllowed",
           "numSubmissions",
+          "hasDraft",
           "daysBetweenReplies",
           "canSubmit",
           "submissions",
-          "hasDraft",
           "groups",
           "triggers"
         ]
@@ -3881,8 +3895,8 @@
                     },
                     "answer": {
                       "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -3991,8 +4005,8 @@
                                 },
                                 "answer": {
                                   "type": "string",
-                                  "format": "date",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -4049,14 +4063,42 @@
         },
         "required": ["replies", "isDraft"]
       },
+      "InvalidSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "type": "string"
+              },
+              "rowNum": {
+                "type": "number"
+              },
+              "rowQuestionId": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              }
+            },
+            "required": ["questionId", "errorCode", "errorMessage"]
+          }
+        }
+      },
       "QuestionnaireSubmissionDetailDto": {
         "type": "object",
         "properties": {
           "title": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "canSubmit": {
             "type": "boolean",
@@ -4102,32 +4144,6 @@
           }
         },
         "required": ["canSubmit", "groups", "submission"]
-      },
-      "InvalidSubmissionDto": {
-        "type": "object",
-        "properties": {
-          "errorMessage": {
-            "type": "object",
-            "properties": {
-              "questionId": {
-                "type": "string"
-              },
-              "rowNum": {
-                "type": "number"
-              },
-              "rowQuestionId": {
-                "type": "string"
-              },
-              "errorCode": {
-                "type": "string"
-              },
-              "errorMessage": {
-                "type": "string"
-              }
-            },
-            "required": ["questionId", "errorCode", "errorMessage"]
-          }
-        }
       },
       "AllergyClinicalStatus": {
         "type": "string",

@@ -20,9 +20,13 @@ export {
   mapPoliceVerdictDeliveryStatus,
 } from './lib/verdict'
 
+export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliverySupplementCode,
+  DocumentDeliveryMethod,
+  getServiceDateFromSupplements,
 } from './lib/policeDocument'
 export type {
   SubpoenaPoliceDocumentInfo,
@@ -104,6 +108,9 @@ export {
   deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
+  IndictmentCaseSubtypes,
+  type Subtype,
+  courtSubtypes,
   CaseAppealState,
   RequestCaseState,
   CaseTransition,
@@ -144,9 +151,11 @@ export {
 } from './lib/case'
 
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+export type { VerdictInfo } from './lib/indictmentCase'
 
 export {
-  getIndictmentAppealDeadlineDate,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
-import { ListItemFragment } from './listItem'
 import { LanguageFields } from './languageFields'
+import { ListItemFragment } from './listItem'
 
 export const FieldSettingsFragment = gql`
   fragment FieldSettings on FormSystemFieldSettings {
@@ -33,6 +33,7 @@ export const FieldSettingsFragment = gql`
     zendeskIsCustomField
     zendeskCustomFieldId
     applicantType
+    hasDescription
   }
   ${ListItemFragment}
   ${LanguageFields}

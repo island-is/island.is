@@ -1,3 +1,4 @@
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -22,6 +23,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
+import { permitTagSelector } from '../../utils/tagSelector'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
@@ -32,13 +34,25 @@ const MedicineDelegation = () => {
     variables: {
       locale: lang,
       input: {
-        active: false, // Fetch all data so the user doens't have to refetch when toggling expired permits
+        status: [
+          HealthDirectoratePermitStatus.active,
+          HealthDirectoratePermitStatus.expired,
+          HealthDirectoratePermitStatus.inactive,
+          HealthDirectoratePermitStatus.unknown,
+          HealthDirectoratePermitStatus.awaitingApproval,
+        ],
       },
     },
   })
+  const dataLength =
+    data?.healthDirectorateMedicineDelegations?.items?.length ?? 0
+
   const filteredData =
     data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
-      showExpiredPermits ? item : item.isActive,
+      showExpiredPermits
+        ? item.status
+        : item.status === HealthDirectoratePermitStatus.active ||
+          item.status === HealthDirectoratePermitStatus.awaitingApproval,
     )
 
   return (
@@ -72,18 +86,22 @@ const MedicineDelegation = () => {
         </>,
       ]}
     >
-      {!loading && error && (
-        <Problem type="internal_service_error" noBorder={false} />
+      {!loading && !error && dataLength === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.noPermit)}
+          message={formatMessage(messages.noPermitsRegistered)}
+          imgSrc="./assets/images/empty_flower.svg"
+        />
       )}
-      {!loading && !error && (!filteredData || filteredData.length === 0) && (
-        <Problem type="no_data" noBorder={false} />
-      )}
+      {!loading && error && <Problem error={error} noBorder={false} />}
       {loading && !error && (
         <Box marginY={3}>
-          <ActionCardLoader />
+          <ActionCardLoader repeat={3} />
         </Box>
       )}
-      {!loading && !error && filteredData && (
+      {!loading && !error && dataLength > 0 && (
         <>
           <Box justifyContent="spaceBetween" alignItems="center" display="flex">
             <Text variant="medium">
@@ -100,7 +118,18 @@ const MedicineDelegation = () => {
               checked={showExpiredPermits}
             />
           </Box>
-
+          {dataLength > 0 &&
+            filteredData?.length === 0 &&
+            !showExpiredPermits && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(messages.noData)}
+                message={formatMessage(messages.noActivePermitsRegistered)}
+                imgSrc="./assets/images/empty_flower.svg"
+                imgAlt=""
+              />
+            )}
           <Stack space={2}>
             {filteredData?.map((item) => {
               return (
@@ -113,6 +142,12 @@ const MedicineDelegation = () => {
                       ? formatMessage(messages.pickupMedicineAndLookup)
                       : formatMessage(messages.pickupMedicine),
                   })}
+                  backgroundColor={
+                    item.status ===
+                    HealthDirectoratePermitStatus.awaitingApproval
+                      ? 'blue'
+                      : 'white'
+                  }
                   subText={
                     item.dates?.to
                       ? formatMessage(messages.medicineValidTo) +
@@ -120,14 +155,9 @@ const MedicineDelegation = () => {
                         formatDate(item.dates.to)
                       : undefined
                   }
-                  tag={{
-                    outlined: false,
-                    label: item.isActive
-                      ? formatMessage(messages.valid)
-                      : formatMessage(messages.expired),
-                    variant: item.isActive ? 'blue' : 'red',
-                  }}
+                  tag={permitTagSelector(item.status, formatMessage)}
                   cta={{
+                    size: 'small',
                     variant: 'text',
                     label: formatMessage(m.seeDetails),
                     onClick: () =>

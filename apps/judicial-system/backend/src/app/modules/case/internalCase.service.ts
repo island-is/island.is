@@ -1,5 +1,8 @@
 import addDays from 'date-fns/addDays'
+import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
+import startOfDay from 'date-fns/startOfDay'
+import subDays from 'date-fns/subDays'
 import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
@@ -32,10 +35,10 @@ import {
   CaseState,
   CaseType,
   CourtSessionRulingType,
+  courtSubtypes,
   DefendantEventType,
   EventType,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getIndictmentAppealDeadline,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -61,7 +64,6 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
@@ -415,16 +417,20 @@ export class InternalCaseService {
       const newCase = await this.caseRepositoryService.create(
         {
           ...caseToCreate,
-          state: isRequestCase(caseToCreate.type)
-            ? CaseState.NEW
-            : CaseState.DRAFT,
+          ...(isRequestCase(caseToCreate.type)
+            ? {
+                state: CaseState.NEW,
+                courtId: creator.institution?.defaultCourtId,
+              }
+            : {
+                state: CaseState.DRAFT,
+                courtId: undefined,
+                withCourtSessions: true,
+              }),
           origin: CaseOrigin.LOKE,
           creatingProsecutorId: creator.id,
           prosecutorId:
             creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-          courtId: isRequestCase(caseToCreate.type)
-            ? creator.institution?.defaultCourtId
-            : undefined,
           prosecutorsOfficeId: creator.institution?.id,
         },
         { transaction },
@@ -643,12 +649,11 @@ export class InternalCaseService {
         theCase.defendants ?? [],
         filterMap((defendant) => {
           if (defendant.verdict?.serviceDate) {
-            const appealDeadline = getIndictmentAppealDeadlineDate({
+            const { isDeadlineExpired } = getIndictmentAppealDeadline({
               baseDate: defendant.verdict?.serviceDate,
               isFine: false,
             })
-            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
-            if (isAppealDeadlineExpired) {
+            if (isDeadlineExpired) {
               return option.some({ theCase, defendant })
             }
           }
@@ -1497,6 +1502,7 @@ export class InternalCaseService {
         'state',
         'indictmentRulingDecision',
         'rulingDate',
+        'ruling',
       ],
       where: {
         type: CaseType.INDICTMENT,
@@ -1558,5 +1564,33 @@ export class InternalCaseService {
         '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
       },
     })
+  }
+  async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
+    indictmentReviewerId: string,
+    targetDate: Date,
+  ) {
+    const targetRulingDate = subDays(targetDate, VERDICT_APPEAL_WINDOW_DAYS)
+    const start = startOfDay(targetRulingDate)
+    const end = endOfDay(targetRulingDate)
+
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+      ],
+      where: {
+        indictmentReviewerId: indictmentReviewerId,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        rulingDate: { [Op.gte]: start, [Op.lte]: end },
+      },
+    })
+    return cases
   }
 }

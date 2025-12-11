@@ -64,11 +64,11 @@ export class Defendant {
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
-  // TODO: move to verdict api model
+  // represents appeal deadline for both verdicts and fines
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
-  // TODO: move to verdict api model
+  // represents appeal deadline for both verdicts and fines
   @Field(() => Boolean, { nullable: true })
   readonly isVerdictAppealDeadlineExpired?: boolean
 

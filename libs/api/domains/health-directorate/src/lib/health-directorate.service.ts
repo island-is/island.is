@@ -14,8 +14,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import {
-  MedicineDelegationCreateInput,
-  MedicineDelegationDeleteInput,
+  MedicineDelegationCreateOrDeleteInput,
+  MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
 import {
   InvalidatePermitInput,
@@ -23,6 +23,15 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
+import { mapVaccinationStatus } from './mappers/basicInformationMapper'
+import {
+  mapDelegationStatus,
+  mapDispensationItem,
+  mapPrescriptionCategory,
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+} from './mappers/medicineMapper'
+import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -44,14 +53,6 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import {
-  mapDispensationItem,
-  mapPermit,
-  mapPrescriptionCategory,
-  mapPrescriptionRenewalBlockedReason,
-  mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -269,14 +270,15 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          type: item.productType,
-          form: item.productForm,
-          url: item.productUrl,
-          quantity: item.productQuantity?.toString(),
-          prescriberName: item.prescriberName,
-          medCardDrugId: item.medCardDrugId,
+          id: item.product.id,
+          name: item.product.name,
+          type: item.product.type,
+          form: item.product.form,
+          strength: item.product.strength,
+          url: item.product.url,
+          quantity: item.product.quantity?.toString(),
+          prescriberName: item.prescriber.name,
+          medCardDrugId: item.medCard?.id,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -285,26 +287,26 @@ export class HealthDirectorateService {
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
-          isRenewable: item.isRenewable,
-          renewalBlockedReason: item.renewalBlockedReason
-            ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
+          isRenewable: item.renewal.isRenewable,
+          renewalBlockedReason: item.renewal.blockedReason
+            ? mapPrescriptionRenewalBlockedReason(item.renewal.blockedReason)
             : undefined,
-          renewalStatus: item.renewalStatus
-            ? mapPrescriptionRenewalStatus(item.renewalStatus)
+          renewalStatus: item.renewal.status
+            ? mapPrescriptionRenewalStatus(item.renewal.status)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
-          dispensations: item.dispensations.map((item) => {
+          dispensations: item.dispensations.map((dispensation) => {
             return {
-              id: item.id,
-              agentName: item.dispensingAgentName,
-              date: item.dispensationDate,
-              count: item.dispensedItems.length,
-              items: item.dispensedItems.map((item) => {
+              id: dispensation.id,
+              agentName: dispensation.dispensingAgentName,
+              date: dispensation.dispensationDate,
+              count: item.dispensations.length,
+              items: dispensation.dispensedItems.map((dispensedItem) => {
                 return {
-                  id: item.productId,
-                  name: item.productName,
-                  strength: item.productStrength,
-                  amount: item.dispensedAmountDisplay,
+                  id: dispensedItem.productId,
+                  name: dispensedItem.productName,
+                  strength: dispensedItem.productStrength,
+                  amount: dispensedItem.dispensedAmountDisplay,
                 }
               }),
             }
@@ -373,10 +375,10 @@ export class HealthDirectorateService {
     const medicineHistory: Array<MedicineHistoryItem> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          strength: item.productStrength,
-          atcCode: item.productAtcCode,
+          id: item.product.id,
+          name: item.product.name,
+          strength: item.product.strength,
+          atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
@@ -411,12 +413,14 @@ export class HealthDirectorateService {
   async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
+    input: MedicineDelegationInput,
   ): Promise<MedicineDelegations | null> {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      active,
+      input.status.map((status) =>
+        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+      ),
     )
 
     if (!medicineDelegations) {
@@ -425,14 +429,21 @@ export class HealthDirectorateService {
 
     const data: MedicineDelegations = {
       items: medicineDelegations.map((item) => ({
-        cacheId: [item.toName, item.toNationalId, locale].join('-'),
+        cacheId: [
+          item.toNationalId,
+          item.validFrom?.toISOString() || 'no-start',
+          item.validTo?.toISOString() || 'no-end',
+          item.status,
+          locale,
+        ].join('-'),
         name: item.toName,
         nationalId: item.toNationalId,
         dates: {
           from: item.validFrom,
           to: item.validTo,
         },
-        isActive: item.isActive,
+        isActive: item.status === 'active',
+        status: mapDelegationStatus(item.status),
         lookup: item.commissionType === 1,
       })),
     }
@@ -442,14 +453,15 @@ export class HealthDirectorateService {
 
   async postMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationCreateInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .postMedicineDelegation(auth, {
+      .putMedicineDelegation(auth, {
         commissionType: input.lookup ? 1 : 0,
         toNationalId: input.nationalId,
         validFrom: input.from?.toISOString(),
         validTo: input.to?.toISOString(),
+        isActive: true,
       })
       .then(() => {
         return { success: true }
@@ -464,10 +476,14 @@ export class HealthDirectorateService {
 
   async deleteMedicineDelegation(
     auth: Auth,
-    input: MedicineDelegationDeleteInput,
+    input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<HealthDirectorateResponse> {
     return await this.healthApi
-      .deleteMedicineDelegation(auth, input.nationalId)
+      .putMedicineDelegation(auth, {
+        isActive: false,
+        toNationalId: input.nationalId,
+        commissionType: input.lookup ? 1 : 0,
+      })
       .then(() => {
         return { success: true }
       })
@@ -488,9 +504,7 @@ export class HealthDirectorateService {
     const permits = await this.healthApi.getPermits(
       auth,
       locale,
-      input.statuses.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status.map((status) => mapCountryPermitStatus(status)),
     )
 
     if (!permits) {

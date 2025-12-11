@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 import { doYouHaveVacationDays } from '../../../utils'
+import { getVacationMaxDate } from '../../../utils/getMaxVacationDate'
 
 export const vacationSubSection = buildSubSection({
   id: 'vacationSubSection',
@@ -75,6 +76,7 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
+              maxDate: getVacationMaxDate,
             },
             endDate: {
               component: 'date',
@@ -82,6 +84,7 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
+              maxDate: getVacationMaxDate,
             },
           },
         }),

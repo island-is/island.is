@@ -116,7 +116,7 @@ export class ApplicationStatistics {
   name?: string
 }
 
-export class ApplicationTypeAdminInstitution {
+export class ApplicationTypeAdmin {
   @ApiProperty()
   @Expose()
   @IsString()

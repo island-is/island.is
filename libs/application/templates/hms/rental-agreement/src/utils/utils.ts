@@ -57,6 +57,13 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+export const isValidMobileNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return (
+    phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
+  )
+}
+
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
@@ -103,13 +110,13 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: true,
+    enableCountrySelector: false,
     width: 'half',
   },
   email: {
@@ -131,13 +138,13 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   nationalIdWithName: {
     component: 'nationalIdWithName',
     required: true,
-    searchCompanies: true,
+    searchCompanies: false,
   },
   phone: {
     component: 'phone',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: true,
+    enableCountrySelector: false,
     width: 'half',
   },
   email: {
@@ -285,8 +292,8 @@ export const staticPartyTableData = (
   application: Application,
   role: ApplicantsRole,
 ) => {
-  const { answers } = application
-  const aplicantRole = getValueViaPath<string>(
+  const { answers, externalData } = application
+  const applicantRole = getValueViaPath<string>(
     answers,
     'assignApplicantParty.applicantsRole',
   )
@@ -296,7 +303,22 @@ export const staticPartyTableData = (
   const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
   const address = getValueViaPath<string>(answers, 'applicant.address')
 
-  if (aplicantRole !== role) {
+  if (
+    getValueViaPath<string>(externalData, 'identity.data.type') === 'company' &&
+    role === ApplicantsRole.LANDLORD
+  ) {
+    return [
+      {
+        name: fullName ?? '',
+        phone: formatPhoneNumber(phone ?? ''),
+        nationalId: formatNationalId(nationalId ?? ''),
+        email: email ?? '',
+        address: address ?? '',
+      },
+    ]
+  }
+
+  if (applicantRole !== role) {
     return []
   }
 
