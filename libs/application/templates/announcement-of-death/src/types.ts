@@ -27,6 +27,7 @@ export type AssetFormField = Asset & { id: string }
 
 export type Answers = {
   additionalInfo: string
+  addApplicantToEstateMembers: string[]
   applicantEmail: string
   applicantName: string
   applicantPhone: string
@@ -37,7 +38,7 @@ export type Answers = {
     encountered?: boolean
   }
   assetsAbroad: boolean
-  authorizationForFuneralExpenses?: boolean
+  authorizationForFuneralExpenses: string
   bankStockOrShares: boolean
   caseNumber: string
   certificateOfDeathAnnouncement: string
@@ -45,8 +46,9 @@ export type Answers = {
   estateMembers: {
     members: EstateMember[]
     encountered?: boolean
+    applicantAdded?: boolean
   }
-  financesDataCollectionPermission?: boolean
+  financesDataCollectionPermission: string
   knowledgeOfOtherWills: 'yes' | 'no'
   hadFirearms: 'yes' | 'no'
   firearmApplicant: FirearmApplicant

@@ -30,12 +30,12 @@ import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
-  hasSpecialEducationSubType,
-  isWelfareContactSelected,
   needsOtherGuardianApproval,
   needsPayerApproval,
-  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
+  hasSpecialEducationSubType,
+  isWelfareContactSelected,
+  shouldShowAlternativeSpecialEducationDepartment,
   showCaseManagerFields,
 } from '../utils/conditionUtils'
 import {
