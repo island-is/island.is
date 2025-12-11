@@ -42,7 +42,6 @@ export const participantsSection = buildSection({
               dictionaryOfItems,
             }
           },
-
           table: {
             header: [
               participantMessages.labels.name,

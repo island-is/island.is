@@ -55,10 +55,80 @@ export const m = {
     },
   }),
   participant: defineMessages({
+    participantListTitle: {
+      id: 'hh.courses.application:participant.participantListTitle',
+      defaultMessage: 'Aðrir þátttakendur',
+      description: 'Title of participant list',
+    },
     sectionTitle: {
       id: 'hh.courses.application:participant.sectionTitle',
-      defaultMessage: 'Upplýsingar um þátttakanda',
+      defaultMessage: 'Upplýsingar um þátttakendur',
       description: 'Title of participant section',
+    },
+    userInformationTitle: {
+      id: 'hh.courses.application:participant.userInformationTitle',
+      defaultMessage: 'Þínar upplýsingar',
+      description: 'Title of user information',
+    },
+    userName: {
+      id: 'hh.courses.application:participant.userName',
+      defaultMessage: 'Nafn',
+      description: 'Title of user name field',
+    },
+    userNationalId: {
+      id: 'hh.courses.application:participant.userNationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Title of user national id field',
+    },
+    userEmail: {
+      id: 'hh.courses.application:participant.userEmail',
+      defaultMessage: 'Netfang',
+      description: 'Title of user email field',
+    },
+    userPhone: {
+      id: 'hh.courses.application:participant.userPhone',
+      defaultMessage: 'Símanúmer',
+      description: 'Title of user phone field',
+    },
+    participantName: {
+      id: 'hh.courses.application:participant.participantName',
+      defaultMessage: 'Nafn',
+      description: 'Title of participant name field',
+    },
+    participantNationalId: {
+      id: 'hh.courses.application:participant.participantNationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Title of participant national id field',
+    },
+    participantEmail: {
+      id: 'hh.courses.application:participant.participantEmail',
+      defaultMessage: 'Netfang',
+      description: 'Title of participant email field',
+    },
+    participantPhone: {
+      id: 'hh.courses.application:participant.participantPhone',
+      defaultMessage: 'Símanúmer',
+      description: 'Title of participant phone field',
+    },
+    userIsParticipatingLabel: {
+      id: 'hh.courses.application:participant.userIsParticipatingLabel',
+      defaultMessage: 'Viltu skrá þig á námskeiðið?',
+      description: 'Label of user is participating field',
+    },
+    userIsParticipatingYesLabel: {
+      id: 'hh.courses.application:participant.userIsParticipatingYesLabel',
+      defaultMessage: 'Já',
+      description: 'Title of user is participating field',
+    },
+    userIsNotParticipatingNoLabel: {
+      id: 'hh.courses.application:participant.userIsNotParticipatingNoLabel',
+      defaultMessage: 'Nei',
+      description: 'Title of user is not participating field',
+    },
+    changeInfo: {
+      id: 'hh.courses.application:participant.changeInfo',
+      defaultMessage: 'Breyta upplýsingum á mínum síðum',
+      description: 'Title of change info field',
     },
   }),
   payer: defineMessages({
@@ -143,137 +213,3 @@ export const m = {
     },
   }),
 }
-
-// export const m = defineMessages({
-//   payerSectionTitle: {
-//     id: 'hh.courses.application:payerSectionTitle',
-//     defaultMessage: 'Upplýsingar um greiðanda',
-//     description: 'Title of payer section',
-//   },
-//   courseSectionTitle: {
-//     id: 'hh.courses.application:courseSectionTitle',
-//     defaultMessage: 'Val á námskeiði',
-//     description: 'Title of course section',
-//   },
-//   courseSelectTitle: {
-//     id: 'hh.courses.application:courseSelectTitle',
-//     defaultMessage: 'Námskeið',
-//     description: 'Title of course select',
-//   },
-//   dateSelectTitle: {
-//     id: 'hh.courses.application:dateSelectTitle',
-//     defaultMessage: 'Dagsetning',
-//     description: 'Title of date select',
-//   },
-//   confirmButtonLabel: {
-//     id: 'hh.courses.application:confirmButtonLabel',
-//     defaultMessage: 'Staðfesta',
-//     description: 'Confirm button label',
-//   },
-//   prerequisitesNationalRegistryTitle: {
-//     id: 'hh.courses.application:prerequisitesNationalRegistryTitle',
-//     defaultMessage: 'Upplýsingar úr Þjóðskrá',
-//     description: 'Information from the National Registry',
-//   },
-//   prerequisitesNationalRegistrySubTitle: {
-//     id: 'hh.courses.application:prerequisitesNationalRegistrySubTitle',
-//     defaultMessage:
-//       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
-//     description: 'We will fetch name, national id and address',
-//   },
-//   mainSectionTitle: {
-//     id: 'hh.courses.application:mainSectionTitle',
-//     defaultMessage: 'Skráning á námskeið',
-//     description: 'Title of main section',
-//   },
-//   participantSectionTitle: {
-//     id: 'hh.courses.application:participantSectionTitle',
-//     defaultMessage: 'Upplýsingar um þátttakanda',
-//     description: 'Title of participant section',
-//   },
-//   participantSectionParticipantEmail: {
-//     id: 'hh.courses.application:participantSectionParticipantEmail',
-//     defaultMessage: 'Netfang',
-//     description: 'Label for participant email',
-//   },
-//   participantSectionParticipantPhoneNumber: {
-//     id: 'hh.courses.application:participantSectionParticipantPhoneNumber',
-//     defaultMessage: 'Símanúmer',
-//     description: 'Label for participant phone number',
-//   },
-//   participantSectionPayerHeading: {
-//     id: 'hh.courses.application:participantSectionPayerHeading',
-//     defaultMessage: 'Greiðandi reiknings',
-//     description: 'Heading for payer segment',
-//   },
-//   participantSectionPayerNationalId: {
-//     id: 'hh.courses.application:participantSectionPayerNationalId',
-//     defaultMessage: 'Kennitala',
-//     description: 'Label for payer national id',
-//   },
-//   participantSectionPayerName: {
-//     id: 'hh.courses.application:participantSectionPayerName',
-//     defaultMessage: 'Nafn',
-//     description: 'Label for payer name',
-//   },
-//   overviewSectionHeading: {
-//     id: 'hh.courses.application:overviewSectionHeading',
-//     defaultMessage: 'Yfirlit skráningar',
-//     description: 'Heading for overview section',
-//   },
-//   overviewSectionParticipantHeading: {
-//     id: 'hh.courses.application:overviewSectionParticipantHeading',
-//     defaultMessage: 'Þátttakandi',
-//     description: 'Heading for participant in overview section',
-//   },
-//   overviewSectionParticipantName: {
-//     id: 'hh.courses.application:overviewSectionParticipantName',
-//     defaultMessage: 'Nafn',
-//     description: 'Label for participant name in overview section',
-//   },
-//   overviewSectionParticipantNationalId: {
-//     id: 'hh.courses.application:overviewSectionParticipantNationalId',
-//     defaultMessage: 'Kennitala',
-//     description: 'Label for participant national id in overview section',
-//   },
-//   overviewSectionParticipantEmail: {
-//     id: 'hh.courses.application:overviewSectionParticipantEmail',
-//     defaultMessage: 'Netfang',
-//     description: 'Label for participant email in overview section',
-//   },
-//   overviewSectionParticipantPhone: {
-//     id: 'hh.courses.application:overviewSectionParticipantPhone',
-//     defaultMessage: 'Símanúmer',
-//     description: 'Label for participant phone number in overview section',
-//   },
-//   overviewSectionPayerHeading: {
-//     id: 'hh.courses.application:overviewSectionPayerHeading',
-//     defaultMessage: 'Greiðandi reiknings',
-//     description: 'Heading for payer in overview section',
-//   },
-//   overviewSectionPayerName: {
-//     id: 'hh.courses.application:overviewSectionPayerName',
-//     defaultMessage: 'Nafn',
-//     description: 'Label for payer name in overview section',
-//   },
-//   overviewSectionPayerNationalId: {
-//     id: 'hh.courses.application:overviewSectionPayerNationalId',
-//     defaultMessage: 'Kennitala',
-//     description: 'Label for payer national id in overview section',
-//   },
-//   overviewSectionSubmit: {
-//     id: 'hh.courses.application:overviewSectionSubmit',
-//     defaultMessage: 'Staðfesta skráningu',
-//     description: 'Label for submit button in overview section',
-//   },
-//   completedFormAlertTitle: {
-//     id: 'hh.courses.application:completedFormAlertTitle',
-//     defaultMessage: 'Takk fyrir skráninguna',
-//     description: 'Title of completed form alert',
-//   },
-//   completedFormAlertMessage: {
-//     id: 'hh.courses.application:completedFormAlertMessage',
-//     defaultMessage: 'Skráning þín er móttekin',
-//     description: 'Message of completed form alert',
-//   },
-// })
