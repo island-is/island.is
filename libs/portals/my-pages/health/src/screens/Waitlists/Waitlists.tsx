@@ -6,6 +6,7 @@ import {
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
+  m,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
@@ -36,9 +37,10 @@ const Waitlists: React.FC = () => {
       {!loading && !error && waitlists?.length === 0 && (
         <Problem
           type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
           message={formatMessage(messages.noWaitlists)}
           imgSrc="./assets/images/nodata.svg"
-          noBorder={false}
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
