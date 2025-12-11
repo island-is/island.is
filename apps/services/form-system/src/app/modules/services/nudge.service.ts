@@ -13,11 +13,11 @@ export class NudgeService {
   ) {}
   async sendNudge(
     applicationDto: ApplicationDto,
-    url: OrganizationUrl,
+    url: string,
   ): Promise<boolean> {
     let success = true
     try {
-      const response = await fetch(url.url, {
+      const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({ applicationId: applicationDto.id }),
         headers: {
