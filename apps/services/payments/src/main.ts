@@ -14,5 +14,3 @@ bootstrap({
     database: true,
   },
 })
-
-// TRIGGER DEPLOY
