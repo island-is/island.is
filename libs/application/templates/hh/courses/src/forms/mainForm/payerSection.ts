@@ -1,7 +1,12 @@
 import {
   buildMultiField,
+  buildRadioField,
   buildSection,
-  buildTextField,
+  YES,
+  getValueViaPath,
+  NO,
+  buildNationalIdWithNameField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -13,18 +18,32 @@ export const payerSection = buildSection({
       id: 'payerSectionMultiField',
       title: m.payer.sectionTitle,
       children: [
-        buildTextField({
-          id: 'payerNationalId',
-          title: m.payer.nationalIdTitle,
+        buildRadioField({
+          id: 'userIsPayingAsIndividual',
+          title: m.payer.userIsPayingAsIndividualLabel,
+          defaultValue: YES,
           width: 'half',
-          format: '######-####',
-          required: true,
+          backgroundColor: 'white',
+          options: [
+            { label: m.payer.userIsPayingAsIndividualYesLabel, value: YES },
+            { label: m.payer.userIsPayingAsIndividualNoLabel, value: NO },
+          ],
         }),
-        buildTextField({
-          id: 'payerName',
-          title: m.payer.nameTitle,
-          width: 'half',
+        buildNationalIdWithNameField({
+          marginTop: 4,
+          id: 'companyPayment',
+          title: m.payer.companyInfoTitle,
+          titleVariant: 'h4',
           required: true,
+          searchCompanies: true,
+          searchPersons: false,
+          // TODO: Do we need to ask for phone and email of someone in the company?
+          condition: (answers) =>
+            getValueViaPath<YesOrNoEnum>(
+              answers,
+              'userIsPayingAsIndividual',
+              YesOrNoEnum.NO,
+            ) === YesOrNoEnum.NO,
         }),
       ],
     }),

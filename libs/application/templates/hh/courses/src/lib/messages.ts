@@ -62,7 +62,7 @@ export const m = {
     },
     sectionTitle: {
       id: 'hh.courses.application:participant.sectionTitle',
-      defaultMessage: 'Upplýsingar um þátttakendur',
+      defaultMessage: 'Þátttakendur',
       description: 'Title of participant section',
     },
     userInformationTitle: {
@@ -134,18 +134,28 @@ export const m = {
   payer: defineMessages({
     sectionTitle: {
       id: 'hh.courses.application:payer.sectionTitle',
-      defaultMessage: 'Upplýsingar um greiðanda',
+      defaultMessage: 'Greiðsluupplýsingar',
       description: 'Title of payer section',
     },
-    nationalIdTitle: {
-      id: 'hh.courses.application:payer.nationalIdTitle',
-      defaultMessage: 'Kennitala',
-      description: 'Title of national id field',
+    companyInfoTitle: {
+      id: 'hh.courses.application:payer.companyInfoTitle',
+      defaultMessage: 'Upplýsingar um fyrirtæki',
+      description: 'Title of company info field',
     },
-    nameTitle: {
-      id: 'hh.courses.application:payer.nameTitle',
-      defaultMessage: 'Nafn',
-      description: 'Title of name field',
+    userIsPayingAsIndividualLabel: {
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualLabel',
+      defaultMessage: 'Greiðslutilhögun',
+      description: 'Label of user is paying as individual field',
+    },
+    userIsPayingAsIndividualYesLabel: {
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualYesLabel',
+      defaultMessage: 'Greiða sem einstaklingur',
+      description: 'Title of user is paying as individual field',
+    },
+    userIsPayingAsIndividualNoLabel: {
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualNoLabel',
+      defaultMessage: 'Greiða sem fyrirtæki',
+      description: 'Title of user is paying as individual field',
     },
   }),
   overview: defineMessages({

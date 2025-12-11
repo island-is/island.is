@@ -23,7 +23,8 @@ const participantSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  userIsParticipating: z.nativeEnum(YesOrNoEnum),
+  userIsParticipating: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
+  userIsPayingAsIndividual: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   participantList: z.array(participantSchema),
 })
 
