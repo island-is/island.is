@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
-import { NationalRegistryV3Service } from './national-registry.service'
+import { NationalRegistryV3Service } from './national-registry-v3.service'
 import { NationalRegistryModule } from '../national-registry/national-registry.module'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
