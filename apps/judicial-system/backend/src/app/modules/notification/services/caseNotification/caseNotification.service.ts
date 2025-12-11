@@ -2061,6 +2061,120 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region Ruling order notifications
+  //#region RULING_ORDER_ADDED notifications
+  private sendRulingOrderAddedNotification({
+    courtCaseNumber,
+    link,
+    name,
+    email,
+    appealDeadline,
+  }: {
+    courtCaseNumber?: string
+    link?: string
+    name?: string
+    email?: string
+    appealDeadline?: Date
+  } = {}) {
+    const subject = `Nýr úrskurður í máli ${courtCaseNumber}`
+    const html = `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Kærufrestur rennur út ${formatDate(
+      appealDeadline,
+      'PPPp',
+    )}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a><br/>(Athugið að úrskurði í sakamálum er enn ekki hægt að kæra í gegnum Réttarvörslugátt)`
+
+    return this.sendEmail({
+      subject,
+      html,
+      recipientName: name,
+      recipientEmail: email,
+      skipTail: !link,
+    })
+  }
+
+  private async sendRulingOrderAddedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    // get appeal deadline 
+    const promises = []
+
+    if (theCase.registrar) {
+      promises.push(
+        this.sendCaseFilesUpdatedNotification(
+          theCase.courtCaseNumber,
+          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
+
+    const uniqueSpokespersons = _uniqBy(
+      theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
+      (c: CivilClaimant) => c.spokespersonEmail,
+    )
+    uniqueSpokespersons.forEach((civilClaimant) => {
+      if (civilClaimant.spokespersonEmail) {
+        promises.push(
+          this.sendCaseFilesUpdatedNotification(
+            theCase.courtCaseNumber,
+            civilClaimant.spokespersonNationalId &&
+              formatDefenderRoute(
+                this.config.clientUrl,
+                theCase.type,
+                theCase.id,
+              ),
+            civilClaimant.spokespersonName,
+            civilClaimant.spokespersonEmail,
+          ),
+        )
+      }
+    })
+
+    const uniqueDefendants = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    )
+    uniqueDefendants.forEach((defendant) => {
+      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+        promises.push(
+          this.sendCaseFilesUpdatedNotification(
+            theCase.courtCaseNumber,
+            defendant.defenderNationalId &&
+              formatDefenderRoute(
+                this.config.clientUrl,
+                theCase.type,
+                theCase.id,
+              ),
+            defendant.defenderName,
+            defendant.defenderEmail,
+          ),
+        )
+      }
+    })
+
+    promises.push(
+      this.sendCaseFilesUpdatedNotification(
+        theCase.courtCaseNumber,
+        `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        theCase.prosecutor?.name,
+        theCase.prosecutor?.email,
+      ),
+    )
+
+    const recipients = await Promise.all(promises)
+
+    if (recipients.length > 0) {
+      return this.recordNotification(
+        theCase.id,
+        CaseNotificationType.RULING_ORDER_ADDED,
+        recipients,
+      )
+    }
+
+    return { delivered: true }
+  }
+  //#endregion
+
   //#region Appeal notifications
   //#region COURT_OF_APPEAL_JUDGE_ASSIGNED notifications
   private async sendCourtOfAppealJudgeAssignedNotification(
@@ -2928,8 +3042,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
       case CaseNotificationType.RULING_ORDER_ADDED:
-        // TODO - update this one
-        return this.sendCaseFilesUpdatedNotifications(theCase, user)
+        return this.sendRulingOrderAddedNotifications(theCase)
       case CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       default:
