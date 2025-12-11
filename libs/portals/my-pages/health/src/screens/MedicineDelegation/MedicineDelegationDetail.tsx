@@ -121,7 +121,7 @@ const MedicineDelegationDetail = () => {
             filteredData?.isActive
               ? {
                   type: 'action',
-                  label: formatMessage(messages.deleteDelegation),
+                  label: formatMessage(messages.invalidatePermit),
                   action: () => setModalVisible(true),
                   variant: 'text',
                   icon: 'trash',

@@ -441,7 +441,7 @@ export const messages = defineMessages({
     id: 'sp.health:delegation-type',
   },
   deleteDelegation: {
-    defaultMessage: 'Eyða heimild',
+    defaultMessage: 'Afturkalla heimild',
     id: 'sp.health:delete-delegation',
   },
   dentist: {
