@@ -14,11 +14,14 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
+  /** Utility button variant with filled blue background and white text */
+  isFilledUtilityButton?: boolean
   textStyle?: TextStyle
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
   iconPosition?: 'start' | 'end'
+  compactPadding?: boolean
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -42,10 +45,19 @@ const Host = styled.TouchableHighlight<HostProps>`
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
   padding: ${(props) =>
-    `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
+    props.compactPadding
+      ? `${props.theme.spacing.p1}px ${props.theme.spacing.p2}px`
+      : `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isTransparent, isOutlined, isUtilityButton }) =>
-      isTransparent || isOutlined || isUtilityButton
+    ({
+      theme,
+      disabled,
+      isTransparent,
+      isOutlined,
+      isUtilityButton,
+      isFilledUtilityButton,
+    }) =>
+      isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
@@ -82,6 +94,7 @@ const Text = styled.Text<{
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
+  isFilledUtilityButton?: boolean
   disabled?: boolean
 }>`
   ${font({
@@ -89,7 +102,7 @@ const Text = styled.Text<{
     color: (props) =>
       props.isTransparent && props.disabled
         ? props.theme.color.dark200
-        : props.isUtilityButton
+        : props.isUtilityButton && !props.isFilledUtilityButton
         ? {
             light: props.theme.color.dark400,
             dark: props.theme.color.white,
@@ -114,15 +127,19 @@ export function Button({
   isTransparent,
   isOutlined,
   isUtilityButton,
+  isFilledUtilityButton,
   icon,
   textStyle,
   textProps,
   iconStyle,
   ellipsis,
+  compactPadding = false,
   iconPosition = 'end',
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
+
+  if (isFilledUtilityButton) isUtilityButton = true
 
   const renderIcon = () => {
     return (
@@ -138,13 +155,17 @@ export function Button({
   return (
     <Host
       underlayColor={
-        isTransparent || isOutlined || isUtilityButton
+        isTransparent ||
+        isOutlined ||
+        (isUtilityButton && !isFilledUtilityButton)
           ? theme.shade.shade100
           : theme.color.blue600
       }
       isTransparent={isTransparent}
       isOutlined={isOutlined}
       isUtilityButton={isUtilityButton}
+      isFilledUtilityButton={isFilledUtilityButton}
+      compactPadding={compactPadding}
       {...rest}
     >
       <>
@@ -155,6 +176,7 @@ export function Button({
             isTransparent={isTransparent}
             isOutlined={isOutlined}
             isUtilityButton={isUtilityButton}
+            isFilledUtilityButton={isFilledUtilityButton}
             disabled={rest.disabled}
             style={textStyle}
             numberOfLines={ellipsis ? 1 : undefined}

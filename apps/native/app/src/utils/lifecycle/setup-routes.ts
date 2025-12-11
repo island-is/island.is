@@ -173,6 +173,57 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/medicine-delegation/add', async (passProps) => {
+    const { parentComponentId, ...rest } = (passProps as any) || {}
+
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationFormScreen,
+              passProps: {
+                parentComponentId,
+                ...rest,
+              },
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation/detail', async (passProps) => {
+    const { parentComponentId, ...rest } = (passProps as any) || {}
+
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationDetailScreen,
+              passProps: {
+                parentComponentId,
+                ...rest,
+              },
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.MedicineDelegationScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {

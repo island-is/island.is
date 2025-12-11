@@ -742,6 +742,7 @@ export const en: TranslatedMessages = {
   'health.overview.vaccinations': 'Vaccinations',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.medicineDelegation': 'Medicine authorizations',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
@@ -783,4 +784,51 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Medicine authorizations',
+  'health.medicineDelegation.title': 'Medicine authorizations',
+  'health.medicineDelegation.description':
+    'Only you can collect your medicines at the pharmacy unless you grant someone a special authorization. Here you can register people who are allowed to collect medicines at the pharmacy on your behalf.',
+  'health.medicineDelegation.readMore': 'Read about medicine authorizations',
+  'health.medicineDelegation.addButton': 'Add authorization',
+  'health.medicineDelegation.emptyTitle': 'No authorizations',
+  'health.medicineDelegation.emptyDescription':
+    'There are no registered authorizations.',
+  'health.medicineDelegation.listCaption':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.detail.delete': 'Delete authorization',
+  'health.medicineDelegation.detail.issuerLabel': 'Issuer',
+  'health.medicineDelegation.detail.issuerValue': 'Icelandic Health Insurance',
+  'health.medicineDelegation.detail.issuedDate': 'Issue date',
+  'health.medicineDelegation.detail.status': 'Status',
+  'health.medicineDelegation.detail.statusActive': 'Active',
+  'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.validity': 'Validity period',
+  'health.medicineDelegation.detail.validFor': 'Valid for',
+  'health.medicineDelegation.detail.validForValue':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.detail.revoke': 'Revoke delegaiton',
+  'health.medicineDelegation.detail.revokeError':
+    'Failed to revoke medicine authorization. Please try again later.',
+  'health.medicineDelegation.form.title': 'Add medicine authorization',
+  'health.medicineDelegation.form.subtitle':
+    'Choose a person who may collect your medicine at the pharmacy.',
+  'health.medicineDelegation.form.nationalIdLabel': 'National ID',
+  'health.medicineDelegation.form.nameLabel': 'Name',
+  'health.medicineDelegation.form.validityLabel':
+    'How long should the authorization be valid?',
+  'health.medicineDelegation.form.dateFromLabel': 'Date from',
+  'health.medicineDelegation.form.dateToLabel': 'Date to',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Choose a date from',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Choose a date to',
+  'health.medicineDelegation.form.submit': 'Add authorization',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Failed to create medicine authorization. Please try again later.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Could not find a name for this national ID.',
+  'health.medicineDelegation.form.nameError':
+    'An error occurred while fetching the name.',
+  'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
 }
