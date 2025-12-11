@@ -23,7 +23,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  getIndictmentRulingDecisionTag,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -190,7 +189,6 @@ const Summary: FC = () => {
     },
     [[] as CaseFile[], [] as CaseFile[]],
   )
-
 
   const canUserCompleteCase =
     (workingCase.indictmentRulingDecision !==

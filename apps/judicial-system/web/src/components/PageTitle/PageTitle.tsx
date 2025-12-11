@@ -40,7 +40,6 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
       ? isCompletedCase(workingCase.state)
       : true
 
-  console.log({ showCaseStateTag })
   return (
     <Box
       marginBottom={marginBottom ?? 7}
