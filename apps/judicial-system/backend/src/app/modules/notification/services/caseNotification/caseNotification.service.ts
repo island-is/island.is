@@ -2094,7 +2094,7 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendRulingOrderAddedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    // get appeal deadline 
+    // get appeal deadline
     const promises = []
 
     if (theCase.registrar) {
