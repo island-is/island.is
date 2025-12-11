@@ -842,4 +842,6 @@ export const is = {
   'health.medicineDelegation.form.nameError':
     'Villa kom upp við að sækja nafn.',
   'health.medicineDelegation.form.invalidNationalId': 'Ógild kennitala.',
+  'health.medicineDelegation.form.lookupLabel':
+    'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
 }

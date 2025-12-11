@@ -14,9 +14,11 @@ import {
 } from '../../graphql/types/schema'
 import {
   Button,
+  Checkbox,
   DatePickerInput,
   NavigationBarSheet,
   TextField,
+  theme,
   Typography,
 } from '../../ui'
 
@@ -79,6 +81,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
   const [dateTo, setDateTo] = useState<Date | undefined>()
   const [nameError, setNameError] = useState<string | undefined>()
   const [delegateError, setDelegateError] = useState<string | undefined>()
+  const [lookup, setLookup] = useState(false)
 
   const [
     delegateMedicineDelegation,
@@ -160,7 +163,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
             nationalId,
             from: dateFrom?.toISOString(),
             to: dateTo?.toISOString(),
-            lookup: false,
+            lookup,
           },
         },
       })
@@ -217,6 +220,22 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
                 focusable={false}
               />
             </Fields>
+            <Checkbox
+              label={intl.formatMessage({
+                id: 'health.medicineDelegation.form.lookupLabel',
+              })}
+              checked={lookup}
+              onPress={() => setLookup((prev) => !prev)}
+              borderBottom={false}
+              containerStyle={{
+                flexDirection: 'row-reverse',
+                justifyContent: 'flex-end',
+                width: '100%',
+                gap: theme.spacing[1],
+                marginHorizontal: 0,
+                marginVertical: 0,
+              }}
+            />
             <ValidityHeading variant="heading5">
               {intl.formatMessage({
                 id: 'health.medicineDelegation.form.validityLabel',

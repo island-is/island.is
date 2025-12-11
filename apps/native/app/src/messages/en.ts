@@ -797,6 +797,10 @@ export const en: TranslatedMessages = {
     'There are no registered authorizations.',
   'health.medicineDelegation.listCaption':
     'Pick up medicine and view prescription.',
+  'health.medicineDelegation.captionPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
   'health.medicineDelegation.listValidTo': 'Valid until {date}',
   'health.medicineDelegation.showExpiredPermits': 'Show inactive',
   'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
@@ -815,6 +819,10 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.detail.validFor': 'Valid for',
   'health.medicineDelegation.detail.validForValue':
     'Pick up medicine and view prescription.',
+  'health.medicineDelegation.detail.validForPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
   'health.medicineDelegation.detail.revoke': 'Revoke delegaiton',
   'health.medicineDelegation.detail.revokeError':
     'Failed to revoke medicine authorization. Please try again later.',
@@ -837,4 +845,6 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.nameError':
     'An error occurred while fetching the name.',
   'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
+  'health.medicineDelegation.form.lookupLabel':
+    'The above person may also look up my prescriptions at the pharmacy.',
 }
