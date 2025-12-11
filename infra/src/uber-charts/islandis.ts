@@ -30,6 +30,7 @@ import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-
 import {
   workerSetup as cmsImporterSetup,
   energyFundImportSetup as cmsImporterEnergyFundImportSetup,
+  fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
 } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
@@ -160,6 +161,7 @@ const xroadCollector = xroadCollectorSetup()
 const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
 const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
+const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
 
 const storybook = storybookSetup({})
 
@@ -208,6 +210,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     cmsImporter,
     cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -253,6 +256,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     cmsImporter,
     cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -297,6 +301,7 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     cmsImporter,
     cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     licenseApi,
     sessionsService,
     sessionsWorker,

@@ -11,13 +11,10 @@ import {
   CONTENT_TYPE,
   GENERIC_LIST_ITEM_CONTENT_TYPE,
   LOCALE,
-  PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
 } from '../../constants'
 import { logger } from '@island.is/logging'
-import { EnergyGrantCollectionDto } from '../energyGrants/dto/energyGrantCollection.dto'
 import { CmsGrant } from '../../grant-import/grant-import.types'
 import { CreationType, EntryInput } from './cms.types'
-import { mapEnergyGrantToGenericListItem } from './mapper'
 import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
 @Injectable()
@@ -32,72 +29,6 @@ export class CmsRepository {
       return null
     }
     return regExResult[2]
-  }
-
-  updatePreviousEnergyFundGrantRecipients = async (
-    energyGrants: EnergyGrantCollectionDto,
-  ) => {
-    if (energyGrants) {
-      const previousEntriesResponse = await this.managementClient.getEntries({
-        content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
-        select: 'fields,sys,metadata',
-        links_to_entry: PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
-      })
-
-      if (!previousEntriesResponse.ok) {
-        logger.warn(`cms service failed to fetch previous energy fund grants`, {
-          error: previousEntriesResponse.error,
-        })
-        return []
-      } else {
-        const previousEntryNames: Array<Entry> =
-          previousEntriesResponse.data.items
-            .map((i) => {
-              const title = i.fields['internalTitle']?.['LOCALE']
-
-              if (!title) {
-                return null
-              }
-              return title
-            })
-            .filter(isDefined)
-
-        const newEntries: Array<CreationType> = energyGrants.grants
-          .map((eg) => {
-            if (
-              previousEntryNames.find(
-                (i) => i.fields['internalTitle']?.['LOCALE'] === eg.projectName,
-              )
-            ) {
-              logger.info('Entry already exists, skipping.', {
-                name: eg.projectName,
-              })
-              return null
-            }
-
-            return mapEnergyGrantToGenericListItem(eg)
-          })
-          .filter(isDefined)
-
-        const contentTypeResponse = await this.managementClient.getContentType(
-          GENERIC_LIST_ITEM_CONTENT_TYPE,
-        )
-
-        if (!contentTypeResponse.ok) {
-          logger.warn('cms content type fetch failed', {
-            error: contentTypeResponse.error,
-          })
-          return [
-            {
-              ok: false,
-              error: contentTypeResponse.error.message,
-            },
-          ]
-        } else {
-          this.createEntries(newEntries, contentTypeResponse.data)
-        }
-      }
-    }
   }
 
   getContentfulGrants = async (): Promise<Array<CmsGrant>> => {
@@ -142,6 +73,28 @@ export class CmsRepository {
       })
       return []
     }
+  }
+
+  getGenericListItemEntries = async (
+    genericListId: string,
+  ): Promise<Entry[]> => {
+    const existingEntries = await this.managementClient.getEntries({
+      content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
+      select: 'fields,sys,metadata',
+      links_to_entry: genericListId,
+    })
+
+    if (!existingEntries?.ok) {
+      logger.warn(
+        `cms service failed to fetch items from ${genericListId} entries`,
+        {
+          error: existingEntries.error,
+        },
+      )
+      return []
+    }
+
+    return existingEntries.data.items.filter(isDefined)
   }
 
   createEntries = async (

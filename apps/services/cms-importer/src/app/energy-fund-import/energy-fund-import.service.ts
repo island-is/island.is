@@ -1,19 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CmsRepository } from '../repositories/cms/cms.repository'
 import { logger } from '@island.is/logging'
-import { EnergyGrantsRepository } from '../repositories/energyGrants/energyGrants.repository'
-import { ClientAPI, Entry } from 'contentful-management'
+import { EnergyGrantsRepository } from '../repositories/energy-grants/energyGrants.repository'
+import { ClientAPI } from 'contentful-management'
 import { CreationType } from '../repositories/cms/cms.types'
 import { isDefined } from '@island.is/shared/utils'
-import { mapEnergyGrantToGenericListItem } from '../repositories/cms/mapper'
-import { ContentfulFetchResponse } from '../repositories/cms/managementClient/managementClient.types'
-import {
-  ENVIRONMENT,
-  GENERIC_LIST_ITEM_CONTENT_TYPE,
-  LOCALE,
-  PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
-  SPACE_ID,
-} from '../constants'
+import { ENVIRONMENT, LOCALE, SPACE_ID } from '../constants'
+import { PREVIOUS_RECIPIENTS_GENERIC_LIST_ID, UOS_TAGS } from './constants'
+import { mapEnergyGrantToGenericListItem } from '../repositories/energy-grants/mapper'
 
 @Injectable()
 export class EnergyFundImportService {
@@ -34,30 +28,12 @@ export class EnergyFundImportService {
     const grants = await this.clientsRepository.getEnergyGrants(10)
 
     if (grants) {
-      const existingEntries = await this.client
-        .getSpace(SPACE_ID)
-        .then((space) => space.getEnvironment(ENVIRONMENT))
-        .then((environment) =>
-          environment.getEntries({
-            content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
-            select: 'fields,sys,metadata',
-            links_to_entry: PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
-          }),
+      const existingEntries =
+        await this.cmsRepository.getGenericListItemEntries(
+          PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
         )
-        .then((entries) => ({ ok: true as const, data: entries }))
-        .catch((e) => ({
-          ok: false as const,
-          error: e,
-        }))
 
-      if (!existingEntries?.ok) {
-        logger.warn(`cms service failed to fetch previous energy fund grants`, {
-          error: existingEntries.error,
-        })
-        return
-      }
-
-      const previousEntryNames: Array<string> = existingEntries.data.items
+      const previousEntryNames: Array<string> = existingEntries
         .map((i) => {
           const title: string = i.fields['internalTitle']?.[LOCALE]
           if (!title) {
@@ -76,17 +52,21 @@ export class EnergyFundImportService {
             return null
           }
 
-          return mapEnergyGrantToGenericListItem(eg)
+          return mapEnergyGrantToGenericListItem(
+            eg,
+            PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
+            UOS_TAGS,
+          )
         })
         .filter(isDefined)
 
-      logger.info('creating entries...')
+      logger.info('creating energy fund entries...')
       if (!newEntries.length) {
-        logger.warn('no entries to create')
+        logger.warn('no  energy fund entries to create')
         return [
           {
             ok: true,
-            error: 'no entries to create',
+            error: 'no energy fund entries to create',
           },
         ]
       }
@@ -102,7 +82,7 @@ export class EnergyFundImportService {
             ok: false as const,
             error: e,
           }))
-        //  logger.warn('createdEntry', createdEntry)
+        logger.info('createdEntry', createdEntry)
       }
     }
   }

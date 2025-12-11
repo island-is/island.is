@@ -35,6 +35,16 @@
         "args": ["--job", "grant-import"]
       }
     },
+    "fsre-buildings-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer/fsre-buildings-import"
+        },
+        "args": ["--job", "fsre-buildings-import"]
+      }
+    },
     "energy-fund-import": {
       "executor": "@nx/js:node",
       "options": {
