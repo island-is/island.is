@@ -33,7 +33,7 @@ const ReferralsDetail: React.FC = () => {
       intro={formatMessage(messages.referralsDetailIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirReferralTooltip,
       )}
       loading={loading}
       marginBottom={6}
