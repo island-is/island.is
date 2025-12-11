@@ -436,7 +436,8 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       ? {
           nationalId: parentOneDetails.nationalId,
           givenName: parentOneDetails.name.split(' ').shift() || null,
-          familyName: parentOneDetails.name.split(' ').pop() || null,
+          familyName:
+            parentOneDetails.name.split(' ').slice(1).join(' ') || null,
           fullName: parentOneDetails.name,
           legalDomicile: parentOneDetails.legalDomicile,
         }
@@ -445,7 +446,8 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       ? {
           nationalId: parentTwoDetails.nationalId,
           givenName: parentTwoDetails.name.split(' ').shift() || null,
-          familyName: parentTwoDetails.name.split(' ').pop() || null,
+          familyName:
+            parentTwoDetails.name.split(' ').slice(1).join(' ') || null,
           fullName: parentTwoDetails.name,
           legalDomicile: parentTwoDetails.legalDomicile,
         }
