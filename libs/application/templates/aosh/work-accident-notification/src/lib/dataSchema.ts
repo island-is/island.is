@@ -231,8 +231,7 @@ const projectPurchaseSchema = z
     (data) => {
       return (
         data.radio !== YES ||
-        (data.contractor?.nationalId &&
-          data.contractor.name)
+        (data.contractor?.nationalId && data.contractor.name)
       )
     },
     {
