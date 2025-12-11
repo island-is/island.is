@@ -1,12 +1,12 @@
-# New Primary School - Directorate of Education and School Services (DESS) 
+# New Primary School - Directorate of Education and School Services (DESS)
 
 ## Innritun í 1. bekk, Umsókn um skólavist, Umsókn um áframhaldandi skólavist
 
 ## About
 
-This application template allows applicants to apply for a school transfer, continuation and enrollment in first grade. 
+This application template allows applicants to apply for a school transfer, continuation and enrollment in first grade.
 
-![](./assets/nps-flow-chart.png)
+![Application state flow chart](./assets/nps-flow-chart.png)
 
 ### States
 
