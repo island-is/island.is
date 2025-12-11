@@ -17,15 +17,15 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: m.mainSectionTitle,
+      tabTitle: m.general.shorterApplicationTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: m.mainSectionTitle,
+          title: m.general.shorterApplicationTitle,
           dataProviders: [
             buildDataProviderItem({
-              title: m.prerequisitesNationalRegistryTitle,
-              subTitle: m.prerequisitesNationalRegistrySubTitle,
+              title: m.prerequisites.nationalRegistryTitle,
+              subTitle: m.prerequisites.nationalRegistrySubTitle,
             }),
           ],
           submitField: buildSubmitField({

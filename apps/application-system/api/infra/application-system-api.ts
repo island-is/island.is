@@ -124,6 +124,12 @@ export const workerSetup = (services: {
             ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
           }application-system-api.application-system.svc.cluster.local`,
       ),
+      HH_COURSES_CONFIRMATION_EMAIL_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
+      },
     })
     .xroad(
       Base,
@@ -154,6 +160,8 @@ export const workerSetup = (services: {
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      HH_COURSES_CONFIRMATION_SEND_TO_EMAIL:
+        '/k8s/api/HH_COURSES_CONFIRMATION_SEND_TO_EMAIL',
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')

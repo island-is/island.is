@@ -1,12 +1,14 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { mainSection } from '../mainForm/mainSection'
+import { participantSection } from './participantSection'
 import { overviewSection } from './overview'
+import { courseSection } from './courseSection'
+import { payerSection } from './payerSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [mainSection, overviewSection],
+  children: [courseSection, participantSection, payerSection, overviewSection],
 })

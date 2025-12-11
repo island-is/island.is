@@ -15,14 +15,14 @@ export const getParticipantOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: m.overviewSectionParticipantName,
+      keyText: m.overview.participantName,
       valueText:
         getValueViaPath<string>(answers, 'participantNationalIdAndName.name') ??
         '',
     },
     {
       width: 'full',
-      keyText: m.overviewSectionParticipantNationalId,
+      keyText: m.overview.participantNationalId,
       valueText:
         getValueViaPath<string>(
           answers,
@@ -31,7 +31,7 @@ export const getParticipantOverviewItems = (
     },
     {
       width: 'full',
-      keyText: m.overviewSectionParticipantEmail,
+      keyText: m.overview.participantEmail,
       valueText:
         getValueViaPath<string>(
           answers,
@@ -40,7 +40,7 @@ export const getParticipantOverviewItems = (
     },
     {
       width: 'full',
-      keyText: m.overviewSectionParticipantPhone,
+      keyText: m.overview.participantPhone,
       valueText: formatPhoneNumber(
         getValueViaPath<string>(
           answers,
@@ -58,12 +58,12 @@ export const getPayerOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: m.overviewSectionPayerName,
+      keyText: m.overview.payerName,
       valueText: getValueViaPath<string>(answers, 'payerName') ?? '',
     },
     {
       width: 'full',
-      keyText: m.overviewSectionPayerNationalId,
+      keyText: m.overview.payerNationalId,
       valueText: getValueViaPath<string>(answers, 'payerNationalId') ?? '',
     },
   ]

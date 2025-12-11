@@ -26,9 +26,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.HH_COURSES,
-  name: m.applicationTitle,
+  name: m.general.applicationTitle,
   codeOwner: CodeOwners.Stefna,
-  institution: m.institutionName,
+  institution: m.general.institutionName,
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
   dataSchema,
@@ -63,7 +63,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.general.confirmButtonLabel,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -94,7 +98,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.confirmButtonLabel,
+                  name: m.overview.submitTitle,
                   type: 'primary',
                 },
               ],

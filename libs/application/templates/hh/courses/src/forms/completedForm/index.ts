@@ -8,8 +8,8 @@ export const completedForm = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      alertTitle: m.completedFormAlertTitle,
-      alertMessage: m.completedFormAlertMessage,
+      alertTitle: m.completedForm.alertTitle,
+      alertMessage: m.completedForm.alertMessage,
     }),
   ],
 })

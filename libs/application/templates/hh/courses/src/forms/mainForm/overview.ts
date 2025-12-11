@@ -12,32 +12,32 @@ import { m } from '../../lib/messages'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: m.overviewSectionHeading,
+  title: m.overview.sectionTitle,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: m.overviewSectionHeading,
+      title: m.overview.sectionTitle,
       children: [
         buildOverviewField({
           id: 'participantOverview',
           bottomLine: false,
-          title: m.overviewSectionParticipantHeading,
+          title: m.overview.participantHeading,
           items: getParticipantOverviewItems,
         }),
         buildOverviewField({
           id: 'payerOverview',
           bottomLine: false,
-          title: m.overviewSectionPayerHeading,
+          title: m.overview.payerHeading,
           items: getPayerOverviewItems,
         }),
         buildSubmitField({
           id: 'submit',
-          title: m.overviewSectionSubmit,
+          title: m.overview.submitTitle,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: m.overviewSectionSubmit,
+              name: m.overview.submitTitle,
               type: 'primary',
             },
           ],
