@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -18,6 +19,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { CaseListEntry } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../Tags/TagCaseState/TagCaseState'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {
   marginBottom?: ResponsiveProp<Space>
@@ -29,7 +31,16 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { user } = useContext(UserContext)
 
+  const showCaseStateTag =
+    isIndictmentCase(workingCase.type) &&
+    workingCase.indictmentRulingDecision &&
+    !isDistrictCourtUser(user)
+      ? isCompletedCase(workingCase.state)
+      : true
+
+  console.log({ showCaseStateTag })
   return (
     <Box
       marginBottom={marginBottom ?? 7}
@@ -52,11 +63,9 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
           {children}
         </Text>
       </Box>
-      {isIndictmentCase(workingCase.type) &&
-        workingCase.indictmentRulingDecision &&
-        isCompletedCase(workingCase.state) && (
-          <TagCaseState theCase={workingCase as CaseListEntry} />
-        )}
+      {showCaseStateTag && (
+        <TagCaseState theCase={workingCase as CaseListEntry} />
+      )}
     </Box>
   )
 }

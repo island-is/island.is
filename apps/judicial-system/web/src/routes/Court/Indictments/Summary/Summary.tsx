@@ -18,7 +18,6 @@ import {
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  CaseTag,
   ConnectedCaseFilesAccordionItem,
   DateTime,
   FormContentContainer,
@@ -192,9 +191,6 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
-  const indictmentRulingTag = getIndictmentRulingDecisionTag(
-    workingCase.indictmentRulingDecision,
-  )
 
   const canUserCompleteCase =
     (workingCase.indictmentRulingDecision !==
@@ -212,17 +208,7 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <Box display="flex" justifyContent="spaceBetween">
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
-          {workingCase.indictmentRulingDecision && (
-            <Box marginTop={2}>
-              <CaseTag
-                color={indictmentRulingTag.color}
-                text={formatMessage(indictmentRulingTag.text)}
-              />
-            </Box>
-          )}
-        </Box>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
