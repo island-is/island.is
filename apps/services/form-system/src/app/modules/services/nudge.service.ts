@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 import { ApplicationEvents } from '@island.is/form-system/shared'
