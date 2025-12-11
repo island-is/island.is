@@ -38,7 +38,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
 
   const verdict = { id: verdictId } as Verdict
 
-  const defendant = { id: defendantId, verdict } as Defendant
+  const defendant = { id: defendantId, verdicts: [verdict] } as Defendant
   const theCase = {
     id: caseId,
     defendants: [defendant],

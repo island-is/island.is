@@ -37,7 +37,9 @@ export const transformDefendants = ({
   rulingDate?: Date
 }) => {
   return defendants?.map((defendant) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =
@@ -68,6 +70,7 @@ export const transformDefendants = ({
             },
           }
         : {}),
+      verdicts: undefined,
       verdictAppealDeadline: appealDeadline,
       isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
@@ -142,6 +145,7 @@ const transformCase = (theCase: Case, user?: User) => {
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),
+    caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
@@ -180,7 +184,11 @@ const transformCase = (theCase: Case, user?: User) => {
       EventType.REQUEST_COMPLETED,
       theCase.eventLogs,
     ),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    indictmentCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
+    ),
+    eventLogs: undefined,
   }
 }
 

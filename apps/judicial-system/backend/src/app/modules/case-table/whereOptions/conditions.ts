@@ -43,3 +43,25 @@ export const buildEventLogExistsCondition = (
         AND event_log.event_type = '${eventType}'
     )
   `)
+
+export const buildEventLogOrderCondition = (
+  eventType1: EventType,
+  eventType2: EventType,
+  exists: boolean,
+) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      WHERE (
+        SELECT MAX(created)
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType1}'
+      ) < (
+        SELECT MAX(created)
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType2}'
+      )
+    )
+  `)

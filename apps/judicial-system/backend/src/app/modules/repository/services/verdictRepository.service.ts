@@ -195,6 +195,42 @@ export class VerdictRepositoryService {
     }
   }
 
+  async updateMany(
+    where: FindOptions['where'],
+    data: UpdateVerdict,
+    options?: UpdateVerdictOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug('Updating multiple verdicts with data:', {
+        where: Object.keys(where ?? {}),
+        data: Object.keys(data),
+      })
+
+      const updateOptions: UpdateOptions = { where: where ?? {} }
+
+      if (options?.transaction) {
+        updateOptions.transaction = options.transaction
+      }
+
+      const [numberOfAffectedRows] = await this.verdictModel.update(
+        data,
+        updateOptions,
+      )
+
+      this.logger.debug(`Updated ${numberOfAffectedRows} verdict(s)`)
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error('Error updating multiple verdicts with data:', {
+        where: Object.keys(where ?? {}),
+        data: Object.keys(data),
+        error,
+      })
+
+      throw error
+    }
+  }
+
   async delete(
     caseId: string,
     defendantId: string,

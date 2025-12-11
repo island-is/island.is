@@ -55,6 +55,10 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                 AND verdict.appeal_date IS NULL
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
                 AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
+                AND verdict.created = (
+                    SELECT MAX(v2.created)
+                    FROM verdict v2
+                    WHERE v2.defendant_id = defendant.id
             )`),
             where(
               literal(`"ruling_date"::date + INTERVAL '29 days'`),
@@ -76,6 +80,10 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                 AND (
                   verdict.service_date IS NULL
                   OR verdict.service_date + INTERVAL '29 days' > NOW()
+                AND verdict.created = (
+                    SELECT MAX(v2.created)
+                    FROM verdict v2
+                    WHERE v2.defendant_id = defendant.id
                 )
             )`),
           ],
@@ -98,12 +106,16 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
             [Op.not]: {
               [Op.and]: [
                 literal(`EXISTS (
-                  SELECT 1 FROM defendant 
+                  SELECT 1 FROM defendant
                   JOIN verdict ON defendant.id = verdict.defendant_id
                   WHERE defendant.case_id = "Case".id
                     AND verdict.appeal_date IS NULL
                     AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
                     AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
+                    AND verdict.created = (
+                        SELECT MAX(v2.created)
+                        FROM verdict v2
+                        WHERE v2.defendant_id = defendant.id
                 )`),
                 where(
                   literal(`"ruling_date"::date + INTERVAL '29 days'`),
@@ -127,6 +139,10 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       verdict.service_date IS NULL
                       OR verdict.service_date + INTERVAL '29 days' > NOW()
                     )
+                    AND verdict.created = (
+                        SELECT MAX(v2.created)
+                        FROM verdict v2
+                        WHERE v2.defendant_id = defendant.id
                 )`),
               ],
             },
@@ -139,6 +155,10 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                 WHERE defendant.case_id = "Case".id
                   AND verdict.appeal_date IS NULL
                   AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                  AND verdict.created = (
+                      SELECT MAX(v2.created)
+                      FROM verdict v2
+                      WHERE v2.defendant_id = defendant.id
               )`),
             ],
           },
@@ -172,6 +192,10 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
               SELECT 1 FROM verdict
               WHERE verdict.case_id = "Case".id
                 AND verdict.appeal_date IS NOT NULL
+                AND verdict.created = (
+                    SELECT MAX(v2.created)
+                    FROM verdict v2
+                    WHERE v2.defendant_id = defendant.id
             )`),
           ],
         },

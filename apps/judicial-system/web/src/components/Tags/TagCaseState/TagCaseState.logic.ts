@@ -99,7 +99,8 @@ export const mapCaseStateToTagVariant = (
       return { color: 'rose', text: formatMessage(strings.rejected) }
     case CaseState.DISMISSED:
       return { color: 'dark', text: formatMessage(strings.dismissed) }
-    case CaseState.COMPLETED: {
+    case CaseState.COMPLETED:
+    case CaseState.CORRECTING: {
       // TODO: this will be fixed when we have considered ruling decision per defendant
       if (
         theCase.defendants &&

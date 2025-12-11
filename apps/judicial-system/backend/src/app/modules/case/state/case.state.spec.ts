@@ -603,6 +603,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
+      CaseState.CORRECTING,
     ]
 
     describe.each(allowedFromStates)(
@@ -1051,7 +1052,7 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.RECEIVED })
+          expect(res).toMatchObject({ state: CaseState.CORRECTING })
         },
       )
 

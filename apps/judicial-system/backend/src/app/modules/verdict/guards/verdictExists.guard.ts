@@ -17,12 +17,14 @@ export class VerdictExistsGuard implements CanActivate {
       throw new BadRequestException('Missing defendant')
     }
 
-    const { verdict } = defendant
-    if (!verdict) {
+    const { verdicts } = defendant
+
+    if (!verdicts || verdicts.length === 0) {
       throw new NotFoundException(`Defendant is missing verdict`)
     }
 
-    request.verdict = verdict
+    // Only the latest verdict is relevant
+    request.verdict = verdicts[0]
     return true
   }
 }

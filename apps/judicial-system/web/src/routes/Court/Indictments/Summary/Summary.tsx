@@ -32,6 +32,7 @@ import {
   PageTitle,
   PdfButton,
   RenderFiles,
+  RulingModifiedModal,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -40,6 +41,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -52,6 +54,8 @@ import {
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
 
+type modal = 'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'CORRECTION_EXPLANATION'
+
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const {
@@ -63,9 +67,8 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
-  >()
+
+  const [modalVisible, setModalVisible] = useState<modal>()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -106,7 +109,7 @@ const Summary: FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleModalPrimaryButtonClick = async () => {
+  const completeCase = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -118,6 +121,14 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleModalPrimaryButtonClick = async () => {
+    if (workingCase.state === CaseState.CORRECTING) {
+      setModalVisible('CORRECTION_EXPLANATION')
+    } else {
+      await completeCase()
+    }
   }
 
   const handleRuling = async () => {
@@ -418,6 +429,23 @@ const Summary: FC = () => {
             text: formatMessage(strings.completeCaseModalSecondaryButton),
             onClick: () => setModalVisible(undefined),
           }}
+        />
+      )}
+      {modalVisible === 'CORRECTION_EXPLANATION' && (
+        <RulingModifiedModal
+          onCancel={() =>
+            setModalVisible(
+              workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                ? 'CONFIRM_RULING'
+                : 'CONFIRM_INDICTMENT',
+            )
+          }
+          onContinue={async () => await completeCase()}
+          continueDisabled={isTransitioningCase}
+          description="Skráðu hvað var leiðrétt í dómnum eða þingbókinni. Aðilar máls munu fá skilaboðin."
+          defaultExplanation="Með heimild í 3. mgr. 186. gr. laga nr. 88/2008 hefur dómur verið leiðréttur."
+          fieldToModify="rulingModifiedHistory"
         />
       )}
     </PageLayout>
