@@ -16,6 +16,7 @@ query DefenderCases($input: CaseListQueryInput) {
         serviceStatus
       }
       verdict {
+        id
         isDefaultJudgement
       }
     }
