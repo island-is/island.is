@@ -384,7 +384,6 @@ export class NotificationsWorkerService {
 
   private async createActorNotificationDbRecord(
     args: InternalCreateHnippNotificationDto & { messageId: string },
-    scope: string,
   ) {
     const { messageId, ...message } = args
 

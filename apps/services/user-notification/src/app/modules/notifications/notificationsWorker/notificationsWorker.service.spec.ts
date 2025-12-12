@@ -7,7 +7,6 @@ import { randomUUID } from 'crypto'
 import {
   DelegationsApi,
   DelegationRecordDTO,
-  PaginatedDelegationRecordDTO,
 } from '@island.is/clients/auth/delegation-api'
 import { CmsService } from '@island.is/clients/cms'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -814,8 +813,6 @@ describe('NotificationsWorkerService', () => {
 
           // For other users, delegate to original mock implementation
           // This calls the MockDelegationsService
-          const MockDelegationsService =
-            require('./mocks').MockDelegationsService
           const mockService = new MockDelegationsService()
           return mockService.delegationsControllerGetDelegationRecords({
             xQueryNationalId,
