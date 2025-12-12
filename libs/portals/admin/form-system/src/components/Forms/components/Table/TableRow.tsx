@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { UPDATE_FORM_STATUS, COPY_FORM } from '@island.is/form-system/graphql'
+import { COPY_FORM, UPDATE_FORM_STATUS } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -18,8 +18,8 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
-import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 import { StatusTag } from '../../../StatusTag/StatusTag'
+import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 
 interface Props {
   id?: string | null
