@@ -52,7 +52,7 @@ const Completed: FC = () => {
   const { deliverCaseVerdict } = useVerdict()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
@@ -235,8 +235,6 @@ const Completed: FC = () => {
           <Box marginBottom={5}>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
             <RulingInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               rows={8}
               label="Dómsorð"
               placeholder="Hvert er dómsorðið?"
