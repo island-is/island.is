@@ -224,9 +224,11 @@ export class PaymentService extends BaseTemplateApiService {
       let requestId = payment.request_id as string
 
       if (requestId) {
+        this.logger.info('Calling deleteCharge with requestId', requestId)
         await this.chargeFjsV2ClientService.deleteCharge(requestId)
       } else if (paymentUrl) {
         //if requestId is not set, we need to get it from the paymentUrl
+        this.logger.info('Calling deleteCharge with paymentUrl', paymentUrl)
         const url = new URL(paymentUrl)
         requestId = url.pathname.split('/').pop() ?? ''
       }
