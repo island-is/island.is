@@ -17,14 +17,22 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { EventType } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  EventType,
+  StringType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { CaseString } from '../models/caseString.model'
+import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
+import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
+import { Victim } from '../models/victim.model'
 import { UpdateCase } from '../types/caseRepository.types'
 
 interface FindByIdOptions {
@@ -90,8 +98,13 @@ export class CaseRepositoryService {
     @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
     @InjectModel(DefendantEventLog)
     private readonly defendantEventLogModel: typeof DefendantEventLog,
-    @InjectModel(EventLog)
-    private readonly eventLogModel: typeof EventLog,
+    @InjectModel(CaseString)
+    private readonly caseStringModel: typeof CaseString,
+    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
+    @InjectModel(EventLog) private readonly eventLogModel: typeof EventLog,
+    @InjectModel(Victim) private readonly victimModel: typeof Victim,
+    @InjectModel(IndictmentCount)
+    private readonly indictmentCountModel: typeof IndictmentCount,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -436,6 +449,48 @@ export class CaseRepositoryService {
         ),
       )
 
+      // Copy civil demands case string to the new case
+      const civilDemands = await this.caseStringModel.findOne({
+        where: { caseId, stringType: StringType.CIVIL_DEMANDS },
+        transaction,
+      })
+
+      if (civilDemands) {
+        const caseStringCreateOptions: CreateOptions = {}
+
+        if (transaction) {
+          caseStringCreateOptions.transaction = transaction
+        }
+
+        promises.push(
+          this.caseStringModel.create(
+            { ...civilDemands.toJSON(), id: undefined, caseId: splitCaseId },
+            caseStringCreateOptions,
+          ),
+        )
+      }
+
+      // Copy arraignment date date log to the new case
+      const arraignmentDate = await this.dateLogModel.findOne({
+        where: { caseId, dateType: DateType.ARRAIGNMENT_DATE },
+        transaction,
+      })
+
+      if (arraignmentDate) {
+        const dateLogCreateOptions: CreateOptions = {}
+
+        if (transaction) {
+          dateLogCreateOptions.transaction = transaction
+        }
+
+        promises.push(
+          this.dateLogModel.create(
+            { ...arraignmentDate.toJSON(), id: undefined, caseId: splitCaseId },
+            dateLogCreateOptions,
+          ),
+        )
+      }
+
       // Copy relevant event logs to the new case
       const eventLogs = await this.eventLogModel.findAll({
         where: {
@@ -463,6 +518,52 @@ export class CaseRepositoryService {
           ),
         )
       }
+
+      // Copy all victims to the new case
+      const victims = await this.victimModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      const victimCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        victimCreateOptions.transaction = transaction
+      }
+
+      for (const victim of victims) {
+        promises.push(
+          this.victimModel.create(
+            { ...victim.toJSON(), id: undefined, caseId: splitCaseId },
+            victimCreateOptions,
+          ),
+        )
+      }
+
+      // Copy all indicment counts to the new case
+      const indictmentCounts = await this.indictmentCountModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      const indictmentCountCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        indictmentCountCreateOptions.transaction = transaction
+      }
+
+      for (const indictmentCount of indictmentCounts) {
+        promises.push(
+          this.indictmentCountModel.create(
+            { ...indictmentCount.toJSON(), id: undefined, caseId: splitCaseId },
+            indictmentCountCreateOptions,
+          ),
+        )
+      }
+
+      // Copy all indictment count offenses to the new case
+      // Nothing to do here, offenses are only linked to indictment counts
+      // Consider removing case id from other tables not directly linked to cases
 
       await Promise.all(promises)
 
