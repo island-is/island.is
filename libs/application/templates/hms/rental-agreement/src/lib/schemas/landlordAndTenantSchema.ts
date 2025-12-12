@@ -29,9 +29,6 @@ const personInfoSchema = z.object({
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
     })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
-    })
     .refine((x) => x && isValidMobileNumber(x), {
       params: m.landlordAndTenantDetails.phoneNumberMobileError,
     }),
@@ -73,9 +70,6 @@ const landLordInfoSchema = z.object({
     .optional()
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
-    })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
     })
     .refine((x) => x && isValidMobileNumber(x), {
       params: m.landlordAndTenantDetails.phoneNumberMobileError,
