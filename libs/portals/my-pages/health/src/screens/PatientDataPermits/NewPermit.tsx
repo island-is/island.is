@@ -1,7 +1,7 @@
 import { ActionCard, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'

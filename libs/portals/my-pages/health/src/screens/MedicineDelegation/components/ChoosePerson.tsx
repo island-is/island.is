@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { messages } from '../../..'
 import { DelegationState } from '../../../utils/types'
 import { useIdentityQueryLazyQuery } from '../MedicineDelegation.generated'

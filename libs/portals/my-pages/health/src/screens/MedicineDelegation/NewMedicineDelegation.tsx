@@ -5,15 +5,15 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { DelegationState } from '../../utils/types'
 import SecondStep from './components/ChooseDate'
 import FirstStep from './components/ChoosePerson'
 import { usePostMedicineDelegationMutation } from './MedicineDelegation.generated'
-import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
