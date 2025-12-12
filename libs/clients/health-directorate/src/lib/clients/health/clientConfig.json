@@ -80,6 +80,15 @@
         "operationId": "MeReferralController_getReferrals_v1",
         "parameters": [
           {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
             "name": "status",
             "required": false,
             "in": "query",
@@ -87,17 +96,8 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "array"
               }
-            }
-          },
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
             }
           }
         ],
@@ -1110,21 +1110,21 @@
         "operationId": "MeDonorStatusController_getOrganDonorStatus_v1",
         "parameters": [
           {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1187,21 +1187,21 @@
         "operationId": "MeDonorStatusController_updateOrganDonorStatus_v1",
         "parameters": [
           {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "locale",
             "required": false,
             "in": "query",
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1822,6 +1822,15 @@
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
             "name": "validFrom",
             "required": false,
             "in": "query",
@@ -1853,15 +1862,6 @@
               "items": {
                 "$ref": "#/components/schemas/EuPatientConsentStatus"
               }
-            }
-          },
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
             }
           }
         ],
@@ -2393,7 +2393,8 @@
           "notFullyDispensed",
           "isRegiment",
           "drugNotOnMedCard",
-          "noPrimaryCareClinic"
+          "noPrimaryCareClinic",
+          "moreRecentPrescriptionExists"
         ]
       },
       "PrescriptionRenewalStatus": {
@@ -2428,7 +2429,7 @@
       },
       "PrescribedItemCategory": {
         "type": "string",
-        "enum": ["regular", "pn", "regiment", "owner"]
+        "enum": ["regular", "pn", "regiment", "owner", "unknown"]
       },
       "DispensedItemDto": {
         "type": "object",
@@ -2441,6 +2442,10 @@
           },
           "productStrength": {
             "type": "string"
+          },
+          "prouctQuantity": {
+            "type": "number",
+            "description": "Product quantity per package"
           },
           "dispensedAmount": {
             "type": "number"
@@ -2685,6 +2690,12 @@
           },
           "isExpired": {
             "type": "boolean"
+          },
+          "prescribedAmountDisplay": {
+            "type": "string"
+          },
+          "dispensedAmountDisplay": {
+            "type": "string"
           }
         },
         "required": ["product", "prescriberName", "isExpired"]
@@ -2873,7 +2884,7 @@
             "type": "string"
           }
         },
-        "required": ["isDonor", "exceptions"]
+        "required": ["isDonor"]
       },
       "QuestionnaireBaseDto": {
         "type": "object",
