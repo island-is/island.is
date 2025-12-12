@@ -76,7 +76,6 @@ export const CourtSessionMergedCaseEntries = ({
         hasError={mergedEntriesErrorMessage !== ''}
         errorMessage={mergedEntriesErrorMessage}
         rows={15}
-        autoExpand={{ on: true, maxHeight: 1300 }}
         disabled={disabled}
         textarea
         required

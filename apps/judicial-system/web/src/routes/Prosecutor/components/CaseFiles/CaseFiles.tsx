@@ -278,7 +278,6 @@ export const CaseFiles = () => {
               }
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 1300 }}
             />
           </Box>
         </Box>

@@ -465,7 +465,6 @@ const Conclusion: FC = () => {
             <Input
               name="reasonForPostponement"
               rows={10}
-              autoExpand={{ on: true, maxHeight: 1300 }}
               label={formatMessage(strings.reasonForPostponementTitle)}
               placeholder={formatMessage(
                 strings.reasonForPostponementPlaceholder,
