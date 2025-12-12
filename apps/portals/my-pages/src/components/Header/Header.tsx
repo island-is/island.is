@@ -54,7 +54,8 @@ export const Header = ({
     DocumentsScope.main,
   )
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
-  const [lastScrollY, setLastScrollY] = useState<number>(0)
+  const headerVisibleRef = useRef<boolean>(true)
+  const lastScrollYRef = useRef<number>(0)
   const [disableTransition, setDisableTransition] = useState<boolean>(false)
   const location = useLocation()
   const isNavigatingRef = useRef<boolean>(false)
@@ -73,7 +74,7 @@ export const Header = ({
     isNavigatingRef.current = true
     setDisableTransition(true)
     setHeaderVisible(true)
-    setLastScrollY(0)
+    lastScrollYRef.current = 0
     notifyVisibilityChange(true)
 
     // Re-enable transitions after a brief delay
@@ -88,29 +89,37 @@ export const Header = ({
     }
   }, [isMobile, location.pathname, notifyVisibilityChange])
 
+  // Scrolling logic to show/hide header based on scroll direction and position
   useScrollPosition(
     ({ currPos }) => {
       if (!isMobile || isNavigatingRef.current) return // Skip during navigation
 
       const currentScrollY = -currPos.y
+      const lastScrollY = lastScrollYRef.current
       const scrollingDown = currentScrollY > lastScrollY
       const scrollingUp = currentScrollY < lastScrollY
       const scrollThreshold = SERVICE_PORTAL_HEADER_HEIGHT_SM
 
       // Show header when scrolling up or at top of page
       if (scrollingUp || currentScrollY < scrollThreshold) {
-        setHeaderVisible(true)
-        notifyVisibilityChange(true)
+        if (!headerVisibleRef.current) {
+          headerVisibleRef.current = true
+          setHeaderVisible(true)
+          notifyVisibilityChange(true)
+        }
       }
       // Hide header when scrolling down and past threshold
       else if (scrollingDown && currentScrollY > scrollThreshold) {
-        setHeaderVisible(false)
-        notifyVisibilityChange(false)
+        if (headerVisibleRef.current) {
+          headerVisibleRef.current = false
+          setHeaderVisible(false)
+          notifyVisibilityChange(false)
+        }
       }
 
-      setLastScrollY(currentScrollY)
+      lastScrollYRef.current = currentScrollY
     },
-    [lastScrollY, isMobile, notifyVisibilityChange],
+    [isMobile, notifyVisibilityChange],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     null,

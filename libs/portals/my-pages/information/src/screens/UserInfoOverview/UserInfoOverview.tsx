@@ -126,7 +126,6 @@ const UserInfoOverview = () => {
           )}
           {childCards}
           {bioChildrenCards}
-          <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
         </Stack>
       )}
     </IntroWrapper>

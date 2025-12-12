@@ -12,7 +12,7 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -24,25 +24,22 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { isDefined } from '@island.is/shared/utils'
 import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
+import { formatDateToMonthString } from '../../utils/format'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-import { parse } from 'path'
-import { formatDateToMonthString } from '../../utils/format'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns, lang } = useLocale()
