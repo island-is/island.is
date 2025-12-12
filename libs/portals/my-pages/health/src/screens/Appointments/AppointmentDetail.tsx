@@ -63,40 +63,38 @@ const AppointmentDetail = () => {
           />
           <InfoLine
             label={formatMessage(messages.type)}
-            content={appointment?.title ?? ''}
+            content={appointment?.title ?? undefined}
             loading={loading}
           />
           {appointment?.instruction && (
             <InfoLine
               label={formatMessage(messages.instructions)}
-              content={appointment?.instruction ?? ''}
+              content={appointment?.instruction}
               loading={loading}
             />
           )}
           <InfoLine
             loading={loading}
             label={formatMessage(messages.locationAddress)}
-            content={appointment?.location?.name ?? ''}
+            content={appointment?.location?.name}
           />
           <InfoLine
             loading={loading}
             label={formatMessage(m.address)}
-            content={
-              [
-                appointment?.location?.address,
-                [appointment?.location?.postalCode, appointment?.location?.city]
-                  .filter(Boolean)
-                  .join(' '),
-              ]
+            content={[
+              appointment?.location?.address,
+              [appointment?.location?.postalCode, appointment?.location?.city]
                 .filter(Boolean)
-                .join(', ') ?? ''
-            }
+                .join(' '),
+            ]
+              .filter(Boolean)
+              .join(', ')}
           />
           {(appointment?.practitioners?.length ?? 0) > 0 && (
             <InfoLine
               loading={loading}
               label={formatMessage(messages.appointmentAtSimple)}
-              content={appointment?.practitioners.join(', ') ?? ''}
+              content={appointment?.practitioners.join(', ')}
             />
           )}
         </InfoLineStack>

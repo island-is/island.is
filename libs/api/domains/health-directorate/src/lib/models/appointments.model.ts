@@ -23,8 +23,8 @@ export class AppointmentLocation {
   @Field()
   postalCode!: string
 
-  @Field()
-  country!: string
+  @Field({ nullable: true })
+  country?: string
 
   @Field(() => Float)
   latitude!: number
