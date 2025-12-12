@@ -4,20 +4,22 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
+import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { shouldShowPage } from '../../../utils/conditionUtils'
 import {
+  ApplicationFeatureKey,
   AttachmentOptions,
   FILE_SIZE_LIMIT,
   UPLOAD_ACCEPT,
 } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { canHaveAttachments } from '../../../utils/conditionUtils'
 
 export const attachmentSubSection = buildSubSection({
   id: 'attachmentSubSection',
   title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
   // show attachment page only if feature is enabled (only enabled for Special School and
   // Special Department) and application type is not continuing enrollment
-  condition: (answer, externalData) => canHaveAttachments(answer, externalData),
+  condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.ATTACHMENTS),
   children: [
     buildMultiField({
       id: 'attachments',

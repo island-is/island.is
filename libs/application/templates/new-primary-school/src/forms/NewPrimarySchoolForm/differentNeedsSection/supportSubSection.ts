@@ -14,9 +14,11 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
   isWelfareContactSelected,
+  shouldShowPage,
   showCaseManagerFields,
 } from '../../../utils/conditionUtils'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
   CaseWorkerInputTypeEnum,
   OrganizationSubType,
@@ -35,6 +37,7 @@ export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
   title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
   condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     !hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
