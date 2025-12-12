@@ -40,18 +40,6 @@ export const otherBenefitsSchema = z
   .superRefine((data, ctx) => {
     data.payments?.forEach((payment, index) => {
       if (payment.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID) {
-        if (
-          !(
-            payment.sicknessAllowanceFile &&
-            payment.sicknessAllowanceFile.length > 0
-          )
-        ) {
-          ctx.addIssue({
-            path: ['payments', index, 'sicknessAllowanceFile'],
-            code: z.ZodIssueCode.custom,
-          })
-        }
-
         if (!payment.dateFrom) {
           ctx.addIssue({
             path: ['payments', index, 'dateFrom'],
@@ -111,13 +99,6 @@ export const otherBenefitsSchema = z
       }
 
       if (payment.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID) {
-        if (!(payment.paymentPlanFile && payment.paymentPlanFile.length > 0)) {
-          ctx.addIssue({
-            path: ['payments', index, 'paymentPlanFile'],
-            code: z.ZodIssueCode.custom,
-          })
-        }
-
         if (
           payment.subType !== PaymentTypeIds.REHAB_PENSION_ID &&
           !payment.paymentAmount

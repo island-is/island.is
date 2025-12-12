@@ -17,9 +17,9 @@ import {
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
 import { getRskOptions } from '../../../utils/getRskOptions'
+import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -132,23 +132,8 @@ export const currentSituationSubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
-                const jobList =
-                  getValueViaPath<
-                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
-                  >(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.jobCodes',
-                  ) ?? []
-                return jobList.map((job) => ({
-                  value:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                  label:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                }))
-              },
+              options: (application, _activeField, locale) =>
+                getJobCodeOptions(application, locale),
             },
             percentage: {
               component: 'input',
