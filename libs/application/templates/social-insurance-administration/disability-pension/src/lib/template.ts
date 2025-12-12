@@ -338,7 +338,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: sm.dismissedTag,
+              label: statesMessages.dismissedTag,
               variant: 'red',
             },
             pendingAction: {
