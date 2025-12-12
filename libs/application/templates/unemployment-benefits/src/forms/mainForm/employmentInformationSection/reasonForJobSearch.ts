@@ -127,24 +127,6 @@ export const reasonForJobSearchSubSection = buildSubSection({
             )
           },
         }),
-        buildDescriptionField({
-          id: 'reasonForJobSearch.additionalReasonDescription',
-          title:
-            employmentMessages.reasonForJobSearch.labels
-              .additionalReasonForJobSearchDescription,
-          titleVariant: 'h5',
-          condition: (answers, externalData) => {
-            const reasonBasedOnChoice = getReasonBasedOnChoice(
-              answers,
-              externalData,
-            )
-            return (
-              !!reasonBasedOnChoice &&
-              !!reasonBasedOnChoice.requiresAdditonalDetails
-            )
-          },
-        }),
-
         buildRadioField({
           id: 'reasonForJobSearch.reasonQuestion',
           width: 'half',
