@@ -304,6 +304,17 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             />
           )}
           <Button
+            title={intl.formatMessage({
+              id: 'health.overview.medicineDelegation',
+            })}
+            isOutlined
+            isUtilityButton
+            iconStyle={{ tintColor: theme.color.dark300 }}
+            style={buttonStyle}
+            ellipsis
+            onPress={() => navigateTo('/medicine-delegation', componentId)}
+          />
+          <Button
             title={intl.formatMessage({ id: 'health.overview.therapy' })}
             isOutlined
             isUtilityButton
