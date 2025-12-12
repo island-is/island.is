@@ -1,4 +1,5 @@
 import {
+  AppointmentStatus,
   DispensationHistoryItemDto,
   PrescribedItemCategory,
   PrescriptionCommissionStatus,
@@ -6,6 +7,7 @@ import {
   PrescriptionRenewalStatus,
 } from '@island.is/clients/health-directorate'
 import {
+  AppointmentStatusEnum,
   PermitStatusEnum,
   PrescribedItemCategoryEnum,
   PrescribedItemRenewalBlockedReasonEnum,

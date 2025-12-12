@@ -23,5 +23,9 @@ export {
   EuPatientConsentDto,
   EuPatientConsentStatus,
   PrescriptionCommissionStatus,
+  CreateEuPatientConsentDto,
 } from './lib/clients'
-export { DispensationHistoryItemDto } from './lib/clients/health'
+export {
+  DispensationHistoryItemDto,
+  AppointmentStatus,
+} from './lib/clients/health'

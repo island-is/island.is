@@ -84,6 +84,13 @@ export const flexItemBorder = style({
   flex: 1,
 })
 
+export const link = style({
+  textDecoration: 'none',
+  ':hover': {
+    textDecoration: 'underline !important',
+  },
+})
+
 globalStyle(`${flexItemBorder} > div`, {
   ...themeUtils.responsiveStyle({
     xs: {
