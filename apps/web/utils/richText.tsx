@@ -38,6 +38,7 @@ import {
   KilometerFee,
   MasterList,
   MultipleStatistics,
+  NewKilometerFee,
   OneColumnTextSlice,
   OverviewLinksSlice,
   ParentalLeaveCalculator,
@@ -187,6 +188,9 @@ export const webRenderConnectedComponent = (
       break
     case 'KilometerFee':
       connectedComponent = <KilometerFee slice={slice} />
+      break
+    case 'NewKilometerFee':
+      connectedComponent = <NewKilometerFee slice={slice} />
       break
     case 'SpecificHousingBenefitSupportCalculator':
       connectedComponent = <SpecificHousingBenefitSupportCalculator />
