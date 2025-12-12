@@ -173,6 +173,32 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/prescriptions', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.PrescriptionsScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions/dispensation', (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDispensationDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
