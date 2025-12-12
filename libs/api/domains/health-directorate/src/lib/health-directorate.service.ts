@@ -277,7 +277,7 @@ export class HealthDirectorateService {
           form: item.product.form,
           strength: item.product.strength,
           url: item.product.url,
-          quantity: item.product?.toString(),
+          quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
           medCardDrugId: item.medCard?.id,
           issueDate: item.issueDate,
@@ -446,9 +446,7 @@ export class HealthDirectorateService {
         lookup: item.commissionType === 1,
       })),
     }
-    const sorted = sortBy(data.items, 'status', 'asc')
-
-    return { items: sorted }
+    return { items: sortBy(data.items, 'status') }
   }
 
   async postMedicineDelegation(
@@ -512,8 +510,7 @@ export class HealthDirectorateService {
     }
 
     const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
-    const sorted = sortBy(data, 'status', 'asc')
-    return { data: sorted }
+    return { data: sortBy(data, 'status') }
   }
 
   /* Patient data - Permit Detail */

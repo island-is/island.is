@@ -1057,6 +1057,10 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki hægt',
     id: 'sp.health:not-valid-for-renewal',
   },
+  notValidForRenewalForMobile: {
+    defaultMessage: 'Endurnýjun ekki í boði: ',
+    id: 'sp.health:not-valid-for-renewal-mobile',
+  },
   notValidForRenewalDetail: {
     defaultMessage:
       'Sjálfvirk endurnýjun er ekki í boði fyrir þetta hjálpartæki.',
@@ -2206,6 +2210,10 @@ export const messages = defineMessages({
   prescriptionBlockedAlreadyRequested: {
     defaultMessage: 'Endurnýjun þegar í vinnslu',
     id: 'sp.health:prescription-blocked-already-requested',
+  },
+  prescriptionBlockedMoreRecentExists: {
+    defaultMessage: 'Nýrri lyfseðill til staðar',
+    id: 'sp.health:prescription-blocked-more-recent-exists',
   },
   prescriptionBlockedOther: {
     defaultMessage: 'Óþekkt ástæða',

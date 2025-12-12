@@ -33,6 +33,8 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
     case PrescriptionRenewalBlockedReason.NO_PRIMARY_CARE_CLINIC:
       return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
+    case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
+      return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists
     default:
       return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }

@@ -129,7 +129,9 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                     type: 'info' as const,
                     //TODO: FIX AFTER DESIGNER HAS REVIEWED
                     label:
-                      (isMobile ? 'Enurnýjun ekki í boði: ' : '') +
+                      (isMobile
+                        ? formatMessage(messages.notValidForRenewalForMobile)
+                        : '') +
                       mapBlockedStatus(
                         item.renewalBlockedReason?.toString() ?? '',
                         formatMessage,

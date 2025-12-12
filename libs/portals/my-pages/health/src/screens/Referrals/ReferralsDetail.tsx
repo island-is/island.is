@@ -29,7 +29,7 @@ const ReferralsDetail: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={referral?.serviceName ?? formatMessage(messages.referrals)}
+      title={referral?.serviceName || formatMessage(messages.referrals)}
       intro={formatMessage(messages.referralsDetailIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
@@ -67,7 +67,7 @@ const ReferralsDetail: React.FC = () => {
           <InfoLine
             label={formatMessage(messages.publicationDate)}
             content={
-              formatDate(referral?.createdDate) ??
+              formatDate(referral?.createdDate) ||
               formatMessage(messages.noDataRegistered)
             }
             loading={loading}
@@ -75,14 +75,14 @@ const ReferralsDetail: React.FC = () => {
           <InfoLine
             label={formatMessage(messages.vaccinatedStatus)}
             content={
-              referral?.stateDisplay ?? formatMessage(messages.noDataRegistered)
+              referral?.stateDisplay || formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
           <InfoLine
             label={formatMessage(messages.medicineValidTo)}
             content={
-              formatDate(referral?.validUntilDate) ??
+              formatDate(referral?.validUntilDate) ||
               formatMessage(messages.noDataRegistered)
             }
             loading={loading}
@@ -102,7 +102,7 @@ const ReferralsDetail: React.FC = () => {
           <InfoLine
             label={formatMessage(messages.reason)}
             content={
-              referral?.reason ?? formatMessage(messages.noDataRegistered)
+              referral?.reason || formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
