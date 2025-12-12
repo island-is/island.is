@@ -4,6 +4,7 @@ import {
   CreateOptions,
   FindAndCountOptions,
   FindOptions,
+  Op,
   Transaction,
   UpdateOptions,
 } from 'sequelize'
@@ -24,6 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
@@ -105,6 +107,7 @@ export class CaseRepositoryService {
     @InjectModel(Victim) private readonly victimModel: typeof Victim,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
+    @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -564,6 +567,51 @@ export class CaseRepositoryService {
       // Copy all indictment count offenses to the new case
       // Nothing to do here, offenses are only linked to indictment counts
       // Consider removing case id from other tables not directly linked to cases
+
+      // Move the defendant's case files to the new case
+      const caseFileUpdateOptions: UpdateOptions = {
+        where: { caseId, defendantId },
+      }
+
+      if (transaction) {
+        caseFileUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.caseFileModel.update(
+          { caseId: splitCaseId },
+          caseFileUpdateOptions,
+        ),
+      )
+
+      // Copy all case files linked to the case but not to any defendant
+      const caseFiles = await this.caseFileModel.findAll({
+        where: {
+          caseId,
+          defendantId: {
+            [Op.or]: [
+              { defendantId: null },
+              { defendantId: { [Op.not]: defendantId } },
+            ],
+          },
+        },
+        transaction,
+      })
+
+      const caseFileCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        caseFileCreateOptions.transaction = transaction
+      }
+
+      for (const caseFile of caseFiles) {
+        promises.push(
+          this.caseFileModel.create(
+            { ...caseFile.toJSON(), id: undefined, caseId: splitCaseId },
+            caseFileCreateOptions,
+          ),
+        )
+      }
 
       await Promise.all(promises)
 
