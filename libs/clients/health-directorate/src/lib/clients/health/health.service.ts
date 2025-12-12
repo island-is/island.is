@@ -390,8 +390,6 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
-    this.logger.info('Creating permit with input:', input)
-
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({

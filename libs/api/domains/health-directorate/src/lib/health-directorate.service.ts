@@ -557,7 +557,7 @@ export class HealthDirectorateService {
     input: PermitInput,
   ): Promise<PermitReturn | null> {
     const mappedInput: CreateEuPatientConsentDto = {
-      codes: ['PATIENT_SUMMARY'],
+      codes: ['PATIENT_SUMMARY'], // Fixed code for patient summary consent
       countryCodes: input.countryCodes,
       validFrom: new Date(input.validFrom),
       validTo: new Date(input.validTo),
