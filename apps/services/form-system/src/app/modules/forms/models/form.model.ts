@@ -76,6 +76,20 @@ export class Form extends Model<Form> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  validationServiceUrl!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,

@@ -49,6 +49,12 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  validationServiceUrl?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
@@ -132,6 +138,9 @@ export class FormResponse {
 
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  submissionUrls?: string[]
 
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
   submitUrls?: OrganizationUrl[]

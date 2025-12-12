@@ -19,6 +19,7 @@ import { FieldContent } from './components/FieldContent/FieldContent'
 import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
+import { Urls } from './components/Urls/Urls'
 
 export const MainContent = () => {
   const {
@@ -53,6 +54,9 @@ export const MainContent = () => {
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.COMPLETED ? (
         <Completed />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Urls' ? (
+        <Urls />
       ) : (
         <Stack space={2}>
           <Row>

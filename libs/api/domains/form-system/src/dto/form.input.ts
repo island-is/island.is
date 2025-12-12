@@ -81,6 +81,12 @@ export class UpdateFormDtoInput {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  validationServiceUrl?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 

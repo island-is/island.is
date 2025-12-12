@@ -45,6 +45,8 @@ export const updateFormFn = async (
             daysUntilApplicationPrune: newForm.daysUntilApplicationPrune,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
+            submissionServiceUrl: newForm.submissionServiceUrl,
+            validationServiceUrl: newForm.validationServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
             completedSectionInfo: {
               title: {
