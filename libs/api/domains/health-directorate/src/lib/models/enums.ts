@@ -23,6 +23,7 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   NoHealthClinic = 'noHealthClinic',
   DismissedRequest = 'dismissedRequest',
   AlreadyRequested = 'alreadyRequested',
+  MoreRecentPrescriptionExists = 'moreRecentPrescriptionExists',
   Unknown = 'unknown',
 }
 
