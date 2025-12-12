@@ -13,10 +13,12 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
-  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
   shouldShowPage,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
+  AttachmentOptions,
+  canHaveAttachments,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -24,6 +26,7 @@ import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
   RegistrationApplicationInputApplicationTypeEnum,
+  RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -175,6 +178,7 @@ export const getSpecialEducationSocialProfile = (application: Application) => {
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
+  attachmentFiles: string[],
 ): RegistrationApplicationInput => {
   const {
     applicationType,
@@ -209,6 +213,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applyForPreferredSchool,
     payerName,
     payerNationalId,
+    attachmentsAnswer,
     terms,
     fieldInspection,
     additionalDataProvisioning,
@@ -383,12 +388,30 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         terms: terms === YES,
       }),
     },
+    ...(canHaveAttachments(application.answers, application.externalData) &&
+      attachmentsAnswer && {
+        files: attachmentFiles,
+        fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),
+      }),
   }
 
   return newPrimarySchoolDTO
 }
 
-export const mapApplicationType = (application: Application) => {
+const mapAttachmentOptionToFileUploadType = (
+  option: AttachmentOptions,
+): RegistrationApplicationInputFileUploadTypeEnum => {
+  switch (option) {
+    case AttachmentOptions.ATTACHMENTS:
+      return RegistrationApplicationInputFileUploadTypeEnum.Attachments
+    case AttachmentOptions.PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.Physical
+    case AttachmentOptions.ATTACHMENTS_AND_PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.AttachmentsAndPhysical
+  }
+}
+
+const mapApplicationType = (application: Application) => {
   const { applicationType, applyForPreferredSchool } = getApplicationAnswers(
     application.answers,
   )

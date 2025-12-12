@@ -31,7 +31,7 @@ export class PaymentPlanResolver {
     nullable: true,
   })
   @FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
   @Audit()
   async paymentPlan(@CurrentUser() user: User) {
     return this.service.getPaymentPlan(user)
@@ -42,7 +42,7 @@ export class PaymentPlanResolver {
     nullable: true,
   })
   @FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
   @Audit()
   async(@CurrentUser() user: User): Promise<Payments | undefined> {
     return this.service.getPayments(user)

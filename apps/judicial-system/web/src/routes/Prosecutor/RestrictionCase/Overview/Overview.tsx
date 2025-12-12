@@ -185,7 +185,7 @@ export const Overview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
               {
                 id: 'case-info-section',
