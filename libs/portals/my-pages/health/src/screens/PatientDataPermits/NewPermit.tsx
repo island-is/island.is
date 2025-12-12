@@ -1,4 +1,4 @@
-import { toast } from '@island.is/island-ui/core'
+import { ActionCard, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
@@ -94,13 +94,24 @@ const NewPermit: React.FC = () => {
 
       {openModal && (
         <ConfirmModal
+          title={formatMessage(messages.newPermit)}
+          description={formatMessage(messages.addNewPermitTitle)}
           onSubmit={handleSubmit}
           open={openModal}
           onClose={() => setOpenModal(false)}
           loading={loading}
-          countries={formState?.countries || []}
-          validFrom={formState?.dates.validFrom?.toLocaleDateString()}
-          validTo={formState?.dates.validTo?.toLocaleDateString()}
+          content={
+            <ActionCard
+              date={formatMessage(messages.validToFrom, {
+                fromDate: formState?.dates.validFrom?.toLocaleDateString(),
+                toDate: formState?.dates.validTo?.toLocaleDateString(),
+              })}
+              heading={formatMessage(messages.permit)}
+              text={formState?.countries
+                .map((country) => country.name)
+                .join(', ')}
+            />
+          }
         />
       )}
     </IntroWrapper>

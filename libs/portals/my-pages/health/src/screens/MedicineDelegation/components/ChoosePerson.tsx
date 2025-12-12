@@ -40,7 +40,11 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
           nationalId: data.identity?.nationalId || '',
           name: data.identity?.name || '',
         })
-        setFormState({ ...formState, nationalId: data.identity?.nationalId })
+        setFormState({
+          ...formState,
+          nationalId: data.identity?.nationalId,
+          name: data.identity?.name,
+        })
       }
     },
   })

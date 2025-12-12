@@ -1,4 +1,4 @@
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -13,10 +13,12 @@ import { DelegationState } from '../../utils/types'
 import SecondStep from './components/ChooseDate'
 import FirstStep from './components/ChoosePerson'
 import { usePostMedicineDelegationMutation } from './MedicineDelegation.generated'
+import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
   const [step, setStep] = useState<number>(1)
+  const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<DelegationState>()
   const navigate = useNavigate()
 
@@ -26,7 +28,7 @@ const NewMedicineDelegation = () => {
       awaitRefetchQueries: true,
     })
 
-  const submit = () => {
+  const handleSubmit = () => {
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
       postMedicineDelegation({
         variables: {
@@ -101,12 +103,36 @@ const NewMedicineDelegation = () => {
                 ? !formState?.nationalId
                 : !formState?.dateFrom || !formState?.dateTo
             }
-            onClick={step === 1 ? () => setStep(2) : () => submit()}
+            onClick={step === 1 ? () => setStep(2) : () => setOpenModal(true)}
           >
             {formatMessage(m.forward)}
           </Button>
         </Box>
       </Box>
+      {openModal && (
+        <ConfirmModal
+          title={formatMessage(messages.newPermit)}
+          description={formatMessage(messages.addNewPermitTitle)}
+          onSubmit={handleSubmit}
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          loading={loading}
+          content={
+            <ActionCard
+              date={formatMessage(messages.validToFrom, {
+                fromDate: formState?.dateFrom?.toLocaleDateString(),
+                toDate: formState?.dateTo?.toLocaleDateString(),
+              })}
+              heading={formState?.name}
+              text={
+                formState?.lookup
+                  ? formatMessage(messages.pickupMedicineAndLookup)
+                  : formatMessage(messages.pickupMedicine)
+              }
+            />
+          }
+        />
+      )}
     </IntroWrapper>
   )
 }

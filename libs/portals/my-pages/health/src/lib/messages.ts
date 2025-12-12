@@ -1981,6 +1981,10 @@ export const messages = defineMessages({
     defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-delete-this-permit',
   },
+  newPermit: {
+    defaultMessage: 'Ný heimild',
+    id: 'sp.health:new-permit',
+  },
   addNewPermitTitle: {
     defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-add-new-permit',
