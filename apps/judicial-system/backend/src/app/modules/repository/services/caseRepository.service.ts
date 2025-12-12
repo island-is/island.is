@@ -1,3 +1,4 @@
+import pick from 'lodash/pick'
 import {
   CountOptions,
   CreateOptions,
@@ -16,7 +17,14 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { EventType } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
+import { Defendant } from '../models/defendant.model'
+import { DefendantEventLog } from '../models/defendantEventLog.model'
+import { EventLog } from '../models/eventLog.model'
+import { Subpoena } from '../models/subpoena.model'
+import { Verdict } from '../models/verdict.model'
 import { UpdateCase } from '../types/caseRepository.types'
 
 interface FindByIdOptions {
@@ -58,6 +66,10 @@ interface CreateCaseOptions {
   transaction?: Transaction
 }
 
+interface SplitCaseOptions {
+  transaction?: Transaction
+}
+
 interface UpdateCaseOptions {
   transaction?: Transaction
 }
@@ -73,6 +85,13 @@ interface CountCaseOptions {
 export class CaseRepositoryService {
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
+    @InjectModel(DefendantEventLog)
+    private readonly defendantEventLogModel: typeof DefendantEventLog,
+    @InjectModel(EventLog)
+    private readonly eventLogModel: typeof EventLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -285,6 +304,178 @@ export class CaseRepositoryService {
         data: Object.keys(data),
         error,
       })
+
+      throw error
+    }
+  }
+
+  async split(
+    caseId: string,
+    defendantId: string,
+    options?: SplitCaseOptions,
+  ): Promise<Case> {
+    try {
+      this.logger.debug(
+        `Splitting defendant ${defendantId} from case ${caseId} into a new case`,
+      )
+
+      const fieldsToCopy: (keyof Case)[] = [
+        'origin',
+        'type',
+        'indictmentSubtypes',
+        'description',
+        'state',
+        'policeCaseNumbers',
+        'courtId',
+        'demands',
+        'comments',
+        'creatingProsecutorId',
+        'prosecutorId',
+        'courtEndTime',
+        'rulingDate',
+        'registrarId',
+        'judgeId',
+        'rulingModifiedHistory',
+        'openedByDefender',
+        'crimeScenes',
+        'indictmentIntroduction',
+        'withCourtSessions',
+        'requestDriversLicenseSuspension',
+        'prosecutorsOfficeId',
+        'indictmentDeniedExplanation',
+        'indictmentReturnedExplanation',
+        'indictmentHash',
+        'hasCivilClaims',
+      ]
+
+      const transaction = options?.transaction
+
+      // Find the case to split
+      const caseToSplit = await this.findById(caseId, { transaction })
+
+      if (!caseToSplit) {
+        // This is a programmer error, so we throw an exception
+        throw new InternalServerErrorException(`Case ${caseId} not found`)
+      }
+
+      // Create the new case
+      const createOptions: CreateOptions = {}
+
+      if (transaction) {
+        createOptions.transaction = transaction
+      }
+
+      const result = await this.caseModel.create(
+        { ...pick(caseToSplit, fieldsToCopy), splitCaseId: caseId },
+        createOptions,
+      )
+
+      const { id: splitCaseId } = result
+
+      // Create a promise collection to await later
+      const promises: Promise<unknown>[] = []
+
+      // Move the defendant to the new case
+      const defendantUpdateOptions: UpdateOptions = {
+        where: { id: defendantId, caseId },
+      }
+
+      if (transaction) {
+        defendantUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.defendantModel.update(
+          { caseId: splitCaseId },
+          defendantUpdateOptions,
+        ),
+      )
+
+      // Move the defandant's subpoenas to the new case
+      const subpoenaUpdateOptions: UpdateOptions = {
+        where: { caseId, defendantId },
+      }
+
+      if (transaction) {
+        subpoenaUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.subpoenaModel.update(
+          { caseId: splitCaseId },
+          subpoenaUpdateOptions,
+        ),
+      )
+
+      // Move the defendant's verdicts to the new case
+      const verdictUpdateOptions: UpdateOptions = {
+        where: { caseId, defendantId },
+      }
+
+      if (transaction) {
+        verdictUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.verdictModel.update({ caseId: splitCaseId }, verdictUpdateOptions),
+      )
+
+      // Move the defendant's event logs to the new case
+      const defendantEventLogUpdateOptions: UpdateOptions = {
+        where: { caseId, defendantId },
+      }
+
+      if (transaction) {
+        defendantEventLogUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.defendantEventLogModel.update(
+          { caseId: splitCaseId },
+          defendantEventLogUpdateOptions,
+        ),
+      )
+
+      // Copy relevant event logs to the new case
+      const eventLogs = await this.eventLogModel.findAll({
+        where: {
+          caseId,
+          eventType: [
+            EventType.INDICTMENT_CONFIRMED,
+            EventType.CASE_SENT_TO_COURT,
+            EventType.CASE_RECEIVED_BY_COURT,
+          ],
+        },
+        transaction,
+      })
+
+      const eventLogCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        eventLogCreateOptions.transaction = transaction
+      }
+
+      for (const eventLog of eventLogs) {
+        promises.push(
+          this.eventLogModel.create(
+            { ...eventLog.toJSON(), id: undefined, caseId: splitCaseId },
+            eventLogCreateOptions,
+          ),
+        )
+      }
+
+      await Promise.all(promises)
+
+      this.logger.debug(
+        `Split defendant ${defendantId} from case ${caseId} into a new case ${result.id}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error splitting defendant ${defendantId} from case ${caseId} into a new case`,
+        { error },
+      )
 
       throw error
     }

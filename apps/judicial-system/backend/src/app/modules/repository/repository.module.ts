@@ -9,6 +9,7 @@ import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
 import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
+import { EventLog } from './models/eventLog.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
@@ -26,10 +27,11 @@ import { repositoryModuleConfig } from './repository.config'
     SequelizeModule.forFeature([
       Case,
       CaseArchive,
-      CourtSession,
       CourtDocument,
+      CourtSession,
       Defendant,
       DefendantEventLog,
+      EventLog,
       Subpoena,
       Verdict,
     ]),

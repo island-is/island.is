@@ -2733,50 +2733,13 @@ export class CaseService {
     theCase: Case,
     defendant: Defendant,
   ): Promise<Case> {
-    const copiedSplitIndictmentCaseFields: (keyof Case)[] = [
-      'origin',
-      'type',
-      'indictmentSubtypes',
-      'description',
-      'state',
-      'policeCaseNumbers',
-      'courtId',
-      'demands',
-      'comments',
-      'creatingProsecutorId',
-      'prosecutorId',
-      'courtEndTime',
-      'rulingDate',
-      'registrarId',
-      'judgeId',
-      'rulingModifiedHistory',
-      'openedByDefender',
-      'crimeScenes',
-      'indictmentIntroduction',
-      'withCourtSessions',
-      'requestDriversLicenseSuspension',
-      'prosecutorsOfficeId',
-      'indictmentDeniedExplanation',
-      'indictmentReturnedExplanation',
-      'indictmentHash',
-      'hasCivilClaims',
-    ]
-
     const transaction = await this.sequelize.transaction()
 
     try {
-      const splitCase = await this.createCase(
-        {
-          ...pick(theCase, copiedSplitIndictmentCaseFields),
-          splitCaseId: theCase.id,
-        },
-        transaction,
-      )
-
-      await this.defendantService.transferDefendantToCase(
-        splitCase,
-        defendant,
-        transaction,
+      const splitCase = await this.caseRepositoryService.split(
+        theCase.id,
+        defendant.id,
+        { transaction },
       )
 
       await transaction.commit()
