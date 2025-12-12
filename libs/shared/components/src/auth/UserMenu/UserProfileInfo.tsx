@@ -4,18 +4,28 @@ import { UserDropdownItem } from './UserDropdownItem'
 import { userMessages } from '@island.is/shared/translations'
 
 interface UserProfileInfoProps {
+  isCompany: boolean
   onClick: () => void
 }
 
-export const UserProfileInfo = ({ onClick }: UserProfileInfoProps) => {
+export const UserProfileInfo = ({
+  onClick,
+  isCompany,
+}: UserProfileInfoProps) => {
   const { formatMessage } = useLocale()
   const origin = window.location.origin
-  const baseUrl = `${origin}/minarsidur/stillingar`
+  const settingsPath = isCompany
+    ? '/minarsidur/fyrirtaeki/stillingar/'
+    : '/minarsidur/min-gogn/stillingar/'
 
   return (
     <UserDropdownItem
-      text={formatMessage(userMessages.personalInformation)}
-      link={`${baseUrl}/minar-stillingar`}
+      text={formatMessage(
+        isCompany
+          ? userMessages.companyInformation
+          : userMessages.personalInformation,
+      )}
+      link={`${origin}${settingsPath}`}
       icon={{ type: 'outline', icon: 'settings' }}
       onClick={() => onClick()}
     />

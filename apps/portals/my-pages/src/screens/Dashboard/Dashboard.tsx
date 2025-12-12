@@ -18,6 +18,7 @@ import {
   ServicePortalPaths,
   m,
   useDynamicRoutesWithNavigation,
+  isCompany,
 } from '@island.is/portals/my-pages/core'
 import {
   DocumentLine,
@@ -46,7 +47,7 @@ export const Dashboard = () => {
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
-  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const IS_COMPANY = isCompany(userInfo)
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
   const { filteredDocuments, data, loading } = useDocumentList()

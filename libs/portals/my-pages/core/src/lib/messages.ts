@@ -565,6 +565,14 @@ export const m = defineMessages({
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
   },
+  companyInfo: {
+    id: 'service.portal:company-info',
+    defaultMessage: 'Um fyrirtækið',
+  },
+  companyData: {
+    id: 'service.portal:company-data',
+    defaultMessage: 'Gögn úr fyrirtækjaskrá',
+  },
   userInfoDescription: {
     id: 'service.portal:user-info-description',
     defaultMessage: 'Gögn um þig og fjölskylduna þína',
@@ -573,6 +581,11 @@ export const m = defineMessages({
     id: 'service.portal:user-info-intro',
     defaultMessage:
       'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
+  },
+  companyIntro: {
+    id: 'service.portal:company-intro',
+    defaultMessage:
+      'Hér eru gögn um fyrirtækið sem sótt eru til Fyrirtækjaskrár.',
   },
   detailInfo: {
     id: 'service.portal:detail-info',
@@ -910,6 +923,14 @@ export const m = defineMessages({
   mySettings: {
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
+  },
+  companySettings: {
+    id: 'service.portal:company-settings',
+    defaultMessage: 'Stillingar',
+  },
+  companySettingsNavigation: {
+    id: 'service.portal:company-settings-navigation',
+    defaultMessage: 'Stillingar fyrirtækis',
   },
   mySettingsInformation: {
     id: 'service.portal:my-settings-information',

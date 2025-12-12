@@ -1,4 +1,3 @@
-import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Button,
@@ -13,6 +12,7 @@ import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
+import { hasNotificationScopes } from '@island.is/auth/scopes'
 import {
   LinkResolver,
   ServicePortalPaths,
@@ -45,9 +45,8 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
 
   const user = useUserInfo()
 
-  const hasNotificationsDelegationAccess = user?.scopes?.includes(
-    DocumentsScope.main,
-  )
+  const hasNotificationsDelegationAccess = hasNotificationScopes(user?.scopes)
+
   const [show, setShow] = useState<boolean>(true)
 
   const [hide, setHide] = useState<boolean>(true)

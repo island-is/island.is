@@ -11,10 +11,15 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
-import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
+import {
+  OrganizationLogoByNationalIdLoader,
+  OrganizationTitleByNationalIdLoader,
+} from '@island.is/cms'
 import type {
   LogoUrl,
   OrganizationLogoByNationalIdDataLoader,
+  OrganizationTitleByNationalIdDataLoader,
+  ShortTitle,
 } from '@island.is/cms'
 import { NotificationsService } from './notifications.service'
 import {
@@ -26,14 +31,14 @@ import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Loader } from '@island.is/nest/dataloader'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { notificationScopes } from '@island.is/auth/scopes'
 
 const LOG_CATEGORY = 'notification-list-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationsResponse)
 @Audit({ namespace: AUDIT_NAMESPACE })
-@Scopes(DocumentsScope.main)
+@Scopes(...notificationScopes)
 export class NotificationsListResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -92,6 +97,15 @@ export class NotificationsListResolver {
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationSender)
 export class NotificationSenderResolver {
+  @ResolveField('title', () => String, { nullable: true })
+  async resolveOrganisationTitle(
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Parent() sender: NotificationSender,
+  ): Promise<ShortTitle | undefined> {
+    return organizationTitleLoader.load(sender?.id ?? '')
+  }
+
   @ResolveField('logoUrl', () => String, { nullable: true })
   async resolveOrganisationLogoUrl(
     @Loader(OrganizationLogoByNationalIdLoader)

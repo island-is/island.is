@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { PageInfoDto } from '@island.is/nest/pagination'
 import {
@@ -24,6 +30,12 @@ export class DelegationRecordDTO {
   @IsString()
   @ApiProperty({ type: String })
   type!: AuthDelegationType
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String], nullable: true })
+  customDelegationScopes?: string[] | null
 }
 
 export class PaginatedDelegationRecordDTO {

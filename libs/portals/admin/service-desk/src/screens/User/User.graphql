@@ -40,9 +40,40 @@ query GetAdminNotifications($nationalId: String!, $input: NotificationsInput!) {
       notificationId
       sender {
         id
+        title
         logoUrl
       }
+      scope
       sent
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query GetAdminActorNotifications(
+  $nationalId: String!
+  $input: NotificationsInput!
+) {
+  adminActorNotifications(nationalId: $nationalId, input: $input) {
+    data {
+      id
+      messageId
+      rootMessageId
+      userNotificationId
+      recipient {
+        nationalId
+      }
+      onBehalfOfNationalId {
+        nationalId
+      }
+      scope
+      created
     }
     pageInfo {
       hasNextPage

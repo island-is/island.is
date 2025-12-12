@@ -89,7 +89,7 @@ export const PermissionAccessControl = () => {
             })
           }}
           {...commonProps}
-        ></Checkbox>
+        />
       </Stack>
     </FormCard>
   )

@@ -9,6 +9,7 @@ import {
   Table as T,
   LoadingDots,
   SkeletonLoader,
+  Tabs,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
@@ -19,7 +20,9 @@ import InfiniteScroll from 'react-infinite-scroller'
 import { m } from '../../lib/messages'
 import {
   GetAdminNotificationsQuery,
+  GetAdminActorNotificationsQuery,
   useUpdateUserProfileMutation,
+  useGetAdminActorNotificationsQuery,
 } from './User.generated'
 import { UpdateUserProfileInput } from '@island.is/api/schema'
 import React from 'react'
@@ -44,6 +47,18 @@ const User = () => {
     error,
     fetchMore,
   } = useGetAdminNotificationsQuery({
+    variables: {
+      nationalId: user.nationalId,
+      input: { limit: DEFAULT_PAGE_SIZE },
+    },
+  })
+
+  const {
+    data: actorNotifications,
+    loading: actorLoading,
+    error: actorError,
+    fetchMore: actorFetchMore,
+  } = useGetAdminActorNotificationsQuery({
     variables: {
       nationalId: user.nationalId,
       input: { limit: DEFAULT_PAGE_SIZE },
@@ -94,6 +109,42 @@ const User = () => {
               ...(fetchMoreResult.adminNotifications?.data || []),
             ],
           } as GetAdminNotificationsQuery['adminNotifications'],
+        }
+      },
+    })
+  }
+
+  const loadMoreActorNotifications = async () => {
+    if (
+      actorLoading ||
+      !actorNotifications ||
+      !actorNotifications?.adminActorNotifications?.pageInfo.hasNextPage
+    ) {
+      return
+    }
+
+    await actorFetchMore({
+      variables: {
+        nationalId: user.nationalId,
+        input: {
+          limit: DEFAULT_PAGE_SIZE,
+          after:
+            actorNotifications?.adminActorNotifications?.pageInfo.endCursor ??
+            undefined,
+        },
+      },
+      updateQuery: (
+        prev,
+        { fetchMoreResult },
+      ): GetAdminActorNotificationsQuery => {
+        return {
+          adminActorNotifications: {
+            ...fetchMoreResult.adminActorNotifications,
+            data: [
+              ...(prev.adminActorNotifications?.data || []),
+              ...(fetchMoreResult.adminActorNotifications?.data || []),
+            ],
+          } as GetAdminActorNotificationsQuery['adminActorNotifications'],
         }
       },
     })
@@ -242,55 +293,155 @@ const User = () => {
       </Stack>
       <Stack space="gutter">
         <Text variant="h4">{formatMessage(m.notifications)}</Text>
-        {error ? (
-          <Problem error={error} />
-        ) : loading ? (
-          <SkeletonLoader height={40} repeat={6} width={'100%'} />
-        ) : (
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={loadMore}
-            hasMore={notifications?.adminNotifications?.pageInfo.hasNextPage}
-            loader={
-              <Box
-                key={'user.screens.notifications.loader'}
-                marginTop={'gutter'}
-                display={'flex'}
-                justifyContent={'center'}
-              >
-                <LoadingDots />
-              </Box>
-            }
-          >
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>ID</T.HeadData>
-                  <T.HeadData>Message ID</T.HeadData>
-                  <T.HeadData>Sender ID</T.HeadData>
-                  <T.HeadData>Sent</T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {notifications?.adminNotifications?.data.map(
-                  (notification, index) => (
-                    <T.Row key={index}>
-                      <T.Data>{notification.id}</T.Data>
-                      <T.Data>{notification.notificationId}</T.Data>
-                      <T.Data>{notification.sender.id}</T.Data>
-                      <T.Data>
-                        {notification.sent &&
-                        isValidDate(new Date(notification.sent))
-                          ? format(new Date(notification.sent), 'dd.MM.yyyy')
-                          : ''}
-                      </T.Data>
-                    </T.Row>
-                  ),
-                )}
-              </T.Body>
-            </T.Table>
-          </InfiniteScroll>
-        )}
+        <Tabs
+          label="Notifications"
+          selected="user-notifications"
+          onlyRenderSelectedTab
+          contentBackground="white"
+          tabs={[
+            {
+              id: 'user-notifications',
+              label: formatMessage(m.userNotifications),
+              content: (
+                <Box paddingTop={4}>
+                  {error ? (
+                    <Problem error={error} />
+                  ) : loading ? (
+                    <SkeletonLoader height={40} repeat={6} width={'100%'} />
+                  ) : (
+                    <InfiniteScroll
+                      pageStart={0}
+                      loadMore={loadMore}
+                      hasMore={
+                        notifications?.adminNotifications?.pageInfo.hasNextPage
+                      }
+                      loader={
+                        <Box
+                          key={'user.screens.notifications.loader'}
+                          marginTop={'gutter'}
+                          display={'flex'}
+                          justifyContent={'center'}
+                        >
+                          <LoadingDots />
+                        </Box>
+                      }
+                    >
+                      <T.Table>
+                        <T.Head>
+                          <T.Row>
+                            <T.HeadData>ID</T.HeadData>
+                            <T.HeadData>Sent</T.HeadData>
+                            <T.HeadData>Message ID</T.HeadData>
+                            <T.HeadData>Sender</T.HeadData>
+                            <T.HeadData>Scope</T.HeadData>
+                          </T.Row>
+                        </T.Head>
+                        <T.Body>
+                          {notifications?.adminNotifications?.data.map(
+                            (notification, index) => (
+                              <T.Row key={index}>
+                                <T.Data>{notification.id}</T.Data>
+                                <T.Data>
+                                  {notification.sent &&
+                                  isValidDate(new Date(notification.sent))
+                                    ? format(
+                                        new Date(notification.sent),
+                                        'dd.MM.yyyy',
+                                      )
+                                    : ''}
+                                </T.Data>
+                                <T.Data>{notification.notificationId}</T.Data>
+                                <T.Data>
+                                  {notification.sender.title ||
+                                    notification.sender.id}
+                                </T.Data>
+                                <T.Data>{notification.scope}</T.Data>
+                              </T.Row>
+                            ),
+                          )}
+                        </T.Body>
+                      </T.Table>
+                    </InfiniteScroll>
+                  )}
+                </Box>
+              ),
+            },
+            {
+              id: 'actor-notifications',
+              label: formatMessage(m.actorNotifications),
+              content: (
+                <Box paddingTop={4}>
+                  {actorError ? (
+                    <Problem error={actorError} />
+                  ) : actorLoading ? (
+                    <SkeletonLoader height={40} repeat={6} width={'100%'} />
+                  ) : (
+                    <InfiniteScroll
+                      pageStart={0}
+                      loadMore={loadMoreActorNotifications}
+                      hasMore={
+                        actorNotifications?.adminActorNotifications?.pageInfo
+                          .hasNextPage
+                      }
+                      loader={
+                        <Box
+                          key={'user.screens.actor-notifications.loader'}
+                          marginTop={'gutter'}
+                          display={'flex'}
+                          justifyContent={'center'}
+                        >
+                          <LoadingDots />
+                        </Box>
+                      }
+                    >
+                      <T.Table>
+                        <T.Head>
+                          <T.Row>
+                            <T.HeadData>ID</T.HeadData>
+                            <T.HeadData>Sent</T.HeadData>
+                            <T.HeadData>Message ID</T.HeadData>
+                            <T.HeadData style={{ whiteSpace: 'nowrap' }}>
+                              On Behalf Of
+                            </T.HeadData>
+                            <T.HeadData>Scope</T.HeadData>
+                          </T.Row>
+                        </T.Head>
+                        <T.Body>
+                          {actorNotifications?.adminActorNotifications?.data.map(
+                            (notification, index) => (
+                              <T.Row key={index}>
+                                <T.Data>{notification.id}</T.Data>
+                                <T.Data>
+                                  {notification.created &&
+                                  isValidDate(new Date(notification.created))
+                                    ? format(
+                                        new Date(notification.created),
+                                        'dd.MM.yyyy',
+                                      )
+                                    : ''}
+                                </T.Data>
+                                <T.Data>{notification.messageId}</T.Data>
+                                <T.Data>
+                                  {notification.onBehalfOfNationalId?.nationalId
+                                    ? formatNationalId(
+                                        notification.onBehalfOfNationalId
+                                          .nationalId,
+                                      )
+                                    : ''}
+                                </T.Data>
+                                <T.Data>{notification.scope}</T.Data>
+                              </T.Row>
+                            ),
+                          )}
+                        </T.Body>
+                      </T.Table>
+                    </InfiniteScroll>
+                  )}
+                </Box>
+              ),
+            },
+          ]}
+        />
       </Stack>
     </Stack>
   )
