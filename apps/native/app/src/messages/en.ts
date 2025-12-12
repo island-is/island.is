@@ -189,6 +189,10 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
+  'homeBanner.vehicleMileage.title': 'Register mileage',
+  'homeBanner.vehicleMileage.description':
+    'Register the mileage of your vehicles',
+  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
