@@ -116,7 +116,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   {
                     icon: 'calendar',
                     text: `${n(
-                      'courseInstanceStartDate',
+                      'courseInstanceStartDatePrefix',
                       activeLocale === 'is' ? 'Hefst' : 'Starts',
                     )} ${format(new Date(instance.startDate), 'do MMMM yyyy')}`,
                   },
