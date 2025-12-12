@@ -1,5 +1,4 @@
 import { TagVariant } from '@island.is/island-ui/core'
-import {} from '@island.is/judicial-system/types'
 
 import { CaseIndictmentRulingDecision } from '../../graphql/schema'
 import { strings } from './CaseTag.strings'

@@ -216,6 +216,7 @@ export type RepeaterItem = {
       component: 'phone'
       allowedCountryCodes?: string[]
       enableCountrySelector?: boolean
+      format?: string
     }
   | {
       component: 'date'
@@ -247,10 +248,6 @@ export type RepeaterItem = {
       nameDefaultValue?: string
       searchPersons?: boolean
       searchCompanies?: boolean
-    }
-  | {
-      component: 'phone'
-      format: string
     }
   | {
       component: 'selectAsync'
@@ -950,6 +947,7 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: (value: unknown, application?: Application) => unknown
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface HiddenInputField extends BaseField {

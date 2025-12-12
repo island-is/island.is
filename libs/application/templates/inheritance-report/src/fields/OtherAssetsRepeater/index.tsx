@@ -36,15 +36,17 @@ export const OtherAssetsRepeater: FC<
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
   const otherAssets =
-    getEstateDataFromApplication(application)?.inheritanceReportInfo
-      ?.otherAssets ?? []
+    application.answers.applicationFor === PREPAID_INHERITANCE
+      ? []
+      : getEstateDataFromApplication(application)?.inheritanceReportInfo
+          ?.otherAssets ?? []
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,
     index = 0,
   ) =>
     application.answers.applicationFor === PREPAID_INHERITANCE
-      ? {}
+      ? ''
       : getEstateDataFromApplication(application)?.inheritanceReportInfo
           ?.otherAssets?.[index]?.[fieldName] ?? ''
 

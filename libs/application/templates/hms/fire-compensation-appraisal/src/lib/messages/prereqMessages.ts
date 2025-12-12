@@ -34,7 +34,7 @@ export const prereqMessages = defineMessages({
   },
   propertiesTitle: {
     id: 'fca.application:prereq.propertiesTitle',
-    defaultMessage: 'Húsnæðis og mannvirkjastofnun',
+    defaultMessage: 'HMS',
     description: 'Properties title',
   },
   propertiesSubtitle: {

@@ -44,6 +44,7 @@ import {
   SidebarShipSearchInput,
   Sticky,
   Webreader,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import {
@@ -95,7 +96,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -272,16 +273,6 @@ export const OrganizationHeader: React.FC<
           image={n(
             'hsnHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'hsu':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsuHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
           )}
         />
       )
@@ -644,6 +635,7 @@ export const OrganizationFooter: React.FC<
     case 'hsu':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -865,6 +857,18 @@ export const OrganizationChatPanel = ({
         endpoint={
           organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
         }
+      />
+    )
+  }
+
+  const organizationIdWithZendesk = organizationIds.find((id) => {
+    return id in zendeskConfig[activeLocale]
+  })
+
+  if (organizationIdWithZendesk) {
+    return (
+      <ZendeskChatPanel
+        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
       />
     )
   }

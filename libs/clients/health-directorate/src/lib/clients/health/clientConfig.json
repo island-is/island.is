@@ -1665,10 +1665,10 @@
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
-            "name": "statuses",
+            "name": "status",
             "required": false,
             "in": "query",
-            "description": "Filter appointments by status. Can include multiple statuses.",
+            "description": "Filter appointments by status. Can include multiple statuses (comma-separated).",
             "schema": {
               "type": "array",
               "items": {
@@ -1680,7 +1680,7 @@
             "name": "fromStartTime",
             "required": false,
             "in": "query",
-            "description": "Filter appointments to only include those starting at or after this time. ",
+            "description": "Filter appointments to only include those starting at or after this time.",
             "schema": {
               "format": "date-time",
               "example": "2024-01-15T10:30:00.000Z",
@@ -1822,15 +1822,6 @@
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
-            }
-          },
-          {
             "name": "validFrom",
             "required": false,
             "in": "query",
@@ -1856,12 +1847,21 @@
             "name": "status",
             "required": false,
             "in": "query",
-            "description": "The statuses to filter the consents",
+            "description": "The statuses to filter the consents (comma-separated)",
             "schema": {
               "type": "array",
               "items": {
                 "$ref": "#/components/schemas/EuPatientConsentStatus"
               }
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
             }
           }
         ],
@@ -2319,26 +2319,116 @@
         },
         "required": ["id", "serviceType", "fromContactInfo"]
       },
-      "PrescribedItemCategory": {
-        "type": "string",
-        "enum": ["regular", "pn", "regiment", "owner"]
+      "ProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "form": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "PrescriberDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "MedCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "category"]
+      },
+      "PrimaryCareClinicDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
       },
       "PrescriptionRenewalBlockedReason": {
         "type": "string",
         "enum": [
           "pendingRequest",
           "rejectedRequest",
-          "dismissedRequest",
           "alreadyRequested",
           "notFullyDispensed",
           "isRegiment",
-          "noMedCard",
-          "noHealthClinic"
+          "drugNotOnMedCard",
+          "noPrimaryCareClinic"
         ]
       },
       "PrescriptionRenewalStatus": {
         "type": "number",
         "enum": [0, 1, 2, 3]
+      },
+      "RenewalDto": {
+        "type": "object",
+        "properties": {
+          "isRenewable": {
+            "type": "boolean"
+          },
+          "blockedReason": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+              }
+            ]
+          },
+          "responseMessage": {
+            "type": "string"
+          }
+        },
+        "required": ["isRenewable"]
+      },
+      "PrescribedItemCategory": {
+        "type": "string",
+        "enum": ["regular", "pn", "regiment", "owner"]
       },
       "DispensedItemDto": {
         "type": "object",
@@ -2400,21 +2490,6 @@
           "prescriptionId": {
             "type": "number"
           },
-          "medCardDrugId": {
-            "type": "string"
-          },
-          "medCardDrugCategory": {
-            "type": "number"
-          },
-          "prescriberId": {
-            "type": "string"
-          },
-          "prescriberName": {
-            "type": "string"
-          },
-          "healthClinic": {
-            "type": "string"
-          },
           "issueDate": {
             "format": "date-time",
             "type": "string"
@@ -2427,28 +2502,20 @@
             "format": "date-time",
             "type": "string"
           },
-          "productId": {
-            "type": "string"
+          "product": {
+            "$ref": "#/components/schemas/ProductDto"
           },
-          "productName": {
-            "type": "string"
+          "prescriber": {
+            "$ref": "#/components/schemas/PrescriberDto"
           },
-          "productType": {
-            "type": "string",
-            "description": "Based on the ATC classification"
+          "medCard": {
+            "$ref": "#/components/schemas/MedCardDto"
           },
-          "productForm": {
-            "type": "string"
+          "primaryCareClinic": {
+            "$ref": "#/components/schemas/PrimaryCareClinicDto"
           },
-          "productUrl": {
-            "type": "string"
-          },
-          "productStrength": {
-            "type": "string"
-          },
-          "productQuantity": {
-            "type": "number",
-            "description": "Product quantity per package"
+          "renewal": {
+            "$ref": "#/components/schemas/RenewalDto"
           },
           "numberOfPackages": {
             "type": "number"
@@ -2478,26 +2545,6 @@
           "isRegiment": {
             "type": "boolean"
           },
-          "isRenewable": {
-            "type": "boolean"
-          },
-          "renewalBlockedReason": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
-              }
-            ]
-          },
-          "renewalStatus": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
-              }
-            ]
-          },
-          "renewalResponseMessage": {
-            "type": "string"
-          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2520,16 +2567,11 @@
         "required": [
           "prescribedItemId",
           "prescriptionId",
-          "medCardDrugId",
-          "medCardDrugCategory",
-          "prescriberId",
-          "prescriberName",
-          "healthClinic",
           "issueDate",
           "expiryDate",
-          "nextDispensationDate",
-          "productId",
-          "isRenewable",
+          "product",
+          "prescriber",
+          "renewal",
           "isFullyDispensed",
           "dispensations"
         ]
@@ -2564,6 +2606,50 @@
         },
         "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
+      "DispensationHistoryProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "DispensationHistoryItemProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
       "DispensationHistoryItemDto": {
         "type": "object",
         "properties": {
@@ -2577,24 +2663,8 @@
             "format": "date-time",
             "type": "string"
           },
-          "productStrength": {
-            "type": "string"
-          },
-          "productName": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "productQuantity": {
-            "type": "number"
-          },
-          "productUnit": {
-            "type": "string"
-          },
-          "productType": {
-            "type": "string",
-            "description": "Based on the ATC classification"
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryItemProductDto"
           },
           "indication": {
             "type": "string"
@@ -2617,22 +2687,13 @@
             "type": "boolean"
           }
         },
-        "required": ["prescriberName", "isExpired"]
+        "required": ["product", "prescriberName", "isExpired"]
       },
       "DispensationHistoryDto": {
         "type": "object",
         "properties": {
-          "productName": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "productStrength": {
-            "type": "string"
-          },
-          "productAtcCode": {
-            "type": "string"
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryProductDto"
           },
           "indication": {
             "type": "string"
@@ -2651,7 +2712,7 @@
             }
           }
         },
-        "required": ["dispensationCount", "dispensations"]
+        "required": ["product", "dispensationCount", "dispensations"]
       },
       "CommissionType": {
         "type": "number",

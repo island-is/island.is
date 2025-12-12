@@ -27,7 +27,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
       children: [
         buildCheckboxField({
-          id: 'selfAssessment.currentEmploymentStatuses',
+          id: 'selfAssessmentQuestionsTwo.currentEmploymentStatuses',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .currentEmploymentStatusTitle,
@@ -56,7 +56,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'selfAssessment.currentEmploymentStatusExplanation',
+          id: 'selfAssessmentQuestionsTwo.currentEmploymentStatusExplanation',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .furtherExplanation,
@@ -67,7 +67,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'selfAssessment.lastProfession.title',
+          id: 'selfAssessmentQuestionsTwo.lastProfession.title',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .lastProfessionTitle,
@@ -75,7 +75,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           space: 4,
         }),
         buildSelectField({
-          id: 'selfAssessment.lastProfession',
+          id: 'selfAssessmentQuestionsTwo.lastProfession',
           title: medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
@@ -92,7 +92,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'selfAssessment.lastProfessionDescription',
+          id: 'selfAssessmentQuestionsTwo.lastProfessionDescription',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .furtherExplanation,
@@ -104,7 +104,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildSelectField({
-          id: 'selfAssessment.lastActivityOfProfession',
+          id: 'selfAssessmentQuestionsTwo.lastActivityOfProfession',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .lastActivityOfProfession,
@@ -123,7 +123,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'selfAssessment.lastActivityOfProfessionDescription',
+          id: 'selfAssessmentQuestionsTwo.lastActivityOfProfessionDescription',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .furtherExplanation,
@@ -135,7 +135,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           },
         }),
         buildSelectField({
-          id: 'selfAssessment.lastProfessionYear',
+          id: 'selfAssessmentQuestionsTwo.lastProfessionYear',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .lastProfessionYear,
