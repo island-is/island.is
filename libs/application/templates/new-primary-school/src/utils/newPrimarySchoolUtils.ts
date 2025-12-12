@@ -12,6 +12,7 @@ import {
   PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import {
@@ -731,6 +732,14 @@ export const getApplicationType = (
   const nationalId = childNationalId || ''
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
+  if (
+    (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+    nationalId === '5555555559' // Bína Maack
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
 
   if (!isValid(nationalId) || !yearOfBirth) {
     return undefined
