@@ -24,6 +24,8 @@ export const FormFragment = gql`
     invalidationDate
     created
     modified
+    submissionServiceUrl
+    validationServiceUrl
     isTranslated
     hasPayment
     beenPublished

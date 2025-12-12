@@ -22,10 +22,11 @@ interface Props {
   workingCase: Case
   setWorkingCase?: Dispatch<SetStateAction<Case>>
   onCreateCourtCase?: () => void
+  onChange?: (courtCaseNumber: string) => void
 }
 
 const CourtCaseNumberInput: FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, onCreateCourtCase } = props
+  const { workingCase, setWorkingCase, onCreateCourtCase, onChange } = props
   const { formatMessage } = useIntl()
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
   const [value, setValue] = useState<string>(workingCase.courtCaseNumber ?? '')
@@ -147,6 +148,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           onChange={(event) => {
             setCourtCaseNumberErrorMessage('')
             setValue(event.target.value)
+            onChange?.(event.target.value)
           }}
           onBlur={(evt) => validateInput(evt.target.value)}
           disabled={
