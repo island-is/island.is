@@ -1100,7 +1100,7 @@ export const m = defineMessages({
   urlReuseEncouragement: {
     id: 'form.system:url-reuse-encouragement',
     defaultMessage:
-      'Vinsamlega reynið að halda fjölda slóða í lágmarki og endurnýtið þær sem fyrir eru eftir því sem unnt er.',
+      'Vinsamlega reynið að halda fjölda slóða í lágmarki og nýta þær sem fyrir eru eftir því sem unnt er.',
     description:
       'Please try to keep the number of URLs to a minimum and reuse existing ones as much as possible.',
   },

@@ -28,7 +28,7 @@ export const SubmissionUrls = () => {
 
   return (
     <Stack space={2}>
-      {!showInput && (
+      {!showInput && !submissionUrlInput && (
         <Box marginTop={4}>
           <Button onClick={() => setShowInput(true)} variant="ghost">
             {formatMessage(m.addFormUrl)}
@@ -36,7 +36,7 @@ export const SubmissionUrls = () => {
         </Box>
       )}
 
-      {showInput && (
+      {(showInput || submissionUrlInput) && (
         <Box marginTop={4}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
