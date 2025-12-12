@@ -42,6 +42,12 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  submissionServiceUrl!: string
+
+  @ApiProperty()
+  validationServiceUrl!: string
+
+  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()

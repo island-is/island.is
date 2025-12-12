@@ -174,6 +174,12 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_SUBMISSION_URL'
+      payload: {
+        value: string
+      }
+    }
+  | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
     }
@@ -737,6 +743,17 @@ export const controlReducer = (
         },
       }
       action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_SUBMISSION_URL': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          submissionServiceUrl: action.payload.value,
+        },
+      }
+      // action.payload.update({ ...updatedState.form })
       return updatedState
     }
     case 'UPDATE_APPLICANT_TYPES': {
