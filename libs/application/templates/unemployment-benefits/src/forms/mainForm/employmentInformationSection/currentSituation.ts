@@ -17,7 +17,6 @@ import {
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
 import { getRskOptions } from '../../../utils/getRskOptions'
 import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
