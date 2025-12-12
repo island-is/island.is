@@ -1,5 +1,8 @@
 import type { BffUser } from '@island.is/shared/types'
-import type { User } from '@island.is/auth-nest-tools'
+
+interface BackendUser {
+  subjectType?: string
+}
 
 /**
  * Checks if the user is a company (legal entity)
@@ -7,7 +10,7 @@ import type { User } from '@island.is/auth-nest-tools'
  * @returns true if the user is a company (legal entity)
  */
 export const isCompany = (
-  userOrProfile?: BffUser | BffUser['profile'] | User | null,
+  userOrProfile?: BffUser | BffUser['profile'] | BackendUser | null,
 ): boolean => {
   if (!userOrProfile) {
     return false
