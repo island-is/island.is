@@ -174,7 +174,6 @@ const ChatFeedbackPanel = ({
         </Box>
 
         <Input
-          autoExpand={{ on: true, maxHeight: 300 }}
           textarea
           rows={3}
           size="xs"

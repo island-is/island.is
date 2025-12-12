@@ -61,10 +61,6 @@ const RulingInput: FC<Props> = ({
       }
       textarea
       rows={rows ?? 16}
-      autoExpand={{
-        on: !rows,
-        maxHeight: 600,
-      }}
       disabled={disabled}
     />
   )

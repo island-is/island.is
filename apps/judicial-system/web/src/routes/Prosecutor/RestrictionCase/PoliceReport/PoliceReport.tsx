@@ -95,7 +95,6 @@ export const PoliceReport = () => {
                 )
               }
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -145,7 +144,6 @@ export const PoliceReport = () => {
               }
               required
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -197,7 +195,6 @@ export const PoliceReport = () => {
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>

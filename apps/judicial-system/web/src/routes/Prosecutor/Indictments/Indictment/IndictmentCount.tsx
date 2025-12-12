@@ -640,7 +640,6 @@ export const IndictmentCount: FC<Props> = ({
             }}
             required
             rows={7}
-            autoExpand={{ on: true, maxHeight: 600 }}
             textarea
           />
         </Box>
@@ -687,7 +686,6 @@ export const IndictmentCount: FC<Props> = ({
           }}
           required
           rows={7}
-          autoExpand={{ on: true, maxHeight: 600 }}
           textarea
         />
       </Box>

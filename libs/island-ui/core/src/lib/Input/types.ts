@@ -56,10 +56,6 @@ export interface InputComponentProps {
     // A one-time password (OTP) for verifying user identity that is used as an additional factor in a sign-in flow.
     // Most commonly this is a code received via some out-of-channel mechanism, such as SMS, email, or authenticator application.
     | 'one-time-code'
-  autoExpand?: {
-    on: boolean
-    maxHeight?: number
-  }
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode']
 }
 
