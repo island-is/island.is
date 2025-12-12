@@ -148,6 +148,8 @@ const Conclusion: FC = () => {
     null,
   )
   const [splitCaseId, setSplitCaseId] = useState<string>()
+  const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
+    useState<string>()
   const [modalVisible, setModalVisible] = useState<
     'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
   >()
@@ -850,6 +852,9 @@ const Conclusion: FC = () => {
               router.push(
                 `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
               ),
+            isDisabled: !validate([
+              [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
+            ]).isValid,
           }}
         >
           <CourtCaseNumberInput
@@ -859,6 +864,9 @@ const Conclusion: FC = () => {
               type: CaseType.INDICTMENT,
             }}
             onCreateCourtCase={() => createCourtCase(splitCaseId)}
+            onChange={(courtCaseNumber) => {
+              setSplitCaseCourtCaseNumber(courtCaseNumber)
+            }}
           />
         </Modal>
       )}
