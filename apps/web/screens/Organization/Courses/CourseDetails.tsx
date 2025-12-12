@@ -131,7 +131,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Næstu námskeið' : 'Next courses',
+                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
               )}
             </Text>
             <InfoCardGrid
