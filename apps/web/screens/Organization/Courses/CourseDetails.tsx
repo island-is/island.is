@@ -7,11 +7,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { formatCurrency } from '@island.is/shared/utils'
+import type { Locale } from '@island.is/shared/types'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import type {
   Course,
   OrganizationPage,
+  Price,
   Query,
   QueryGetCourseByIdArgs,
   QueryGetNamespaceArgs,
@@ -27,6 +28,31 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_COURSE_BY_ID_QUERY } from '../../queries/Courses'
+
+const formatPrice = (price: Price, locale: Locale) => {
+  const amount = price?.amount
+  if (typeof amount !== 'number') return null
+
+  let postfix = 'krónur'
+
+  const amountEndsWithOne = amount % 10 === 1
+  const amountEndsWithEleven = amount % 100 === 11
+
+  if (amountEndsWithOne && !amountEndsWithEleven) {
+    postfix = 'króna'
+  }
+
+  // For other than icelandic locales display 'ISK' as a postfix
+  if (locale !== 'is') {
+    postfix = 'ISK'
+  }
+
+  // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
+  const formatter = new Intl.NumberFormat('de-DE')
+
+  const displayedValue = `${formatter.format(amount)} ${postfix}`
+  return displayedValue
+}
 
 type CourseDetailsScreenContext = ScreenContext & {
   organizationPage: Query['getOrganizationPage']
@@ -151,7 +177,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                 const tags = []
                 if (instance.price?.amount && instance.price.amount > 0) {
                   tags.push({
-                    label: formatCurrency(instance.price?.amount ?? 0),
+                    label: formatPrice(instance.price, activeLocale),
                     variant: 'dark',
                   })
                 }
