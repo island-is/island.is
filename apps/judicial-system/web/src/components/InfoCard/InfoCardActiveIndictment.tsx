@@ -28,6 +28,8 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     mergedCaseCourt,
     civilClaimants,
     courtCaseNumber,
+    splitCases,
+    splitCase,
     showItem,
   } = useInfoCardItems()
 
@@ -73,6 +75,12 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
               ],
               columns: 2,
             }))
+          : []),
+        ...(workingCase.splitCases && workingCase.splitCases.length > 0
+          ? [{ id: 'split-cases-section', items: [splitCases], columns: 2 }]
+          : []),
+        ...(workingCase.splitCase
+          ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
           : []),
       ]}
     />
