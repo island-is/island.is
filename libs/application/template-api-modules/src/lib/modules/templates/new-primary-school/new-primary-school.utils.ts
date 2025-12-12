@@ -1,5 +1,6 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
@@ -14,6 +15,7 @@ import {
   ReasonForApplicationOptions,
   shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
+  shouldShowPage,
   shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
@@ -294,8 +296,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      ...(!isSpecialEducation &&
-        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
           requestingMeeting: requestingMeeting === YES,
         }),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
@@ -357,19 +363,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      ...(isSpecialEducation &&
-        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
-          childCircumstances: {
-            fieldInspection: fieldInspection === YES,
-            additionalDataProvisioning: additionalDataProvisioning === YES,
-            outsideSpecialist: outsideSpecialist === YES,
-            childViewOnApplication: childViewOnApplication === YES,
-          },
-        }),
-      ...(isSpecialEducationBehavior &&
-        applicationType !== ApplicationType.CONTINUING_ENROLLMENT && {
-          terms: terms === YES,
-        }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
   }
 
