@@ -537,18 +537,4 @@ export class VerdictService {
     }
     return { queued: false }
   }
-
-  transferDefendantVerdictToCase(
-    newCase: Case,
-    verdict: Verdict,
-    transaction: Transaction,
-  ): Promise<Verdict> {
-    return this.verdictRepositoryService.update(
-      verdict.caseId,
-      verdict.defendantId,
-      verdict.id,
-      { caseId: newCase.id },
-      { transaction },
-    )
-  }
 }

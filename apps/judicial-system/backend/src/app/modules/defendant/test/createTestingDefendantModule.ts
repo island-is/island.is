@@ -19,9 +19,7 @@ import {
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../../repository'
-import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
-import { VerdictService } from '../../verdict'
 import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
@@ -32,8 +30,6 @@ import { LimitedAccessDefendantController } from '../limitedAccessDefendant.cont
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
-jest.mock('../../subpoena/subpoena.service')
-jest.mock('../../verdict/verdict.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
@@ -52,8 +48,6 @@ export const createTestingDefendantModule = async () => {
       MessageService,
       UserService,
       CourtService,
-      SubpoenaService,
-      VerdictService,
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,

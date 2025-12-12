@@ -1,17 +1,11 @@
 import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import {
-  CaseOrigin,
-  CaseState,
-  CaseType,
-  Gender,
-} from '@island.is/judicial-system/types'
+import { CaseOrigin, CaseType, Gender } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { DefendantService } from '../../../defendant'
 import { Case, CaseRepositoryService, Defendant } from '../../../repository'
 
 interface Then {
@@ -27,19 +21,13 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Split defendant from case', () => {
-  let mockDefendantService: DefendantService
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseRepositoryService,
-      caseController,
-    } = await createTestingCaseModule()
-    mockDefendantService = defendantService
+    const { sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -111,35 +99,18 @@ describe('CaseController - Split defendant from case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseRepositoryService.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(splitCase)
+      const mockSplit = mockCaseRepositoryService.split as jest.Mock
+      mockSplit.mockResolvedValueOnce(splitCase)
 
       then = await givenWhenThen(caseId, defendantId, theCase, defendantToSplit)
     })
 
     it('should create new case and transfer defendant', () => {
       expect(then.error).toBeUndefined()
-      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
-        {
-          origin,
-          type,
-          state: CaseState.DRAFT,
-          withCourtSessions: true,
-          description,
-          policeCaseNumbers,
-          courtId,
-          demands,
-          comments,
-          creatingProsecutorId,
-          prosecutorId,
-          splitCaseId: caseId,
-        },
+      expect(mockCaseRepositoryService.split).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
         { transaction },
-      )
-      expect(mockDefendantService.transferDefendantToCase).toHaveBeenCalledWith(
-        splitCase,
-        defendantToSplit,
-        transaction,
       )
       expect(then.result).toBe(splitCase)
     })
