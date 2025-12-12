@@ -19,11 +19,16 @@ import {
   shouldShowChildAndAdolescentPsychiatryDepartment,
   shouldShowChildAndAdolescentPsychiatryServicesReceived,
   shouldShowDiagnosticians,
+  shouldShowPage,
   shouldShowServicesFromMunicipality,
   shouldShowSpecialists,
   shouldShowSupportNeedsAssessmentBy,
 } from '../../../utils/conditionUtils'
-import { CaseWorkerInputTypeEnum, OptionsType } from '../../../utils/constants'
+import {
+  ApplicationFeatureKey,
+  CaseWorkerInputTypeEnum,
+  OptionsType,
+} from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -37,6 +42,7 @@ export const specialEducationSupportSubSection = buildSubSection({
   id: 'specialEducationSupportSubSection',
   title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
   condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
