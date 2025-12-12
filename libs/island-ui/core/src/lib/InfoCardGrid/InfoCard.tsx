@@ -32,7 +32,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       aria-label={restOfProps.title}
       component={LinkV2}
       href={restOfProps.link.href}
-      target={restOfProps.link.openInNewTab ? '_blank' : '_self'}
+      target={restOfProps.link.openInNewTab ? '_blank' : undefined}
       background={restOfProps.background ?? 'white'}
       borderColor={restOfProps.borderColor ?? 'white'}
       color="blue"
