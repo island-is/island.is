@@ -1,5 +1,5 @@
 import { Appearance, ColorSchemeName } from 'react-native'
-import { DefaultTheme } from 'styled-components'
+import { DefaultTheme } from 'styled-components/native'
 
 import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
 import { theme } from '../ui'
