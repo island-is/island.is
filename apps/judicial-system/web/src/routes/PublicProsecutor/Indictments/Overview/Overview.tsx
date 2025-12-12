@@ -166,6 +166,13 @@ export const Overview = () => {
           const isServiceNotApplicable =
             verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
+          const canDefendantAppealVerdict = !!(
+            verdict &&
+            !verdict.isDefaultJudgement &&
+            (isServiceNotApplicable ||
+              (isServiceRequired && !!verdict.serviceDate))
+          )
+
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
@@ -173,32 +180,32 @@ export const Overview = () => {
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
-                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
+                  <BlueBoxWithDate
+                    defendant={defendant}
+                    canDefendantAppealVerdict={canDefendantAppealVerdict}
+                    icon="calendar"
+                  />
                 </Box>
-                {verdict &&
-                  (isServiceNotApplicable ||
-                    (isServiceRequired &&
-                      verdict.serviceDate &&
-                      !verdict.isDefaultJudgement)) && (
-                    <Box component="section">
-                      <BlueBox>
-                        <SectionHeading
-                          title="Afstaða dómfellda til dóms"
-                          heading="h4"
-                          marginBottom={2}
-                          required
-                        />
-                        <Box marginBottom={2}>
-                          <Text variant="eyebrow">{defendant.name}</Text>
-                        </Box>
-                        <VerdictAppealDecisionChoice
-                          defendant={defendant}
-                          verdict={verdict}
-                          disabled={!!defendant.isSentToPrisonAdmin}
-                        />
-                      </BlueBox>
-                    </Box>
-                  )}
+                {canDefendantAppealVerdict && (
+                  <Box component="section">
+                    <BlueBox>
+                      <SectionHeading
+                        title="Afstaða dómfellda til dóms"
+                        heading="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow">{defendant.name}</Text>
+                      </Box>
+                      <VerdictAppealDecisionChoice
+                        defendant={defendant}
+                        verdict={verdict}
+                        disabled={!!defendant.isSentToPrisonAdmin}
+                      />
+                    </BlueBox>
+                  </Box>
+                )}
               </Box>
               <Box
                 display="flex"
