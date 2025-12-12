@@ -5,6 +5,7 @@ import {
   InfoCardGrid,
   type NavigationItem,
   Stack,
+  TagVariant,
   Text,
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
@@ -31,7 +32,7 @@ import { GET_COURSE_BY_ID_QUERY } from '../../queries/Courses'
 
 const formatPrice = (price: Price, locale: Locale) => {
   const amount = price?.amount
-  if (typeof amount !== 'number') return null
+  if (typeof amount !== 'number') return ''
 
   let postfix = 'krónur'
 
@@ -174,7 +175,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   })
                 }
 
-                const tags = []
+                const tags: { label: string; variant: TagVariant }[] = []
                 if (instance.price?.amount && instance.price.amount > 0) {
                   tags.push({
                     label: formatPrice(instance.price, activeLocale),
@@ -182,13 +183,15 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   })
                 }
 
+                const title = instance.displayedTitle?.trim() || course.title
+
                 return {
                   id: instance.id,
-                  title: instance.displayedTitle?.trim() || course.title,
+                  title,
                   description: instance.description,
                   eyebrow: '',
                   link: {
-                    label: instance.displayedTitle ?? '',
+                    label: title,
                     href: `/umsoknir/hh-namskeid/${instance.id}`,
                     openInNewTab: true,
                   },
