@@ -61,6 +61,9 @@ export class ApplicationChargeService {
       if (!requestId && paymentUrl) {
         const url = new URL(paymentUrl)
         requestId = url.pathname.split('/').pop() ?? ''
+        this.logger.info(
+          'requestId not set, falling back to getting it from paymentUrl',
+        )
       }
 
       if (requestId) {
