@@ -35,6 +35,8 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
     case PrescriptionRenewalBlockedReason.NO_PRIMARY_CARE_CLINIC:
       return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
+    case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
+      return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists
     default:
       return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }
@@ -93,7 +95,9 @@ export const mapDispensationItem = (
   const quantity = item.product.quantity ?? 0
 
   return {
-    id: item.product.id,
+    id: [item.product.id, item.dispensationDate?.toISOString()]
+      .filter((x) => isDefined(x))
+      .join('-'),
     name: item.product.name,
     quantity: [quantity.toString(), item.product.unit]
       .filter((x) => isDefined(x))
@@ -108,5 +112,6 @@ export const mapDispensationItem = (
     expirationDate: item.expirationDate,
     isExpired: item.isExpired,
     date: item.dispensationDate,
+    strength: item.product.strength ?? '',
   }
 }

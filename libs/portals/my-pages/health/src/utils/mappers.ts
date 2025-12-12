@@ -23,6 +23,8 @@ export const mapBlockedStatus = (
       return formatMessage(messages.prescriptionBlockedDismissedRequest)
     case HealthDirectoratePrescriptionRenewalBlockedReason.AlreadyRequested:
       return formatMessage(messages.prescriptionBlockedAlreadyRequested)
+    case HealthDirectoratePrescriptionRenewalBlockedReason.MoreRecentPrescriptionExists:
+      return formatMessage(messages.prescriptionBlockedMoreRecentExists)
     case HealthDirectoratePrescriptionRenewalBlockedReason.Unknown:
       return formatMessage(messages.prescriptionBlockedOther)
     default:

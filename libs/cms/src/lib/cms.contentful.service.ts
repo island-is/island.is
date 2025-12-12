@@ -1566,6 +1566,7 @@ export class CmsContentfulService {
     const params = {
       content_type: 'course',
       limit: 1,
+      include: 4,
     }
 
     const response =
