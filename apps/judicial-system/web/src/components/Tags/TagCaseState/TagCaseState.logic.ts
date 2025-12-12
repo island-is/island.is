@@ -123,11 +123,7 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     case CaseState.COMPLETED: {
       // TODO: this will be fixed when we have considered ruling decision per defendant
-      if (theCase.indictmentRulingDecision) {
-        return mapIndictmentRulingDecisionToTagVariant(formatMessage, theCase)
-      }
-      // should never happen
-      return { color: 'white', text: formatMessage(strings.unknown) }
+      return mapIndictmentRulingDecisionToTagVariant(formatMessage, theCase)
     }
     case CaseState.WAITING_FOR_CANCELLATION:
       return {
