@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isDistrictCourtJudgeUser } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -102,7 +103,12 @@ const OverviewBody = ({
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
-          <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={3}
+            columnGap={2}
+          >
             <Button
               variant="primary"
               icon="add"
@@ -116,6 +122,21 @@ const OverviewBody = ({
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
+            {isDistrictCourtJudgeUser(user) && (
+              <Button
+                variant="primary"
+                icon="add"
+                size="small"
+                onClick={() => {
+                  router.push(
+                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                  )
+                }}
+                disabled={false}
+              >
+                Kveða upp úrskurð undir rekstri máls
+              </Button>
+            )}
           </Box>
         </Box>
       </FormContentContainer>
