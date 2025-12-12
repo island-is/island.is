@@ -26,6 +26,8 @@ export const SubmissionUrls = () => {
 
   const [showInput, setShowInput] = useState(false)
 
+  const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
+
   return (
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
@@ -65,7 +67,7 @@ export const SubmissionUrls = () => {
         <RadioButton
           label={submissionUrlInput}
           large
-          name="customSubmissionUrl"
+          name="submissionUrl"
           id="customSubmissionUrl"
           checked={form.submissionServiceUrl === submissionUrlInput}
           onChange={() => {
@@ -90,8 +92,8 @@ export const SubmissionUrls = () => {
               <RadioButton
                 label={url}
                 large
-                name={url ?? undefined}
-                id={url ?? undefined}
+                name="submissionUrl"
+                id={`submission-url-${sanitizeId(url ?? '')}`}
                 checked={form.submissionServiceUrl === url}
                 onChange={() => {
                   controlDispatch({
@@ -109,7 +111,7 @@ export const SubmissionUrls = () => {
         <RadioButton
           label="Zendesk"
           large
-          name="zendesk"
+          name="submissionUrl"
           id="zendesk"
           checked={form.submissionServiceUrl === 'zendesk'}
           onChange={(e) => {
