@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  InfoCardGrid,
   type NavigationItem,
   Stack,
   Text,
@@ -103,32 +104,73 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Dagsetningar' : 'Dates',
+                activeLocale === 'is' ? 'Næstu námskeið' : 'Next courses',
               )}
             </Text>
-            <Stack space={3}>
-              {course.instances.map((instance) => (
-                <Box
-                  key={instance.id}
-                  padding={2}
-                  border="standard"
-                  borderRadius="large"
-                >
-                  <Stack space={2}>
-                    <Text variant="h3" as="h3">
-                      {format(new Date(instance.startDate), 'do MMMM yyyy')}
-                    </Text>
-                    <Text>{instance.description}</Text>
-                    {Boolean(instance.price?.amount) && (
-                      <Text>
-                        {n('price', activeLocale === 'is' ? 'Verð' : 'Price')}:{' '}
-                        {formatCurrency(instance.price?.amount ?? 0)}
-                      </Text>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+            <InfoCardGrid
+              variant="detailed"
+              columns={1}
+              cardsBorder="standard"
+              cards={course.instances.map((instance) => {
+                const detailLines = [
+                  {
+                    icon: 'calendar',
+                    text: `${n(
+                      'courseInstanceStartDate',
+                      activeLocale === 'is' ? 'Hefst' : 'Starts',
+                    )} ${format(new Date(instance.startDate), 'do MMMM yyyy')}`,
+                  },
+                ]
+
+                let startDateTimeDuration = ''
+                if (instance.startDateTimeDuration?.startTime) {
+                  startDateTimeDuration =
+                    instance.startDateTimeDuration.startTime
+                  if (instance.startDateTimeDuration.endTime) {
+                    startDateTimeDuration += ` ${n(
+                      'timeDurationSeparator',
+                      activeLocale === 'is' ? 'til' : '-',
+                    )} ${instance.startDateTimeDuration.endTime}`
+                  }
+                }
+
+                if (startDateTimeDuration) {
+                  detailLines.push({
+                    icon: 'time',
+                    text: startDateTimeDuration,
+                  })
+                }
+
+                if (instance.location) {
+                  detailLines.push({
+                    icon: 'location',
+                    text: instance.location,
+                  })
+                }
+
+                const tags = []
+                if (instance.price?.amount && instance.price.amount > 0) {
+                  tags.push({
+                    label: formatCurrency(instance.price?.amount ?? 0),
+                    variant: 'dark',
+                  })
+                }
+
+                return {
+                  id: instance.id,
+                  title: instance.displayedTitle?.trim() || course.title,
+                  description: instance.description,
+                  eyebrow: '',
+                  link: {
+                    label: instance.displayedTitle ?? '',
+                    href: `/umsoknir/hh-namskeid/${instance.id}`,
+                    openInNewTab: true,
+                  },
+                  detailLines,
+                  tags,
+                }
+              })}
+            />
           </Stack>
         )}
       </Stack>
