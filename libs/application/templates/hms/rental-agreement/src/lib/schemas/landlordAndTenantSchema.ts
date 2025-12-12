@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from '../messages'
 import { EMAIL_REGEX, YES } from '@island.is/application/core'
-import { isValidMobileNumber, isValidPhoneNumber } from '../../utils/utils'
+import { isValidMobileNumber } from '../../utils/utils'
 import { ApplicantsRole } from '../../utils/enums'
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
