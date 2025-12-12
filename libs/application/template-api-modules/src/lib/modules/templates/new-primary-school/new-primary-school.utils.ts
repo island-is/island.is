@@ -1,5 +1,6 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
@@ -13,6 +14,7 @@ import {
   needsPayerApproval,
   ReasonForApplicationOptions,
   shouldShowExpectedEndDate,
+  shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
   AttachmentOptions,
@@ -238,6 +240,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     application.externalData,
   )
 
+  const isSpecialEducationBehavior = hasBehaviorSchoolOrDepartmentSubType(
+    application.answers,
+    application.externalData,
+  )
+
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
     applicationType: mapApplicationType(application),
@@ -294,7 +301,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      requestingMeeting: requestingMeeting === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -354,13 +368,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      childCircumstances: {
-        fieldInspection: fieldInspection === YES,
-        additionalDataProvisioning: additionalDataProvisioning === YES,
-        outsideSpecialist: outsideSpecialist === YES,
-        childViewOnApplication: childViewOnApplication === YES,
-      },
-      terms: terms === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
     ...(canHaveAttachments(application.answers, application.externalData) &&
       attachmentsAnswer && {
