@@ -86,4 +86,11 @@ export class Payment extends Model {
   })
   @ApiProperty()
   expires_at!: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  request_id?: string
 }
