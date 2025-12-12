@@ -223,14 +223,12 @@ export class PaymentService extends BaseTemplateApiService {
     try {
       let requestId = payment.request_id as string
 
-      //if requestId is not set, we need to get it from the paymentUrl
-      if (!requestId && paymentUrl) {
-        const url = new URL(paymentUrl)
-        requestId = url.pathname.split('/').pop() ?? ''
-      }
-
       if (requestId) {
         await this.chargeFjsV2ClientService.deleteCharge(requestId)
+      } else if (paymentUrl) {
+        //if requestId is not set, we need to get it from the paymentUrl
+        const url = new URL(paymentUrl)
+        requestId = url.pathname.split('/').pop() ?? ''
       }
 
       await this.paymentModelService.delete(application.id, auth)
