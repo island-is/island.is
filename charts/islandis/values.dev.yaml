@@ -279,7 +279,6 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -1460,7 +1459,6 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -1648,7 +1646,6 @@ form-system-web:
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -3805,7 +3802,6 @@ skilavottord-ws:
     name: 'skilavottord-ws'
 user-notification:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -3923,7 +3919,6 @@ user-notification:
     name: 'user-notification'
 user-notification-birthday-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
@@ -4025,7 +4020,6 @@ user-notification-birthday-worker:
     name: 'user-notification-birthday-worker'
 user-notification-cleanup-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=cleanup'
   command:
@@ -4120,7 +4114,6 @@ user-notification-cleanup-worker:
     name: 'user-notification-cleanup-worker'
 user-notification-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
   command:
@@ -4324,7 +4317,6 @@ web:
     name: 'web'
 xroad-collector:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'

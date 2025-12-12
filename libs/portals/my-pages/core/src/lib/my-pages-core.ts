@@ -21,3 +21,5 @@ export type ServicePortalModuleComponent<P = {}> = PortalModuleComponent<P>
 export type ServicePortalRoute = PortalRoute
 
 export type ServicePortalModule = PortalModule
+
+const k = 8
