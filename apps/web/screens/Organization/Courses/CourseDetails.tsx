@@ -2,15 +2,18 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  InfoCardGrid,
   type NavigationItem,
   Stack,
+  TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { formatCurrency } from '@island.is/shared/utils'
+import type { Locale } from '@island.is/shared/types'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import type {
   Course,
   OrganizationPage,
+  Price,
   Query,
   QueryGetCourseByIdArgs,
   QueryGetNamespaceArgs,
@@ -26,6 +29,31 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_COURSE_BY_ID_QUERY } from '../../queries/Courses'
+
+const formatPrice = (price: Price, locale: Locale) => {
+  const amount = price?.amount
+  if (typeof amount !== 'number') return ''
+
+  let postfix = 'krónur'
+
+  const amountEndsWithOne = amount % 10 === 1
+  const amountEndsWithEleven = amount % 100 === 11
+
+  if (amountEndsWithOne && !amountEndsWithEleven) {
+    postfix = 'króna'
+  }
+
+  // For other than icelandic locales display 'ISK' as a postfix
+  if (locale !== 'is') {
+    postfix = 'ISK'
+  }
+
+  // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
+  const formatter = new Intl.NumberFormat('de-DE')
+
+  const displayedValue = `${formatter.format(amount)} ${postfix}`
+  return displayedValue
+}
 
 type CourseDetailsScreenContext = ScreenContext & {
   organizationPage: Query['getOrganizationPage']
@@ -103,32 +131,75 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Dagsetningar' : 'Dates',
+                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
               )}
             </Text>
-            <Stack space={3}>
-              {course.instances.map((instance) => (
-                <Box
-                  key={instance.id}
-                  padding={2}
-                  border="standard"
-                  borderRadius="large"
-                >
-                  <Stack space={2}>
-                    <Text variant="h3" as="h3">
-                      {format(new Date(instance.startDate), 'do MMMM yyyy')}
-                    </Text>
-                    <Text>{instance.description}</Text>
-                    {Boolean(instance.price?.amount) && (
-                      <Text>
-                        {n('price', activeLocale === 'is' ? 'Verð' : 'Price')}:{' '}
-                        {formatCurrency(instance.price?.amount ?? 0)}
-                      </Text>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+            <InfoCardGrid
+              variant="detailed"
+              columns={1}
+              cardsBorder="standard"
+              cards={course.instances.map((instance) => {
+                const detailLines = [
+                  {
+                    icon: 'calendar',
+                    text: `${n(
+                      'courseInstanceStartDatePrefix',
+                      activeLocale === 'is' ? 'Hefst' : 'Starts',
+                    )} ${format(new Date(instance.startDate), 'do MMMM yyyy')}`,
+                  },
+                ]
+
+                let startDateTimeDuration = ''
+                if (instance.startDateTimeDuration?.startTime) {
+                  startDateTimeDuration =
+                    instance.startDateTimeDuration.startTime
+                  if (instance.startDateTimeDuration.endTime) {
+                    startDateTimeDuration += ` ${n(
+                      'timeDurationSeparator',
+                      activeLocale === 'is' ? 'til' : '-',
+                    )} ${instance.startDateTimeDuration.endTime}`
+                  }
+                }
+
+                if (startDateTimeDuration) {
+                  detailLines.push({
+                    icon: 'time',
+                    text: startDateTimeDuration,
+                  })
+                }
+
+                if (instance.location) {
+                  detailLines.push({
+                    icon: 'location',
+                    text: instance.location,
+                  })
+                }
+
+                const tags: { label: string; variant: TagVariant }[] = []
+                if (instance.price?.amount && instance.price.amount > 0) {
+                  tags.push({
+                    label: formatPrice(instance.price, activeLocale),
+                    variant: 'dark',
+                  })
+                }
+
+                const title = instance.displayedTitle?.trim() || course.title
+
+                return {
+                  id: instance.id,
+                  title,
+                  description: instance.description,
+                  eyebrow: '',
+                  link: {
+                    label: title,
+                    href: `/umsoknir/hh-namskeid/${instance.id}`,
+                    openInNewTab: true,
+                  },
+                  detailLines,
+                  tags,
+                }
+              })}
+            />
           </Stack>
         )}
       </Stack>

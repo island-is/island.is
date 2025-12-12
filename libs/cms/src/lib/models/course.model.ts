@@ -7,12 +7,30 @@ import { mapPrice, Price } from './price.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
 
 @ObjectType()
+class CourseInstanceTimeDuration {
+  @Field(() => String, { nullable: true })
+  startTime?: string
+
+  @Field(() => String, { nullable: true })
+  endTime?: string
+}
+
+@ObjectType()
 export class CourseInstance {
   @Field(() => ID)
   id!: string
 
   @Field(() => String)
   startDate!: string
+
+  @CacheField(() => CourseInstanceTimeDuration, { nullable: true })
+  startDateTimeDuration?: CourseInstanceTimeDuration | null
+
+  @Field(() => String, { nullable: true })
+  location?: string | null
+
+  @Field(() => String, { nullable: true })
+  displayedTitle?: string | null
 
   @CacheField(() => Price, { nullable: true })
   price?: Price | null
@@ -24,12 +42,19 @@ export class CourseInstance {
 const mapCourseInstance = ({
   fields,
   sys,
-}: ICourseInstance): CourseInstance => ({
-  id: sys.id,
-  startDate: fields.startDate ?? '',
-  price: fields.price ? mapPrice(fields.price) : null,
-  description: fields.description ?? '',
-})
+}: ICourseInstance): CourseInstance => {
+  const startTime = fields.startDateTimeDuration?.startTime
+  const endTime = fields.startDateTimeDuration?.endTime
+  return {
+    id: sys.id,
+    startDate: fields.startDate ?? '',
+    location: fields.location ?? null,
+    displayedTitle: fields.displayedTitle ?? null,
+    price: fields.price ? mapPrice(fields.price) : null,
+    description: fields.description ?? '',
+    startDateTimeDuration: startTime ? { startTime, endTime } : null,
+  }
+}
 
 @ObjectType()
 export class Course {
