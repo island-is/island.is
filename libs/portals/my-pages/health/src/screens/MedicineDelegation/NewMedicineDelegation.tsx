@@ -5,7 +5,7 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -99,9 +99,10 @@ const NewMedicineDelegation = () => {
             type="submit"
             loading={loading}
             disabled={
-              step === 1
-                ? !formState?.nationalId
-                : !formState?.dateFrom || !formState?.dateTo
+              (step === 1
+                ? formState?.nationalId?.length !== 10 ||
+                  formState?.name === undefined
+                : !formState?.dateFrom || !formState?.dateTo) || loading
             }
             onClick={step === 1 ? () => setStep(2) : () => setOpenModal(true)}
           >

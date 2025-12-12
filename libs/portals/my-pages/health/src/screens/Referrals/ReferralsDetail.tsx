@@ -65,7 +65,7 @@ const ReferralsDetail: React.FC = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.publicationDate)}
+            label={messages.publicationDate}
             content={
               formatDate(referral?.createdDate) ||
               formatMessage(messages.noDataRegistered)
@@ -73,14 +73,14 @@ const ReferralsDetail: React.FC = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.vaccinatedStatus)}
+            label={messages.vaccinatedStatus}
             content={
               referral?.stateDisplay || formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.medicineValidTo)}
+            label={messages.medicineValidTo}
             content={
               formatDate(referral?.validUntilDate) ||
               formatMessage(messages.noDataRegistered)
@@ -88,7 +88,7 @@ const ReferralsDetail: React.FC = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.referralTo)}
+            label={messages.referralTo}
             content={
               [
                 referral?.toContactInfo?.name,
@@ -100,7 +100,7 @@ const ReferralsDetail: React.FC = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.reason)}
+            label={messages.reason}
             content={
               referral?.reason || formatMessage(messages.noDataRegistered)
             }
@@ -108,7 +108,7 @@ const ReferralsDetail: React.FC = () => {
           />
           {referral?.diagnoses && (
             <InfoLine
-              label={formatMessage(messages.diagnoses)}
+              label={messages.diagnoses}
               content={referral?.diagnoses}
               loading={loading}
             />

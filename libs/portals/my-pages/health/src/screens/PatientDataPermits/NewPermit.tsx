@@ -1,7 +1,7 @@
 import { ActionCard, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
@@ -89,7 +89,11 @@ const NewPermit: React.FC = () => {
         />
       )}
       {step === 3 && (
-        <Terms goBack={() => setStep(2)} onClick={() => setOpenModal(true)} />
+        <Terms
+          goBack={() => setStep(2)}
+          loading={loading}
+          onClick={() => setOpenModal(true)}
+        />
       )}
 
       {openModal && (
