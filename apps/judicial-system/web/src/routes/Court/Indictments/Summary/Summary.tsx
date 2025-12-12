@@ -206,7 +206,9 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
+          {formatMessage(strings.title)}
+        </PageTitle>
         <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {

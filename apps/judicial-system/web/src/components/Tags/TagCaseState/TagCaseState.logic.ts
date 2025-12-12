@@ -36,6 +36,28 @@ const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
   })
 }
 
+export const mapIndictmentRulingDecisionToTagVariant = (
+  formatMessage: IntlShape['formatMessage'],
+  theCase: CaseListEntry,
+): CaseStateTag => {
+  if (
+    theCase.defendants &&
+    theCase.defendants.length > 0 &&
+    theCase.defendants?.every((d) => d.verdict?.isDefaultJudgement)
+  ) {
+    return {
+      color: 'purple',
+      text: 'Útivistardómur',
+    }
+  }
+  return {
+    color: 'darkerBlue',
+    text: formatMessage(strings.completed, {
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+    }),
+  }
+}
+
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   theCase: CaseListEntry,
@@ -101,22 +123,7 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     case CaseState.COMPLETED: {
       // TODO: this will be fixed when we have considered ruling decision per defendant
-      if (
-        theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants?.every((d) => d.verdict?.isDefaultJudgement)
-      ) {
-        return {
-          color: 'purple',
-          text: 'Útivistardómur',
-        }
-      }
-      return {
-        color: 'darkerBlue',
-        text: formatMessage(strings.completed, {
-          indictmentRulingDecision: theCase.indictmentRulingDecision,
-        }),
-      }
+      return mapIndictmentRulingDecisionToTagVariant(formatMessage, theCase)
     }
     case CaseState.WAITING_FOR_CANCELLATION:
       return {
