@@ -70,10 +70,9 @@ describe('LimitedAccessFileController - Delete case file', () => {
 
     it('should update the case file status in the database', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { state: CaseFileState.DELETED, key: null },
+        { state: CaseFileState.DELETED, isKeyAccessible: false },
         { where: { id: fileId } },
       )
-      expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(caseType, key)
       expect(then.result).toEqual({ success: true })
     })
   })

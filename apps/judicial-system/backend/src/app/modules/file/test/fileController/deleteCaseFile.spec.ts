@@ -70,7 +70,7 @@ describe('FileController - Delete case file', () => {
 
     it('should delete the case file', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { state: CaseFileState.DELETED, key: null },
+        { state: CaseFileState.DELETED, isKeyAccessible: false },
         { where: { id: fileId } },
       )
       expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(caseType, key)

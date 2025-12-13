@@ -141,14 +141,10 @@ export class AwsS3Service {
 
   getSignedUrl(
     type: CaseType | 'statistics',
-    key?: string,
+    key: string,
     timeToLive?: number,
     useFreshSession = false,
   ): Promise<string> {
-    if (!key) {
-      throw new Error('Key is required')
-    }
-
     return new Promise((resolve, reject) => {
       const s3 = useFreshSession
         ? new S3({ region: this.config.region })
@@ -174,16 +170,12 @@ export class AwsS3Service {
 
   async getConfirmedIndictmentCaseSignedUrl(
     caseType: CaseType,
-    key: string | undefined,
+    key: string,
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
     useFreshSession = false,
   ): Promise<string> {
-    if (!key) {
-      throw new Error('Key is required')
-    }
-
     if (!isIndictmentCase(caseType)) {
       throw new Error('Only indictment case objects can be confirmed')
     }
@@ -222,11 +214,7 @@ export class AwsS3Service {
       .then((data) => data.Body as Buffer)
   }
 
-  async getObject(caseType: CaseType, key?: string): Promise<Buffer> {
-    if (!key) {
-      throw new Error('Key is required')
-    }
-
+  async getObject(caseType: CaseType, key: string): Promise<Buffer> {
     return this.getObjectFromS3(formatS3Key(caseType, key))
   }
 
@@ -243,14 +231,10 @@ export class AwsS3Service {
 
   async getConfirmedIndictmentCaseObject(
     caseType: CaseType,
-    key: string | undefined,
+    key: string,
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
   ): Promise<Buffer> {
-    if (!key) {
-      throw new Error('Key is required')
-    }
-
     if (!isIndictmentCase(caseType)) {
       throw new Error('Only indictment case objects can be confirmed')
     }

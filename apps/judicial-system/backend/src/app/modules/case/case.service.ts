@@ -1008,7 +1008,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             caseFilesCategories.includes(caseFile.category),
         )
@@ -1147,7 +1147,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             // In restriction and investigation cases, ordinary case files do not have a category.
             // We should consider migrating all existing case files to have a category in the database.
             !caseFile.category,
@@ -1191,7 +1191,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
               caseFile.category,
@@ -1326,7 +1326,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -1372,7 +1372,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             caseFile.category === CaseFileCategory.APPEAL_RULING,
         )
@@ -1474,7 +1474,7 @@ export class CaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
