@@ -114,10 +114,6 @@ export class FileService {
   ): Promise<boolean> {
     this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
-    if (!file.key) {
-      return true
-    }
-
     return this.awsS3Service
       .deleteObject(theCase.type, file.key)
       .catch((reason) => {
