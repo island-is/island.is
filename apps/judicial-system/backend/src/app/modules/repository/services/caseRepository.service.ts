@@ -588,10 +588,7 @@ export class CaseRepositoryService {
       const caseFiles = await this.caseFileModel.findAll({
         where: {
           caseId,
-          [Op.or]: [
-            { defendantId: null },
-            { defendantId: { [Op.not]: defendantId } },
-          ],
+          defendantId: null,
         },
         transaction,
       })
