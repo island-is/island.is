@@ -4,7 +4,6 @@ import {
   CreateOptions,
   FindAndCountOptions,
   FindOptions,
-  Op,
   Transaction,
   UpdateOptions,
 } from 'sequelize'

@@ -58,7 +58,7 @@ describe('LimitedAccessFileController - Delete case file', () => {
     const theCase = { id: caseId, type: caseType } as Case
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -73,26 +73,8 @@ describe('LimitedAccessFileController - Delete case file', () => {
         { state: CaseFileState.DELETED, isKeyAccessible: false },
         { where: { id: fileId } },
       )
+      expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(caseType, key)
       expect(then.result).toEqual({ success: true })
-    })
-  })
-
-  describe('AWS S3 removal skipped', () => {
-    const caseId = uuid()
-    const caseType = CaseType.CUSTODY
-    const theCase = { id: caseId, type: caseType } as Case
-    const fileId = uuid()
-    const caseFile = { id: fileId } as CaseFile
-
-    beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-
-      await givenWhenThen(caseId, theCase, fileId, caseFile)
-    })
-
-    it('should not attempt to remove from AWS S3', () => {
-      expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
     })
   })
 
