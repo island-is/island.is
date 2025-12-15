@@ -6,10 +6,12 @@ import { m } from '@island.is/form-system/ui'
 import {
   Box,
   Button,
+  Checkbox,
   Filter,
   FilterInput,
-  FilterMultiChoice,
   GridRow,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -180,22 +182,35 @@ export const Forms = () => {
             />
           }
         >
-          <FilterMultiChoice
-            labelClear="Hreinsa val"
-            categories={categories}
-            onChange={(event) =>
-              setFilter({
-                ...filter,
-                [event.categoryId]: event.selected,
-              })
-            }
-            onClear={(categoryId) =>
-              setFilter({
-                ...filter,
-                [categoryId]: defaultFormState,
-              })
-            }
-          />
+          <Box
+            paddingX={3}
+            paddingY={1}
+            borderRadius="large"
+            background="white"
+          >
+            <Stack space={2}>
+              <Text variant="h4">Staða</Text>
+              {categories[0].filters.map((category) => (
+                <Checkbox
+                  key={category.value}
+                  name={category.value}
+                  label={category.label}
+                  value={category.value}
+                  checked={filter.formState.includes(category.value)}
+                  onChange={(event) => {
+                    const value = event.target.value
+                    let newSelected = [...filter.formState]
+                    if (newSelected.includes(value)) {
+                      newSelected = newSelected.filter((item) => item !== value)
+                    } else {
+                      newSelected.push(value)
+                    }
+                    setFilter({ ...filter, formState: newSelected })
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
         </Filter>
       </Box>
       <TableHeader />
@@ -214,6 +229,7 @@ export const Forms = () => {
                 beenPublished={f?.beenPublished ?? false}
                 setFormsState={setForms}
                 status={f?.status}
+                lastModified={f?.modified}
               />
             )
           })}
