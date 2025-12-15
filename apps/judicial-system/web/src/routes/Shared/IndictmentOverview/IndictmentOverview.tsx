@@ -108,7 +108,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { user } = useContext(UserContext)
@@ -350,10 +350,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isProsecutionUser(user) && (
             <Box component="section">
-              <InputPenalties
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
+              <InputPenalties />
             </Box>
           )}
         </Box>

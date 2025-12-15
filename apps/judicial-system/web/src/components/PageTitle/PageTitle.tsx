@@ -21,17 +21,25 @@ import {
 
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../Tags/TagCaseState/TagCaseState'
+import { mapIndictmentRulingDecisionToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 
 interface Props {
   marginBottom?: ResponsiveProp<Space>
   previousUrl?: string
+  includeTag?: boolean
 }
 
 const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
-  const { marginBottom, previousUrl, children } = props
+  const { marginBottom, previousUrl, children, includeTag = false } = props
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
+
+  const showRulingDecisionTag =
+    includeTag ||
+    (isIndictmentCase(workingCase.type) &&
+      workingCase.indictmentRulingDecision &&
+      isCompletedCase(workingCase.state))
 
   return (
     <Box
@@ -61,6 +69,12 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
         workingCase.state !== CaseState.CORRECTING && (
           <TagCaseState theCase={workingCase as CaseListEntry} />
         )}
+      {showRulingDecisionTag && (
+        <TagCaseState
+          theCase={workingCase as CaseListEntry}
+          customMapCaseStateToTag={mapIndictmentRulingDecisionToTagVariant}
+        />
+      )}
     </Box>
   )
 }
