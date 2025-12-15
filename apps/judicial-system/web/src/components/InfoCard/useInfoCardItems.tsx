@@ -110,16 +110,20 @@ const useInfoCardItems = () => {
     values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
-  const prosecutor = (caseType?: CaseType | null): Item => ({
+  const prosecutor = (
+    caseType?: CaseType | null,
+    onClick?: () => void,
+  ): Item => ({
     id: 'prosecutor-item',
     title: formatMessage(
       isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     ),
     values: [
-      RenderPersonalData(
-        workingCase.prosecutor?.name,
-        workingCase.prosecutor?.email,
-      ),
+      RenderPersonalData({
+        name: workingCase.prosecutor?.name,
+        email: workingCase.prosecutor?.email,
+        onClick,
+      }),
     ],
   })
 
@@ -167,7 +171,10 @@ const useInfoCardItems = () => {
     id: 'judges-item',
     title: formatMessage(core.judge),
     values: [
-      RenderPersonalData(workingCase.judge?.name, workingCase.judge?.email),
+      RenderPersonalData({
+        name: workingCase.judge?.name,
+        email: workingCase.judge?.email,
+      }),
     ],
   }
 
@@ -181,10 +188,10 @@ const useInfoCardItems = () => {
     id: 'registrar-item',
     title: formatMessage(core.registrar),
     values: [
-      RenderPersonalData(
-        workingCase.registrar?.name,
-        workingCase.registrar?.email,
-      ),
+      RenderPersonalData({
+        name: workingCase.registrar?.name,
+        email: workingCase.registrar?.email,
+      }),
     ],
   }
 
