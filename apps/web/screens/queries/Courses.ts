@@ -57,6 +57,12 @@ export const GET_COURSE_BY_ID_QUERY = gql`
       instances {
         id
         startDate
+        startDateTimeDuration {
+          startTime
+          endTime
+        }
+        location
+        displayedTitle
         price {
           amount
         }
