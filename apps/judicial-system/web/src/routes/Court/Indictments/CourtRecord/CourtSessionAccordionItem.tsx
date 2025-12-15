@@ -767,7 +767,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     name="courtStartDate"
                     datepickerLabel="Dagsetning þingfestingar"
                     timeLabel="Þinghald hófst (kk:mm)"
-                    maxDate={new Date()}
                     selectedDate={
                       courtSession.startDate ??
                       workingCase.courtDate?.date ??
