@@ -1,5 +1,5 @@
 export {
   UserProfileApi,
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
 } from '@island.is/application/types'
