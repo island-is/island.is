@@ -35,7 +35,7 @@ export const energyFundImportSetup =
           '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       })
       .command('node')
-      .args('main.js')
+      .args('main.cjs')
 
 export const fsreBuildingsImportSetup =
   (): ServiceBuilder<'cms-importer-fsre-buildings-import'> =>
@@ -54,4 +54,4 @@ export const fsreBuildingsImportSetup =
           '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       })
       .command('node')
-      .args('main.js')
+      .args('main.cjs')

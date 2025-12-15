@@ -3,7 +3,7 @@ import { CreationType, LocalizedContent } from '../cms/cms.types'
 import { generateGenericListItem } from '../cms/mapper'
 import { BuildingDto } from './dto/building.dto'
 
-const OWNER_TAG = 'owner-fsre'
+const OWNER_TAG = 'ownerFsre'
 
 export const mapFSREBuildingToGenericListItem = (
   data: BuildingDto,
@@ -59,14 +59,12 @@ const generateCardIntro = (data: BuildingDto): LocalizedContent => {
 
   if (data.propertyManagement) {
     cardIntro[LOCALE].push({
-      items: [
-        { value: `Eignastjórn: (${data.propertyManagement.join(', ')})` },
-      ],
+      items: [{ value: `Eignastjórn: ${data.propertyManagement.join(', ')}` }],
     })
     cardIntro[EN_LOCALE].push({
       items: [
         {
-          value: `Property Management: (${data.propertyManagement.join(', ')})`,
+          value: `Property Management: ${data.propertyManagement.join(', ')}`,
         },
       ],
     })
@@ -91,7 +89,7 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
   }
 
   content[LOCALE].push({
-    items: [{ value: `Fastanúmer: ${data.id}`, isBold: true }],
+    items: [{ value: `Fastanúmer: ${data.id}` }],
   })
   content[EN_LOCALE].push({
     items: [{ value: `ID number: ${data.id}`, isBold: true }],
@@ -100,13 +98,13 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
   if (data.squareMeters) {
     content[LOCALE].push({
       items: [
-        { value: 'Stærð (fm):' },
+        { value: 'Stærð (fm): ' },
         { value: data.squareMeters.toString(), isBold: true },
       ],
     })
     content[EN_LOCALE].push({
       items: [
-        { value: 'Area (sq.m):' },
+        { value: 'Area (sq.m): ' },
         { value: data.squareMeters.toString(), isBold: true },
       ],
     })
@@ -114,11 +112,11 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
 
   if (data.built) {
     content[LOCALE].push({
-      items: [{ value: 'Byggingarár:' }, { value: data.built, isBold: true }],
+      items: [{ value: 'Byggingarár: ' }, { value: data.built, isBold: true }],
     })
     content[EN_LOCALE].push({
       items: [
-        { value: 'Year of construction:' },
+        { value: 'Year of construction: ' },
         { value: data.built, isBold: true },
       ],
     })
@@ -126,23 +124,23 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
 
   if (data.use) {
     content[LOCALE].push({
-      items: [{ value: 'Starfssemi:' }, { value: data.use, isBold: true }],
+      items: [{ value: 'Starfssemi: ' }, { value: data.use, isBold: true }],
     })
     content[EN_LOCALE].push({
-      items: [{ value: 'Function:' }, { value: data.use, isBold: true }],
+      items: [{ value: 'Function: ' }, { value: data.use, isBold: true }],
     })
   }
 
   if (data.propertyManagement) {
     content[LOCALE].push({
       items: [
-        { value: 'Eignastjórn:' },
+        { value: 'Eignastjórn: ' },
         { value: data.propertyManagement.join(', '), isBold: true },
       ],
     })
     content[EN_LOCALE].push({
       items: [
-        { value: 'Property management:' },
+        { value: 'Property management: ' },
         { value: data.propertyManagement.join(', '), isBold: true },
       ],
     })
@@ -151,13 +149,13 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
   if (data.accountManagement) {
     content[LOCALE].push({
       items: [
-        { value: 'Viðskiptastjórn:' },
+        { value: 'Viðskiptastjórn: ' },
         { value: data.accountManagement.join(', '), isBold: true },
       ],
     })
     content[EN_LOCALE].push({
       items: [
-        { value: 'Account management:' },
+        { value: 'Account management: ' },
         { value: data.accountManagement.join(', '), isBold: true },
       ],
     })

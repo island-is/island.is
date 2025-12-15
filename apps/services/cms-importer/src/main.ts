@@ -37,4 +37,7 @@ switch (job) {
       })
     break
   }
+  default: {
+    throw Error('invalid service argument provided')
+  }
 }

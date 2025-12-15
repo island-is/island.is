@@ -4,7 +4,7 @@ import { CreationType } from '../cms/cms.types'
 import { EnergyGrantDto } from './dto/energyGrant.dto'
 import { generateGenericListItem } from '../cms/mapper'
 
-const OWNER_TAG = 'owner-orkustofnun'
+const OWNER_TAG = 'ownerOrkustofnun'
 
 export const mapEnergyGrantToGenericListItem = (
   data: EnergyGrantDto,

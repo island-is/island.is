@@ -49,6 +49,7 @@ export const generateGenericListItem = ({
     }),
     title: {
       [LOCALE]: title,
+      [EN_LOCALE]: title,
     },
     slug: {
       [EN_LOCALE]: slug,
@@ -57,6 +58,9 @@ export const generateGenericListItem = ({
     ...(content && {
       content: generateContentFormatting(content),
     }),
+    fullWidthImageInContent: {
+      [LOCALE]: false,
+    },
   }
   return {
     fields: newEntry,

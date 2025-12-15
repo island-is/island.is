@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'cms-importer-energy-fund-import'
 args:
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
