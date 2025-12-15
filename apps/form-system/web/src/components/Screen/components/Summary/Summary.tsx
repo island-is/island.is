@@ -1,19 +1,17 @@
+import { ApplicationState, m, SectionTypes } from '@island.is/form-system/ui'
 import {
   Box,
-  Text,
   Button,
-  GridRow,
+  Divider,
   GridColumn,
   GridContainer,
+  GridRow,
+  Text,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
-import { ApplicationState } from '@island.is/form-system/ui'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
-import { useIntl } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import { Divider } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { Display } from '../Display/Display'
-import { SectionTypes } from '@island.is/form-system/ui'
 
 interface Props {
   state?: ApplicationState
@@ -29,6 +27,7 @@ export const Summary = ({ state }: Props) => {
       payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
     })
   }
+
   const sections = state?.sections?.filter(
     (s) =>
       !s?.isHidden &&
@@ -36,6 +35,7 @@ export const Summary = ({ state }: Props) => {
       s.sectionType !== SectionTypes.COMPLETED &&
       s.sectionType !== SectionTypes.SUMMARY,
   )
+  console.log('sections', sections)
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
@@ -54,9 +54,16 @@ export const Summary = ({ state }: Props) => {
                 <GridRow>
                   <GridColumn span={['12/12', '1/2']}>
                     <Box marginTop={5}>
-                      <Text as="h3" variant="h3" fontWeight="semiBold">
-                        {screen?.name?.[lang] ?? ''}
-                      </Text>
+                      {section.sectionType === SectionTypes.PARTIES ? (
+                        <Text as="h3" variant="h3" fontWeight="semiBold">
+                          {screen?.fields?.[0]?.name?.[lang] ??
+                            screen?.name?.[lang]}
+                        </Text>
+                      ) : (
+                        <Text as="h3" variant="h3" fontWeight="semiBold">
+                          {screen?.name?.[lang] ?? ''}
+                        </Text>
+                      )}
                     </Box>
                   </GridColumn>
                   <GridColumn span={['12/12', '1/2']}>
