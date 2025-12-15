@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { useUiStore } from '../../stores/ui-store'
 import { dynamicColor } from '../../ui'
+import { isIosLiquidGlassEnabled } from '../../utils/devices'
 
 const Host = styled.View`
   position: absolute;
@@ -19,13 +20,20 @@ const Active = styled(Animated.View)`
   background-color: ${(props) => props.theme.color.blue400};
 `
 
-export function BottomTabsIndicator({
-  index,
-  total,
-}: {
+type BottomTabsIndicatorProps = {
   index: number
   total: number
-}) {
+}
+
+export function BottomTabsIndicator(props: BottomTabsIndicatorProps) {
+  if (isIosLiquidGlassEnabled) {
+    return null
+  }
+
+  return <BottomTabsIndicatorInner {...props} />
+}
+
+function BottomTabsIndicatorInner({ index, total }: BottomTabsIndicatorProps) {
   const theme = useTheme()
   const win = useWindowDimensions()
   const { selectedTab, unselectedTab } = useUiStore()
