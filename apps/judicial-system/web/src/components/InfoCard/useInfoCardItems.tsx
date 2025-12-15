@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -23,6 +23,7 @@ import {
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
+import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
@@ -261,6 +262,39 @@ const useInfoCardItems = () => {
     values: [mergedCase.court?.name],
   })
 
+  const splitCases: Item = {
+    id: 'split-cases-item',
+    title: 'Klofinn frá',
+    values:
+      workingCase.splitCases?.flatMap((splitCase) =>
+        splitCase.defendants?.map((defendant) => (
+          <Fragment key={defendant.id}>
+            <Text>{defendant.name}</Text>
+            <LinkComponent
+              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+            >
+              {splitCase.courtCaseNumber}
+            </LinkComponent>
+          </Fragment>
+        )),
+      ) || [],
+  }
+
+  const splitCase: Item = {
+    id: 'split-case-item',
+    title: 'Klofið frá',
+    values: workingCase.splitCase
+      ? [
+          <LinkComponent
+            href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+            key={workingCase.splitCase.id}
+          >
+            {workingCase.splitCase.courtCaseNumber}
+          </LinkComponent>,
+        ]
+      : [],
+  }
+
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
@@ -444,6 +478,8 @@ const useInfoCardItems = () => {
     indictmentReviewedDate,
     parentCaseValidToDate,
     civilClaimants,
+    splitCases,
+    splitCase,
     victims,
   }
 }
