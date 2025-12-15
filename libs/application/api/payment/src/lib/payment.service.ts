@@ -78,10 +78,11 @@ export class PaymentService {
     }
   }
 
-  async addPaymentUrl(
+  async addPaymentUrlAndRequestId(
     applicationId: string,
     paymentId: string,
     paymentUrl: string,
+    requestId: string,
   ): Promise<void> {
     const payment = await this.findPaymentByApplicationId(applicationId)
     const definition = JSON.parse(
@@ -93,6 +94,7 @@ export class PaymentService {
           ...definition,
           paymentUrl: paymentUrl,
         },
+        request_id: requestId,
       },
       {
         where: {
@@ -171,7 +173,12 @@ export class PaymentService {
   ): Promise<Payment> {
     const paymentModel: Pick<
       BasePayment,
-      'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
+      | 'application_id'
+      | 'fulfilled'
+      | 'amount'
+      | 'definition'
+      | 'expires_at'
+      | 'request_id'
     > = {
       application_id: applicationId,
       fulfilled: false,
@@ -190,6 +197,8 @@ export class PaymentService {
         })),
       },
       expires_at: new Date(),
+      request_id: '', // request_id is not set here, it is set once the requestId has been returned by the payment system
+      // the requestId is the ID of the created charge in FJS which must be used when deleting a charge
     }
     return await this.paymentModel.create(paymentModel)
   }
@@ -300,7 +309,12 @@ export class PaymentService {
         ? paymentFlowUrls.urls.en
         : paymentFlowUrls.urls.is
 
-    await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
+    await this.addPaymentUrlAndRequestId(
+      applicationId,
+      paymentModel.id,
+      paymentUrl,
+      paymentFlowUrls.id,
+    )
     await paymentModel.reload()
 
     // Update payment with a fixed user4 since services-payments does not need it
