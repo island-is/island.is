@@ -7,7 +7,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -64,7 +64,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi],
             },
           ],
         },
