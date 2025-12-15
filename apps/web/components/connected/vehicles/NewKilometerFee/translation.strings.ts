@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
+  errorOccurred: {
+    id: 'web.newKilometerFee:errorOccurred',
+    defaultMessage: 'Ekki tókst að reikna gjald',
+    description: 'Ekki tókst að reikna gjald',
+  },
   environmentalResultPrefix: {
     id: 'web.newKilometerFee:environmentalResultPrefix',
     defaultMessage: 'Áætlað kílómetragjald fyrir vistvæn ökutæki',

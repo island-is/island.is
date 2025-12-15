@@ -24,8 +24,6 @@ import { translation as translationStrings } from './translation.strings'
 
 const MAX_KILOMETER_INPUT_LENGTH = 10
 
-const numberFormatter = new Intl.NumberFormat('de-DE')
-
 const calculate = (
   inputState: InputState,
   slice: ConnectedComponent,
@@ -57,16 +55,17 @@ const calculate = (
     }
   }
 
-  const year = String(new Date().getFullYear())
+  let year = String(new Date().getFullYear())
+  if (year === '2025') year = '2026'
 
   let multiplier = 1
   let environmentalMultiplier = 1
 
   if (row.environmentalMultipliers?.[year] !== undefined) {
-    multiplier = row.environmentalMultipliers[year]
+    environmentalMultiplier = row.environmentalMultipliers[year]
   }
   if (row.multipliers?.[year] !== undefined) {
-    environmentalMultiplier = row.multipliers[year]
+    multiplier = row.multipliers[year]
   }
 
   const unit = row.fee * multiplier
@@ -186,9 +185,20 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
       })
     },
     onError(error) {
-      setErrorMessage(error.message)
+      console.error(error)
+      setErrorMessage(formatMessage(translationStrings.errorOccurred))
     },
   })
+
+  const onKeyDown = (
+    ev: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (ev.key === 'Enter' && canCalculate && !loading) {
+      search({
+        variables: { input: { search: inputState.plateNumber } },
+      })
+    }
+  }
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
@@ -206,6 +216,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
             }}
             maxLength={16}
             disabled={loading}
+            onKeyDown={onKeyDown}
           />
         </Inline>
 
@@ -231,13 +242,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
                 }
                 updateInputState('kilometers', ev.target.value)
               }}
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter' && canCalculate && !loading) {
-                  search({
-                    variables: { input: { search: inputState.plateNumber } },
-                  })
-                }
-              }}
+              onKeyDown={onKeyDown}
               disabled={loading}
             />
 
@@ -302,12 +307,6 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
                   </Stack>
                 )}
               </Stack>
-              <Text variant="small">
-                {formatMessage(translationStrings.massLadenExplanation, {
-                  plateNumber: result.plateNumber,
-                  massLaden: numberFormatter.format(result.massLaden),
-                })}
-              </Text>
             </Stack>
           )}
       </Stack>
