@@ -28,6 +28,7 @@ const formatS3Key = (caseType: CaseType | 'statistics', key: string) => {
   if (caseType === 'statistics') {
     return formatS3StatisticsKey(key)
   }
+
   if (isRequestCase(caseType)) {
     return formatS3RequestCaseKey(key)
   }
@@ -276,19 +277,5 @@ export class AwsS3Service {
 
         return false
       })
-  }
-
-  deleteConfirmedIndictmentCaseObject(
-    caseType: CaseType,
-    key: string,
-  ): Promise<boolean> {
-    if (!isIndictmentCase(caseType)) {
-      throw new Error('Only indictment case objects can be confirmed')
-    }
-
-    // No need to wait for the delete to finish
-    this.deleteObject(caseType, formatConfirmedIndictmentCaseKey(key))
-
-    return this.deleteObject(caseType, key)
   }
 }

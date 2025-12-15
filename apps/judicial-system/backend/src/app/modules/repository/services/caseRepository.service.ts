@@ -19,6 +19,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseFileCategory,
   DateType,
   EventType,
   StringType,
@@ -569,8 +570,20 @@ export class CaseRepositoryService {
       // Consider removing case id from other tables not directly linked to cases
 
       // Move the defendant's case files to the new case
+      const caseFilesCategoriesToMove = [
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      ]
+
       const caseFileUpdateOptions: UpdateOptions = {
-        where: { caseId, defendantId },
+        where: { caseId, defendantId, category: caseFilesCategoriesToMove },
       }
 
       if (transaction) {
@@ -589,6 +602,7 @@ export class CaseRepositoryService {
         where: {
           caseId,
           defendantId: null,
+          category: caseFilesCategoriesToMove,
         },
         transaction,
       })
