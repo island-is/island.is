@@ -15,7 +15,7 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
-import { PATIENT_PERMIT_CODE } from './constants'
+import { IS_DATE_LOCALE, PATIENT_PERMIT_CODE } from './constants'
 import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
@@ -624,16 +624,16 @@ export class HealthDirectorateService {
           const data: Appointment = {
             id: item.id,
             date: item.startTime
-              ? new Date(item.startTime).toLocaleDateString('is-IS')
+              ? new Date(item.startTime).toLocaleDateString(IS_DATE_LOCALE)
               : item.startTime,
             time: item.startTime
-              ? new Date(item.startTime).toLocaleTimeString('is-IS', {
+              ? new Date(item.startTime).toLocaleTimeString(IS_DATE_LOCALE, {
                   hour: '2-digit',
                   minute: '2-digit',
                 })
               : item.startTime,
             weekday: item.startTime
-              ? new Date(item.startTime).toLocaleDateString('is-IS', {
+              ? new Date(item.startTime).toLocaleDateString(IS_DATE_LOCALE, {
                   weekday: 'long',
                 })
               : undefined,
