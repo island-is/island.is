@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
   TextProps,
@@ -22,6 +23,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   ellipsis?: boolean
   iconPosition?: 'start' | 'end'
   compactPadding?: boolean
+  loading?: boolean
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -135,6 +137,7 @@ export function Button({
   ellipsis,
   compactPadding = false,
   iconPosition = 'end',
+  loading = false,
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
@@ -170,20 +173,24 @@ export function Button({
     >
       <>
         {icon && iconPosition === 'start' && renderIcon()}
-        {title && (
-          <Text
-            {...textProps}
-            isTransparent={isTransparent}
-            isOutlined={isOutlined}
-            isUtilityButton={isUtilityButton}
-            isFilledUtilityButton={isFilledUtilityButton}
-            disabled={rest.disabled}
-            style={textStyle}
-            numberOfLines={ellipsis ? 1 : undefined}
-            ellipsizeMode={ellipsis ? 'tail' : undefined}
-          >
-            {title}
-          </Text>
+        {loading ? (
+          <ActivityIndicator size="small" color={theme.color.white} />
+        ) : (
+          title && (
+            <Text
+              {...textProps}
+              isTransparent={isTransparent}
+              isOutlined={isOutlined}
+              isUtilityButton={isUtilityButton}
+              isFilledUtilityButton={isFilledUtilityButton}
+              disabled={rest.disabled}
+              style={textStyle}
+              numberOfLines={ellipsis ? 1 : undefined}
+              ellipsizeMode={ellipsis ? 'tail' : undefined}
+            >
+              {title}
+            </Text>
+          )
         )}
         {icon && iconPosition === 'end' && renderIcon()}
       </>

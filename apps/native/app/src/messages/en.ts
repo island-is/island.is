@@ -742,7 +742,7 @@ export const en: TranslatedMessages = {
   'health.overview.vaccinations': 'Vaccinations',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
-  'health.overview.medicineDelegation': 'Medicine authorizations',
+  'health.overview.medicineDelegation': 'Medicine delegation',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
@@ -823,7 +823,7 @@ export const en: TranslatedMessages = {
     'Pick up medicine at the pharmacy.',
   'health.medicineDelegation.detail.validForPickupAndLookup':
     'Pick up medicine at the pharmacy and view prescriptions.',
-  'health.medicineDelegation.detail.revoke': 'Revoke delegaiton',
+  'health.medicineDelegation.detail.revoke': 'Revoke delegation',
   'health.medicineDelegation.detail.revokeError':
     'Failed to revoke medicine authorization. Please try again later.',
   'health.medicineDelegation.form.title': 'Add medicine authorization',
@@ -847,4 +847,6 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
   'health.medicineDelegation.form.lookupLabel':
     'The above person may also look up my prescriptions at the pharmacy.',
+  'health.medicineDelegation.form.xYears': '{years} years',
+  'health.medicineDelegation.form.xMonths': '{months} months',
 }

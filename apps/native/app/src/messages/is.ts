@@ -844,4 +844,6 @@ export const is = {
   'health.medicineDelegation.form.invalidNationalId': 'Ógild kennitala.',
   'health.medicineDelegation.form.lookupLabel':
     'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
+  'health.medicineDelegation.form.xYears': '{years} ár',
+  'health.medicineDelegation.form.xMonths': '{months} mán',
 }

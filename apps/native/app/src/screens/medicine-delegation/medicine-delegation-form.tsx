@@ -17,6 +17,7 @@ import {
   Checkbox,
   DatePickerInput,
   NavigationBarSheet,
+  Tag,
   TextField,
   theme,
   Typography,
@@ -55,6 +56,18 @@ const ValidityHeading = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[4]}px;
 `
 
+const QuickLabelsContainer = styled(View)`
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+`
+
+const QuickLabel = styled(View)`
+  width: 100%;
+  max-width: 23%;
+`
+
 const Actions = styled(View)`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
@@ -77,7 +90,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
 
   const [nationalId, setNationalId] = useState('')
   const [name, setName] = useState('')
-  const [dateFrom, setDateFrom] = useState<Date | undefined>()
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(new Date())
   const [dateTo, setDateTo] = useState<Date | undefined>()
   const [nameError, setNameError] = useState<string | undefined>()
   const [delegateError, setDelegateError] = useState<string | undefined>()
@@ -89,7 +102,6 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
   ] = usePostMedicineDelegationMutation({
     refetchQueries: ['GetMedicineDelegations'],
     onCompleted: (response) => {
-      console.log('response', response)
       if (response.healthDirectorateMedicineDelegationCreate.success) {
         close()
       } else {
@@ -101,7 +113,6 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
       }
     },
     onError: () => {
-      console.log('error from delegateMedicineDelegation')
       setDelegateError(
         intl.formatMessage({
           id: 'health.medicineDelegation.form.delegateMedicineDelegationError',
@@ -168,6 +179,43 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
         },
       })
     }
+  }
+
+  const getQuickLabels = (value: number, type: 'Months' | 'Years') => {
+    return intl.formatMessage(
+      {
+        id: 'health.medicineDelegation.form.x' + type,
+      },
+      {
+        [type.toLowerCase()]: value,
+      },
+    )
+  }
+  const quickLabels: { value: number; type: 'Months' | 'Years' }[] = [
+    {
+      value: 6,
+      type: 'Months',
+    },
+    {
+      value: 1,
+      type: 'Years',
+    },
+    {
+      value: 2,
+      type: 'Years',
+    },
+    {
+      value: 3,
+      type: 'Years',
+    },
+  ]
+
+  const getQuickSelectDate = (value: number, type: 'Months' | 'Years') => {
+    const currentTime = dateFrom?.getTime() ?? new Date().getTime()
+
+    return type === 'Months'
+      ? new Date(currentTime + value * 30 * 24 * 60 * 60 * 1000)
+      : new Date(currentTime + value * 365 * 24 * 60 * 60 * 1000)
   }
 
   return (
@@ -242,6 +290,22 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
               })}
             </ValidityHeading>
             <Fields>
+              <QuickLabelsContainer>
+                {quickLabels.map((label) => (
+                  <QuickLabel key={label.value}>
+                    <Tag
+                      title={getQuickLabels(label.value, label.type)}
+                      onPress={() => {
+                        setDateTo(getQuickSelectDate(label.value, label.type))
+                      }}
+                      active={
+                        dateTo?.getTime() ===
+                        getQuickSelectDate(label.value, label.type)?.getTime()
+                      }
+                    />
+                  </QuickLabel>
+                ))}
+              </QuickLabelsContainer>
               <DatePickerInput
                 label={intl.formatMessage({
                   id: 'health.medicineDelegation.form.dateFromLabel',
@@ -277,6 +341,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
               })}
               onPress={createMedicineDelegation}
               disabled={!isValid || loadingDelegateMedicineDelegation}
+              loading={loadingDelegateMedicineDelegation}
             />
           </Actions>
         </FormContainer>
