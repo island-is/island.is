@@ -19,6 +19,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { m } from './messages'
+import { CoursesApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -105,6 +106,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [CoursesApi],
             },
           ],
           onExit: [
