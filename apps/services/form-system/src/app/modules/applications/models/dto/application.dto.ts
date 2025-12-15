@@ -67,4 +67,7 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: CompletedSectionInfo })
   completedSectionInfo?: CompletedSectionInfo
+
+  submissionServiceUrl?: string
+  validationServiceUrl?: string
 }

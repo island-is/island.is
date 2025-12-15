@@ -28,6 +28,10 @@ export interface IControlContext {
     | undefined
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
+  submissionUrls: string[]
+  setSubmissionUrls: Dispatch<React.SetStateAction<string[]>>
+  submissionUrlInput: string
+  setSubmissionUrlInput: Dispatch<string>
   submitUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
   validationUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
   setInSettings: Dispatch<boolean>
@@ -55,6 +59,7 @@ export const ControlContext = createContext<IControlContext>({
   certificationTypes: [] as Maybe<Maybe<FormSystemFormCertificationType>[]>,
   fieldTypes: [] as Maybe<Maybe<FormSystemFieldType>[]>,
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
+  submissionUrls: [] as string[],
   submitUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
   validationUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
   setInSettings: function (_value: boolean): void {
@@ -69,6 +74,13 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   updateDnD: function (_type: ItemType): void {
+    throw new Error('Function not implemented.')
+  },
+  setSubmissionUrls: function (_value: React.SetStateAction<string[]>): void {
+    throw new Error('Function not implemented.')
+  },
+  submissionUrlInput: '',
+  setSubmissionUrlInput: function (_value: string): void {
     throw new Error('Function not implemented.')
   },
   selectStatus: NavbarSelectStatus.OFF,

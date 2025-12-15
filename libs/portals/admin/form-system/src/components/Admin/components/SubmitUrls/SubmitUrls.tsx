@@ -116,54 +116,6 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
               handleDelete={handleDelete}
             />
           ))}
-
-      <Box
-        display="flex"
-        alignItems="center"
-        marginBottom={1}
-        marginTop={20}
-        columnGap={6}
-      >
-        <Button
-          size="small"
-          variant="utility"
-          onClick={() => createSubmitUrl(true, UrlMethods.SEND_NUDGE)}
-        >
-          {formatMessage(m.addDevUrl)}
-        </Button>
-        <Box marginTop={2}>
-          <ToggleSwitchButton
-            label="Zendesk málakerfið"
-            checked={submitUrls.some(
-              (url) => url.method === UrlMethods.SEND_TO_ZENDESK && url.isTest,
-            )}
-            onChange={function (checked: boolean): void {
-              if (checked) {
-                createSubmitUrl(true, UrlMethods.SEND_TO_ZENDESK)
-              } else {
-                const zendeskUrl = submitUrls.find(
-                  (url) =>
-                    url.method === UrlMethods.SEND_TO_ZENDESK && url.isTest,
-                )
-                if (zendeskUrl?.id) {
-                  handleDelete(zendeskUrl.id)
-                }
-              }
-            }}
-          />
-        </Box>
-      </Box>
-      <TableHeader text={formatMessage(m.devUrl)} />
-      {submitUrls &&
-        submitUrls
-          .filter((url) => url.isTest)
-          .map((url) => (
-            <TableRow
-              key={url.id}
-              submitUrl={url}
-              handleDelete={handleDelete}
-            />
-          ))}
     </>
   )
 }

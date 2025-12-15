@@ -2,6 +2,7 @@ import { YES } from '@island.is/application/core'
 import {
   ApplicationFeatureKey,
   ApplicationType,
+  AttachmentOptions,
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
@@ -16,9 +17,9 @@ import {
   shouldShowExpectedEndDate,
   shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
+  shouldShowPage,
   shouldShowReasonForApplicationPage,
-  AttachmentOptions,
-  canHaveAttachments,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -346,9 +347,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: isSpecialEducation
-        ? getSpecialEducationSocialProfile(application)
-        : getSocialProfile(application),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) && {
+        social: isSpecialEducation
+          ? getSpecialEducationSocialProfile(application)
+          : getSocialProfile(application),
+      }),
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
@@ -388,7 +395,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         terms: terms === YES,
       }),
     },
-    ...(canHaveAttachments(application.answers, application.externalData) &&
+    ...(shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
       attachmentsAnswer && {
         files: attachmentFiles,
         fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),
