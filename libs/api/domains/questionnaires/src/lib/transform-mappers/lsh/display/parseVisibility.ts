@@ -1,27 +1,10 @@
-/* eslint-disable func-style */
-/**
- * LSH Questionnaire Mapper - Transforms LSH Dev API Form objects into the internal Questionnaire format.
- */
 import {
-  QuestionnaireBody,
-  QuestionType,
-  Section,
-} from '@island.is/clients/lsh'
-import {
-  AnswerOption,
-  AnswerOptionType,
-  Question,
   VisibilityCondition,
   VisibilityOperator,
-} from '../../../models/question.model'
-import {
-  Questionnaire,
-  QuestionnaireSection,
-} from '../../../models/questionnaire.model'
-import { QuestionnairesOrganizationEnum } from '../../../models/questionnaires.model'
+} from '../../../../models/question.model'
 
-// Enhanced visibility parsing with better pattern matching
-const parseVisibility = (
+// Parse a raw LSH visibility expression into a list of simple conditions
+export const parseVisibility = (
   expr: string | null,
   dependsOn?: string[] | null,
 ): VisibilityCondition[] | undefined => {
@@ -38,14 +21,16 @@ const parseVisibility = (
     return undefined
   }
 
+  // Collected, normalized conditions extracted from the expression
   const conditions: VisibilityCondition[] = []
 
   try {
-    // Reset the expression for multiple passes
+    // Keep a mutable copy of the expression so we can strip out
+    // each recognized pattern as we convert it into conditions
     let remainingExpr = expr
 
     // Pattern 1: not(isSelected('value', @@@questionId)) or not(isSelected(number, @@@questionId))
-    // Handle negation - question should be HIDDEN when value is selected
+    // Negation: question should be hidden when the value is selected
     // Handle single-quoted strings (can contain parentheses)
     const notIsSelectedQuotedPattern =
       /not\s*\(\s*isSelected\s*\(\s*'([^']+)'\s*,\s*@@@([a-zA-Z0-9_-]+)\s*\)\s*\)/g
@@ -97,7 +82,7 @@ const parseVisibility = (
     }
 
     // Pattern 2: isSelected('value', @@@questionId) or isSelected(number, @@@questionId)
-    // This handles both string and numeric values
+    // Positive selection: question should be shown when the value is selected
     // First try quoted string pattern (handles values with parentheses inside)
     const isSelectedQuotedPattern =
       /isSelected\s*\(\s*'([^']+)'\s*,\s*['"]?@@@([a-zA-Z0-9_-]+)['"]?\s*\)/g
@@ -176,7 +161,7 @@ const parseVisibility = (
       remainingExpr = remainingExpr.replace(match[0], '')
     }
 
-    // Pattern 4: Handle complex logical expressions with && and ||
+    // Pattern 4: Complex logical expressions with && and ||
     // Example: "@@@Totalscore >=20 && @@@Totalscore <=24"
     const complexLogicalPattern = /(.+?)\s*(&&|\|\|)\s*(.+)/
     const complexMatch = complexLogicalPattern.exec(remainingExpr)
@@ -186,7 +171,7 @@ const parseVisibility = (
       const logicalOp = complexMatch[2]
       const rightExpr = complexMatch[3].trim()
 
-      // Parse left and right expressions separately
+      // Recursively parse left and right expressions separately
       const leftConditions = parseVisibility(leftExpr) || []
       const rightConditions = parseVisibility(rightExpr) || []
 
@@ -233,7 +218,7 @@ const parseVisibility = (
           const value =
             pattern.op === 'variable_comparison' ? mathMatch[3] : mathMatch[3]
 
-          // Map operators to our visibility operators
+          // Map comparison operators to our visibility operators
           let visibilityOp = VisibilityOperator.equals
           const expectedVal = value
           let showWhen = true
@@ -272,7 +257,7 @@ const parseVisibility = (
       }
     }
 
-    // Pattern 6: Existence check - only if no specific patterns matched and has unprocessed @@@
+    // Pattern 6: Fallback existence check for any remaining question references
     if (conditions.length === 0 && remainingExpr.includes('@@@')) {
       const dependencyPattern = /@@@([a-zA-Z0-9_-]+)/g
       let depMatch
@@ -289,7 +274,7 @@ const parseVisibility = (
     console.warn('Error parsing visibility expression:', expr, error)
   }
 
-  // Add explicit dependencies from dependsOn array if not already captured
+  // Also add explicit dependencies from dependsOn array if not already captured
   if (dependsOn && dependsOn.length > 0) {
     const existingQuestionIds = new Set(conditions.map((c) => c.questionId))
 
@@ -305,7 +290,7 @@ const parseVisibility = (
     })
   }
 
-  // Deduplicate conditions based on questionId, operator, and expectedValues
+  // Deduplicate conditions so the evaluator does not see duplicates
   const uniqueConditions = conditions.filter((condition, index, self) => {
     return (
       index ===
@@ -321,114 +306,4 @@ const parseVisibility = (
   })
 
   return uniqueConditions.length > 0 ? uniqueConditions : undefined
-}
-
-// Map question type
-const mapAnswerOptionType = (
-  type: string,
-  slider?: string | null,
-): AnswerOptionType => {
-  switch (type) {
-    case 'String':
-      return AnswerOptionType.text
-    case 'Label':
-      return AnswerOptionType.label
-    case 'Text':
-      return AnswerOptionType.text
-    case 'SingleSelect':
-      return AnswerOptionType.radio
-    case 'MultiSelect':
-      return AnswerOptionType.checkbox
-    case 'Number':
-      if (slider && slider === '1') {
-        return AnswerOptionType.scale
-      }
-      return AnswerOptionType.number
-    case 'Date':
-      return AnswerOptionType.date
-    case 'DateTime':
-      return AnswerOptionType.datetime
-    case 'Slider':
-      return AnswerOptionType.thermometer
-    default:
-      return AnswerOptionType.text
-  }
-}
-
-/* -------------------- Core Mapping -------------------- */
-
-const mapQuestion = (q: QuestionType): Question => {
-  // Parse visibility with dependsOn array for better dependency tracking
-  const visibilityConditions = parseVisibility(
-    q.visible as string,
-    q.dependsOn as string[] | null,
-  )
-
-  const answerType = mapAnswerOptionType(q.type as string, q.slider as string)
-
-  const answerOption: AnswerOption = {
-    type: answerType,
-    placeholder: (q.instructions as string)?.trim() || undefined,
-    options: q.options?.map((opt) => ({
-      id: ((opt.value ?? '') + (opt.label ?? '')) as string,
-      label: (opt.label ?? '') as string,
-      value: (opt.value ?? '') as string,
-    })),
-    min:
-      q.minValue !== null && q.minValue !== undefined
-        ? (q.minValue as number).toString()
-        : undefined,
-    max:
-      q.maxValue !== null && q.maxValue !== undefined
-        ? (q.maxValue as number).toString()
-        : undefined,
-    maxLength:
-      q.maxLength !== null && q.maxLength !== undefined
-        ? q.maxLength.toString()
-        : undefined,
-    formula: (q.formula as string)?.trim() || undefined,
-  }
-
-  // Extract dependencies from visibility conditions and explicit DependsOn
-  const visibilityDeps = visibilityConditions
-    ? visibilityConditions.map((vc) => vc.questionId)
-    : []
-  const explicitDeps = Array.isArray(q.dependsOn)
-    ? (q.dependsOn as string[])
-    : []
-  const allDeps = [...new Set([...visibilityDeps, ...explicitDeps])]
-
-  return {
-    id: (q.entryID as string) || 'undefined-id',
-    label: (q.question as string) || '',
-    sublabel: (q.description as string)?.trim() || undefined,
-    answerOptions: answerOption,
-    visibilityConditions,
-    dependsOn: allDeps.length > 0 ? allDeps : undefined,
-    required: q.required === true,
-  }
-}
-
-const mapSection = (section: Section): QuestionnaireSection => {
-  return {
-    title: section.caption || '',
-    questions: Array.isArray(section.questions)
-      ? section.questions.map(mapQuestion)
-      : [],
-  }
-}
-
-export const mapLshQuestionnaire = (form: QuestionnaireBody): Questionnaire => {
-  const data = {
-    baseInformation: {
-      id: form.gUID || 'undefined-id',
-      formId: form.formID || 'undefined-form-id',
-      title: form.header || '',
-      description: form.description || undefined,
-      organization: QuestionnairesOrganizationEnum.LSH,
-      sentDate: '',
-    },
-    sections: form.sections ? form.sections.map(mapSection) : [],
-  }
-  return data
 }

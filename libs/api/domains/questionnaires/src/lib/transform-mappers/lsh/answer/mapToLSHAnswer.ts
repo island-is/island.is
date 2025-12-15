@@ -1,6 +1,6 @@
 import { QuestionnaireAnswers } from '@island.is/clients/lsh'
-import { AnswerOptionType } from '../../../models/question.model'
-import { QuestionnaireInput } from '../../dto/questionnaire.input'
+import { AnswerOptionType } from '../../../../models/question.model'
+import { QuestionnaireInput } from '../../../dto/questionnaire.input'
 
 enum LSHQuestionType {
   SingleSelect = 'SingleSelect',
@@ -12,17 +12,6 @@ enum LSHQuestionType {
   Text = 'Text',
   Label = 'Label',
   Slider = 'Slider',
-}
-
-interface LSHAnswer {
-  Answers: {
-    EntryID: string
-    Type: LSHQuestionType
-    Values: [string]
-  }[]
-  FormID: string
-  GUID: string
-  InstanceID: string
 }
 
 const typeMapper = (type: AnswerOptionType): LSHQuestionType => {

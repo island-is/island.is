@@ -27,11 +27,10 @@ import {
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
 import { QuestionnairesResponse } from './dto/response.dto'
-import { mapToElAnswer } from './transform-mappers/health-directorate/hd-input-mapper'
-import { mapExternalQuestionnaireToGraphQL } from './transform-mappers/health-directorate/hd-mapper'
-import { mapToLshAnswer } from './transform-mappers/lsh/lsh-input-mapper'
-import { mapLshQuestionnaire } from './transform-mappers/lsh/lsh-mapper'
-// import { mapTriggerSourceToGraphQL } from './transform-mappers/health-directorate/hd-gpt-mapper'
+import { mapToElAnswer } from './transform-mappers/el/answer/mapToELAnswer'
+import { mapELQuestionnaire } from './transform-mappers/el/display/mapQuestionnaire'
+import { mapToLshAnswer } from './transform-mappers/lsh/answer/mapToLSHAnswer'
+import { mapLshQuestionnaire } from './transform-mappers/lsh/display/mapQuestionnaire'
 
 @Injectable()
 export class QuestionnairesService {
@@ -112,7 +111,7 @@ export class QuestionnairesService {
   ): Questionnaire | null {
     if (!data) return null
     return withQuestions
-      ? mapExternalQuestionnaireToGraphQL(data, _locale)
+      ? mapELQuestionnaire(data, _locale)
       : {
           baseInformation: {
             id: data.questionnaireId,

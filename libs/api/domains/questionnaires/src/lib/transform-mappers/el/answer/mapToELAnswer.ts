@@ -1,42 +1,15 @@
 import { SubmitQuestionnaireDto } from '@island.is/clients/health-directorate'
-import { AnswerOptionType } from '../../../models/question.model'
-import { QuestionnaireInput } from '../../dto/questionnaire.input'
-
-// Type definitions matching the Health Directorate API
-type StringReply = {
-  questionId: string
-  answer: string
-}
-
-type BooleanReply = {
-  questionId: string
-  answer: boolean
-}
-
-type DateReply = {
-  questionId: string
-  answer: string // Date in ISO format
-}
-
-type NumberReply = {
-  questionId: string
-  answer: number
-}
-
-type ListReply = {
-  questionId: string
-  values: Array<{
-    id: string
-    answer: string
-  }>
-}
-
-type Reply = StringReply | BooleanReply | DateReply | NumberReply | ListReply
-
-type TableReply = {
-  questionId: string
-  rows: Reply[][]
-}
+import { AnswerOptionType } from '../../../../models/question.model'
+import { QuestionnaireInput } from '../../../dto/questionnaire.input'
+import {
+  BooleanReply,
+  DateReply,
+  ListReply,
+  NumberReply,
+  Reply,
+  StringReply,
+  TableReply,
+} from '../types'
 
 /**
  * Maps a QuestionnaireInput to the Health Directorate submission format
