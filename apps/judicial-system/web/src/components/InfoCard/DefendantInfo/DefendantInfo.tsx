@@ -137,12 +137,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           {`${defenderLabel}: `}
         </Text>
         {hasDefender ? (
-          RenderPersonalData(
-            defenderName,
-            defenderEmail,
-            defenderPhoneNumber,
-            false,
-          )
+          RenderPersonalData({
+            name: defenderName,
+            email: defenderEmail,
+            phoneNumber: defenderPhoneNumber,
+            breakSpaces: false,
+          })
         ) : (
           <Text as="span">{formatMessage(strings.noDefender)}</Text>
         )}
