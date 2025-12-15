@@ -36,6 +36,7 @@ import {
 } from '../types'
 import {
   AgentType,
+  ApplicationFeatureConfigType,
   ApplicationType,
   AttachmentOptions,
   CaseWorkerInputTypeEnum,
@@ -976,4 +977,25 @@ export const getReasonOptionsType = (
     : selectedSchoolSector === OrganizationSector.PRIVATE
     ? OptionsType.REASON_PRIVATE_SCHOOL
     : OptionsType.REASON
+}
+
+export const mapApplicationType = (answers: FormValue) => {
+  const { applicationType, applyForPreferredSchool } =
+    getApplicationAnswers(answers)
+
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return ApplicationFeatureConfigType.TRANSFER
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return ApplicationFeatureConfigType.CONTINUATION
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? ApplicationFeatureConfigType.ENROLLMENT
+        : ApplicationFeatureConfigType.TRANSFER
+
+    default:
+      return ApplicationFeatureConfigType.ENROLLMENT
+  }
 }

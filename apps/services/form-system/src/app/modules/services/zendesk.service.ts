@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
@@ -33,16 +32,15 @@ export class ZendeskService {
     })
   }
 
-  async sendToZendesk(
-    applicationDto: ApplicationDto,
-    url: OrganizationUrl,
-  ): Promise<boolean> {
+  async sendToZendesk(applicationDto: ApplicationDto): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
     const tenantId =
-      url.isTest === true ? this.SANDBOX_TENANT_ID : this.PROD_TENANT_ID
+      applicationDto.isTest === true
+        ? this.SANDBOX_TENANT_ID
+        : this.PROD_TENANT_ID
     const apiKey =
-      url.isTest === true ? this.SANDBOX_API_KEY : this.PROD_API_KEY
+      applicationDto.isTest === true ? this.SANDBOX_API_KEY : this.PROD_API_KEY
     if (!tenantId || !apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
