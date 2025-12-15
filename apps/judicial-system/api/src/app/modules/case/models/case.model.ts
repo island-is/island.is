@@ -515,4 +515,13 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly splitCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly splitCases?: Case[]
 }

@@ -1,7 +1,4 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
 import { FirearmApi } from '@island.is/clients/firearm-license'
 import {
   Pass,
@@ -9,6 +6,9 @@ import {
   Result,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
@@ -19,7 +19,7 @@ import {
 } from '../../../licenseClient.type'
 import { FirearmLicenseDto } from '../firearmLicenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
-
+import { FirearmLicenseVerifyExtraData } from '../firearmLicensExtraData.types'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 
@@ -311,6 +311,23 @@ export class FirearmLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<FirearmLicenseVerifyExtraData> {
+    const license = await this.fetchLicenseData(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.licenseInfo?.name) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.licenseInfo?.ssn ?? '',
+      name: license.data.licenseInfo.name,
+      picture: license.data.licenseInfo?.licenseImgBase64 ?? '',
     }
   }
 }

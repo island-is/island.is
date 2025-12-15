@@ -4,11 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
-import {
-  IdentityInput,
-  Query,
-  RskCompanyInfoInput,
-} from '@island.is/api/schema'
+import { IdentityInput, Query } from '@island.is/api/schema'
 import {
   InputController,
   PhoneInputController,
@@ -16,7 +12,7 @@ import {
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
-import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
+import { IDENTITY_QUERY } from './graphql/queries'
 import { setInputsOnChange } from '@island.is/shared/utils'
 
 interface NationalIdWithNameProps {
@@ -131,6 +127,7 @@ export const NationalIdWithName: FC<
   }
 
   const getNameFieldErrorMessage = () => {
+    if (!nationalIdInput) return
     if (nationalIdInput.length !== 10) return
 
     const notFoundMessage = formatMessage(
@@ -140,22 +137,11 @@ export const NationalIdWithName: FC<
     // Invalid national ID or mismatch with allowed search modes
     if (invalidNationalId) return notFoundMessage
 
-    const isPerson = kennitala.isPerson(nationalIdInput)
-    const isCompany = kennitala.isCompany(nationalIdInput)
-    const personFailed = queryError || data?.identity === null
-    const companyFailed =
-      companyQueryError || companyData?.companyRegistryCompany === null
+    const queryFailed = queryError || data?.identity === null
     const nameError = getFieldErrorString(error, 'name')
 
-    if (isPerson && searchPersons) {
-      if (personFailed) return notFoundMessage
-      if (nameError && !data?.identity) return nameError
-    }
-
-    if (isCompany && searchCompanies) {
-      if (companyFailed) return notFoundMessage
-      if (nameError && !companyData) return nameError
-    }
+    if (queryFailed) return notFoundMessage
+    if (nameError && !data?.identity) return nameError
 
     return undefined
   }
@@ -185,60 +171,18 @@ export const NationalIdWithName: FC<
           onNameChange && onNameChange(data.identity?.name ?? '')
           if (data.identity?.name) {
             setValue(nameField, data.identity?.name)
-          } else if (
-            searchPersons &&
-            !searchCompanies &&
-            data?.identity === null
-          ) {
-            setValue(nameField, '')
-          } else if (
-            searchPersons &&
-            searchCompanies &&
-            companyData?.companyRegistryCompany === null
-          ) {
+          } else {
             setValue(nameField, '')
           }
         },
       },
     )
 
-  // query to get company name by national id
-  const [
-    getCompanyIdentity,
-    {
-      data: companyData,
-      loading: companyQueryLoading,
-      error: companyQueryError,
-    },
-  ] = useLazyQuery<Query, { input: RskCompanyInfoInput }>(
-    gql`
-      ${COMPANY_IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (companyData) => {
-        onNameChange &&
-          onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        if (companyData.companyRegistryCompany?.name) {
-          setValue(nameField, companyData.companyRegistryCompany?.name)
-        } else if (
-          !searchPersons &&
-          searchCompanies &&
-          companyData?.companyRegistryCompany === null
-        ) {
-          setValue(nameField, '')
-        } else if (
-          searchPersons &&
-          searchCompanies &&
-          data?.identity === null
-        ) {
-          setValue(nameField, '')
-        }
-      },
-    },
-  )
-
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
+    if (!nationalIdInput) {
+      return
+    }
     if (nationalIdInput.length !== 10) {
       // Clear name field whenever national id is not complete
       // avoids name lingering from previous valid national ids
@@ -254,34 +198,28 @@ export const NationalIdWithName: FC<
 
     const isPerson = kennitala.isPerson(nationalIdInput)
 
-    // Prevent searching the wrong registry (person vs company) unless both are allowed
+    // Check if the search mode matches the provided nationalId
     const searchModeMismatch =
       ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
       !(searchPersons && searchCompanies)
 
+    // Prevent search if the provided nationalId does not match the searchMode
     if (searchModeMismatch) {
       setValue(nameField, '')
+      // This results in an error shown provided by 'getNameFieldErrorMessage' func
       setInvalidNationalId(true)
       return
     }
 
     setInvalidNationalId(false)
 
-    if (searchPersons && isPerson) {
-      getIdentity({
-        variables: { input: { nationalId: nationalIdInput } },
-      })
-    }
-
-    if (searchCompanies && !isPerson) {
-      getCompanyIdentity({
-        variables: { input: { nationalId: nationalIdInput } },
-      })
-    }
+    // Identity returns both companies and individuals
+    getIdentity({
+      variables: { input: { nationalId: nationalIdInput } },
+    })
   }, [
     nationalIdInput,
     getIdentity,
-    getCompanyIdentity,
     searchPersons,
     searchCompanies,
     setValue,
@@ -317,13 +255,7 @@ export const NationalIdWithName: FC<
                 )
               }
             })}
-            loading={
-              searchPersons
-                ? queryLoading
-                : searchCompanies
-                ? companyQueryLoading
-                : undefined
-            }
+            loading={queryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}

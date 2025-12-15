@@ -35,7 +35,7 @@ env:
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
   XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
-  XROAD_HUNTING_LICENSE_PATH: 'IS-TEST/GOV/10009/Umhverfisstofnun-Protected/api'
+  XROAD_NVS_PERMITS_PATH: 'IS-TEST/GOV/10085/NVS-Protected/api'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
 grantNamespaces:
@@ -71,7 +71,7 @@ ingress:
           - '/'
 namespace: 'license-api'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

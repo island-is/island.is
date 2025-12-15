@@ -25,18 +25,6 @@ export class DependencyInput {
   isSelected?: boolean
 }
 
-@InputType('FormSystemDeleteFormInput')
-export class DeleteFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
-@InputType('FormSystemPublishFormInput')
-export class PublishFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })
@@ -100,7 +88,7 @@ export class UpdateFormDtoInput {
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
@@ -160,7 +148,7 @@ export class FormInput {
   beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number

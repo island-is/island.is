@@ -1,8 +1,7 @@
 import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   coreHistoryMessages,
   getValueViaPath,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -60,7 +59,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -117,7 +116,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
@@ -184,7 +183,7 @@ const EstateTemplate: ApplicationTemplate<
           name: 'Approved',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,

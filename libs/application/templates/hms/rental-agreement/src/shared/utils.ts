@@ -22,6 +22,7 @@ import {
   DraftPropertyUnit,
 } from './types'
 import { ApplicantsRole, NextStepInReviewOptions } from '../utils/enums'
+import { isCompany } from 'kennitala'
 
 const mapParticipantInfo = (participant: ApplicantsInfo): ApplicantsInfo => {
   return {
@@ -73,12 +74,12 @@ const extractParticipants = (
     representatives as Array<ApplicantsInfo>
   ).map(mapParticipantInfo)
   const landlords = (
-    getValueViaPath<ApplicantsInfo[]>(answers, 'parties.landlordInfo.table') ??
+    getValueViaPath<ApplicantsInfo[]>(answers, 'parties.landlordInfo.table') ||
     []
   ).map(mapParticipantInfo)
 
   const tenants = (
-    getValueViaPath<ApplicantsInfo[]>(answers, 'parties.tenantInfo.table') ?? []
+    getValueViaPath<ApplicantsInfo[]>(answers, 'parties.tenantInfo.table') || []
   ).map(mapParticipantInfo)
 
   switch (applicantRole) {
@@ -94,10 +95,23 @@ const extractParticipants = (
       break
   }
 
+  const signingParties = []
+
+  if (isCompany(applicant.nationalId ?? '')) {
+    const signatory = mapParticipantInfo(
+      getValueViaPath<ApplicantsInfo>(answers, 'parties.signatory') ??
+        ({} as ApplicantsInfo),
+    )
+    signingParties.push(...tenants, signatory)
+  } else {
+    signingParties.push(...tenants, ...landlords)
+  }
+
   return {
     landlords,
     landlordRepresentatives,
     tenants,
+    signingParties,
   }
 }
 
@@ -116,7 +130,7 @@ const extractPropertyInfo = (
     getValueViaPath<PropertyUnit[]>(
       answers,
       'registerProperty.searchresults.units',
-    ) ?? [],
+    ) || [],
   categoryType: getValueViaPath<string>(answers, 'propertyInfo.categoryType'),
   categoryClass: getValueViaPath<string>(answers, 'propertyInfo.categoryClass'),
   categoryClassGroup: getValueViaPath<string>(
@@ -291,10 +305,8 @@ const extractOtherFees = (
     answers,
     'otherFees.otherCosts',
   ),
-  otherCostItems: getValueViaPath<CostField[]>(
-    answers,
-    'otherFees.otherCostItems',
-  ),
+  otherCostItems:
+    getValueViaPath<CostField[]>(answers, 'otherFees.otherCostItems') || [],
 })
 
 const extractReview = (answers: Application['answers']): ReviewSection => ({
@@ -329,11 +341,12 @@ export const draftAnswers = (
     landlords: answers.landlords,
     landlordRepresentatives: answers.landlordRepresentatives,
     tenants: answers.tenants,
+    signingParties: answers.signingParties,
     units: answers.units as DraftPropertyUnit[],
     startDate: answers.startDate ?? '',
     endDate: answers.endDate ?? '',
     amount: answers.amount ?? '',
-    isIndexConnected: answers.isIndexConnected ?? [],
+    isIndexConnected: answers.isIndexConnected || [],
     indexDate: answers.indexDate ?? '',
     indexRate: answers.indexRate ?? '',
     paymentMethodOther: answers.paymentMethodOther,
@@ -375,6 +388,6 @@ export const draftAnswers = (
     heatingCostMeterNumber: answers.heatingCostMeterNumber,
     heatingCostMeterStatus: answers.heatingCostMeterStatus,
     otherCostPayedByTenant: answers.otherCostPayedByTenant ?? YesOrNoEnum.NO,
-    otherCostItems: answers.otherCostItems ?? [],
+    otherCostItems: answers.otherCostItems || [], // '' is not nullish
   }
 }

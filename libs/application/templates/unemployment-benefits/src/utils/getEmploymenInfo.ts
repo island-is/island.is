@@ -1,9 +1,13 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormatMessage,
+  FormValue,
+} from '@island.is/application/types'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../shared'
-import { GaldurDomainModelsApplicantsApplicantProfileDTOsJob } from '@island.is/clients/vmst-unemployment'
+import { GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer } from '@island.is/clients/vmst-unemployment'
 import { employment as employmentMessages } from '../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 export const isUnemployed = (answers: FormValue) => {
   const status = getValueViaPath<string>(answers, 'currentSituation.status')
@@ -44,24 +48,33 @@ export const doesOwnResume = (answers: FormValue) => {
   return doesOwnResume === YES
 }
 
-export const getEmploymentFromRsk = (externalData: ExternalData) => {
+export const getEmploymentFromRsk = (
+  externalData: ExternalData,
+  formatMessage?: FormatMessage,
+) => {
   const employmentList =
-    getValueViaPath<Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>>(
+    getValueViaPath<
+      Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+    >(
       externalData,
-      'unemploymentApplication.data.jobCareer.jobs',
+      'unemploymentApplication.data.rskEmploymentInformation',
       [],
     ) ?? []
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { formatMessage } = useLocale()
-
   const extendedList = [
-    ...employmentList,
+    ...employmentList.map((x) => {
+      return {
+        employerSSN: x.ssn,
+        employer: x.name,
+      }
+    }),
     {
       employerSSN: '-',
-      employer: formatMessage(
-        employmentMessages.currentSituation.labels.unregisteredEmployer,
-      ),
+      employer: formatMessage
+        ? formatMessage(
+            employmentMessages.currentSituation.labels.unregisteredEmployer,
+          )
+        : '',
     },
   ]
 
@@ -205,4 +218,48 @@ export const getDefaultFromCurrentStatus = (
   }
 
   return repeaterJobs[index][currentStatusFieldItem] || ''
+}
+
+export const getChosenEmployerNationalId = (
+  index: number,
+  application: Application,
+) => {
+  const repeaterJobs =
+    getValueViaPath<CurrentEmploymentInAnswers[]>(
+      application.answers,
+      'currentSituation.currentSituationRepeater',
+      [],
+    ) ?? []
+
+  return repeaterJobs[index]?.nationalIdWithName &&
+    repeaterJobs[index]?.nationalIdWithName !== '-'
+    ? repeaterJobs[index]?.nationalIdWithName
+    : repeaterJobs[index]?.employer?.nationalId ?? ''
+}
+
+export const getChosenEmployerName = (
+  index: number,
+  application: Application,
+) => {
+  const repeaterJobs =
+    getValueViaPath<CurrentEmploymentInAnswers[]>(
+      application.answers,
+      'currentSituation.currentSituationRepeater',
+      [],
+    ) ?? []
+
+  if (
+    isUnemployed(application.answers) ||
+    repeaterJobs.length === 0 ||
+    !repeaterJobs[index]
+  ) {
+    return ''
+  }
+
+  const nationalIdChosen = getChosenEmployerNationalId(index, application)
+
+  return repeaterJobs[index]?.nationalIdWithName &&
+    repeaterJobs[index]?.nationalIdWithName !== '-'
+    ? getEmployerNameFromSSN(application.externalData, nationalIdChosen || '')
+    : repeaterJobs[index]?.employer?.name
 }

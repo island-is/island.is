@@ -3,6 +3,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
+  GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer,
+  GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   GaldurDomainModelsAttachmentsAttachmentViewModel,
@@ -16,6 +18,7 @@ import { sharedModuleConfig } from '../../shared'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ConfigType } from '@nestjs/config'
 import {
+  getAcknowledgements,
   getBankinPensionUnion,
   getEducationalQuestions,
   getEducationInformation,
@@ -37,17 +40,22 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   errorMsgs,
   FileSchemaInAnswers,
-  EducationInAnswers,
   WorkingAbilityInAnswers,
   OtherBenefitsInAnswers,
   ResumeInAnswers,
-  EducationType,
   EmploymentStatus,
   EmploymentStatusIds,
+  EducationHistoryInAnswers,
+  ReasonsForJobSearchInAnswers,
 } from '@island.is/application/templates/unemployment-benefits'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
+
+interface ExtendedUnemploymentApplicationDto
+  extends GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto {
+  rskEmploymentInformation?: Array<GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer>
+}
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -70,7 +78,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
   async getEmptyApplication({
     auth,
     currentUserLocale,
-  }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
+  }: TemplateApiModuleActionProps): Promise<ExtendedUnemploymentApplicationDto> {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication(auth)
 
@@ -90,12 +98,17 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         400,
       )
     }
-    return results.unemploymentApplication || null
+    const extendedObject: ExtendedUnemploymentApplicationDto = {
+      ...results.unemploymentApplication,
+      rskEmploymentInformation: results.rskEmploymentHistory || [],
+    }
+    return extendedObject
   }
 
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
 
@@ -105,12 +118,23 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         'unemploymentApplication.data.supportData.jobCodes',
       ) ?? []
 
+    const personalInformationFromData =
+      getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
+        application.externalData,
+        'unemploymentApplication.data.personalInformation',
+      )
+
     /* 
-      The following fields are updated with answers from the application, and we need to merge them with the data from the api:
+      The following fields are updated with answers from the application, sometimes we need to merge with data from externalData
     */
 
     //personalInformation
+
     const personalInformationFromAnswers = getPersonalInformation(answers)
+    const personalInformation = {
+      ...personalInformationFromAnswers,
+      nationality: personalInformationFromData?.nationality,
+    }
 
     //Other information
     const otherInformationFromService =
@@ -133,7 +157,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const educationInformation = getEducationInformation(answers)
 
     //jobCareer
-    const jobCareer = getJobCareer(answers, jobCodes)
+    const jobCareer = getJobCareer(answers, jobCodes, externalData)
 
     //drivingLicense
     const licenseInformation = getLicenseInformation(answers)
@@ -190,28 +214,24 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       )
     })
 
-    // Staðfesting á námi/prófgráðu - menntun
-    const educationAnswers = getValueViaPath<EducationInAnswers>(
+    //Staðfesting á námi/prófgráðu - menntun
+    const educationAnswers = getValueViaPath<EducationHistoryInAnswers>(
       answers,
-      'education',
+      'educationHistory',
     )
-    educationAnswers?.currentEducation?.degreeFile?.forEach((file) => {
-      let fileTypeId: string
+    educationAnswers?.currentStudies?.degreeFile?.forEach((file) => {
+      const fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
+      attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+    })
 
-      // We need to return a specific type of file depending on how the user answered the education questions
-      if (educationAnswers.typeOfEducation === EducationType.LAST_YEAR) {
-        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
-      } else if (educationAnswers.typeOfEducation === EducationType.CURRENT) {
-        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
-      } else {
-        // only option left is LAST_SEMESTER
-        if (educationAnswers.didFinishLastSemester === YES) {
-          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_WITH_DEGREE
-        } else {
-          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_LAST_SEMESTER
-        }
-      }
+    educationAnswers?.lastSemester?.degreeFile?.forEach((file) => {
+      const fileTypeId =
+        FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_LAST_SEMESTER
+      attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+    })
 
+    educationAnswers?.finishedEducation?.degreeFile?.forEach((file) => {
+      const fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
       attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
     })
 
@@ -250,6 +270,19 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       attachmentPromises.push(safeGetFileInfo(file, FileTypeIds.CV))
     })
 
+    // ástæður atvinnuleysis - extra gögn
+    const reasonsForJobSearchExtraFiles =
+      getValueViaPath<ReasonsForJobSearchInAnswers>(
+        answers,
+        'reasonForJobSearch',
+      )
+    reasonsForJobSearchExtraFiles?.extraFileUpload?.forEach((file) => {
+      const fileTypeId = reasonsForJobSearchExtraFiles.attachmentTypeId
+      if (fileTypeId) {
+        attachmentPromises.push(safeGetFileInfo(file, fileTypeId))
+      }
+    })
+
     await Promise.all(attachmentPromises)
 
     //childrenSupported
@@ -265,7 +298,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const employerSettlement = getEmployerSettlement(answers)
 
     //languageKnowledge
-    const languageKnowledge = getLanguageSkills(answers, externalData)
+    const languageKnowledge = getLanguageSkills(answers)
 
     //workingCapacity
     const workingCapacity = {
@@ -277,7 +310,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //pensionAndOtherPayments
     const pensionAndOtherPayments = otherBenefits
-      ? getPensionAndOtherPayments(otherBenefits)
+      ? getPensionAndOtherPayments(otherBenefits, answers, externalData)
       : undefined
 
     //previousOccupation
@@ -304,6 +337,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //educationalQuestions
     const educationalQuestions = getEducationalQuestions(answers)
+
+    //Acknowledgements
+    const acknowledgements = getAcknowledgements(answers)
 
     const submitAttachment = async (
       file: GaldurDomainModelsAttachmentsCreateAttachmentRequest,
@@ -364,7 +400,10 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
           {
             unemploymentApplication: {
-              personalInformation: personalInformationFromAnswers,
+              applicationInformation: {
+                applicationLanguage: currentUserLocale === 'is' ? 'IS' : 'EN',
+              },
+              personalInformation: personalInformation,
               otherInformation: otherInformation,
               preferredJobs: preferredJobsFromAnswers,
               educationHistory: educationInformation,
@@ -387,11 +426,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               euresInformation: euresInformation,
               educationalQuestions: educationalQuestions,
               applicantId: null,
+              acknowledgements: acknowledgements,
             },
             save: true,
             finalize: true,
           },
       }
+
     const response = await this.vmstUnemploymentClientService.submitApplication(
       auth,
       submitResponse,

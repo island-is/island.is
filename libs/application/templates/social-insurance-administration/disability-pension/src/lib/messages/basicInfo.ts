@@ -27,24 +27,9 @@ export const basicInfo = defineMessages({
     defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
     description: 'Instructions for income plan',
   },
-  incomePlanTitle: {
-    id: 'dp.application:basicInfo.incomePlanTitle',
-    defaultMessage: 'Tekjuáætlun',
-    description: 'Income plan',
-  },
-  disabilityEvaluationTitle: {
-    id: 'dp.application:basicInfo.disabilityEvaluationTitle',
-    defaultMessage: 'Örorkumat',
-    description: 'Disability evaluation',
-  },
   employmentParticipationTitle: {
     id: 'dp.application:basicInfo.employmentParticipationTitle',
     defaultMessage: 'Atvinnuþátttaka',
     description: 'Employment participation',
-  },
-  relatedApplicationsTitle: {
-    id: 'dp.application:basicInfo.relatedApplicationsTitle',
-    defaultMessage: 'Tengdar umsóknir',
-    description: 'Related applications',
   },
 })

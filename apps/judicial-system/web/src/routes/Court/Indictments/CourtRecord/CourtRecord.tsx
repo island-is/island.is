@@ -63,11 +63,13 @@ const CourtRecord: FC = () => {
   }, [workingCase.courtSessions?.length])
 
   const stepIsValid = isIndictmentCourtRecordStepValid(workingCase)
-
+  const allCourtSessionsConfirmed = workingCase.courtSessions?.every(
+    (c) => c.isConfirmed,
+  )
   const canCreateCourtSession =
     !workingCase.courtSessions ||
     workingCase.courtSessions.length === 0 ||
-    (stepIsValid && workingCase.courtSessions.every((c) => c.isConfirmed))
+    (stepIsValid && allCourtSessionsConfirmed)
 
   return (
     <PageLayout
@@ -82,7 +84,7 @@ const CourtRecord: FC = () => {
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.withCourtSessions ? (
-          <Box>
+          <>
             <Accordion dividerOnTop={false} singleExpand>
               {workingCase.courtSessions?.map((courtSession, index) => (
                 <CourtSessionAccordionItem
@@ -116,10 +118,11 @@ const CourtRecord: FC = () => {
                 caseId={workingCase.id}
                 title="Þingbók - PDF"
                 pdfType="courtRecord"
+                elementId="Þingbók"
                 disabled={!hasGeneratedCourtRecord}
               />
             </Box>
-          </Box>
+          </>
         ) : (
           <Box width="half" marginBottom={10}>
             <AlertMessage
@@ -136,7 +139,7 @@ const CourtRecord: FC = () => {
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
+          nextIsDisabled={!stepIsValid || !allCourtSessionsConfirmed}
           onNextButtonClick={() =>
             handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
           }

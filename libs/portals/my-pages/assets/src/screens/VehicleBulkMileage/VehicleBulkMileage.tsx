@@ -26,6 +26,7 @@ import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { useLoaderData } from 'react-router-dom'
 
 interface FormData {
   [key: string]: number
@@ -33,15 +34,13 @@ interface FormData {
 
 const VehicleBulkMileage = () => {
   useNamespaces('sp.vehicles')
+  const isAllowedBulkMileageUpload: boolean = useLoaderData() as boolean
   const { formatMessage } = useLocale()
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
-  const [displayFilters, setDisplayFilters] = useState<boolean>(false)
-
-  const [vehicleListQuery, { data, loading, error }] =
-    useVehiclesListLazyQuery()
+  const [vehicleListQuery, { loading, error }] = useVehiclesListLazyQuery()
 
   const debouncedQuery = useMemo(() => {
     return debounce(() => {
@@ -105,12 +104,6 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
-  useEffect(() => {
-    if (!displayFilters) {
-      setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
-    }
-  }, [data, displayFilters])
-
   const buttons = [
     <LinkButton
       key="finance"
@@ -148,7 +141,7 @@ const VehicleBulkMileage = () => {
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
           buttonGroup={
-            displayFilters
+            isAllowedBulkMileageUpload
               ? [
                   ...buttons,
                   <LinkButton
@@ -169,7 +162,7 @@ const VehicleBulkMileage = () => {
               : buttons
           }
         >
-          {displayFilters && (
+          {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>
               <GridRow>
                 <GridColumn span="4/12">

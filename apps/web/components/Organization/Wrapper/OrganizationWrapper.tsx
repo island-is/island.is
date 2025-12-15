@@ -275,16 +275,6 @@ export const OrganizationHeader: React.FC<
           )}
         />
       )
-    case 'hsu':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsuHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
-          )}
-        />
-      )
     case 'landlaeknir':
       return (
         <DefaultHeader
@@ -644,6 +634,7 @@ export const OrganizationFooter: React.FC<
     case 'hsu':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />

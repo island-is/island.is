@@ -21,6 +21,9 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   IsRegiment = 'isRegiment',
   NoMedCard = 'noMedCard',
   NoHealthClinic = 'noHealthClinic',
+  DismissedRequest = 'dismissedRequest',
+  AlreadyRequested = 'alreadyRequested',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalBlockedReasonEnum, {
@@ -46,4 +49,24 @@ export enum PrescribedItemCategoryEnum {
 
 registerEnumType(PrescribedItemCategoryEnum, {
   name: 'HealthDirectoratePrescribedItemCategory',
+})
+
+export enum PermitCodesEnum {
+  PatientSummary = 'patient_summary',
+}
+
+registerEnumType(PermitCodesEnum, {
+  name: 'HealthDirectoratePermitCodes',
+})
+
+export enum PermitStatusEnum {
+  active = 'active',
+  inactive = 'inactive',
+  expired = 'expired',
+  awaitingApproval = 'awaitingApproval',
+  unknown = 'unknown',
+}
+
+registerEnumType(PermitStatusEnum, {
+  name: 'HealthDirectoratePermitStatus',
 })

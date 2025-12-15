@@ -54,11 +54,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const defenderPhoneNumber =
     defendant.defenderPhoneNumber || defender?.phoneNumber
 
-  const appealExpirationInfo = getAppealExpirationInfo(
-    defendant.verdictAppealDeadline,
-    defendant.isVerdictAppealDeadlineExpired,
-    defendant.verdict?.serviceRequirement,
-  )
+  const appealExpirationInfo = getAppealExpirationInfo({
+    verdictAppealDeadline: defendant.verdictAppealDeadline,
+    isVerdictAppealDeadlineExpired: defendant.isVerdictAppealDeadlineExpired,
+    serviceRequirement: defendant.verdict?.serviceRequirement,
+  })
 
   return (
     <>
@@ -100,6 +100,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         <Text as="p" marginTop={1} fontWeight="semiBold">
           {formatMessage(appealExpirationInfo.message, {
             appealExpirationDate: appealExpirationInfo.date,
+            deadlineType: defendant.verdict?.isDefaultJudgement
+              ? 'Endurupptökufrestur'
+              : 'Áfrýjunarfrestur',
           })}
         </Text>
       )}

@@ -1,3 +1,4 @@
+import { Query } from '@island.is/api/schema'
 import {
   buildAsyncSelectField,
   buildDescriptionField,
@@ -5,8 +6,7 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/sampleQuery'
 
 export const asyncSelectSubsection = buildSubSection({
   id: 'asyncSelectSubsection',
@@ -22,15 +22,14 @@ export const asyncSelectSubsection = buildSubSection({
           placeholder: 'Placeholder text',
           loadingError: 'Loading error',
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: organization.name,
+                label: organization.name,
               })) ?? []
             )
           },
@@ -41,15 +40,14 @@ export const asyncSelectSubsection = buildSubSection({
           isSearchable: true,
           loadingError: 'Loading error',
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: organization.name,
+                label: organization.name,
               })) ?? []
             )
           },
@@ -60,15 +58,14 @@ export const asyncSelectSubsection = buildSubSection({
           isMulti: true,
           loadingError: 'Loading error',
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: organization.name,
+                label: organization.name,
               })) ?? []
             )
           },
@@ -89,15 +86,14 @@ export const asyncSelectSubsection = buildSubSection({
           placeholder: 'This will inform the dependent async select',
           loadingError: 'Loading error',
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: organization.name,
+                label: organization.name,
               })) ?? []
             )
           },
@@ -110,15 +106,14 @@ export const asyncSelectSubsection = buildSubSection({
           loadingError: 'Loading error',
           updateOnSelect: ['primaryAsyncSelect'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipality>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: `${municipality.name} ${selectedValues?.[0] || ''}`,
-                label: `${municipality.name} ${selectedValues?.[0] || ''}`,
+              data?.friggOrganizationsByType?.map((organization) => ({
+                value: `${organization.name} ${selectedValues?.[0] || ''}`,
+                label: `${organization.name} ${selectedValues?.[0] || ''}`,
               })) ?? []
             )
           },

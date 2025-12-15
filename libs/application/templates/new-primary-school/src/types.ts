@@ -12,15 +12,19 @@ import {
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
 export interface RelativesRow {
-  fullName: string
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
   phoneNumber: string
-  nationalId: string
   relation: string
 }
 
 export interface SiblingsRow {
-  fullName: string
-  nationalId: string
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
 }
 
 export type Child = {
@@ -197,6 +201,7 @@ export type Organization = {
   subType: OrganizationSubType
   sector: OrganizationSector
   gradeLevels: string[]
+  address?: AddressModel
   unitId: string | null
   settings: ApplicationSettings | null
 }

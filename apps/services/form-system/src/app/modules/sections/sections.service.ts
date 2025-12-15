@@ -35,6 +35,12 @@ export class SectionsService {
       zipObject(keys, Array(keys.length).fill(null)),
     ) as SectionDto
 
+    const form = await this.formModel.findByPk(section.formId)
+    if (form) {
+      form.draftTotalSteps++
+      await form.save()
+    }
+
     return sectionDto
   }
 
@@ -111,6 +117,7 @@ export class SectionsService {
       } else {
         form.dependencies = filterDependency(dependencies, id)
       }
+      form.draftTotalSteps--
       await form.save()
     }
 

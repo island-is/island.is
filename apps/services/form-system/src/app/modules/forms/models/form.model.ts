@@ -100,13 +100,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  derivedFrom!: string
+  derivedFrom!: string | null
 
   @Column({
     type: DataType.ENUM,
@@ -143,17 +143,17 @@ export class Form extends Model<Form> {
   completedSectionInfo!: CompletedSectionInfo
 
   @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
+
+  @Column({
     type: DataType.JSON,
     allowNull: true,
   })
   dependencies?: Dependency[]
-
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-    defaultValue: [],
-  })
-  allowedDelegationTypes!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]
