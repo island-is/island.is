@@ -17,8 +17,6 @@ import {
   shouldShowExpectedEndDate,
   shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
-  shouldShowExpectedEndDate,
-  shouldShowPage,
   shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
@@ -237,11 +235,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       .map((item) => item.department)
 
   const isSpecialEducation = hasSpecialEducationSubType(
-    application.answers,
-    application.externalData,
-  )
-
-  const isSpecialEducationBehavior = hasBehaviorSchoolOrDepartmentSubType(
     application.answers,
     application.externalData,
   )
