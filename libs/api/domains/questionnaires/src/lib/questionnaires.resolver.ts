@@ -2,13 +2,18 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject, Scope, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
@@ -20,11 +25,13 @@ import {
 } from './dto/questionnaire.input'
 import { QuestionnairesService } from './questionnaires.service'
 import { QuestionnairesResponse } from './dto/response.dto'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/questionnaires' })
-//TODO: add scope
+@Scopes(ApiScope.internal, ApiScope.health)
+@FeatureFlag(Features.isServicePortalHealthQuestionnairesPageEnabled)
 export class QuestionnairesResolver {
   constructor(
     private readonly questionnairesService: QuestionnairesService,

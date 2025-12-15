@@ -408,29 +408,29 @@ export const healthModule: PortalModule = {
     {
       name: hm.questionnaires,
       path: HealthPaths.HealthQuestionnaires,
-      key: undefined, //TODO
-      enabled: true, // TODO
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Questionnaires />,
     },
     {
       name: hm.questionnaires,
       path: HealthPaths.HealthQuestionnairesDetail,
-      key: undefined, //TODO
-      enabled: true, // TODO
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesDetail />,
     },
     {
       name: hm.questionnaire,
       path: HealthPaths.HealthQuestionnairesAnswer,
-      key: undefined, //TODO
-      enabled: true, // TODO
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesAnswer />,
     },
     {
       name: hm.questionnaire,
       path: HealthPaths.HealthQuestionnairesAnswered,
-      key: undefined, //TODO
-      enabled: true, // TODO
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesAnswered />,
     },
     {
