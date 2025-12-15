@@ -46,15 +46,15 @@ const generateCardIntro = (data: BuildingDto): LocalizedContent => {
       ? `${data.use} (${data.squareMeters} fm)`
       : data.use
     const textEn = data.squareMeters
-      ? `${data.use} (${data.squareMeters} sq.m)`
-      : data.use
 
     cardIntro[LOCALE].push({
       items: [{ value: textIs }],
     })
-    cardIntro[EN_LOCALE].push({
-      items: [{ value: textEn }],
-    })
+    if (textEn) {
+      cardIntro[EN_LOCALE].push({
+        items: [{ value: textEn.toString() }],
+      })
+    }
   }
 
   if (data.propertyManagement) {
@@ -92,7 +92,7 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
     items: [{ value: `Fastanúmer: ${data.id}` }],
   })
   content[EN_LOCALE].push({
-    items: [{ value: `ID number: ${data.id}`, isBold: true }],
+    items: [{ value: `ID number: ${data.id}` }],
   })
 
   if (data.squareMeters) {
