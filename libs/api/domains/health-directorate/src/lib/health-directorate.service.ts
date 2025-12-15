@@ -650,8 +650,8 @@ export class HealthDirectorateService {
                   city: item.location.city || '',
                   postalCode: item.location.postalCode || '',
                   country: item.location.country || '',
-                  latitude: item.location.latitude || 0,
-                  longitude: item.location.longitude || 0,
+                  latitude: item.location.latitude || undefined,
+                  longitude: item.location.longitude || undefined,
                 }
               : undefined,
             practitioners: item.practitioners || [],
