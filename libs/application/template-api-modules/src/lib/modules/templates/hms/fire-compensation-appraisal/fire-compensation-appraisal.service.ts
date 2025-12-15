@@ -26,6 +26,7 @@ import {
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
+import uniqBy from 'lodash/uniqBy'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -272,9 +273,11 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
       // get content of files from S3
-      const files = await this.attachmentService.getFiles(application, [
+      const fetchedFiles = await this.attachmentService.getFiles(application, [
         'photos',
       ])
+
+      const files = uniqBy(fetchedFiles, 'key')
 
       const missingFiles = files.filter(
         (file) => !file.fileContent || file.fileContent.trim().length === 0,

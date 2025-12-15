@@ -12,19 +12,48 @@ import * as m from './messages'
 import { rentalPeriodSchema } from './schemas/rentalPeriodSchema'
 import { specialProvisionsSchema } from './schemas/specialProvisionsSchema'
 import { conditionSchema } from './schemas/conditionSchema'
-import { isValidMobileNumber } from '../utils/utils'
+import { isValidMobileNumber, isValidPhoneNumber } from '../utils/utils'
 
-const applicant = z.object({
-  nationalId: z
-    .string()
-    .refine((val) => (val ? kennitala.isValid(val) : false), {
-      params: m.dataSchema.nationalId,
-    }),
-  email: z.string().email(),
-  phoneNumber: z.string().refine((v) => isValidMobileNumber(v), {
-    params: m.landlordAndTenantDetails.phoneNumberMobileError,
-  }),
-})
+const applicant = z
+  .object({
+    nationalId: z
+      .string()
+      .refine((val) => (val ? kennitala.isValid(val) : false), {
+        params: m.dataSchema.nationalId,
+      }),
+    email: z.string().email(),
+    phoneNumber: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    const { phoneNumber, nationalId } = data
+
+    if (!phoneNumber) {
+      ctx.addIssue({
+        message: 'Phone number is required',
+        params: m.landlordAndTenantDetails.phoneNumberEmptyError,
+        code: z.ZodIssueCode.custom,
+        path: ['phoneNumber'],
+      })
+    } else if (!kennitala.isCompany(nationalId)) {
+      if (!isValidMobileNumber(phoneNumber)) {
+        ctx.addIssue({
+          message: 'Phone number is not a mobile number',
+          params: m.landlordAndTenantDetails.phoneNumberMobileError,
+          code: z.ZodIssueCode.custom,
+          path: ['phoneNumber'],
+        })
+      }
+    } else {
+      if (!isValidPhoneNumber(phoneNumber)) {
+        ctx.addIssue({
+          message: 'Phone number is not a valid phone number',
+          params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+          code: z.ZodIssueCode.custom,
+          path: ['phoneNumber'],
+        })
+      }
+    }
+  })
 
 const preSignatureInfo = z.object({
   statement: z
