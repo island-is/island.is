@@ -2,9 +2,6 @@ import { Field, ObjectType, Float, Int } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
-  @Field({ nullable: true })
-  id?: string
-
   @Field()
   name!: string
 

@@ -119,7 +119,6 @@ export const TimeCard = ({
         padding={isMobile ? 2 : 3}
         className={styles.boxContainer}
       >
-        {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
         {to ? (
           <LinkResolver href={to}>
             <Box className={styles.containerLink}>{content}</Box>

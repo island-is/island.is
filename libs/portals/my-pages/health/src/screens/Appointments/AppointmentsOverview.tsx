@@ -14,7 +14,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
@@ -30,7 +30,7 @@ interface Filter {
 const AppointmentsOverview = () => {
   const { formatMessage } = useLocale()
   const [filter, setFilter] = useState<Filter>({
-    statuses: DEFAULT_APPOINTMENTS_STATUS,
+    statuses: [],
     dates: {},
   })
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -38,36 +38,33 @@ const AppointmentsOverview = () => {
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
       from: filter.dates?.from,
-      status: filter.statuses.length > 0 ? filter.statuses : undefined,
+      status:
+        filter.statuses.length > 0
+          ? filter.statuses
+          : DEFAULT_APPOINTMENTS_STATUS,
     },
   })
 
   const appointments = data?.healthDirectorateAppointments
 
-  const filteredAppointments = useMemo(() => {
-    if (!appointments?.data) return appointments
+  const filteredData = (() => {
+    if (!appointments?.data || !searchTerm) return appointments?.data ?? []
 
-    let filtered = [...appointments.data]
+    const search = searchTerm.trim().toLowerCase()
 
-    if (searchTerm) {
-      const searchLower = searchTerm.trim().toLowerCase()
-      filtered = filtered.filter(
-        (appointment) =>
-          appointment?.title?.toLowerCase().includes(searchLower) ||
-          appointment?.date?.toLowerCase().includes(searchLower) ||
-          appointment?.weekday?.toLowerCase().includes(searchLower) ||
-          appointment?.location?.address?.toLowerCase().includes(searchLower) ||
-          appointment?.location?.name?.toLowerCase().includes(searchLower) ||
-          appointment?.practitioners.some((p) =>
-            p.toLowerCase().includes(searchLower),
-          ),
-      )
-    }
-    return {
-      ...appointments,
-      data: filtered,
-    }
-  }, [appointments, searchTerm])
+    return appointments.data.filter((a) =>
+      [
+        a.title,
+        a.date,
+        a.weekday,
+        a.location?.address,
+        a.location?.name,
+        ...(a.practitioners ?? []),
+      ]
+        .filter(Boolean)
+        .some((value) => value?.toLowerCase().includes(search)),
+    )
+  })()
 
   const mapLabel = (status: HealthDirectorateAppointmentStatus): string => {
     switch (status) {
@@ -204,7 +201,7 @@ const AppointmentsOverview = () => {
       {!error && (
         <Appointments
           data={{
-            data: filteredAppointments,
+            data: { data: filteredData },
             loading,
             error: error ? true : false,
           }}

@@ -1,6 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   AppointmentStatus,
+  CreateEuPatientConsentDto,
   HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
@@ -8,13 +9,13 @@ import {
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
-  CreateEuPatientConsentDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
+import { PATIENT_PERMIT_CODE } from './constants'
 import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
@@ -38,6 +39,7 @@ import {
   mapPrescriptionRenewalStatus,
 } from './mappers/medicineMapper'
 import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { Appointment, Appointments } from './models/appointments.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -59,7 +61,6 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import { Appointment, Appointments } from './models/appointments.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -557,7 +558,7 @@ export class HealthDirectorateService {
     input: PermitInput,
   ): Promise<PermitReturn | null> {
     const mappedInput: CreateEuPatientConsentDto = {
-      codes: ['PATIENT_SUMMARY'], // Fixed code for patient summary consent
+      codes: [PATIENT_PERMIT_CODE], // Fixed code for patient summary consent
       countryCodes: input.countryCodes,
       validFrom: new Date(input.validFrom),
       validTo: new Date(input.validTo),
@@ -642,7 +643,6 @@ export class HealthDirectorateService {
             duration: item.duration,
             location: item.location
               ? {
-                  id: item.location.id || '',
                   name: item.location.name,
                   organization: item.location.organization || '',
                   address: item.location.address,
@@ -660,7 +660,7 @@ export class HealthDirectorateService {
         }) ?? []
       return { data: appointments }
     } catch (error) {
-      this.logger.error(
+      this.logger.warn(
         'Error fetching appointments from Health Directorate API',
         error,
       )

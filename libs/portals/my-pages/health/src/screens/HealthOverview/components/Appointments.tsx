@@ -25,7 +25,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
     ? [
         {
           error: data?.error,
-          title: '',
+          title: formatMessage(messages.appointments),
           description: '',
         },
       ]

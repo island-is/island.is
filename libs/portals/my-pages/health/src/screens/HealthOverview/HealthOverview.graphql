@@ -72,7 +72,6 @@ query getAppointmentsOverview(
       status
       location {
         __typename
-        id
         name
         organization
         directions
