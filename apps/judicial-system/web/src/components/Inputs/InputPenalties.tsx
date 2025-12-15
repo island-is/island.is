@@ -54,7 +54,6 @@ const InputPenalties: FC<Props> = (props) => {
         textarea
         autoComplete="off"
         rows={10}
-        autoExpand={{ on: true, maxHeight: 300 }}
       />
     </>
   )

@@ -326,7 +326,6 @@ export const Ruling = () => {
             hasError={introductionErrorMessage !== ''}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
@@ -368,7 +367,6 @@ export const Ruling = () => {
             hasError={prosecutorDemandsErrorMessage !== ''}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
@@ -414,7 +412,6 @@ export const Ruling = () => {
               hasError={courtCaseFactsErrorMessage !== ''}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -463,7 +460,6 @@ export const Ruling = () => {
               hasError={courtLegalArgumentsErrorMessage !== ''}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -622,7 +618,6 @@ export const Ruling = () => {
             }
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box marginBottom={10}>
