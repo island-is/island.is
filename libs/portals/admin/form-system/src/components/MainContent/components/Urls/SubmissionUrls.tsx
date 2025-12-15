@@ -117,9 +117,9 @@ export const SubmissionUrls = () => {
           onChange={(e) => {
             controlDispatch({
               type: 'CHANGE_SUBMISSION_URL',
-              payload: { value: e.target.name },
+              payload: { value: e.target.id },
             })
-            formUpdate({ ...form, submissionServiceUrl: e.target.name })
+            formUpdate({ ...form, submissionServiceUrl: e.target.id })
           }}
         />
       </Box>
