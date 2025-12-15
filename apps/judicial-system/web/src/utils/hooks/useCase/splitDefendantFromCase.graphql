@@ -1,0 +1,8 @@
+mutation SplitDefendantFromCase($input: SplitDefendantFromCaseInput!) {
+  splitDefendantFromCase(input: $input) {
+    id
+    defendants {
+      id
+    }
+  }
+}
