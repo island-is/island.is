@@ -12,6 +12,7 @@ query getAppointments(
       time
       weekday
       status
+      duration
       location {
         __typename
         id

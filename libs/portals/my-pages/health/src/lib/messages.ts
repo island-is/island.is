@@ -2271,4 +2271,12 @@ export const messages = defineMessages({
     defaultMessage: 'Opna kort',
     id: 'sp.health:see-on-maps',
   },
+  duration: {
+    defaultMessage: 'Tímalengd',
+    id: 'sp.health:duration',
+  },
+  argWithMinutes: {
+    defaultMessage: '{arg} mínútur',
+    id: 'sp.health:arg-with-minutes',
+  },
 })

@@ -4,7 +4,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
-import { CONTENT_GAP_LG } from '../../utils/constants'
+import {
+  CONTENT_GAP_LG,
+  DEFAULT_APPOINTMENTS_STATUS,
+} from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
   useGetBloodTypeOverviewQuery,
@@ -108,7 +111,7 @@ export const HealthOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: [], //TODO: FIX WHEN SERVICE IS READY
+      status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
     },
     skip: !showAppointments,
   })

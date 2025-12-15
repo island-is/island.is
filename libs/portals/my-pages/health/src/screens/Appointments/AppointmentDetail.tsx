@@ -74,6 +74,15 @@ const AppointmentDetail = () => {
               loading={loading}
             />
           )}
+          {appointment?.duration && (
+            <InfoLine
+              label={formatMessage(messages.duration)}
+              content={formatMessage(messages.argWithMinutes, {
+                arg: appointment?.duration,
+              })}
+              loading={loading}
+            />
+          )}
           <InfoLine
             loading={loading}
             label={formatMessage(messages.locationAddress)}

@@ -639,6 +639,7 @@ export class HealthDirectorateService {
             title: item.description,
             status: item.status,
             instruction: item.patientInstruction,
+            duration: item.duration,
             location: item.location
               ? {
                   id: item.location.id || '',

@@ -16,6 +16,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
 import { messages } from '../../lib/messages'
+import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
 
@@ -29,7 +30,7 @@ interface Filter {
 const AppointmentsOverview = () => {
   const { formatMessage } = useLocale()
   const [filter, setFilter] = useState<Filter>({
-    statuses: [],
+    statuses: DEFAULT_APPOINTMENTS_STATUS,
     dates: {},
   })
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -76,8 +77,6 @@ const AppointmentsOverview = () => {
         return formatMessage(messages.appointmentStatusBooked)
       case HealthDirectorateAppointmentStatus.CANCELLED:
         return formatMessage(messages.appointmentStatusCancelled)
-      case HealthDirectorateAppointmentStatus.FULFILLED:
-        return formatMessage(messages.appointmentStatusFulfilled)
       default:
         return status
     }
@@ -145,35 +144,31 @@ const AppointmentsOverview = () => {
                   <Text variant={'h5'} as="span" color={'blue400'}>
                     {formatMessage(messages.status)}
                   </Text>
-                  {[
-                    HealthDirectorateAppointmentStatus.BOOKED,
-                    HealthDirectorateAppointmentStatus.CANCELLED,
-                    HealthDirectorateAppointmentStatus.FULFILLED,
-                  ]
-                    .sort((a, b) => mapLabel(a).localeCompare(mapLabel(b)))
-                    .map((status) => (
-                      <Box key={status} paddingTop={2}>
-                        <Checkbox
-                          name={status}
-                          label={mapLabel(status)}
-                          checked={filter.statuses.includes(status)}
-                          onChange={(event) => {
-                            const isChecked = event.target.checked
-                            setFilter((prev) => {
-                              let updatedStatuses = [...prev.statuses]
-                              if (isChecked) {
-                                updatedStatuses.push(status)
-                              } else {
-                                updatedStatuses = updatedStatuses.filter(
-                                  (s) => s !== status,
-                                )
-                              }
-                              return { ...prev, statuses: updatedStatuses }
-                            })
-                          }}
-                        />
-                      </Box>
-                    ))}
+                  {DEFAULT_APPOINTMENTS_STATUS.sort((a, b) =>
+                    mapLabel(a).localeCompare(mapLabel(b)),
+                  ).map((status) => (
+                    <Box key={status} paddingTop={2}>
+                      <Checkbox
+                        name={status}
+                        label={mapLabel(status)}
+                        checked={filter.statuses.includes(status)}
+                        onChange={(event) => {
+                          const isChecked = event.target.checked
+                          setFilter((prev) => {
+                            let updatedStatuses = [...prev.statuses]
+                            if (isChecked) {
+                              updatedStatuses.push(status)
+                            } else {
+                              updatedStatuses = updatedStatuses.filter(
+                                (s) => s !== status,
+                              )
+                            }
+                            return { ...prev, statuses: updatedStatuses }
+                          })
+                        }}
+                      />
+                    </Box>
+                  ))}
                 </Box>
                 <Box
                   display="flex"
