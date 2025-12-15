@@ -1200,23 +1200,21 @@ export class CaseService {
     const messages: Message[] = []
 
     // No need to deliver case files if completing after correction
-    if (theCase.state !== CaseState.CORRECTING) {
-      for (const caseFile of updatedCase.caseFiles?.filter(
-        (caseFile) =>
-          caseFile.state === CaseFileState.STORED_IN_RVG &&
-          caseFile.key &&
-          caseFile.category &&
-          [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
-            caseFile.category,
-          ),
-      ) ?? []) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: updatedCase.id,
-          elementId: caseFile.id,
-        })
-      }
+    for (const caseFile of updatedCase.caseFiles?.filter(
+      (caseFile) =>
+        caseFile.state === CaseFileState.STORED_IN_RVG &&
+        caseFile.key &&
+        caseFile.category &&
+        [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+          caseFile.category,
+        ),
+    ) ?? []) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+        user,
+        caseId: updatedCase.id,
+        elementId: caseFile.id,
+      })
     }
 
     messages.push({

@@ -624,7 +624,7 @@ export class InternalCaseService {
                 serviceDate: {
                   [Op.lte]: minDate,
                 },
-                // 🔑 Only use the latest verdict per defendant
+                // Only use the latest verdict per defendant
                 [Op.and]: Sequelize.literal(`
                   "verdicts"."created" = (
                     SELECT MAX("v2"."created")
