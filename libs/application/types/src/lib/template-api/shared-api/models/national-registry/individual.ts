@@ -18,3 +18,13 @@ export interface NationalRegistryIndividual {
   } | null
   birthDate: Date
 }
+
+export interface NationalRegistryV3Individual
+  extends NationalRegistryIndividual {
+  genderDescription?: string | undefined
+}
+export interface NationalRegistryOtherIndividual {
+  nationalId: string
+  fullName: string
+  address: Address | null
+}
