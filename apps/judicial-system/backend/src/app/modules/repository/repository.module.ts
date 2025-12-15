@@ -5,6 +5,7 @@ import { ConfigModule } from '@island.is/nest/config'
 
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseFile } from './models/caseFile.model'
 import { CaseString } from './models/caseString.model'
 import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
@@ -31,6 +32,7 @@ import { repositoryModuleConfig } from './repository.config'
     SequelizeModule.forFeature([
       Case,
       CaseArchive,
+      CaseFile,
       CaseString,
       CourtDocument,
       CourtSession,
