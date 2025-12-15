@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Platform, StatusBar, useColorScheme } from 'react-native'
 import { Navigation } from 'react-native-navigation'
-import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components/native'
 import { overrideUserInterfaceStyle } from '../lib/rn-island'
 import { usePreferencesStore } from '../stores/preferences-store'
 import { uiStore } from '../stores/ui-store'

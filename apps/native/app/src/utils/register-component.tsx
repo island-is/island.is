@@ -1,21 +1,18 @@
-import { ApolloProvider } from '@apollo/client'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
-import { NavigationProvider } from 'react-native-navigation-hooks'
-import { FeatureFlagProvider } from '../contexts/feature-flag-provider'
-import { I18nProvider } from '../contexts/i18n-provider'
+import { Text } from 'react-native'
+import { Navigation } from 'react-native-navigation'
 import { ThemeProvider } from '../contexts/theme-provider'
+import { NavigationProvider } from 'react-native-navigation-hooks'
+import { I18nProvider } from '../contexts/i18n-provider'
+import { FeatureFlagProvider } from '../contexts/feature-flag-provider'
+import { ApolloProvider } from '@apollo/client'
 import { getApolloClient } from '../graphql/client'
 import { OfflineHoc } from '../hoc/offline-hoc'
 
 export function registerComponent<Props>(
   name: string,
-  Component: NavigationFunctionComponent<Props>,
+  Component: React.ComponentType<Props>,
 ) {
-  const client = getApolloClient()
-
+  // const client = getApolloClient()
   Navigation.registerComponent(
     name,
     () => (props) => {
@@ -24,11 +21,11 @@ export function registerComponent<Props>(
           <I18nProvider>
             <NavigationProvider value={{ componentId: props.componentId }}>
               <FeatureFlagProvider>
-                <ApolloProvider client={client}>
-                  <OfflineHoc>
-                    <Component {...props} />
-                  </OfflineHoc>
-                </ApolloProvider>
+                {/* <ApolloProvider client={client}>
+                  <OfflineHoc> */}
+                <Component {...props} />
+                {/* </OfflineHoc>
+                </ApolloProvider> */}
               </FeatureFlagProvider>
             </NavigationProvider>
           </I18nProvider>
