@@ -45,14 +45,14 @@ const generateCardIntro = (data: BuildingDto): LocalizedContent => {
     const textIs = data.squareMeters
       ? `${data.use} (${data.squareMeters} fm)`
       : data.use
-    const textEn = data.squareMeters
+    const textEn = data.squareMeters ? `(${data.squareMeters} sq.m)` : undefined
 
     cardIntro[LOCALE].push({
       items: [{ value: textIs }],
     })
     if (textEn) {
       cardIntro[EN_LOCALE].push({
-        items: [{ value: textEn.toString() }],
+        items: [{ value: textEn }],
       })
     }
   }
