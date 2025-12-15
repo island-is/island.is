@@ -321,10 +321,7 @@ const Overview: FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={10}>
-          <InputPenalties
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <InputPenalties />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

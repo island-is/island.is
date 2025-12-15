@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -33,16 +33,14 @@ import {
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   toggleInArray,
-  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   UpdateCase,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -102,15 +100,14 @@ export const PoliceDemands = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
-    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
-  useDeb(workingCase, [
-    'lawsBroken',
-    'legalBasis',
-    'requestedOtherRestrictions',
-  ])
 
+  const lawsBrokenInput = useDebouncedInput('lawsBroken', ['empty'])
+  const legalBasisInput = useDebouncedInput('legalBasis', [])
+  const requestedOtherRestrictionsInput = useDebouncedInput(
+    'requestedOtherRestrictions',
+    [],
+  )
   const initialize = useCallback(() => {
     if (
       !workingCase.requestedOtherRestrictions &&
@@ -321,29 +318,11 @@ export const PoliceDemands = () => {
               placeholder={formatMessage(
                 rcDemands.sections.lawsBroken.placeholder,
               )}
-              value={workingCase.lawsBroken || ''}
-              errorMessage={lawsBrokenErrorMessage}
-              hasError={lawsBrokenErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  lawsBrokenErrorMessage,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLawsBrokenErrorMessage,
-                )
-              }
+              value={lawsBrokenInput.value || ''}
+              errorMessage={lawsBrokenInput.errorMessage}
+              hasError={lawsBrokenInput.hasError}
+              onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+              onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
               required
               textarea
               rows={7}
@@ -385,24 +364,8 @@ export const PoliceDemands = () => {
               placeholder={formatMessage(
                 rcDemands.sections.legalBasis.legalBasisPlaceholder,
               )}
-              value={workingCase.legalBasis || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'legalBasis',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'legalBasis',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
+              value={legalBasisInput.value || ''}
+              onChange={(evt) => legalBasisInput.onChange(evt.target.value)}
               textarea
               rows={7}
             />
@@ -491,26 +454,12 @@ export const PoliceDemands = () => {
                 label={formatMessage(
                   rcDemands.sections.custodyRestrictions.label,
                 )}
-                value={workingCase.requestedOtherRestrictions || ''}
+                value={requestedOtherRestrictionsInput.value || ''}
                 placeholder={formatMessage(
                   rcDemands.sections.custodyRestrictions.placeholder,
                 )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'requestedOtherRestrictions',
-                    event.target.value,
-                    [],
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'requestedOtherRestrictions',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
+                onChange={(evt) =>
+                  requestedOtherRestrictionsInput.onChange(evt.target.value)
                 }
                 rows={10}
                 textarea

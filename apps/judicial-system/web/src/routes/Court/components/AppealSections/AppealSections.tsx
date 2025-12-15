@@ -14,10 +14,9 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+  useCase,
+  useDebouncedInput,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isNullOrUndefined } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealSections as m } from './AppealSections.strings'
@@ -45,11 +44,20 @@ const AppealSections: FC<Props> = ({
   onChange,
 }) => {
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const [checkedAccusedRadio, setCheckedAccusedRadio] =
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
+
+  const accusedAppealAnnouncementInput = useDebouncedInput(
+    'accusedAppealAnnouncement',
+    [],
+  )
+  const prosecutorAppealAnnouncementInput = useDebouncedInput(
+    'prosecutorAppealAnnouncement',
+    [],
+  )
 
   const handleChange = (update: {
     accusedAppealDecision?: CaseAppealDecision
@@ -232,25 +240,15 @@ const AppealSections: FC<Props> = ({
               name="accusedAppealAnnouncement"
               data-testid="accusedAppealAnnouncement"
               label={formatMessage(m.defendantAnnouncementLabelV2)}
-              value={workingCase.accusedAppealAnnouncement || ''}
+              value={accusedAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.defendantAnnouncementPlaceholderV2)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'accusedAppealAnnouncement',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) => {
-                const accusedAppealAnnouncement = event.target.value
-                validateAndSendToServer(
-                  'accusedAppealAnnouncement',
+              onChange={(evt) => {
+                const accusedAppealAnnouncement = evt.target.value
+
+                accusedAppealAnnouncementInput.onChange(
                   accusedAppealAnnouncement,
-                  [],
-                  workingCase,
-                  updateCase,
                 )
+
                 if (onChange) {
                   onChange({ accusedAppealAnnouncement })
                 }
@@ -294,7 +292,6 @@ const AppealSections: FC<Props> = ({
               large
               backgroundColor="white"
             />
-
             <RadioButton
               name="prosecutor-appeal-decision"
               id="prosecutor-accept"
@@ -370,25 +367,15 @@ const AppealSections: FC<Props> = ({
               name="prosecutorAppealAnnouncement"
               data-testid="prosecutorAppealAnnouncement"
               label={formatMessage(m.prosecutorAnnouncementLabelV2)}
-              value={workingCase.prosecutorAppealAnnouncement || ''}
+              value={prosecutorAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.prosecutorAnnouncementPlaceholderV2)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'prosecutorAppealAnnouncement',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) => {
-                const prosecutorAppealAnnouncement = event.target.value
-                validateAndSendToServer(
-                  'prosecutorAppealAnnouncement',
+              onChange={(evt) => {
+                const prosecutorAppealAnnouncement = evt.target.value
+
+                prosecutorAppealAnnouncementInput.onChange(
                   prosecutorAppealAnnouncement,
-                  [],
-                  workingCase,
-                  updateCase,
                 )
+
                 if (onChange) {
                   onChange({ prosecutorAppealAnnouncement })
                 }

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -17,25 +17,23 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+  useCase,
+  useDebouncedInput,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const PoliceReport = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
-  const [caseFactsEM, setCaseFactsEM] = useState<string>('')
-  const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, [
-    'caseFacts',
-    'legalArguments',
+  const caseFactsInput = useDebouncedInput('caseFacts', ['empty'])
+  const legalArgumentsInput = useDebouncedInput('legalArguments', ['empty'])
+  const prosecutorOnlySessionRequestInput = useDebouncedInput(
     'prosecutorOnlySessionRequest',
-  ])
+    [],
+  )
 
   useEffect(() => {
     if (
@@ -99,29 +97,11 @@ const PoliceReport = () => {
             name="caseFacts"
             label={formatMessage(icReportForm.caseFacts.label)}
             placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
-            errorMessage={caseFactsEM}
-            hasError={caseFactsEM !== ''}
-            value={workingCase.caseFacts || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'caseFacts',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                caseFactsEM,
-                setCaseFactsEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'caseFacts',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setCaseFactsEM,
-              )
-            }
+            errorMessage={caseFactsInput.errorMessage}
+            hasError={caseFactsInput.hasError}
+            value={caseFactsInput.value || ''}
+            onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
+            onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
             required
             rows={14}
             textarea
@@ -146,29 +126,11 @@ const PoliceReport = () => {
               placeholder={formatMessage(
                 icReportForm.legalArguments.placeholder,
               )}
-              value={workingCase.legalArguments || ''}
-              errorMessage={legalArgumentsEM}
-              hasError={legalArgumentsEM !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  legalArgumentsEM,
-                  setLegalArgumentsEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLegalArgumentsEM,
-                )
-              }
+              value={legalArgumentsInput.value || ''}
+              errorMessage={legalArgumentsInput.errorMessage}
+              hasError={legalArgumentsInput.hasError}
+              onChange={(evt) => legalArgumentsInput.onChange(evt.target.value)}
+              onBlur={(evt) => legalArgumentsInput.onBlur(evt.target.value)}
               required
               textarea
               rows={14}
@@ -206,23 +168,9 @@ const PoliceReport = () => {
                   icReportForm.prosecutorOnly.input.placeholder,
                 )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
-                value={workingCase.prosecutorOnlySessionRequest || ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'prosecutorOnlySessionRequest',
-                    event.target.value,
-                    [],
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'prosecutorOnlySessionRequest',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
+                value={prosecutorOnlySessionRequestInput.value || ''}
+                onChange={(evt) =>
+                  prosecutorOnlySessionRequestInput.onChange(evt.target.value)
                 }
                 textarea
                 rows={7}
@@ -230,10 +178,7 @@ const PoliceReport = () => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
-            <CommentsInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            <CommentsInput />
           </Box>
         </Box>
       </FormContentContainer>
