@@ -6,10 +6,12 @@ import {
   TextProps,
   TextStyle,
   TouchableHighlightProps,
+  View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
+import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
@@ -144,7 +146,10 @@ export function Button({
 
   if (isFilledUtilityButton) isUtilityButton = true
 
-  const renderIcon = () => {
+  const renderIcon = (loading: boolean) => {
+    if (loading) {
+      return <Loader />
+    }
     return (
       <Icon
         source={icon}
@@ -171,12 +176,20 @@ export function Button({
       compactPadding={compactPadding}
       {...rest}
     >
-      <>
-        {icon && iconPosition === 'start' && renderIcon()}
-        {loading ? (
-          <ActivityIndicator size="small" color={theme.color.white} />
-        ) : (
-          title && (
+      {loading ? (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: theme.spacing.p3,
+          }}
+        >
+          <Loader />
+        </View>
+      ) : (
+        <>
+          {icon && iconPosition === 'start' && renderIcon(loading)}
+          {title && (
             <Text
               {...textProps}
               isTransparent={isTransparent}
@@ -190,10 +203,10 @@ export function Button({
             >
               {title}
             </Text>
-          )
-        )}
-        {icon && iconPosition === 'end' && renderIcon()}
-      </>
+          )}
+          {icon && iconPosition === 'end' && renderIcon(loading)}
+        </>
+      )}
     </Host>
   )
 }

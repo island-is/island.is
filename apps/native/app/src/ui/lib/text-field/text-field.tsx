@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
-import { dynamicColor, font } from '../../utils'
+import { dynamicColor, font, theme } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable`
@@ -30,18 +30,30 @@ const Host = styled.Pressable`
   }))};
 `
 
-const Label = styled(Typography)`
+const Label = styled(Typography)<{ readOnly: boolean }>`
   color: ${dynamicColor((props) => ({
     dark: 'foreground',
     light: props.theme.color.blue400,
   }))};
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+  ${({ readOnly }) =>
+    readOnly &&
+    css`
+      color: ${({ theme }) => theme.color.dark400};
+    `}
 `
 
-const Input = styled(TextInput)<{ value: string; disabled: boolean }>`
+const Input = styled(TextInput)<{
+  value: string
+  disabled: boolean
+  readOnly: boolean
+}>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
+
+  color: ${({ theme, readOnly }) =>
+    readOnly ? theme.color.dark400 : theme.color.blue400};
 
   ${font({
     fontSize: 16,
@@ -75,6 +87,7 @@ export const TextField = ({
   disabled = false,
   loading = false,
   errorMessage,
+  readOnly = false,
   ...rest
 }: TextFieldProps) => {
   const theme = useTheme()
@@ -84,12 +97,15 @@ export const TextField = ({
     <View>
       <Host onPress={() => inputRef.current?.focus()} style={style}>
         <View>
-          <Label variant="eyebrow">{label}</Label>
+          <Label readOnly={readOnly} variant="eyebrow">
+            {label}
+          </Label>
           <Input
             disabled={disabled}
             onChangeText={onChange}
             value={value}
             ref={inputRef}
+            readOnly={readOnly}
             {...rest}
           />
         </View>

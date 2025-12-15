@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView } from 'react-native'
+import { Alert, SafeAreaView, ScrollView } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -106,6 +106,30 @@ export const MedicineDelegationDetailScreen: NavigationFunctionComponent<{
     })
   }
 
+  const confirmRevoke = () => {
+    Alert.alert(
+      intl.formatMessage({
+        id: 'health.medicineDelegation.detail.revokePromptTitle',
+      }),
+      '',
+      [
+        {
+          text: intl.formatMessage({
+            id: 'health.medicineDelegation.detail.revokePromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'health.medicineDelegation.detail.revokePromptConfirm',
+          }),
+          style: 'destructive',
+          onPress: revoke,
+        },
+      ],
+    )
+  }
+
   const validFrom = delegation?.dates?.from
     ? new Date(delegation.dates.from)
     : undefined
@@ -166,11 +190,12 @@ export const MedicineDelegationDetailScreen: NavigationFunctionComponent<{
           style={{ marginBottom: 16 }}
         />
         <Button
+          loading={loadingRevokeMedicineDelegation}
           compactPadding
           title={intl.formatMessage({
             id: 'health.medicineDelegation.detail.revoke',
           })}
-          onPress={revoke}
+          onPress={confirmRevoke}
           isUtilityButton
           isOutlined
           icon={trashIcon}

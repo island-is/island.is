@@ -259,13 +259,12 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
                 errorMessage={nameError}
               />
               <NameField
+                readOnly={true}
                 label={intl.formatMessage({
                   id: 'health.medicineDelegation.form.nameLabel',
                 })}
                 value={name}
-                disabled
                 editable={false}
-                focusable={false}
               />
             </Fields>
             <Checkbox

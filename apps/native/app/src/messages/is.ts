@@ -823,6 +823,9 @@ export const is = {
   'health.medicineDelegation.detail.revoke': 'Eyða heimild',
   'health.medicineDelegation.detail.revokeError':
     'Ekki tókst að eyða lyfjaheimild. Vinsamlegast reynið aftur síðar.',
+  'health.medicineDelegation.detail.revokePromptTitle': 'Viltu eyða heimild?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Hætta við',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Eyða',
   'health.medicineDelegation.form.title': 'Bæta við lyfjaheimild',
   'health.medicineDelegation.form.subtitle':
     'Veldu aðila sem má sækja lyfin þín í apóteki.',

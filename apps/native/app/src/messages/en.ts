@@ -826,6 +826,10 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.detail.revoke': 'Revoke delegation',
   'health.medicineDelegation.detail.revokeError':
     'Failed to revoke medicine authorization. Please try again later.',
+  'health.medicineDelegation.detail.revokePromptTitle':
+    'Do you want to revoke this authorization?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Cancel',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Revoke',
   'health.medicineDelegation.form.title': 'Add medicine authorization',
   'health.medicineDelegation.form.subtitle':
     'Choose a person who may collect your medicine at the pharmacy.',
