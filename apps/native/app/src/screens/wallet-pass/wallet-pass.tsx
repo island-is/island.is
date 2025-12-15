@@ -39,7 +39,7 @@ import {
   LICENSE_CARD_ROW_GAP,
   LicenseCard,
 } from '../../ui'
-import { isAndroid, isIos } from '../../utils/devices'
+import { isAndroid, isIos, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 import {
@@ -496,7 +496,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: cardHeight }} />
+      <View
+        style={{
+          height: isIosLiquidGlassEnabled ? 2 * cardHeight : cardHeight,
+        }}
+      />
       <LicenseCardWrapper>
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
