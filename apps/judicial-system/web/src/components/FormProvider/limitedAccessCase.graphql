@@ -21,6 +21,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       displayDate
       submittedBy
       fileRepresentative
+      isKeyAccessible
     }
     defendants {
       id
@@ -367,6 +368,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         userGeneratedFilename
         displayDate
         submittedBy
+        isKeyAccessible
       }
       policeCaseNumbers
       indictmentSubtypes

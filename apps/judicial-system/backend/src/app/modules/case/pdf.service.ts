@@ -92,7 +92,7 @@ export class PdfService {
           caseFile.policeCaseNumber === policeCaseNumber &&
           caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
-          caseFile.key &&
+          caseFile.isKeyAccessible &&
           caseFile.chapter !== null &&
           caseFile.orderWithinChapter !== null,
       )

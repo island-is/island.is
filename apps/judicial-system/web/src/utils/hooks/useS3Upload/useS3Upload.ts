@@ -72,6 +72,7 @@ export interface TUploadFile extends UploadFile {
   submissionDate?: string | null
   fileRepresentative?: string | null
   previewUrl?: string | null
+  isKeyAccessible?: boolean | null
 }
 
 export interface UploadFileState {
@@ -95,6 +96,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   userGeneratedFilename: file.userGeneratedFilename,
   submissionDate: file.submissionDate,
   fileRepresentative: file.fileRepresentative,
+  isKeyAccessible: file.isKeyAccessible,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
@@ -359,6 +361,7 @@ const useS3Upload = (
         userGeneratedFilename: file.userGeneratedFilename,
         submissionDate: file.submissionDate,
         fileRepresentative: file.fileRepresentative,
+        isKeyAccessible: file.isKeyAccessible,
       }
 
       if (defendantId) {

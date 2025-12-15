@@ -18,12 +18,14 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseFileCategory,
   DateType,
   EventType,
   StringType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
@@ -105,6 +107,7 @@ export class CaseRepositoryService {
     @InjectModel(Victim) private readonly victimModel: typeof Victim,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
+    @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -564,6 +567,59 @@ export class CaseRepositoryService {
       // Copy all indictment count offenses to the new case
       // Nothing to do here, offenses are only linked to indictment counts
       // Consider removing case id from other tables not directly linked to cases
+
+      // Move the defendant's case files to the new case
+      const caseFilesCategoriesToMove = [
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      ]
+
+      const caseFileUpdateOptions: UpdateOptions = {
+        where: { caseId, defendantId, category: caseFilesCategoriesToMove },
+      }
+
+      if (transaction) {
+        caseFileUpdateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.caseFileModel.update(
+          { caseId: splitCaseId },
+          caseFileUpdateOptions,
+        ),
+      )
+
+      // Copy all case files linked to the case but not to any defendant
+      const caseFiles = await this.caseFileModel.findAll({
+        where: {
+          caseId,
+          defendantId: null,
+          category: caseFilesCategoriesToMove,
+        },
+        transaction,
+      })
+
+      const caseFileCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        caseFileCreateOptions.transaction = transaction
+      }
+
+      for (const caseFile of caseFiles) {
+        promises.push(
+          this.caseFileModel.create(
+            { ...caseFile.toJSON(), id: undefined, caseId: splitCaseId },
+            caseFileCreateOptions,
+          ),
+        )
+      }
 
       await Promise.all(promises)
 

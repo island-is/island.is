@@ -480,7 +480,7 @@ export class LimitedAccessCaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -696,7 +696,7 @@ export class LimitedAccessCaseService {
     const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
-          file.key &&
+          file.isKeyAccessible &&
           file.category &&
           allowedCaseFileCategories.includes(file.category),
       ) ?? []

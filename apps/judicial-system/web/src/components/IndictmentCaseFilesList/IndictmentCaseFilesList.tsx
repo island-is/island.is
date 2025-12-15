@@ -80,7 +80,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
           <PdfButton
             title={getFileName(file)}
             renderAs="row"
-            disabled={!file.key}
+            disabled={!file.isKeyAccessible}
             handleClick={() => onOpenFile(file.id)}
           />
         </Box>
