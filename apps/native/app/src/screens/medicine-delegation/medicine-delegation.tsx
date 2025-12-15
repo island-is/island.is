@@ -173,7 +173,10 @@ export const MedicineDelegationScreen: NavigationFunctionComponent = ({
               accessibilityRole="button"
               onPress={() =>
                 // TODO: Add link to read more about medicine delegation
-                openBrowser('https://island.is', componentId)
+                openBrowser(
+                  'https://island.is/s/landlaeknir/frett',
+                  componentId,
+                )
               }
             >
               <Typography
