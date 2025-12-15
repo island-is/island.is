@@ -186,15 +186,21 @@ export class FileService {
       return undefined
     }
 
-    const confirmationDate = hasRulingDateConfirmation
-      ? EventLog.getEventLogDateByEventType(
-          EventType.INDICTMENT_COMPLETED,
-          theCase.eventLogs,
-        ) ?? theCase.rulingDate
-      : hasRulingOrderConfirmation
-      ? file.submissionDate
-      : undefined
-
+    const getConfirmationDate = (): Date | undefined => {
+      if (hasRulingDateConfirmation) {
+        return (
+          EventLog.getEventLogDateByEventType(
+            EventType.INDICTMENT_COMPLETED,
+            theCase.eventLogs,
+          ) ?? theCase.rulingDate
+        )
+      }
+      if (hasRulingOrderConfirmation) {
+        return file.submissionDate
+      }
+      return undefined
+    }
+    const confirmationDate = getConfirmationDate()
     if (!confirmationDate) {
       return undefined
     }

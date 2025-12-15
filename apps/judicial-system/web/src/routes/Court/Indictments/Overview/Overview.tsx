@@ -132,7 +132,6 @@ const OverviewBody = ({
                     `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
                   )
                 }}
-                disabled={false}
               >
                 Kveða upp úrskurð undir rekstri máls
               </Button>
