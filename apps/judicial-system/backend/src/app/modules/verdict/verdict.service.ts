@@ -581,16 +581,4 @@ export class VerdictService {
       throw error
     }
   }
-
-  transferDefendantVerdictsToCase(
-    newCase: Case,
-    defendant: Defendant,
-    transaction: Transaction,
-  ): Promise<number> {
-    return this.verdictRepositoryService.updateMany(
-      { caseId: defendant.caseId, defendantId: defendant.id },
-      { caseId: newCase.id },
-      { transaction },
-    )
-  }
 }
