@@ -62,10 +62,10 @@ const calculate = (
   let multiplier = 1
   let environmentalMultiplier = 1
 
-  if (row.environmentalMultipliers?.[year]) {
+  if (row.environmentalMultipliers?.[year] !== undefined) {
     multiplier = row.environmentalMultipliers[year]
   }
-  if (row.multipliers?.[year]) {
+  if (row.multipliers?.[year] !== undefined) {
     environmentalMultiplier = row.multipliers[year]
   }
 
@@ -164,15 +164,18 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
   >(PUBLIC_VEHICLE_SEARCH_QUERY, {
     onCompleted(data) {
       const massLaden = data.getPublicVehicleSearch?.massLaden ?? 0
-      if (!massLaden)
+      if (!massLaden) {
         setErrorMessage(formatMessage(translationStrings.noVehicleFound))
-      else setErrorMessage(null)
+        return
+      }
 
       const newResult = calculate(inputState, slice, massLaden, formatMessage)
       if (newResult.errorMessage) {
         setErrorMessage(newResult.errorMessage)
         return
       }
+
+      setErrorMessage(null)
 
       setResult({
         massLaden,
@@ -186,8 +189,6 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
       setErrorMessage(error.message)
     },
   })
-
-  console.log(result)
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
@@ -231,7 +232,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
                 updateInputState('kilometers', ev.target.value)
               }}
               onKeyDown={(ev) => {
-                if (ev.key === 'Enter') {
+                if (ev.key === 'Enter' && canCalculate && !loading) {
                   search({
                     variables: { input: { search: inputState.plateNumber } },
                   })
@@ -262,7 +263,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
           onClick={() =>
             search({ variables: { input: { search: inputState.plateNumber } } })
           }
-          disabled={!canCalculate}
+          disabled={!canCalculate || loading}
           loading={loading}
         >
           {formatMessage(translationStrings.calculate)}
