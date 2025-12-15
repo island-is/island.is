@@ -767,7 +767,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     name="courtStartDate"
                     datepickerLabel="Dagsetning þingfestingar"
                     timeLabel="Þinghald hófst (kk:mm)"
-                    maxDate={new Date()}
                     selectedDate={
                       courtSession.startDate ??
                       workingCase.courtDate?.date ??
@@ -966,7 +965,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 }}
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
                 disabled={courtSession.isConfirmed || false}
               />
               <MultipleValueList
@@ -1448,7 +1446,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   hasError={entriesErrorMessage !== ''}
                   errorMessage={entriesErrorMessage}
                   rows={15}
-                  autoExpand={{ on: true, maxHeight: 300 }}
                   disabled={courtSession.isConfirmed || false}
                   textarea
                   required
@@ -1569,7 +1566,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       hasError={rulingErrorMessage !== ''}
                       errorMessage={rulingErrorMessage}
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                       required
@@ -1596,7 +1592,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         )
                       }
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                     />

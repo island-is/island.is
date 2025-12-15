@@ -1,5 +1,8 @@
 import addDays from 'date-fns/addDays'
+import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
+import startOfDay from 'date-fns/startOfDay'
+import subDays from 'date-fns/subDays'
 import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
@@ -1561,5 +1564,33 @@ export class InternalCaseService {
         '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
       },
     })
+  }
+  async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
+    indictmentReviewerId: string,
+    targetDate: Date,
+  ) {
+    const targetRulingDate = subDays(targetDate, VERDICT_APPEAL_WINDOW_DAYS)
+    const start = startOfDay(targetRulingDate)
+    const end = endOfDay(targetRulingDate)
+
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+      ],
+      where: {
+        indictmentReviewerId: indictmentReviewerId,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        rulingDate: { [Op.gte]: start, [Op.lte]: end },
+      },
+    })
+    return cases
   }
 }

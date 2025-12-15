@@ -174,6 +174,12 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_SUBMISSION_URL'
+      payload: {
+        value: string
+      }
+    }
+  | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
     }
@@ -282,6 +288,15 @@ type InputSettingsActions =
       payload: {
         newValue: FormSystemLanguageType[]
         update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
+      type: 'SET_ANY_FIELD_SETTING'
+      payload: {
+        property: string
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        value: any
+        update?: (updatedActiveItem?: ActiveItem) => void
       }
     }
 
@@ -730,6 +745,17 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'CHANGE_SUBMISSION_URL': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          submissionServiceUrl: action.payload.value,
+        },
+      }
+      // action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'UPDATE_APPLICANT_TYPES': {
       return {
         ...state,
@@ -921,6 +947,31 @@ export const controlReducer = (
         },
       }
       update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_ANY_FIELD_SETTING': {
+      const field = activeItem.data as FormSystemField
+      const { property, value, update } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field.fieldSettings,
+          [property]: value,
+        },
+      }
+      if (update) {
+        update({ type: 'Field', data: newField })
+      }
       return {
         ...state,
         activeItem: {

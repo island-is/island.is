@@ -31,6 +31,8 @@ import {
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { VerdictService } from '../verdict'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
@@ -42,6 +44,8 @@ export class DefendantService {
     @InjectConnection() private readonly sequelize: Sequelize,
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly subpoenaService: SubpoenaService,
+    private readonly verdictService: VerdictService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -533,5 +537,41 @@ export class DefendantService {
 
         return { delivered: false }
       })
+  }
+
+  async transferDefendantToCase(
+    newCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<Defendant> {
+    const updatedDefendant = await this.defendantRepositoryService.update(
+      defendant.caseId,
+      defendant.id,
+      { caseId: newCase.id },
+      { transaction },
+    )
+
+    await this.subpoenaService.transferDefendantSubpoenasToCase(
+      newCase,
+      defendant,
+      transaction,
+    )
+
+    if (defendant.verdict) {
+      await this.verdictService.transferDefendantVerdictToCase(
+        newCase,
+        defendant.verdict,
+        transaction,
+      )
+    }
+
+    await this.defendantEventLogRepositoryService.transferDefendantEventLogsToCase(
+      defendant.caseId,
+      defendant.id,
+      newCase.id,
+      { transaction },
+    )
+
+    return updatedDefendant
   }
 }

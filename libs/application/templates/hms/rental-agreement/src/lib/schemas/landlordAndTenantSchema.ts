@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from '../messages'
 import { EMAIL_REGEX, YES } from '@island.is/application/core'
-import { isValidPhoneNumber } from '../../utils/utils'
+import { isValidMobileNumber } from '../../utils/utils'
 import { ApplicantsRole } from '../../utils/enums'
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
@@ -29,8 +29,8 @@ const personInfoSchema = z.object({
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
     })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+    .refine((x) => x && isValidMobileNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberMobileError,
     }),
   email: z
     .string()
@@ -71,8 +71,8 @@ const landLordInfoSchema = z.object({
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
     })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+    .refine((x) => x && isValidMobileNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberMobileError,
     }),
   email: z
     .string()
@@ -371,7 +371,7 @@ export const partiesSchema = z
         }
       })
     }
-  })
+  }) // Validate signatory
   .superRefine((data, ctx) => {
     const { applicant, signatory } = data
     const { nationalIdWithName, phone, email } = signatory || {}
@@ -389,6 +389,14 @@ export const partiesSchema = z
           code: z.ZodIssueCode.custom,
           message: 'Company signatory phone missing',
           params: m.landlordAndTenantDetails.phoneNumberEmptyError,
+          path: ['signatory', 'phone'],
+        })
+      }
+      if (phone && !isValidMobileNumber(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Company signatory phone is not a mobile number',
+          params: m.landlordAndTenantDetails.phoneNumberMobileError,
           path: ['signatory', 'phone'],
         })
       }

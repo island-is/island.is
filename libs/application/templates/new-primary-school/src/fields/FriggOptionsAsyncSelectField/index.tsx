@@ -1,3 +1,4 @@
+import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import { coreErrorMessages } from '@island.is/application/core'
 import {
   Application,
@@ -10,8 +11,7 @@ import { AsyncSelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { friggOptionsQuery } from '../../graphql/queries'
-import { OptionsType } from '../../utils/constants'
-import { Query, EducationFriggOptionsListInput } from '@island.is/api/schema'
+import { OptionsType, OTHER_OPTION } from '../../utils/constants'
 
 type FriggOptionsAsyncSelectFieldProps = {
   field: {
@@ -70,23 +70,29 @@ const FriggOptionsAsyncSelectField: FC<
             },
           })
 
+          let otherContentValue = ''
+
           const options =
-            data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key, id }) => {
-                const content = value.find(
-                  ({ language }) => language === lang,
-                )?.content
+            data?.friggOptions
+              ?.flatMap(({ options }) =>
+                options.flatMap(({ value, key, id }) => {
+                  const content = value.find(
+                    ({ language }) => language === lang,
+                  )?.content
 
-                if (!content) return []
+                  if (!content) return []
 
-                const contentValue = useIdAndKey ? `${id}::${key}` : id
+                  const contentValue = useIdAndKey ? `${id}::${key}` : id
 
-                return { value: contentValue, label: content }
-              }),
-            ) ?? []
+                  if (key === OTHER_OPTION) otherContentValue = contentValue
+
+                  return { value: contentValue, label: content }
+                }),
+              )
+              .sort((a, b) => a.label.localeCompare(b.label)) ?? []
 
           const otherIndex = options.findIndex(
-            (option) => option.value === 'other',
+            (option) => option.value === otherContentValue,
           )
 
           if (otherIndex >= 0) {

@@ -23,18 +23,18 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.RejectedRequest
     case PrescriptionRenewalBlockedReason.PENDING_REQUEST:
       return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
-    case PrescriptionRenewalBlockedReason.DISMISSED_REQUEST:
-      return PrescribedItemRenewalBlockedReasonEnum.DismissedRequest
     case PrescriptionRenewalBlockedReason.ALREADY_REQUESTED:
       return PrescribedItemRenewalBlockedReasonEnum.AlreadyRequested
     case PrescriptionRenewalBlockedReason.NOT_FULLY_DISPENSED:
       return PrescribedItemRenewalBlockedReasonEnum.NotFullyDispensed
     case PrescriptionRenewalBlockedReason.IS_REGIMENT:
       return PrescribedItemRenewalBlockedReasonEnum.IsRegiment
-    case PrescriptionRenewalBlockedReason.NO_MED_CARD:
+    case PrescriptionRenewalBlockedReason.DRUG_NOT_ON_MED_CARD:
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
-    case PrescriptionRenewalBlockedReason.NO_HEALTH_CLINIC:
+    case PrescriptionRenewalBlockedReason.NO_PRIMARY_CARE_CLINIC:
       return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
+    case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
+      return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists
     default:
       return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }
@@ -90,17 +90,19 @@ export const mapDelegationStatus = (
 export const mapDispensationItem = (
   item: DispensationHistoryItemDto,
 ): MedicineHistoryDispensation => {
-  const quantity = item.productQuantity ?? 0
+  const quantity = item.product.quantity ?? 0
 
   return {
-    id: item.productId,
-    name: item.productName,
-    quantity: [quantity.toString(), item.productUnit]
+    id: [item.product.id, item.dispensationDate?.toISOString()]
+      .filter((x) => isDefined(x))
+      .join('-'),
+    name: item.product.name,
+    quantity: [quantity.toString(), item.product.unit]
       .filter((x) => isDefined(x))
       .join(' '),
     agentName: item.dispensingAgentName,
-    unit: item.productUnit,
-    type: item.productType,
+    unit: item.product.unit,
+    type: item.product.type,
     indication: item.indication,
     dosageInstructions: item.dosageInstructions,
     issueDate: item.issueDate,
@@ -108,5 +110,6 @@ export const mapDispensationItem = (
     expirationDate: item.expirationDate,
     isExpired: item.isExpired,
     date: item.dispensationDate,
+    strength: item.product.strength ?? '',
   }
 }
