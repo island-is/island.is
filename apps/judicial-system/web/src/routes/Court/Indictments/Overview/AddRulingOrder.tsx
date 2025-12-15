@@ -92,7 +92,7 @@ const AddRulingOrder: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
+      sendNotification(workingCase.id, NotificationType.RULING_ORDER_ADDED)
     }
 
     setVisibleModal(undefined)

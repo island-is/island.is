@@ -88,6 +88,7 @@ export enum NotificationType {
   RECEIVED_BY_COURT = CaseNotificationType.RECEIVED_BY_COURT,
   REVOKED = CaseNotificationType.REVOKED,
   RULING = CaseNotificationType.RULING,
+  RULING_ORDER_ADDED = CaseNotificationType.RULING_ORDER_ADDED,
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
   SERVICE_SUCCESSFUL = SubpoenaNotificationType.SERVICE_SUCCESSFUL,
   SPOKESPERSON_ASSIGNED = CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,

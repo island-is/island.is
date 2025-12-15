@@ -304,6 +304,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ],
     },
     separate: true,
