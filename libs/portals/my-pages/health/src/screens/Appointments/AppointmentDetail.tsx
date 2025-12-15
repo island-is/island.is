@@ -14,6 +14,7 @@ import { messages } from '../../lib/messages'
 
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
 import { useGetAppointmentsQuery } from './Appointments.generated'
+import { generateGoogleMapsLink } from '../../utils/googleMaps'
 
 const AppointmentDetail = () => {
   const { formatMessage } = useLocale()
@@ -89,6 +90,18 @@ const AppointmentDetail = () => {
             ]
               .filter(Boolean)
               .join(', ')}
+            button={
+              appointment?.location?.address
+                ? {
+                    type: 'link',
+                    to: generateGoogleMapsLink(
+                      appointment.location?.address ?? '',
+                    ),
+                    icon: 'link',
+                    label: formatMessage(messages.openMap),
+                  }
+                : undefined
+            }
           />
           {(appointment?.practitioners?.length ?? 0) > 0 && (
             <InfoLine

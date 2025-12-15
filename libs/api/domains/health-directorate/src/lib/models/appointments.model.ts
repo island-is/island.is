@@ -2,35 +2,35 @@ import { Field, ObjectType, Float } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
-  @Field()
-  id!: string
+  @Field({ nullable: true })
+  id?: string
 
   @Field()
   name!: string
 
-  @Field()
-  organization!: string
+  @Field({ nullable: true })
+  organization?: string
 
   @Field()
   address!: string
 
-  @Field()
-  directions!: string
+  @Field({ nullable: true })
+  directions?: string
 
-  @Field()
-  city!: string
+  @Field({ nullable: true })
+  city?: string
 
-  @Field()
-  postalCode!: string
+  @Field({ nullable: true })
+  postalCode?: string
 
   @Field({ nullable: true })
   country?: string
 
-  @Field(() => Float)
-  latitude!: number
+  @Field(() => Float, { nullable: true })
+  latitude?: number
 
-  @Field(() => Float)
-  longitude!: number
+  @Field(() => Float, { nullable: true })
+  longitude?: number
 }
 
 @ObjectType('HealthDirectorateAppointment')

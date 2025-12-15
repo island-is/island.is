@@ -2267,4 +2267,8 @@ export const messages = defineMessages({
     defaultMessage: 'Útgáfustaður',
     id: 'sp.health:publication-place',
   },
+  openMap: {
+    defaultMessage: 'Opna kort',
+    id: 'sp.health:see-on-maps',
+  },
 })

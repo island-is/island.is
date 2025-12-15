@@ -639,18 +639,20 @@ export class HealthDirectorateService {
             title: item.description,
             status: item.status,
             instruction: item.patientInstruction,
-            location: {
-              id: item.location?.id || '',
-              name: item.location?.name || '',
-              organization: item.location?.organization || '',
-              address: item.location?.address || '',
-              directions: item.location?.directions || '',
-              city: item.location?.city || '',
-              postalCode: item.location?.postalCode || '',
-              country: item.location?.country || '',
-              latitude: item.location?.latitude || 0,
-              longitude: item.location?.longitude || 0,
-            },
+            location: item.location
+              ? {
+                  id: item.location.id || '',
+                  name: item.location.name,
+                  organization: item.location.organization || '',
+                  address: item.location.address,
+                  directions: item.location.directions || '',
+                  city: item.location.city || '',
+                  postalCode: item.location.postalCode || '',
+                  country: item.location.country || '',
+                  latitude: item.location.latitude || 0,
+                  longitude: item.location.longitude || 0,
+                }
+              : undefined,
             practitioners: item.practitioners || [],
           }
           return data
