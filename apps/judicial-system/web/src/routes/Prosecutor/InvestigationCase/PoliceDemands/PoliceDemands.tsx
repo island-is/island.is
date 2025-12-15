@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -21,12 +21,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -53,12 +49,11 @@ const PoliceDemands = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
-  const [demandsEM, setDemandsEM] = useState<string>('')
-  const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
-  const [legalBasisEM, setLegalBasisEM] = useState<string>('')
+  const { setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, ['demands', 'lawsBroken', 'legalBasis'])
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const lawsBrokenInput = useDebouncedInput('lawsBroken', ['empty'])
+  const legalBasisInput = useDebouncedInput('legalBasis', ['empty'])
 
   const initialize = useCallback(() => {
     const courtClaimPrefill: Partial<
@@ -204,29 +199,11 @@ const PoliceDemands = () => {
             name="demands"
             label={formatMessage(icDemands.sections.demands.label)}
             placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            value={workingCase.demands || ''}
-            errorMessage={demandsEM}
-            hasError={demandsEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'demands',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                demandsEM,
-                setDemandsEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'demands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setDemandsEM,
-              )
-            }
+            value={demandsInput.value || ''}
+            errorMessage={demandsInput.errorMessage}
+            hasError={demandsInput.hasError}
+            onChange={(evt) => demandsInput.onChange(evt.target.value)}
+            onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
             required
             textarea
             rows={7}
@@ -247,29 +224,11 @@ const PoliceDemands = () => {
             placeholder={formatMessage(
               icDemands.sections.lawsBroken.placeholder,
             )}
-            value={workingCase.lawsBroken || ''}
-            errorMessage={lawsBrokenEM}
-            hasError={lawsBrokenEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                lawsBrokenEM,
-                setLawsBrokenEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLawsBrokenEM,
-              )
-            }
+            value={lawsBrokenInput.value || ''}
+            errorMessage={lawsBrokenInput.errorMessage}
+            hasError={lawsBrokenInput.hasError}
+            onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+            onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
             required
             textarea
             rows={7}
@@ -288,29 +247,11 @@ const PoliceDemands = () => {
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,
             )}
-            value={workingCase.legalBasis || ''}
-            errorMessage={legalBasisEM}
-            hasError={legalBasisEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'legalBasis',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                legalBasisEM,
-                setLegalBasisEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'legalBasis',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLegalBasisEM,
-              )
-            }
+            value={legalBasisInput.value || ''}
+            errorMessage={legalBasisInput.errorMessage}
+            hasError={legalBasisInput.hasError}
+            onChange={(event) => legalBasisInput.onChange(event.target.value)}
+            onBlur={(event) => legalBasisInput.onBlur(event.target.value)}
             required
             textarea
             rows={7}
