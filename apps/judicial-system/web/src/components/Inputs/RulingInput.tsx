@@ -34,10 +34,6 @@ const RulingInput: FC<Props> = ({
       onChange={(evt) => rulingInput.onChange(evt.target.value)}
       textarea
       rows={rows ?? 16}
-      autoExpand={{
-        on: !rows,
-        maxHeight: 600,
-      }}
       disabled={disabled}
     />
   )

@@ -104,7 +104,6 @@ const PoliceReport = () => {
             onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
             required
             rows={14}
-            autoExpand={{ on: true, maxHeight: 600 }}
             textarea
           />
         </Box>
@@ -135,7 +134,6 @@ const PoliceReport = () => {
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -176,7 +174,6 @@ const PoliceReport = () => {
                 }
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </BlueBox>
           </Box>

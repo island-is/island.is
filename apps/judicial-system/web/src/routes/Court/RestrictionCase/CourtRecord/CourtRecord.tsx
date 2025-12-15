@@ -362,7 +362,6 @@ export const CourtRecord: FC = () => {
             onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -397,7 +396,6 @@ export const CourtRecord: FC = () => {
               hasError={sessionBookingsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -440,7 +438,6 @@ export const CourtRecord: FC = () => {
                 endOfSessionBookingsInput.onChange(evt.target.value)
               }
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>

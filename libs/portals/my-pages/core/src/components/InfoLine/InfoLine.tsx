@@ -125,6 +125,7 @@ export const InfoLine = ({
               width="full"
               className={styles.content}
               overflow="hidden"
+              flexWrap="wrap"
             >
               {loading ? (
                 <SkeletonLoader width="70%" height={27} />

@@ -207,7 +207,6 @@ const PoliceDemands = () => {
             required
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -233,7 +232,6 @@ const PoliceDemands = () => {
             required
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -257,7 +255,6 @@ const PoliceDemands = () => {
             required
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
       </FormContentContainer>

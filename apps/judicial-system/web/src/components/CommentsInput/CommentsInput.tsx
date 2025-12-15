@@ -30,7 +30,6 @@ const CommentsInput: FC = () => {
         onChange={(evt) => commentsInput.onChange(evt.target.value)}
         textarea
         rows={7}
-        autoExpand={{ on: true, maxHeight: 300 }}
       />
     </>
   )

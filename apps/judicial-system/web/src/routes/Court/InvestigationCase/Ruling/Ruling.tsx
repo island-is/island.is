@@ -178,7 +178,6 @@ const Ruling = () => {
             hasError={introductionInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -205,7 +204,6 @@ const Ruling = () => {
             hasError={prosecutorDemandsInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -232,7 +230,6 @@ const Ruling = () => {
               hasError={courtCaseFactsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -266,7 +263,6 @@ const Ruling = () => {
               hasError={courtLegalArgumentsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -345,7 +341,6 @@ const Ruling = () => {
             value={conclusionInput.value || ''}
             onChange={(evt) => conclusionInput.onChange(evt.target.value)}
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             textarea
             disabled={!isRulingRequired}
           />

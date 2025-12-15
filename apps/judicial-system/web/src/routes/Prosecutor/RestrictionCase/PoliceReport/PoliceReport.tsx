@@ -66,7 +66,6 @@ export const PoliceReport = () => {
               onChange={(evt) => demandsInput.onChange(evt.target.value)}
               onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -98,7 +97,6 @@ export const PoliceReport = () => {
               onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
               required
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -132,7 +130,6 @@ export const PoliceReport = () => {
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>

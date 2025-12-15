@@ -73,6 +73,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         serviceDate
         serviceInformationForDefendant
         externalPoliceDocumentId
+        isDefaultJudgement
       }
     }
     defenderName

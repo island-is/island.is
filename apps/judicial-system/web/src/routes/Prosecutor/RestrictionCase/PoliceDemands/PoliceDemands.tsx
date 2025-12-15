@@ -326,7 +326,6 @@ export const PoliceDemands = () => {
               required
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         )}
@@ -369,7 +368,6 @@ export const PoliceDemands = () => {
               onChange={(evt) => legalBasisInput.onChange(evt.target.value)}
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
         </Box>
@@ -464,7 +462,6 @@ export const PoliceDemands = () => {
                   requestedOtherRestrictionsInput.onChange(evt.target.value)
                 }
                 rows={10}
-                autoExpand={{ on: true, maxHeight: 500 }}
                 textarea
               />
             </BlueBox>

@@ -14,7 +14,7 @@ export const completedMessages = defineMessages({
   alertMessage: {
     id: 'fca.application:completed.alertMessage',
     defaultMessage:
-      'Umsókn þín um endurmat brunabótamats hefur verið send inn til Húsnæðis og mannvirkjastofnunar til yfirferðar',
+      'Umsókn þín um endurmat brunabótamats hefur verið send inn til HMS til yfirferðar',
     description: 'Completed alert message',
   },
   actionCardDone: {

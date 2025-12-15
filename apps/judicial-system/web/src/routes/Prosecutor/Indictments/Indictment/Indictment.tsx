@@ -461,7 +461,6 @@ const Indictment = () => {
               required
               autoComplete="off"
               rows={10}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
           <AnimatePresence>
@@ -540,7 +539,6 @@ const Indictment = () => {
                 hasError={demandsInput.hasError}
                 autoComplete="off"
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
                 textarea
                 required
               />
@@ -564,7 +562,6 @@ const Indictment = () => {
                 autoComplete="off"
                 required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </Box>
           )}
