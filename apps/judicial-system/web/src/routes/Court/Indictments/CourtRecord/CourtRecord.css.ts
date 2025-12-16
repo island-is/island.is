@@ -37,3 +37,13 @@ export const twoColGrid = style({
     },
   },
 })
+
+export const alertContainer = style({
+  width: '100%',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      width: '70%',
+    },
+  },
+})
