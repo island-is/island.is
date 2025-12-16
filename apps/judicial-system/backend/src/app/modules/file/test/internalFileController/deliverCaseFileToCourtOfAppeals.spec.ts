@@ -42,6 +42,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     category,
     name,
     key,
+    isKeyAccessible: true,
   } as CaseFile
   const theCase = {
     id: caseId,

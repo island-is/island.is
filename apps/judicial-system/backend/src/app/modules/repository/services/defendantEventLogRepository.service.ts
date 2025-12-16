@@ -1,4 +1,4 @@
-import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
+import { CreateOptions, Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -8,10 +8,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 interface CreateDefendantEventLogOptions {
-  transaction?: Transaction
-}
-
-interface MoveToCaseOptions {
   transaction?: Transaction
 }
 
@@ -51,43 +47,6 @@ export class DefendantEventLogRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error creating a new defendant event log for defendant ${data.defendantId} of case ${data.caseId} with event type ${data.eventType}:`,
-        { error },
-      )
-
-      throw error
-    }
-  }
-
-  async transferDefendantEventLogsToCase(
-    caseId: string,
-    defendantId: string,
-    newCaseId: string,
-    options?: MoveToCaseOptions,
-  ): Promise<number> {
-    try {
-      this.logger.debug(
-        `Updating multiple defendant event logs for defendant ${defendantId} of case ${caseId}`,
-      )
-
-      const updateOptions: UpdateOptions = { where: { caseId, defendantId } }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
-      }
-
-      const [numberOfAffectedRows] = await this.defendantEventLogModel.update(
-        { caseId: newCaseId },
-        updateOptions,
-      )
-
-      this.logger.debug(
-        `Updated ${numberOfAffectedRows} defendant event log(s)`,
-      )
-
-      return numberOfAffectedRows
-    } catch (error) {
-      this.logger.error(
-        `Error updating multiple defendant event logs for defendant ${defendantId} of case ${caseId}`,
         { error },
       )
 
