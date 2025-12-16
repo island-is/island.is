@@ -138,20 +138,17 @@ const generateDate = (date: Date | undefined): CaseTableCell<StringValue> => {
   return generateCell({ str: dateValue }, sortValue)
 }
 
-const getDefaultJudgementCell = (
-  c: Case,
-): CaseTableCell<TagValue> | undefined => {
+const generateDefaultJudgementTag = (c: Case): TagValue | undefined => {
   // TODO: this will be fixed when we have considered ruling decision per defendant
-
   if (
     c.defendants &&
     c.defendants.length > 0 &&
     c.defendants?.every(
-      // Only the latest verdict is relevant
+      // Only the latest verdict of the first defendant is relevant
       (d) => d.verdicts?.[0]?.isDefaultJudgement,
     )
   ) {
-    return generateCell({ color: 'purple', text: 'Útivistardómur' }, 'K')
+    return { color: 'purple', text: 'Útivistardómur' }
   }
 
   return undefined
@@ -290,12 +287,19 @@ const generateIndictmentRulingDecisionTag = (
       return createCell({ color: 'rose', text: 'Sameinað' }, 'I')
     case CaseIndictmentRulingDecision.DISMISSAL:
       return createCell({ color: 'blue', text: 'Frávísun' }, 'J')
-    case CaseIndictmentRulingDecision.RULING:
-      return createCell({ color: 'darkerBlue', text: 'Dómur' }, 'K')
+    case CaseIndictmentRulingDecision.RULING: {
+      const defaultJudgementTag = generateDefaultJudgementTag(c)
+
+      if (!defaultJudgementTag) {
+        return createCell({ color: 'darkerBlue', text: 'Dómur' }, 'K')
+      }
+
+      return createCell(defaultJudgementTag, 'L')
+    }
     case CaseIndictmentRulingDecision.WITHDRAWAL:
-      return createCell({ color: 'rose', text: 'Afturkallað' }, 'L')
+      return createCell({ color: 'rose', text: 'Afturkallað' }, 'M')
     default:
-      return createCell({ color: 'darkerBlue', text: 'Lokið' }, 'M')
+      return createCell({ color: 'darkerBlue', text: 'Lokið' }, 'N')
   }
 }
 
@@ -303,7 +307,7 @@ const generateIndictmentCaseStateTag = (
   c: Case,
   user: TUser,
 ): CaseTableCell<TagValue | TagPairValue> => {
-  const { state, indictmentDecision, indictmentReviewerId } = c
+  const { state, indictmentDecision } = c
 
   const courtDate = getIndictmentCourtDate(c)
 
@@ -332,30 +336,6 @@ const generateIndictmentCaseStateTag = (
     }
   }
 
-  const generateCompletedIndictmentStateTag = (): CaseTableCell<
-    TagValue | TagPairValue
-  > => {
-    if (isPublicProsecutionOfficeUser(user)) {
-      const isInReview = Boolean(indictmentReviewerId)
-
-      return generateCell(
-        {
-          color: isInReview ? 'mint' : 'purple',
-          text: isInReview ? 'Í yfirlestri' : 'Nýtt',
-        },
-        isInReview ? 'H' : 'G',
-      )
-    }
-
-    const defaultJudgementCell = getDefaultJudgementCell(c)
-
-    if (!defaultJudgementCell) {
-      return generateIndictmentRulingDecisionTag(c, user)
-    }
-
-    return defaultJudgementCell
-  }
-
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
@@ -373,7 +353,7 @@ const generateIndictmentCaseStateTag = (
       return generateReceivedIndictmentStateTag()
     case CaseState.COMPLETED:
     case CaseState.CORRECTING:
-      return generateCompletedIndictmentStateTag()
+      return generateIndictmentRulingDecisionTag(c, user)
     case CaseState.WAITING_FOR_CANCELLATION:
       return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
@@ -636,12 +616,7 @@ const requestCaseState: CaseTableCellGenerator<TagValue> = {
 }
 
 const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
-  attributes: [
-    'state',
-    'indictmentDecision',
-    'indictmentRulingDecision',
-    'indictmentReviewerId',
-  ],
+  attributes: ['state', 'indictmentDecision', 'indictmentRulingDecision'],
   includes: {
     defendants: {
       model: Defendant,
@@ -694,9 +669,7 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
 
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    return generateDate(c.created)
-  },
+  generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.created),
 }
 
 const prosecutor: CaseTableCellGenerator<StringValue> = {
@@ -885,12 +858,13 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
           'Viðurlagaákvörðun',
         )
       case CaseIndictmentRulingDecision.RULING: {
-        const defaultJudgementCell = getDefaultJudgementCell(c)
+        const defaultJudgementTag = generateDefaultJudgementTag(c)
 
-        return (
-          defaultJudgementCell ??
-          generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'Dómur')
-        )
+        if (!defaultJudgementTag) {
+          return generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'Dómur')
+        }
+
+        return generateCell(defaultJudgementTag, 'Útivistardómur')
       }
       default:
         return generateCell()
@@ -1146,11 +1120,8 @@ const indictmentRulingDecision: CaseTableCellGenerator<
       separate: true,
     },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> => {
-    const defaultJudgementCell = getDefaultJudgementCell(c)
-
-    return defaultJudgementCell ?? generateIndictmentRulingDecisionTag(c, user)
-  },
+  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
+    generateIndictmentRulingDecisionTag(c, user),
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
