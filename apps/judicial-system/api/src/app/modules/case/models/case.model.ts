@@ -504,6 +504,9 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly requestCompletedDate?: string
 
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
+
   @Field(() => [Victim], { nullable: true })
   readonly victims?: Victim[]
 

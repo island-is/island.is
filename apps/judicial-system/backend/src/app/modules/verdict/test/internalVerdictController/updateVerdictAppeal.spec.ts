@@ -42,7 +42,7 @@ describe('InternalVerdictController - Update verdict appeal', () => {
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
-    verdict,
+    verdicts: [verdict],
   } as Defendant
 
   const theCase = {

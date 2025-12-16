@@ -70,7 +70,7 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað aftur',
+  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
@@ -85,15 +85,15 @@ const caseEvent: Record<CaseEvent, string> = {
 }
 
 const caseEventsToLog = [
+  'ACCEPT',
   'CREATE',
   'CREATE_XRD',
+  'COMPLETE',
+  'DISMISS',
+  'REJECT',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
   'VERDICT_SERVICE_STATUS',
-  'COMPLETE',
-  'ACCEPT',
-  'REJECT',
-  'DISMISS',
 ]
 
 @Injectable()

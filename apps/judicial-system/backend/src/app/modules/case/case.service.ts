@@ -1,3 +1,6 @@
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -42,6 +45,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  completedIndictmentCaseStates,
   CourtDocumentType,
   CourtSessionStringType,
   DateType,
@@ -216,8 +220,10 @@ export const include: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
     ],
     separate: true,
@@ -353,7 +359,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: Defendant,
@@ -370,8 +376,10 @@ export const include: Includeable[] = [
           },
           {
             model: Verdict,
-            as: 'verdict',
+            as: 'verdicts',
             required: false,
+            order: [['created', 'DESC']],
+            separate: true,
           },
         ],
         separate: true,
@@ -483,8 +491,10 @@ export const caseListInclude: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
     ],
     separate: true,
@@ -1184,45 +1194,48 @@ export class CaseService {
 
   private addMessagesForCompletedIndictmentCaseToQueue(
     theCase: Case,
+    updatedCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: Message[] =
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.isKeyAccessible &&
-            caseFile.category &&
-            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
-              caseFile.category,
-            ),
-        )
-        .map((caseFile) => ({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })) ?? []
-    messages.push({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.RULING },
-    })
+    const messages: Message[] = []
 
-    if (theCase.withCourtSessions) {
+    for (const caseFile of updatedCase.caseFiles?.filter(
+      (caseFile) =>
+        caseFile.state === CaseFileState.STORED_IN_RVG &&
+        caseFile.key &&
+        caseFile.category &&
+        [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+          caseFile.category,
+        ),
+    ) ?? []) {
       messages.push({
-        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
+        type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
+        elementId: caseFile.id,
       })
     }
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    messages.push({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: updatedCase.id,
+      body: { type: CaseNotificationType.RULING },
+    })
+
+    if (updatedCase.withCourtSessions) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
+        user,
+        caseId: updatedCase.id,
+      })
+    }
+
+    if (updatedCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
       })
     }
 
@@ -1620,6 +1633,7 @@ export class CaseService {
         if (isIndictment) {
           if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
             await this.addMessagesForCompletedIndictmentCaseToQueue(
+              theCase,
               updatedCase,
               user,
             )
@@ -2213,7 +2227,10 @@ export class CaseService {
       isReceivingCase && isIndictmentCase(theCase.type)
 
     const completingIndictmentCase =
-      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.COMPLETED &&
+      // Not true when closing again after correcting an indictment case
+      theCase.state !== CaseState.CORRECTING
 
     const completingIndictmentCaseWithoutRuling =
       completingIndictmentCase &&
@@ -2324,7 +2341,7 @@ export class CaseService {
         if (completingIndictmentCaseWithRuling && theCase.defendants) {
           await Promise.all(
             theCase.defendants.map((defendant) => {
-              if (!defendant.verdict) {
+              if (!defendant.verdicts || defendant.verdicts.length === 0) {
                 return this.verdictService.createVerdict(
                   theCase.id,
                   { defendantId: defendant.id },
@@ -2337,7 +2354,6 @@ export class CaseService {
 
         // if ruling decision is changed to other decision
         // we have to clean up idle verdicts
-
         const hasNewDecision =
           theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
           !!update.indictmentDecision &&
@@ -2362,14 +2378,20 @@ export class CaseService {
 
         if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
           await Promise.all(
-            theCase.defendants.map((defendant) => {
-              if (defendant.verdict) {
-                return this.verdictService.deleteVerdict(
-                  defendant.verdict,
-                  transaction,
-                )
-              }
-            }),
+            theCase.defendants.flatMap((defendant) =>
+              pipe(
+                defendant.verdicts ?? [],
+                filterMap((verdict) => {
+                  if (verdict) {
+                    return option.some(
+                      this.verdictService.deleteVerdict(verdict, transaction),
+                    )
+                  }
+
+                  return option.none
+                }),
+              ),
+            ),
           )
         }
 

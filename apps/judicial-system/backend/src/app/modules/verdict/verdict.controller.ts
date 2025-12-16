@@ -234,6 +234,7 @@ export class VerdictController {
     this.logger.debug(
       `Deliver case ${caseId} verdict to all affected defendants`,
     )
+
     return await this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
       theCase,
       user,

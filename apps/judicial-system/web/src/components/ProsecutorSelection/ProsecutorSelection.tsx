@@ -15,7 +15,10 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useOnceOn } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
@@ -34,7 +37,7 @@ interface Props {
 const ProsecutorSelection: FC<Props> = ({
   onChange,
   placeholder,
-  isRequired,
+  isRequired = true,
   shouldInitializeSelector,
   onMenuOpen,
   onMenuClose,
@@ -155,8 +158,8 @@ const ProsecutorSelection: FC<Props> = ({
       value={selectedProsecutor}
       options={eligibleProsecutors}
       onChange={handleChange}
-      isDisabled={loading}
-      required={isRequired === undefined ? true : isRequired}
+      isDisabled={loading || workingCase.state === CaseState.CORRECTING}
+      required={isRequired}
       onMenuOpen={onMenuOpen}
       onMenuClose={onMenuClose}
     />

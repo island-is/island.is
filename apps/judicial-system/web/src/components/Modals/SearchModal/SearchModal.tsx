@@ -7,7 +7,7 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ModalContainer } from '../Modal/Modal'

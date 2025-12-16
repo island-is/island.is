@@ -923,9 +923,11 @@ export class CaseNotificationService extends BaseNotificationService {
   ) => {
     return {
       subject: this.formatMessage(notifications.caseCompleted.subject, {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
       }),
       html: this.formatMessage(notifications.caseCompleted.prosecutorBody, {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: applyDativeCaseToCourtName(
           theCase.court?.name || 'héraðsdómi',
@@ -1030,6 +1032,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.subject, {
+            isCorrection: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
           })
         : this.formatMessage(rulingMessage.subject, {
@@ -1037,11 +1040,12 @@ export class CaseNotificationService extends BaseNotificationService {
           }),
       html: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
-            ...sharedHtmlProps,
+            isCorrection: Boolean(theCase.rulingModifiedHistory),
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
               ),
+            ...sharedHtmlProps,
           })
         : this.formatMessage(rulingMessage.body, {
             ...rulingMessage.props.body,

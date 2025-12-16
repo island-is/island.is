@@ -28,7 +28,12 @@ export const courtOfAppealsRequestCasesAccessWhereOptions = {
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
   [Op.or]: [
-    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED] },
+    {
+      appeal_state: [
+        CaseAppealState.RECEIVED,
+        ...completedIndictmentCaseStates,
+      ],
+    },
     {
       [Op.and]: [
         { appeal_state: CaseAppealState.WITHDRAWN },
