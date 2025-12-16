@@ -1,4 +1,5 @@
 import {
+  Application,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -13,7 +14,10 @@ import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { OptionsType } from '../../utils/constants'
-import { getSelectedOptionLabel } from '../../utils/newPrimarySchoolUtils'
+import {
+  getOtherGuardian,
+  getSelectedOptionLabel,
+} from '../../utils/newPrimarySchoolUtils'
 
 const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
@@ -72,6 +76,18 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
             options: relationFriggOptions,
             dataTestId: 'relative-relation',
+          },
+          applicantNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) => application.applicant,
+          },
+          otherGuardianNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) =>
+              getOtherGuardian(application.answers, application.externalData)
+                ?.nationalId,
           },
         },
         table: {
