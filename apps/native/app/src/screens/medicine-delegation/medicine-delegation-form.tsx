@@ -8,6 +8,7 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
+import { addMonths, addYears } from 'date-fns'
 import {
   useIdentityQueryLazyQuery,
   usePostMedicineDelegationMutation,
@@ -58,14 +59,12 @@ const ValidityHeading = styled(Typography)`
 
 const QuickLabelsContainer = styled(View)`
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
   align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const QuickLabel = styled(View)`
-  width: 100%;
-  max-width: 23%;
+  flex: 1;
 `
 
 const Actions = styled(View)`
@@ -82,6 +81,13 @@ const ErrorMessage = styled(Typography)`
 const NameField = styled(TextField)`
   background-color: ${({ theme }) => theme.color.white};
 `
+
+const QUICK_LABEL_TYPE = {
+  Months: 'Months',
+  Years: 'Years',
+} as const
+
+type QuickLabelType = typeof QUICK_LABEL_TYPE[keyof typeof QUICK_LABEL_TYPE]
 
 export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
   componentId,
@@ -181,7 +187,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
     }
   }
 
-  const getQuickLabels = (value: number, type: 'Months' | 'Years') => {
+  const getQuickLabels = (value: number, type: QuickLabelType) => {
     return intl.formatMessage(
       {
         id: 'health.medicineDelegation.form.x' + type,
@@ -191,31 +197,31 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
       },
     )
   }
-  const quickLabels: { value: number; type: 'Months' | 'Years' }[] = [
+  const quickLabels: { value: number; type: QuickLabelType }[] = [
     {
       value: 6,
-      type: 'Months',
+      type: QUICK_LABEL_TYPE.Months,
     },
     {
       value: 1,
-      type: 'Years',
+      type: QUICK_LABEL_TYPE.Years,
     },
     {
       value: 2,
-      type: 'Years',
+      type: QUICK_LABEL_TYPE.Years,
     },
     {
       value: 3,
-      type: 'Years',
+      type: QUICK_LABEL_TYPE.Years,
     },
   ]
 
-  const getQuickSelectDate = (value: number, type: 'Months' | 'Years') => {
+  const getQuickSelectDate = (value: number, type: QuickLabelType) => {
     const currentTime = dateFrom?.getTime() ?? new Date().getTime()
 
-    return type === 'Months'
-      ? new Date(currentTime + value * 30 * 24 * 60 * 60 * 1000)
-      : new Date(currentTime + value * 365 * 24 * 60 * 60 * 1000)
+    return type === QUICK_LABEL_TYPE.Months
+      ? addMonths(currentTime, value)
+      : addYears(currentTime, value)
   }
 
   return (
