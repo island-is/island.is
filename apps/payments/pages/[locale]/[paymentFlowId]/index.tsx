@@ -223,7 +223,7 @@ function PaymentPage({
   })
 
   const availablePaymentMethods = useMemo(() => {
-    const methods = paymentFlow.availablePaymentMethods
+    const methods = [...paymentFlow.availablePaymentMethods]
 
     if (isInvoicePaymentEnabledForUser) {
       methods.push('invoice')
