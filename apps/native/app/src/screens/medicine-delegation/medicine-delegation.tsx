@@ -20,7 +20,15 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
-import { Button, EmptyState, Label, Tag, Typography } from '../../ui'
+import {
+  Button,
+  EmptyState,
+  GeneralCardSkeleton,
+  Label,
+  Problem,
+  Tag,
+  Typography,
+} from '../../ui'
 import { ButtonRegistry } from '../../utils/component-registry'
 
 const Host = styled(SafeAreaView)`
@@ -142,6 +150,9 @@ export const MedicineDelegationScreen: NavigationFunctionComponent = ({
     extraData: [showExpiredPermits],
   })
 
+  const isInitialLoading =
+    medicineDelegationsRes.loading && !medicineDelegationsRes.data
+
   const delegations =
     medicineDelegationsRes.data?.healthDirectorateMedicineDelegations?.items ??
     []
@@ -155,6 +166,7 @@ export const MedicineDelegationScreen: NavigationFunctionComponent = ({
 
   const hasDelegations = delegations.length > 0
   const hasVisibleDelegations = filteredDelegations.length > 0
+  const hasError = medicineDelegationsRes.error && !medicineDelegationsRes.data
 
   return (
     <View style={{ flex: 1 }}>
@@ -208,7 +220,17 @@ export const MedicineDelegationScreen: NavigationFunctionComponent = ({
             />
           </HeaderActions>
 
-          {hasDelegations ? (
+          {hasError ? (
+            <View style={{ marginTop: theme.spacing[3] }}>
+              <Problem />
+            </View>
+          ) : isInitialLoading ? (
+            <View style={{ paddingVertical: theme.spacing[2] }}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <GeneralCardSkeleton height={90} key={index} />
+              ))}
+            </View>
+          ) : hasDelegations ? (
             hasVisibleDelegations ? (
               filteredDelegations.map((delegation, index) => (
                 <Card
