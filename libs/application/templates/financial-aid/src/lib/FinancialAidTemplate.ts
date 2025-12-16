@@ -23,15 +23,19 @@ import { FAApplication } from '..'
 import {
   CreateApplicationApi,
   CurrentApplicationApi,
-  NationalRegistryUserApi,
-  ChildrenCustodyInformationApi,
-  NationalRegistrySpouseApi,
+  NationalRegistryV3UserApi,
+  ChildrenCustodyInformationApiV3,
+  NationalRegistryV3SpouseApi,
   MunicipalityApi,
   TaxDataApi,
   TaxDataSpouseApi,
   SendSpouseEmailApi,
 } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -74,9 +78,9 @@ const FinancialAidTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentApplicationApi,
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
+                ChildrenCustodyInformationApiV3,
                 MunicipalityApi,
                 TaxDataApi,
               ],
@@ -179,6 +183,28 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.spouse,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+                includeSubjectAndActor: true,
+              },
+            ],
+            pendingAction: (_, role) => {
+              return role === Roles.SPOUSE
+                ? {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.youNeedToReviewDescription,
+                    displayStatus: 'warning',
+                  }
+                : {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.waitingForReviewFromSpouseDescription,
+                    displayStatus: 'info',
+                  }
+            },
           },
           roles: [
             {

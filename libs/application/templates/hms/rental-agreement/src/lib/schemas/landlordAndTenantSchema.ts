@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from '../messages'
 import { EMAIL_REGEX, YES } from '@island.is/application/core'
-import { isValidPhoneNumber } from '../../utils/utils'
+import { isValidMobileNumber } from '../../utils/utils'
 import { ApplicantsRole } from '../../utils/enums'
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
@@ -29,8 +29,8 @@ const personInfoSchema = z.object({
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
     })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+    .refine((x) => x && isValidMobileNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberMobileError,
     }),
   email: z
     .string()
@@ -71,8 +71,8 @@ const landLordInfoSchema = z.object({
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
     })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+    .refine((x) => x && isValidMobileNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberMobileError,
     }),
   email: z
     .string()
@@ -91,6 +91,17 @@ const landlordInfo = z.object({
 const tenantInfo = z.object({
   table: z.array(personInfoSchema),
 })
+
+const signatory = z
+  .object({
+    nationalIdWithName: z.object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    }),
+    phone: z.string().optional(),
+    email: z.string().optional(),
+  })
+  .optional()
 
 const checkforDuplicatesHelper = (
   table: Array<{ nationalIdWithName: { nationalId?: string | undefined } }>,
@@ -121,6 +132,7 @@ export const partiesSchema = z
     }),
     landlordInfo,
     tenantInfo,
+    signatory,
   }) // Cross reference between tables
   .superRefine((data, ctx) => {
     const { landlordInfo, tenantInfo, applicantsRole, applicant } = data
@@ -358,5 +370,43 @@ export const partiesSchema = z
           nationalIds.add(nationalId)
         }
       })
+    }
+  }) // Validate signatory
+  .superRefine((data, ctx) => {
+    const { applicant, signatory } = data
+    const { nationalIdWithName, phone, email } = signatory || {}
+    if (kennitala.isCompany(applicant.nationalId)) {
+      if (!nationalIdWithName?.nationalId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Company signatory missing',
+          params: m.partiesDetails.companySignatoryError,
+          path: ['signatory', 'nationalIdWithName', 'nationalId'],
+        })
+      }
+      if (!phone) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Company signatory phone missing',
+          params: m.landlordAndTenantDetails.phoneNumberEmptyError,
+          path: ['signatory', 'phone'],
+        })
+      }
+      if (phone && !isValidMobileNumber(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Company signatory phone is not a mobile number',
+          params: m.landlordAndTenantDetails.phoneNumberMobileError,
+          path: ['signatory', 'phone'],
+        })
+      }
+      if (!email) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Company signatory email missing',
+          params: m.landlordAndTenantDetails.emailInvalidError,
+          path: ['signatory', 'email'],
+        })
+      }
     }
   })

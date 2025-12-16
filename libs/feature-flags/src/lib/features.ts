@@ -81,6 +81,9 @@ export enum Features {
   isHolarUniversityEnabled = 'isHolarUniversityEnabled',
   isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
 
+  //License service license scanner disabled
+  isLicenseScannerDisabled = 'isLicenseScannerDisabled',
+
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
   licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
@@ -122,6 +125,9 @@ export enum Features {
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
+
+  // Should applicaton-system use national registry v3
+  shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 

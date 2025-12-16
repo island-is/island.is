@@ -76,6 +76,20 @@ export class Form extends Model<Form> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  validationServiceUrl!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
@@ -106,7 +120,7 @@ export class Form extends Model<Form> {
     type: DataType.UUID,
     allowNull: true,
   })
-  derivedFrom!: string
+  derivedFrom!: string | null
 
   @Column({
     type: DataType.ENUM,
@@ -154,13 +168,6 @@ export class Form extends Model<Form> {
     allowNull: true,
   })
   dependencies?: Dependency[]
-
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-    defaultValue: () => [],
-  })
-  allowedLoginTypes!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]

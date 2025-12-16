@@ -17,11 +17,13 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
+import { useFragment_experimental } from '@apollo/client/react/hooks'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
   GenericUserLicenseExpiryStatus,
+  GenericUserLicenseFragmentFragmentDoc,
   GenericUserLicensePkPassStatus,
   useGeneratePkPassMutation,
   useGetLicenseQuery,
@@ -37,7 +39,7 @@ import {
   LICENSE_CARD_ROW_GAP,
   LicenseCard,
 } from '../../ui'
-import { isAndroid, isIos } from '../../utils/devices'
+import { isAndroid, isIos, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 import {
@@ -209,7 +211,25 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     },
   })
 
-  const data = res.data?.genericLicense ?? item
+  // useFragment will get the license by license type and license id from license list cache
+  const licenseFromCache = useFragment_experimental<GenericUserLicense>({
+    fragment: GenericUserLicenseFragmentFragmentDoc,
+    fragmentName: 'GenericUserLicenseFragment',
+    from: {
+      __typename: 'GenericUserLicense',
+      license: {
+        type,
+      },
+      payload: {
+        metadata: {
+          licenseId: id,
+        },
+      },
+    },
+    returnPartialData: true,
+  })
+
+  const data = res.data?.genericLicense ?? item ?? licenseFromCache?.data
   const isExpired = data?.payload?.metadata?.expired
   const expireDate = item?.payload?.metadata?.expireDate
   const expireWarning =
@@ -399,14 +419,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             intl.formatMessage({
               id: 'walletPass.errorTitle',
             }),
-            item?.license?.type === 'DriversLicense'
+            item?.license?.type === GenericLicenseType.DriversLicense
               ? intl.formatMessage({
                   id: 'walletPass.errorNotPossibleToAddDriverLicense',
                 })
               : intl.formatMessage({
                   id: 'walletPass.errorAddingOrFetching',
                 }),
-            item?.license?.type === 'DriversLicense'
+            item?.license?.type === GenericLicenseType.DriversLicense
               ? [
                   {
                     text: intl.formatMessage({
@@ -476,7 +496,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: cardHeight }} />
+      <View
+        style={{
+          height: isIosLiquidGlassEnabled ? 2 * cardHeight : cardHeight,
+        }}
+      />
       <LicenseCardWrapper>
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}

@@ -1,7 +1,9 @@
+import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -52,6 +54,7 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isRequestCase,
+  isRestrictionCase,
   notificationTypes,
   ServiceStatus,
   StringType,
@@ -96,7 +99,7 @@ import {
   Victim,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
-import { VerdictService } from '../verdict/verdict.service'
+import { VerdictService } from '../verdict'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { MinimalCase } from './models/case.types'
@@ -434,6 +437,25 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+    include: [{ model: User, as: 'judge' }],
+  },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -525,11 +547,13 @@ export class CaseService {
     private readonly caseStringModel: typeof CaseString,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
     private readonly courtSessionService: CourtSessionService,
     private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
+    @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -601,15 +625,15 @@ export class CaseService {
   }
 
   private async createCase(
-    caseToCreate: CreateCaseDto,
+    caseToCreate: Partial<Case>,
     transaction: Transaction,
-  ): Promise<string> {
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.create(
       {
-        ...caseToCreate,
         ...(isRequestCase(caseToCreate.type)
           ? { state: CaseState.NEW }
           : { state: CaseState.DRAFT, withCourtSessions: true }),
+        ...caseToCreate,
       },
       { transaction },
     )
@@ -622,7 +646,7 @@ export class CaseService {
       )
     }
 
-    return theCase.id
+    return theCase
   }
 
   private async handlePoliceCaseNumbersUpdate(
@@ -853,6 +877,22 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForPublicProsecutorReviewerAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        },
+      },
+    ])
+  }
+
   private addMessagesForReceivedCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -968,7 +1008,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             caseFilesCategories.includes(caseFile.category),
         )
@@ -1107,7 +1147,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             // In restriction and investigation cases, ordinary case files do not have a category.
             // We should consider migrating all existing case files to have a category in the database.
             !caseFile.category,
@@ -1151,7 +1191,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
               caseFile.category,
@@ -1286,7 +1326,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -1332,7 +1372,7 @@ export class CaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             caseFile.category === CaseFileCategory.APPEAL_RULING,
         )
@@ -1434,7 +1474,7 @@ export class CaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -1769,6 +1809,19 @@ export class CaseService {
         user,
       )
     }
+
+    // currently public prosecutors only want to be notified about fines since they have a shorter deadline to review compared to verdicts
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE &&
+      updatedCase.indictmentReviewerId &&
+      updatedCase.indictmentReviewerId !== theCase.indictmentReviewerId &&
+      isIndictment
+    ) {
+      await this.addMessagesForPublicProsecutorReviewerAssignedToQueue(
+        updatedCase,
+        user,
+      )
+    }
   }
 
   private allAppealRolesAssigned(updatedCase: Case) {
@@ -1860,7 +1913,7 @@ export class CaseService {
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const caseId = await this.createCase(
+        const theCase = await this.createCase(
           {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
@@ -1874,15 +1927,19 @@ export class CaseService {
               ? user.institution?.defaultCourtId
               : undefined,
             prosecutorsOfficeId: user.institution?.id,
-          } as CreateCaseDto,
+          },
           transaction,
         )
 
-        await this.defendantService.createForNewCase(caseId, {}, transaction)
+        await this.defendantService.createForNewCase(
+          theCase.id,
+          {},
+          transaction,
+        )
 
-        return caseId
+        return theCase
       })
-      .then((caseId) => this.findById(caseId))
+      .then((theCase) => this.findById(theCase.id))
   }
 
   private async handleDateLogUpdates(
@@ -2308,8 +2365,7 @@ export class CaseService {
             theCase.defendants.map((defendant) => {
               if (defendant.verdict) {
                 return this.verdictService.deleteVerdict(
-                  theCase.id,
-                  defendant.id,
+                  defendant.verdict,
                   transaction,
                 )
               }
@@ -2504,7 +2560,7 @@ export class CaseService {
           actor: user.name,
           institution: user.institution?.name,
         },
-        error as Error,
+        error,
       )
 
       if (error instanceof DokobitError) {
@@ -2590,7 +2646,7 @@ export class CaseService {
           actor: user.name,
           institution: user.institution?.name,
         },
-        error as Error,
+        error,
       )
 
       if (error instanceof DokobitError) {
@@ -2606,38 +2662,46 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
+    const copiedExtendRestrictionCaseFields: (keyof Case)[] = [
+      'origin',
+      'type',
+      'description',
+      'policeCaseNumbers',
+      'defenderName',
+      'defenderNationalId',
+      'defenderEmail',
+      'defenderPhoneNumber',
+      'leadInvestigator',
+      'courtId',
+      'translator',
+      'lawsBroken',
+      'legalBasis',
+      'legalProvisions',
+      'requestedCustodyRestrictions',
+      'caseFacts',
+      'legalArguments',
+      'requestProsecutorOnlySession',
+      'prosecutorOnlySessionRequest',
+    ]
+
+    const copiedExtendInvestigationCaseFields: (keyof Case)[] = [
+      ...copiedExtendRestrictionCaseFields,
+      'demands',
+    ]
+
     return this.sequelize
       .transaction(async (transaction) => {
-        const caseId = await this.createCase(
+        const extendedCase = await this.createCase(
           {
-            origin: theCase.origin,
-            type: theCase.type,
-            description: theCase.description,
-            policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            leadInvestigator: theCase.leadInvestigator,
-            courtId: theCase.courtId,
-            translator: theCase.translator,
-            lawsBroken: theCase.lawsBroken,
-            legalBasis: theCase.legalBasis,
-            legalProvisions: theCase.legalProvisions,
-            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-            caseFacts: theCase.caseFacts,
-            legalArguments: theCase.legalArguments,
-            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            ...(isRestrictionCase(theCase.type)
+              ? pick(theCase, copiedExtendRestrictionCaseFields)
+              : pick(theCase, copiedExtendInvestigationCaseFields)),
             parentCaseId: theCase.id,
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
             prosecutorsOfficeId: user.institution?.id,
-            demands: isInvestigationCase(theCase.type)
-              ? theCase.demands
-              : undefined,
-          } as CreateCaseDto,
+          },
           transaction,
         )
 
@@ -2645,7 +2709,7 @@ export class CaseService {
           await Promise.all(
             theCase.defendants?.map((defendant) =>
               this.defendantService.createForNewCase(
-                caseId,
+                extendedCase.id,
                 {
                   noNationalId: defendant.noNationalId,
                   nationalId: defendant.nationalId,
@@ -2660,9 +2724,39 @@ export class CaseService {
           )
         }
 
-        return caseId
+        return extendedCase
       })
-      .then((caseId) => this.findById(caseId))
+      .then((extendedCase) => this.findById(extendedCase.id))
+  }
+
+  async splitDefendantFromCase(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<Case> {
+    const transaction = await this.sequelize.transaction()
+
+    try {
+      const splitCase = await this.caseRepositoryService.split(
+        theCase.id,
+        defendant.id,
+        { transaction },
+      )
+
+      await transaction.commit()
+
+      return splitCase
+    } catch (error) {
+      await transaction.rollback()
+
+      this.logger.error(
+        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
+        { error },
+      )
+
+      throw new InternalServerErrorException(
+        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
+      )
+    }
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {

@@ -13,7 +13,6 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
-import { Urls } from '../Urls/Urls'
 
 export const BaseSettings = () => {
   const {
@@ -179,13 +178,11 @@ export const BaseSettings = () => {
               setFocus(e.target.value)
             }}
             onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                const response: UpdateFormResponse = await formUpdate()
-                if (response && response.errors) {
-                  setErrorMsg(response.errors[0].message as string)
-                } else {
-                  setErrorMsg('')
-                }
+              const response: UpdateFormResponse = await formUpdate()
+              if (response && response.errors) {
+                setErrorMsg(response.errors[0].message as string)
+              } else {
+                setErrorMsg('')
               }
             }}
             onChange={(e) =>
@@ -306,7 +303,6 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
-      <Urls />
     </Stack>
   )
 }

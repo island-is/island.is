@@ -92,7 +92,7 @@ export class PdfService {
           caseFile.policeCaseNumber === policeCaseNumber &&
           caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
-          caseFile.key &&
+          caseFile.isKeyAccessible &&
           caseFile.chapter !== null &&
           caseFile.orderWithinChapter !== null,
       )
@@ -403,7 +403,13 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
+        .setHash(
+          theCase.id,
+          defendant.id,
+          subpoena.id,
+          subpoenaHash.hash,
+          subpoenaHash.hashAlgorithm,
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,

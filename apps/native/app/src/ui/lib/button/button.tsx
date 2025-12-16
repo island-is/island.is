@@ -52,7 +52,7 @@ const Host = styled.TouchableHighlight<HostProps>`
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 
@@ -67,7 +67,7 @@ const Host = styled.TouchableHighlight<HostProps>`
           }
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 

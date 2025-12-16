@@ -194,6 +194,11 @@ export type CurrentSchool = {
   municipality?: string
 }
 
+export type FileType = {
+  key: string
+  name: string
+}
+
 export type Organization = {
   id: string
   name: string
@@ -201,6 +206,7 @@ export type Organization = {
   subType: OrganizationSubType
   sector: OrganizationSector
   gradeLevels: string[]
+  address?: AddressModel
   unitId: string | null
   settings: ApplicationSettings | null
 }

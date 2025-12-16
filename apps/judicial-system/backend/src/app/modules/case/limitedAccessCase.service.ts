@@ -2,7 +2,12 @@ import archiver from 'archiver'
 import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -433,7 +438,9 @@ export const include: Includeable[] = [
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => CivilClaimantService))
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
@@ -473,7 +480,7 @@ export class LimitedAccessCaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -689,7 +696,7 @@ export class LimitedAccessCaseService {
     const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
-          file.key &&
+          file.isKeyAccessible &&
           file.category &&
           allowedCaseFileCategories.includes(file.category),
       ) ?? []

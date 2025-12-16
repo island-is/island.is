@@ -28,6 +28,8 @@ export class ApplicationMapper {
       modified: application.modified,
       slug: form.slug,
       formName: form.name,
+      submissionServiceUrl: form.submissionServiceUrl,
+      validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,

@@ -1109,3 +1109,13 @@ export const VMSTUnemployment = new XroadConf({
       '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD',
   },
 })
+
+export const GoProVerdicts = new XroadConf({
+  env: {
+    XROAD_VERDICTS_GOPRO_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is',
+      staging: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is',
+      prod: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is',
+    },
+  },
+})
