@@ -45,18 +45,21 @@ describe('LimitedAccessCaseController - Transition', () => {
     {
       id: defenderAppealBriefId,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
     },
     {
       id: defenderAppealBriefCaseFileId1,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
     {
       id: defenderAppealBriefCaseFileId2,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
