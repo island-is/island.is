@@ -144,7 +144,7 @@ const generateDefaultJudgementTag = (c: Case): TagValue | undefined => {
     c.defendants &&
     c.defendants.length > 0 &&
     c.defendants?.every(
-      // Only the latest verdict of the first defendant is relevant
+      // Only the latest verdict is relevant
       (d) => d.verdicts?.[0]?.isDefaultJudgement,
     )
   ) {
