@@ -414,6 +414,11 @@ export const m = defineMessages({
     defaultMessage: 'Er til erfðaskrá?',
     description: '',
   },
+  knowledgeOfOtherWills: {
+    id: 'es.application:knowledgeOfOtherWills',
+    defaultMessage: 'Er vitneskja um aðrar erfðaskrár?',
+    description: '',
+  },
   doesAgreementExist: {
     id: 'es.application:doesAgreementExist',
     defaultMessage: 'Er til kaupmáli?',
