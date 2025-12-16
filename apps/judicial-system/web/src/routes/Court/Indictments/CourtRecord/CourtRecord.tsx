@@ -20,6 +20,7 @@ import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks
 import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
+import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
   const { user } = useContext(UserContext)
@@ -124,10 +125,10 @@ const CourtRecord: FC = () => {
             </Box>
           </>
         ) : (
-          <Box width="half" marginBottom={10}>
+          <Box className={alertContainer} marginBottom={10}>
             <AlertMessage
               title="Sjálfvirkni ekki í boði"
-              message="Þetta mál var móttekið af héraðsdómi áður en sjálfvirkni við gerð þingbókar var virkjuð."
+              message="Þetta mál var stofnað af sækjanda áður en sjálfvirkni við gerð þingbókar var virkjuð."
               type="info"
             />
           </Box>

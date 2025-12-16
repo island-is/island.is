@@ -68,4 +68,7 @@ export class CaseFile {
   // when users submit files on behalf of case representatives
   @Field(() => String, { nullable: true })
   readonly fileRepresentative?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isKeyAccessible?: boolean
 }
