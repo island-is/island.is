@@ -14,11 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Link } from 'react-router-dom'
-import {
-  LoadModal,
-  m,
-  parseNumber,
-} from '@island.is/portals/my-pages/core'
+import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteEmailOrPhoneValue,
   useUserProfile,
