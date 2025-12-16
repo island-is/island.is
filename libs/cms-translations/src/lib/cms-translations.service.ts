@@ -22,7 +22,7 @@ interface NamespaceFields {
 }
 
 const MAX_AGE = 1000 * 60 * 30 // 30 minutes
-const PREFETCH_FACTOR = 0.6 // prefetch after a third of the time or 10 minutes
+const PREFETCH_FACTOR = 0.6 // prefetch after a third of the time or 12 minutes
 const DEFAULT_LOCALE = 'is-IS'
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
