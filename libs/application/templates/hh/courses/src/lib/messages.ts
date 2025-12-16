@@ -50,7 +50,7 @@ export const m = {
     },
     dateSelectTitle: {
       id: 'hh.courses.application:course.dateSelectTitle',
-      defaultMessage: 'Dagsetning',
+      defaultMessage: 'Upphafsdagsetning',
       description: 'Title of date select',
     },
   }),
