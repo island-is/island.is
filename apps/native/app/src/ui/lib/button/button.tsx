@@ -145,10 +145,7 @@ export function Button({
 
   if (isFilledUtilityButton) isUtilityButton = true
 
-  const renderIcon = (loading: boolean) => {
-    if (loading) {
-      return <Loader />
-    }
+  const renderIcon = () => {
     return (
       <Icon
         source={icon}
@@ -187,7 +184,7 @@ export function Button({
         </View>
       ) : (
         <>
-          {icon && iconPosition === 'start' && renderIcon(loading)}
+          {icon && iconPosition === 'start' && renderIcon()}
           {title && (
             <Text
               {...textProps}
@@ -203,7 +200,7 @@ export function Button({
               {title}
             </Text>
           )}
-          {icon && iconPosition === 'end' && renderIcon(loading)}
+          {icon && iconPosition === 'end' && renderIcon()}
         </>
       )}
     </Host>
