@@ -447,13 +447,16 @@ export const getEmployerSettlement = (answers: FormValue) => {
   )
   return {
     hasUnpaidVacationTime: vacationInformation?.doYouHaveVacationDays === YES,
-    unpaidVacations: vacationInformation?.vacationDays?.map((vacation) => {
-      return {
-        unpaidVacationDays: parseInt(vacation.amount || ''),
-        unpaidVacationStart: vacation.startDate,
-        unpaidVacationEnd: vacation.endDate,
-      }
-    }),
+    unpaidVacations:
+      vacationInformation?.doYouHaveVacationDays === YES
+        ? vacationInformation?.vacationDays?.map((vacation) => {
+            return {
+              unpaidVacationDays: parseInt(vacation.amount || ''),
+              unpaidVacationStart: vacation.startDate,
+              unpaidVacationEnd: vacation.endDate,
+            }
+          })
+        : [],
     //This is definitely in the wrong place but to hard to fix in Galdur at this moment so it remains here
     resignationEnds:
       currentSituation?.status === EmploymentStatus.EMPLOYED &&

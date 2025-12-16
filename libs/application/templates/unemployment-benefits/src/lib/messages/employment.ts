@@ -503,6 +503,11 @@ export const employment = {
         defaultMessage: 'Bæta við starfi',
         description: 'Add job button label',
       },
+      employerSelectLabel: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.employerSelectLabel',
+        defaultMessage: 'atvinnurekandi',
+        description: 'employer select label',
+      },
       lastJobs: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobs',
         defaultMessage: 'Fyrra starf',
