@@ -155,21 +155,23 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
   }
 
-  try {
-    const userObj = {
-      identifier: paymentFlow.payerNationalId,
-      custom: {
-        nationalId: paymentFlow.payerNationalId,
-      },
-    }
+  if (paymentFlow) {
+    try {
+      const userObj = {
+        identifier: paymentFlow.payerNationalId,
+        custom: {
+          nationalId: paymentFlow.payerNationalId,
+        },
+      }
 
-    isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
-      Features.isIslandisInvoicePaymentAllowedForUser,
-      false,
-      userObj,
-    )
-  } catch (e) {
-    console.error('Error getting invoice payment enabled for user', e)
+      isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
+        Features.isIslandisInvoicePaymentAllowedForUser,
+        false,
+        userObj,
+      )
+    } catch (e) {
+      console.error('Error getting invoice payment enabled for user', e)
+    }
   }
 
   const productInformation = {
