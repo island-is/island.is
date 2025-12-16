@@ -8,7 +8,13 @@ export const getVideoEmbedProperties = (
   termsUrl: string
   type: VideoEmbedType
 } | null => {
-  const item = new URL(url)
+  let item: URL | null = null
+  try {
+    item = new URL(url)
+  } catch {
+    return null
+  }
+  if (!item) return null
 
   if (item.hostname.match(/(vimeo.com)/g)) {
     let videoId: string | null = null
