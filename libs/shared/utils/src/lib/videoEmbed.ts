@@ -11,16 +11,32 @@ export const getVideoEmbedProperties = (
   const item = new URL(url)
 
   if (item.hostname.match(/(vimeo.com)/g)) {
-    const match = /vimeo.*\/(\d+)/i.exec(item.href)
+    let videoId: string | null = null
+    let privacyHash: string | null = null
 
-    if (match) {
-      const vimeoId = match[1]
-      return {
-        id: vimeoId,
-        embedUrl: `https://player.vimeo.com/video/${vimeoId}?autoplay=1`,
-        termsUrl: 'https://vimeo.com/terms',
-        type: 'VIMEO',
+    if (item.hostname === 'player.vimeo.com') {
+      const pathParts = item.pathname.split('/')
+      videoId = pathParts[pathParts.length - 1]
+      privacyHash = item.searchParams.get('h')
+    } else {
+      const regExp =
+        /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)(?:\/([a-zA-Z0-9]+))?/
+      const match = item.href.match(regExp)
+      if (match && match[5]) {
+        videoId = match[5]
+        privacyHash = match[6]
       }
+    }
+
+    if (!videoId) return null
+
+    return {
+      id: videoId,
+      embedUrl: `https://player.vimeo.com/video/${videoId}?autoplay=1${
+        privacyHash ? `&h=${privacyHash}` : ''
+      }`,
+      termsUrl: 'https://vimeo.com/terms',
+      type: 'VIMEO',
     }
   }
 
