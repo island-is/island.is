@@ -2379,7 +2379,7 @@ export class CaseService {
 
         if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
           await Promise.all(
-            theCase.defendants.flatMap((defendant) => {
+            theCase.defendants.flatMap((defendant) =>
               pipe(
                 defendant.verdicts ?? [],
                 filterMap((verdict) => {
@@ -2391,8 +2391,8 @@ export class CaseService {
 
                   return option.none
                 }),
-              )
-            }),
+              ),
+            ),
           )
         }
 
