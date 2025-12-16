@@ -308,6 +308,10 @@ export const m = {
       id: 'web.grants:bullets.technologyDevelopmentFund',
       defaultMessage: 'Tækniþróunarsjóður',
     },
+    technologyDevelopment: {
+      id: 'web.grants:bullets.technologyDevelopment',
+      defaultMessage: 'Tækniþróunar',
+    },
     financing: {
       id: 'web.grants:bullets.financing',
       defaultMessage: 'Fjármögnun',
