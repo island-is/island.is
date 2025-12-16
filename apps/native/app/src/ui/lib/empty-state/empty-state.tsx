@@ -1,10 +1,9 @@
 import React from 'react'
 import { Image } from 'react-native'
 
-import infoBubbleIcon from '../../../assets/icons/info-bubble.png'
-import { EmptyList } from './empty-list'
-import { Typography } from '../typography/typography'
 import styled from 'styled-components/native'
+import infoBubbleIcon from '../../../assets/icons/info-bubble.png'
+import { Typography } from '../typography/typography'
 
 interface EmptyStateProps {
   title: React.ReactNode

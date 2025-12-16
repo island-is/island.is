@@ -174,18 +174,13 @@ export function setupRoutes() {
   })
 
   addRoute('/medicine-delegation/add', async (passProps) => {
-    const { parentComponentId, ...rest } = (passProps as any) || {}
-
     Navigation.showModal({
       stack: {
         children: [
           {
             component: {
               name: ComponentRegistry.MedicineDelegationFormScreen,
-              passProps: {
-                parentComponentId,
-                ...rest,
-              },
+              passProps,
             },
           },
         ],
@@ -194,18 +189,13 @@ export function setupRoutes() {
   })
 
   addRoute('/medicine-delegation/detail', async (passProps) => {
-    const { parentComponentId, ...rest } = (passProps as any) || {}
-
     Navigation.showModal({
       stack: {
         children: [
           {
             component: {
               name: ComponentRegistry.MedicineDelegationDetailScreen,
-              passProps: {
-                parentComponentId,
-                ...rest,
-              },
+              passProps,
             },
           },
         ],

@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
-import { dynamicColor, font, theme } from '../../utils'
+import { dynamicColor, font } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable`
