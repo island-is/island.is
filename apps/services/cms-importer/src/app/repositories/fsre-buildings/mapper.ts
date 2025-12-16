@@ -14,11 +14,19 @@ export const mapFSREBuildingToGenericListItem = (
 
   return generateGenericListItem({
     listId: genericListId,
-    ownerTag: OWNER_TAG,
+    ownerTags: [OWNER_TAG],
     properties: {
       internalTitle: `FSRE: ${data.address}_${data.id}`,
-      title: data.address,
-      slug: data.address.toLocaleLowerCase(LOCALE).replace(/\s+/g, '-'),
+      title: {
+        [EN_LOCALE]: `Address: ${data.address}`,
+        [LOCALE]: data.address,
+      },
+      slug: {
+        [EN_LOCALE]: data.address
+          .toLocaleLowerCase(EN_LOCALE)
+          .replace(/\s+/g, '-'),
+        [LOCALE]: data.address.toLocaleLowerCase(LOCALE).replace(/\s+/g, '-'),
+      },
       tagIds,
       cardIntro: generateCardIntro(data),
       content: generateContent(data),

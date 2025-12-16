@@ -4,7 +4,7 @@ import { CreationType } from '../cms/cms.types'
 import { EnergyGrantDto } from './dto/energyGrant.dto'
 import { generateGenericListItem } from '../cms/mapper'
 
-const OWNER_TAG = 'ownerOrkustofnun'
+const OWNER_TAGS = ['ownerOrkustofnun', 'ownerUmhverfisstofnun']
 
 export const mapEnergyGrantToGenericListItem = (
   data: EnergyGrantDto,
@@ -13,11 +13,19 @@ export const mapEnergyGrantToGenericListItem = (
 ): CreationType | undefined =>
   generateGenericListItem({
     listId: genericListId,
-    ownerTag: OWNER_TAG,
+    ownerTags: OWNER_TAGS,
     properties: {
       internalTitle: data.projectName,
-      title: data.projectName,
-      slug: data.projectName.toLocaleLowerCase(LOCALE).replace(/ /g, ''),
+      title: {
+        [EN_LOCALE]: `Project: ${data.projectName}`,
+        [LOCALE]: data.projectName,
+      },
+      slug: {
+        [EN_LOCALE]: data.projectName
+          .toLocaleLowerCase(EN_LOCALE)
+          .replace(/ /g, ''),
+        [LOCALE]: data.projectName.toLocaleLowerCase(LOCALE).replace(/ /g, ''),
+      },
       tagIds: [
         tagsRegistry[data.tagOne],
         data.tagTwo ? tagsRegistry[data.tagTwo] : undefined,
@@ -26,13 +34,6 @@ export const mapEnergyGrantToGenericListItem = (
       ].filter(isDefined),
       cardIntro: {
         [LOCALE]: [
-          {
-            items: [
-              {
-                value: data.initiativeName,
-              },
-            ],
-          },
           {
             items: [
               {
@@ -49,15 +50,19 @@ export const mapEnergyGrantToGenericListItem = (
               },
             ],
           },
-        ],
-        [EN_LOCALE]: [
           {
             items: [
               {
+                value: 'Heiti átaks: ',
+              },
+              {
+                isBold: true,
                 value: data.initiativeName,
               },
             ],
           },
+        ],
+        [EN_LOCALE]: [
           {
             items: [
               {
@@ -71,6 +76,16 @@ export const mapEnergyGrantToGenericListItem = (
               {
                 isBold: true,
                 value: data.recipient,
+              },
+            ],
+          },
+          {
+            items: [
+              {
+                value: 'Initiative: ',
+              },
+              {
+                value: data.initiativeName,
               },
             ],
           },

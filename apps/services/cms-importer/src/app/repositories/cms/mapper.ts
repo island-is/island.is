@@ -1,23 +1,23 @@
 import { isDefined } from '@island.is/shared/utils'
 import { LOCALE, EN_LOCALE } from '../../constants'
-import { CreationType, LocalizedContent } from './cms.types'
+import { CreationType, LocalizedContent, LocalizedValue } from './cms.types'
 
 interface Props {
   listId: string
   properties: {
     internalTitle: string
-    title: string
-    slug: string
+    title: LocalizedValue
+    slug: LocalizedValue
     tagIds?: string[]
     cardIntro?: LocalizedContent
     content?: LocalizedContent
   }
-  ownerTag: string
+  ownerTags: string[]
 }
 
 export const generateGenericListItem = ({
   listId,
-  ownerTag,
+  ownerTags,
   properties,
 }: Props): CreationType | undefined => {
   const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
@@ -65,15 +65,13 @@ export const generateGenericListItem = ({
   return {
     fields: newEntry,
     metadata: {
-      tags: [
-        {
-          sys: {
-            type: 'Link',
-            linkType: 'Tag',
-            id: ownerTag,
-          },
+      tags: ownerTags.map((ownerTag) => ({
+        sys: {
+          type: 'Link',
+          linkType: 'Tag',
+          id: ownerTag,
         },
-      ],
+      })),
     },
   }
 }

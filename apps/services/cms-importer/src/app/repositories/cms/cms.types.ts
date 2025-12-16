@@ -7,6 +7,11 @@ export type EntryInput = Array<{
   referenceId?: string
 }>
 
+export interface LocalizedValue {
+  [EN_LOCALE]: string
+  [LOCALE]: string
+}
+
 export interface LocalizedContent {
   [EN_LOCALE]: Array<Paragraph>
   [LOCALE]: Array<Paragraph>
