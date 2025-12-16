@@ -10,10 +10,6 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  validateAndSendToServer,
-  validateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
