@@ -403,20 +403,6 @@ export const isPoliceReportStepValidIC = (workingCase: Case): boolean => {
 export const isReceptionAndAssignmentStepValid = (
   workingCase: Case,
 ): boolean => {
-  console.log(
-    workingCase.judge,
-    validate([
-      [
-        workingCase.courtCaseNumber,
-        [
-          'empty',
-          isIndictmentCase(workingCase.type)
-            ? 'S-case-number'
-            : 'R-case-number',
-        ],
-      ],
-    ]).isValid,
-  )
   return Boolean(
     workingCase.judge &&
       validate([
