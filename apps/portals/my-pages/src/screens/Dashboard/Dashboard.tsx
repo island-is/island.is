@@ -18,7 +18,6 @@ import {
   ServicePortalPaths,
   m,
   useDynamicRoutesWithNavigation,
-  isCompany,
 } from '@island.is/portals/my-pages/core'
 import {
   DocumentLine,
@@ -27,7 +26,7 @@ import {
 } from '@island.is/portals/my-pages/documents'
 import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { getOrganizationLogoUrl, isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'

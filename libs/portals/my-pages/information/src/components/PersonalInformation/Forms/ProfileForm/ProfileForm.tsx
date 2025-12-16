@@ -18,7 +18,6 @@ import {
   LoadModal,
   m,
   parseNumber,
-  isCompany,
 } from '@island.is/portals/my-pages/core'
 import {
   useDeleteEmailOrPhoneValue,
@@ -33,7 +32,7 @@ import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTyp
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 import { emailsMsg, msg, mNotifications } from '../../../../lib/messages'
 import { usePaperMail } from '../../../../hooks/usePaperMail'
-import { safeAwait } from '@island.is/shared/utils'
+import { isCompany, safeAwait } from '@island.is/shared/utils'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { EmailsList } from '../../../emails/EmailsList/EmailsList'
