@@ -2075,14 +2075,16 @@ export class CaseNotificationService extends BaseNotificationService {
     email?: string
   } = {}) {
     const subject = `Nýr úrskurður í máli ${courtCaseNumber}`
-    const html = `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+    const hasLink = Boolean(link)
+    const html = hasLink
+      ? `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+      : `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í Réttarvörslugátt.`
 
     return this.sendEmail({
       subject,
       html,
       recipientName: name,
       recipientEmail: email,
-      skipTail: !link,
     })
   }
 
