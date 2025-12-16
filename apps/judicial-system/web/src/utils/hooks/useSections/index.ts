@@ -904,8 +904,9 @@ const useSections = (
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
         (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
-        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
-          !isCompletedCase(state)),
+        (isDistrictCourtUser(user) &&
+          (!isCompletedCase(state) || state === CaseState.CORRECTING)) ||
+        (isDefenceUser(user) && !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
         ? [
             {
