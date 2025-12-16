@@ -170,6 +170,7 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
   // Fallback for backward compatibility - delegations without scope filtering
@@ -179,6 +180,7 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null,
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
   [userWithDelegations2.nationalId]: [
@@ -187,6 +189,7 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithDelegations.nationalId,
       subjectId: delegationSubjectId,
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
@@ -195,6 +198,7 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
 }
