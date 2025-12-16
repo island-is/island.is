@@ -26,6 +26,8 @@ export const dataSchema = z.object({
   userIsParticipating: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   userIsPayingAsIndividual: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   participantList: z.array(participantSchema),
+  courseSelect: z.string().min(1),
+  dateSelect: z.string().min(1),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

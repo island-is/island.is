@@ -33,7 +33,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
   dataSchema,
   allowMultipleApplicationsInDraft: true,
-  // TODO: look into reading courseId and date from queryparams, initialQueryParameter: 'courseId',
+  initialQueryParameter: 'selection', // JSON stringified object with courseId and courseInstanceId
   // TODO: Store what course the applicant has applied for and what date
   // Note: only use this if any data should remain after pruning for better visibility in the admin portal
   // adminDataConfig: {

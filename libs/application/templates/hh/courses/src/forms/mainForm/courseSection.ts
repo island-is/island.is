@@ -1,19 +1,22 @@
 import gql from 'graphql-tag'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import is from 'date-fns/locale/is'
 import type {
   Query,
   QueryGetCourseByIdArgs,
   QueryGetCourseSelectOptionsArgs,
 } from '@island.is/api/schema'
+import type { Application } from '@island.is/application/types'
 import {
   buildAsyncSelectField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import is from 'date-fns/locale/is'
+const QUERY_PARAM_KEY = 'initialQuery'
 
 const GET_COURSE_SELECT_OPTIONS_QUERY = gql`
   query GetCourseSelectOptions($input: GetCourseSelectOptionsInput!) {
@@ -47,6 +50,18 @@ const GET_COURSE_BY_ID_QUERY = gql`
   }
 `
 
+const parseQueryParamValue = (
+  value?: string,
+): { courseId?: string; courseInstanceId?: string } | undefined => {
+  if (!value) return undefined
+  try {
+    const parsedValue = JSON.parse(value)
+    return parsedValue
+  } catch {
+    return undefined
+  }
+}
+
 export const courseSection = buildSection({
   id: 'courseSection',
   title: m.course.sectionTitle,
@@ -59,6 +74,14 @@ export const courseSection = buildSection({
           id: 'courseSelect',
           title: m.course.courseSelectTitle,
           clearOnChange: ['dateSelect'],
+          defaultValue: (application: Application) => {
+            const value = getValueViaPath<string>(
+              application.answers,
+              QUERY_PARAM_KEY,
+              '',
+            )
+            return parseQueryParamValue(value)?.courseId
+          },
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<
               Query,
@@ -83,6 +106,14 @@ export const courseSection = buildSection({
           title: m.course.dateSelectTitle,
           isSearchable: false,
           updateOnSelect: ['courseSelect'],
+          defaultValue: (application: Application) => {
+            const value = getValueViaPath<string>(
+              application.answers,
+              QUERY_PARAM_KEY,
+              '',
+            )
+            return parseQueryParamValue(value)?.courseInstanceId
+          },
           loadOptions: async ({ apolloClient, selectedValues }) => {
             const courseId = selectedValues?.[0]
             if (!courseId) return []
