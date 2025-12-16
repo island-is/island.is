@@ -25,7 +25,7 @@ export class EnergyFundImportService {
   }
 
   private async processEnergyGrants() {
-    const grants = await this.clientsRepository.getEnergyGrants(10)
+    const grants = await this.clientsRepository.getEnergyGrants(20)
 
     if (grants) {
       const existingEntries =
