@@ -19,6 +19,8 @@ const REDIS_NODE_CONFIG = {
 }
 
 const serviceName = 'services-form-system-api'
+const workerName = `${serviceName}-worker`
+
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
@@ -76,11 +78,11 @@ const FORM_SYSTEM_BULL_PREFIX = (ctx: Context) =>
     ? `form_system_api_bull_module.${ctx.featureDeploymentName}`
     : 'form_system_api_bull_module'
 
-export const workerSetup = (): ServiceBuilder<'services-form-system-worker'> =>
-  service('services-form-system-worker')
+export const workerSetup = (): ServiceBuilder<typeof workerName> =>
+  service(workerName)
     .image(serviceName)
     .namespace(serviceName)
-    .serviceAccount('services-form-system-worker')
+    .serviceAccount(workerName)
     .codeOwner(CodeOwners.Advania)
     .redis()
     .db()
