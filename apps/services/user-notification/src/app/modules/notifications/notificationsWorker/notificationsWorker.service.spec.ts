@@ -30,6 +30,7 @@ import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
+import { InternalCreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { wait } from './helpers'
 import {
   MockDelegationsService,
@@ -517,7 +518,8 @@ describe('NotificationsWorkerService', () => {
       expect(actorNotificationQueueCalls.length).toBe(1)
 
       // Verify the actor notification in queue is for the specific actor we targeted
-      const actorNotificationMessage = actorNotificationQueueCalls[0][0] as any
+      const actorNotificationMessage =
+        actorNotificationQueueCalls[0][0] as InternalCreateHnippNotificationDto
       expect(actorNotificationMessage.recipient).toBe(
         userWithNoDelegations.nationalId,
       ) // Should be the targeted actor
@@ -722,7 +724,7 @@ describe('NotificationsWorkerService', () => {
       jest
         .spyOn(notificationsService, 'getTemplate')
         .mockReturnValue(
-          Promise.resolve(getMockHnippTemplate({ scope: undefined as any })),
+          Promise.resolve(getMockHnippTemplate({ scope: undefined })),
         )
 
       // Add a message for a user with delegations
@@ -830,7 +832,7 @@ describe('NotificationsWorkerService', () => {
             emailVerified: true,
             documentNotifications: true,
             emailNotifications: true,
-          } as any),
+          } as UserProfileDto),
         )
 
       // Mock actor profiles
@@ -848,9 +850,9 @@ describe('NotificationsWorkerService', () => {
               documentNotifications: true,
               emailNotifications: true,
               locale: 'is',
-            } as any
+            } as UserProfileDto
           }
-          return undefined as any
+          return undefined
         })
 
       // Spy on queue.add to verify actor notifications
@@ -898,7 +900,8 @@ describe('NotificationsWorkerService', () => {
       expect(actorNotificationQueueCalls).toHaveLength(1)
 
       // Verify it's for the correct actor (documents scope)
-      const actorNotificationMessage = actorNotificationQueueCalls[0][0] as any
+      const actorNotificationMessage =
+        actorNotificationQueueCalls[0][0] as InternalCreateHnippNotificationDto
       expect(actorNotificationMessage.recipient).toBe(actorWithDocumentsScope)
       expect(actorNotificationMessage.onBehalfOf?.nationalId).toBe(
         testUserNationalId,

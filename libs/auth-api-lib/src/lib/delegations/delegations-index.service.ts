@@ -278,8 +278,8 @@ export class DelegationsIndexService {
     const customDelegationScopes = new Set<string>()
 
     for (const scope of apiScopes) {
-      const scopeDelegationTypes = (scope as any).supportedDelegationTypes
-        ? (scope as any).supportedDelegationTypes.map(
+      const scopeDelegationTypes = scope.supportedDelegationTypes
+        ? scope.supportedDelegationTypes.map(
             (d: ApiScopeDelegationType) => d.delegationType,
           )
         : []

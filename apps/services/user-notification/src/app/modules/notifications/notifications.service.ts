@@ -73,7 +73,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetOrganizationByNationalId,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      organizationCollection: { items: Array<{ title: string }> }
+    }
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
@@ -132,7 +134,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplates,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -152,7 +156,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -479,7 +485,13 @@ export class NotificationsService {
 
     // Map results to include fields from joined user_notification
     const mappedData = result.data.map((item) => {
-      const actorNotification = item as any
+      const actorNotification = item as ActorNotification & {
+        userNotification?: {
+          messageId?: string
+          recipient?: string
+          scope?: string
+        }
+      }
       return {
         ...actorNotification.toJSON(),
         rootMessageId: actorNotification.userNotification?.messageId,
@@ -490,7 +502,7 @@ export class NotificationsService {
 
     return {
       ...result,
-      data: mappedData as any,
+      data: mappedData,
     }
   }
 }

@@ -36,10 +36,7 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import {
-  createNationalId,
-  createNationalRegistryUser,
-} from '@island.is/testing/fixtures'
+import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp, truncate } from '@island.is/testing/nest'
 
 describe('DelegationsIndexService', () => {
@@ -642,7 +639,7 @@ describe('DelegationsIndexService', () => {
         const delegationRecord = testCase.expectedFrom.find(
           (record) =>
             record.nationalId === delegation.fromNationalId &&
-            (record.type as any) ===
+            (record.type as string) ===
               `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
         expect(delegationRecord).toBeDefined()
