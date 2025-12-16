@@ -127,6 +127,7 @@ export interface ApplicationStateMeta<
           application: Application,
           role: ApplicationRole,
           nationalId: string,
+          isAdmin: boolean,
         ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }

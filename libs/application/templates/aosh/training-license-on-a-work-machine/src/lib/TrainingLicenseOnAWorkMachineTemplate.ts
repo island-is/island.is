@@ -207,10 +207,11 @@ const template: ApplicationTemplate<
                 includeSubjectAndActor: true,
               },
             ],
-            pendingAction: (application, _role, nationalId) => {
+            pendingAction: (application, role, nationalId, isAdmin) => {
               return getReviewStatePendingAction(
                 nationalId,
                 getReviewers(application.answers),
+                isAdmin || role === Roles.APPLICANT,
               )
             },
           },

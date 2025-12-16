@@ -36,6 +36,7 @@ const isCurrentUserReviewPending = (
 export const getReviewStatePendingAction = (
   currentUserNationalId: string,
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
+  shouldShowReviewerList: boolean,
 ): PendingAction => {
   // If the current user needs to review, return "you need to review" message
   if (isCurrentUserReviewPending(currentUserNationalId, reviewers)) {
@@ -48,12 +49,14 @@ export const getReviewStatePendingAction = (
 
   // If the current user either has reviewed or their review isn't needed and some reviewer(s) need to review
   // return message with list of reviewers that need to review
-  const pendingReviewersContent = getPendingReviewersText(reviewers)
-  if (pendingReviewersContent) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: pendingReviewersContent,
-      displayStatus: 'info',
+  if (shouldShowReviewerList) {
+    const pendingReviewersContent = getPendingReviewersText(reviewers)
+    if (pendingReviewersContent) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: pendingReviewersContent,
+        displayStatus: 'info',
+      }
     }
   }
 
