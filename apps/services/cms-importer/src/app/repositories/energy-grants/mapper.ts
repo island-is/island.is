@@ -3,6 +3,7 @@ import { LOCALE, EN_LOCALE } from '../../constants'
 import { CreationType } from '../cms/cms.types'
 import { EnergyGrantDto } from './dto/energyGrant.dto'
 import { generateGenericListItem } from '../cms/mapper'
+import slugify from '@sindresorhus/slugify'
 
 const OWNER_TAGS = ['ownerOrkustofnun', 'ownerUmhverfisstofnun']
 
@@ -21,10 +22,8 @@ export const mapEnergyGrantToGenericListItem = (
         [LOCALE]: data.projectName,
       },
       slug: {
-        [EN_LOCALE]: data.projectName
-          .toLocaleLowerCase(EN_LOCALE)
-          .replace(/ /g, ''),
-        [LOCALE]: data.projectName.toLocaleLowerCase(LOCALE).replace(/ /g, ''),
+        [EN_LOCALE]: slugify(data.projectName),
+        [LOCALE]: slugify(data.projectName),
       },
       tagIds: [
         tagsRegistry[data.tagOne],
@@ -85,6 +84,7 @@ export const mapEnergyGrantToGenericListItem = (
                 value: 'Initiative: ',
               },
               {
+                isBold: true,
                 value: data.initiativeName,
               },
             ],

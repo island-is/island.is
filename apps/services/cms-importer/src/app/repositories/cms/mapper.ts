@@ -47,14 +47,8 @@ export const generateGenericListItem = ({
         })),
       },
     }),
-    title: {
-      [LOCALE]: title,
-      [EN_LOCALE]: title,
-    },
-    slug: {
-      [EN_LOCALE]: slug,
-      [LOCALE]: slug,
-    },
+    title,
+    slug,
     ...(content && {
       content: generateContentFormatting(content),
     }),

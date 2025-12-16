@@ -2,6 +2,7 @@ import { LOCALE, EN_LOCALE } from '../../constants'
 import { CreationType, LocalizedContent } from '../cms/cms.types'
 import { generateGenericListItem } from '../cms/mapper'
 import { BuildingDto } from './dto/building.dto'
+import slugify from '@sindresorhus/slugify'
 
 const OWNER_TAG = 'ownerFsre'
 
@@ -11,6 +12,7 @@ export const mapFSREBuildingToGenericListItem = (
   tagsRegistry: Record<string, string>,
 ): CreationType | undefined => {
   const tagIds = data.region ? [tagsRegistry[data.region]] : undefined
+  const slug = slugify(data.address, { separator: '-' })
 
   return generateGenericListItem({
     listId: genericListId,
@@ -22,10 +24,8 @@ export const mapFSREBuildingToGenericListItem = (
         [LOCALE]: data.address,
       },
       slug: {
-        [EN_LOCALE]: data.address
-          .toLocaleLowerCase(EN_LOCALE)
-          .replace(/\s+/g, '-'),
-        [LOCALE]: data.address.toLocaleLowerCase(LOCALE).replace(/\s+/g, '-'),
+        [EN_LOCALE]: slug,
+        [LOCALE]: slug,
       },
       tagIds,
       cardIntro: generateCardIntro(data),
@@ -97,10 +97,22 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
   }
 
   content[LOCALE].push({
-    items: [{ value: `Fastanúmer: ${data.id}` }],
+    items: [
+      { value: 'Fastanúmer: ' },
+      {
+        value: data.id,
+        isBold: true,
+      },
+    ],
   })
   content[EN_LOCALE].push({
-    items: [{ value: `ID number: ${data.id}` }],
+    items: [
+      { value: 'Id number: ' },
+      {
+        value: data.id,
+        isBold: true,
+      },
+    ],
   })
 
   if (data.squareMeters) {
