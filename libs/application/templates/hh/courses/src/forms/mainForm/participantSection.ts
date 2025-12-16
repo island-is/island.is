@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildLinkField,
   buildMultiField,
   buildRadioField,
@@ -130,6 +131,10 @@ export const participantSection = buildSection({
               emailRequired: true,
             },
           },
+        }),
+        buildCustomField({
+          id: 'participantValidation',
+          component: 'ParticipantValidation',
         }),
       ],
     }),

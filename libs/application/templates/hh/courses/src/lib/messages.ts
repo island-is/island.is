@@ -130,6 +130,12 @@ export const m = {
       defaultMessage: 'Breyta upplýsingum á mínum síðum',
       description: 'Title of change info field',
     },
+    participantValidationError: {
+      id: 'hh.courses.application:participant.participantValidationError',
+      defaultMessage:
+        'Þú verður að skrá þig eða að minnsta kosti einn þátttakanda á námskeiðið',
+      description: 'Error message when no participants are registered',
+    },
   }),
   payer: defineMessages({
     sectionTitle: {
