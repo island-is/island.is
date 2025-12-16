@@ -6,11 +6,16 @@ import useInfoCardItems from './useInfoCardItems'
 
 interface Props {
   displayVerdictViewDate?: boolean
+  onProsecutorClick?: () => void
   displayOpenCaseReference?: boolean
 }
 
 const InfoCardActiveIndictment: React.FC<Props> = (props) => {
-  const { displayVerdictViewDate, displayOpenCaseReference } = props
+  const {
+    displayVerdictViewDate,
+    displayOpenCaseReference,
+    onProsecutorClick,
+  } = props
   const { workingCase } = useContext(FormContext)
   const {
     defendants,
@@ -28,6 +33,8 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     mergedCaseCourt,
     civilClaimants,
     courtCaseNumber,
+    splitCases,
+    splitCase,
     showItem,
   } = useInfoCardItems()
 
@@ -51,7 +58,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           id: 'case-info-section',
           items: [
             ...(showItem(indictmentCreated) ? [indictmentCreated] : []),
-            prosecutor(workingCase.type),
+            prosecutor(workingCase.type, onProsecutorClick),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),
@@ -73,6 +80,12 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
               ],
               columns: 2,
             }))
+          : []),
+        ...(workingCase.splitCases && workingCase.splitCases.length > 0
+          ? [{ id: 'split-cases-section', items: [splitCases], columns: 2 }]
+          : []),
+        ...(workingCase.splitCase
+          ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
           : []),
       ]}
     />
