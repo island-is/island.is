@@ -54,7 +54,9 @@ export const FormStepper = ({
                 {section.sectionType === SectionTypes.PARTIES
                   ? (screen?.fields ?? []).find(
                       (f) => f?.fieldType === FieldTypesEnum.APPLICANT,
-                    )?.name?.[lang] ?? ''
+                    )?.name?.[lang] ??
+                    screen?.name?.[lang] ??
+                    ''
                   : screen?.name?.[lang] ?? ''}
               </Text>
             ))}
