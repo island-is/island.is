@@ -39,15 +39,15 @@ export const attachmentSubSection = buildSubSection({
                   .electronicAttachmentOption,
             },
             {
-              value: AttachmentOptions.PHYSICAL,
-              label:
-                newPrimarySchoolMessages.differentNeeds.paperAttachmentOption,
-            },
-            {
               value: AttachmentOptions.ATTACHMENTS_AND_PHYSICAL,
               label:
                 newPrimarySchoolMessages.differentNeeds
                   .electronicAndPaperAttachmentOption,
+            },
+            {
+              value: AttachmentOptions.PHYSICAL,
+              label:
+                newPrimarySchoolMessages.differentNeeds.paperAttachmentOption,
             },
           ],
         }),
