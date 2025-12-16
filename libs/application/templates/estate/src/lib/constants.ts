@@ -59,6 +59,13 @@ export const relationWithApplicant = [
 
 export const SPOUSE = 'Maki'
 
+// Applicant relation enum for "Seta í óskiptu búi"
+export enum ApplicantRelation {
+  HEIR = 'Erfingi',
+  REPRESENTATIVE = 'Umboðsmaður',
+  EXCHANGE_MANAGER = 'Skiptastjóri',
+}
+
 export const heirAgeValidation = 'heirAgeValidation'
 export const missingHeirUndividedEstateValidation =
   'missingHeirUndividedEstateValidation'
