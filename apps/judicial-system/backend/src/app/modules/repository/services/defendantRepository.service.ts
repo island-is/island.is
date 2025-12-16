@@ -55,7 +55,6 @@ interface DeleteDefendantOptions {
 }
 
 interface UpdateDefendant {
-  caseId?: string
   noNationalId?: boolean
   nationalId?: string
   dateOfBirth?: string

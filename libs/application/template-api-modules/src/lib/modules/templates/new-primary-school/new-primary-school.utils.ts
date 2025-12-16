@@ -1,6 +1,8 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
+  AttachmentOptions,
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
@@ -13,10 +15,9 @@ import {
   needsPayerApproval,
   ReasonForApplicationOptions,
   shouldShowExpectedEndDate,
+  shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
-  AttachmentOptions,
-  canHaveAttachments,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -294,7 +295,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      requestingMeeting: requestingMeeting === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -332,9 +340,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: isSpecialEducation
-        ? getSpecialEducationSocialProfile(application)
-        : getSocialProfile(application),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) && {
+        social: isSpecialEducation
+          ? getSpecialEducationSocialProfile(application)
+          : getSocialProfile(application),
+      }),
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
@@ -354,15 +368,31 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      childCircumstances: {
-        fieldInspection: fieldInspection === YES,
-        additionalDataProvisioning: additionalDataProvisioning === YES,
-        outsideSpecialist: outsideSpecialist === YES,
-        childViewOnApplication: childViewOnApplication === YES,
-      },
-      terms: terms === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
-    ...(canHaveAttachments(application.answers, application.externalData) &&
+    ...(shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
       attachmentsAnswer && {
         files: attachmentFiles,
         fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),

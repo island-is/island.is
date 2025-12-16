@@ -189,6 +189,10 @@ export const is = {
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
+  'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
+  'homeBanner.vehicleMileage.description':
+    'Skráðu kílómetrastöðu þinna ökutækja',
+  'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 
   // home options
