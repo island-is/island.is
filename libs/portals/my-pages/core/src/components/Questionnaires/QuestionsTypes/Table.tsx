@@ -248,7 +248,12 @@ export const Table: React.FC<TableProps> = ({
       </Text>
 
       {error && (
-        <Text variant="small" color="red600" marginBottom={2}>
+        <Text
+          variant="small"
+          color="red600"
+          marginBottom={2}
+          id={`${id}-error`}
+        >
           {error}
         </Text>
       )}

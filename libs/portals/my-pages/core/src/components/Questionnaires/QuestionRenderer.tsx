@@ -240,6 +240,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Box width={'full'} paddingBottom={3}>
             <ProgressBar
+              id={question.id}
               progress={progress}
               label={question.label}
               options={options?.map((option) => ({

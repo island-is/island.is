@@ -412,11 +412,24 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                       <Box key={`section-${sectionIndex}`}>
                         {section.title && (
                           <Box marginBottom={3}>
-                            <Text variant="h4" as="h2">
+                            <Text
+                              variant="h4"
+                              as="h2"
+                              aria-describedby={
+                                section.description
+                                  ? `section-desc-${sectionIndex}`
+                                  : undefined
+                              }
+                            >
                               {section.title}
                             </Text>
                             {section.description && (
-                              <Text marginTop={1}>{section.description}</Text>
+                              <Text
+                                marginTop={1}
+                                id={`section-desc-${sectionIndex}`}
+                              >
+                                {section.description}
+                              </Text>
                             )}
                           </Box>
                         )}

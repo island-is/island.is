@@ -5,7 +5,6 @@ import React, {
   FC,
   MouseEventHandler,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -14,6 +13,7 @@ import HtmlParser from 'react-html-parser'
 import * as styles from './ProgressBar.css'
 
 interface Props {
+  id: string
   progress: number
   label?: string
   className?: string
@@ -31,6 +31,7 @@ interface Props {
 }
 
 export const ProgressBar: FC<Props> = ({
+  id,
   progress,
   label,
   className,
@@ -47,9 +48,8 @@ export const ProgressBar: FC<Props> = ({
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
   const shouldFocusAfterSelection = useRef(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const uniqueId = useId()
-  const labelId = `progress-label-${uniqueId}`
-  const descriptionId = `progress-description-${uniqueId}`
+  const labelId = `progress-label-${id}`
+  const descriptionId = `progress-description-${id}`
 
   // Check if the selected value actually exists in this instance's options
   const hasValidSelection = useMemo(

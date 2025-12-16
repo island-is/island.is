@@ -1,134 +1,81 @@
-# Health Questionnaire GraphQL Models
+# Health Questionnaires – Models and Mappers
 
-This library provides GraphQL models for health questionnaires that support complex query structures with union types and nested conditional questions.
+This library provides the GraphQL models and mapping logic used for health-related questionnaires in the API and portals.
 
-## Overview
+It sits between external providers (LSH and the Health Directorate/EL) and the internal `Questionnaire` model exposed over GraphQL.
 
-The models support a flexible questionnaire system where:
+## What this library contains
 
-- Questions can have different answer types (thermometer, text, radio, etc.)
-- Answer options can contain extra questions (nested/conditional questions)
-- Union types allow for type-specific fields like `maxLabel` and `minLabel` for thermometer questions
+- GraphQL object types for:
+  - `Questionnaire`, `QuestionnaireSection`, `Question`, `QuestionnaireDraftAnswer`, etc.
+  - Enums such as `QuestionnairesStatusEnum` and `QuestionnaireAnswerOptionType`.
+- Display mappers for **LSH** and **EL** that turn their respective DTOs into the internal `Questionnaire` shape.
+- Helper logic for:
+  - Visibility and dependencies (`dependsOn`, `visibilityConditions`).
+  - Draft answers for EL questionnaires.
 
-## Query Structure Supported
+## Providers and mapping
 
-```graphql
-query GetHealthQuestions($questionnaireId: String!) {
-  healthQuestions(questionnaireId: $questionnaireId) {
-    __typename
-    id
-    label
-    sublabel
-    display
-    etc
-    answerOptions {
-      id
-      value {
-        extraQuestions {
-          __typename
-          id
-          label
-          sublabel
-          display
-          ... on HealthQuestionnaireAnswerThermometer {
-            maxLabel
-            minLabel
-          }
-          ... on HealthQuestionnaireAnswerText {
-            placeholder
-            maxLength
-          }
-          ... on HealthQuestionnaireAnswerRadio {
-            options
-          }
-        }
-      }
-      label
-      type
-    }
-  }
-}
-```
+### LSH mappers
 
-## Model Structure
+Located under `src/lib/transform-mappers/lsh`.
 
-### Core Types
+- **Entry point:** `mapLshQuestionnaire(form)`
+  - Input: `QuestionnaireBody` from `@island.is/clients/lsh`.
+  - Output: `Questionnaire` from `src/models/questionnaire.model.ts`.
+- Sections and questions:
+  - `mapSection` maps LSH `Section` → `QuestionnaireSection`.
+  - `mapQuestion` maps LSH `QuestionType` → internal `Question`.
+- Visibility and dependencies:
+  - LSH exposes a string visibility expression (`visible`) and an optional `dependsOn: string[]`.
+  - `parseVisibility` parses expressions like `@@@Q1 == 'yes'` or `isSelected('x', @@@Q1)` into `VisibilityCondition[]`.
+  - `mapQuestion` merges:
+    - Question ids referenced in `visibilityConditions`.
+    - Explicit `dependsOn`.
+  - The merged, de-duplicated set becomes `question.dependsOn`.
+- Drafts:
+  - LSH mappers only describe structure and visibility; they do **not** generate `draftAnswers`.
 
-1. **Question**: Main question type with basic fields and answer options
-2. **AnswerOption**: Individual answer choice with optional nested questions
-3. **AnswerOptionValue**: Container for extra questions triggered by selecting an option
+See `src/lib/transform-mappers/lsh/README.md` for more detail.
 
-### Union Types
+### EL (Health Directorate) mappers
 
-**HealthQuestionnaireAnswerUnion** supports multiple answer types:
+Located under `src/lib/transform-mappers/el`.
 
-- `HealthQuestionnaireAnswerThermometer`: For pain scales, rating scales
-- `HealthQuestionnaireAnswerText`: For text input questions
-- `HealthQuestionnaireAnswerRadio`: For single-choice questions
-- `HealthQuestionnaireAnswerNumber`: For number input questions
-- `HealthQuestionnaireAnswerCheckbox`: For multi-choice questions
+- **Entry point:** `mapELQuestionnaire(q, locale)`
+  - Input: `QuestionnaireDetailDto` (detailed) or `QuestionnaireBaseDto` (summary) from `@island.is/clients/health-directorate`.
+  - Output: `Questionnaire`.
+- Sections and questions:
+  - `mapGroupToSection` maps EL `QuestionGroupDto` → `QuestionnaireSection`.
+  - `mapItemToQuestion` maps EL question DTOs → internal `Question` and `answerOptions`.
+- Triggers, visibility, and dependencies:
+  - EL uses structured **triggers** instead of visibility expressions.
+  - `mapGroupTriggers` and `mapTriggers` convert these into:
+    - `dependsOn: string[]` (which questions this group/question depends on).
+    - `visibilityConditions: VisibilityCondition[]` controlling when to show.
+- Draft support (EL only):
+  - For detailed questionnaires, `replies` from EL are mapped into `draftAnswers` via `mapDraftRepliesToAnswers`.
+  - This enables saving and resuming questionnaire drafts in the portals.
 
-### Enums
+See `src/lib/transform-mappers/el/README.md` for more detail.
 
-- `QuestionnairesStatusEnum`: answered, unanswered, expired
-- `QuestionnaireQuestionDisplayType`: required, optional, hidden
-- `QuestionnaireAnswerOptionType`: text, radio, checkbox, select, thermometer
+## Using the models in resolvers
 
-## Usage Examples
+Resolvers typically:
 
-### Creating a Thermometer Question
-
-```typescript
-const thermometerQuestion: HealthQuestionnaireAnswerThermometer = {
-  __typename: 'HealthQuestionnaireAnswerThermometer',
-  id: 'pain-scale-1',
-  label: 'Rate your pain level',
-  sublabel: 'Scale from 0-10',
-  display: QuestionDisplayType.required,
-  maxLabel: 'Worst pain imaginable',
-  minLabel: 'No pain at all',
-}
-```
-
-### Creating a Question with Conditional Logic
-
-```typescript
-const mainQuestion: Question = {
-  __typename: 'Question',
-  id: 'has-symptoms',
-  label: 'Do you have any symptoms?',
-  display: QuestionDisplayType.required,
-  answerOptions: [
-    {
-      id: 'yes-symptoms',
-      label: 'Yes',
-      type: AnswerOptionType.radio,
-      value: {
-        extraQuestions: [thermometerQuestion], // Shown if "Yes" selected
-      },
-    },
-    {
-      id: 'no-symptoms',
-      label: 'No',
-      type: AnswerOptionType.radio,
-      // No extraQuestions - nothing shown if "No" selected
-    },
-  ],
-}
-```
-
-## Integration
-
-Import the models in your resolver:
-
-```typescript
-import {
-  Question,
-  HealthQuestionnaireAnswerUnion,
-  HealthQuestionnaireAnswerThermometer,
-} from '@island.is/api/domains/questionnaires'
-```
+1. Call the appropriate client (`LshClientService` or `HealthDirectorateHealthService`).
+2. Pass the DTO into the correct mapper (`mapLshQuestionnaire` or `mapELQuestionnaire`).
+3. Return the resulting `Questionnaire` object from GraphQL.
 
 ## Running unit tests
 
-Run `nx test questionnaires` to execute the unit tests via [Jest](https://jestjs.io).
+This library has Jest tests configured via Nx.
+
+- Display mappers (including `dependsOn` / visibility) are tested in:
+  - `src/lib/transform-mappers/display.mappers.spec.ts`
+
+Run the tests with:
+
+```bash
+yarn nx test api-domains-questionnaires
+```

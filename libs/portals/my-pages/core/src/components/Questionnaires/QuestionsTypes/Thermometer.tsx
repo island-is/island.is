@@ -31,7 +31,6 @@ export const Thermometer: React.FC<ThermometerProps> = ({
   step = 1,
 }) => {
   const height = 442 // Fixed height constant
-  const totalHeight = height + 36 // Including padding and border
   const segmentHeight = 40
 
   const thermometerRef = useRef<HTMLDivElement>(null)
