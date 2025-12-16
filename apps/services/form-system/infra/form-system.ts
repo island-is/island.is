@@ -1,5 +1,6 @@
 import {
   CodeOwners,
+  Context,
   json,
   service,
   ServiceBuilder,
@@ -64,3 +65,36 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-external')
+
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
+const FORM_SYSTEM_BULL_PREFIX = (ctx: Context) =>
+  ctx.featureDeploymentName
+    ? `form_system_api_bull_module.${ctx.featureDeploymentName}`
+    : 'form_system_api_bull_module'
+
+export const workerSetup = (): ServiceBuilder<'services-form-system-worker'> =>
+  service('services-form-system-worker')
+    .image(serviceName)
+    .namespace(serviceName)
+    .serviceAccount('services-form-system-worker')
+    .codeOwner(CodeOwners.Advania)
+    .redis()
+    .db()
+    .env({
+      FORM_SYSTEM_BULL_PREFIX,
+    })
+    .args('main.cjs', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/30 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '768Mi' },
+      requests: { cpu: '150m', memory: '384Mi' },
+    })

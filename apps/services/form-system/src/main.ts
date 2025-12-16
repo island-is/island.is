@@ -1,16 +1,13 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import { processJob } from '@island.is/infra-nest-server'
 
-import { AppModule } from './app/app.module'
-import { openApi } from './openApi'
-import { bootstrap } from '@island.is/infra-nest-server'
+const job = processJob()
 
-bootstrap({
-  appModule: AppModule,
-  name: 'services-form-system-api',
-  openApi,
-  swaggerPath: 'api/swagger',
-  port: 3434,
-})
+if (job === 'worker') {
+  import('./worker').then((app) => {
+    app.worker()
+  })
+} else {
+  import('./app').then((app) => {
+    app.bootstrapServer()
+  })
+}
