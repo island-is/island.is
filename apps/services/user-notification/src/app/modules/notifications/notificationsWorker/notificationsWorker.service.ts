@@ -345,11 +345,7 @@ export class NotificationsWorkerService {
       locale,
     )
 
-    const scope = template.scope || DocumentsScope.main
-    const dbNotification = await this.createActorNotificationDbRecord(
-      args,
-      scope,
-    )
+    const dbNotification = await this.createActorNotificationDbRecord(args)
 
     // Check if delegation email notifications are enabled for the original recipient
     const shouldSendToDelegations = await this.featureFlagService.getValue(
