@@ -137,6 +137,22 @@ export class NotificationDispatchService {
     ])
   }
 
+  private async dispatchIndictmentSplitCompletedNotifications(
+    theCase: Case,
+  ): Promise<void> {
+    const messages = [
+      {
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        },
+      },
+    ]
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
   private async dispatchCourtDateNotifications(
     theCase: Case,
     userDescriptor?: UserDescriptor,
@@ -182,6 +198,9 @@ export class NotificationDispatchService {
           break
         case EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT:
           await this.dispatchIndictmentCriminalRecordFileUpdate(theCase)
+          break
+        case EventNotificationType.INDICTMENT_SPLIT_COMPLETED:
+          await this.dispatchIndictmentSplitCompletedNotifications(theCase)
           break
         default:
           throw new InternalServerErrorException(

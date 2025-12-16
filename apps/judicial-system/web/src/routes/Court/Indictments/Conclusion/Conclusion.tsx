@@ -19,6 +19,7 @@ import {
 import {
   CourtSessionRulingType,
   courtSessionTypeNames,
+  EventType,
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -57,6 +58,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -107,6 +109,7 @@ const courtSessionOptions = [
 const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
@@ -132,6 +135,7 @@ const Conclusion: FC = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
+  const { createEventLog } = useEventLog()
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [postponementReason, setPostponementReason] = useState<string>()
@@ -847,10 +851,18 @@ const Conclusion: FC = () => {
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
           primaryButton={{
             text: 'Staðfesta',
-            onClick: () =>
+            onClick: () => {
+              const eventLogCreated = createEventLog({
+                caseId: splitCaseId,
+                eventType: EventType.INDICTMENT_SPLIT_COMPLETED,
+              })
+              if (!eventLogCreated) {
+                return
+              }
               router.push(
                 `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              ),
+              )
+            },
             isDisabled: !validate([
               [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
             ]).isValid,
