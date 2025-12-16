@@ -647,7 +647,7 @@ export class InternalCaseService {
         },
       ],
       where: {
-        state: { [Op.eq]: completedIndictmentCaseStates },
+        state: completedIndictmentCaseStates,
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       },
