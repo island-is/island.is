@@ -8,7 +8,8 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import { addMonths, addYears } from 'date-fns'
+import addMonths from 'date-fns/addMonths'
+import addYears from 'date-fns/addYears'
 import {
   useIdentityQueryLazyQuery,
   usePostMedicineDelegationMutation,
