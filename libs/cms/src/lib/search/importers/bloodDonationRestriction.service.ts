@@ -6,6 +6,7 @@ import { IBloodDonationRestriction } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { extractChildEntryIds } from './utils'
 import { mapBloodDonationRestrictionListItem } from '../../models/bloodDonationRestriction.model'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 
 @Injectable()
 export class BloodDonationRestrictionSyncService
@@ -73,6 +74,11 @@ export class BloodDonationRestrictionSyncService
           }
           if (mapped.keywordsText) {
             contentSections.push(mapped.keywordsText)
+          }
+          if (entry.fields.cardText) {
+            contentSections.push(
+              documentToPlainTextString(entry.fields.cardText),
+            )
           }
 
           const content = contentSections.join(' ')
