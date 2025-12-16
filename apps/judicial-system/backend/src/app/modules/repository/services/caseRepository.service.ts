@@ -465,13 +465,15 @@ export class CaseRepositoryService {
         caseStringCreateOptions.transaction = transaction
       }
 
-      this.caseStringModel.create(
-        {
-          caseId: splitCaseId,
-          stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
-          value: `Ákærði klofinn frá máli ${caseToSplit.courtCaseNumber}.`,
-        },
-        caseStringCreateOptions,
+      promises.push(
+        this.caseStringModel.create(
+          {
+            caseId: splitCaseId,
+            stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+            value: `Ákærði klofinn frá máli ${caseToSplit.courtCaseNumber}.`,
+          },
+          caseStringCreateOptions,
+        ),
       )
 
       // Copy the civil demands case string to the new case
