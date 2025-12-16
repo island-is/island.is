@@ -10,6 +10,10 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
   UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -145,12 +149,22 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           }
           errorMessage={courtCaseNumberErrorMessage}
           hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
-          onChange={(event) => {
+          onChange={(evt) => {
             setCourtCaseNumberErrorMessage('')
-            setValue(event.target.value)
-            onChange?.(event.target.value)
+            setValue(evt.target.value)
+            onChange?.(evt.target.value)
+
+            if (!setWorkingCase) {
+              return
+            }
+
+            setWorkingCase((prevWorkingCase) => {
+              return { ...prevWorkingCase, courtCaseNumber: evt.target.value }
+            })
           }}
-          onBlur={(evt) => validateInput(evt.target.value)}
+          onBlur={(evt) => {
+            validateInput(evt.target.value)
+          }}
           disabled={
             workingCase.state !== CaseState.SUBMITTED &&
             workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
