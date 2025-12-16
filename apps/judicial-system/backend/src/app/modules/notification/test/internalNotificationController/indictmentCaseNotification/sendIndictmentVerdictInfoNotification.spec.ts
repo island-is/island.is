@@ -48,7 +48,7 @@ describe('IndictmentCaseService', () => {
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
-        verdict: { serviceRequirement: ServiceRequirement.REQUIRED },
+        verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
       },
     ],
     prosecutor: {
