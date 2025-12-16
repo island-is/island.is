@@ -158,9 +158,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
               return { ...prevWorkingCase, courtCaseNumber: evt.target.value }
             })
           }}
-          onBlur={(evt) => {
-            validateInput(evt.target.value)
-          }}
+          onBlur={(evt) => validateInput(evt.target.value)}
           disabled={
             workingCase.state !== CaseState.SUBMITTED &&
             workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
