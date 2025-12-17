@@ -60,9 +60,7 @@ export const getReviewStatePendingAction = (
     }
   }
 
-  // Should only reach here if application is in review state and no reviewers
-  // are yet to review indicating some sort of error. Since we can't know why the application is still in review state
-  // we return a generic "waiting for review" message.
+  // Default "Waiting for review" message
   return {
     title: corePendingActionMessages.waitingForReviewTitle,
     content: corePendingActionMessages.waitingForReviewDescription,
