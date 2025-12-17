@@ -88,6 +88,20 @@ export const estateSchema = z.object({
       }),
   }),
 
+  // Registrant (for "Seta í óskiptu búi")
+  registrant: z
+    .object({
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+      address: z.string(),
+      relation: customZodError(z.string().min(1), m.errorRelation),
+    })
+    .optional(),
+
   selectedEstate: z.enum([
     EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
