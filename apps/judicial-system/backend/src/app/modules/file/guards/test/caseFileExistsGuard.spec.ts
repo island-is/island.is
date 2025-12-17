@@ -7,11 +7,8 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
-
 import { createTestingFileModule } from '../../test/createTestingFileModule'
 
-import { CaseFile } from '../../../repository'
 import { CaseFileExistsGuard } from '../caseFileExists.guard'
 
 interface Then {
@@ -23,13 +20,10 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Case File Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockFileModel: typeof CaseFile
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileModel, fileService } = await createTestingFileModule()
-
-    mockFileModel = fileModel
+    const { fileService } = await createTestingFileModule()
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new CaseFileExistsGuard(fileService)
@@ -47,27 +41,6 @@ describe('Case File Exists Guard', () => {
     }
   })
 
-  describe('database lookup', () => {
-    const caseId = uuid()
-    const fileId = uuid()
-
-    beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId, fileId } }))
-
-      await givenWhenThen()
-    })
-
-    it('should query the database', () => {
-      expect(mockFileModel.findOne).toHaveBeenCalledWith({
-        where: {
-          id: fileId,
-          caseId,
-          state: { [Op.not]: CaseFileState.DELETED },
-        },
-      })
-    })
-  })
-
   describe('case file exists', () => {
     const caseId = uuid()
     const fileId = uuid()
@@ -75,9 +48,10 @@ describe('Case File Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId, fileId } }))
-      const mockFindOne = mockFileModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(caseFile)
+      mockRequest.mockImplementationOnce(() => ({
+        params: { fileId },
+        case: { id: caseId, caseFiles: [caseFile] },
+      }))
 
       then = await givenWhenThen()
     })
@@ -93,7 +67,10 @@ describe('Case File Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId, fileId } }))
+      mockRequest.mockImplementationOnce(() => ({
+        params: { fileId },
+        case: { id: caseId, caseFiles: [{ id: uuid() }] },
+      }))
 
       then = await givenWhenThen()
     })
@@ -106,7 +83,7 @@ describe('Case File Exists Guard', () => {
     })
   })
 
-  describe('missing case id', () => {
+  describe('missing case', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -117,7 +94,7 @@ describe('Case File Exists Guard', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing case id')
+      expect(then.error.message).toBe('Missing case')
     })
   })
 
@@ -126,7 +103,10 @@ describe('Case File Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockImplementationOnce(() => ({
+        params: {},
+        case: { id: caseId, caseFiles: [] },
+      }))
 
       then = await givenWhenThen()
     })

@@ -38,7 +38,7 @@ export class SplitCaseFileExistsGuard implements CanActivate {
 
     if (!caseFile) {
       throw new NotFoundException(
-        `File ${fileId} of case ${theCase.id} does not exist`,
+        `Case file ${fileId} of case ${theCase.id} does not exist`,
       )
     }
 

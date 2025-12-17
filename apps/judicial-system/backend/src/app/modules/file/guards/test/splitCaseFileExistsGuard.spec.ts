@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import {
@@ -7,12 +6,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
-
 import { createTestingFileModule } from '../../test/createTestingFileModule'
 
 import { CaseFile } from '../../../repository'
-import { CaseFileExistsGuard } from '../caseFileExists.guard'
+import { SplitCaseFileExistsGuard } from '../splitCaseFileExists.guard'
 
 interface Then {
   result: boolean
@@ -32,7 +29,7 @@ describe('Split Case File Exists Guard', () => {
     mockFileModel = fileModel
 
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new CaseFileExistsGuard(fileService)
+      const guard = new SplitCaseFileExistsGuard(fileService)
       const then = {} as Then
 
       try {
@@ -55,7 +52,8 @@ describe('Split Case File Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
-        params: { case: { id: caseId, caseFiles: [caseFile] }, fileId },
+        params: { fileId },
+        case: { id: caseId, caseFiles: [caseFile] },
       }))
       const mockFindOne = mockFileModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(caseFile)
@@ -76,13 +74,11 @@ describe('Split Case File Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
-        params: {
-          case: {
-            id: caseId,
-            caseFiles: [{ id: uuid() }],
-            splitCases: [{ id: uuid(), caseFiles: [caseFile] }],
-          },
-          fileId,
+        params: { fileId },
+        case: {
+          id: caseId,
+          caseFiles: [{ id: uuid() }],
+          splitCases: [{ id: uuid(), caseFiles: [caseFile] }],
         },
       }))
       const mockFindOne = mockFileModel.findOne as jest.Mock
@@ -103,13 +99,11 @@ describe('Split Case File Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
-        params: {
-          case: {
-            id: caseId,
-            caseFiles: [{ id: uuid() }],
-            splitCases: [{ id: uuid(), caseFiles: [{ id: uuid() }] }],
-          },
-          fileId,
+        params: { fileId },
+        case: {
+          id: caseId,
+          caseFiles: [{ id: uuid() }],
+          splitCases: [{ id: uuid(), caseFiles: [{ id: uuid() }] }],
         },
       }))
 
@@ -135,7 +129,7 @@ describe('Split Case File Exists Guard', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing case id')
+      expect(then.error.message).toBe('Missing case')
     })
   })
 
@@ -144,7 +138,10 @@ describe('Split Case File Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockImplementationOnce(() => ({
+        params: {},
+        case: { id: caseId, caseFiles: [{ id: uuid() }] },
+      }))
 
       then = await givenWhenThen()
     })

@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { Case } from '../../repository'
@@ -30,8 +31,8 @@ export class CaseFileExistsGuard implements CanActivate {
     const caseFile = theCase.caseFiles?.find((file) => file.id === fileId)
 
     if (!caseFile) {
-      throw new BadRequestException(
-        `File ${fileId} of case ${theCase.id} does not exist`,
+      throw new NotFoundException(
+        `Case file ${fileId} of case ${theCase.id} does not exist`,
       )
     }
 
