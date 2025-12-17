@@ -88,7 +88,7 @@ export const otherBenefitsSubSection = buildSubSection({
             },
             subType: {
               component: 'select',
-              label: payoutMessages.otherBenefits.typeOfPayment,
+              label: payoutMessages.otherBenefits.subTypeOfPayment,
               required: true,
               condition: (application, activeField, _) => {
                 if (
