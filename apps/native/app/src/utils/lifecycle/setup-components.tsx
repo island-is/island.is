@@ -122,10 +122,7 @@ export function registerAllComponents() {
     CR.MedicineDispensationDetailScreen,
     MedicineDispensationDetailScreen,
   )
-  registerComponent(
-    CR.MedicineDispensationsScreen,
-    MedicineDispensationsScreen,
-  )
+  registerComponent(CR.MedicineDispensationsScreen, MedicineDispensationsScreen)
 
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
 
