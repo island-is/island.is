@@ -798,6 +798,8 @@ export const is = {
   'health.prescriptionsAndCertificates.furtherInformation':
     'Nánari upplýsingar',
   'health.prescriptionsAndCertificates.status': 'Staða',
+  'health.prescriptionsAndCertificates.description':
+    'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
 
   'health.drugCertificates.title': 'Lyfjaskírteini',
   'health.drugCertificates.drugName': 'Lyfjaheiti',

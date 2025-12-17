@@ -99,6 +99,7 @@ query GetDrugPrescriptions($locale: String) {
     prescriptions {
       id
       name
+      strength
       type
       form
       url
@@ -106,6 +107,7 @@ query GetDrugPrescriptions($locale: String) {
       prescriberName
       issueDate
       expiryDate
+      category
       dosageInstructions
       indication
       totalPrescribedAmount
@@ -113,18 +115,16 @@ query GetDrugPrescriptions($locale: String) {
       renewalBlockedReason
       renewalStatus
       amountRemaining
+      medCardDrugId
       dispensations {
         id
-        agentName
+        pharmacy
         date
+        name
         count
-        items {
-          id
-          name
-          strength
-          amount
-          numberOfPackages
-        }
+        strength
+        itemId
+        amount
       }
     }
   }

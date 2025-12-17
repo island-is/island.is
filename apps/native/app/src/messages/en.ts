@@ -799,6 +799,8 @@ export const en: TranslatedMessages = {
   'health.prescriptionsAndCertificates.furtherInformation':
     'Further information',
   'health.prescriptionsAndCertificates.status': 'Status',
+  'health.prescriptionsAndCertificates.description':
+    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
 
   'health.drugCertificates.title': 'Medication certificate',
   'health.drugCertificates.drugName': 'Drug name',
