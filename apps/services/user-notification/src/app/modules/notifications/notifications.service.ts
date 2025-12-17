@@ -486,17 +486,17 @@ export class NotificationsService {
     // Map results to include fields from joined user_notification
     const mappedData = result.data.map((item) => {
       const actorNotification = item as ActorNotification & {
-        userNotification?: {
-          messageId?: string
-          recipient?: string
-          scope?: string
+        userNotification: {
+          messageId: string
+          recipient: string
+          scope: string
         }
       }
       return {
         ...actorNotification.toJSON(),
-        rootMessageId: actorNotification.userNotification?.messageId,
-        onBehalfOfNationalId: actorNotification.userNotification?.recipient,
-        scope: actorNotification.userNotification?.scope,
+        rootMessageId: actorNotification.userNotification.messageId,
+        onBehalfOfNationalId: actorNotification.userNotification.recipient,
+        scope: actorNotification.userNotification.scope,
       }
     })
 
