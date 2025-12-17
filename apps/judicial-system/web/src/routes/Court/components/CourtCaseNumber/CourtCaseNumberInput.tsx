@@ -145,10 +145,18 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           }
           errorMessage={courtCaseNumberErrorMessage}
           hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
-          onChange={(event) => {
+          onChange={(evt) => {
             setCourtCaseNumberErrorMessage('')
-            setValue(event.target.value)
-            onChange?.(event.target.value)
+            setValue(evt.target.value)
+            onChange?.(evt.target.value)
+
+            if (!setWorkingCase) {
+              return
+            }
+
+            setWorkingCase((prevWorkingCase) => {
+              return { ...prevWorkingCase, courtCaseNumber: evt.target.value }
+            })
           }}
           onBlur={(evt) => validateInput(evt.target.value)}
           disabled={

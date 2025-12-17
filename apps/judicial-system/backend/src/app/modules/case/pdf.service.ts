@@ -12,6 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isCompletedCase,
@@ -201,7 +202,12 @@ export class PdfService {
       confirmation,
     )
 
-    if (isCompletedCase(theCase.state) && confirmation) {
+    if (
+      isCompletedCase(theCase.state) &&
+      // Don't store court record for cases being corrected
+      theCase.state !== CaseState.CORRECTING &&
+      confirmation
+    ) {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish

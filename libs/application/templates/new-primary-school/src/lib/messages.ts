@@ -1578,6 +1578,11 @@ export const errorMessages = defineMessages({
       'Nauðsynlegt er að bæta við að minnsta kosti einum aðstandanda.',
     description: 'You must add at least one relative',
   },
+  relativeSameAsGuardian: {
+    id: 'nps.application:error.relative.same.as.guardian',
+    defaultMessage: 'Aðstandandi má ekki vera forsjáraðili',
+    description: 'A relative may not be a guardian',
+  },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',
     defaultMessage: 'Nauðsynlegt er að bæta við að minnsta kosti einu systkini',
