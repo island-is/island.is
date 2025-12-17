@@ -19,7 +19,6 @@ import {
 import {
   CourtSessionRulingType,
   courtSessionTypeNames,
-  EventType,
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -135,7 +134,6 @@ const Conclusion: FC = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { createEventLog } = useEventLog()
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [postponementReason, setPostponementReason] = useState<string>()

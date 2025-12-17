@@ -13,7 +13,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   DEFENDER_INDICTMENT_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
   ROUTE_HANDLER_ROUTE,

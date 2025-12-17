@@ -112,19 +112,6 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         },
       ],
     },
-    {
-      theCase: baseCase,
-      notificationType: EventNotificationType.INDICTMENT_SPLIT_COMPLETED,
-      expectedMessages: [
-        {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-          caseId,
-          body: {
-            type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
-          },
-        },
-      ],
-    },
   ]
 
   it.each(
