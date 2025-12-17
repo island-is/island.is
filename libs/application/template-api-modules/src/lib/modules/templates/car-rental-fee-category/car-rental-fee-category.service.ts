@@ -13,12 +13,14 @@ import {
   RateCategory,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { Logger } from '@island.is/logging'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
+    private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
@@ -66,9 +68,16 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   async getCurrentVehiclesRateCategory({
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
-    return await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
-      entityId: auth.nationalId,
-    })
+    try {
+      const resp = await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
+        entityId: auth.nationalId,
+      })
+      this.logger.info('Current vehicles rate category debug response', resp)
+      return resp
+    } catch (error) {
+      this.logger.error('Error getting current vehicles rate category', error)
+      throw error
+    }
   }
 
   async postDataToSkatturinn({
