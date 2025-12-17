@@ -111,11 +111,6 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/emailGenerators/assets",
             "output": "./hms/registration-of-new-property-numbers-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets",
-            "output": "./new-primary-school-assets"
           }
         ]
       },

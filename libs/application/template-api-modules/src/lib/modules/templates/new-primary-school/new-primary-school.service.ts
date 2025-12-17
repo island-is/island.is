@@ -1,45 +1,48 @@
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { getSlugFromType } from '@island.is/application/core'
 import {
   errorMessages,
   // FIRST_GRADE_AGE,
   getApplicationAnswers,
+  getApplicationExternalData,
+  getOtherGuardian,
   needsOtherGuardianApproval,
   needsPayerApproval,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import {
   FriggClientService,
   GetOrganizationsByTypeTypeEnum,
 } from '@island.is/clients/mms/frigg'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import * as kennitala from 'kennitala'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
-import { SharedTemplateApiService } from '../../shared'
+import { format as formatKennitala } from 'kennitala'
+import { NotificationsService } from '../../../notification/notifications.service'
+import { NotificationType } from '../../../notification/notificationsTemplates'
 import {
-  generateAssignOtherGuardianEmail,
-  generateAssignPayerEmail,
-  generateOtherGuardianApprovedApplicationEmail,
-  generateOtherGuardianRejectedApplicationEmail,
-  generatePayerApprovedApplicationEmail,
-  generatePayerRejectedApplicationEmail,
-} from './emailGenerators'
+  SharedModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { getConfigValue } from '../../shared/shared.utils'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
-import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly friggClientService: FriggClientService,
     private readonly nationalRegistryService: NationalRegistryXRoadService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly s3Service: S3Service,
+    private readonly notificationsService: NotificationsService,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super(ApplicationTypes.NEW_PRIMARY_SCHOOL)
   }
@@ -121,6 +124,12 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     )
   }
 
+  async getSchools({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getOrganizationsByType(auth, {
+      type: GetOrganizationsByTypeTypeEnum.School,
+    })
+  }
+
   async getAttachmentsAsBase64(
     application: TemplateApiModuleActionProps['application'],
   ): Promise<string[]> {
@@ -171,81 +180,128 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     )
 
     if (needsOtherGuardianApproval(application)) {
-      await this.sharedTemplateAPIService
-        .sendEmail(generateOtherGuardianApprovedApplicationEmail, application)
-        .catch((e) => {
-          this.logger.error('Failed to send other guardian approved email', {
-            e,
-            applicationId: application.id,
-          })
-        })
+      await this.sendHnippNotificationToApplicant({
+        application,
+        type: NotificationType.NewPrimarySchoolOtherGuardianApproved,
+      })
     }
 
     if (needsPayerApproval(application)) {
-      await this.sharedTemplateAPIService
-        .sendEmail(generatePayerApprovedApplicationEmail, application)
-        .catch((e) => {
-          this.logger.error('Failed to send payer approved email', {
-            e,
-            applicationId: application.id,
-          })
-        })
+      await this.sendHnippNotificationToApplicant({
+        application,
+        type: NotificationType.NewPrimarySchoolPayerApproved,
+      })
     }
 
     return response
   }
 
   async assignOtherGuardian({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService
-      .sendEmail(generateAssignOtherGuardianEmail, application)
-      .catch((e) => {
-        this.logger.error('Failed to send assign other guardian email', {
-          e,
-          applicationId: application.id,
-        })
-      })
+    const otherGuardian = getOtherGuardian(
+      application.answers,
+      application.externalData,
+    )
+
+    await this.sendHnippNotificationToAssignee({
+      application,
+      type: NotificationType.NewPrimarySchoolAssignOtherGuardian,
+      recipient: otherGuardian?.nationalId,
+    })
   }
 
   async notifyApplicantOfRejectionFromOtherGuardian({
     application,
   }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService
-      .sendEmail(generateOtherGuardianRejectedApplicationEmail, application)
-      .catch((e) => {
-        this.logger.error('Failed to send other guardian rejected email', {
-          e,
-          applicationId: application.id,
-        })
-      })
+    await this.sendHnippNotificationToApplicant({
+      application,
+      type: NotificationType.NewPrimarySchoolOtherGuardianRejected,
+    })
   }
 
   async assignPayer({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService
-      .sendEmail(generateAssignPayerEmail, application)
-      .catch((e) => {
-        this.logger.error('Failed to send assign payer email', {
-          e,
-          applicationId: application.id,
-        })
-      })
+    const { payerNationalId } = getApplicationAnswers(application.answers)
+
+    await this.sendHnippNotificationToAssignee({
+      application,
+      type: NotificationType.NewPrimarySchoolAssignPayer,
+      recipient: payerNationalId,
+    })
   }
 
   async notifyApplicantOfRejectionFromPayer({
     application,
   }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService
-      .sendEmail(generatePayerRejectedApplicationEmail, application)
-      .catch((e) => {
-        this.logger.error('Failed to send payer rejected email', {
-          e,
-          applicationId: application.id,
-        })
-      })
+    await this.sendHnippNotificationToApplicant({
+      application,
+      type: NotificationType.NewPrimarySchoolPayerRejected,
+    })
   }
 
-  async getSchools({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getOrganizationsByType(auth, {
-      type: GetOrganizationsByTypeTypeEnum.School,
+  private async sendHnippNotificationToApplicant({
+    application,
+    type,
+  }: {
+    application: ApplicationWithAttachments
+    type: NotificationType
+  }) {
+    const { applicantNationalId } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicationLink = await this.getApplicationLink(application)
+
+    if (!applicantNationalId)
+      throw new Error('Could not find applicant national id')
+
+    await this.notificationsService.sendNotification({
+      type,
+      messageParties: { recipient: applicantNationalId },
+      applicationId: application.id,
+      args: { applicationLink },
     })
+  }
+
+  private async sendHnippNotificationToAssignee({
+    application,
+    type,
+    recipient,
+  }: {
+    application: ApplicationWithAttachments
+    type: NotificationType
+    recipient?: string
+  }) {
+    const { applicantName, applicantNationalId } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicationLink = await this.getApplicationLink(application)
+
+    if (!recipient) throw new Error('Could not find recipient')
+    if (!applicantName) throw new Error('Could not find applicant name')
+    if (!applicantNationalId)
+      throw new Error('Could not find applicant national id')
+
+    await this.notificationsService.sendNotification({
+      type,
+      messageParties: {
+        recipient,
+        sender: applicantNationalId,
+      },
+      applicationId: application.id,
+      args: {
+        name: applicantName,
+        id: formatKennitala(applicantNationalId),
+        applicationLink,
+      },
+    })
+  }
+
+  private async getApplicationLink(application: ApplicationWithAttachments) {
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    return `${clientLocationOrigin}/${
+      getSlugFromType(application.typeId) as string
+    }/${application.id}` as string
   }
 }
