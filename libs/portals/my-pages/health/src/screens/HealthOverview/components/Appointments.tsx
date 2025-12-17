@@ -1,7 +1,13 @@
 import { HealthDirectorateAppointments } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InfoCardGrid, LinkButton } from '@island.is/portals/my-pages/core'
+import {
+  formatDate,
+  getTime,
+  getWeekday,
+  InfoCardGrid,
+  LinkButton,
+} from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
@@ -40,11 +46,12 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         to: HealthPaths.HealthAppointmentDetail.replace(':id', appointment.id),
         href: HealthPaths.HealthAppointments,
         appointment: {
-          date: appointment.date ?? '',
-          time: appointment.time ?? '',
-          weekday: appointment.weekday
-            ? mapWeekday(appointment.weekday, formatMessage)
-            : undefined,
+          date: formatDate(appointment.date ?? ''),
+          time: getTime(appointment.date ?? ''),
+          weekday: mapWeekday(
+            getWeekday(appointment.date ?? ''),
+            formatMessage,
+          ),
           location: {
             label: appointment.location?.name ?? '',
             href: generateGoogleMapsLink(appointment.location?.address ?? ''),

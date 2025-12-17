@@ -623,20 +623,7 @@ export class HealthDirectorateService {
         sortedData.map((item) => {
           const data: Appointment = {
             id: item.id,
-            date: item.startTime
-              ? new Date(item.startTime).toLocaleDateString(IS_DATE_LOCALE)
-              : item.startTime,
-            time: item.startTime
-              ? new Date(item.startTime).toLocaleTimeString(IS_DATE_LOCALE, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-              : item.startTime,
-            weekday: item.startTime
-              ? new Date(item.startTime).toLocaleDateString(IS_DATE_LOCALE, {
-                  weekday: 'long',
-                })
-              : undefined,
+            date: item.startTime?.toISOString(),
             title: item.description,
             status: item.status,
             instruction: item.patientInstruction,

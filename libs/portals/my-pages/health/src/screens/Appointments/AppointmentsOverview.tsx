@@ -56,7 +56,6 @@ const AppointmentsOverview = () => {
       [
         a.title,
         a.date,
-        a.weekday,
         a.location?.address,
         a.location?.name,
         ...(a.practitioners ?? []),

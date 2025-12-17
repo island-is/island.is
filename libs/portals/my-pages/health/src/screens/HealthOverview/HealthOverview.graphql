@@ -67,8 +67,6 @@ query getAppointmentsOverview(
       title
       instruction
       date
-      time
-      weekday
       status
       location {
         __typename

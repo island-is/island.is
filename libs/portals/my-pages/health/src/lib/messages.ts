@@ -68,6 +68,10 @@ export const messages = defineMessages({
     id: 'sp.health:date-and-time',
     defaultMessage: 'Dagsetning og tími',
   },
+  clockShortArg: {
+    id: 'sp.health:clock-short',
+    defaultMessage: 'kl. {arg}',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',

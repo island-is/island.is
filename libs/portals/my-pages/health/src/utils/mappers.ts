@@ -33,20 +33,20 @@ export const mapBlockedStatus = (
 }
 
 export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
-  switch (weekday) {
-    case 'mánudagur':
+  switch (weekday.toLowerCase()) {
+    case 'monday':
       return formatMessage(messages.weekdayMondayAcc)
-    case 'þriðjudagur':
+    case 'tuesday':
       return formatMessage(messages.weekdayTuesdayAcc)
-    case 'miðvikudagur':
+    case 'wednesday':
       return formatMessage(messages.weekdayWednesdayAcc)
-    case 'fimmtudagur':
+    case 'thursday':
       return formatMessage(messages.weekdayThursdayAcc)
-    case 'föstudagur':
+    case 'friday':
       return formatMessage(messages.weekdayFridayAcc)
-    case 'laugardagur':
+    case 'saturday':
       return formatMessage(messages.weekdaySaturdayAcc)
-    case 'sunnudagur':
+    case 'sunday':
       return formatMessage(messages.weekdaySundayAcc)
     default:
       return weekday

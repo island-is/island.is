@@ -41,12 +41,6 @@ export class Appointment {
   @Field({ nullable: true })
   date?: string
 
-  @Field({ nullable: true })
-  time?: string
-
-  @Field({ nullable: true })
-  weekday?: string
-
   @Field()
   status!: string
 

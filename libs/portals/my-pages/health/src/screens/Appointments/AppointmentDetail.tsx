@@ -5,6 +5,8 @@ import {
   InfoLineStack,
   IntroWrapper,
   formatDate,
+  getTime,
+  getWeekday,
   m,
 } from '@island.is/portals/my-pages/core'
 
@@ -13,8 +15,9 @@ import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
-import { useGetAppointmentsQuery } from './Appointments.generated'
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
+import { mapWeekday } from '../../utils/mappers'
+import { useGetAppointmentsQuery } from './Appointments.generated'
 
 const AppointmentDetail = () => {
   const { formatMessage } = useLocale()
@@ -52,12 +55,18 @@ const AppointmentDetail = () => {
             label={formatMessage(messages.dateAndTime)}
             content={
               appointment?.date
-                ? appointment?.weekday +
-                  ', ' +
-                  formatDate(appointment?.date ?? '') +
-                  ', ' +
-                  'kl. ' +
-                  appointment?.time
+                ? [
+                    mapWeekday(
+                      getWeekday(appointment?.date ?? ''),
+                      formatMessage,
+                    ),
+                    formatDate(appointment?.date ?? ''),
+                    formatMessage(messages.clockShortArg, {
+                      arg: getTime(appointment?.date ?? ''),
+                    }),
+                  ]
+                    .filter(Boolean)
+                    .join(', ')
                 : undefined
             }
             loading={loading}

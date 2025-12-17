@@ -9,8 +9,6 @@ query getAppointments(
       title
       instruction
       date
-      time
-      weekday
       status
       duration
       location {
