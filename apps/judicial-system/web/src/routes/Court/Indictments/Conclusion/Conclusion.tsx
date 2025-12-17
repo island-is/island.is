@@ -57,7 +57,6 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
