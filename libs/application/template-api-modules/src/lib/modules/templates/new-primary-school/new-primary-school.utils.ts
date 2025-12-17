@@ -26,8 +26,6 @@ import {
   RegistrationApplicationInputApplicationTypeEnum,
   RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -405,15 +403,4 @@ const mapApplicationType = (application: Application) => {
     default:
       return RegistrationApplicationInputApplicationTypeEnum.Enrollment
   }
-}
-
-export const pathToAsset = (file: string) => {
-  if (isRunningOnEnvironment('local')) {
-    return join(
-      __dirname,
-      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
-    )
-  }
-
-  return join(__dirname, `./new-primary-school-assets/${file}`)
 }
