@@ -152,6 +152,7 @@ export const languageSubSection = buildSubSection({
           width: 'half',
           required: true,
           space: 4,
+          defaultValue: NO,
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
