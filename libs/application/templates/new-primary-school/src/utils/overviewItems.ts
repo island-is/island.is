@@ -1239,8 +1239,7 @@ export const specialEducationSupportItems = async (
 }
 
 export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { payer, payerName, payerNationalId, payerEmail } =
-    getApplicationAnswers(answers)
+  const { payer, payerName, payerNationalId } = getApplicationAnswers(answers)
 
   return payer === PayerOption.APPLICANT
     ? [
@@ -1261,11 +1260,6 @@ export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
           width: 'half',
           keyText: newPrimarySchoolMessages.shared.nationalId,
           valueText: formatKennitala(payerNationalId ?? ''),
-        },
-        {
-          width: 'half',
-          keyText: newPrimarySchoolMessages.shared.email,
-          valueText: payerEmail,
         },
       ]
 }

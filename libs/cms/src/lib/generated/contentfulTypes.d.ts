@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction

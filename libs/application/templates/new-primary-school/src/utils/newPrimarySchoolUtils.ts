@@ -317,8 +317,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'payer.other.nationalId',
   )
 
-  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
-
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -466,7 +464,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     payer,
     payerName,
     payerNationalId,
-    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
