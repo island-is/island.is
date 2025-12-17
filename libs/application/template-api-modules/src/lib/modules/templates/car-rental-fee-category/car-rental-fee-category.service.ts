@@ -13,14 +13,14 @@ import {
   RateCategory,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
