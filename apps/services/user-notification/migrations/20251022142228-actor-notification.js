@@ -32,8 +32,6 @@ module.exports = {
       },
     })
 
-    // Create indexes
-    // Index on user_notification_id for joins
     await queryInterface.addIndex(
       'actor_notification',
       ['user_notification_id'],
@@ -42,13 +40,10 @@ module.exports = {
       },
     )
 
-    // Composite index on (recipient, id DESC) for efficient querying and sorting
-    // This supports queries filtering by recipient and sorting by id DESC
     await queryInterface.addIndex('actor_notification', ['recipient', 'id'], {
       name: 'actor_notification_recipient_id_idx',
     })
 
-    // Index on message_id for duplicate checking
     await queryInterface.addIndex('actor_notification', ['message_id'], {
       name: 'actor_notification_message_id_idx',
     })

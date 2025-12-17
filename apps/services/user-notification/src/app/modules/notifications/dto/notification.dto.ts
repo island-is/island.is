@@ -208,8 +208,7 @@ export class ActorNotificationDto {
   @ApiProperty({ example: 'uuid-root-message-id' })
   @IsString()
   @IsUUID()
-  @IsOptional()
-  rootMessageId?: string
+  rootMessageId!: string
 
   @ApiProperty({ example: 456 })
   @IsInt()
