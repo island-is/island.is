@@ -239,7 +239,7 @@ export class FileService {
       return this.awsS3Service.getConfirmedIndictmentCaseObject(
         theCase.type,
         file.key,
-        !file.hash,
+        true, // !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
       )
@@ -495,11 +495,12 @@ export class FileService {
     timeToLive?: number,
     useFreshSession = false,
   ): Promise<string> {
+    console.log('!!!!!!!!!!!!!!!!!', file, theCase)
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
         file.key,
-        !file.hash,
+        true, // !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,

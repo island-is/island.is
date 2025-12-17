@@ -149,7 +149,11 @@ export const addConfirmation = (
     .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(9))
   doc.font('Times-Roman')
   // The X value here is approx. 8px after the title
-  doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
+  doc.text(
+    'Rafræn staðfesting!!!',
+    calculatePt(210),
+    pageMargin + calculatePt(9),
+  )
   doc.text(
     formatDate(confirmation.date) ?? '',
     0,
@@ -226,6 +230,11 @@ export const addIndictmentConfirmation = (
   const institutionWidth = confirmedByWidth + calculatePt(48)
 
   // Draw the shaddow
+  console.log(
+    'shaddowWidth',
+    coatOfArmsWidth + titleWidth,
+    '!!!!!!!!!!!!!!!!!!!!',
+  )
   doc
     .rect(
       pageMargin,
@@ -255,7 +264,7 @@ export const addIndictmentConfirmation = (
   doc.font('Times-Roman')
   // The X value here is approx. 8px after the title
   doc.text(
-    'Skjal samþykkt rafrænt',
+    'Skjal samþykkt rafrænt!!!!!!!!!!',
     calculatePt(210),
     pageMargin + calculatePt(12),
   )
