@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import {
