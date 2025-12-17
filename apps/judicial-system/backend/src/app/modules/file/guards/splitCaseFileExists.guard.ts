@@ -3,13 +3,14 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { Case } from '../../repository'
 import { FileService } from '../file.service'
 
 @Injectable()
-export class CaseFileExistsGuard implements CanActivate {
+export class SplitCaseFileExistsGuard implements CanActivate {
   constructor(private readonly fileService: FileService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,10 +28,16 @@ export class CaseFileExistsGuard implements CanActivate {
       throw new BadRequestException('Missing file id')
     }
 
-    const caseFile = theCase.caseFiles?.find((file) => file.id === fileId)
+    const allCaseFiles = theCase.caseFiles ?? []
+
+    for (const splitCase of theCase.splitCases ?? []) {
+      allCaseFiles.push(...(splitCase.caseFiles ?? []))
+    }
+
+    const caseFile = allCaseFiles.find((file) => file.id === fileId)
 
     if (!caseFile) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         `File ${fileId} of case ${theCase.id} does not exist`,
       )
     }

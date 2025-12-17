@@ -108,7 +108,7 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(['', ':subpoenaId/pdf'])
-  // Strictly speaking, only court users need access to
+  // Strictly speaking, only district court users need access to
   // split case defendants' subpoenas
   // However, giving prosecution users access does not pose a security risk
   @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsOptionalGuard)
@@ -156,7 +156,7 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(':subpoenaId/serviceCertificate')
-  // Strictly speaking, only court users need access to
+  // Strictly speaking, only district court users need access to
   // split case defendants' subpoena service certificates
   // However, giving prosecution users access does not pose a security risk
   @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsGuard)

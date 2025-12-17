@@ -470,6 +470,13 @@ export const include: Includeable[] = [
         ],
         separate: true,
       },
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED } },
+        separate: true,
+      },
     ],
     separate: true,
   },
