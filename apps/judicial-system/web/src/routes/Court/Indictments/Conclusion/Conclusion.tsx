@@ -852,13 +852,6 @@ const Conclusion: FC = () => {
           primaryButton={{
             text: 'Staðfesta',
             onClick: () => {
-              const eventLogCreated = createEventLog({
-                caseId: splitCaseId,
-                eventType: EventType.INDICTMENT_SPLIT_COMPLETED,
-              })
-              if (!eventLogCreated) {
-                return
-              }
               router.push(
                 `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
               )

@@ -458,7 +458,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         promises.push(
           this.sendEmail({
             subject,
-            html: `${body} Sjá nánar á <a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+            html: `${body} Sjá nánar á <a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
             recipientName: theCase.prosecutor.name,
             recipientEmail: theCase.prosecutor.email,
           }),
@@ -470,7 +470,13 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         promises.push(
           this.sendEmail({
             subject,
-            html: `${body} Sjá nánar á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+            html: `${body} Sjá nánar á <a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}${DEFENDER_INDICTMENT_ROUTE}/${
+              theCase.id
+            }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
             recipientName: defenderName,
             recipientEmail: defenderEmail,
           }),
@@ -483,6 +489,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private async sendSplitCompletedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
+    if (
+      this.hasSentNotification(
+        IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        theCase.notifications,
+      )
+    ) {
+      return { delivered: true }
+    }
     this.eventService.postEvent('SPLIT', theCase)
 
     const promises: Promise<Recipient>[] =
