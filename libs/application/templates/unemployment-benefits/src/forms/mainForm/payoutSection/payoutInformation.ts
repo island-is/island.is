@@ -49,7 +49,6 @@ export const payoutInformationSubSection = buildSubSection({
           id: 'payout.payToUnionDescription',
           title: payoutMessages.payoutInformation.unionQuestion,
           titleVariant: 'h5',
-          space: 0,
         }),
         buildRadioField({
           id: 'payout.payToUnion',
