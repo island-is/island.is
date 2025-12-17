@@ -39,7 +39,8 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
     includeTag ||
     (isIndictmentCase(workingCase.type) &&
       workingCase.indictmentRulingDecision &&
-      isCompletedCase(workingCase.state))
+      isCompletedCase(workingCase.state) &&
+      workingCase.state !== CaseState.CORRECTING)
 
   return (
     <Box
@@ -63,12 +64,6 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
           {children}
         </Text>
       </Box>
-      {isIndictmentCase(workingCase.type) &&
-        workingCase.indictmentRulingDecision &&
-        isCompletedCase(workingCase.state) &&
-        workingCase.state !== CaseState.CORRECTING && (
-          <TagCaseState theCase={workingCase as CaseListEntry} />
-        )}
       {showRulingDecisionTag && (
         <TagCaseState
           theCase={workingCase as CaseListEntry}
