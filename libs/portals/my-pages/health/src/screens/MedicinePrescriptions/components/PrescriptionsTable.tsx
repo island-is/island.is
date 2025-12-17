@@ -1,5 +1,11 @@
 import { HealthDirectoratePrescription } from '@island.is/api/schema'
-import { Box, LoadingDots, Stack, Tag } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  LoadingDots,
+  Stack,
+  Tag,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -31,7 +37,6 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
   // This state is used to handle errors, but currently not displayed in the UI. Will be after service fixes
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null)
-  const isMobile = useIsMobile()
   const [prescriptions, setPrescriptions] = useState<
     Array<PrescriptionItem> | undefined
   >(data)
@@ -126,17 +131,17 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                     icon: { icon: 'reload' as const, type: 'outline' as const },
                   }
                 : {
-                    type: 'info' as const,
-                    //TODO: FIX AFTER DESIGNER HAS REVIEWED
-                    label:
-                      (isMobile
-                        ? formatMessage(messages.notValidForRenewalForMobile)
-                        : '') +
+                    type: 'text' as const,
+                    label: mapBlockedStatus(
+                      item.renewalBlockedReason?.toString() ?? '',
+                      formatMessage,
+                    ).status,
+                    text:
+                      item.renewResponseMessage ||
                       mapBlockedStatus(
                         item.renewalBlockedReason?.toString() ?? '',
                         formatMessage,
-                      ),
-                    text: formatMessage(messages.notValidForRenewal),
+                      ).description,
                   },
 
               onExpandCallback: () => {
@@ -145,6 +150,19 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
               children: (
                 <Box background="blue100" paddingBottom={1}>
+                  <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
+                    <AlertMessage
+                      type="info"
+                      message={
+                        item.renewResponseMessage ||
+                        mapBlockedStatus(
+                          item.renewalBlockedReason?.toString() ?? '',
+                          formatMessage,
+                        ).description
+                      }
+                    />
+                  </Box>
+
                   <Stack space={2}>
                     <>
                       <NestedInfoLines

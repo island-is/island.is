@@ -289,6 +289,7 @@ export class HealthDirectorateService {
             ? mapPrescriptionCategory(item.category)
             : undefined,
           isRenewable: item.renewal.isRenewable,
+          renewResponseMessage: item.renewal.responseMessage,
           renewalBlockedReason: item.renewal.blockedReason
             ? mapPrescriptionRenewalBlockedReason(item.renewal.blockedReason)
             : undefined,
