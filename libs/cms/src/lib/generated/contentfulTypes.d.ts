@@ -4403,7 +4403,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */
