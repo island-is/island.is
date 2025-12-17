@@ -4409,7 +4409,7 @@ export interface ISliceConnectedComponentFields {
     | 'Landspitali/DirectGrants'
     | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
-| 'Syslumenn/DrivingInstructorList'
+    | 'Syslumenn/DrivingInstructorList'
     | 'FSRE/EmployeeList'
     | 'NewKilometerFee'
     | 'LatestVerdicts'
