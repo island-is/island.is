@@ -42,35 +42,24 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
   }
 `
 
-export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES = gql`
-  query IcelandicGovernmentInstitutionsInvoices(
-    $input: IcelandicGovernmentInstitutionsInvoicesInput!
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
+  query IcelandicGovernmentInstitutionsInvoiceGroups(
+    $input: IcelandicGovernmentInstitutionsInvoiceGroupsInput!
   ) {
-    icelandicGovernmentInstitutionsInvoices(input: $input) {
+    icelandicGovernmentInstitutionsInvoiceGroups(input: $input) {
       totalCount
       data {
         id
         supplier {
           id
           name
-          legalId
         }
         customer {
           id
           name
-          legalId
         }
-        totalAmount
-        invoices {
-          id
-          date
-          itemization {
-            id
-            label
-            amount
-          }
-          totalItemizationAmount
-        }
+        totalPaymentsSum
+        totalPaymentsCount
       }
       pageInfo {
         __typename

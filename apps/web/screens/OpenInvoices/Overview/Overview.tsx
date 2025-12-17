@@ -23,11 +23,11 @@ import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroup,
-  IcelandicGovernmentInstitutionsInvoices,
+  IcelandicGovernmentInstitutionsInvoiceGroups,
   Organization,
   Query,
   QueryGetOrganizationArgs,
-  QueryIcelandicGovernmentInstitutionsInvoicesArgs,
+  QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -43,7 +43,7 @@ import { ORGANIZATION_SLUG } from '../contants'
 import { m } from '../messages'
 import { OverviewFilters } from '../types'
 import {
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
 } from './Overview.graphql'
 import { OverviewContent } from './OverviewContent'
@@ -53,7 +53,7 @@ const PAGE_SIZE = 12
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
   filters,
-  initialInvoices,
+  initialInvoiceGroups,
   customPageData,
   organization,
 }) => {
@@ -62,12 +62,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const [getInvoices] = useLazyQuery<
+  const [getInvoiceGroups] = useLazyQuery<
     {
-      icelandicGovernmentInstitutionsInvoices: IcelandicGovernmentInstitutionsInvoices
+      icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
     },
-    QueryIcelandicGovernmentInstitutionsInvoicesArgs
-  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES)
+    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
 
   const baseUrl = linkResolver('openinvoicesoverview', [], locale).href
 
@@ -119,10 +119,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const [invoiceGroups, setInvoiceGroups] = useState<
     Array<IcelandicGovernmentInstitutionsInvoiceGroup>
-  >(initialInvoices?.data ?? [])
+  >(initialInvoiceGroups?.data ?? [])
 
   const [totalHits, setTotalHits] = useState<number | undefined>(
-    initialInvoices?.totalCount ?? 0,
+    initialInvoiceGroups?.totalCount ?? 0,
   )
 
   const totalPages = useMemo(() => {
@@ -132,7 +132,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
   }, [totalHits])
 
-  const fetchInvoices = useCallback(() => {
+  const fetchInvoiceGroups = useCallback(() => {
     if (initialRender) {
       setInitialRender(false)
       return
@@ -140,7 +140,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
     const today = new Date()
 
-    getInvoices({
+    getInvoiceGroups({
       variables: {
         input: {
           customers,
@@ -155,10 +155,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       .then((res) => {
         if (res.data) {
           setInvoiceGroups(
-            res.data.icelandicGovernmentInstitutionsInvoices.data,
+            res.data.icelandicGovernmentInstitutionsInvoiceGroups.data,
           )
           setTotalHits(
-            res.data.icelandicGovernmentInstitutionsInvoices.totalCount,
+            res.data.icelandicGovernmentInstitutionsInvoiceGroups.totalCount,
           )
         } else if (res.error) {
           setInvoiceGroups([])
@@ -169,7 +169,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       })
   }, [
     initialRender,
-    getInvoices,
+    getInvoiceGroups,
     customers,
     suppliers,
     invoiceTypes,
@@ -178,7 +178,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   ])
 
   useEffect(() => {
-    fetchInvoices()
+    fetchInvoiceGroups()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     customers,
@@ -403,14 +403,14 @@ interface OpenInvoicesOverviewProps {
   organization?: Organization
   locale: Locale
   filters?: OverviewFilters
-  initialInvoices?: IcelandicGovernmentInstitutionsInvoices
+  initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoiceGroups
 }
 
 const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
   organization,
   locale,
   filters,
-  initialInvoices,
+  initialInvoiceGroups,
   customPageData,
 }) => {
   return (
@@ -419,7 +419,7 @@ const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
       locale={locale}
       customPageData={customPageData}
       filters={filters}
-      initialInvoices={initialInvoices}
+      initialInvoiceGroups={initialInvoiceGroups}
     />
   )
 }
@@ -432,7 +432,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
       data: { icelandicGovernmentInstitutionsInvoicesFilters },
     },
     {
-      data: { icelandicGovernmentInstitutionsInvoices },
+      data: { icelandicGovernmentInstitutionsInvoiceGroups },
     },
     {
       data: { getOrganization },
@@ -442,7 +442,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
     }),
     apolloClient.query<Query>({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES,
+      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
       variables: {
         input: {
           dateFrom: oneMonthBack,
@@ -491,7 +491,8 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
   return {
     locale: locale as Locale,
     filters,
-    initialInvoices: icelandicGovernmentInstitutionsInvoices ?? undefined,
+    initialInvoiceGroups:
+      icelandicGovernmentInstitutionsInvoiceGroups ?? undefined,
     organization: getOrganization ?? undefined,
   }
 }

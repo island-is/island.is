@@ -1,6 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { Invoice } from './invoice.model'
-import { Entity } from './entity.model'
+import { Supplier } from './supplier.model'
+import { Customer } from './customer.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoiceGroup', {
   description:
@@ -10,15 +11,18 @@ export class InvoiceGroup {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Entity)
-  supplier!: Entity
+  @Field(() => Supplier)
+  supplier!: Supplier
 
-  @Field(() => Entity)
-  customer!: Entity
+  @Field(() => Customer)
+  customer!: Customer
 
-  @Field()
-  totalAmount!: number
+  @Field(() => Int)
+  totalPaymentsSum!: number
 
-  @Field(() => [Invoice])
+  @Field(() => Int)
+  totalPaymentsCount!: number
+
+  @Field(() => [Invoice], { nullable: true })
   invoices?: Array<Invoice>
 }

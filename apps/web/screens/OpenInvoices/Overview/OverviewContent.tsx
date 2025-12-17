@@ -82,9 +82,9 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
             id: group.id,
             Seljandi: group.supplier.name,
             Kaupandi: group.customer.name,
-            Upphæð: formatCurrency(group.totalAmount),
+            Upphæð: formatCurrency(group.totalPaymentsSum),
             children:
-              group.invoices.length > 0 ? (
+              (group.invoices?.length ?? []) > 0 ? (
                 <Box>
                   {group.invoices.map((invoice) => (
                     <Box
@@ -105,12 +105,12 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                         </Box>
                         <Text variant="small">{invoice.id}</Text>
                       </Box>
-                      <T.Table>
+                      {/*<T.Table>
                         <T.Body>
                           {invoice.itemization?.map((invoiceItem, i) => {
                             const background = i % 2 === 0 ? 'white' : undefined
                             const isLastRow =
-                              i === invoice.itemization.length - 1
+                              i === invoice..length - 1
                             return (
                               <>
                                 <T.Row key={invoiceItem.id}>
@@ -171,7 +171,7 @@ export const OverviewContent = ({ invoiceGroups, error }: Props) => {
                             )
                           })}
                         </T.Body>
-                      </T.Table>
+                      </T.Table>*/}
                     </Box>
                   ))}
                 </Box>

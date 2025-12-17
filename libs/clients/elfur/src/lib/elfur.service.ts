@@ -13,6 +13,8 @@ import { mapCustomerDto } from './dtos/customer.dto'
 import { InvoiceTypesDto } from './dtos/invoiceTypes.dto'
 import { mapInvoiceTypeDto } from './dtos/invoiceType.dto'
 import { mapPageInfo } from './utils/pageInfo.util'
+import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
+import { InvoiceGroupRequestDto } from './dtos/invoiceGroupRequest.dto'
 
 @Injectable()
 export class ElfurClientService {
@@ -43,14 +45,30 @@ export class ElfurClientService {
     }))
   }
 
-  public async getOpenInvoices(
-    requestParams?: InvoiceRequestDto,
+  public async getOpenInvoicesGroups(
+    requestParams?: InvoiceGroupRequestDto,
+  ): Promise<InvoiceGroupDto[] | null> {
+    const data = await this.invoicesApi.v1OpeninvoicesInvoicegroupsGet(
+      requestParams ?? {},
+    )
+
+    return data.map((d) => mapInvoiceGroupDto(d)).filter(isDefined)
+  }
+
+  public async getOpenInvoicesByGroup(
+    requestParams: InvoiceRequestDto,
   ): Promise<OpenInvoicesDto | null> {
     const {
       invoices = [],
       pageInfo,
       totalCount,
-    } = await this.invoicesApi.v1OpeninvoicesInvoicesGet(requestParams ?? {})
+    } = await this.invoicesApi.v1OpeninvoicesInvoicesGet({
+      dateFrom: requestParams?.dateFrom,
+      dateTo: requestParams?.dateTo,
+      types: requestParams?.types,
+      suppliers: [requestParams.supplier],
+      customers: [requestParams.customer],
+    })
 
     if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
       return null
