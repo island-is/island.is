@@ -225,14 +225,14 @@ function PaymentPage({
   })
 
   const availablePaymentMethods = useMemo(() => {
-    const methods = [...paymentFlow.availablePaymentMethods]
+    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
 
     if (isInvoicePaymentEnabledForUser) {
       methods.push('invoice')
     }
 
     return Array.from(new Set(methods)) as ('card' | 'invoice')[]
-  }, [paymentFlow.availablePaymentMethods, isInvoicePaymentEnabledForUser])
+  }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
 
   // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
   const isCardPaymentInvalid =
