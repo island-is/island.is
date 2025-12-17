@@ -36,6 +36,7 @@ import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin
 import { PasskeyScreen } from '../../screens/passkey/passkey'
 import { PrescriptionsScreen } from '../../screens/prescriptions/prescriptions'
 import { MedicineDispensationDetailScreen } from '../../screens/prescriptions/components/medicine-dispensation-detail'
+import { MedicineDispensationsScreen } from '../../screens/prescriptions/components/medicine-dispensations'
 import { RegisterEmailScreen } from '../../screens/register-email/register-email'
 import { EditBankInfoScreen } from '../../screens/settings/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/settings/edit-confirm'
@@ -120,6 +121,10 @@ export function registerAllComponents() {
   registerComponent(
     CR.MedicineDispensationDetailScreen,
     MedicineDispensationDetailScreen,
+  )
+  registerComponent(
+    CR.MedicineDispensationsScreen,
+    MedicineDispensationsScreen,
   )
 
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)

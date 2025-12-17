@@ -6,7 +6,6 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 
-import { useTheme } from 'styled-components/native'
 import { HealthDirectorateMedicineHistoryDispensation } from '../../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../../hooks/create-navigation-option-hooks'
 import { Badge, Input, InputRow, NavigationBarSheet } from '../../../ui'
@@ -27,7 +26,6 @@ export const MedicineDispensationDetailScreen: NavigationFunctionComponent<
 > = ({ componentId, dispensation, number }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
-  const theme = useTheme()
 
   if (!dispensation) {
     return null
@@ -40,9 +38,10 @@ export const MedicineDispensationDetailScreen: NavigationFunctionComponent<
     <View style={{ flex: 1 }}>
       <NavigationBarSheet
         componentId={componentId}
-        title={intl.formatMessage({
-          id: 'health.prescriptions.dispensationDetail.title',
-        })}
+        title={intl.formatMessage(
+          { id: 'health.prescriptions.dispensationDetail.title' },
+          { count: number },
+        )}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
@@ -59,10 +58,9 @@ export const MedicineDispensationDetailScreen: NavigationFunctionComponent<
 
           <InputRow>
             <Input
-              label={intl.formatMessage(
-                { id: 'health.prescriptions.dispensationNumber' },
-                { number },
-              )}
+              label={intl.formatMessage({
+                id: 'health.prescriptions.dispensationNumber',
+              })}
               value={formatDate(dispensation.date ?? dispensation.issueDate)}
             />
           </InputRow>

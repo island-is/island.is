@@ -203,7 +203,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
 
   const handleTabChange = (tabIndex: number) => {
     setSelectedTab(tabIndex)
-    tabs[tabIndex]?.ensureLoaded()
   }
 
   const showError =

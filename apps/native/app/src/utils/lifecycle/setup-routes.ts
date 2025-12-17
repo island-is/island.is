@@ -184,6 +184,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/prescriptions/medicine-history', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.MedicineDispensationsScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/prescriptions/dispensation', (passProps) => {
     Navigation.showModal({
       stack: {
