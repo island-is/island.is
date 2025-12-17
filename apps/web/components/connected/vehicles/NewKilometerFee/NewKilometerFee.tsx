@@ -23,6 +23,29 @@ import { formatCurrency } from '@island.is/web/utils/currency'
 import { translation as translationStrings } from './translation.strings'
 
 const MAX_KILOMETER_INPUT_LENGTH = 10
+const numberFormatter = new Intl.NumberFormat('de-DE')
+
+const getValueOrEmptyString = (value?: string | null) => {
+  return value ? value : ''
+}
+
+const formatVehicleType = (
+  vehicleInformation?: {
+    vehicleCommercialName?: string | null
+    color?: string | null
+    make?: string | null
+  } | null,
+) => {
+  const bothCommercialNameAndMakeArePresent =
+    !!vehicleInformation?.make && !!vehicleInformation?.vehicleCommercialName
+  if (!bothCommercialNameAndMakeArePresent) return ''
+
+  return `${getValueOrEmptyString(vehicleInformation.make)}${
+    bothCommercialNameAndMakeArePresent ? ' - ' : ''
+  }${getValueOrEmptyString(vehicleInformation.vehicleCommercialName)}${
+    vehicleInformation.color ? ' (' + vehicleInformation.color + ')' : ''
+  }`
+}
 
 const calculate = (
   inputState: InputState,
@@ -114,6 +137,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
     plateNumber: '',
     fee: 0,
     environmentalFee: 0 as number | undefined,
+    vehicleType: '',
   })
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [inputState, setInputState] = useState(initialInputState)
@@ -145,6 +169,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
       plateNumber: '',
       fee: 0,
       environmentalFee: undefined,
+      vehicleType: '',
     })
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
@@ -182,6 +207,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
           data.getPublicVehicleSearch?.regno ?? inputState.plateNumber,
         fee: newResult.fee,
         environmentalFee: newResult.environmentalFee,
+        vehicleType: formatVehicleType(data.getPublicVehicleSearch),
       })
     },
     onError(error) {
@@ -203,7 +229,7 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
       <Stack space={5}>
-        <Inline space={1} alignY="bottom">
+        <Inline space={2} alignY="bottom">
           <Input
             name="plateNumber"
             type="text"
@@ -218,6 +244,28 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
             disabled={loading}
             onKeyDown={onKeyDown}
           />
+          <Box
+            style={{
+              visibility:
+                result.vehicleType && result.massLaden ? 'visible' : 'hidden',
+              minHeight: 104,
+            }}
+          >
+            <Stack space={1}>
+              <Stack space={0}>
+                <Text variant="eyebrow">
+                  {formatMessage(translationStrings.vehicleTypeLabel)}
+                </Text>
+                <Text>{result.vehicleType}</Text>
+              </Stack>
+              <Stack space={0}>
+                <Text variant="eyebrow">
+                  {formatMessage(translationStrings.massLadenLabel)}
+                </Text>
+                <Text>{numberFormatter.format(result.massLaden)} kg</Text>
+              </Stack>
+            </Stack>
+          </Box>
         </Inline>
 
         <Stack space={2}>
