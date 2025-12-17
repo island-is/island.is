@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
@@ -13,14 +13,14 @@ import {
   RateCategory,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { Logger } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
