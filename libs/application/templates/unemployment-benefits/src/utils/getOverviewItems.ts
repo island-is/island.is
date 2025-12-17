@@ -497,6 +497,7 @@ export const useLicenseOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const drivingLicenseTypes =
     getValueViaPath<
       Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
@@ -543,8 +544,15 @@ export const useLicenseOverviewItems = (
       'licenses.heavyMachineryLicensesTypes',
     )
     const name = ids
-      ?.map((id) => heavyMachineryLicenses.find((x) => x.id === id)?.name)
+      ?.map((id) => {
+        const item = heavyMachineryLicenses.find((x) => x.id === id)
+
+        return (
+          (locale === 'is' ? item?.name : item?.english ?? item?.name) || ''
+        )
+      })
       .filter(Boolean)
+
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
@@ -558,6 +566,7 @@ export const useLanguageOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const allLanguages =
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
@@ -566,7 +575,15 @@ export const useLanguageOverviewItems = (
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
-          index === 0 ? 'Íslenska' : index === 1 ? 'Enska' : language.language
+          index === 0
+            ? locale === 'is'
+              ? 'Íslenska'
+              : 'Icelandic'
+            : index === 1
+            ? locale === 'is'
+              ? 'Enska'
+              : 'English'
+            : language.language
         return `${languageName}: ${language.skill}`
       }
       const languages =
@@ -579,9 +596,11 @@ export const useLanguageOverviewItems = (
           _externalData,
           'unemploymentApplication.data.supportData.languageValues',
         ) || []
-      const languageName = languages.find(
-        (x) => x.id === language.language,
-      )?.name
+      const languageItem = languages.find((x) => x.id === language.language)
+      const languageName =
+        (locale === 'is'
+          ? languageItem?.name
+          : languageItem?.english ?? languageItem?.name) || ''
       const languageSkill = languageSkills.find(
         (x) => x.id === language.skill,
       )?.name
