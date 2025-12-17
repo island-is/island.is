@@ -96,6 +96,7 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -244,6 +245,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Syslumenn/DrivingInstructorList':
       connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
+      break
+    case 'LatestVerdicts':
+      connectedComponent = <LatestVerdicts slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
