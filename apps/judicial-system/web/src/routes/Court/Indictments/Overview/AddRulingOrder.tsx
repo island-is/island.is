@@ -1,9 +1,8 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Box, FileUploadStatus } from '@island.is/island-ui/core'
+import { AlertMessage, Box, FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isDistrictCourtJudgeUser } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -39,6 +38,7 @@ const AddRulingOrder: FC = () => {
   const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
 
   const previousRoute = `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
 
@@ -110,10 +110,6 @@ const AddRulingOrder: FC = () => {
     previousRoute,
   ])
 
-  if (!user || !isDistrictCourtJudgeUser(user)) {
-    return null
-  }
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -121,72 +117,95 @@ const AddRulingOrder: FC = () => {
       notFound={caseNotFound}
     >
       <PageHeader title={'Úrskurðir - Réttarvörslugátt'} />
-      <FormContentContainer>
-        <PageTitle>Úrskurðir</PageTitle>
-        <CourtCaseInfo workingCase={workingCase} />
-        <SectionHeading title="Hlaða upp úrskurði" />
-        <UploadFiles
-          files={uploadFiles}
-          onChange={addFiles}
-          onDelete={removeUploadFile}
-          onRename={handleRename}
-          setEditCount={setEditCount}
-        />
-        <Box component="section" marginBottom={3}>
-          <BlueBox>
-            <Box>
-              <DateTime
-                name="rulingOrderDate"
-                datepickerLabel="Dagsetning úrskurðar"
-                maxDate={new Date()}
-                selectedDate={confirmationDate}
-                onChange={(date: Date | undefined, valid: boolean) => {
-                  if (date && valid) {
-                    setConfirmationDate(date)
 
-                    uploadFiles.forEach((file) => {
-                      updateUploadFile({
-                        ...file,
-                        submissionDate: formatDateForServer(date),
-                      })
-                    })
-                  }
-                }}
-                blueBox={false}
-                required
+      {isUserAssignedJudge ? (
+        <>
+          <FormContentContainer>
+            <PageTitle>Úrskurðir</PageTitle>
+            <CourtCaseInfo workingCase={workingCase} />
+            <SectionHeading title="Hlaða upp úrskurði" />
+            <UploadFiles
+              files={uploadFiles}
+              onChange={addFiles}
+              onDelete={removeUploadFile}
+              onRename={handleRename}
+              setEditCount={setEditCount}
+            />
+            <Box component="section" marginBottom={3}>
+              <BlueBox>
+                <Box>
+                  <DateTime
+                    name="rulingOrderDate"
+                    datepickerLabel="Dagsetning úrskurðar"
+                    maxDate={new Date()}
+                    selectedDate={confirmationDate}
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      if (date && valid) {
+                        setConfirmationDate(date)
+
+                        uploadFiles.forEach((file) => {
+                          updateUploadFile({
+                            ...file,
+                            submissionDate: formatDateForServer(date),
+                          })
+                        })
+                      }
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </Box>
+              </BlueBox>
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={previousRoute}
+              nextButtonText="Staðfesta úrskurð"
+              nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+              nextIsDisabled={
+                !isUserAssignedJudge ||
+                uploadFiles.length === 0 ||
+                !allFilesDoneOrError ||
+                editCount > 0
+              }
+              onNextButtonClick={() => setVisibleModal('confirmation')}
+            />
+          </FormContentContainer>
+          {visibleModal === 'confirmation' && (
+            <Modal
+              title="Viltu staðfesta úrskurð"
+              text="Tilkynning verður send ákæranda og verjanda"
+              primaryButton={{
+                text: 'Staðfesta úrskurð',
+                onClick: async () => {
+                  await handleNextButtonClick()
+                },
+                isDisabled: !allFilesDoneOrError,
+              }}
+              secondaryButton={{
+                text: 'Hætta við',
+                onClick: () => setVisibleModal(undefined),
+              }}
+              onClose={() => setVisibleModal(undefined)}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          <FormContentContainer>
+            <Box marginBottom={10}>
+              <AlertMessage
+                title="Einungis skráður dómari getur hlaðið upp úrskurði"
+                message="Einungis skráður dómari á máli getur hlaðið upp úrskurði undir rekstri máls."
+                type="info"
               />
             </Box>
-          </BlueBox>
-        </Box>
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={previousRoute}
-          nextButtonText="Staðfesta úrskurð"
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={
-            uploadFiles.length === 0 || !allFilesDoneOrError || editCount > 0
-          }
-          onNextButtonClick={() => setVisibleModal('confirmation')}
-        />
-      </FormContentContainer>
-      {visibleModal === 'confirmation' && (
-        <Modal
-          title="Viltu staðfesta úrskurð"
-          text="Tilkynning verður send ákæranda og verjanda"
-          primaryButton={{
-            text: 'Staðfesta úrskurð',
-            onClick: async () => {
-              await handleNextButtonClick()
-            },
-            isDisabled: !allFilesDoneOrError,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setVisibleModal(undefined),
-          }}
-          onClose={() => setVisibleModal(undefined)}
-        />
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter previousUrl={previousRoute} hideNextButton />
+          </FormContentContainer>
+        </>
       )}
     </PageLayout>
   )

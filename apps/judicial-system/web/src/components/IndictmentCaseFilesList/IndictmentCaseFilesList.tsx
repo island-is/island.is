@@ -48,7 +48,6 @@ interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
   showFiledDocumentNumber?: boolean
-  showUserGeneratedFileName?: boolean
 }
 
 interface FileSectionProps {
@@ -62,15 +61,12 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
   showFiledDocumentNumber = false,
-  showUserGeneratedFileName = false,
 }) => {
   const { prefixUploadedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
   const getFileName = (file: CaseFile) => {
-    const fileName = showUserGeneratedFileName
-      ? file.userGeneratedFilename
-      : file.name
+    const fileName = file.userGeneratedFilename ?? file.name
     if (!showFiledDocumentNumber) {
       return fileName
     }
@@ -454,7 +450,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
               <RenderFiles
                 caseFiles={filteredFiles.rulingOrders}
                 onOpenFile={onOpen}
-                showUserGeneratedFileName={true}
               />
               {permissions.canViewVerdictServiceCertificate &&
                 workingCase.defendants?.map((defendant) => {

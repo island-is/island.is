@@ -129,14 +129,6 @@ export const isDistrictCourtUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-export const isDistrictCourtJudgeUser = (user?: InstitutionUser): boolean => {
-  return Boolean(
-    user?.role &&
-      user.role === UserRole.DISTRICT_COURT_JUDGE &&
-      user.institution?.type === InstitutionType.DISTRICT_COURT,
-  )
-}
-
 export const courtOfAppealsRoles: UserRole[] = [
   UserRole.COURT_OF_APPEALS_JUDGE,
   UserRole.COURT_OF_APPEALS_REGISTRAR,

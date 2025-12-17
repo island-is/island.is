@@ -2097,7 +2097,7 @@ export class CaseNotificationService extends BaseNotificationService {
       promises.push(
         this.sendRulingOrderAddedNotification({
           courtCaseNumber: theCase.courtCaseNumber,
-          link: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
           name: theCase.registrar.name,
           email: theCase.registrar.email,
         }),
@@ -2153,7 +2153,7 @@ export class CaseNotificationService extends BaseNotificationService {
     promises.push(
       this.sendRulingOrderAddedNotification({
         courtCaseNumber: theCase.courtCaseNumber,
-        link: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
         name: theCase.prosecutor?.name,
         email: theCase.prosecutor?.email,
       }),

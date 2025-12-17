@@ -85,7 +85,6 @@ export {
   isDistrictCourtUser,
   courtOfAppealsRoles,
   isCourtOfAppealsUser,
-  isDistrictCourtJudgeUser,
   prisonSystemRoles,
   isPrisonSystemUser,
   isPrisonStaffUser,

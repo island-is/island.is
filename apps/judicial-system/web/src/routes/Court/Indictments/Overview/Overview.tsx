@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isDistrictCourtJudgeUser } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -49,6 +48,7 @@ const OverviewBody = ({
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
+  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -122,7 +122,7 @@ const OverviewBody = ({
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
-            {isDistrictCourtJudgeUser(user) && (
+            {isUserAssignedJudge && (
               <Button
                 variant="primary"
                 icon="add"
