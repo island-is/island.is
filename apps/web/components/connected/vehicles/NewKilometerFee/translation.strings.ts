@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
+  vehicleTypeLabel: {
+    id: 'web.newKilometerFee:vehicleTypeLabel',
+    defaultMessage: 'Tegund ökutækis',
+    description: 'Tegund ökutækis',
+  },
+  massLadenLabel: {
+    id: 'web.newKilometerFee:massLadenLabel',
+    defaultMessage: 'Leyfð heildarþyngd',
+    description: 'Leyfð heildarþyngd',
+  },
   errorOccurred: {
     id: 'web.newKilometerFee:errorOccurred',
     defaultMessage: 'Ekki tókst að reikna gjald',
