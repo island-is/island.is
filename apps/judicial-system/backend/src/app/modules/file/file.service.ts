@@ -495,7 +495,6 @@ export class FileService {
     timeToLive?: number,
     useFreshSession = false,
   ): Promise<string> {
-    console.log('!!!!!!!!!!!!!!!!!', file, theCase)
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
