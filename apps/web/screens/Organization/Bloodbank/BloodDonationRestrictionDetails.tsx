@@ -119,6 +119,9 @@ const BloodDonationRestrictionDetails: CustomScreen<
               {item.keywordsText}
             </Text>
           )}
+          {Boolean(item.effectiveDate) && (
+            <Text variant="small">{item.effectiveDate}</Text>
+          )}
         </Stack>
       </Box>
     </OrganizationWrapper>
