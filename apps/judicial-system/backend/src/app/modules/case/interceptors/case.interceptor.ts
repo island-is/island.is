@@ -13,6 +13,8 @@ import {
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
+  isDefenceUser,
+  isPrisonSystemUser,
   isProsecutionUser,
   ServiceRequirement,
   User,
@@ -189,6 +191,11 @@ const transformCase = (theCase: Case, user?: User) => {
       theCase.eventLogs,
     ),
     eventLogs: undefined,
+    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    rulingModifiedHistory:
+      isDefenceUser(user) || isPrisonSystemUser(user)
+        ? undefined
+        : theCase.rulingModifiedHistory,
   }
 }
 
