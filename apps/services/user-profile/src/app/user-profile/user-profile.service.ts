@@ -27,7 +27,7 @@ import { DataStatus } from './types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { notificationScopes } from '@island.is/auth/scopes'
 import { uuid } from 'uuidv4'
 import { UserProfileConfig } from '../../config'
 import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
@@ -748,16 +748,6 @@ export class UserProfileService {
     fromNationalId: string
     toNationalId: string
   }): Promise<ActorProfileDto> {
-    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
-
-    const delegation = incomingDelegation.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('delegation does not exist')
-    }
-
     const userProfile = await this.findById(
       toNationalId,
       false,
@@ -1250,7 +1240,7 @@ export class UserProfileService {
   private async getIncomingDelegations(nationalId: string) {
     return this.delegationsApi.delegationsControllerGetDelegationRecords({
       xQueryNationalId: nationalId,
-      scope: DocumentsScope.main,
+      scopes: notificationScopes.join(','),
       direction:
         DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
     })

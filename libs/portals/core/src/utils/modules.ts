@@ -4,6 +4,7 @@ import type { BffUser } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { isCompany } from '@island.is/shared/utils'
 
 interface FilterEnabledModulesArgs {
   modules: PortalModule[]
@@ -17,13 +18,13 @@ export const filterEnabledModules = async ({
   userInfo,
 }: FilterEnabledModulesArgs) => {
   const filteredModules: PortalModule[] = []
-  const isCompany = userInfo.profile?.subjectType === 'legalEntity'
+  const isCompanyUser = isCompany(userInfo)
 
   for (const module of modules) {
     let enabled = true
 
     if (module?.enabled) {
-      enabled = module.enabled({ userInfo, isCompany })
+      enabled = module.enabled({ userInfo, isCompany: isCompanyUser })
     }
 
     if (enabled && module.featureFlag) {
@@ -55,7 +56,7 @@ export const arrangeRoutes = async ({
   client,
   formatMessage,
 }: ArrangeRoutesArgs) => {
-  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const IS_COMPANY = isCompany(userInfo)
   const portalRoutes = modules.map((module) => {
     const routesObject =
       module.companyRoutes && IS_COMPANY ? module.companyRoutes : module.routes

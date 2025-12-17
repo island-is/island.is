@@ -8,6 +8,9 @@ import {
   GridRow,
   PhoneInput,
   SkeletonLoader,
+  ToggleSwitchButton,
+  Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Link } from 'react-router-dom'
@@ -20,9 +23,12 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
+import { useFeatureFlagClient, Features } from '@island.is/react/feature-flags'
 import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTypeFeatureFlag'
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
-import { emailsMsg, msg } from '../../../../lib/messages'
+import { emailsMsg, msg, mNotifications } from '../../../../lib/messages'
+import { usePaperMail } from '../../../../hooks/usePaperMail'
+import { isCompany, safeAwait } from '@island.is/shared/utils'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { EmailsList } from '../../../emails/EmailsList/EmailsList'
@@ -83,6 +89,10 @@ export const ProfileForm = ({
   const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
     useDelegationTypeFeatureFlag()
 
+  const featureFlagClient = useFeatureFlagClient()
+  const [allowCompanyUserProfileEmails, setAllowCompanyUserProfileEmails] =
+    useState(false)
+
   // Filter out emails that are not set
   const emails = useMemo(() => {
     return (
@@ -94,7 +104,60 @@ export const ProfileForm = ({
   }, [userProfile?.emails])
 
   const [confirmNudge] = useConfirmNudgeMutation()
-  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
+  const isCompanyUser = isCompany(userInfo)
+
+  useEffect(() => {
+    const checkFeatureFlag = async () => {
+      if (isCompanyUser && userInfo?.profile?.nationalId) {
+        const isEnabled = await featureFlagClient.getValue(
+          Features.shouldSendEmailNotificationsToCompanyUserProfiles,
+          false,
+          {
+            id: userInfo.profile.nationalId,
+            attributes: {},
+          },
+        )
+        setAllowCompanyUserProfileEmails(isEnabled as boolean)
+      }
+    }
+
+    checkFeatureFlag()
+  }, [isCompanyUser, featureFlagClient, userInfo])
+
+  const {
+    wantsPaper,
+    postPaperMailMutation,
+    loading: paperMailLoading,
+  } = usePaperMail()
+  const [isPaperMailEnabled, setIsPaperMailEnabled] = useState<boolean>(
+    wantsPaper ?? false,
+  )
+
+  useEffect(() => {
+    if (wantsPaper !== null && wantsPaper !== undefined) {
+      setIsPaperMailEnabled(wantsPaper)
+    }
+  }, [wantsPaper])
+
+  const onPaperMailChange = async (active: boolean) => {
+    setIsPaperMailEnabled(active)
+
+    const { data, error } = await safeAwait(
+      postPaperMailMutation({
+        variables: {
+          input: { wantsPaper: active },
+        },
+      }),
+    )
+
+    if (error) {
+      setIsPaperMailEnabled(!active)
+      toast.error(formatMessage(mNotifications.updateError))
+      return
+    }
+
+    setIsPaperMailEnabled(data?.data?.postPaperMailInfo?.wantsPaper ?? active)
+  }
 
   /**
    * Creates a link to the IDS user profile page.
@@ -195,7 +258,7 @@ export const ProfileForm = ({
             showIntroText={showIntroText}
           />
           {!isCheckingFeatureFlag &&
-            (isDelegationTypeEnabled ? (
+            (isDelegationTypeEnabled && !isCompanyUser ? (
               <InputSection
                 title={formatMessage(emailsMsg.emails)}
                 text={
@@ -245,7 +308,8 @@ export const ProfileForm = ({
                 )}
               </InputSection>
             ) : (
-              hasUserProfileWriteScope && (
+              ((!isDelegationTypeEnabled && hasUserProfileWriteScope) ||
+                (isCompanyUser && allowCompanyUserProfileEmails)) && (
                 <Box marginTop={2}>
                   <InputEmail
                     buttonText={formatMessage(msg.saveEmail)}
@@ -257,6 +321,7 @@ export const ProfileForm = ({
                 </Box>
               )
             ))}
+
           {hasUserProfileWriteScope && (
             <>
               <InputSection
@@ -265,7 +330,7 @@ export const ProfileForm = ({
                 loading={userLoading}
               >
                 {!userLoading &&
-                  (!isCompany ? (
+                  (!isCompanyUser ? (
                     <WithLinkWrapper
                       input={
                         <PhoneInput
@@ -303,7 +368,7 @@ export const ProfileForm = ({
                 title={formatMessage(m.bankAccountInfo)}
                 text={formatMessage(msg.editBankInfoText)}
                 loading={userLoading}
-                divider={false}
+                divider={isDelegationTypeEnabled && isCompanyUser}
               >
                 {!userLoading && !userProfile?.bankInfoError && (
                   <BankInfoForm
@@ -314,6 +379,37 @@ export const ProfileForm = ({
                   <Problem size="small" />
                 )}
               </InputSection>
+              {isDelegationTypeEnabled && isCompanyUser && (
+                <Box paddingTop={4}>
+                  {paperMailLoading ? (
+                    <Box paddingBottom={3}>
+                      <SkeletonLoader />
+                    </Box>
+                  ) : (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="spaceBetween"
+                      columnGap={3}
+                    >
+                      <Box>
+                        <Text variant="h5" as="h2" marginBottom={1}>
+                          {formatMessage(mNotifications.paperMailTitle)}
+                        </Text>
+                        <Text variant="medium">
+                          {formatMessage(msg.editPaperMailText)}
+                        </Text>
+                      </Box>
+                      <ToggleSwitchButton
+                        label={formatMessage(mNotifications.paperMailAriaLabel)}
+                        checked={isPaperMailEnabled}
+                        onChange={onPaperMailChange}
+                        hiddenLabel
+                      />
+                    </Box>
+                  )}
+                </Box>
+              )}
             </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (

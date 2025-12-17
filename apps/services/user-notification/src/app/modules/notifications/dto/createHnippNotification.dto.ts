@@ -28,6 +28,10 @@ export class ArgumentDto {
   value!: string
 }
 
+/**
+ * Public DTO for creating notifications via API
+ * This is what external consumers should use
+ */
 export class CreateHnippNotificationDto {
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })
@@ -58,4 +62,19 @@ export class CreateHnippNotificationDto {
     ],
   })
   args!: ArgumentDto[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    example: 'Email subject line',
+    description:
+      'Optional subject line for email notifications. If not provided, the template title will be used.',
+  })
+  subject?: string
+}
+
+export class InternalCreateHnippNotificationDto extends CreateHnippNotificationDto {
+  @IsOptional()
+  @IsString()
+  rootMessageId?: string
 }

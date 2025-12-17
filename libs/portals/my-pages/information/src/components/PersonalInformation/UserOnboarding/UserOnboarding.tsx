@@ -4,6 +4,7 @@ import { UserProfileScope } from '@island.is/auth/scopes'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { showUserOnboardingModal } from '../../../utils/showUserOnboardingModal'
 import { UserOnboardingModal } from '../UserOnboardingModal/UserOnboardingModal'
 import {
@@ -15,10 +16,10 @@ const UserOnboarding = () => {
   const userInfo = useUserInfo()
   // Use userRef to store the userProfile data to preserve the initial value after re-fetch.
   const userProfile = useRef<GetUserProfileQuery['getUserProfile'] | null>(null)
-  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
+  const isCompanyUser = isCompany(userInfo)
 
   const { data, loading } = useGetUserProfileQuery({
-    skip: !(isCompany && userInfo?.scopes.includes(UserProfileScope.write)),
+    skip: !(isCompanyUser && userInfo?.scopes.includes(UserProfileScope.write)),
     onCompleted: (data) => {
       if (!userProfile.current) {
         userProfile.current = data?.getUserProfile
@@ -46,7 +47,7 @@ const UserOnboarding = () => {
     const showTheModal = showUserOnboardingModal(userProfile.current)
 
     if (
-      (!hiddenByFeatureFlag || isCompany) &&
+      (!hiddenByFeatureFlag || isCompanyUser) &&
       //!isDevelopment &&
       userInfo.scopes.includes(UserProfileScope.write) &&
       showTheModal

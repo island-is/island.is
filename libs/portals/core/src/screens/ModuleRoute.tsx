@@ -6,6 +6,7 @@ import { usePortalMeta } from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
 import { Box } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 
 type ModuleRouteProps = {
   route: PortalRoute
@@ -22,10 +23,7 @@ export const ModuleRoute = React.memo(({ route }: ModuleRouteProps) => {
       plausiblePageviewDetail({
         basePath,
         path: route.path,
-        entity:
-          userInfo?.profile?.subjectType === 'legalEntity'
-            ? 'company'
-            : 'person',
+        entity: isCompany(userInfo) ? 'company' : 'person',
       })
 
       if (route.name && route.path !== '/') {

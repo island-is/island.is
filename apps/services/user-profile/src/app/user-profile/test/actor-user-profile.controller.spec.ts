@@ -877,7 +877,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scope: '@island.is/documents',
+      scopes: '@island.is/documents',
       direction: 'incoming',
     })
   })
@@ -1079,7 +1079,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scope: '@island.is/documents',
+      scopes: '@island.is/documents',
       direction: 'incoming',
     })
   })
@@ -1870,7 +1870,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scope: '@island.is/documents',
+      scopes: '@island.is/documents',
       direction: 'incoming',
     })
   })

@@ -6,6 +6,10 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
+import {
+  PaginatedActorNotificationDto,
+  ExtendedPaginationDto,
+} from '../dto/notification.dto'
 
 describe('NotificationsController', () => {
   let controller: NotificationsController
@@ -21,8 +25,10 @@ describe('NotificationsController', () => {
           provide: NotificationsService,
           useValue: {
             validate: jest.fn(),
+            sanitize: jest.fn(),
             getTemplates: jest.fn(),
             getTemplate: jest.fn(),
+            findActorNotifications: jest.fn(),
           },
         },
         {
@@ -60,6 +66,7 @@ describe('NotificationsController', () => {
           externalBody: 'New document from {{organization}}',
           clickActionUrl: 'https://island.is/minarsidur/postholf',
           args: ['arg1', 'arg2'],
+          scope: '@island.is/documents',
         },
       ]
 
@@ -83,6 +90,7 @@ describe('NotificationsController', () => {
         externalBody: 'Body',
         clickActionUrl: 'https://island.is/minarsidur/postholf',
         args: ['arg1'],
+        scope: '@island.is/documents',
       }
 
       jest
@@ -112,7 +120,22 @@ describe('NotificationsController', () => {
         ],
       }
 
+      const mockTemplate: HnippTemplate = {
+        templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        title: 'Test Template',
+        externalBody: 'Test body',
+        clickActionUrl: 'https://island.is/test',
+        args: ['organization', 'documentId'],
+        scope: '@island.is/documents',
+      }
+
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockResolvedValue(mockTemplate)
       jest.spyOn(notificationsService, 'validate').mockResolvedValue(undefined)
+      jest
+        .spyOn(notificationsService, 'sanitize')
+        .mockReturnValue(createHnippNotificationDto.args)
 
       const mockQueueId = 'mockQueueId'
       jest.spyOn(queueService, 'add').mockResolvedValue(mockQueueId)
@@ -129,7 +152,11 @@ describe('NotificationsController', () => {
 
       // Additionally, checking the validate method was called correctly
       expect(notificationsService.validate).toHaveBeenCalledWith(
-        createHnippNotificationDto.templateId,
+        mockTemplate,
+        createHnippNotificationDto.args,
+      )
+      expect(notificationsService.sanitize).toHaveBeenCalledWith(
+        mockTemplate,
         createHnippNotificationDto.args,
       )
 
@@ -139,6 +166,117 @@ describe('NotificationsController', () => {
 
       // If reaching this point without errors, validation is considered successful.
       expect(true).toBe(true) // This is implicitly true if no error was thrown.
+    })
+  })
+
+  describe('findActorNotifications', () => {
+    it('should return paginated actor notifications for a national id', async () => {
+      const nationalId = '1234567890'
+      const query: ExtendedPaginationDto = {
+        limit: 10,
+        after: '',
+        locale: 'is',
+      }
+
+      const mockActorNotifications: PaginatedActorNotificationDto = {
+        totalCount: 1,
+        data: [
+          {
+            id: 1,
+            messageId: '550e8400-e29b-41d4-a716-446655440000',
+            rootMessageId: '550e8400-e29b-41d4-a716-446655440001',
+            userNotificationId: 100,
+            recipient: '1234567890',
+            onBehalfOfNationalId: '0987654321',
+            scope: '@island.is/documents',
+            created: new Date('2021-01-01T00:00:00Z'),
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+      }
+
+      jest
+        .spyOn(notificationsService, 'findActorNotifications')
+        .mockResolvedValue(mockActorNotifications)
+
+      const result = await controller.findActorNotifications(nationalId, query)
+
+      expect(notificationsService.findActorNotifications).toHaveBeenCalledWith(
+        nationalId,
+        query,
+      )
+      expect(result).toEqual(mockActorNotifications)
+      expect(result.data).toHaveLength(1)
+      expect(result.data[0].recipient).toBe(nationalId)
+    })
+
+    it('should handle pagination parameters correctly', async () => {
+      const nationalId = '1234567890'
+      const query: ExtendedPaginationDto = {
+        limit: 20,
+        after: 'cursor123',
+        locale: 'is',
+      }
+
+      const mockActorNotifications: PaginatedActorNotificationDto = {
+        totalCount: 0,
+        data: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+      }
+
+      jest
+        .spyOn(notificationsService, 'findActorNotifications')
+        .mockResolvedValue(mockActorNotifications)
+
+      const result = await controller.findActorNotifications(nationalId, query)
+
+      expect(notificationsService.findActorNotifications).toHaveBeenCalledWith(
+        nationalId,
+        query,
+      )
+      expect(result).toEqual(mockActorNotifications)
+    })
+
+    it('should handle empty results', async () => {
+      const nationalId = '1234567890'
+      const query: ExtendedPaginationDto = {
+        limit: 10,
+        locale: 'is',
+      }
+
+      const mockActorNotifications: PaginatedActorNotificationDto = {
+        totalCount: 0,
+        data: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+      }
+
+      jest
+        .spyOn(notificationsService, 'findActorNotifications')
+        .mockResolvedValue(mockActorNotifications)
+
+      const result = await controller.findActorNotifications(nationalId, query)
+
+      expect(notificationsService.findActorNotifications).toHaveBeenCalledWith(
+        nationalId,
+        query,
+      )
+      expect(result.data).toHaveLength(0)
+      expect(result.totalCount).toBe(0)
     })
   })
 })
