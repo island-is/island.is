@@ -88,7 +88,7 @@ const CourtOfAppealOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [

@@ -309,6 +309,11 @@ export const Item = ({
     labelVal = label
   }
 
+  let disableDropdownVal: boolean | undefined
+  if (component === 'phone') {
+    disableDropdownVal = !(item.enableCountrySelector ?? false)
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -564,6 +569,9 @@ export const Item = ({
               ? { maxDate: maxDateVal, minDate: minDateVal }
               : {})}
             {...(component === 'input' ? { suffix: suffixVal } : {})}
+            {...(component === 'phone'
+              ? { disableDropdown: disableDropdownVal }
+              : {})}
           />
         )}
     </GridColumn>

@@ -30,9 +30,19 @@ export const DefendantServiceRequirement = ({
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendVerdictToServer } = useVerdict()
   const { verdict } = defendant
+
   if (!verdict) {
     return null
   }
+
+  // If the case has been sent to the public prosecutor after completion/correction
+  // then lock the service requirement choices
+  const isSentToPublicProsecutor = Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
+  )
 
   return (
     <Box
@@ -57,6 +67,7 @@ export const DefendantServiceRequirement = ({
             checked={
               verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
             }
+            disabled={isSentToPublicProsecutor}
             onChange={() => {
               setAndSendVerdictToServer(
                 {
@@ -78,6 +89,7 @@ export const DefendantServiceRequirement = ({
             id={`defendant-${defendant.id}-service-requirement-required`}
             name={`defendant-${defendant.id}-service-requirement`}
             checked={verdict.serviceRequirement === ServiceRequirement.REQUIRED}
+            disabled={isSentToPublicProsecutor}
             onChange={() => {
               setAndSendVerdictToServer(
                 {
@@ -108,6 +120,7 @@ export const DefendantServiceRequirement = ({
           checked={
             verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED
           }
+          disabled={isSentToPublicProsecutor}
           onChange={() => {
             setAndSendVerdictToServer(
               {
@@ -126,41 +139,43 @@ export const DefendantServiceRequirement = ({
           tooltip={formatMessage(strings.serviceRequirementNotRequiredTooltip)}
         />
         <AnimatePresence>
-          {verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE && (
-            <motion.div
-              key="verdict-appeal-decision"
-              className={styles.motionBox}
-              initial={{
-                opacity: 0,
-                height: 0,
-              }}
-              animate={{
-                opacity: 1,
-                height: 'auto',
-                transition: {
-                  opacity: { delay: 0.2 },
-                },
-              }}
-              exit={{
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: { delay: 0.2 },
-                },
-              }}
-            >
-              <SectionHeading
-                heading="h4"
-                title="Afstaða dómfellda til dóms"
-                marginBottom={2}
-                required
-              />
-              <VerdictAppealDecisionChoice
-                defendant={defendant}
-                verdict={verdict}
-              />
-            </motion.div>
-          )}
+          {!verdict.isDefaultJudgement &&
+            verdict.serviceRequirement ===
+              ServiceRequirement.NOT_APPLICABLE && (
+              <motion.div
+                key="verdict-appeal-decision"
+                className={styles.motionBox}
+                initial={{
+                  opacity: 0,
+                  height: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  transition: {
+                    opacity: { delay: 0.2 },
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  height: 0,
+                  transition: {
+                    height: { delay: 0.2 },
+                  },
+                }}
+              >
+                <SectionHeading
+                  heading="h4"
+                  title="Afstaða dómfellda til dóms"
+                  marginBottom={2}
+                  required
+                />
+                <VerdictAppealDecisionChoice
+                  defendant={defendant}
+                  verdict={verdict}
+                />
+              </motion.div>
+            )}
         </AnimatePresence>
       </BlueBox>
     </Box>
