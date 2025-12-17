@@ -39,6 +39,7 @@ export const employmentSearchConfirmationAgreementSubSection = buildSubSection({
         buildCustomField({
           id: 'employmentSearchConfirmationAgreement.addAcknowledgementFields',
           component: 'AcknowledgementChecksUpdate',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

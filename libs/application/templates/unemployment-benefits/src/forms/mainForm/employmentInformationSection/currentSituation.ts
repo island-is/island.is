@@ -217,6 +217,7 @@ export const currentSituationSubSection = buildSubSection({
         buildCustomField({
           id: 'currentSituation.updateEmploymentHistory',
           component: 'UpdateEmploymentHistory',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
