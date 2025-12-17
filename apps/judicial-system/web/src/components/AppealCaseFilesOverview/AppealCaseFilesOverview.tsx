@@ -114,7 +114,7 @@ const AppealCaseFilesOverview = () => {
           />
           {allFiles.map((file) => {
             const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
-            const isDisabled = !file.key
+            const isDisabled = !file.isKeyAccessible
             const canDeleteFile =
               file.category &&
               [

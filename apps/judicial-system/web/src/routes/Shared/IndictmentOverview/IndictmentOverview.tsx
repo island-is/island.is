@@ -27,6 +27,7 @@ import {
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -107,7 +108,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { user } = useContext(UserContext)
@@ -173,6 +174,20 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -335,10 +350,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isProsecutionUser(user) && (
             <Box component="section">
-              <InputPenalties
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
+              <InputPenalties />
             </Box>
           )}
         </Box>

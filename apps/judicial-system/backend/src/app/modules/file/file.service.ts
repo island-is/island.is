@@ -31,6 +31,7 @@ import {
   EventType,
   isCompletedCase,
   isIndictmentCase,
+  isRequestCase,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -87,11 +88,11 @@ export class FileService {
 
     const promisedUpdate = transaction
       ? this.fileModel.update(
-          { state: CaseFileState.DELETED, key: null },
+          { state: CaseFileState.DELETED, isKeyAccessible: false },
           { where: { id: fileId }, transaction },
         )
       : this.fileModel.update(
-          { state: CaseFileState.DELETED, key: null },
+          { state: CaseFileState.DELETED, isKeyAccessible: false },
           { where: { id: fileId } },
         )
 
@@ -112,10 +113,6 @@ export class FileService {
     file: CaseFile,
   ): Promise<boolean> {
     this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
-
-    if (!file.key) {
-      return true
-    }
 
     return this.awsS3Service
       .deleteObject(theCase.type, file.key)
@@ -475,7 +472,7 @@ export class FileService {
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {
-    if (!file.key) {
+    if (!file.isKeyAccessible) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
@@ -483,7 +480,10 @@ export class FileService {
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
+      this.fileModel.update(
+        { isKeyAccessible: false },
+        { where: { id: file.id } },
+      )
 
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
@@ -533,7 +533,7 @@ export class FileService {
   ): Promise<DeleteFileResponse> {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
-    if (success) {
+    if (success && isRequestCase(theCase.type)) {
       // Fire and forget, no need to wait for the result
       this.tryDeleteFileFromS3(theCase, file)
     }

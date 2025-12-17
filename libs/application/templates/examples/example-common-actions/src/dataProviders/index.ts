@@ -4,7 +4,7 @@ import {
 } from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   SendNotificationApi,
 } from '@island.is/application/types'
 
@@ -41,7 +41,7 @@ export const MyMockProvider = MockProviderApi.configure({
   },
 })
 
-export const NationalRegistryApi = NationalRegistryUserApi.configure({
+export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
   order: 1,
 })
 

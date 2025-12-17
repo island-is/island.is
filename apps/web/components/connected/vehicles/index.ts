@@ -29,3 +29,10 @@ export const KilometerFee = dynamic(
     ssr: true,
   },
 )
+
+export const NewKilometerFee = dynamic(
+  () => import('./NewKilometerFee/NewKilometerFee'),
+  {
+    ssr: true,
+  },
+)
