@@ -83,7 +83,7 @@ export const languageSkillsSubSection = buildSubSection({
               label: employmentSearchMessages.languageSkills.skill,
               component: 'select',
               width: 'half',
-              options: (application) => {
+              options: (application, _, locale) => {
                 const languageSkills =
                   getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
                     application.externalData,
@@ -91,7 +91,10 @@ export const languageSkillsSubSection = buildSubSection({
                   ) || []
                 return languageSkills.map((skill) => ({
                   value: skill.id || '',
-                  label: skill.name || '',
+                  label:
+                    (locale === 'is'
+                      ? skill.name
+                      : skill.english ?? skill.name) || '',
                 }))
               },
             },

@@ -521,7 +521,6 @@ export const dataSchema = z.object({
         .object({
           name: z.string(),
           nationalId: z.string(),
-          email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
     })
@@ -536,11 +535,6 @@ export const dataSchema = z.object({
           ? other && kennitala.isValid(other.nationalId)
           : true,
       { path: ['other', 'nationalId'], params: errorMessages.nationalId },
-    )
-    .refine(
-      ({ option, other }) =>
-        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
-      { path: ['other', 'email'] },
     ),
 })
 
