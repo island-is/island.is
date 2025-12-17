@@ -12,10 +12,7 @@ import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
-import {
-  childrenNGuardiansMessages,
-  sharedMessages,
-} from '../../lib/messages'
+import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
 import { OptionsType } from '../../utils/constants'
 import {
   getOtherGuardian,

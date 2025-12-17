@@ -11,10 +11,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import {
-  differentNeedsMessages,
-  sharedMessages,
-} from '../../../lib/messages'
+import { differentNeedsMessages, sharedMessages } from '../../../lib/messages'
 import { OptionsType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
