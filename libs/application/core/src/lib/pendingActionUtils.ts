@@ -47,8 +47,8 @@ export const getReviewStatePendingAction = (
     }
   }
 
-  // If the current user either has reviewed or their review isn't needed and some reviewer(s) need to review
-  // return message with list of reviewers that need to review
+  // If shouldShowReviewerList is true and the current user does not have a pending review,
+  // and there are reviewers who have not yet approved, return a message listing those reviewers
   if (shouldShowReviewerList) {
     const pendingReviewersContent = getPendingReviewersText(reviewers)
     if (pendingReviewersContent) {
