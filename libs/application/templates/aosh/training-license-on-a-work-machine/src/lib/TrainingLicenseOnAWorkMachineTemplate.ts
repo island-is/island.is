@@ -199,12 +199,16 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
-                includeSubjectAndActor: true,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
-                includeSubjectAndActor: true,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
               },
             ],
             pendingAction: (application, role, nationalId, isAdmin) => {
