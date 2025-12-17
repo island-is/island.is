@@ -18,6 +18,9 @@ import { Notification } from './notification.model'
 
 @Table({
   tableName: 'actor_notification',
+  timestamps: true,
+  createdAt: 'created',
+  updatedAt: false,
   indexes: [
     { fields: ['user_notification_id'] },
     { fields: ['message_id'] },
