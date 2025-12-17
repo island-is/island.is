@@ -16,6 +16,7 @@ import {
   isDefenceUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isRequestCase,
   ServiceRequirement,
   User,
   UserRole,
@@ -193,7 +194,8 @@ const transformCase = (theCase: Case, user?: User) => {
     eventLogs: undefined,
     // Defence and prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
-      isDefenceUser(user) || isPrisonSystemUser(user)
+      isRequestCase(theCase.type) &&
+      (isDefenceUser(user) || isPrisonSystemUser(user))
         ? undefined
         : theCase.rulingModifiedHistory,
   }
