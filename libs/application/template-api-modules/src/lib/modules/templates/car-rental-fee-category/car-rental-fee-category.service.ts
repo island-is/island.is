@@ -69,7 +69,9 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
     try {
-      const resp = await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
+      const resp = await this.rentalsApiWithAuth(
+        auth,
+      ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
       })
       this.logger.info('Current vehicles rate category debug response', resp)
