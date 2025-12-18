@@ -1,14 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { InjectModel } from '@nestjs/sequelize'
-import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 
 @Injectable()
 export class NudgeService {
-  constructor(
-    @InjectModel(ApplicationEvent)
-    private readonly applicationEventModel: typeof ApplicationEvent,
-  ) {}
   async sendNudge(
     applicationDto: ApplicationDto,
     url: string,

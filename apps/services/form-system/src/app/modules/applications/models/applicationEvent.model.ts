@@ -38,7 +38,7 @@ export class ApplicationEvent extends Model<ApplicationEvent> {
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    defaultValue: new LanguageType(),
+    defaultValue: () => new LanguageType(),
   })
   eventMessage!: LanguageType
 
