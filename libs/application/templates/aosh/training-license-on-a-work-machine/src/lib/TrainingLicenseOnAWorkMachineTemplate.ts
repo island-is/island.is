@@ -225,7 +225,7 @@ const template: ApplicationTemplate<
                     applicationMessage.pendingActionYouNeedToReviewDescription,
                   waitingForReviewDescription:
                     applicationMessage.pendingActionWaitingForReviewDescription,
-                  whoNeedsToReviewWithValues:
+                  whoNeedsToReviewDescription:
                     applicationMessage.pendingActionWhoNeedsToReviewDescription,
                 },
               )

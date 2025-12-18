@@ -69,7 +69,7 @@ export const application = defineMessages({
   },
   pendingActionWaitingForReviewDescription: {
     id: 'aosh.tlwm.application:pendingActionWaitingForReviewDescription',
-    defaultMessage: 'Umsóknin þín er í bið eftir staðfestingu',
+    defaultMessage: 'Umsóknin er í bið eftir staðfestingu',
     description: 'Pending action waiting for review description',
   },
   connectionError: {
