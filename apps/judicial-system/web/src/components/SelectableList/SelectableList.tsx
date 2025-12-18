@@ -113,10 +113,10 @@ const SelectableList: FC<Props> = (props) => {
   }
 
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
+
   return (
     <>
       <Box
-        marginBottom={3}
         borderColor="blue200"
         borderWidth="standard"
         paddingX={4}

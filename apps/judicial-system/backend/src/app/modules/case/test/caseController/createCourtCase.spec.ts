@@ -313,24 +313,28 @@ describe('CaseController - Create court case', () => {
         {
           id: criminalRecordId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.CRIMINAL_RECORD,
         },
         {
           id: costBreakdownId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.COST_BREAKDOWN,
         },
         {
           id: uncategorisedId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.CASE_FILE,
         },
         {
           id: uuid(),
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_COURT,
           category: CaseFileCategory.CASE_FILE,
         },

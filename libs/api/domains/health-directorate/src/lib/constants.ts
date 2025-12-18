@@ -1,0 +1,1 @@
+export const PATIENT_PERMIT_CODE = 'PATIENT_SUMMARY'

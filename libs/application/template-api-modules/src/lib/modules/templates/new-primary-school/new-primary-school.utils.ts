@@ -14,9 +14,9 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
-  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
   shouldShowPage,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
@@ -27,8 +27,6 @@ import {
   RegistrationApplicationInputApplicationTypeEnum,
   RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -295,7 +293,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      requestingMeeting: requestingMeeting === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -361,13 +366,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      childCircumstances: {
-        fieldInspection: fieldInspection === YES,
-        additionalDataProvisioning: additionalDataProvisioning === YES,
-        outsideSpecialist: outsideSpecialist === YES,
-        childViewOnApplication: childViewOnApplication === YES,
-      },
-      terms: terms === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
     ...(shouldShowPage(
       application.answers,
@@ -416,15 +433,4 @@ const mapApplicationType = (application: Application) => {
     default:
       return RegistrationApplicationInputApplicationTypeEnum.Enrollment
   }
-}
-
-export const pathToAsset = (file: string) => {
-  if (isRunningOnEnvironment('local')) {
-    return join(
-      __dirname,
-      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
-    )
-  }
-
-  return join(__dirname, `./new-primary-school-assets/${file}`)
 }

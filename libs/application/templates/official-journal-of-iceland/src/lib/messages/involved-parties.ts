@@ -3,18 +3,18 @@ import { defineMessages } from 'react-intl'
 export const involvedParty = {
   general: defineMessages({
     title: {
-      id: 'ojoi.application:original.general.title',
+      id: 'ojoi.application:involvedParty.general.title',
       defaultMessage: 'Stofnun ',
       description: 'Title of the involved party screen',
     },
     intro: {
-      id: 'ojoi.application:original.general.intro',
+      id: 'ojoi.application:involvedParty.general.intro',
       defaultMessage:
         'Þú hefur aðgang að fleiri en einum lögaðila, veldu þann sem þú vilt senda auglýsingu fyrir.',
       description: 'Intro of the involved party form',
     },
     section: {
-      id: 'ojoi.application:original.general.section',
+      id: 'ojoi.application:involvedParty.general.section',
       defaultMessage: 'Stofnanir',
       description: 'Title of the involved party section',
     },

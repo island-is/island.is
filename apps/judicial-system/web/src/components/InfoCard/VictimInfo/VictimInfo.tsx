@@ -29,12 +29,12 @@ export const VictimInfo: FC<VictimInfoProps> = (props) => {
         {'Réttargæslumaður: '}
       </Text>
       {victim.lawyerName ? (
-        RenderPersonalData(
-          victim.lawyerName,
-          victim.lawyerEmail,
-          victim.lawyerPhoneNumber,
-          false,
-        )
+        RenderPersonalData({
+          name: victim.lawyerName,
+          email: victim.lawyerEmail,
+          phoneNumber: victim.lawyerPhoneNumber,
+          breakSpaces: false,
+        })
       ) : (
         <Text as="span">Hefur ekki verið skráður</Text>
       )}
