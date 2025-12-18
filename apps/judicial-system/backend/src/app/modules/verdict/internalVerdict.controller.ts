@@ -146,32 +146,27 @@ export class InternalVerdictController {
 
     // callback function to fetch the updated verdict fields after delivering verdict to police
     const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-      results: DeliverResponse,
+      results?: DeliverResponse,
     ) => {
       const currentVerdict = await this.verdictService.findById(verdict.id)
-
       return {
-        deliveredToPolice: results.delivered,
+        deliveredToPolice: Boolean(results?.delivered),
         verdictId: verdict.id,
-        verdictCreated: verdict.created,
         externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
         verdictHash: currentVerdict.hash,
         verdictDeliveredToPolice: new Date(),
       }
     }
 
-    return this.auditTrailService.audit(
-      deliverDto.user.id,
-      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      this.verdictService.deliverVerdictToNationalCommissionersOffice(
-        theCase,
-        defendant,
-        verdict,
-        deliverDto.user,
-      ),
-      caseId,
-      getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-    )
+    return this.auditTrailService.runAndAuditRequest({
+      userId: deliverDto.user.id,
+      actionType:
+        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      action: this.verdictService.deliverVerdictToNationalCommissionersOffice,
+      actionProps: { theCase, defendant, verdict, user: deliverDto.user },
+      auditedResult: caseId,
+      getAuditDetails: getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+    })
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
