@@ -7,11 +7,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  formatDate,
-  SortableTable,
-  useIsMobile,
-} from '@island.is/portals/my-pages/core'
+import { formatDate, SortableTable } from '@island.is/portals/my-pages/core'
 import React, { useEffect, useState } from 'react'
 import DispensingContainer from '../../../components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from '../../../components/NestedInfoLines/NestedInfoLines'
