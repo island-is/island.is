@@ -51,9 +51,6 @@ export class Value extends Model<Value> {
   })
   fieldType!: string
 
-  @HasMany(() => ApplicationEvent)
-  events?: ApplicationEvent[]
-
   @ForeignKey(() => Field)
   @Column({
     type: DataType.STRING,

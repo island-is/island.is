@@ -11,9 +11,4 @@ export class ApplicationEventDto {
   @IsString()
   @ApiPropertyOptional()
   eventType?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  isFileEvent?: boolean
 }

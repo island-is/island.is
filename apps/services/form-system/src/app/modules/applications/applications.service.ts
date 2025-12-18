@@ -110,8 +110,9 @@ export class ApplicationsService {
 
       await this.applicationEventModel.create(
         {
-          eventType: ApplicationEvents.APPLICATION_CREATED,
           applicationId: newApplication.id,
+          eventType: ApplicationEvents.APPLICATION_CREATED,
+          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
         } as ApplicationEvent,
         { transaction },
       )
@@ -237,15 +238,6 @@ export class ApplicationsService {
           order: index,
           json: value.json,
         } as Value)
-
-        if (field.fieldType === FieldTypesEnum.FILE) {
-          await this.applicationEventModel.create({
-            eventType: ApplicationEvents.FILE_CREATED,
-            applicationId: applicationDto.id,
-            isFileEvent: true,
-            valueId: newValue.id,
-          } as ApplicationEvent)
-        }
       })
     })
 
@@ -278,7 +270,21 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
-      await application.save()
+      await this.sequelize.transaction(async (transaction) => {
+        await application.save({ transaction })
+
+        await this.applicationEventModel.create(
+          {
+            applicationId: application.id,
+            eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+            eventMessage: {
+              is: 'Umsókn móttekin',
+              en: 'Application submitted',
+            },
+          } as ApplicationEvent,
+          { transaction },
+        )
+      })
     }
 
     return success
@@ -307,7 +313,6 @@ export class ApplicationsService {
           {
             model: ApplicationEvent,
             as: 'events',
-            where: { isFileEvent: false },
           },
           {
             model: Value,
@@ -373,7 +378,6 @@ export class ApplicationsService {
         {
           model: ApplicationEvent,
           as: 'events',
-          where: { isFileEvent: false },
         },
         {
           model: Value,
@@ -506,6 +510,7 @@ export class ApplicationsService {
     const mappedApplications =
       await this.applicationMapper.mapApplicationsToMyPagesApplications(
         applicationsByUser,
+        locale,
       )
 
     return mappedApplications
