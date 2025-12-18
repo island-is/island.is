@@ -15,7 +15,7 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
-import { IS_DATE_LOCALE, PATIENT_PERMIT_CODE } from './constants'
+import { PATIENT_PERMIT_CODE } from './constants'
 import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
