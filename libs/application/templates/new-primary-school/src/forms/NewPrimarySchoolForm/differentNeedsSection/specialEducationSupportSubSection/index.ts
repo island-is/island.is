@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import { differentNeedsMessages } from '../../../../lib/messages'
 import {
   hasSpecialEducationSubType,
   shouldShowPage,
@@ -21,17 +21,15 @@ import { welfareContact } from './welfareContact'
 
 export const specialEducationSupportSubSection = buildSubSection({
   id: 'specialEducationSupportSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
+  title: differentNeedsMessages.support.subSectionTitle,
   condition: (answers, externalData) =>
     shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'specialEducationSupport',
-      title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.differentNeeds
-          .specialEducationSupportDescription,
+      title: differentNeedsMessages.support.subSectionTitle,
+      description: differentNeedsMessages.specialEducationSupport.description,
       children: [
         ...welfareContact,
         ...caseManager,
