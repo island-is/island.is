@@ -16,6 +16,7 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerGetPatientAppointmentsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -34,6 +35,8 @@ import {
   meWaitingListControllerGetWaitingListEntriesV1,
 } from './gen/fetch'
 import {
+  AppointmentDto,
+  AppointmentStatus,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -387,20 +390,10 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
-    if (!input.validTo || !input.validFrom) {
-      this.logger.debug('Missing validTo or validFrom in createPermit input')
-      return null
-    }
-
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
-          body: {
-            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
-            countryCodes: input.countryCodes,
-            validFrom: input.validFrom,
-            validTo: input.validTo,
-          },
+          body: input,
         }),
       ),
     )
@@ -416,5 +409,27 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    from?: Date,
+    statuses?: AppointmentStatus[],
+  ): Promise<AppointmentDto[] | null> {
+    const defaultFrom = new Date()
+
+    const appointments = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentsV1({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            status: statuses,
+          },
+        }),
+      ),
+    )
+
+    return appointments ?? null
   }
 }

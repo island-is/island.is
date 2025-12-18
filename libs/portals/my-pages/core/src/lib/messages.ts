@@ -2180,4 +2180,16 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
   },
+  appointment: {
+    id: 'sp.search.tags:appointment',
+    defaultMessage: 'Tími',
+  },
+  appointmentDoctor: {
+    id: 'sp.search.tags:appointment-doctor',
+    defaultMessage: 'Læknir',
+  },
+  appointmentBook: {
+    id: 'sp.search.tags:appointment-book',
+    defaultMessage: 'Bóka',
+  },
 })

@@ -1,5 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  AppointmentStatus,
+  CreateEuPatientConsentDto,
   HealthDirectorateHealthService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
@@ -13,6 +15,8 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
+import { PATIENT_PERMIT_CODE } from './constants'
+import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -23,7 +27,10 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
-import { mapVaccinationStatus } from './mappers/basicInformationMapper'
+import {
+  mapAppointmentStatus,
+  mapVaccinationStatus,
+} from './mappers/basicInformationMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -32,6 +39,7 @@ import {
   mapPrescriptionRenewalStatus,
 } from './mappers/medicineMapper'
 import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { Appointment, Appointments } from './models/appointments.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -549,12 +557,13 @@ export class HealthDirectorateService {
     auth: Auth,
     input: PermitInput,
   ): Promise<PermitReturn | null> {
-    const response = await this.healthApi.createPermit(auth, {
-      codes: input.codes,
+    const mappedInput: CreateEuPatientConsentDto = {
+      codes: [PATIENT_PERMIT_CODE], // Fixed code for patient summary consent
       countryCodes: input.countryCodes,
       validFrom: new Date(input.validFrom),
       validTo: new Date(input.validTo),
-    })
+    }
+    const response = await this.healthApi.createPermit(auth, mappedInput)
     return response ? { status: true } : null
   }
 
@@ -585,5 +594,64 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    input: HealthDirectorateAppointmentsInput,
+  ): Promise<Appointments | null> {
+    try {
+      const data = await this.healthApi.getAppointments(
+        auth,
+        input.from,
+        input.status
+          ?.map((status) => mapAppointmentStatus(status))
+          .filter((status): status is AppointmentStatus => status !== null),
+      )
+      if (!data) {
+        return null
+      }
+
+      // Sort data by startTime before mapping
+      const sortedData = [...data].sort((a, b) => {
+        if (!a.startTime || !b.startTime) return 0
+        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      })
+
+      const appointments: Array<Appointment> =
+        sortedData.map((item) => {
+          const data: Appointment = {
+            id: item.id,
+            date: item.startTime?.toISOString(),
+            title: item.description,
+            status: item.status,
+            instruction: item.patientInstruction,
+            duration: item.duration,
+            location: item.location
+              ? {
+                  name: item.location.name,
+                  organization: item.location.organization || '',
+                  address: item.location.address,
+                  directions: item.location.directions || '',
+                  city: item.location.city || '',
+                  postalCode: item.location.postalCode || '',
+                  country: item.location.country || '',
+                  latitude: item.location.latitude || undefined,
+                  longitude: item.location.longitude || undefined,
+                }
+              : undefined,
+            practitioners: item.practitioners || [],
+          }
+          return data
+        }) ?? []
+      return { data: appointments }
+    } catch (error) {
+      this.logger.warn(
+        'Error fetching appointments from Health Directorate API',
+        error,
+      )
+      return null
+    }
   }
 }
