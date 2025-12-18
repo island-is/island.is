@@ -1,4 +1,3 @@
-
 PODS:
   - AppAuth (2.0.0):
     - AppAuth/Core (= 2.0.0)
