@@ -218,13 +218,43 @@ export const addConfirmation = (
 interface InfoBox {
   title: string
   content: string
-  width: number // percentage
+  widthPercent: number // 0-100
 }
 
-export const addIndictmentConfirmation = (
+interface ConfirmationConfig {
+  boxes: InfoBox[]
+  showLockIcon?: boolean
+}
+
+// const infoBoxes = [
+//     {
+//       x: coatOfArmsX + coatOfArmsWidth,
+//       width: confirmedByWidth,
+//       title: 'Samþykktaraðili',
+//       content: `${confirmation.actor}${
+//         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
+//       }`,
+//     },
+//     {
+//       x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
+//       width: institutionWidth,
+//       title: 'Embætti',
+//       content: confirmation.institution,
+//     },
+//     {
+//       x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth + institutionWidth,
+//       width: totalWidth - coatOfArmsWidth - confirmedByWidth - institutionWidth,
+//       title: 'Útgáfa ákæru',
+//       content: formatDate(confirmation.date) ?? '',
+//     },
+//   ]
+
+export const drawConfirmation = (
   doc: PDFKit.PDFDocument,
-  confirmation: Confirmation,
+  config: ConfirmationConfig,
 ) => {
+  const { boxes, showLockIcon = false } = config
+
   const pageMargin = calculatePt(18)
   const shaddowHeight = calculatePt(48)
   const coatOfArmsHeight = calculatePt(48)
@@ -232,34 +262,11 @@ export const addIndictmentConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(16)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const confirmedByWidth = calculatePt(250)
-  const institutionWidth = confirmedByWidth + calculatePt(48)
   const fontSize = calculatePt(smallFontSize) * 0.7
+
   // Page width minus 2 times the page margin
   const totalWidth = doc.page.width - pageMargin * 2
-
-  const infoBoxes = [
-    {
-      x: coatOfArmsX + coatOfArmsWidth,
-      width: confirmedByWidth,
-      title: 'Samþykktaraðili',
-      content: `${confirmation.actor}${
-        confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-      }`,
-    },
-    {
-      x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
-      width: institutionWidth,
-      title: 'Embætti',
-      content: confirmation.institution,
-    },
-    {
-      x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth + institutionWidth,
-      width: totalWidth - coatOfArmsWidth - confirmedByWidth - institutionWidth,
-      title: 'Útgáfa ákæru',
-      content: formatDate(confirmation.date) ?? '',
-    },
-  ]
+  const availableBoxWidth = totalWidth - coatOfArmsWidth
 
   doc.save()
 
@@ -280,7 +287,7 @@ export const addIndictmentConfirmation = (
     )
     .fillAndStroke('white', darkGray)
 
-  // Draw the actual Coat of Arms. Noyr that the x and y is offset by
+  // Draw the actual Coat of Arms. Note that the x and y is offset by
   // some magic numbers to center it in the box
   addCoatOfArms(doc, doc.x + calculatePt(35), doc.y - calculatePt(1), 0.25)
 
@@ -313,38 +320,71 @@ export const addIndictmentConfirmation = (
   doc.font('Times-Roman')
   doc.text('Skjal samþykkt rafrænt', { lineBreak: false })
 
-  // Draw lock icon
-  doc
-    .translate(totalWidth + calculatePt(8), doc.y - calculatePt(8))
-    .scale(0.5)
-    .path(
-      'M2.76356 11.8047H9.57201C9.85402 11.8047 10.0826 11.5761 10.0826 11.2941V5.50692C10.0826 5.22492 9.85402 4.99629 9.57201 4.99629H9.06138V3.46439C9.06138 1.86887 7.76331 0.570801 6.16779 0.570801C4.57226 0.570801 3.2742 1.86887 3.2742 3.46439V4.99629H2.76356C2.48156 4.99629 2.25293 5.22492 2.25293 5.50692V11.2941C2.25293 11.5761 2.48156 11.8047 2.76356 11.8047ZM7.61394 8.03817L6.16714 9.48496C6.06743 9.58467 5.93674 9.63455 5.80609 9.63455C5.67543 9.63455 5.54471 9.58467 5.44504 9.48496L4.72164 8.76157C4.52222 8.56215 4.52222 8.23888 4.72164 8.03943C4.92102 7.84001 5.24436 7.84001 5.44378 8.03943L5.80612 8.40174L6.89187 7.31603C7.09125 7.11661 7.41458 7.11661 7.614 7.31603C7.81339 7.51549 7.81339 7.83875 7.61394 8.03817ZM4.29546 3.46439C4.29546 2.43199 5.13539 1.59207 6.16779 1.59207C7.20019 1.59207 8.04011 2.43199 8.04011 3.46439V4.99629H4.29546V3.46439Z',
-    )
-    .lineWidth(0.5)
-    .fillAndStroke(gold, gold)
-
-  doc.restore()
-
-  infoBoxes.forEach((box) => {
-    // Draw the box
+  // Draw lock icon if needed
+  if (showLockIcon) {
     doc
-      .rect(
-        box.x,
-        titleBoxY + titleHeight,
-        box.width,
-        shaddowHeight - titleHeight,
+      .translate(totalWidth + calculatePt(8), doc.y - calculatePt(8))
+      .scale(0.5)
+      .path(
+        'M2.76356 11.8047H9.57201C9.85402 11.8047 10.0826 11.5761 10.0826 11.2941V5.50692C10.0826 5.22492 9.85402 4.99629 9.57201 4.99629H9.06138V3.46439C9.06138 1.86887 7.76331 0.570801 6.16779 0.570801C4.57226 0.570801 3.2742 1.86887 3.2742 3.46439V4.99629H2.76356C2.48156 4.99629 2.25293 5.22492 2.25293 5.50692V11.2941C2.25293 11.5761 2.48156 11.8047 2.76356 11.8047ZM7.61394 8.03817L6.16714 9.48496C6.06743 9.58467 5.93674 9.63455 5.80609 9.63455C5.67543 9.63455 5.54471 9.58467 5.44504 9.48496L4.72164 8.76157C4.52222 8.56215 4.52222 8.23888 4.72164 8.03943C4.92102 7.84001 5.24436 7.84001 5.44378 8.03943L5.80612 8.40174L6.89187 7.31603C7.09125 7.11661 7.41458 7.11661 7.614 7.31603C7.81339 7.51549 7.81339 7.83875 7.61394 8.03817ZM4.29546 3.46439C4.29546 2.43199 5.13539 1.59207 6.16779 1.59207C7.20019 1.59207 8.04011 2.43199 8.04011 3.46439V4.99629H4.29546V3.46439Z',
       )
+      .lineWidth(0.5)
+      .fillAndStroke(gold, gold)
+
+    doc.restore()
+  }
+
+  const boxY = titleBoxY + titleHeight
+  const boxHeight = shaddowHeight - titleHeight
+  let currentX = coatOfArmsX + coatOfArmsWidth
+
+  boxes.forEach((box) => {
+    // Draw the box
+    const boxWidth = (availableBoxWidth * box.widthPercent) / 100
+
+    doc
+      .rect(currentX, boxY, boxWidth, boxHeight)
       .fillAndStroke('white', darkGray)
     doc.fill('black')
     doc.font('Times-Bold')
-    doc.text(
-      box.title,
-      titleX + (box.x - (coatOfArmsX + coatOfArmsWidth)),
-      titleBoxY + titleHeight + calculatePt(9),
-      { lineGap: 1, width: box.width },
-    )
+    doc.text(box.title, currentX + calculatePt(8), boxY + calculatePt(9), {
+      lineGap: 1,
+      width: boxWidth - calculatePt(16),
+    })
     doc.font('Times-Roman')
     doc.text(box.content)
+
+    currentX += boxWidth
+  })
+
+  doc.fillColor('black')
+}
+
+export const addIndictmentConfirmation = (
+  doc: PDFKit.PDFDocument,
+  confirmation: Confirmation,
+) => {
+  drawConfirmation(doc, {
+    showLockIcon: true,
+    boxes: [
+      {
+        title: 'Samþykktaraðili',
+        content: `${confirmation.actor}${
+          confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
+        }`,
+        widthPercent: 40,
+      },
+      {
+        title: 'Embætti',
+        content: confirmation.institution,
+        widthPercent: 40,
+      },
+      {
+        title: 'Útgáfa ákæru',
+        content: formatDate(confirmation.date) ?? '',
+        widthPercent: 20,
+      },
+    ],
   })
 }
 
