@@ -146,6 +146,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
     }
     caseModifiedExplanation
+    rulingModifiedHistory
     caseResentExplanation
     appealState
     accusedAppealDecision

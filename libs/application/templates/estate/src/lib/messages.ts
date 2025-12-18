@@ -304,6 +304,11 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  registrantTitle: {
+    id: 'es.application:registrantTitle',
+    defaultMessage: 'Skráningaraðili',
+    description: 'Registrant section title',
+  },
   name: {
     id: 'es.application:name',
     defaultMessage: 'Nafn',
@@ -338,6 +343,26 @@ export const m = defineMessages({
     id: 'es.application:applicantAutonomous',
     defaultMessage: 'Er umsækjandi lögráða',
     description: 'Autonomous label',
+  },
+  applicantRelation: {
+    id: 'es.application:applicantRelation',
+    defaultMessage: 'Tengsl',
+    description: 'Applicant relation label',
+  },
+  heir: {
+    id: 'es.application:heir',
+    defaultMessage: 'Erfingi',
+    description: 'Heir option',
+  },
+  representative: {
+    id: 'es.application:representative',
+    defaultMessage: 'Umboðsmaður',
+    description: 'Representative option',
+  },
+  exchangeManager: {
+    id: 'es.application:exchangeManager',
+    defaultMessage: 'Skiptastjóri',
+    description: 'Exchange manager option',
   },
 
   // Estate members, assets, vehicles
@@ -1017,6 +1042,18 @@ export const m = defineMessages({
     id: 'es.application:submitApplication',
     defaultMessage: 'Senda inn beiðni',
     description: '',
+  },
+
+  // Payment
+  forPayment: {
+    id: 'es.application:forPayment',
+    defaultMessage: 'Til greiðslu',
+    description: 'Label for payment amount',
+  },
+  proceedToPayment: {
+    id: 'es.application:proceedToPayment',
+    defaultMessage: 'Halda áfram í greiðslu',
+    description: 'Button label to proceed to payment',
   },
 
   // Done

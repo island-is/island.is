@@ -1,3 +1,5 @@
+import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
+
 export const PHYSIO_THERAPY = 'physio'
 export const PHYSIO_ACCIDENT_THERAPY = 'accident'
 export const PHYSIO_HOME_THERAPY = 'home'
@@ -25,3 +27,9 @@ export const DATE_FORMAT = 'dd.MM.yyyy'
 export const DATE_FORMAT_SHORT = 'd.M.yyyy'
 
 export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
+
+export const DEFAULT_APPOINTMENTS_STATUS = [
+  HealthDirectorateAppointmentStatus.BOOKED,
+  HealthDirectorateAppointmentStatus.CANCELLED,
+  HealthDirectorateAppointmentStatus.PENDING,
+]
