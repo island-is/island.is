@@ -233,7 +233,6 @@ export class AuditTrailService {
     ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>,
   ): Promise<R> {
     try {
-      // here we are calling the action, add a log here on demand??? maybe we can implement pre log hmm
       const result = await action
 
       return await this.auditResult({

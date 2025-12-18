@@ -108,7 +108,7 @@ export class InternalSubpoenaController {
     ) => {
       const currentSubpoena = await this.subpoenaService.findById(subpoena.id)
       return {
-        deliveredToPolice: results?.delivered,
+        deliveredToPolice: Boolean(results?.delivered),
         subpoenaId: subpoena.id,
         subpoenaCreated: subpoena.created,
         policeSubpoenaId: currentSubpoena.policeSubpoenaId,
