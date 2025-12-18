@@ -182,6 +182,7 @@ export class AwsS3Service {
     }
 
     const confirmedKey = formatConfirmedIndictmentCaseKey(key)
+
     if (!force && (await this.objectExists(caseType, confirmedKey))) {
       return this.getSignedUrl(
         caseType,
