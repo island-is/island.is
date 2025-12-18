@@ -239,7 +239,7 @@ export class FileService {
       return this.awsS3Service.getConfirmedIndictmentCaseObject(
         theCase.type,
         file.key,
-        true, // !file.hash,
+        !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
       )
@@ -499,7 +499,7 @@ export class FileService {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
         file.key,
-        true, // !file.hash,
+        !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
