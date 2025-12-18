@@ -36,7 +36,7 @@ export const clearOnChangeSection = buildSection({
         }),
         buildDescriptionField({
           id: 'descriptionField3',
-          description: `The "empty" value for the fields that are cleared can be specified using the clearOnChangeDefaultValue property. Not that although we are using a string here the values can be strings, numbers or booleans`,
+          description: `The "empty" value for the fields that are cleared can be specified using the clearOnChangeDefaultValue property. Note that although we are using a string here the values can be strings, numbers or booleans`,
         }),
         buildAsyncSelectField({
           id: 'asyncSelectField',
