@@ -13,9 +13,6 @@ export class ApplicationEventDto {
   @Field(() => String, { nullable: true })
   eventType?: string
 
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
-
   @Field(() => Date, { nullable: true })
   created?: Date
 }

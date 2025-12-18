@@ -60,9 +60,6 @@ export class ApplicationEventDtoInput {
 
   @Field(() => String, { nullable: true })
   eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
 }
 
 @InputType('FormSystemApplicationDtoInput')
