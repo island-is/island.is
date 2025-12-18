@@ -3,7 +3,7 @@ import { corePendingActionMessages } from './messages'
 
 const getPendingReviewersText = (
   reviewers: { nationalId: string; name?: string; hasApproved: boolean }[],
-  whoNeedsToReviewWithValues?: StaticText,
+  whoNeedsToReviewDescription?: StaticText,
 ) => {
   const pendingReviewers = reviewers.filter((x) => !x.hasApproved)
   if (pendingReviewers.length === 0) return null
@@ -12,12 +12,12 @@ const getPendingReviewersText = (
     .map((x) => (x.name ? x.name : x.nationalId))
     .join(', ')
 
-  if (typeof whoNeedsToReviewWithValues === 'string') {
-    return whoNeedsToReviewWithValues
+  if (typeof whoNeedsToReviewDescription === 'string') {
+    return whoNeedsToReviewDescription
   }
 
   return {
-    ...(whoNeedsToReviewWithValues ??
+    ...(whoNeedsToReviewDescription ??
       corePendingActionMessages.whoNeedsToReviewDescription),
     values: { value: names },
   }
@@ -37,6 +37,13 @@ const isCurrentUserReviewPending = (
  *
  * @param currentUserNationalId - nationalId of the currently logged-in user
  * @param reviewers - array of all reviewers for this state, if the reviewer has approved reviewer.hasApproved must be TRUE
+ * @param shouldShowReviewerList - whether to display a list of reviewers who have not yet approved
+ * @param customMessages - optional custom messages to override default pending action messages:
+ *   - waitingForReviewTitle: title for the pending review message
+ *   - youNeedToReviewDescription: text shown if the current user needs to review
+ *   - whoNeedsToReviewDescription: text for the list of pending reviewers;
+ *       if provided as a string instead of a text object, the list of reviewer names will not be appended
+ *   - waitingForReviewDescription: default text shown if no one needs to review or reviewer list is hidden
  * @returns a message telling the user to review if they need to, otherwise a list of reviewers yet to review.
  */
 export const getReviewStatePendingAction = (
@@ -46,8 +53,8 @@ export const getReviewStatePendingAction = (
   customMessages?: {
     waitingForReviewTitle?: StaticText
     youNeedToReviewDescription?: StaticText
+    whoNeedsToReviewDescription?: StaticText
     waitingForReviewDescription?: StaticText
-    whoNeedsToReviewWithValues?: StaticText
   },
 ): PendingAction => {
   // If the current user needs to review, return "you need to review" message
@@ -68,7 +75,7 @@ export const getReviewStatePendingAction = (
   if (shouldShowReviewerList) {
     const pendingReviewersContent = getPendingReviewersText(
       reviewers,
-      customMessages?.whoNeedsToReviewWithValues,
+      customMessages?.whoNeedsToReviewDescription,
     )
     if (pendingReviewersContent) {
       return {
