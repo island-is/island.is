@@ -1,70 +1,109 @@
+import { z } from 'zod'
+
 import type {
   ExternalData,
   KeyValueItem,
   FormValue,
+  TableData,
 } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 
 import { m } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
+import { dataSchema } from '../lib/dataSchema'
 
-export const getParticipantOverviewItems = (
+export const getParticipantOverviewTableData = (
   answers: FormValue,
   _externalData: ExternalData,
-): Array<KeyValueItem> => {
-  return [
-    {
-      width: 'full',
-      keyText: m.overview.participantName,
-      valueText:
-        getValueViaPath<string>(answers, 'participantNationalIdAndName.name') ??
-        '',
-    },
-    {
-      width: 'full',
-      keyText: m.overview.participantNationalId,
-      valueText:
-        getValueViaPath<string>(
-          answers,
-          'participantNationalIdAndName.nationalId',
-        ) ?? '',
-    },
-    {
-      width: 'full',
-      keyText: m.overview.participantEmail,
-      valueText:
-        getValueViaPath<string>(
-          answers,
-          'participantNationalIdAndName.email',
-        ) ?? '',
-    },
-    {
-      width: 'full',
-      keyText: m.overview.participantPhone,
-      valueText: formatPhoneNumber(
-        getValueViaPath<string>(
-          answers,
-          'participantNationalIdAndName.phone',
-        ) ?? '',
+): TableData => {
+  const userIsParticipating = getValueViaPath<YesOrNoEnum>(
+    answers,
+    'userIsParticipating',
+    YesOrNoEnum.YES,
+  )
+
+  const tableData: TableData = {
+    header: [
+      m.overview.participantName,
+      m.overview.participantNationalId,
+      m.overview.participantEmail,
+      m.overview.participantPhone,
+    ],
+    rows: [],
+  }
+
+  if (userIsParticipating === YesOrNoEnum.YES) {
+    tableData.rows.push([
+      getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
+      getValueViaPath<string>(answers, 'applicant.email') ?? '',
+      formatPhoneNumber(
+        getValueViaPath<string>(answers, 'applicant.phone') ?? '',
       ),
-    },
-  ]
+    ])
+  }
+
+  const participantList =
+    getValueViaPath<z.infer<typeof dataSchema.shape.participantList>>(
+      answers,
+      'participantList',
+    ) ?? []
+
+  if (participantList.length > 0) {
+    for (const participant of participantList) {
+      tableData.rows.push([
+        participant.nationalIdWithName.name,
+        participant.nationalIdWithName.nationalId,
+        participant.nationalIdWithName.email,
+        formatPhoneNumber(participant.nationalIdWithName.phone),
+      ])
+    }
+  }
+
+  return tableData
 }
 
 export const getPayerOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  return [
+  const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
+    answers,
+    'companyPayment.userIsPayingAsIndividual',
+    YesOrNoEnum.YES,
+  )
+
+  const items: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText: m.overview.payerName,
-      valueText: getValueViaPath<string>(answers, 'payerName') ?? '',
-    },
-    {
-      width: 'full',
-      keyText: m.overview.payerNationalId,
-      valueText: getValueViaPath<string>(answers, 'payerNationalId') ?? '',
+      keyText: m.payer.userIsPayingAsIndividualLabel,
+      valueText:
+        userIsPayingAsIndividual === YesOrNoEnum.YES
+          ? m.payer.userIsPayingAsIndividualYesLabel
+          : m.payer.userIsPayingAsIndividualNoLabel,
     },
   ]
+
+  if (userIsPayingAsIndividual === YesOrNoEnum.NO) {
+    items.push({
+      width: 'full',
+      keyText: m.payer.companyTitle,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'companyPayment.nationalIdWithName.name',
+        ) ?? '',
+    })
+    items.push({
+      width: 'full',
+      keyText: m.payer.companyNationalId,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'companyPayment.nationalIdWithName.nationalId',
+        ) ?? '',
+    })
+  }
+
+  return items
 }

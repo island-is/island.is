@@ -6,6 +6,7 @@ import {
   getValueViaPath,
   NO,
   buildNationalIdWithNameField,
+  buildCustomField,
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -44,6 +45,10 @@ export const payerSection = buildSection({
               'userIsPayingAsIndividual',
               YesOrNoEnum.NO,
             ) === YesOrNoEnum.NO,
+        }),
+        buildCustomField({
+          id: 'payerValidation',
+          component: 'PayerValidation',
         }),
       ],
     }),

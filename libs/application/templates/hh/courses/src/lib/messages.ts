@@ -36,6 +36,17 @@ export const m = {
         'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'We will fetch name, national id and address',
     },
+    emailAndPhoneTitle: {
+      id: 'hh.courses.application:prerequisites.emailAndPhoneTitle',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone title',
+    },
+    emailAndPhoneSubTitle: {
+      id: 'hh.courses.application:prerequisites.emailAndPhoneSubTitle',
+      defaultMessage:
+        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+      description: 'Email and phone sub title',
+    },
   }),
   course: defineMessages({
     sectionTitle: {
@@ -148,6 +159,16 @@ export const m = {
       defaultMessage: 'Upplýsingar um fyrirtæki',
       description: 'Title of company info field',
     },
+    companyTitle: {
+      id: 'hh.courses.application:payer.companyTitle',
+      defaultMessage: 'Nafn fyrirtækis',
+      description: 'Title of company field',
+    },
+    companyNationalId: {
+      id: 'hh.courses.application:payer.companyNationalId',
+      defaultMessage: 'Kennitala fyrirtækis',
+      description: 'Title of company national id field',
+    },
     userIsPayingAsIndividualLabel: {
       id: 'hh.courses.application:payer.userIsPayingAsIndividualLabel',
       defaultMessage: 'Greiðslutilhögun',
@@ -163,6 +184,12 @@ export const m = {
       defaultMessage: 'Greiða sem fyrirtæki',
       description: 'Title of user is paying as individual field',
     },
+    payerValidationError: {
+      id: 'hh.courses.application:payer.payerValidationError',
+      defaultMessage:
+        'Þú verður að fylla út upplýsingar um fyrirtækið ef þú vilt greiða sem fyrirtæki',
+      description: 'Error message when company payment information is required',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {
@@ -172,8 +199,8 @@ export const m = {
     },
     participantHeading: {
       id: 'hh.courses.application:overview.participantHeading',
-      defaultMessage: 'Þátttakandi',
-      description: 'Heading for participant in overview section',
+      defaultMessage: 'Þátttakendur',
+      description: 'Heading for participants in overview section',
     },
     participantName: {
       id: 'hh.courses.application:overview.participantName',

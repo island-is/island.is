@@ -73,6 +73,7 @@ export const courseSection = buildSection({
         buildAsyncSelectField({
           id: 'courseSelect',
           title: m.course.courseSelectTitle,
+          required: true,
           clearOnChange: ['dateSelect'],
           defaultValue: (application: Application) => {
             const value = getValueViaPath<string>(
@@ -104,6 +105,7 @@ export const courseSection = buildSection({
         buildAsyncSelectField({
           id: 'dateSelect',
           title: m.course.dateSelectTitle,
+          required: true,
           isSearchable: false,
           updateOnSelect: ['courseSelect'],
           defaultValue: (application: Application) => {

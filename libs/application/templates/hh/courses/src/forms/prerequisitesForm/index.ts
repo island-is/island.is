@@ -27,6 +27,10 @@ export const Prerequisites = buildForm({
               title: m.prerequisites.nationalRegistryTitle,
               subTitle: m.prerequisites.nationalRegistrySubTitle,
             }),
+            buildDataProviderItem({
+              title: m.prerequisites.emailAndPhoneTitle,
+              subTitle: m.prerequisites.emailAndPhoneSubTitle,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import {
   getPayerOverviewItems,
-  getParticipantOverviewItems,
+  getParticipantOverviewTableData,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
 
@@ -22,7 +22,7 @@ export const overviewSection = buildSection({
           id: 'participantOverview',
           bottomLine: false,
           title: m.overview.participantHeading,
-          items: getParticipantOverviewItems,
+          tableData: getParticipantOverviewTableData,
         }),
         buildOverviewField({
           id: 'payerOverview',
