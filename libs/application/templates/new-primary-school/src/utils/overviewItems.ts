@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { NO, YES } from '@island.is/application/core'
 import {
+  AttachmentItem,
   ExternalData,
   FormValue,
   KeyValueItem,
@@ -812,6 +813,23 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
   ]
 }
 
+export const attachmentItems = (answers: FormValue): Array<AttachmentItem> => {
+  const { attachmentsFiles } = getApplicationAnswers(answers)
+
+  return attachmentsFiles.map((file) => {
+    const fullName = file.name || ''
+    const nameArray = fullName.split('.')
+    const fileType = nameArray.pop()?.toUpperCase()
+    const fileName = nameArray.join('.')
+
+    return {
+      width: 'full',
+      fileName: fileName,
+      fileType: fileType || undefined,
+    }
+  })
+}
+
 export const specialEducationSupportItems = async (
   answers: FormValue,
   externalData: ExternalData,
@@ -1221,8 +1239,7 @@ export const specialEducationSupportItems = async (
 }
 
 export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { payer, payerName, payerNationalId, payerEmail } =
-    getApplicationAnswers(answers)
+  const { payer, payerName, payerNationalId } = getApplicationAnswers(answers)
 
   return payer === PayerOption.APPLICANT
     ? [
@@ -1243,11 +1260,6 @@ export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
           width: 'half',
           keyText: newPrimarySchoolMessages.shared.nationalId,
           valueText: formatKennitala(payerNationalId ?? ''),
-        },
-        {
-          width: 'half',
-          keyText: newPrimarySchoolMessages.shared.email,
-          valueText: payerEmail,
         },
       ]
 }

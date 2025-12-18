@@ -1,6 +1,8 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
+  AttachmentOptions,
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
@@ -12,8 +14,9 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   ReasonForApplicationOptions,
-  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowExpectedEndDate,
+  shouldShowPage,
+  shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
@@ -22,9 +25,8 @@ import {
   CaseWorkerInputTypeEnum,
   RegistrationApplicationInput,
   RegistrationApplicationInputApplicationTypeEnum,
+  RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -173,6 +175,7 @@ export const getSpecialEducationSocialProfile = (application: Application) => {
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
+  attachmentFiles: string[],
 ): RegistrationApplicationInput => {
   const {
     applicationType,
@@ -182,6 +185,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplication,
     reasonForApplicationId,
     counsellingRegardingApplication,
+    hasVisitedSchool,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -202,9 +206,16 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     alternativeSpecialEducationDepartment,
     currentSchoolId,
+    currentNursery,
     applyForPreferredSchool,
     payerName,
     payerNationalId,
+    attachmentsAnswer,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, preferredSchool } = getApplicationExternalData(
@@ -228,7 +239,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
 
   const newPrimarySchoolDTO: RegistrationApplicationInput = {
     id: application.id,
-    applicationType: mapApplicationType(applicationType),
+    applicationType: mapApplicationType(application),
     approvalRequester: application.applicant,
     ...(needsOtherGuardianApproval(application) &&
       otherGuardian && {
@@ -262,11 +273,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         phone: relative.phoneNumber,
         relationTypeId: relative.relation,
       })),
-      ...((primaryOrgId || currentSchoolId) && {
-        defaultOrganizationId: primaryOrgId || currentSchoolId,
-      }),
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
+            defaultOrganizationId: currentNursery,
+          }),
       selectedOrganizationId:
-        (applyForPreferredSchool === YES
+        (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+          ? selectedSchoolId
+          : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+          ? primaryOrgId
+          : applyForPreferredSchool === YES
           ? preferredSchool?.id
           : selectedSchoolId) || '',
       ...(shouldShowAlternativeSpecialEducationDepartment(
@@ -276,29 +293,35 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      requestingMeeting: requestingMeeting === YES,
-      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? {
-            expectedStartDate: expectedStartDate
-              ? new Date(expectedStartDate)
-              : new Date(),
-            ...(shouldShowExpectedEndDate(
-              application.answers,
-              application.externalData,
-            ) &&
-              temporaryStay === YES && {
-                expectedEndDate: expectedEndDate
-                  ? new Date(expectedEndDate)
-                  : undefined,
-              }),
-          }
-        : {
-            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
+        expectedStartDate: expectedStartDate
+          ? new Date(expectedStartDate)
+          : undefined,
+        ...(shouldShowExpectedEndDate(
+          application.answers,
+          application.externalData,
+        ) &&
+          temporaryStay === YES && {
+            expectedEndDate: expectedEndDate
+              ? new Date(expectedEndDate)
+              : undefined,
           }),
+      }),
       ...(shouldShowReasonForApplicationPage(application.answers) && {
-        reasonId: isSpecialEducation
-          ? counsellingRegardingApplication
-          : reasonForApplicationId,
+        ...(isSpecialEducation
+          ? {
+              reasonId: counsellingRegardingApplication,
+              visitedAndResearched: hasVisitedSchool === YES,
+            }
+          : { reasonId: reasonForApplicationId }),
       }),
       health: {
         ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
@@ -315,9 +338,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: isSpecialEducation
-        ? getSpecialEducationSocialProfile(application)
-        : getSocialProfile(application),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) && {
+        social: isSpecialEducation
+          ? getSpecialEducationSocialProfile(application)
+          : getSocialProfile(application),
+      }),
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
@@ -337,31 +366,71 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
+    ...(shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
+      attachmentsAnswer && {
+        files: attachmentFiles,
+        fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),
+      }),
   }
 
   return newPrimarySchoolDTO
 }
 
-export const mapApplicationType = (
-  applicationType: ApplicationType | undefined,
-) => {
-  if (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL)
-    return RegistrationApplicationInputApplicationTypeEnum.Transfer
-
-  if (applicationType === ApplicationType.CONTINUING_ENROLLMENT)
-    return RegistrationApplicationInputApplicationTypeEnum.Continuation
-
-  return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+const mapAttachmentOptionToFileUploadType = (
+  option: AttachmentOptions,
+): RegistrationApplicationInputFileUploadTypeEnum => {
+  switch (option) {
+    case AttachmentOptions.ATTACHMENTS:
+      return RegistrationApplicationInputFileUploadTypeEnum.Attachments
+    case AttachmentOptions.PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.Physical
+    case AttachmentOptions.ATTACHMENTS_AND_PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.AttachmentsAndPhysical
+  }
 }
 
-export const pathToAsset = (file: string) => {
-  if (isRunningOnEnvironment('local')) {
-    return join(
-      __dirname,
-      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
-    )
-  }
+const mapApplicationType = (application: Application) => {
+  const { applicationType, applyForPreferredSchool } = getApplicationAnswers(
+    application.answers,
+  )
 
-  return join(__dirname, `./new-primary-school-assets/${file}`)
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return RegistrationApplicationInputApplicationTypeEnum.Continuation
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? RegistrationApplicationInputApplicationTypeEnum.Enrollment
+        : RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+    default:
+      return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+  }
 }

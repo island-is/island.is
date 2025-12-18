@@ -35,7 +35,7 @@ const WaitlistsDetail: React.FC = () => {
       intro={formatMessage(messages.waitlistsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirWaitlistTooltip,
       )}
       marginBottom={6}
     >
@@ -53,19 +53,19 @@ const WaitlistsDetail: React.FC = () => {
         <InfoLineStack space={1}>
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.waitlist)}
+            label={messages.waitlist}
             content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.organization)}
+            label={messages.organization}
             content={
               waitlist?.organization ?? formatMessage(messages.noDataRegistered)
             }
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.registeredToList)}
+            label={messages.registeredToList}
             content={
               formatDate(waitlist?.waitBegan) ??
               formatMessage(messages.noDataRegistered)
@@ -73,14 +73,14 @@ const WaitlistsDetail: React.FC = () => {
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.status)}
+            label={messages.status}
             content={
               waitlist?.status ?? formatMessage(messages.noDataRegistered)
             }
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.statusLastUpdated)}
+            label={messages.statusLastUpdated}
             content={
               formatDate(waitlist?.lastUpdated) ??
               formatMessage(messages.noDataRegistered)

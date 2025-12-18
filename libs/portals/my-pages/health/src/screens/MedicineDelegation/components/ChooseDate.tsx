@@ -45,7 +45,7 @@ const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
                     dateTo: endDate,
                   })
                 }}
-                placeholderText={undefined}
+                placeholderText={formatMessage(messages.choosePeriod)}
                 range
                 minDate={today}
                 ranges={[

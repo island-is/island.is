@@ -70,7 +70,7 @@ const MedicinePrescriptionHistory = () => {
       childrenWidthFull
       marginBottom={6}
     >
-      {!loading && !error && history && history.length > 0 && (
+      {!error && (
         <SortableTable
           title=""
           labels={{
@@ -85,6 +85,7 @@ const MedicinePrescriptionHistory = () => {
           sortBy="descending"
           mobileTitleKey="medicine"
           ellipsisLength={22}
+          tableLoading={loading}
           items={
             history?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -93,16 +94,18 @@ const MedicinePrescriptionHistory = () => {
               lastDispensed: formatDate(item?.lastDispensationDate),
               numberOfDispensations: item.dispensationCount,
               children: (
-                <Box padding={1} background={'blue100'}>
+                <Box padding={1} background="blue100">
                   <DispensingContainer
                     backgroundColor="blue"
                     label={formatMessage(messages.dispenseHistory)}
-                    showMedicineName
                     data={(dispensations && dispensations.id === item.atcCode
                       ? dispensations.data
                       : item.dispensations
                     )?.map((subItem, subIndex) => {
                       return {
+                        id:
+                          subItem.id ??
+                          subItem.name + '-' + subIndex.toString(),
                         pharmacy:
                           subItem.agentName ??
                           formatMessage(messages.notRegistered),
@@ -117,7 +120,7 @@ const MedicinePrescriptionHistory = () => {
                         date: subItem.date
                           ? formatDate(new Date(subItem.date))
                           : '',
-
+                        strength: subItem.strength ?? '',
                         medicine:
                           subItem?.name ??
                           item.name ??
@@ -189,7 +192,6 @@ const MedicinePrescriptionHistory = () => {
         <DispensingDetailModal
           id={activeDispensation.id}
           activeDispensation={activeDispensation.activeDispensation}
-          number={activeDispensation.dispensationNumber}
           toggleClose={openModal}
           isVisible={openModal}
           closeModal={() => {
@@ -200,9 +202,8 @@ const MedicinePrescriptionHistory = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {!error && history && history.length === 0 && (
+      {!error && !loading && history && history.length === 0 && (
         <EmptyTable
-          loading={loading}
           message={formatMessage(messages.noDataFound, {
             arg: formatMessage(messages.medicineTitle).toLowerCase(),
           })}

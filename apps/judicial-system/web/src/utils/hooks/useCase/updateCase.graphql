@@ -127,6 +127,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
         state
         key
         size
+        isKeyAccessible
       }
     }
     childCase {
@@ -155,6 +156,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      isKeyAccessible
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired

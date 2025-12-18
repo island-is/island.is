@@ -49,7 +49,6 @@ export const payoutInformationSubSection = buildSubSection({
           id: 'payout.payToUnionDescription',
           title: payoutMessages.payoutInformation.unionQuestion,
           titleVariant: 'h5',
-          space: 0,
         }),
         buildRadioField({
           id: 'payout.payToUnion',
@@ -109,10 +108,12 @@ export const payoutInformationSubSection = buildSubSection({
                 'unemploymentApplication.data.supportData.pensionFunds',
                 [],
               ) || []
-            return pensionFundOptions.map((option) => ({
-              label: option.name || '',
-              value: option.id || '',
-            }))
+            return pensionFundOptions
+              .filter((x) => x.visibleOnWeb)
+              .map((option) => ({
+                label: option.name || '',
+                value: option.id || '',
+              }))
           },
         }),
         buildDescriptionField({

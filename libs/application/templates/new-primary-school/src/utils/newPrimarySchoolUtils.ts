@@ -12,6 +12,7 @@ import {
   PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import {
@@ -22,6 +23,7 @@ import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -34,7 +36,9 @@ import {
 } from '../types'
 import {
   AgentType,
+  ApplicationFeatureConfigType,
   ApplicationType,
+  AttachmentOptions,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   OptionsType,
@@ -313,8 +317,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'payer.other.nationalId',
   )
 
-  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
-
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -367,6 +369,40 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const currentSchoolId = getValueViaPath<string>(
     answers,
     'currentSchool.school',
+  )
+
+  const attachmentsFiles =
+    getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
+
+  const attachmentsAnswer = getValueViaPath<AttachmentOptions>(
+    answers,
+    'attachments.answer',
+  )
+
+  const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
+
+  const fieldInspection = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservation[0]',
+    NO,
+  )
+
+  const additionalDataProvisioning = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservationAdditionalInfo[0]',
+    NO,
+  )
+
+  const outsideSpecialist = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.callInExpert[0]',
+    NO,
+  )
+
+  const childViewOnApplication = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.childViews[0]',
+    NO,
   )
 
   return {
@@ -428,7 +464,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     payer,
     payerName,
     payerNationalId,
-    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -440,6 +475,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachmentsFiles,
+    attachmentsAnswer,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   }
 }
 
@@ -689,6 +731,14 @@ export const getApplicationType = (
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
+  // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
+  if (
+    (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+    nationalId === '5555555559' // Bína Maack
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
   if (!isValid(nationalId) || !yearOfBirth) {
     return undefined
   }
@@ -924,4 +974,25 @@ export const getReasonOptionsType = (
     : selectedSchoolSector === OrganizationSector.PRIVATE
     ? OptionsType.REASON_PRIVATE_SCHOOL
     : OptionsType.REASON
+}
+
+export const mapApplicationType = (answers: FormValue) => {
+  const { applicationType, applyForPreferredSchool } =
+    getApplicationAnswers(answers)
+
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return ApplicationFeatureConfigType.TRANSFER
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return ApplicationFeatureConfigType.CONTINUATION
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? ApplicationFeatureConfigType.ENROLLMENT
+        : ApplicationFeatureConfigType.TRANSFER
+
+    default:
+      return ApplicationFeatureConfigType.ENROLLMENT
+  }
 }

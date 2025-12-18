@@ -1,6 +1,5 @@
 import {
   ActionCard,
-  AlertMessage,
   Box,
   SkeletonLoader,
   Stack,
@@ -36,9 +35,12 @@ export const MedicineLicense = () => {
       ) : (
         <Box marginY={5}>
           {data?.rightsPortalDrugCertificates.length === 0 ? (
-            <AlertMessage
-              type="info"
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.noData)}
               message={formatMessage(messages.medicineNoIssuedCertificates)}
+              imgSrc="./assets/images/nodata.svg"
             />
           ) : (
             <Stack space={3}>

@@ -32,7 +32,7 @@ const Waitlists: React.FC = () => {
       intro={formatMessage(messages.waitlistsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirWaitlistTooltip,
       )}
     >
       {!loading && !error && waitlists?.length === 0 && (

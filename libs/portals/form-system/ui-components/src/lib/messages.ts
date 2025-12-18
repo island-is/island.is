@@ -397,7 +397,7 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Málakerfi',
+    defaultMessage: 'Innsendingarslóðir',
     description: 'Submission URLs',
   },
   validationUrls: {
@@ -1067,6 +1067,16 @@ export const m = defineMessages({
     defaultMessage: 'Stofna nýja umsókn',
     description: 'Create new application',
   },
+  maxTextLength: {
+    id: 'form.system:max-text-length',
+    defaultMessage: 'Hámarksfjöldi stafa',
+    description: 'Maximum text length',
+  },
+  hasDescription: {
+    id: 'form.system:has-description',
+    defaultMessage: 'Hefur lýsingu',
+    description: 'Has description',
+  },
   inProgress: {
     id: 'form.system:in-progress',
     defaultMessage: 'Í vinnslu',
@@ -1091,5 +1101,27 @@ export const m = defineMessages({
     id: 'form.system:check-url-please',
     defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
     description: 'Please check the URL.',
+  },
+  urlFormatInstruction: {
+    id: 'form.system:url-format-instruction',
+    defaultMessage: 'Slóðin þarf að vera X‑Road slóð sem byrjar á',
+    description: 'The URL must be an X-Road URL starting with',
+  },
+  urlReuseEncouragement: {
+    id: 'form.system:url-reuse-encouragement',
+    defaultMessage:
+      'Vinsamlega reynið að halda fjölda slóða í lágmarki og nýta þær sem fyrir eru eftir því sem unnt er.',
+    description:
+      'Please try to keep the number of URLs to a minimum and reuse existing ones as much as possible.',
+  },
+  addFormUrl: {
+    id: 'form.system:add-form-url',
+    defaultMessage: '+ Bæta við nýrri slóð fyrir þetta form',
+    description: '+ Add new URL for this form',
+  },
+  newFormUrlButton: {
+    id: 'form.system:new-form-url-button',
+    defaultMessage: 'Ný slóð fyrir innsendingar',
+    description: 'New submission URL',
   },
 })
