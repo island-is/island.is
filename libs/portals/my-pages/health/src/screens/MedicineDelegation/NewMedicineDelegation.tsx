@@ -49,11 +49,17 @@ const NewMedicineDelegation = () => {
               replace: true,
             })
           } else {
-            toast.error(formatMessage(messages.permitCreatedError))
+            toast.error(
+              formatMessage(messages.permitCreatedError, {
+                arg:
+                  response.data?.healthDirectorateMedicineDelegationCreate
+                    .message || '',
+              }),
+            )
           }
         })
         .catch(() => {
-          toast.error(formatMessage(messages.permitCreatedError))
+          toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
         })
     }
   }
@@ -61,7 +67,7 @@ const NewMedicineDelegation = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
-      intro={formatMessage(messages.medicineDelegationIntroText)}
+      intro={formatMessage(messages.newMedicineDelegationIntroText)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
