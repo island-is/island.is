@@ -25,7 +25,7 @@ export class FSREBuildingsImportService {
   }
 
   private async processEntries() {
-    const buildings = await this.clientsRepository.getBuildings(20)
+    const buildings = await this.clientsRepository.getBuildings()
 
     if (buildings) {
       const existingEntries =

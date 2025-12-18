@@ -20,7 +20,7 @@ export const mapFSREBuildingToGenericListItem = (
     properties: {
       internalTitle: `FSRE: ${data.address}_${data.id}`,
       title: {
-        [EN_LOCALE]: `Address: ${data.address}`,
+        [EN_LOCALE]: data.address,
         [LOCALE]: data.address,
       },
       slug: {

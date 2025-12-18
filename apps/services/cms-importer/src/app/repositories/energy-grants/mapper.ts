@@ -11,8 +11,9 @@ export const mapEnergyGrantToGenericListItem = (
   data: EnergyGrantDto,
   genericListId: string,
   tagsRegistry: Record<string, string>,
-): CreationType | undefined =>
-  generateGenericListItem({
+): CreationType | undefined => {
+  const slug = `${data.projectName}-${data.caseId}`
+  return generateGenericListItem({
     listId: genericListId,
     ownerTags: OWNER_TAGS,
     properties: {
@@ -22,8 +23,8 @@ export const mapEnergyGrantToGenericListItem = (
         [LOCALE]: data.projectName,
       },
       slug: {
-        [EN_LOCALE]: slugify(data.projectName),
-        [LOCALE]: slugify(data.projectName),
+        [EN_LOCALE]: slugify(slug),
+        [LOCALE]: slugify(slug),
       },
       tagIds: [
         tagsRegistry[data.tagOne],
@@ -171,3 +172,4 @@ export const mapEnergyGrantToGenericListItem = (
       },
     },
   })
+}
