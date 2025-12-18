@@ -42,7 +42,14 @@ interface NationalIdWithNameProps {
   showEmailField?: boolean
   error?: string
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)

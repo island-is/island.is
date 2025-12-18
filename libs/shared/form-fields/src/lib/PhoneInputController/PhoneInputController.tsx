@@ -35,7 +35,14 @@ interface Props {
   allowedCountryCodes?: string[]
   disableDropdown?: boolean
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
 }
 
 interface ChildParams {

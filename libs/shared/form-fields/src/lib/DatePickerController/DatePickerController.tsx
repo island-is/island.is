@@ -32,7 +32,14 @@ interface Props {
   readOnly?: boolean
   calendarStartDay?: number
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
 }
 
 const df = 'yyyy-MM-dd'

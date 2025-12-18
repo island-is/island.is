@@ -35,7 +35,14 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { key: string; value: any }[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

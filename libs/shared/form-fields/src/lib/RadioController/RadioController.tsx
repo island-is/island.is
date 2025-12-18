@@ -44,7 +44,14 @@ interface Props {
   paddingBottom?: BoxProps['paddingBottom']
   paddingTop?: BoxProps['paddingTop']
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
 }
 
 export const RadioController: FC<React.PropsWithChildren<Props>> = ({

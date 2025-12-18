@@ -51,7 +51,14 @@ interface Props {
   min?: number
   step?: string
   clearOnChange?: string[]
-  clearOnChangeDefaultValue?: string | boolean | number | undefined
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   tooltip?: string
   setOnChange?:
     | { key: string; value: any }[]
