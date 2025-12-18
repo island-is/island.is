@@ -55,10 +55,15 @@ const NewPermit: React.FC = () => {
               navigate(HealthPaths.HealthPatientDataPermits, {
                 replace: true,
               })
-            } else toast.error(formatMessage(messages.permitCreatedError))
+            } else
+              toast.error(
+                formatMessage(messages.permitCreatedError, {
+                  arg: '',
+                }),
+              )
           })
           .catch(() => {
-            toast.error(formatMessage(messages.permitCreatedError))
+            toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
           })
       }
     }
