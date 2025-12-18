@@ -874,6 +874,83 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         settings: {
           applicationConfigs: [
             {
+              applicationType: 'enrollment',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'continuation',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'transfer',
               applicationFeatures: [
                 {
                   key: 'consents',
@@ -935,6 +1012,83 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         settings: {
           applicationConfigs: [
             {
+              applicationType: 'enrollment',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'continuation',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'transfer',
               applicationFeatures: [
                 {
                   key: 'consents',
@@ -996,6 +1150,83 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         settings: {
           applicationConfigs: [
             {
+              applicationType: 'enrollment',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'continuation',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'transfer',
               applicationFeatures: [
                 {
                   key: 'consents',
@@ -1057,6 +1288,83 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
         settings: {
           applicationConfigs: [
             {
+              applicationType: 'enrollment',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'continuation',
+              applicationFeatures: [
+                {
+                  key: 'consents',
+                },
+                {
+                  key: 'applicant_info',
+                },
+                {
+                  key: 'guardians',
+                },
+                {
+                  key: 'emergency_contacts',
+                },
+                {
+                  key: 'current_organization',
+                },
+                {
+                  key: 'application_reason',
+                },
+                {
+                  key: 'siblings',
+                },
+                {
+                  key: 'timeframe',
+                },
+                {
+                  key: 'language_info',
+                },
+                {
+                  key: 'health_info',
+                },
+                {
+                  key: 'social_info',
+                },
+              ],
+            },
+            {
+              applicationType: 'transfer',
               applicationFeatures: [
                 {
                   key: 'consents',
@@ -1146,7 +1454,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
     config: Frigg,
     prefix: 'XROAD_MMS_FRIGG_PATH',
     apiPath:
-      '/organizations?type=school&municipalityCode=0000&gradeLevels=01%2C02&limit=1000',
+      '/organizations?type=school&municipalityCode=1000&gradeLevels=01%2C02&limit=1000',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody([
       {
