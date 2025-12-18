@@ -246,7 +246,12 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     } finally {
       setRefetching(false)
     }
-  }, [prescriptionsRes, certificatesRes, medicineHistoryRes])
+  }, [
+    prescriptionsRes,
+    certificatesRes,
+    medicineHistoryRes,
+    isPrescriptionsEnabled,
+  ])
 
   if (isPrescriptionsEnabled === null) {
     return null
