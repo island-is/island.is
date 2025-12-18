@@ -42,6 +42,7 @@ interface NationalIdWithNameProps {
   showEmailField?: boolean
   error?: string
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)
@@ -76,6 +77,7 @@ export const NationalIdWithName: FC<
   showEmailField = false,
   error,
   clearOnChange,
+  clearOnChangeDefaultValue,
   setOnChange,
 }) => {
   const [invalidNationalId, setInvalidNationalId] = useState(false)
@@ -259,6 +261,7 @@ export const NationalIdWithName: FC<
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>

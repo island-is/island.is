@@ -32,6 +32,7 @@ interface Props {
   readOnly?: boolean
   calendarStartDay?: number
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
 }
 
 const df = 'yyyy-MM-dd'
@@ -57,6 +58,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   onChange = () => undefined,
   calendarStartDay = 0,
   clearOnChange,
+  clearOnChangeDefaultValue,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -94,7 +96,11 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
             setValue(name, newVal)
             onChange(newVal)
             if (clearOnChange) {
-              clearInputsOnChange(clearOnChange, setValue)
+              clearInputsOnChange(
+                clearOnChange,
+                setValue,
+                clearOnChangeDefaultValue,
+              )
             }
           }}
         />

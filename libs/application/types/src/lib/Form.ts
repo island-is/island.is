@@ -211,6 +211,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void

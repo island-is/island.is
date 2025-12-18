@@ -44,6 +44,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -125,6 +126,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           paddingBottom={0}
           paddingTop={2}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>
     </Box>

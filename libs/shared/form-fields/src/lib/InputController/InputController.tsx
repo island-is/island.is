@@ -51,6 +51,7 @@ interface Props {
   min?: number
   step?: string
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   tooltip?: string
   setOnChange?:
     | { key: string; value: any }[]
@@ -103,6 +104,7 @@ export const InputController = forwardRef(
       min,
       step,
       clearOnChange,
+      clearOnChangeDefaultValue,
       setOnChange,
       tooltip,
       allowNegative,
@@ -147,7 +149,11 @@ export const InputController = forwardRef(
                 onInputChange(e)
               }
               if (clearOnChange && formContext?.setValue) {
-                clearInputsOnChange(clearOnChange, formContext.setValue)
+                clearInputsOnChange(
+                  clearOnChange,
+                  formContext.setValue,
+                  clearOnChangeDefaultValue,
+                )
               }
               if (setOnChange) {
                 setInputsOnChange(
@@ -203,7 +209,11 @@ export const InputController = forwardRef(
                 onInputChange(e)
               }
               if (clearOnChange && formContext?.setValue) {
-                clearInputsOnChange(clearOnChange, formContext.setValue)
+                clearInputsOnChange(
+                  clearOnChange,
+                  formContext.setValue,
+                  clearOnChangeDefaultValue,
+                )
               }
               if (setOnChange) {
                 setInputsOnChange(
@@ -255,7 +265,11 @@ export const InputController = forwardRef(
                 onInputChange(e)
               }
               if (clearOnChange && formContext?.setValue) {
-                clearInputsOnChange(clearOnChange, formContext.setValue)
+                clearInputsOnChange(
+                  clearOnChange,
+                  formContext.setValue,
+                  clearOnChangeDefaultValue,
+                )
               }
               if (setOnChange) {
                 setInputsOnChange(
@@ -306,7 +320,11 @@ export const InputController = forwardRef(
                 onInputChange(e)
               }
               if (clearOnChange && formContext?.setValue) {
-                clearInputsOnChange(clearOnChange, formContext.setValue)
+                clearInputsOnChange(
+                  clearOnChange,
+                  formContext.setValue,
+                  clearOnChangeDefaultValue,
+                )
               }
               if (setOnChange) {
                 setInputsOnChange(
