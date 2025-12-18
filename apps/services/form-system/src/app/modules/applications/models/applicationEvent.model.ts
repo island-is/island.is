@@ -9,7 +9,6 @@ import {
 } from 'sequelize-typescript'
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
-import { Value } from './value.model'
 import { ApplicationEvents } from '@island.is/form-system/shared'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 

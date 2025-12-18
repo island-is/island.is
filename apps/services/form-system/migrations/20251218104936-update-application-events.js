@@ -27,7 +27,7 @@ module.exports = {
       await queryInterface.addColumn(
         'application_event',
         'is_file_event',
-        { type: Sequelize.BOOLEAN, allowNull: false },
+        { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
         { transaction },
       )
       await queryInterface.addColumn(

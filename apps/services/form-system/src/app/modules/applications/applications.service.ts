@@ -230,7 +230,7 @@ export class ApplicationsService {
       })
 
       field.values?.forEach(async (value, index) => {
-        const newValue = await this.valueModel.create({
+        await this.valueModel.create({
           fieldId: field.id,
           fieldType: field.fieldType,
           applicationId: applicationDto.id,
