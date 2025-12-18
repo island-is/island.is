@@ -334,7 +334,7 @@ export class SubpoenaService {
           civilClaimFile,
         )
         const civilClaimantHash = getCaseFileHash(civilClaimPdf)
-        this.fileService.updateCaseFile(theCase.id, civilClaimFile.id, {
+        await this.fileService.updateCaseFile(theCase.id, civilClaimFile.id, {
           hash: civilClaimantHash.hash,
           hashAlgorithm: civilClaimantHash.hashAlgorithm,
         })
