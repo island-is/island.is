@@ -43,6 +43,7 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { AuthDelegationType } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import type { Locale } from '@island.is/shared/types'
+import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 
 @Injectable()
 export class ApplicationsService {
@@ -101,9 +102,7 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
-          pruneAt: new Date(
-            Date.now() + form.daysUntilApplicationPrune * 24 * 60 * 60 * 1000,
-          ),
+          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune || 30),
         } as Application,
         { transaction },
       )
@@ -261,9 +260,16 @@ export class ApplicationsService {
 
   async submit(id: string): Promise<boolean> {
     const application = await this.applicationModel.findByPk(id)
+    const form = await this.formModel.findByPk(application?.formId || '')
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
+    }
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found.`,
+      )
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
@@ -278,6 +284,9 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
+      application.pruneAt = calculatePruneAt(
+        form.daysUntilApplicationPrune || 30,
+      )
       await application.save()
     }
 
