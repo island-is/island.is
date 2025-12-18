@@ -439,7 +439,6 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'splitCase',
-    include: [{ model: User, as: 'judge' }],
   },
 ]
 
