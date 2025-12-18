@@ -102,7 +102,7 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune || 30),
+          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune),
         } as Application,
         { transaction },
       )
@@ -276,9 +276,7 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
-      application.pruneAt = calculatePruneAt(
-        form.daysUntilApplicationPrune || 30,
-      )
+      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
       await this.sequelize.transaction(async (transaction) => {
         await application.save({ transaction })
 
