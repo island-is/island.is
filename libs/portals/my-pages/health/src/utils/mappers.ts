@@ -31,3 +31,24 @@ export const mapBlockedStatus = (
       return formatMessage(messages.prescriptionBlockedOther)
   }
 }
+
+export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
+  switch (weekday.toLowerCase()) {
+    case 'monday':
+      return formatMessage(messages.weekdayMondayAcc)
+    case 'tuesday':
+      return formatMessage(messages.weekdayTuesdayAcc)
+    case 'wednesday':
+      return formatMessage(messages.weekdayWednesdayAcc)
+    case 'thursday':
+      return formatMessage(messages.weekdayThursdayAcc)
+    case 'friday':
+      return formatMessage(messages.weekdayFridayAcc)
+    case 'saturday':
+      return formatMessage(messages.weekdaySaturdayAcc)
+    case 'sunday':
+      return formatMessage(messages.weekdaySundayAcc)
+    default:
+      return weekday
+  }
+}

@@ -68,6 +68,10 @@ export const messages = defineMessages({
     id: 'sp.health:date-and-time',
     defaultMessage: 'Dagsetning og tími',
   },
+  clockShortArg: {
+    id: 'sp.health:clock-short',
+    defaultMessage: 'kl. {arg}',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -2266,5 +2270,17 @@ export const messages = defineMessages({
   publicationPlace: {
     defaultMessage: 'Útgáfustaður',
     id: 'sp.health:publication-place',
+  },
+  openMap: {
+    defaultMessage: 'Opna kort',
+    id: 'sp.health:see-on-maps',
+  },
+  duration: {
+    defaultMessage: 'Tímalengd',
+    id: 'sp.health:duration',
+  },
+  argWithMinutes: {
+    defaultMessage: '{arg} mínútur',
+    id: 'sp.health:arg-with-minutes',
   },
 })
