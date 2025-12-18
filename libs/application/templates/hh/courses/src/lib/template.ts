@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -33,19 +34,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
   dataSchema,
   allowMultipleApplicationsInDraft: true,
-  initialQueryParameter: 'selection', // JSON stringified object with courseId and courseInstanceId
-  // TODO: Store what course the applicant has applied for and what date
-  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  // adminDataConfig: {
-  //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-  //   answers: [
-  //     {
-  //       key: 'pickVehicle.plate',
-  //       isListed: true,
-  //       label: 'Bílnúmer',
-  //     },
-  //   ],
-  // },
+  initialQueryParameter: 'selection',
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -71,7 +60,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, IdentityApi],
               delete: true,
             },
           ],

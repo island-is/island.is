@@ -9,7 +9,6 @@ export enum States {
   DRAFT = 'draft',
   COMPLETED = 'completed',
   PAYMENT = 'payment',
-  REVIEW = 'review',
 }
 
 export enum Roles {

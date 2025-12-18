@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import gql from 'graphql-tag'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,10 +28,6 @@ export class CoursesService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HH_COURSES)
-  }
-
-  async getCourses({ application }: TemplateApiModuleActionProps) {
-    return []
   }
 
   async submitApplication({
