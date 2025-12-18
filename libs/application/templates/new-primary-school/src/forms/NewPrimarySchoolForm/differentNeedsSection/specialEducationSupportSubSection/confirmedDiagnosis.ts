@@ -5,7 +5,10 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { shouldShowDiagnosticians } from '../../../../utils/conditionUtils'
 import { OptionsType } from '../../../../utils/constants'
 import { getApplicationAnswers } from '../../../../utils/newPrimarySchoolUtils'
@@ -13,18 +16,18 @@ import { getApplicationAnswers } from '../../../../utils/newPrimarySchoolUtils'
 export const confirmedDiagnosis = [
   buildRadioField({
     id: 'specialEducationSupport.hasConfirmedDiagnosis',
-    title: newPrimarySchoolMessages.differentNeeds.hasConfirmedDiagnosis,
+    title: differentNeedsMessages.specialEducationSupport.hasConfirmedDiagnosis,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-confirmed-diagnosis',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-confirmed-diagnosis',
         value: NO,
       },
@@ -32,18 +35,18 @@ export const confirmedDiagnosis = [
   }),
   buildRadioField({
     id: 'specialEducationSupport.isDiagnosisInProgress',
-    title: newPrimarySchoolMessages.differentNeeds.isDiagnosisInProgress,
+    title: differentNeedsMessages.specialEducationSupport.isDiagnosisInProgress,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'is-diagnosis-in-progress',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-is-diagnosis-in-progress',
         value: NO,
       },
@@ -56,7 +59,7 @@ export const confirmedDiagnosis = [
   }),
   buildDescriptionField({
     id: 'specialEducationSupport.diagnosticians.description',
-    title: newPrimarySchoolMessages.differentNeeds.atWhichDiagnostician,
+    title: differentNeedsMessages.specialEducationSupport.atWhichDiagnostician,
     titleVariant: 'h4',
     space: 4,
     condition: shouldShowDiagnosticians,
@@ -64,14 +67,15 @@ export const confirmedDiagnosis = [
   buildCustomField(
     {
       id: 'specialEducationSupport.diagnosticians',
-      title: newPrimarySchoolMessages.differentNeeds.diagnostician,
+      title: differentNeedsMessages.specialEducationSupport.diagnostician,
       component: 'FriggOptionsAsyncSelectField',
       condition: shouldShowDiagnosticians,
     },
     {
       optionsType: OptionsType.DIAGNOSIS_SPECIALIST,
       placeholder:
-        newPrimarySchoolMessages.differentNeeds.selectAllThatAppliesPlaceholder,
+        differentNeedsMessages.specialEducationSupport
+          .selectAllThatAppliesPlaceholder,
       isMulti: true,
     },
   ),
