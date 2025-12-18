@@ -6,13 +6,12 @@ export const inner = style({
   left: 0,
   right: 0,
   top: 0,
-  transition: 'transform 0.2s linear',
-  willChange: 'transform',
+  transition: 'height 0.2s linear, width 0.2s linear, transform 0.2s linear',
+  willChange: 'height, width, transform',
 })
 
 export const vertical = style({
   width: '12px',
-  height: 'auto',
 })
 
 export const options = {
@@ -96,6 +95,14 @@ export const selectedIndicatorContainer = style({
   height: '12px',
 })
 
+export const selectedIndicatorContainerVertical = style({
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  bottom: 0,
+  width: '12px',
+})
+
 export const dotPosition = style({
   position: 'absolute',
   top: '50%',
@@ -103,9 +110,25 @@ export const dotPosition = style({
   cursor: 'pointer',
 })
 
+export const dotPositionVertical = style({
+  position: 'absolute',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  cursor: 'pointer',
+})
+
 export const textContainer = style({
   position: 'relative',
   marginTop: '4px',
+})
+
+export const textContainerVertical = style({
+  position: 'relative',
+  marginLeft: '24px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  minHeight: '200px',
 })
 
 export const textPosition = style({

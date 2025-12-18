@@ -45,9 +45,13 @@ export const ProgressBar: FC<Props> = ({
   required = false,
 }) => {
   const ref = useRef<HTMLElement>(null)
+  const textContainerRef = useRef<HTMLDivElement>(null)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
   const shouldFocusAfterSelection = useRef(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [containerHeight, setContainerHeight] = useState<number | undefined>(
+    undefined,
+  )
   const labelId = `progress-label-${id}`
   const descriptionId = `progress-description-${id}`
 
@@ -87,6 +91,20 @@ export const ProgressBar: FC<Props> = ({
       shouldFocusAfterSelection.current = false
     }
   }, [selectedValue, options])
+
+  // Measure text container height for vertical mode
+  useEffect(() => {
+    if (vertical && textContainerRef.current) {
+      const updateHeight = () => {
+        if (textContainerRef.current) {
+          setContainerHeight(textContainerRef.current.offsetHeight)
+        }
+      }
+      updateHeight()
+      window.addEventListener('resize', updateHeight)
+      return () => window.removeEventListener('resize', updateHeight)
+    }
+  }, [vertical, options])
 
   if (actualProgress > 1 || actualProgress < 0) {
     return null
@@ -128,208 +146,256 @@ export const ProgressBar: FC<Props> = ({
         </Box>
       )}
       <Box
-        className={styles.progressContainer}
-        role={options ? 'radiogroup' : 'group'}
-        aria-labelledby={label ? labelId : undefined}
-        aria-describedby={options ? descriptionId : undefined}
-        aria-orientation={vertical ? 'vertical' : 'horizontal'}
+        display="flex"
+        flexDirection={vertical ? 'row' : 'column'}
+        alignItems={vertical ? 'stretch' : undefined}
+        height={vertical ? 'full' : undefined}
       >
         <Box
-          className={cn(styles.progress, className, {
-            [styles.vertical]: vertical,
-          })}
-          position="relative"
-          overflow="hidden"
-          borderRadius="large"
-          background={variant ? 'white' : options ? 'blue200' : 'blue100'}
-          width="full"
-          onClick={handleClick}
-          ref={ref}
-          role={options ? undefined : 'slider'}
-          aria-valuemin={options ? undefined : 0}
-          aria-valuemax={options ? undefined : 100}
-          aria-valuenow={options ? undefined : Math.round(actualProgress * 100)}
-          aria-valuetext={
-            options ? undefined : `${Math.round(actualProgress * 100)}%`
+          className={styles.progressContainer}
+          role={options ? 'radiogroup' : 'group'}
+          width={vertical ? undefined : 'full'}
+          aria-labelledby={label ? labelId : undefined}
+          aria-describedby={options ? descriptionId : undefined}
+          aria-orientation={vertical ? 'vertical' : 'horizontal'}
+          style={
+            vertical && containerHeight
+              ? { height: `${containerHeight}px` }
+              : undefined
           }
-          tabIndex={options ? -1 : 0}
         >
-          {renderProgressBar && (
-            <Box
-              className={styles.inner}
-              background={'blue400'}
-              borderRadius="large"
-              position="absolute"
-              style={{
-                transform: `translate${vertical ? 'Y' : 'X'}(${
-                  (1 - actualProgress) * -100
-                }%)`,
-              }}
-            />
-          )}
+          <Box
+            className={cn(styles.progress, className, {
+              [styles.vertical]: vertical,
+            })}
+            position="relative"
+            overflow="hidden"
+            borderRadius="large"
+            background={variant ? 'white' : options ? 'blue200' : 'blue100'}
+            style={vertical ? { height: '100%' } : undefined}
+            onClick={handleClick}
+            ref={ref}
+            role={options ? undefined : 'slider'}
+            aria-valuemin={options ? undefined : 0}
+            aria-valuemax={options ? undefined : 100}
+            aria-valuenow={
+              options ? undefined : Math.round(actualProgress * 100)
+            }
+            aria-valuetext={
+              options ? undefined : `${Math.round(actualProgress * 100)}%`
+            }
+            tabIndex={options ? -1 : 0}
+          >
+            {renderProgressBar && (
+              <Box
+                className={styles.inner}
+                background={'blue400'}
+                borderRadius="large"
+                position="absolute"
+                style={{
+                  [vertical ? 'height' : 'width']: `${actualProgress * 100}%`,
+                  ...(vertical ? { top: 0, bottom: 'auto' } : {}),
+                }}
+              />
+            )}
 
-          {/* Dots for each option */}
-          {options &&
-            options.length > 0 &&
-            options.map((option, index) => {
-              const isSelected = selectedValue?.value === option.value
-              const isLast = index === options.length - 1
-              const isFirst = index === 0
-              const position =
-                (index / (options.length - 1)) * 100 +
-                (isLast ? -1 : isFirst ? 1 : 0)
+            {/* Dots for each option */}
+            {options &&
+              options.length > 0 &&
+              options.map((option, index) => {
+                const isSelected = selectedValue?.value === option.value
+                const isLast = index === options.length - 1
+                const isFirst = index === 0
+                const position =
+                  (index / (options.length - 1)) * 100 +
+                  (isLast ? -1 : isFirst ? 1 : 0)
 
-              // Make sure each radiogroup has exactly one tabbable option:
-              // - If selection is valid → the selected one
-              // - If selection is invalid or missing → the first option
-              const isTabbable = isSelected || (!hasValidSelection && isFirst)
+                // Make sure each radiogroup has exactly one tabbable option:
+                // - If selection is valid → the selected one
+                // - If selection is invalid or missing → the first option
+                const isTabbable = isSelected || (!hasValidSelection && isFirst)
 
-              return (
-                <button
-                  key={`dot-${option.value}`}
-                  ref={(el) => {
-                    buttonRefs.current[index] = el
-                  }}
-                  className={cn(styles.dot, styles.dotPosition, {
-                    [styles.dotSelected]: isSelected,
-                  })}
-                  style={{
-                    left: `${position}%`,
-                  }}
-                  type="button"
-                  role="radio"
-                  aria-checked={isSelected}
-                  aria-label={option.label}
-                  tabIndex={isTabbable ? 0 : -1}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  onFocus={() => setHoveredIndex(index)}
-                  onBlur={() => setHoveredIndex(null)}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onOptionClick?.(option.value)
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
+                return (
+                  <button
+                    key={`dot-${option.value}`}
+                    ref={(el) => {
+                      buttonRefs.current[index] = el
+                    }}
+                    className={cn(
+                      styles.dot,
+                      vertical
+                        ? styles.dotPositionVertical
+                        : styles.dotPosition,
+                      {
+                        [styles.dotSelected]: isSelected,
+                      },
+                    )}
+                    style={{
+                      [vertical ? 'top' : 'left']: `${position}%`,
+                    }}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    aria-label={option.label}
+                    tabIndex={isTabbable ? 0 : -1}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onFocus={() => setHoveredIndex(index)}
+                    onBlur={() => setHoveredIndex(null)}
+                    onClick={(e) => {
                       e.stopPropagation()
                       onOptionClick?.(option.value)
-                    } else if (
-                      e.key === 'ArrowRight' ||
-                      e.key === 'ArrowDown'
-                    ) {
-                      e.preventDefault()
-                      shouldFocusAfterSelection.current = true
-                      const nextIndex = Math.min(index + 1, options.length - 1)
-                      onOptionClick?.(options[nextIndex].value)
-                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                      e.preventDefault()
-                      shouldFocusAfterSelection.current = true
-                      const prevIndex = Math.max(index - 1, 0)
-                      onOptionClick?.(options[prevIndex].value)
-                    }
-                  }}
-                />
-              )
-            })}
-        </Box>
-        {/* Selected indicator - positioned outside overflow hidden container */}
-        {options && options.length > 0 && selectedValue && (
-          <Box className={styles.selectedIndicatorContainer}>
-            {options.map((option, index) => {
-              if (selectedValue.value !== option.value) return null
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onOptionClick?.(option.value)
+                      } else if (
+                        e.key === 'ArrowRight' ||
+                        e.key === 'ArrowDown'
+                      ) {
+                        e.preventDefault()
+                        shouldFocusAfterSelection.current = true
+                        const nextIndex = Math.min(
+                          index + 1,
+                          options.length - 1,
+                        )
+                        onOptionClick?.(options[nextIndex].value)
+                      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        shouldFocusAfterSelection.current = true
+                        const prevIndex = Math.max(index - 1, 0)
+                        onOptionClick?.(options[prevIndex].value)
+                      }
+                    }}
+                  />
+                )
+              })}
+          </Box>
+          {/* Selected indicator - positioned outside overflow hidden container */}
+          {options && options.length > 0 && selectedValue && (
+            <Box
+              className={
+                vertical
+                  ? styles.selectedIndicatorContainerVertical
+                  : styles.selectedIndicatorContainer
+              }
+            >
+              {options.map((option, index) => {
+                if (selectedValue.value !== option.value) return null
 
-              const isLast = index === options.length - 1
+                const isLast = index === options.length - 1
+                const isFirst = index === 0
+                const position =
+                  (index / (options.length - 1)) * 100 +
+                  (isLast ? -1 : isFirst ? 1 : 0)
+
+                return (
+                  <Box
+                    key={`indicator-${option.value}`}
+                    className={styles.selectedIndicator}
+                    style={{
+                      [vertical ? 'top' : 'left']: `${position}%`,
+                    }}
+                  >
+                    <Box className={styles.selectedIndicatorInner} />
+                  </Box>
+                )
+              })}
+            </Box>
+          )}
+          {/* Hover indicator - positioned outside overflow hidden container */}
+          {options && options.length > 0 && hoveredIndex !== null && (
+            <Box
+              className={
+                vertical
+                  ? styles.selectedIndicatorContainerVertical
+                  : styles.selectedIndicatorContainer
+              }
+            >
+              {options.map((option, index) => {
+                if (hoveredIndex !== index) return null
+                // Don't show hover indicator on the selected item
+                if (selectedValue?.value === option.value) return null
+
+                const isLast = index === options.length - 1
+                const isFirst = index === 0
+                const position =
+                  (index / (options.length - 1)) * 100 +
+                  (isLast ? -1 : isFirst ? 1 : 0)
+
+                return (
+                  <Box
+                    key={`hover-${option.value}`}
+                    className={cn(
+                      styles.hoverIndicator,
+                      styles.hoverIndicatorVisible,
+                    )}
+                    style={{
+                      [vertical ? 'top' : 'left']: `${position}%`,
+                    }}
+                  />
+                )
+              })}
+            </Box>
+          )}
+        </Box>
+
+        {options && options.length > 0 && (
+          <Box
+            ref={textContainerRef}
+            className={
+              vertical ? styles.textContainerVertical : styles.textContainer
+            }
+            marginTop={vertical ? undefined : 1}
+          >
+            {options.map((option, index) => {
               const isFirst = index === 0
-              const position =
-                (index / (options.length - 1)) * 100 +
-                (isLast ? -1 : isFirst ? 1 : 0)
+              const isLast = index === options.length - 1
+              const isMiddle = !isFirst && !isLast
+
+              // For middle items, use dot position; for first/last, use edge positions
+              const position = isMiddle
+                ? (index / (options.length - 1)) * 100
+                : (index / options.length) * 100 + (isLast ? 2 : 0)
+
+              const textAlign = isLast ? 'right' : 'left'
+
+              // Calculate max width based on number of options to prevent overlap
+              const maxWidthPercent = 100 / options.length - 2 // -2% for spacing
 
               return (
                 <Box
-                  key={`indicator-${option.value}`}
-                  className={styles.selectedIndicator}
-                  style={{
-                    left: `${position}%`,
-                  }}
+                  key={option.value}
+                  className={cn(styles.options, styles.textPosition, {
+                    [styles.textMiddle]: isMiddle,
+                    [styles.textFirst]: isFirst,
+                    [styles.textLast]: isLast,
+                  })}
+                  textAlign={isMiddle ? 'center' : textAlign}
+                  marginTop={vertical ? undefined : 1}
+                  style={
+                    vertical
+                      ? {
+                          top: `${position}%`,
+                          transform: 'translateY(-50%)',
+                        }
+                      : {
+                          left: `${position}%`,
+                          maxWidth: `${maxWidthPercent}%`,
+                        }
+                  }
                 >
-                  <Box className={styles.selectedIndicatorInner} />
+                  <Text variant="small" color="blue400" fontWeight="semiBold">
+                    <Hyphen>{option.label}</Hyphen>
+                  </Text>
                 </Box>
               )
             })}
           </Box>
         )}
-        {/* Hover indicator - positioned outside overflow hidden container */}
-        {options && options.length > 0 && hoveredIndex !== null && (
-          <Box className={styles.selectedIndicatorContainer}>
-            {options.map((option, index) => {
-              if (hoveredIndex !== index) return null
-              // Don't show hover indicator on the selected item
-              if (selectedValue?.value === option.value) return null
-
-              const isLast = index === options.length - 1
-              const isFirst = index === 0
-              const position =
-                (index / (options.length - 1)) * 100 +
-                (isLast ? -1 : isFirst ? 1 : 0)
-
-              return (
-                <Box
-                  key={`hover-${option.value}`}
-                  className={cn(
-                    styles.hoverIndicator,
-                    styles.hoverIndicatorVisible,
-                  )}
-                  style={{
-                    left: `${position}%`,
-                  }}
-                />
-              )
-            })}
-          </Box>
-        )}
       </Box>
-
-      {options && options.length > 0 && (
-        <Box className={styles.textContainer} marginTop={1}>
-          {options.map((option, index) => {
-            const isFirst = index === 0
-            const isLast = index === options.length - 1
-            const isMiddle = !isFirst && !isLast
-
-            // For middle items, use dot position; for first/last, use edge positions
-            const position = isMiddle
-              ? (index / (options.length - 1)) * 100
-              : (index / options.length) * 100 + (isLast ? 2 : 0)
-
-            const textAlign = isLast ? 'right' : 'left'
-
-            // Calculate max width based on number of options to prevent overlap
-            const maxWidthPercent = 100 / options.length - 2 // -2% for spacing
-
-            return (
-              <Box
-                key={option.value}
-                className={cn(styles.options, styles.textPosition, {
-                  [styles.textMiddle]: isMiddle,
-                  [styles.textFirst]: isFirst,
-                  [styles.textLast]: isLast,
-                })}
-                textAlign={isMiddle ? 'center' : textAlign}
-                marginTop={1}
-                style={{
-                  left: `${position}%`,
-                  maxWidth: `${maxWidthPercent}%`,
-                }}
-              >
-                <Text variant="small" color="blue400" fontWeight="semiBold">
-                  <Hyphen>{option.label}</Hyphen>
-                </Text>
-              </Box>
-            )
-          })}
-        </Box>
-      )}
     </Box>
   )
 }
