@@ -1,6 +1,6 @@
 import { FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
-import { SectionTypes } from '../../lib'
+import { SectionTypes, FieldTypesEnum } from '../../lib'
 import { useLocale } from '@island.is/localization'
 
 interface Current<T> {
@@ -51,7 +51,13 @@ export const FormStepper = ({
                 key={screen?.id ?? ''}
                 variant={screen?.id === activeScreenId ? 'h5' : 'default'}
               >
-                {screen?.name?.[lang] ?? ''}
+                {section.sectionType === SectionTypes.PARTIES
+                  ? (screen?.fields ?? []).find(
+                      (f) => f?.fieldType === FieldTypesEnum.APPLICANT,
+                    )?.name?.[lang] ??
+                    screen?.name?.[lang] ??
+                    ''
+                  : screen?.name?.[lang] ?? ''}
               </Text>
             ))}
         />
