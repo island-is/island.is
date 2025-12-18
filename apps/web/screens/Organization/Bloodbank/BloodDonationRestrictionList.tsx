@@ -83,7 +83,14 @@ interface BloodDonationRestrictionListProps {
 
 const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
-> = ({ totalItems, items, organizationPage, namespace, tags }) => {
+> = ({
+  totalItems,
+  items,
+  organizationPage,
+  namespace,
+  tags,
+  customPageData,
+}) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -198,6 +205,11 @@ const BloodDonationRestrictionList: CustomScreen<
               </Text>
               <Webreader marginTop={0} marginBottom={0} readClass="rs_read" />
             </Stack>
+
+            {typeof customPageData?.content?.length === 'number' &&
+              customPageData.content.length > 0 && (
+                <Box>{webRichText(customPageData.content)}</Box>
+              )}
 
             <Stack space={3}>
               <Input
@@ -350,6 +362,9 @@ const BloodDonationRestrictionList: CustomScreen<
                       {formatMessage(m.listPage.keywordsTextPrefix)}
                       {highlightMatch(item.keywordsText, trimmedQueryString)}
                     </Text>
+                  )}
+                  {Boolean(item.effectiveDate) && (
+                    <Text variant="small">{item.effectiveDate}</Text>
                   )}
                 </FocusableBox>
               ))}

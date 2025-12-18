@@ -16,8 +16,9 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import {
-  newPrimarySchoolMessages,
+  differentNeedsMessages,
   pendingActionMessages,
+  sharedMessages,
 } from '../lib/messages'
 import {
   Affiliation,
@@ -317,8 +318,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'payer.other.nationalId',
   )
 
-  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
-
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -466,7 +465,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     payer,
     payerName,
     payerNationalId,
-    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -688,28 +686,28 @@ export const determineNameFromApplicationAnswers = (
   const { applicationType } = getApplicationAnswers(application.answers)
 
   if (!applicationType) {
-    return newPrimarySchoolMessages.shared.applicationName
+    return sharedMessages.applicationName
   }
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    ? sharedMessages.enrollmentApplicationName
     : applicationType === ApplicationType.CONTINUING_ENROLLMENT
-    ? newPrimarySchoolMessages.shared.continuingEnrollmentApplicationName
-    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
+    ? sharedMessages.continuingEnrollmentApplicationName
+    : sharedMessages.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
   switch (genderCode) {
     case '1':
     case '3':
-      return newPrimarySchoolMessages.shared.male
+      return sharedMessages.male
     case '2':
     case '4':
-      return newPrimarySchoolMessages.shared.female
+      return sharedMessages.female
     case '7':
     case '8':
     default:
-      return newPrimarySchoolMessages.shared.otherGender
+      return sharedMessages.otherGender
   }
 }
 
@@ -959,10 +957,8 @@ export const getWelfareContactDescription = (application: Application) => {
   const { applicationType } = getApplicationAnswers(application.answers)
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-    ? newPrimarySchoolMessages.differentNeeds
-        .hasWelfareNurserySchoolContactDescription
-    : newPrimarySchoolMessages.differentNeeds
-        .hasWelfarePrimarySchoolContactDescription
+    ? differentNeedsMessages.support.hasWelfareNurserySchoolContactDescription
+    : differentNeedsMessages.support.hasWelfarePrimarySchoolContactDescription
 }
 
 export const getReasonOptionsType = (
