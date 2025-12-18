@@ -55,3 +55,32 @@ query getBloodTypeOverview {
     type
   }
 }
+
+query getAppointmentsOverview(
+  $from: DateTime
+  $status: [HealthDirectorateAppointmentStatus!]
+) {
+  healthDirectorateAppointments(from: $from, status: $status) {
+    data {
+      __typename
+      id
+      title
+      instruction
+      date
+      status
+      location {
+        __typename
+        name
+        organization
+        directions
+        address
+        city
+        postalCode
+        country
+        latitude
+        longitude
+      }
+      practitioners
+    }
+  }
+}

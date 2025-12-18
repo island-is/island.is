@@ -40,12 +40,9 @@ import {
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
 import { theme } from '@island.is/island-ui/theme'
-import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { useWindowSize } from 'react-use'
-import { m } from '../../lib/messages'
 import LinkResolver from '../LinkResolver/LinkResolver'
-import { EmptyCard } from './EmptyCard'
 import * as styles from './InfoCard.css'
 import { LoaderCard } from './LoaderCard'
 import { TimeCard } from './TimeCard'
@@ -58,11 +55,13 @@ interface InfoCardDetail {
 }
 
 export interface InfoCardProps {
+  id?: string
   title: string
   description: string
   to?: string
   size?: 'small' | 'large'
   appointment?: {
+    weekday?: string
     date: string
     time: string
     location: {
@@ -91,10 +90,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   variant = 'default',
   loading = false,
   tooltip,
-  error,
 }) => {
   const { width } = useWindowSize()
-  const { formatMessage } = useLocale()
   const isMobile = width < theme.breakpoints.md
 
   const displayBottomBorder = width < theme.breakpoints.xl
@@ -108,37 +105,28 @@ export const InfoCard: React.FC<InfoCardProps> = ({
     detailData = detail?.slice(0, 12)
   }
 
-  if (variant === 'appointment') {
-    return (
-      <TimeCard title={title} data={appointment} description={description} />
-    )
-  }
-
   if (loading) {
     return <LoaderCard />
   }
 
-  if (!loading && error) {
-    return (
-      <EmptyCard
+  const content =
+    variant === 'appointment' ? (
+      <TimeCard
         title={title}
-        description={formatMessage(m.errorFetch)}
-        size="large"
+        data={appointment}
+        description={description}
+        to={to}
       />
-    )
-  }
-
-  const content = (
-    <Box
-      border="standard"
-      borderColor="blue200"
-      borderRadius="large"
-      padding={[2, 2, 2, 3]}
-      className={styles.boxContainer}
-      height="full"
-      background="white"
-    >
-      <GridContainer>
+    ) : (
+      <Box
+        border="standard"
+        borderColor="blue200"
+        borderRadius="large"
+        padding={[2, 2, 2, 3]}
+        className={styles.boxContainer}
+        height="full"
+        background="white"
+      >
         <GridRow direction="row" className={styles.gridRow}>
           <GridColumn
             span={
@@ -277,9 +265,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
             </GridColumn>
           </GridRow>
         )}
-      </GridContainer>
-    </Box>
-  )
+      </Box>
+    )
   return (
     <Box
       width={size === 'large' ? 'full' : undefined}
