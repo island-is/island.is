@@ -130,7 +130,6 @@ export class AuditTrailService {
       error,
     }
 
-    console.log(message)
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
     return this.config.useGenericLogger ? JSON.stringify(message) : message
   }

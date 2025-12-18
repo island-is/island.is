@@ -119,7 +119,7 @@ export class InternalSubpoenaController {
     }
 
     return this.auditTrailService.runAndAuditRequest({
-      useId: deliverDto.user.id,
+      userId: deliverDto.user.id,
       actionType:
         AuditedAction.DELIVER_SUBPOENA_TO_NATIONAL_COMMISSIONERS_OFFICE,
       action: this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice,
